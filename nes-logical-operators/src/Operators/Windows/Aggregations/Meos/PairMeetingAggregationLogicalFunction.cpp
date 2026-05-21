@@ -37,7 +37,8 @@ PairMeetingAggregationLogicalFunction::PairMeetingAggregationLogicalFunction(
     const FieldAccessLogicalFunction& latField,
     const FieldAccessLogicalFunction& timestampField,
     const FieldAccessLogicalFunction& vehicleIdField,
-    const FieldAccessLogicalFunction& asField)
+    const FieldAccessLogicalFunction& asField,
+    double dMeetMetres)
     : WindowAggregationLogicalFunction(
           lonField.getDataType(),
           DataTypeProvider::provideDataType(partialAggregateStampType),
@@ -48,6 +49,7 @@ PairMeetingAggregationLogicalFunction::PairMeetingAggregationLogicalFunction(
     , latField(latField)
     , timestampField(timestampField)
     , vehicleIdField(vehicleIdField)
+    , dMeetMetres(dMeetMetres)
 {
 }
 
@@ -56,9 +58,11 @@ PairMeetingAggregationLogicalFunction::create(
     const FieldAccessLogicalFunction& lonField,
     const FieldAccessLogicalFunction& latField,
     const FieldAccessLogicalFunction& timestampField,
-    const FieldAccessLogicalFunction& vehicleIdField)
+    const FieldAccessLogicalFunction& vehicleIdField,
+    double dMeetMetres)
 {
-    return std::make_shared<PairMeetingAggregationLogicalFunction>(lonField, latField, timestampField, vehicleIdField, lonField);
+    return std::make_shared<PairMeetingAggregationLogicalFunction>(
+        lonField, latField, timestampField, vehicleIdField, lonField, dMeetMetres);
 }
 
 std::string_view PairMeetingAggregationLogicalFunction::getName() const noexcept
@@ -133,8 +137,15 @@ AggregationLogicalFunctionRegistryReturnType AggregationLogicalFunctionGenerated
 {
     if (arguments.fields.size() == 5)
     {
+        // The Registrar only carries the 5 field args (lon, lat, ts, vid, asField) — the
+        // SerializableAggregationFunction proto does not yet have a slot for the dMeet
+        // constant, so the deserialize path reconstructs with the BerlinMOD-scaffold
+        // default. The parser path always supplies an explicit dMeet from the SQL
+        // constant arg. Adding dMeet to the proto + extending the Registrar args struct
+        // would close the round-trip gap; tracked as a follow-up.
         auto ptr = std::make_shared<PairMeetingAggregationLogicalFunction>(
-            arguments.fields[0], arguments.fields[1], arguments.fields[2], arguments.fields[3], arguments.fields[4]);
+            arguments.fields[0], arguments.fields[1], arguments.fields[2], arguments.fields[3], arguments.fields[4],
+            PairMeetingAggregationLogicalFunction::DEFAULT_DMEET_METRES);
         return ptr;
     }
     throw CannotDeserialize(

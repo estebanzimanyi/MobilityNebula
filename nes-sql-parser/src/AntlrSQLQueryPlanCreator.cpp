@@ -964,12 +964,35 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             }
             break;
         case AntlrSQLLexer::PAIR_MEETING:
-            // Four-field aggregation: lon, lat, ts, vehicle_id. Hardcoded DMEET inside the
-            // physical operator (BerlinMOD scaffold). Closes Q5 × 3 cells to full.
-            if (helpers.top().functionBuilder.size() != 4) {
-                throw InvalidQuerySyntax("PAIR_MEETING requires exactly four arguments (lon, lat, timestamp, vehicle_id), but got {}", helpers.top().functionBuilder.size());
-            }
+            // Five-arg aggregation: lon, lat, ts, vehicle_id (FieldAccess) + dMeet
+            // (numeric constant — meeting-distance threshold in metres). The first four
+            // are pulled from functionBuilder; the fifth is pulled from constantBuilder
+            // (the parser parks numeric/string literals there). Closes Q5 × 3 cells to
+            // full; this branch makes the dMeet configurable per-query.
             {
+                if (helpers.top().constantBuilder.empty()) {
+                    throw InvalidQuerySyntax(
+                        "PAIR_MEETING requires a numeric constant fifth argument (dMeet metres), "
+                        "e.g. PAIR_MEETING(lon, lat, timestamp, vehicle_id, 200.0)");
+                }
+                auto dMeetString = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                double dMeetMetres;
+                try {
+                    dMeetMetres = std::stod(dMeetString);
+                } catch (const std::exception&) {
+                    throw InvalidQuerySyntax(
+                        "PAIR_MEETING fifth argument must be a numeric constant (dMeet metres), got `{}`",
+                        dMeetString);
+                }
+
+                if (helpers.top().functionBuilder.size() != 4) {
+                    throw InvalidQuerySyntax(
+                        "PAIR_MEETING requires exactly five arguments (lon, lat, timestamp, vehicle_id, dMeet), "
+                        "got {} field args + 1 constant",
+                        helpers.top().functionBuilder.size());
+                }
+
                 const auto vidFunction = helpers.top().functionBuilder.back();
                 helpers.top().functionBuilder.pop_back();
                 const auto timestampFunction = helpers.top().functionBuilder.back();
@@ -983,14 +1006,15 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
                     !latitudeFunction.tryGet<FieldAccessLogicalFunction>() ||
                     !timestampFunction.tryGet<FieldAccessLogicalFunction>() ||
                     !vidFunction.tryGet<FieldAccessLogicalFunction>()) {
-                    throw InvalidQuerySyntax("PAIR_MEETING arguments must be field references");
+                    throw InvalidQuerySyntax("PAIR_MEETING field arguments (lon, lat, timestamp, vehicle_id) must be field references");
                 }
 
                 helpers.top().windowAggs.push_back(
                     PairMeetingAggregationLogicalFunction::create(longitudeFunction.get<FieldAccessLogicalFunction>(),
                                                                   latitudeFunction.get<FieldAccessLogicalFunction>(),
                                                                   timestampFunction.get<FieldAccessLogicalFunction>(),
-                                                                  vidFunction.get<FieldAccessLogicalFunction>()));
+                                                                  vidFunction.get<FieldAccessLogicalFunction>(),
+                                                                  dMeetMetres));
                 helpers.top().functionBuilder.push_back(longitudeFunction);
             }
             break;
@@ -1334,9 +1358,26 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             }
             else if (funcName == "PAIR_MEETING")
             {
+                // Five-arg shape: 4 FieldAccess + 1 numeric constant (dMeet metres).
+                if (helpers.top().constantBuilder.empty())
+                {
+                    throw InvalidQuerySyntax(
+                        "PAIR_MEETING requires a numeric constant fifth argument (dMeet metres) at {}",
+                        context->getText());
+                }
+                auto dMeetString = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                double dMeetMetres;
+                try { dMeetMetres = std::stod(dMeetString); }
+                catch (const std::exception&) {
+                    throw InvalidQuerySyntax(
+                        "PAIR_MEETING fifth argument must be a numeric constant (dMeet metres), got `{}` at {}",
+                        dMeetString, context->getText());
+                }
                 if (helpers.top().functionBuilder.size() < 4)
                 {
-                    throw InvalidQuerySyntax("PAIR_MEETING requires four arguments at {}", context->getText());
+                    throw InvalidQuerySyntax(
+                        "PAIR_MEETING requires four field args + 1 constant at {}", context->getText());
                 }
                 const auto vid = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
                 helpers.top().functionBuilder.pop_back();
@@ -1346,7 +1387,7 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
                 helpers.top().functionBuilder.pop_back();
                 const auto lon = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
                 helpers.top().functionBuilder.pop_back();
-                helpers.top().windowAggs.push_back(PairMeetingAggregationLogicalFunction::create(lon, lat, ts, vid));
+                helpers.top().windowAggs.push_back(PairMeetingAggregationLogicalFunction::create(lon, lat, ts, vid, dMeetMetres));
             }
             else if (funcName == "CROSS_DISTANCE")
             {

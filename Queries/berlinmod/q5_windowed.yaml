@@ -2,12 +2,12 @@
 # "Pairs of vehicles meeting near P." Per-10s tumbling window over the events
 # pre-filtered by upstream edwithin_tgeo_geo to the near-P set; PAIR_MEETING
 # emits the per-window meeting pairs (vid_a, vid_b, ts, "<=dMeet" tag) with
-# dMeet = 200 m hardcoded for the scaffold.
+# dMeet = 200 m passed as the explicit fifth aggregation argument.
 
 query: |
   SELECT start,
          end,
-         PAIR_MEETING(gps_lon, gps_lat, time_utc, vehicle_id) AS meeting_pairs
+         PAIR_MEETING(gps_lon, gps_lat, time_utc, vehicle_id, 200.0) AS meeting_pairs
   FROM berlinmod_stream
   WHERE edwithin_tgeo_geo(gps_lon,
                           gps_lat,
