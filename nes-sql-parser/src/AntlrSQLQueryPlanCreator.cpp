@@ -139,6 +139,12 @@
 #include <Functions/Meos/TemporalADisjointTCbufferCbufferLogicalFunction.hpp>
 #include <Functions/Meos/TemporalAIntersectsTCbufferCbufferLogicalFunction.hpp>
 #include <Functions/Meos/TemporalATouchesTCbufferCbufferLogicalFunction.hpp>
+#include <Functions/Meos/TemporalADisjointTCbufferTCbufferLogicalFunction.hpp>
+#include <Functions/Meos/TemporalAIntersectsTCbufferTCbufferLogicalFunction.hpp>
+#include <Functions/Meos/TemporalATouchesTCbufferTCbufferLogicalFunction.hpp>
+#include <Functions/Meos/TemporalECoversTCbufferTCbufferLogicalFunction.hpp>
+#include <Functions/Meos/TemporalEIntersectsTCbufferTCbufferLogicalFunction.hpp>
+#include <Functions/Meos/TemporalETouchesTCbufferTCbufferLogicalFunction.hpp>
 #include <Plans/LogicalPlan.hpp>
 #include <Plans/LogicalPlanBuilder.hpp>
 #include <Util/Overloaded.hpp>
@@ -2636,6 +2642,138 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TEMPORAL_ATOUCHES_TCBUFFER_CBUFFER */
+        /* BEGIN CODEGEN PARSER GLUE: TEMPORAL_ADISJOINT_TCBUFFER_TCBUFFER */
+        case AntlrSQLLexer::TEMPORAL_ADISJOINT_TCBUFFER_TCBUFFER:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 8)
+                throw InvalidQuerySyntax("TEMPORAL_ADISJOINT_TCBUFFER_TCBUFFER requires exactly 8 arguments (lonA, latA, radiusA, tsA, lonB, latB, radiusB, tsB), but got {}", argCount);
+
+            auto tsB     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto radiusB = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto latB    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto lonB    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto tsA     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto radiusA = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto latA    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto lonA    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                TemporalADisjointTCbufferTCbufferLogicalFunction(lonA, latA, radiusA, tsA, lonB, latB, radiusB, tsB));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: TEMPORAL_ADISJOINT_TCBUFFER_TCBUFFER */
+
+        /* BEGIN CODEGEN PARSER GLUE: TEMPORAL_AINTERSECTS_TCBUFFER_TCBUFFER */
+        case AntlrSQLLexer::TEMPORAL_AINTERSECTS_TCBUFFER_TCBUFFER:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 8)
+                throw InvalidQuerySyntax("TEMPORAL_AINTERSECTS_TCBUFFER_TCBUFFER requires exactly 8 arguments (lonA, latA, radiusA, tsA, lonB, latB, radiusB, tsB), but got {}", argCount);
+
+            auto tsB     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto radiusB = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto latB    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto lonB    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto tsA     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto radiusA = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto latA    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto lonA    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                TemporalAIntersectsTCbufferTCbufferLogicalFunction(lonA, latA, radiusA, tsA, lonB, latB, radiusB, tsB));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: TEMPORAL_AINTERSECTS_TCBUFFER_TCBUFFER */
+
+        /* BEGIN CODEGEN PARSER GLUE: TEMPORAL_ATOUCHES_TCBUFFER_TCBUFFER */
+        case AntlrSQLLexer::TEMPORAL_ATOUCHES_TCBUFFER_TCBUFFER:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 8)
+                throw InvalidQuerySyntax("TEMPORAL_ATOUCHES_TCBUFFER_TCBUFFER requires exactly 8 arguments (lonA, latA, radiusA, tsA, lonB, latB, radiusB, tsB), but got {}", argCount);
+
+            auto tsB     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto radiusB = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto latB    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto lonB    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto tsA     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto radiusA = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto latA    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto lonA    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                TemporalATouchesTCbufferTCbufferLogicalFunction(lonA, latA, radiusA, tsA, lonB, latB, radiusB, tsB));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: TEMPORAL_ATOUCHES_TCBUFFER_TCBUFFER */
+
+        /* BEGIN CODEGEN PARSER GLUE: TEMPORAL_ECOVERS_TCBUFFER_TCBUFFER */
+        case AntlrSQLLexer::TEMPORAL_ECOVERS_TCBUFFER_TCBUFFER:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 8)
+                throw InvalidQuerySyntax("TEMPORAL_ECOVERS_TCBUFFER_TCBUFFER requires exactly 8 arguments (lonA, latA, radiusA, tsA, lonB, latB, radiusB, tsB), but got {}", argCount);
+
+            auto tsB     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto radiusB = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto latB    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto lonB    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto tsA     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto radiusA = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto latA    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto lonA    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                TemporalECoversTCbufferTCbufferLogicalFunction(lonA, latA, radiusA, tsA, lonB, latB, radiusB, tsB));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: TEMPORAL_ECOVERS_TCBUFFER_TCBUFFER */
+
+        /* BEGIN CODEGEN PARSER GLUE: TEMPORAL_EINTERSECTS_TCBUFFER_TCBUFFER */
+        case AntlrSQLLexer::TEMPORAL_EINTERSECTS_TCBUFFER_TCBUFFER:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 8)
+                throw InvalidQuerySyntax("TEMPORAL_EINTERSECTS_TCBUFFER_TCBUFFER requires exactly 8 arguments (lonA, latA, radiusA, tsA, lonB, latB, radiusB, tsB), but got {}", argCount);
+
+            auto tsB     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto radiusB = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto latB    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto lonB    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto tsA     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto radiusA = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto latA    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto lonA    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                TemporalEIntersectsTCbufferTCbufferLogicalFunction(lonA, latA, radiusA, tsA, lonB, latB, radiusB, tsB));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: TEMPORAL_EINTERSECTS_TCBUFFER_TCBUFFER */
+
+        /* BEGIN CODEGEN PARSER GLUE: TEMPORAL_ETOUCHES_TCBUFFER_TCBUFFER */
+        case AntlrSQLLexer::TEMPORAL_ETOUCHES_TCBUFFER_TCBUFFER:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 8)
+                throw InvalidQuerySyntax("TEMPORAL_ETOUCHES_TCBUFFER_TCBUFFER requires exactly 8 arguments (lonA, latA, radiusA, tsA, lonB, latB, radiusB, tsB), but got {}", argCount);
+
+            auto tsB     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto radiusB = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto latB    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto lonB    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto tsA     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto radiusA = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto latA    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto lonA    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                TemporalETouchesTCbufferTCbufferLogicalFunction(lonA, latA, radiusA, tsA, lonB, latB, radiusB, tsB));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: TEMPORAL_ETOUCHES_TCBUFFER_TCBUFFER */
+
 
 
         /* BEGIN CODEGEN AGGREGATION GLUE: TEMPORAL_NUM_INSTANTS (case-switch) */
