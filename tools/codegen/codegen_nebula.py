@@ -826,6 +826,8 @@ def emit_operator(op, output_root: Path):
         physical_cpp_path.write_text(PHYSICAL_CPP_TEMPLATE_TEMPORAL_POINT_WITH_DIST.format(**physical_common))
     elif op.get("build_two_temporal_points"):
         physical_cpp_path.write_text(PHYSICAL_CPP_TEMPLATE_TWO_TEMPORAL_POINTS.format(**physical_common))
+    elif op.get("build_temporal_point_restriction"):
+        physical_cpp_path.write_text(PHYSICAL_CPP_TEMPLATE_TEMPORAL_POINT_RESTRICTION.format(**physical_common))
     elif op.get("build_temporal_point"):
         physical_cpp_path.write_text(PHYSICAL_CPP_TEMPLATE_TEMPORAL_POINT.format(**physical_common))
     elif op.get("build_tnumber_point_with_scalar"):
@@ -839,6 +841,130 @@ def emit_operator(op, output_root: Path):
         )
 
     sys.stderr.write(f"  ✓ {nebula_name}: emitted 4 files ({logical_hpp_path.relative_to(output_root)} + siblings)\n")
+
+
+# Physical .cpp template for one-temporal-point restriction operators —
+# MEOS signature `Temporal* fn(const Temporal*, const GSERIALIZED*)`. The
+# returned Temporal* is checked for non-null (i.e. survived the restriction),
+# freed, and reduced to an int (1 = survives, 0 = clipped/null/error).
+# Per-event single-instant semantics: equivalent to a filter predicate.
+# Mirrors mariana's TemporalAtStBox int-collapse pattern.
+PHYSICAL_CPP_TEMPLATE_TEMPORAL_POINT_RESTRICTION = """\
+/*
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        https://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+*/
+
+#include <Functions/Meos/{nebula_name}PhysicalFunction.hpp>
+
+#include <Functions/PhysicalFunction.hpp>
+#include <MEOSWrapper.hpp>
+#include <Nautilus/DataTypes/VarVal.hpp>
+#include <Nautilus/DataTypes/VariableSizedData.hpp>
+#include <Nautilus/Interface/Record.hpp>
+#include <PhysicalFunctionRegistry.hpp>
+#include <ErrorHandling.hpp>
+#include <ExecutionContext.hpp>
+#include <fmt/format.h>
+#include <function.hpp>
+#include <string>
+#include <utility>
+#include <val.hpp>
+
+extern "C" {{
+#include <meos.h>
+#include <meos_geo.h>
+}}
+
+namespace NES {{
+
+{nebula_name}PhysicalFunction::{nebula_name}PhysicalFunction({ctor_physical_args})
+{{
+    parameterFunctions.reserve({n_args});
+{ctor_physical_pushes}
+}}
+
+VarVal {nebula_name}PhysicalFunction::execute(const Record& record, ArenaRef& arena) const
+{{
+    std::vector<VarVal> parameterValues;
+    parameterValues.reserve(parameterFunctions.size());
+    for (const auto& function : parameterFunctions)
+    {{
+        parameterValues.emplace_back(function.execute(record, arena));
+    }}
+
+    auto lon       = parameterValues[0].cast<nautilus::val<double>>();
+    auto lat       = parameterValues[1].cast<nautilus::val<double>>();
+    auto timestamp = parameterValues[2].cast<nautilus::val<uint64_t>>();
+    auto geometry  = parameterValues[3].cast<VariableSizedData>();
+
+    const auto result = nautilus::invoke(
+        +[](double lonValue,
+            double latValue,
+            uint64_t timestampValue,
+            const char* geometryPtr,
+            uint32_t geometrySize) -> {return_type} {{
+            try
+            {{
+                MEOS::Meos::ensureMeosInitialized();
+                if (!(lonValue >= -180.0 && lonValue <= 180.0 && latValue >= -90.0 && latValue <= 90.0)) return 0;
+
+                const std::string timestampString = MEOS::Meos::convertEpochToTimestamp(timestampValue);
+                std::string temporalGeometryWkt = fmt::format("SRID=4326;Point({{}} {{}})@{{}}", lonValue, latValue, timestampString);
+                std::string staticGeometryWkt(geometryPtr, geometrySize);
+
+                while (!staticGeometryWkt.empty() && (staticGeometryWkt.front() == '\\'' || staticGeometryWkt.front() == '"'))
+                    staticGeometryWkt.erase(staticGeometryWkt.begin());
+                while (!staticGeometryWkt.empty() && (staticGeometryWkt.back() == '\\'' || staticGeometryWkt.back() == '"'))
+                    staticGeometryWkt.pop_back();
+
+                if (temporalGeometryWkt.empty() || staticGeometryWkt.empty()) return 0;
+
+                MEOS::Meos::TemporalGeometry temporalGeometry(temporalGeometryWkt);
+                if (!temporalGeometry.getGeometry()) return 0;
+                MEOS::Meos::StaticGeometry staticGeometry(staticGeometryWkt);
+                if (!staticGeometry.getGeometry()) return 0;
+
+                // MEOS restriction call — returns Temporal* (non-null if the
+                // input survived the restriction, null if clipped/empty).
+                // For per-event single-instant inputs this collapses to a
+                // filter predicate: 1 if the point survives, 0 if clipped.
+                Temporal* clipped = {meos_call}(temporalGeometry.getGeometry(),
+                                                staticGeometry.getGeometry());
+                if (clipped == nullptr) return 0;
+                free(clipped);
+                return 1;
+            }}
+            catch (const std::exception&)
+            {{
+                return 0;
+            }}
+        }},
+        lon, lat, timestamp, geometry.getContent(), geometry.getContentSize());
+
+    return VarVal(result);
+}}
+
+PhysicalFunctionRegistryReturnType PhysicalFunctionGeneratedRegistrar::Register{nebula_name}PhysicalFunction(
+    PhysicalFunctionRegistryArguments arguments)
+{{
+    PRECONDITION(arguments.childFunctions.size() == {n_args},
+                 "{nebula_name}PhysicalFunction requires {n_args} children but got {{}}",
+                 arguments.childFunctions.size());
+{registrar_pushes}
+}}
+
+}} // namespace NES
+"""
 
 
 # Physical .cpp template for one-tnumber-point operators with a trailing
@@ -1249,7 +1375,10 @@ def dispatch_case_for(op):
         return DISPATCH_CASE_ONE_TEMPORAL_POINT_WITH_DIST
     if op.get("build_two_temporal_points"):
         return DISPATCH_CASE_TWO_TEMPORAL_POINTS
-    if op.get("build_temporal_point"):
+    if op.get("build_temporal_point") or op.get("build_temporal_point_restriction"):
+        # Both shapes share the same 4-arg dispatch (lon, lat, ts, geom);
+        # only the physical-cpp body differs (filter-predicate int return vs.
+        # restriction-survival int return).
         return DISPATCH_CASE_ONE_TEMPORAL_POINT
     if op.get("build_tnumber_point_with_scalar"):
         return DISPATCH_CASE_TNUMBER_POINT_WITH_SCALAR

@@ -43,3 +43,5 @@ add_plugin(TemporalNADFloatScalar LogicalFunction nes-logical-operators Temporal
 add_plugin(TemporalNADIntScalar LogicalFunction nes-logical-operators TemporalNADIntScalarLogicalFunction.cpp)
 add_plugin(TemporalNADTFloat LogicalFunction nes-logical-operators TemporalNADTFloatLogicalFunction.cpp)
 add_plugin(TemporalNADTInt LogicalFunction nes-logical-operators TemporalNADTIntLogicalFunction.cpp)
+add_plugin(TemporalAtGeometry LogicalFunction nes-logical-operators TemporalAtGeometryLogicalFunction.cpp)
+add_plugin(TemporalMinusGeometry LogicalFunction nes-logical-operators TemporalMinusGeometryLogicalFunction.cpp)

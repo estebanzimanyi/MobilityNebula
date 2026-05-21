@@ -97,6 +97,8 @@
 #include <Functions/Meos/TemporalNADIntScalarLogicalFunction.hpp>
 #include <Functions/Meos/TemporalNADTFloatLogicalFunction.hpp>
 #include <Functions/Meos/TemporalNADTIntLogicalFunction.hpp>
+#include <Functions/Meos/TemporalAtGeometryLogicalFunction.hpp>
+#include <Functions/Meos/TemporalMinusGeometryLogicalFunction.hpp>
 #include <Plans/LogicalPlan.hpp>
 #include <Plans/LogicalPlanBuilder.hpp>
 #include <Util/Overloaded.hpp>
@@ -1961,6 +1963,62 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TEMPORAL_NAD_TINT */
+        /* BEGIN CODEGEN PARSER GLUE: TEMPORAL_AT_GEOMETRY */
+        case AntlrSQLLexer::TEMPORAL_AT_GEOMETRY:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 4)
+                throw InvalidQuerySyntax("TEMPORAL_AT_GEOMETRY requires exactly 4 arguments (lon, lat, timestamp, geometry), but got {}", argCount);
+
+            /* Lift the WKT constant into the function builder */
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto v = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                helpers.top().functionBuilder.emplace_back(
+                    ConstantValueLogicalFunction(
+                        DataTypeProvider::provideDataType(DataType::Type::VARSIZED), std::move(v)));
+            }
+
+            auto geometry  = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto timestamp = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto lat       = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto lon       = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                TemporalAtGeometryLogicalFunction(lon, lat, timestamp, geometry));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: TEMPORAL_AT_GEOMETRY */
+
+        /* BEGIN CODEGEN PARSER GLUE: TEMPORAL_MINUS_GEOMETRY */
+        case AntlrSQLLexer::TEMPORAL_MINUS_GEOMETRY:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 4)
+                throw InvalidQuerySyntax("TEMPORAL_MINUS_GEOMETRY requires exactly 4 arguments (lon, lat, timestamp, geometry), but got {}", argCount);
+
+            /* Lift the WKT constant into the function builder */
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto v = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                helpers.top().functionBuilder.emplace_back(
+                    ConstantValueLogicalFunction(
+                        DataTypeProvider::provideDataType(DataType::Type::VARSIZED), std::move(v)));
+            }
+
+            auto geometry  = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto timestamp = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto lat       = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto lon       = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                TemporalMinusGeometryLogicalFunction(lon, lat, timestamp, geometry));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: TEMPORAL_MINUS_GEOMETRY */
+
 
 
 
