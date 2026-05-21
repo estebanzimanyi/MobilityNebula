@@ -828,6 +828,12 @@ def emit_operator(op, output_root: Path):
         physical_cpp_path.write_text(PHYSICAL_CPP_TEMPLATE_TWO_TEMPORAL_POINTS.format(**physical_common))
     elif op.get("build_temporal_point_restriction"):
         physical_cpp_path.write_text(PHYSICAL_CPP_TEMPLATE_TEMPORAL_POINT_RESTRICTION.format(**physical_common))
+    elif op.get("build_two_tcbuffer_points_with_dist"):
+        physical_cpp_path.write_text(PHYSICAL_CPP_TEMPLATE_TWO_TCBUFFER_POINTS_WITH_DIST.format(**physical_common))
+    elif op.get("build_tcbuffer_point_cbuffer_with_dist"):
+        physical_cpp_path.write_text(PHYSICAL_CPP_TEMPLATE_TCBUFFER_POINT_CBUFFER_WITH_DIST.format(**physical_common))
+    elif op.get("build_tcbuffer_point_with_dist"):
+        physical_cpp_path.write_text(PHYSICAL_CPP_TEMPLATE_TCBUFFER_POINT_WITH_DIST.format(**physical_common))
     elif op.get("build_two_tcbuffer_points"):
         physical_cpp_path.write_text(PHYSICAL_CPP_TEMPLATE_TWO_TCBUFFER_POINTS.format(**physical_common))
     elif op.get("build_tcbuffer_point_cbuffer"):
@@ -1078,6 +1084,352 @@ VarVal {nebula_name}PhysicalFunction::execute(const Record& record, ArenaRef& ar
             }}
         }},
         lon, lat, radius, timestamp, geometry.getContent(), geometry.getContentSize());
+
+    return VarVal(result);
+}}
+
+PhysicalFunctionRegistryReturnType PhysicalFunctionGeneratedRegistrar::Register{nebula_name}PhysicalFunction(
+    PhysicalFunctionRegistryArguments arguments)
+{{
+    PRECONDITION(arguments.childFunctions.size() == {n_args},
+                 "{nebula_name}PhysicalFunction requires {n_args} children but got {{}}",
+                 arguments.childFunctions.size());
+{registrar_pushes}
+}}
+
+}} // namespace NES
+"""
+
+
+# Physical .cpp template for one-tcbuffer-point + static geom + dist —
+# e.g. edwithin_tcbuffer_geo. Same per-event tcbuffer construction as
+# PHYSICAL_CPP_TEMPLATE_TCBUFFER_POINT but trailing `double dist`.
+# 6 SQL args: lon, lat, radius, ts, geometry, dist.
+PHYSICAL_CPP_TEMPLATE_TCBUFFER_POINT_WITH_DIST = """\
+/*
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        https://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+*/
+
+#include <Functions/Meos/{nebula_name}PhysicalFunction.hpp>
+
+#include <Functions/PhysicalFunction.hpp>
+#include <MEOSWrapper.hpp>
+#include <Nautilus/DataTypes/VarVal.hpp>
+#include <Nautilus/DataTypes/VariableSizedData.hpp>
+#include <Nautilus/Interface/Record.hpp>
+#include <PhysicalFunctionRegistry.hpp>
+#include <ErrorHandling.hpp>
+#include <ExecutionContext.hpp>
+#include <fmt/format.h>
+#include <function.hpp>
+#include <string>
+#include <utility>
+#include <val.hpp>
+
+extern "C" {{
+#include <meos.h>
+#include <meos_cbuffer.h>
+}}
+
+namespace NES {{
+
+{nebula_name}PhysicalFunction::{nebula_name}PhysicalFunction({ctor_physical_args})
+{{
+    parameterFunctions.reserve({n_args});
+{ctor_physical_pushes}
+}}
+
+VarVal {nebula_name}PhysicalFunction::execute(const Record& record, ArenaRef& arena) const
+{{
+    std::vector<VarVal> parameterValues;
+    parameterValues.reserve(parameterFunctions.size());
+    for (const auto& function : parameterFunctions)
+    {{
+        parameterValues.emplace_back(function.execute(record, arena));
+    }}
+
+    auto lon       = parameterValues[0].cast<nautilus::val<double>>();
+    auto lat       = parameterValues[1].cast<nautilus::val<double>>();
+    auto radius    = parameterValues[2].cast<nautilus::val<double>>();
+    auto timestamp = parameterValues[3].cast<nautilus::val<uint64_t>>();
+    auto geometry  = parameterValues[4].cast<VariableSizedData>();
+    auto dist      = parameterValues[5].cast<nautilus::val<double>>();
+
+    const auto result = nautilus::invoke(
+        +[](double lonValue, double latValue, double radiusValue, uint64_t timestampValue,
+            const char* geometryPtr, uint32_t geometrySize, double distValue) -> {return_type} {{
+            try
+            {{
+                MEOS::Meos::ensureMeosInitialized();
+                if (!(lonValue >= -180.0 && lonValue <= 180.0 && latValue >= -90.0 && latValue <= 90.0)) return 0;
+                if (radiusValue < 0.0) return 0;
+
+                const std::string timestampString = MEOS::Meos::convertEpochToTimestamp(timestampValue);
+                std::string tcbufferWkt = fmt::format("Cbuffer(Point({{}} {{}}),{{}})@{{}}",
+                                                     lonValue, latValue, radiusValue, timestampString);
+                std::string staticGeometryWkt(geometryPtr, geometrySize);
+
+                while (!staticGeometryWkt.empty() && (staticGeometryWkt.front() == '\\'' || staticGeometryWkt.front() == '"'))
+                    staticGeometryWkt.erase(staticGeometryWkt.begin());
+                while (!staticGeometryWkt.empty() && (staticGeometryWkt.back() == '\\'' || staticGeometryWkt.back() == '"'))
+                    staticGeometryWkt.pop_back();
+
+                if (tcbufferWkt.empty() || staticGeometryWkt.empty()) return 0;
+
+                Temporal* tcbuffer = tcbuffer_in(tcbufferWkt.c_str());
+                if (!tcbuffer) return 0;
+                MEOS::Meos::StaticGeometry staticGeometry(staticGeometryWkt);
+                if (!staticGeometry.getGeometry()) {{ free(tcbuffer); return 0; }}
+
+                {return_type} r = {meos_call}(tcbuffer, staticGeometry.getGeometry(), distValue);
+                free(tcbuffer);
+                return r;
+            }}
+            catch (const std::exception&)
+            {{
+                return 0;
+            }}
+        }},
+        lon, lat, radius, timestamp, geometry.getContent(), geometry.getContentSize(), dist);
+
+    return VarVal(result);
+}}
+
+PhysicalFunctionRegistryReturnType PhysicalFunctionGeneratedRegistrar::Register{nebula_name}PhysicalFunction(
+    PhysicalFunctionRegistryArguments arguments)
+{{
+    PRECONDITION(arguments.childFunctions.size() == {n_args},
+                 "{nebula_name}PhysicalFunction requires {n_args} children but got {{}}",
+                 arguments.childFunctions.size());
+{registrar_pushes}
+}}
+
+}} // namespace NES
+"""
+
+# Physical .cpp template for one-tcbuffer-point + static Cbuffer + dist —
+# e.g. edwithin_tcbuffer_cbuffer.
+# 6 SQL args: lon, lat, radius, ts, cbufferLiteral, dist.
+PHYSICAL_CPP_TEMPLATE_TCBUFFER_POINT_CBUFFER_WITH_DIST = """\
+/*
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        https://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+*/
+
+#include <Functions/Meos/{nebula_name}PhysicalFunction.hpp>
+
+#include <Functions/PhysicalFunction.hpp>
+#include <MEOSWrapper.hpp>
+#include <Nautilus/DataTypes/VarVal.hpp>
+#include <Nautilus/DataTypes/VariableSizedData.hpp>
+#include <Nautilus/Interface/Record.hpp>
+#include <PhysicalFunctionRegistry.hpp>
+#include <ErrorHandling.hpp>
+#include <ExecutionContext.hpp>
+#include <fmt/format.h>
+#include <function.hpp>
+#include <string>
+#include <utility>
+#include <val.hpp>
+
+extern "C" {{
+#include <meos.h>
+#include <meos_cbuffer.h>
+}}
+
+namespace NES {{
+
+{nebula_name}PhysicalFunction::{nebula_name}PhysicalFunction({ctor_physical_args})
+{{
+    parameterFunctions.reserve({n_args});
+{ctor_physical_pushes}
+}}
+
+VarVal {nebula_name}PhysicalFunction::execute(const Record& record, ArenaRef& arena) const
+{{
+    std::vector<VarVal> parameterValues;
+    parameterValues.reserve(parameterFunctions.size());
+    for (const auto& function : parameterFunctions)
+    {{
+        parameterValues.emplace_back(function.execute(record, arena));
+    }}
+
+    auto lon       = parameterValues[0].cast<nautilus::val<double>>();
+    auto lat       = parameterValues[1].cast<nautilus::val<double>>();
+    auto radius    = parameterValues[2].cast<nautilus::val<double>>();
+    auto timestamp = parameterValues[3].cast<nautilus::val<uint64_t>>();
+    auto cbufLit   = parameterValues[4].cast<VariableSizedData>();
+    auto dist      = parameterValues[5].cast<nautilus::val<double>>();
+
+    const auto result = nautilus::invoke(
+        +[](double lonValue, double latValue, double radiusValue, uint64_t timestampValue,
+            const char* cbufLitPtr, uint32_t cbufLitSize, double distValue) -> {return_type} {{
+            try
+            {{
+                MEOS::Meos::ensureMeosInitialized();
+                if (!(lonValue >= -180.0 && lonValue <= 180.0 && latValue >= -90.0 && latValue <= 90.0)) return 0;
+                if (radiusValue < 0.0) return 0;
+
+                const std::string timestampString = MEOS::Meos::convertEpochToTimestamp(timestampValue);
+                std::string tcbufferWkt = fmt::format("Cbuffer(Point({{}} {{}}),{{}})@{{}}",
+                                                     lonValue, latValue, radiusValue, timestampString);
+                std::string cbufferLiteral(cbufLitPtr, cbufLitSize);
+
+                while (!cbufferLiteral.empty() && (cbufferLiteral.front() == '\\'' || cbufferLiteral.front() == '"'))
+                    cbufferLiteral.erase(cbufferLiteral.begin());
+                while (!cbufferLiteral.empty() && (cbufferLiteral.back() == '\\'' || cbufferLiteral.back() == '"'))
+                    cbufferLiteral.pop_back();
+
+                if (tcbufferWkt.empty() || cbufferLiteral.empty()) return 0;
+
+                Temporal* tcbuffer = tcbuffer_in(tcbufferWkt.c_str());
+                if (!tcbuffer) return 0;
+                Cbuffer* cb = cbuffer_in(cbufferLiteral.c_str());
+                if (!cb) {{ free(tcbuffer); return 0; }}
+
+                {return_type} r = {meos_call}(tcbuffer, cb, distValue);
+                free(tcbuffer);
+                free(cb);
+                return r;
+            }}
+            catch (const std::exception&)
+            {{
+                return 0;
+            }}
+        }},
+        lon, lat, radius, timestamp, cbufLit.getContent(), cbufLit.getContentSize(), dist);
+
+    return VarVal(result);
+}}
+
+PhysicalFunctionRegistryReturnType PhysicalFunctionGeneratedRegistrar::Register{nebula_name}PhysicalFunction(
+    PhysicalFunctionRegistryArguments arguments)
+{{
+    PRECONDITION(arguments.childFunctions.size() == {n_args},
+                 "{nebula_name}PhysicalFunction requires {n_args} children but got {{}}",
+                 arguments.childFunctions.size());
+{registrar_pushes}
+}}
+
+}} // namespace NES
+"""
+
+# Physical .cpp template for two-tcbuffer-points + dist — e.g.
+# edwithin_tcbuffer_tcbuffer. 9 SQL args: lonA, latA, radiusA, tsA,
+# lonB, latB, radiusB, tsB, dist.
+PHYSICAL_CPP_TEMPLATE_TWO_TCBUFFER_POINTS_WITH_DIST = """\
+/*
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        https://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+*/
+
+#include <Functions/Meos/{nebula_name}PhysicalFunction.hpp>
+
+#include <Functions/PhysicalFunction.hpp>
+#include <MEOSWrapper.hpp>
+#include <Nautilus/DataTypes/VarVal.hpp>
+#include <Nautilus/Interface/Record.hpp>
+#include <PhysicalFunctionRegistry.hpp>
+#include <ErrorHandling.hpp>
+#include <ExecutionContext.hpp>
+#include <fmt/format.h>
+#include <function.hpp>
+#include <string>
+#include <utility>
+#include <val.hpp>
+
+extern "C" {{
+#include <meos.h>
+#include <meos_cbuffer.h>
+}}
+
+namespace NES {{
+
+{nebula_name}PhysicalFunction::{nebula_name}PhysicalFunction({ctor_physical_args})
+{{
+    parameterFunctions.reserve({n_args});
+{ctor_physical_pushes}
+}}
+
+VarVal {nebula_name}PhysicalFunction::execute(const Record& record, ArenaRef& arena) const
+{{
+    std::vector<VarVal> parameterValues;
+    parameterValues.reserve(parameterFunctions.size());
+    for (const auto& function : parameterFunctions)
+    {{
+        parameterValues.emplace_back(function.execute(record, arena));
+    }}
+
+    auto lonA    = parameterValues[0].cast<nautilus::val<double>>();
+    auto latA    = parameterValues[1].cast<nautilus::val<double>>();
+    auto radiusA = parameterValues[2].cast<nautilus::val<double>>();
+    auto tsA     = parameterValues[3].cast<nautilus::val<uint64_t>>();
+    auto lonB    = parameterValues[4].cast<nautilus::val<double>>();
+    auto latB    = parameterValues[5].cast<nautilus::val<double>>();
+    auto radiusB = parameterValues[6].cast<nautilus::val<double>>();
+    auto tsB     = parameterValues[7].cast<nautilus::val<uint64_t>>();
+    auto dist    = parameterValues[8].cast<nautilus::val<double>>();
+
+    const auto result = nautilus::invoke(
+        +[](double lonAValue, double latAValue, double radiusAValue, uint64_t tsAValue,
+            double lonBValue, double latBValue, double radiusBValue, uint64_t tsBValue,
+            double distValue) -> {return_type} {{
+            try
+            {{
+                MEOS::Meos::ensureMeosInitialized();
+                if (!(lonAValue >= -180.0 && lonAValue <= 180.0 && latAValue >= -90.0 && latAValue <= 90.0)) return 0;
+                if (!(lonBValue >= -180.0 && lonBValue <= 180.0 && latBValue >= -90.0 && latBValue <= 90.0)) return 0;
+                if (radiusAValue < 0.0 || radiusBValue < 0.0) return 0;
+
+                const std::string tsAString = MEOS::Meos::convertEpochToTimestamp(tsAValue);
+                const std::string tsBString = MEOS::Meos::convertEpochToTimestamp(tsBValue);
+                std::string wktA = fmt::format("Cbuffer(Point({{}} {{}}),{{}})@{{}}", lonAValue, latAValue, radiusAValue, tsAString);
+                std::string wktB = fmt::format("Cbuffer(Point({{}} {{}}),{{}})@{{}}", lonBValue, latBValue, radiusBValue, tsBString);
+
+                Temporal* tA = tcbuffer_in(wktA.c_str());
+                if (!tA) return 0;
+                Temporal* tB = tcbuffer_in(wktB.c_str());
+                if (!tB) {{ free(tA); return 0; }}
+
+                {return_type} r = {meos_call}(tA, tB, distValue);
+                free(tA);
+                free(tB);
+                return r;
+            }}
+            catch (const std::exception&)
+            {{
+                return 0;
+            }}
+        }},
+        lonA, latA, radiusA, tsA, lonB, latB, radiusB, tsB, dist);
 
     return VarVal(result);
 }}
@@ -1676,6 +2028,79 @@ DISPATCH_CASE_TWO_TEMPORAL_POINTS_WITH_DIST = """\
 """
 
 
+# 6-arg shape: lon, lat, radius, ts, geometry, dist — tcbuffer × static geom + dist.
+DISPATCH_CASE_TCBUFFER_POINT_WITH_DIST = """\
+        /* BEGIN CODEGEN PARSER GLUE: {sql_token} */
+        case AntlrSQLLexer::{sql_token}:
+        {{
+            const auto argCount = context->expression().size();
+            if (argCount != 6)
+                throw InvalidQuerySyntax("{sql_token} requires exactly 6 arguments (lon, lat, radius, timestamp, blob, distance), but got {{}}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {{
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }}
+
+            auto blobLast  = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto distLast  = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto timestamp = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto radius    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto lat       = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto lon       = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                {nebula_name}LogicalFunction(lon, lat, radius, timestamp, blobLast, distLast));
+        }}
+        break;
+        /* END CODEGEN PARSER GLUE: {sql_token} */
+"""
+
+# 9-arg shape: lonA, latA, radiusA, tsA, lonB, latB, radiusB, tsB, dist — two tcbuffers + dist.
+DISPATCH_CASE_TWO_TCBUFFER_POINTS_WITH_DIST = """\
+        /* BEGIN CODEGEN PARSER GLUE: {sql_token} */
+        case AntlrSQLLexer::{sql_token}:
+        {{
+            const auto argCount = context->expression().size();
+            if (argCount != 9)
+                throw InvalidQuerySyntax("{sql_token} requires exactly 9 arguments (lonA, latA, radiusA, tsA, lonB, latB, radiusB, tsB, distance), but got {{}}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {{
+                auto v = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                helpers.top().functionBuilder.emplace_back(
+                    ConstantValueLogicalFunction(
+                        DataTypeProvider::provideDataType(DataType::Type::FLOAT64), std::move(v)));
+            }}
+
+            auto dist    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto tsB     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto radiusB = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto latB    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto lonB    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto tsA     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto radiusA = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto latA    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto lonA    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                {nebula_name}LogicalFunction(lonA, latA, radiusA, tsA, lonB, latB, radiusB, tsB, dist));
+        }}
+        break;
+        /* END CODEGEN PARSER GLUE: {sql_token} */
+"""
+
 # 8-arg shape: lonA, latA, radiusA, tsA, lonB, latB, radiusB, tsB (no constants).
 DISPATCH_CASE_TWO_TCBUFFER_POINTS = """\
         /* BEGIN CODEGEN PARSER GLUE: {sql_token} */
@@ -1811,6 +2236,11 @@ def dispatch_case_for(op):
         return DISPATCH_CASE_TCBUFFER_POINT
     if op.get("build_two_tcbuffer_points"):
         return DISPATCH_CASE_TWO_TCBUFFER_POINTS
+    if op.get("build_tcbuffer_point_with_dist") or op.get("build_tcbuffer_point_cbuffer_with_dist"):
+        # Same 6-arg SQL dispatch for both — only physical-cpp body differs (blob parser).
+        return DISPATCH_CASE_TCBUFFER_POINT_WITH_DIST
+    if op.get("build_two_tcbuffer_points_with_dist"):
+        return DISPATCH_CASE_TWO_TCBUFFER_POINTS_WITH_DIST
     if op.get("build_tnumber_point_with_scalar"):
         return DISPATCH_CASE_TNUMBER_POINT_WITH_SCALAR
     if op.get("build_two_tnumber_points"):
