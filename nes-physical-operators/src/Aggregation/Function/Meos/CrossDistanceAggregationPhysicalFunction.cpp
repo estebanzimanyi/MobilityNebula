@@ -116,7 +116,7 @@ void CrossDistanceAggregationPhysicalFunction::combine(
 }
 
 Nautilus::Record CrossDistanceAggregationPhysicalFunction::lower(
-    const nautilus::val<AggregationState*> aggregationState, PipelineMemoryProvider& pipelineMemoryProvider)
+    const nautilus::val<AggregationState*> aggregationState, [[maybe_unused]] PipelineMemoryProvider& pipelineMemoryProvider)
 {
     MEOS::Meos::ensureMeosInitialized();
 
