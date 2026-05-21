@@ -129,6 +129,16 @@
 #include <Functions/Meos/TemporalADisjointTCbufferLogicalFunction.hpp>
 #include <Functions/Meos/TemporalAIntersectsTCbufferLogicalFunction.hpp>
 #include <Functions/Meos/TemporalATouchesTCbufferLogicalFunction.hpp>
+#include <Functions/Meos/TemporalEContainsTCbufferCbufferLogicalFunction.hpp>
+#include <Functions/Meos/TemporalECoversTCbufferCbufferLogicalFunction.hpp>
+#include <Functions/Meos/TemporalEDisjointTCbufferCbufferLogicalFunction.hpp>
+#include <Functions/Meos/TemporalEIntersectsTCbufferCbufferLogicalFunction.hpp>
+#include <Functions/Meos/TemporalETouchesTCbufferCbufferLogicalFunction.hpp>
+#include <Functions/Meos/TemporalAContainsTCbufferCbufferLogicalFunction.hpp>
+#include <Functions/Meos/TemporalACoversTCbufferCbufferLogicalFunction.hpp>
+#include <Functions/Meos/TemporalADisjointTCbufferCbufferLogicalFunction.hpp>
+#include <Functions/Meos/TemporalAIntersectsTCbufferCbufferLogicalFunction.hpp>
+#include <Functions/Meos/TemporalATouchesTCbufferCbufferLogicalFunction.hpp>
 #include <Plans/LogicalPlan.hpp>
 #include <Plans/LogicalPlanBuilder.hpp>
 #include <Util/Overloaded.hpp>
@@ -2337,6 +2347,296 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TEMPORAL_ATOUCHES_TCBUFFER */
+        /* BEGIN CODEGEN PARSER GLUE: TEMPORAL_ECONTAINS_TCBUFFER_CBUFFER */
+        case AntlrSQLLexer::TEMPORAL_ECONTAINS_TCBUFFER_CBUFFER:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 5)
+                throw InvalidQuerySyntax("TEMPORAL_ECONTAINS_TCBUFFER_CBUFFER requires exactly 5 arguments (lon, lat, radius, timestamp, geometry), but got {}", argCount);
+
+            /* Lift the WKT constant into the function builder */
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto v = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                helpers.top().functionBuilder.emplace_back(
+                    ConstantValueLogicalFunction(
+                        DataTypeProvider::provideDataType(DataType::Type::VARSIZED), std::move(v)));
+            }
+
+            auto geometry  = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto timestamp = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto radius    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto lat       = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto lon       = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                TemporalEContainsTCbufferCbufferLogicalFunction(lon, lat, radius, timestamp, geometry));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: TEMPORAL_ECONTAINS_TCBUFFER_CBUFFER */
+
+        /* BEGIN CODEGEN PARSER GLUE: TEMPORAL_ECOVERS_TCBUFFER_CBUFFER */
+        case AntlrSQLLexer::TEMPORAL_ECOVERS_TCBUFFER_CBUFFER:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 5)
+                throw InvalidQuerySyntax("TEMPORAL_ECOVERS_TCBUFFER_CBUFFER requires exactly 5 arguments (lon, lat, radius, timestamp, geometry), but got {}", argCount);
+
+            /* Lift the WKT constant into the function builder */
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto v = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                helpers.top().functionBuilder.emplace_back(
+                    ConstantValueLogicalFunction(
+                        DataTypeProvider::provideDataType(DataType::Type::VARSIZED), std::move(v)));
+            }
+
+            auto geometry  = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto timestamp = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto radius    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto lat       = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto lon       = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                TemporalECoversTCbufferCbufferLogicalFunction(lon, lat, radius, timestamp, geometry));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: TEMPORAL_ECOVERS_TCBUFFER_CBUFFER */
+
+        /* BEGIN CODEGEN PARSER GLUE: TEMPORAL_EDISJOINT_TCBUFFER_CBUFFER */
+        case AntlrSQLLexer::TEMPORAL_EDISJOINT_TCBUFFER_CBUFFER:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 5)
+                throw InvalidQuerySyntax("TEMPORAL_EDISJOINT_TCBUFFER_CBUFFER requires exactly 5 arguments (lon, lat, radius, timestamp, geometry), but got {}", argCount);
+
+            /* Lift the WKT constant into the function builder */
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto v = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                helpers.top().functionBuilder.emplace_back(
+                    ConstantValueLogicalFunction(
+                        DataTypeProvider::provideDataType(DataType::Type::VARSIZED), std::move(v)));
+            }
+
+            auto geometry  = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto timestamp = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto radius    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto lat       = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto lon       = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                TemporalEDisjointTCbufferCbufferLogicalFunction(lon, lat, radius, timestamp, geometry));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: TEMPORAL_EDISJOINT_TCBUFFER_CBUFFER */
+
+        /* BEGIN CODEGEN PARSER GLUE: TEMPORAL_EINTERSECTS_TCBUFFER_CBUFFER */
+        case AntlrSQLLexer::TEMPORAL_EINTERSECTS_TCBUFFER_CBUFFER:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 5)
+                throw InvalidQuerySyntax("TEMPORAL_EINTERSECTS_TCBUFFER_CBUFFER requires exactly 5 arguments (lon, lat, radius, timestamp, geometry), but got {}", argCount);
+
+            /* Lift the WKT constant into the function builder */
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto v = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                helpers.top().functionBuilder.emplace_back(
+                    ConstantValueLogicalFunction(
+                        DataTypeProvider::provideDataType(DataType::Type::VARSIZED), std::move(v)));
+            }
+
+            auto geometry  = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto timestamp = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto radius    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto lat       = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto lon       = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                TemporalEIntersectsTCbufferCbufferLogicalFunction(lon, lat, radius, timestamp, geometry));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: TEMPORAL_EINTERSECTS_TCBUFFER_CBUFFER */
+
+        /* BEGIN CODEGEN PARSER GLUE: TEMPORAL_ETOUCHES_TCBUFFER_CBUFFER */
+        case AntlrSQLLexer::TEMPORAL_ETOUCHES_TCBUFFER_CBUFFER:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 5)
+                throw InvalidQuerySyntax("TEMPORAL_ETOUCHES_TCBUFFER_CBUFFER requires exactly 5 arguments (lon, lat, radius, timestamp, geometry), but got {}", argCount);
+
+            /* Lift the WKT constant into the function builder */
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto v = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                helpers.top().functionBuilder.emplace_back(
+                    ConstantValueLogicalFunction(
+                        DataTypeProvider::provideDataType(DataType::Type::VARSIZED), std::move(v)));
+            }
+
+            auto geometry  = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto timestamp = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto radius    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto lat       = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto lon       = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                TemporalETouchesTCbufferCbufferLogicalFunction(lon, lat, radius, timestamp, geometry));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: TEMPORAL_ETOUCHES_TCBUFFER_CBUFFER */
+
+        /* BEGIN CODEGEN PARSER GLUE: TEMPORAL_ACONTAINS_TCBUFFER_CBUFFER */
+        case AntlrSQLLexer::TEMPORAL_ACONTAINS_TCBUFFER_CBUFFER:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 5)
+                throw InvalidQuerySyntax("TEMPORAL_ACONTAINS_TCBUFFER_CBUFFER requires exactly 5 arguments (lon, lat, radius, timestamp, geometry), but got {}", argCount);
+
+            /* Lift the WKT constant into the function builder */
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto v = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                helpers.top().functionBuilder.emplace_back(
+                    ConstantValueLogicalFunction(
+                        DataTypeProvider::provideDataType(DataType::Type::VARSIZED), std::move(v)));
+            }
+
+            auto geometry  = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto timestamp = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto radius    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto lat       = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto lon       = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                TemporalAContainsTCbufferCbufferLogicalFunction(lon, lat, radius, timestamp, geometry));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: TEMPORAL_ACONTAINS_TCBUFFER_CBUFFER */
+
+        /* BEGIN CODEGEN PARSER GLUE: TEMPORAL_ACOVERS_TCBUFFER_CBUFFER */
+        case AntlrSQLLexer::TEMPORAL_ACOVERS_TCBUFFER_CBUFFER:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 5)
+                throw InvalidQuerySyntax("TEMPORAL_ACOVERS_TCBUFFER_CBUFFER requires exactly 5 arguments (lon, lat, radius, timestamp, geometry), but got {}", argCount);
+
+            /* Lift the WKT constant into the function builder */
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto v = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                helpers.top().functionBuilder.emplace_back(
+                    ConstantValueLogicalFunction(
+                        DataTypeProvider::provideDataType(DataType::Type::VARSIZED), std::move(v)));
+            }
+
+            auto geometry  = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto timestamp = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto radius    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto lat       = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto lon       = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                TemporalACoversTCbufferCbufferLogicalFunction(lon, lat, radius, timestamp, geometry));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: TEMPORAL_ACOVERS_TCBUFFER_CBUFFER */
+
+        /* BEGIN CODEGEN PARSER GLUE: TEMPORAL_ADISJOINT_TCBUFFER_CBUFFER */
+        case AntlrSQLLexer::TEMPORAL_ADISJOINT_TCBUFFER_CBUFFER:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 5)
+                throw InvalidQuerySyntax("TEMPORAL_ADISJOINT_TCBUFFER_CBUFFER requires exactly 5 arguments (lon, lat, radius, timestamp, geometry), but got {}", argCount);
+
+            /* Lift the WKT constant into the function builder */
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto v = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                helpers.top().functionBuilder.emplace_back(
+                    ConstantValueLogicalFunction(
+                        DataTypeProvider::provideDataType(DataType::Type::VARSIZED), std::move(v)));
+            }
+
+            auto geometry  = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto timestamp = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto radius    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto lat       = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto lon       = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                TemporalADisjointTCbufferCbufferLogicalFunction(lon, lat, radius, timestamp, geometry));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: TEMPORAL_ADISJOINT_TCBUFFER_CBUFFER */
+
+        /* BEGIN CODEGEN PARSER GLUE: TEMPORAL_AINTERSECTS_TCBUFFER_CBUFFER */
+        case AntlrSQLLexer::TEMPORAL_AINTERSECTS_TCBUFFER_CBUFFER:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 5)
+                throw InvalidQuerySyntax("TEMPORAL_AINTERSECTS_TCBUFFER_CBUFFER requires exactly 5 arguments (lon, lat, radius, timestamp, geometry), but got {}", argCount);
+
+            /* Lift the WKT constant into the function builder */
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto v = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                helpers.top().functionBuilder.emplace_back(
+                    ConstantValueLogicalFunction(
+                        DataTypeProvider::provideDataType(DataType::Type::VARSIZED), std::move(v)));
+            }
+
+            auto geometry  = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto timestamp = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto radius    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto lat       = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto lon       = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                TemporalAIntersectsTCbufferCbufferLogicalFunction(lon, lat, radius, timestamp, geometry));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: TEMPORAL_AINTERSECTS_TCBUFFER_CBUFFER */
+
+        /* BEGIN CODEGEN PARSER GLUE: TEMPORAL_ATOUCHES_TCBUFFER_CBUFFER */
+        case AntlrSQLLexer::TEMPORAL_ATOUCHES_TCBUFFER_CBUFFER:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 5)
+                throw InvalidQuerySyntax("TEMPORAL_ATOUCHES_TCBUFFER_CBUFFER requires exactly 5 arguments (lon, lat, radius, timestamp, geometry), but got {}", argCount);
+
+            /* Lift the WKT constant into the function builder */
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto v = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                helpers.top().functionBuilder.emplace_back(
+                    ConstantValueLogicalFunction(
+                        DataTypeProvider::provideDataType(DataType::Type::VARSIZED), std::move(v)));
+            }
+
+            auto geometry  = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto timestamp = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto radius    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto lat       = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto lon       = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                TemporalATouchesTCbufferCbufferLogicalFunction(lon, lat, radius, timestamp, geometry));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: TEMPORAL_ATOUCHES_TCBUFFER_CBUFFER */
+
 
         /* BEGIN CODEGEN AGGREGATION GLUE: TEMPORAL_NUM_INSTANTS (case-switch) */
         case AntlrSQLLexer::TEMPORAL_NUM_INSTANTS:
