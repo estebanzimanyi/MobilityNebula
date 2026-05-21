@@ -14,6 +14,7 @@
 
 #pragma once
 
+#include <cstdint>
 #include <Operators/Windows/Aggregations/WindowAggregationLogicalFunction.hpp>
 
 namespace NES
@@ -22,25 +23,43 @@ namespace NES
 /**
  * @brief Logical-plan side of the CROSS_DISTANCE aggregation (BerlinMOD-Q9).
  *
- * Four input fields (lon, lat, timestamp, vehicle_id). Final aggregate stamp = FLOAT64
- * (spheroidal distance in metres between VID_A's and VID_B's latest known positions in
- * the window; NaN if either is unobserved). See `CrossDistanceAggregationPhysicalFunction`.
+ * Four input fields (lon, lat, timestamp, vehicle_id) + per-aggregation `(vidA, vidB)`
+ * target-vehicle pair (the two integer constants identifying which vehicles to compute
+ * the distance between). Final aggregate stamp = FLOAT64 (spheroidal distance in metres
+ * between the two vehicles' latest known positions in the window; NaN if either is
+ * unobserved). See `CrossDistanceAggregationPhysicalFunction`.
+ *
+ * @note The Registrar deserialize path receives only the 5 field args (lon, lat, ts,
+ * vid, asField) and reconstructs the aggregation with the `DEFAULT_VID_A` /
+ * `DEFAULT_VID_B` constants. Round-trip Serde fidelity for the vidA/vidB values is a
+ * follow-up; mirrors PairMeeting #19's same Serde caveat (the proto carries only
+ * SerializableFunction-typed fields in `extra_fields`).
  */
 class CrossDistanceAggregationLogicalFunction : public WindowAggregationLogicalFunction
 {
 public:
+    /// BerlinMOD-scaffold defaults; mirror `CrossDistanceAggregationPhysicalFunction`.
+    /// Used by the Registrar deserialize path; the parser path always supplies
+    /// explicit values.
+    static constexpr uint64_t DEFAULT_VID_A = 100;
+    static constexpr uint64_t DEFAULT_VID_B = 200;
+
     static std::shared_ptr<WindowAggregationLogicalFunction>
     create(const FieldAccessLogicalFunction& lonField,
            const FieldAccessLogicalFunction& latField,
            const FieldAccessLogicalFunction& timestampField,
-           const FieldAccessLogicalFunction& vehicleIdField);
+           const FieldAccessLogicalFunction& vehicleIdField,
+           uint64_t vidA,
+           uint64_t vidB);
 
     CrossDistanceAggregationLogicalFunction(
         const FieldAccessLogicalFunction& lonField,
         const FieldAccessLogicalFunction& latField,
         const FieldAccessLogicalFunction& timestampField,
         const FieldAccessLogicalFunction& vehicleIdField,
-        const FieldAccessLogicalFunction& asField);
+        const FieldAccessLogicalFunction& asField,
+        uint64_t vidA,
+        uint64_t vidB);
 
     void inferStamp(const Schema& schema) override;
     ~CrossDistanceAggregationLogicalFunction() override = default;
@@ -52,6 +71,8 @@ public:
     [[nodiscard]] const FieldAccessLogicalFunction& getLatField() const noexcept { return latField; }
     [[nodiscard]] const FieldAccessLogicalFunction& getTimestampField() const noexcept { return timestampField; }
     [[nodiscard]] const FieldAccessLogicalFunction& getVehicleIdField() const noexcept { return vehicleIdField; }
+    [[nodiscard]] uint64_t getVidA() const noexcept { return vidA; }
+    [[nodiscard]] uint64_t getVidB() const noexcept { return vidB; }
 
 private:
     static constexpr std::string_view NAME = "CrossDistance";
@@ -62,5 +83,7 @@ private:
     FieldAccessLogicalFunction latField;
     FieldAccessLogicalFunction timestampField;
     FieldAccessLogicalFunction vehicleIdField;
+    uint64_t vidA;
+    uint64_t vidB;
 };
 }

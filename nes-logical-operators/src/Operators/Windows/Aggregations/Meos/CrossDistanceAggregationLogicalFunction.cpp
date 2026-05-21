@@ -36,7 +36,9 @@ CrossDistanceAggregationLogicalFunction::CrossDistanceAggregationLogicalFunction
     const FieldAccessLogicalFunction& latField,
     const FieldAccessLogicalFunction& timestampField,
     const FieldAccessLogicalFunction& vehicleIdField,
-    const FieldAccessLogicalFunction& asField)
+    const FieldAccessLogicalFunction& asField,
+    uint64_t vidA,
+    uint64_t vidB)
     : WindowAggregationLogicalFunction(
           lonField.getDataType(),
           DataTypeProvider::provideDataType(partialAggregateStampType),
@@ -47,6 +49,8 @@ CrossDistanceAggregationLogicalFunction::CrossDistanceAggregationLogicalFunction
     , latField(latField)
     , timestampField(timestampField)
     , vehicleIdField(vehicleIdField)
+    , vidA(vidA)
+    , vidB(vidB)
 {
 }
 
@@ -55,9 +59,12 @@ CrossDistanceAggregationLogicalFunction::create(
     const FieldAccessLogicalFunction& lonField,
     const FieldAccessLogicalFunction& latField,
     const FieldAccessLogicalFunction& timestampField,
-    const FieldAccessLogicalFunction& vehicleIdField)
+    const FieldAccessLogicalFunction& vehicleIdField,
+    uint64_t vidA,
+    uint64_t vidB)
 {
-    return std::make_shared<CrossDistanceAggregationLogicalFunction>(lonField, latField, timestampField, vehicleIdField, lonField);
+    return std::make_shared<CrossDistanceAggregationLogicalFunction>(
+        lonField, latField, timestampField, vehicleIdField, lonField, vidA, vidB);
 }
 
 std::string_view CrossDistanceAggregationLogicalFunction::getName() const noexcept
@@ -129,8 +136,17 @@ AggregationLogicalFunctionRegistryReturnType AggregationLogicalFunctionGenerated
 {
     if (arguments.fields.size() == 5)
     {
+        // The Registrar only carries the 5 field args (lon, lat, ts, vid, asField) — the
+        // SerializableAggregationFunction proto does not yet have slots for the (vidA,
+        // vidB) constants, so the deserialize path reconstructs with the
+        // BerlinMOD-scaffold defaults. The parser path always supplies explicit values
+        // from the SQL constant args. Adding (vidA, vidB) to the proto + extending the
+        // Registrar args struct would close the round-trip gap; tracked as a follow-up
+        // alongside the matching PairMeeting Serde follow-up (PR #19).
         auto ptr = std::make_shared<CrossDistanceAggregationLogicalFunction>(
-            arguments.fields[0], arguments.fields[1], arguments.fields[2], arguments.fields[3], arguments.fields[4]);
+            arguments.fields[0], arguments.fields[1], arguments.fields[2], arguments.fields[3], arguments.fields[4],
+            CrossDistanceAggregationLogicalFunction::DEFAULT_VID_A,
+            CrossDistanceAggregationLogicalFunction::DEFAULT_VID_B);
         return ptr;
     }
     throw CannotDeserialize(

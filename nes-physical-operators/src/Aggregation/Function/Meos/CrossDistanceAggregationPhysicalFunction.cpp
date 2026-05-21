@@ -64,6 +64,8 @@ CrossDistanceAggregationPhysicalFunction::CrossDistanceAggregationPhysicalFuncti
     PhysicalFunction latFunctionParam,
     PhysicalFunction timestampFunctionParam,
     PhysicalFunction vehicleIdFunctionParam,
+    uint64_t vidA,
+    uint64_t vidB,
     Nautilus::Record::RecordFieldIdentifier resultFieldIdentifier,
     std::shared_ptr<Nautilus::Interface::BufferRef::TupleBufferRef> bufferRef)
     : AggregationPhysicalFunction(std::move(inputType), std::move(resultType), lonFunctionParam, std::move(resultFieldIdentifier))
@@ -72,6 +74,8 @@ CrossDistanceAggregationPhysicalFunction::CrossDistanceAggregationPhysicalFuncti
     , latFunction(std::move(latFunctionParam))
     , timestampFunction(std::move(timestampFunctionParam))
     , vehicleIdFunction(std::move(vehicleIdFunctionParam))
+    , vidA(vidA)
+    , vidB(vidB)
 {
 }
 
@@ -166,20 +170,25 @@ Nautilus::Record CrossDistanceAggregationPhysicalFunction::lower(
         auto vehicleId = vehicleIdValue.cast<nautilus::val<uint64_t>>();
 
         // Overwrite-on-match — final value is the latest event for each target VID in iter order.
+        // vidA / vidB are passed through to the captureless lambda alongside the state
+        // pointer (Nautilus invoke ABI forbids closures); same pattern as
+        // PairMeetingAggregationPhysicalFunction's dMeet threading in PR #19.
         nautilus::invoke(
-            +[](double* scratch, double lonVal, double latVal, int64_t tsVal, uint64_t vid) -> void
+            +[](double* scratch, double lonVal, double latVal, int64_t tsVal, uint64_t vid,
+                uint64_t vidAArg, uint64_t vidBArg) -> void
             {
-                if (vid == CrossDistanceAggregationPhysicalFunction::VID_A) {
+                if (vid == vidAArg) {
                     scratch[0] = lonVal;
                     scratch[1] = latVal;
                     scratch[2] = static_cast<double>(tsVal);
-                } else if (vid == CrossDistanceAggregationPhysicalFunction::VID_B) {
+                } else if (vid == vidBArg) {
                     scratch[3] = lonVal;
                     scratch[4] = latVal;
                     scratch[5] = static_cast<double>(tsVal);
                 }
             },
-            scratchPtr, lon, lat, timestamp, vehicleId);
+            scratchPtr, lon, lat, timestamp, vehicleId,
+            nautilus::val<uint64_t>(vidA), nautilus::val<uint64_t>(vidB));
     }
 
     auto distanceMetres = nautilus::invoke(
