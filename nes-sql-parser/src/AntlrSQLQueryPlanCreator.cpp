@@ -93,6 +93,10 @@
 #include <Functions/Meos/TemporalECoversGeometryLogicalFunction.hpp>
 #include <Functions/Meos/TemporalAContainsGeometryLogicalFunction.hpp>
 #include <Functions/Meos/TemporalETouchesGeometryLogicalFunction.hpp>
+#include <Functions/Meos/TemporalNADFloatScalarLogicalFunction.hpp>
+#include <Functions/Meos/TemporalNADIntScalarLogicalFunction.hpp>
+#include <Functions/Meos/TemporalNADTFloatLogicalFunction.hpp>
+#include <Functions/Meos/TemporalNADTIntLogicalFunction.hpp>
 #include <Plans/LogicalPlan.hpp>
 #include <Plans/LogicalPlanBuilder.hpp>
 #include <Util/Overloaded.hpp>
@@ -1858,6 +1862,106 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TEMPORAL_ETOUCHES_GEOMETRY */
+        /* BEGIN CODEGEN PARSER GLUE: TEMPORAL_NAD_FLOAT_SCALAR */
+        case AntlrSQLLexer::TEMPORAL_NAD_FLOAT_SCALAR:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("TEMPORAL_NAD_FLOAT_SCALAR requires exactly 3 arguments (value, timestamp, scalar), but got {}", argCount);
+
+            /* Lift the scalar constant — accept FLOAT64 (strtod-clean) and INT32 */
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto scalar    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto timestamp = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto value     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                TemporalNADFloatScalarLogicalFunction(value, timestamp, scalar));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: TEMPORAL_NAD_FLOAT_SCALAR */
+
+        /* BEGIN CODEGEN PARSER GLUE: TEMPORAL_NAD_INT_SCALAR */
+        case AntlrSQLLexer::TEMPORAL_NAD_INT_SCALAR:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("TEMPORAL_NAD_INT_SCALAR requires exactly 3 arguments (value, timestamp, scalar), but got {}", argCount);
+
+            /* Lift the scalar constant — accept FLOAT64 (strtod-clean) and INT32 */
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto scalar    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto timestamp = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto value     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                TemporalNADIntScalarLogicalFunction(value, timestamp, scalar));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: TEMPORAL_NAD_INT_SCALAR */
+
+        /* BEGIN CODEGEN PARSER GLUE: TEMPORAL_NAD_TFLOAT */
+        case AntlrSQLLexer::TEMPORAL_NAD_TFLOAT:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 4)
+                throw InvalidQuerySyntax("TEMPORAL_NAD_TFLOAT requires exactly 4 arguments (valueA, tsA, valueB, tsB), but got {}", argCount);
+
+            auto tsB    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto valueB = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto tsA    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto valueA = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                TemporalNADTFloatLogicalFunction(valueA, tsA, valueB, tsB));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: TEMPORAL_NAD_TFLOAT */
+
+        /* BEGIN CODEGEN PARSER GLUE: TEMPORAL_NAD_TINT */
+        case AntlrSQLLexer::TEMPORAL_NAD_TINT:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 4)
+                throw InvalidQuerySyntax("TEMPORAL_NAD_TINT requires exactly 4 arguments (valueA, tsA, valueB, tsB), but got {}", argCount);
+
+            auto tsB    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto valueB = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto tsA    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto valueA = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                TemporalNADTIntLogicalFunction(valueA, tsA, valueB, tsB));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: TEMPORAL_NAD_TINT */
+
 
 
         default:
