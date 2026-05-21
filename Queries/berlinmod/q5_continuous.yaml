@@ -3,12 +3,12 @@
 # pre-filtered by upstream edwithin_tgeo_geo to the near-P set; the
 # PAIR_MEETING aggregation enumerates pairs of vehicles inside the window and
 # emits the BerlinMOD-Q5 answer directly (vid_a, vid_b, ts, "<=dMeet" tag)
-# with dMeet = 200 m hardcoded for the scaffold.
+# with dMeet = 200 m passed as the explicit fifth aggregation argument.
 
 query: |
   SELECT start,
          end,
-         PAIR_MEETING(gps_lon, gps_lat, time_utc, vehicle_id) AS meeting_pairs
+         PAIR_MEETING(gps_lon, gps_lat, time_utc, vehicle_id, 200.0) AS meeting_pairs
   FROM berlinmod_stream
   WHERE edwithin_tgeo_geo(gps_lon,
                           gps_lat,

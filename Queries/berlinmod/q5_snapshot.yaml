@@ -7,7 +7,7 @@
 query: |
   SELECT start,
          end,
-         PAIR_MEETING(gps_lon, gps_lat, time_utc, vehicle_id) AS meeting_pairs
+         PAIR_MEETING(gps_lon, gps_lat, time_utc, vehicle_id, 200.0) AS meeting_pairs
   FROM berlinmod_stream
   WHERE edwithin_tgeo_geo(gps_lon,
                           gps_lat,

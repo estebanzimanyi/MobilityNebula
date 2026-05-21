@@ -221,6 +221,7 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
                 latPF,
                 tsPF,
                 vidPF,
+                pmDescriptor->getDMeetMetres(),
                 resultFieldIdentifier,
                 tupleBufferRef);
             aggregationPhysicalFunctions.push_back(std::move(phys));

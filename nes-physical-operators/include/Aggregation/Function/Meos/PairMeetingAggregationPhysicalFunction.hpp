@@ -27,20 +27,28 @@ namespace NES
 /**
  * @brief Cartesian aggregation that emits the BerlinMOD-Q5 pair-meeting answer per window.
  *
- * Takes four input fields: lon, lat, timestamp, vehicle_id. The lift step stores per-event
+ * Takes four input fields: lon, lat, timestamp, vehicle_id, plus a per-aggregation
+ * `dMeetMetres` distance threshold passed via the SQL constant arg
+ * (`PAIR_MEETING(lon, lat, ts, vehicle_id, 200.0)`). The lift step stores per-event
  * tuples in a PagedVector. The lower step picks each vehicle's last-known position in the
  * window, enumerates vehicle pairs (a < b), and emits pairs whose spheroidal distance is
- * at most a hardcoded `DMEET_METRES` (200 m for the BerlinMOD scaffold). Result is a
- * VARSIZED string `"vidA,vidB,ts,dist;..."` — same shape pattern as TemporalSequence's
- * BINARY(N) result. Future PR can parameterize DMEET via a constant input to the
- * aggregation.
+ * at most `dMeetMetres`. Result is a VARSIZED string `"vidA,vidB,ts,dist;..."` — same
+ * shape pattern as TemporalSequence's BINARY(N) result.
  *
- * Closes the MobilityNebula BerlinMOD-Q5 × 3-form partial→full gap.
+ * @note `DEFAULT_DMEET_METRES` (200 m) preserves the previous BerlinMOD-scaffold
+ * default; used by the Registrar deserialize path until full Serde round-trip for the
+ * dMeet constant is added (currently the proto carries only the 4 field + asField args
+ * via `SerializableAggregationFunction.extra_fields`).
+ *
+ * Closes the MobilityNebula BerlinMOD-Q5 × 3-form partial→full gap; this PR makes the
+ * meeting-distance configurable per-query.
  */
 class PairMeetingAggregationPhysicalFunction : public AggregationPhysicalFunction
 {
 public:
-    static constexpr double DMEET_METRES = 200.0;
+    /// BerlinMOD-scaffold default (preserved when the SQL omits the constant arg via the
+    /// Serde-deserialize path; the parser path always supplies an explicit value).
+    static constexpr double DEFAULT_DMEET_METRES = 200.0;
 
     PairMeetingAggregationPhysicalFunction(
         DataType inputType,
@@ -49,6 +57,7 @@ public:
         PhysicalFunction latFunctionParam,
         PhysicalFunction timestampFunctionParam,
         PhysicalFunction vehicleIdFunctionParam,
+        double dMeetMetres,
         Nautilus::Record::RecordFieldIdentifier resultFieldIdentifier,
         std::shared_ptr<Nautilus::Interface::BufferRef::TupleBufferRef> bufferRef);
     void lift(
@@ -72,6 +81,7 @@ private:
     PhysicalFunction latFunction;
     PhysicalFunction timestampFunction;
     PhysicalFunction vehicleIdFunction;
+    double dMeetMetres;
 };
 
 }

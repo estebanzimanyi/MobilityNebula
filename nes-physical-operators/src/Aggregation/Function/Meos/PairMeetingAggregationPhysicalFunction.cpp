@@ -65,6 +65,7 @@ PairMeetingAggregationPhysicalFunction::PairMeetingAggregationPhysicalFunction(
     PhysicalFunction latFunctionParam,
     PhysicalFunction timestampFunctionParam,
     PhysicalFunction vehicleIdFunctionParam,
+    double dMeetMetres,
     Nautilus::Record::RecordFieldIdentifier resultFieldIdentifier,
     std::shared_ptr<Nautilus::Interface::BufferRef::TupleBufferRef> bufferRef)
     : AggregationPhysicalFunction(std::move(inputType), std::move(resultType), lonFunctionParam, std::move(resultFieldIdentifier))
@@ -73,6 +74,7 @@ PairMeetingAggregationPhysicalFunction::PairMeetingAggregationPhysicalFunction(
     , latFunction(std::move(latFunctionParam))
     , timestampFunction(std::move(timestampFunctionParam))
     , vehicleIdFunction(std::move(vehicleIdFunctionParam))
+    , dMeetMetres(dMeetMetres)
 {
 }
 
@@ -188,9 +190,11 @@ Nautilus::Record PairMeetingAggregationPhysicalFunction::lower(
             vehicleMapPtr, lon, lat, timestamp, vehicleId);
     }
 
-    // Now enumerate pairs and check geog_dwithin(a, b, DMEET_METRES).
+    // Now enumerate pairs and check geog_dwithin(a, b, dMeet).
+    // dMeet is passed in via the captureless lambda's arg list (Nautilus invoke ABI
+    // forbids closures; we thread the threshold through alongside the state pointers).
     nautilus::invoke(
-        +[](void* mapPtr, char* outBuffer) -> void
+        +[](void* mapPtr, char* outBuffer, double dMeet) -> void
         {
             std::lock_guard<std::mutex> lock(pair_meeting_mutex);
             auto* map = static_cast<std::unordered_map<uint64_t, std::tuple<double, double, int64_t>>*>(mapPtr);
@@ -225,7 +229,7 @@ Nautilus::Record PairMeetingAggregationPhysicalFunction::lower(
                     }
                     GSERIALIZED* ggA = geom_to_geog(gA);
                     GSERIALIZED* ggB = geom_to_geog(gB);
-                    bool meets = geog_dwithin(ggA, ggB, PairMeetingAggregationPhysicalFunction::DMEET_METRES, true);
+                    bool meets = geog_dwithin(ggA, ggB, dMeet, true);
                     if (meets) {
                         // Use the later of the two timestamps as the meeting time
                         int64_t tsMax = (tsA > tsB) ? tsA : tsB;
@@ -236,7 +240,7 @@ Nautilus::Record PairMeetingAggregationPhysicalFunction::lower(
                                  first ? "" : ";",
                                  (unsigned long)vids[i], (unsigned long)vids[j],
                                  (long long)tsMax,
-                                 PairMeetingAggregationPhysicalFunction::DMEET_METRES);
+                                 dMeet);
                         strcat(outBuffer, buf);
                         first = false;
                     }
@@ -248,7 +252,7 @@ Nautilus::Record PairMeetingAggregationPhysicalFunction::lower(
             }
             delete map;
         },
-        vehicleMapPtr, pairsBuffer);
+        vehicleMapPtr, pairsBuffer, nautilus::val<double>(dMeetMetres));
 
     // Allocate VARSIZED output sized to the assembled string
     auto strLen = nautilus::invoke(
