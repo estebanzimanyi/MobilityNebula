@@ -12,5 +12,6 @@
 
 if(NES_ENABLE_MEOS)
 add_plugin(TemporalSequence AggregationPhysicalFunction nes-physical-operators TemporalSequenceAggregationPhysicalFunction.cpp)
+add_plugin(TemporalLength AggregationPhysicalFunction nes-physical-operators TemporalLengthAggregationPhysicalFunction.cpp)
 add_plugin(Var AggregationPhysicalFunction nes-physical-operators VarAggregationFunction.cpp)
 endif()

@@ -33,12 +33,12 @@ For each BerlinMOD reference query Q, three NebulaStream YAMLs realize the form 
 | Q3 | "vehicles within 5 km of Brussels city centre?" | ✓ | ✓ | ✓ | full |
 | Q4 | "vehicles inside Brussels-centre rectangle R?" | ✓ | ✓ | ✓ | full |
 | Q5 | "pairs of vehicles meeting near P" | ◐ | ◐ | ◐ | **partial** — see below |
-| Q6 | "cumulative distance per vehicle" | ◐ | ◐ | ◐ | **partial** — see below |
+| Q6 | "cumulative distance per vehicle" | ✓ | ✓ | ✓ | full (via TEMPORAL_LENGTH aggregation) |
 | Q7 | "first passage of each vehicle through each POI" | ✓ | ✓ | ✓ | full (per-POI fan-out) |
 | Q8 | "vehicles close to a road segment (LINESTRING)" | ✓ | ✓ | ✓ | full |
 | Q9 | "distance between vehicles X and Y at time T" | ◐ | ◐ | ◐ | **partial** — see below |
 
-**27 of 27 cells** covered as scaffold YAMLs. 18 cells are **full** — the BerlinMOD-Q semantic is computed entirely inside NebulaStream — and 9 cells are **partial** — NebulaStream emits the per-window inputs and a consumer post-processes them for the final BerlinMOD-Q answer.
+**27 of 27 cells** covered as scaffold YAMLs. **21 cells are full** — the BerlinMOD-Q semantic is computed entirely inside NebulaStream — and **6 cells remain partial** (Q5 × 3 forms + Q9 × 3 forms): NebulaStream emits the per-window inputs and a consumer post-processes them for the final BerlinMOD-Q answer.
 
 ### Q7 fan-out pattern (full)
 
@@ -48,27 +48,29 @@ NebulaStream's current SQL has no Cartesian (vehicle × POI) aggregation primiti
 
 MEOS' `edwithin_tgeo_geo` accepts any geometry — POINT, POLYGON, and **LINESTRING**. Q8 (vehicles within d of a road segment) is therefore expressible as a single direct predicate against a `LINESTRING(s1, s2)` geometry, no new MobilityNebula PhysicalFunction required. The segment runs from (4.30, 50.83) to (4.36, 50.87) with d = 5 km in the scaffold.
 
-### Q5 / Q6 / Q9 partial pattern (NebulaStream emits, consumer joins)
+### Q6 full via TEMPORAL_LENGTH aggregation
 
-These three queries need either a stream-self-join (Q5, Q9) or a custom `temporal_length` aggregation (Q6) — neither of which is currently a NebulaStream SQL primitive. The scaffold YAMLs express what NebulaStream can compute today:
+The Q6 × 3 cells are full as of this scaffold: they use the new `TEMPORAL_LENGTH(lon, lat, ts)` aggregation, which lifts the same (lon, lat, ts) tuples as `TEMPORAL_SEQUENCE` and lowers them through a MEOS `tpoint_length(Temporal*)` call to a single `FLOAT64` result — the spheroidal length in metres of the per-(window, group) trajectory. Logical, physical, parser, and lowering wiring all live in this PR.
+
+### Q5 / Q9 partial pattern (NebulaStream emits, consumer joins)
+
+These two queries need a stream-self-join (Q5: pair × pair across vehicles, Q9: lookup-pair across vehicles), which is not currently a NebulaStream SQL primitive. The scaffold YAMLs express what NebulaStream can compute today:
 
 | Q | What NebulaStream emits | What the consumer computes |
 |---|---|---|
 | Q5 | per-(window, vehicle) `TEMPORAL_SEQUENCE` trajectory for each near-P vehicle | per-pair distance, pair-meeting predicate, output meeting pairs |
-| Q6 | per-(window, vehicle) `TEMPORAL_SEQUENCE` trajectory | length of trajectory per vehicle |
 | Q9 | per-(window, vehicle) `TEMPORAL_SEQUENCE` trajectory filtered to `vehicle_id ∈ {100, 200}` | join the two trajectories, compute the X-Y distance series |
 
 Each partial cell IS a valid runnable NebulaStream query; the BerlinMOD-Q final answer is one consumer-side reduction step beyond the emitted output.
 
-### Path to "full" for the three partial Qs
+### Path to "full" for the two remaining partial Qs
 
 | Q | What would make it FULL |
 |---|---|
-| Q5 | stream-self-join in NebulaStream SQL, OR a custom `pair_aggregate(tgeo, dMeet)` aggregation |
-| Q6 | a custom `temporal_length(tgeo) → double` scalar function in MobilityNebula `Functions/Meos/` |
-| Q9 | stream-self-join (same shape as Q5) |
+| Q5 | stream-self-join in NebulaStream SQL, OR a custom `pair_aggregate(lon, lat, ts, vehicle_id, dMeet)` Cartesian aggregation on the MobilityNebula side |
+| Q9 | a custom `cross_distance_aggregate(lon, lat, ts, vehicle_id, targetA, targetB)` aggregation on the MobilityNebula side — same Cartesian shape as Q5 |
 
-Each is a single-PR change on MobilityNebula's `nes-physical-operators` C++ surface (or on the NebulaStream upstream for joins). The patterns and templates are documented above; the YAML schemas already exist in this scaffold so the FULL cells would be drop-in replacements once the operators land.
+Each is a single-PR change on MobilityNebula's `nes-physical-operators` C++ surface. The patterns and templates are documented in `TemporalLengthAggregationPhysicalFunction` (this PR) and `TemporalSequenceAggregationPhysicalFunction`; the YAML schemas already exist in this scaffold so the FULL cells would be drop-in replacements once the operators land.
 
 ## MEOS operators consumed
 
@@ -76,10 +78,11 @@ All BerlinMOD predicates use operators already exposed by [`MobilityNebula/PR #1
 
 | Operator | YAMLs using it |
 |---|---|
-| `edwithin_tgeo_geo(lon, lat, t, geom, d)` | Q3 × 3 forms (radius predicate, `POINT`), Q4 × 3 forms (region containment, `POLYGON` with `d=0.0`) |
-| `TEMPORAL_SEQUENCE(lon, lat, t)` (aggregation) | Q2 × 3 forms (per-window trajectory) |
+| `edwithin_tgeo_geo(lon, lat, t, geom, d)` | Q3 × 3 forms (radius predicate, `POINT`), Q4 × 3 forms (region containment, `POLYGON` with `d=0.0`), Q8 × 3 forms (segment predicate, `LINESTRING`) |
+| `TEMPORAL_SEQUENCE(lon, lat, t)` (aggregation) | Q2 × 3 forms (per-window trajectory), Q5 × 3, Q9 × 3 (partial cells) |
+| `TEMPORAL_LENGTH(lon, lat, t)` (aggregation, MEOS `tpoint_length` under the hood) | Q6 × 3 forms (cumulative distance) |
 
-No new MEOS-side operators or PhysicalFunction classes are added by this PR.
+`TEMPORAL_LENGTH` is added by this PR; the rest are pre-existing.
 
 ## Not covered (15 cells / 5 queries)
 
