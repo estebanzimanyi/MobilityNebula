@@ -2,12 +2,12 @@
 # "Distance between vehicles X (= 100) and Y (= 200) at time T." Per-10s
 # tumbling window. CROSS_DISTANCE returns the spheroidal distance between
 # the two vehicles' latest known positions in the window, or NaN if either
-# is unobserved. Hardcoded (VID_A, VID_B) = (100, 200) for the scaffold.
+# is unobserved. (vidA, vidB) = (100, 200) passed as the explicit fifth and sixth aggregation arguments.
 
 query: |
   SELECT start,
          end,
-         CROSS_DISTANCE(gps_lon, gps_lat, time_utc, vehicle_id) AS distance_metres
+         CROSS_DISTANCE(gps_lon, gps_lat, time_utc, vehicle_id, 100, 200) AS distance_metres
   FROM berlinmod_stream
   WINDOW TUMBLING(time_utc, SIZE 10 SEC)
   INTO file_sink;

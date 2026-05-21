@@ -29,21 +29,29 @@ namespace NES
  * @brief Aggregation that emits the BerlinMOD-Q9 cross-distance between two specific
  * vehicles per window.
  *
- * Takes four input fields (lon, lat, timestamp, vehicle_id). The lift step stores per-event
- * tuples; the lower step picks the latest known position of each target vehicle (VID_A and
- * VID_B, hardcoded for the BerlinMOD scaffold) within the window and emits the spheroidal
- * `geog_distance(POINT, POINT)` between them as a FLOAT64. Returns `NaN` when either target
- * vehicle has no observation in the window.
+ * Takes four input fields (lon, lat, timestamp, vehicle_id) plus a per-aggregation
+ * `(vidA, vidB)` vehicle-pair passed via two SQL integer constant args
+ * (`CROSS_DISTANCE(lon, lat, ts, vehicle_id, 100, 200)`). The lift step stores per-event
+ * tuples; the lower step picks the latest known position of each target vehicle within
+ * the window and emits the spheroidal `geog_distance(POINT, POINT)` between them as a
+ * FLOAT64. Returns `NaN` when either target vehicle has no observation in the window.
  *
- * Future PR can parameterize (VID_A, VID_B) via constant inputs to the aggregation.
+ * @note `DEFAULT_VID_A` (100) and `DEFAULT_VID_B` (200) preserve the previous
+ * BerlinMOD-scaffold default; used by the Registrar deserialize path until full Serde
+ * round-trip for the constant pair is added (currently the proto carries only the 4
+ * field + asField args via `SerializableAggregationFunction.extra_fields`). Mirrors the
+ * Serde caveat from PairMeeting #19.
  *
- * Closes the MobilityNebula BerlinMOD-Q9 × 3-form partial→full gap.
+ * Closes the MobilityNebula BerlinMOD-Q9 × 3-form partial→full gap; this PR makes the
+ * target vehicle pair configurable per-query.
  */
 class CrossDistanceAggregationPhysicalFunction : public AggregationPhysicalFunction
 {
 public:
-    static constexpr uint64_t VID_A = 100;
-    static constexpr uint64_t VID_B = 200;
+    /// BerlinMOD-scaffold defaults (preserved on the Serde-deserialize path; the parser
+    /// path always supplies explicit values).
+    static constexpr uint64_t DEFAULT_VID_A = 100;
+    static constexpr uint64_t DEFAULT_VID_B = 200;
 
     CrossDistanceAggregationPhysicalFunction(
         DataType inputType,
@@ -52,6 +60,8 @@ public:
         PhysicalFunction latFunctionParam,
         PhysicalFunction timestampFunctionParam,
         PhysicalFunction vehicleIdFunctionParam,
+        uint64_t vidA,
+        uint64_t vidB,
         Nautilus::Record::RecordFieldIdentifier resultFieldIdentifier,
         std::shared_ptr<Nautilus::Interface::BufferRef::TupleBufferRef> bufferRef);
     void lift(
@@ -75,6 +85,8 @@ private:
     PhysicalFunction latFunction;
     PhysicalFunction timestampFunction;
     PhysicalFunction vehicleIdFunction;
+    uint64_t vidA;
+    uint64_t vidB;
 };
 
 }

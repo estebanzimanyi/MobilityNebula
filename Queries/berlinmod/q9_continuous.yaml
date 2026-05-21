@@ -1,14 +1,14 @@
 # BerlinMOD-Q9 — continuous form (FULL)
 # "Distance between vehicles X (= 100) and Y (= 200) at time T." Per-second
 # sliding window. CROSS_DISTANCE picks the latest known position of each
-# target vehicle (VID_A = 100, VID_B = 200 hardcoded for the scaffold) inside
+# target vehicle (vidA = 100, vidB = 200 passed as the explicit fifth and sixth aggregation arguments) inside
 # the window and returns the spheroidal distance between them in metres.
 # Returns NaN if either vehicle has no observation in the window.
 
 query: |
   SELECT start,
          end,
-         CROSS_DISTANCE(gps_lon, gps_lat, time_utc, vehicle_id) AS distance_metres
+         CROSS_DISTANCE(gps_lon, gps_lat, time_utc, vehicle_id, 100, 200) AS distance_metres
   FROM berlinmod_stream
   WINDOW SLIDING(time_utc, SIZE 1 SEC, ADVANCE BY 1 SEC)
   INTO file_sink;

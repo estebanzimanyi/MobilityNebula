@@ -254,6 +254,8 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
                 latPF,
                 tsPF,
                 vidPF,
+                cdDescriptor->getVidA(),
+                cdDescriptor->getVidB(),
                 resultFieldIdentifier,
                 tupleBufferRef);
             aggregationPhysicalFunctions.push_back(std::move(phys));

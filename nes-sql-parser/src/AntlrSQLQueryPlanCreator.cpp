@@ -1019,12 +1019,42 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             }
             break;
         case AntlrSQLLexer::CROSS_DISTANCE:
-            // Same four-field shape as PAIR_MEETING; returns FLOAT64 (the distance between
-            // VID_A and VID_B's latest known positions in the window). Closes Q9 × 3 cells to full.
-            if (helpers.top().functionBuilder.size() != 4) {
-                throw InvalidQuerySyntax("CROSS_DISTANCE requires exactly four arguments (lon, lat, timestamp, vehicle_id), but got {}", helpers.top().functionBuilder.size());
-            }
+            // Six-arg aggregation: lon, lat, ts, vehicle_id (FieldAccess) + vidA, vidB
+            // (numeric constants — target vehicle IDs). The first four are pulled from
+            // functionBuilder; the fifth and sixth are pulled from constantBuilder.
+            // Closes Q9 × 3 cells to full; this branch makes the target vehicle pair
+            // configurable per-query. Mirrors PAIR_MEETING's 5-arg constant-parameterization
+            // pattern (PR #19).
             {
+                // Pull the two vid constants from constantBuilder. Note: the constants
+                // are pushed in source order, so the LAST one pushed (vidB in the SQL
+                // call) is on top of the stack — pop in reverse order.
+                if (helpers.top().constantBuilder.size() < 2) {
+                    throw InvalidQuerySyntax(
+                        "CROSS_DISTANCE requires two numeric constant arguments (vidA, vidB), "
+                        "e.g. CROSS_DISTANCE(lon, lat, timestamp, vehicle_id, 100, 200)");
+                }
+                auto vidBString = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                auto vidAString = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                uint64_t vidA, vidB;
+                try {
+                    vidA = std::stoull(vidAString);
+                    vidB = std::stoull(vidBString);
+                } catch (const std::exception&) {
+                    throw InvalidQuerySyntax(
+                        "CROSS_DISTANCE constant arguments must be unsigned integers (vidA, vidB), got `{}` and `{}`",
+                        vidAString, vidBString);
+                }
+
+                if (helpers.top().functionBuilder.size() != 4) {
+                    throw InvalidQuerySyntax(
+                        "CROSS_DISTANCE requires exactly six arguments (lon, lat, timestamp, vehicle_id, vidA, vidB), "
+                        "got {} field args + 2 constants",
+                        helpers.top().functionBuilder.size());
+                }
+
                 const auto vidFunction = helpers.top().functionBuilder.back();
                 helpers.top().functionBuilder.pop_back();
                 const auto timestampFunction = helpers.top().functionBuilder.back();
@@ -1038,14 +1068,15 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
                     !latitudeFunction.tryGet<FieldAccessLogicalFunction>() ||
                     !timestampFunction.tryGet<FieldAccessLogicalFunction>() ||
                     !vidFunction.tryGet<FieldAccessLogicalFunction>()) {
-                    throw InvalidQuerySyntax("CROSS_DISTANCE arguments must be field references");
+                    throw InvalidQuerySyntax("CROSS_DISTANCE field arguments (lon, lat, timestamp, vehicle_id) must be field references");
                 }
 
                 helpers.top().windowAggs.push_back(
                     CrossDistanceAggregationLogicalFunction::create(longitudeFunction.get<FieldAccessLogicalFunction>(),
                                                                     latitudeFunction.get<FieldAccessLogicalFunction>(),
                                                                     timestampFunction.get<FieldAccessLogicalFunction>(),
-                                                                    vidFunction.get<FieldAccessLogicalFunction>()));
+                                                                    vidFunction.get<FieldAccessLogicalFunction>(),
+                                                                    vidA, vidB));
                 helpers.top().functionBuilder.push_back(longitudeFunction);
             }
             break;
@@ -1391,9 +1422,30 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             }
             else if (funcName == "CROSS_DISTANCE")
             {
+                // Six-arg shape: 4 FieldAccess + 2 numeric constants (vidA, vidB).
+                if (helpers.top().constantBuilder.size() < 2)
+                {
+                    throw InvalidQuerySyntax(
+                        "CROSS_DISTANCE requires two numeric constant arguments (vidA, vidB) at {}",
+                        context->getText());
+                }
+                auto vidBString = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                auto vidAString = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                uint64_t vidA, vidB;
+                try {
+                    vidA = std::stoull(vidAString);
+                    vidB = std::stoull(vidBString);
+                } catch (const std::exception&) {
+                    throw InvalidQuerySyntax(
+                        "CROSS_DISTANCE constant arguments must be unsigned integers (vidA, vidB), got `{}` and `{}` at {}",
+                        vidAString, vidBString, context->getText());
+                }
                 if (helpers.top().functionBuilder.size() < 4)
                 {
-                    throw InvalidQuerySyntax("CROSS_DISTANCE requires four arguments at {}", context->getText());
+                    throw InvalidQuerySyntax(
+                        "CROSS_DISTANCE requires four field args + 2 constants at {}", context->getText());
                 }
                 const auto vid = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
                 helpers.top().functionBuilder.pop_back();
@@ -1403,7 +1455,7 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
                 helpers.top().functionBuilder.pop_back();
                 const auto lon = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
                 helpers.top().functionBuilder.pop_back();
-                helpers.top().windowAggs.push_back(CrossDistanceAggregationLogicalFunction::create(lon, lat, ts, vid));
+                helpers.top().windowAggs.push_back(CrossDistanceAggregationLogicalFunction::create(lon, lat, ts, vid, vidA, vidB));
             }
             else if (auto logicalFunction = LogicalFunctionProvider::tryProvide(funcName, helpers.top().functionBuilder))
             {
