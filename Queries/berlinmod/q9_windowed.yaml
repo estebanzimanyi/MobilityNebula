@@ -1,17 +1,14 @@
-# BerlinMOD-Q9 — windowed form (PARTIAL)
-# "Distance between vehicles X and Y at time T." Filters to vehicles X = 100
-# and Y = 200, emits per-window TEMPORAL_SEQUENCE per vehicle. Consumer joins
-# the two trajectories to compute the X-Y distance at each time. A NebulaStream
-# stream-self-join (or a custom pair-aggregation) would close this as a FULL cell.
+# BerlinMOD-Q9 — windowed form (FULL)
+# "Distance between vehicles X (= 100) and Y (= 200) at time T." Per-10s
+# tumbling window. CROSS_DISTANCE returns the spheroidal distance between
+# the two vehicles' latest known positions in the window, or NaN if either
+# is unobserved. Hardcoded (VID_A, VID_B) = (100, 200) for the scaffold.
 
 query: |
   SELECT start,
          end,
-         vehicle_id,
-         TEMPORAL_SEQUENCE(gps_lon, gps_lat, time_utc) AS trajectory
+         CROSS_DISTANCE(gps_lon, gps_lat, time_utc, vehicle_id) AS distance_metres
   FROM berlinmod_stream
-  WHERE vehicle_id = UINT64(100) OR vehicle_id = UINT64(200)
-  GROUP BY vehicle_id
   WINDOW TUMBLING(time_utc, SIZE 10 SEC)
   INTO file_sink;
 
@@ -19,10 +16,9 @@ sinks:
   - name: FILE_SINK
     type: File
     schema:
-      - { name: BERLINMOD_STREAM$START,      type: UINT64 }
-      - { name: BERLINMOD_STREAM$END,        type: UINT64 }
-      - { name: BERLINMOD_STREAM$VEHICLE_ID, type: UINT64 }
-      - { name: BERLINMOD_STREAM$TRAJECTORY, type: VARSIZED }
+      - { name: BERLINMOD_STREAM$START,           type: UINT64 }
+      - { name: BERLINMOD_STREAM$END,             type: UINT64 }
+      - { name: BERLINMOD_STREAM$DISTANCE_METRES, type: FLOAT64 }
     config:
       file_path: "/workspace/Output/output_berlinmod_q9_windowed.csv"
       input_format: CSV

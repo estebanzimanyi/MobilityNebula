@@ -12,4 +12,6 @@
 
 add_plugin(TemporalSequence AggregationPhysicalFunction nes-physical-operators TemporalSequenceAggregationPhysicalFunction.cpp)
 add_plugin(TemporalLength AggregationPhysicalFunction nes-physical-operators TemporalLengthAggregationPhysicalFunction.cpp)
+add_plugin(PairMeeting AggregationPhysicalFunction nes-physical-operators PairMeetingAggregationPhysicalFunction.cpp)
+add_plugin(CrossDistance AggregationPhysicalFunction nes-physical-operators CrossDistanceAggregationPhysicalFunction.cpp)
 add_plugin(Var AggregationPhysicalFunction nes-physical-operators VarAggregationFunction.cpp)

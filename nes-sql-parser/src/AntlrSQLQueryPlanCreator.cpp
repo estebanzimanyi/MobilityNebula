@@ -66,6 +66,8 @@
 #include <Operators/Windows/Aggregations/Meos/VarAggregationLogicalFunction.hpp>
 #include <Operators/Windows/Aggregations/Meos/TemporalSequenceAggregationLogicalFunction.hpp>
 #include <Operators/Windows/Aggregations/Meos/TemporalLengthAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/PairMeetingAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/CrossDistanceAggregationLogicalFunction.hpp>
 #include <Functions/Meos/TemporalIntersectsGeometryLogicalFunction.hpp>
 #include <Functions/Meos/TemporalAIntersectsGeometryLogicalFunction.hpp>
 #include <Functions/Meos/TemporalEDWithinGeometryLogicalFunction.hpp>
@@ -961,6 +963,68 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
                 helpers.top().functionBuilder.push_back(longitudeFunction);
             }
             break;
+        case AntlrSQLLexer::PAIR_MEETING:
+            // Four-field aggregation: lon, lat, ts, vehicle_id. Hardcoded DMEET inside the
+            // physical operator (BerlinMOD scaffold). Closes Q5 × 3 cells to full.
+            if (helpers.top().functionBuilder.size() != 4) {
+                throw InvalidQuerySyntax("PAIR_MEETING requires exactly four arguments (lon, lat, timestamp, vehicle_id), but got {}", helpers.top().functionBuilder.size());
+            }
+            {
+                const auto vidFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto timestampFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto latitudeFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto longitudeFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+
+                if (!longitudeFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !latitudeFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !timestampFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !vidFunction.tryGet<FieldAccessLogicalFunction>()) {
+                    throw InvalidQuerySyntax("PAIR_MEETING arguments must be field references");
+                }
+
+                helpers.top().windowAggs.push_back(
+                    PairMeetingAggregationLogicalFunction::create(longitudeFunction.get<FieldAccessLogicalFunction>(),
+                                                                  latitudeFunction.get<FieldAccessLogicalFunction>(),
+                                                                  timestampFunction.get<FieldAccessLogicalFunction>(),
+                                                                  vidFunction.get<FieldAccessLogicalFunction>()));
+                helpers.top().functionBuilder.push_back(longitudeFunction);
+            }
+            break;
+        case AntlrSQLLexer::CROSS_DISTANCE:
+            // Same four-field shape as PAIR_MEETING; returns FLOAT64 (the distance between
+            // VID_A and VID_B's latest known positions in the window). Closes Q9 × 3 cells to full.
+            if (helpers.top().functionBuilder.size() != 4) {
+                throw InvalidQuerySyntax("CROSS_DISTANCE requires exactly four arguments (lon, lat, timestamp, vehicle_id), but got {}", helpers.top().functionBuilder.size());
+            }
+            {
+                const auto vidFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto timestampFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto latitudeFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto longitudeFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+
+                if (!longitudeFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !latitudeFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !timestampFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !vidFunction.tryGet<FieldAccessLogicalFunction>()) {
+                    throw InvalidQuerySyntax("CROSS_DISTANCE arguments must be field references");
+                }
+
+                helpers.top().windowAggs.push_back(
+                    CrossDistanceAggregationLogicalFunction::create(longitudeFunction.get<FieldAccessLogicalFunction>(),
+                                                                    latitudeFunction.get<FieldAccessLogicalFunction>(),
+                                                                    timestampFunction.get<FieldAccessLogicalFunction>(),
+                                                                    vidFunction.get<FieldAccessLogicalFunction>()));
+                helpers.top().functionBuilder.push_back(longitudeFunction);
+            }
+            break;
         case AntlrSQLLexer::TEMPORAL_EINTERSECTS_GEOMETRY:
             {
                 // Convert constants from constantBuilder to ConstantValueLogicalFunction objects
@@ -1267,6 +1331,38 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
                 const auto lon = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
                 helpers.top().functionBuilder.pop_back();
                 helpers.top().windowAggs.push_back(TemporalLengthAggregationLogicalFunction::create(lon, lat, ts));
+            }
+            else if (funcName == "PAIR_MEETING")
+            {
+                if (helpers.top().functionBuilder.size() < 4)
+                {
+                    throw InvalidQuerySyntax("PAIR_MEETING requires four arguments at {}", context->getText());
+                }
+                const auto vid = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto lat = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto lon = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                helpers.top().windowAggs.push_back(PairMeetingAggregationLogicalFunction::create(lon, lat, ts, vid));
+            }
+            else if (funcName == "CROSS_DISTANCE")
+            {
+                if (helpers.top().functionBuilder.size() < 4)
+                {
+                    throw InvalidQuerySyntax("CROSS_DISTANCE requires four arguments at {}", context->getText());
+                }
+                const auto vid = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto lat = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto lon = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                helpers.top().windowAggs.push_back(CrossDistanceAggregationLogicalFunction::create(lon, lat, ts, vid));
             }
             else if (auto logicalFunction = LogicalFunctionProvider::tryProvide(funcName, helpers.top().functionBuilder))
             {
