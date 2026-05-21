@@ -83,6 +83,11 @@
 #include <Operators/Windows/Aggregations/Meos/TemporalTFloatAvgValueAggregationLogicalFunction.hpp>
 #include <Operators/Windows/Aggregations/Meos/TemporalTNumberTwAvgAggregationLogicalFunction.hpp>
 #include <Operators/Windows/Aggregations/Meos/TemporalTIntAvgValueAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TemporalStartTimestampAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TemporalEndTimestampAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TemporalLowerIncAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TemporalUpperIncAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TemporalTPointIsSimpleAggregationLogicalFunction.hpp>
 #include <Functions/Meos/TemporalIntersectsGeometryLogicalFunction.hpp>
 #include <Functions/Meos/TemporalAIntersectsGeometryLogicalFunction.hpp>
 #include <Functions/Meos/TemporalEDWithinGeometryLogicalFunction.hpp>
@@ -2418,6 +2423,151 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             }
             break;
         /* END CODEGEN AGGREGATION GLUE: TEMPORAL_TINT_AVG_VALUE (case-switch) */
+        /* BEGIN CODEGEN AGGREGATION GLUE: TEMPORAL_START_TIMESTAMP (case-switch) */
+        case AntlrSQLLexer::TEMPORAL_START_TIMESTAMP:
+            // TimestampTz (MEOS μs-since-2000) of the first instant in the per-(window, group) tgeo trajectory.
+            if (helpers.top().functionBuilder.size() != 3) {
+                throw InvalidQuerySyntax("TEMPORAL_START_TIMESTAMP requires exactly three arguments (longitude, latitude, timestamp), but got {}", helpers.top().functionBuilder.size());
+            }
+            {
+                const auto timestampFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto latitudeFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto longitudeFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+
+                if (!longitudeFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !latitudeFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
+                    throw InvalidQuerySyntax("TEMPORAL_START_TIMESTAMP arguments must be field references");
+                }
+
+                helpers.top().windowAggs.push_back(
+                    TemporalStartTimestampAggregationLogicalFunction::create(longitudeFunction.get<FieldAccessLogicalFunction>(),
+                                                                    latitudeFunction.get<FieldAccessLogicalFunction>(),
+                                                                    timestampFunction.get<FieldAccessLogicalFunction>()));
+                helpers.top().functionBuilder.push_back(longitudeFunction);
+            }
+            break;
+        /* END CODEGEN AGGREGATION GLUE: TEMPORAL_START_TIMESTAMP (case-switch) */
+
+        /* BEGIN CODEGEN AGGREGATION GLUE: TEMPORAL_END_TIMESTAMP (case-switch) */
+        case AntlrSQLLexer::TEMPORAL_END_TIMESTAMP:
+            // TimestampTz (MEOS μs-since-2000) of the last instant in the per-(window, group) tgeo trajectory.
+            if (helpers.top().functionBuilder.size() != 3) {
+                throw InvalidQuerySyntax("TEMPORAL_END_TIMESTAMP requires exactly three arguments (longitude, latitude, timestamp), but got {}", helpers.top().functionBuilder.size());
+            }
+            {
+                const auto timestampFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto latitudeFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto longitudeFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+
+                if (!longitudeFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !latitudeFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
+                    throw InvalidQuerySyntax("TEMPORAL_END_TIMESTAMP arguments must be field references");
+                }
+
+                helpers.top().windowAggs.push_back(
+                    TemporalEndTimestampAggregationLogicalFunction::create(longitudeFunction.get<FieldAccessLogicalFunction>(),
+                                                                    latitudeFunction.get<FieldAccessLogicalFunction>(),
+                                                                    timestampFunction.get<FieldAccessLogicalFunction>()));
+                helpers.top().functionBuilder.push_back(longitudeFunction);
+            }
+            break;
+        /* END CODEGEN AGGREGATION GLUE: TEMPORAL_END_TIMESTAMP (case-switch) */
+
+        /* BEGIN CODEGEN AGGREGATION GLUE: TEMPORAL_LOWER_INC (case-switch) */
+        case AntlrSQLLexer::TEMPORAL_LOWER_INC:
+            // True if the per-(window, group) tgeo trajectory's lower period bound is inclusive.
+            if (helpers.top().functionBuilder.size() != 3) {
+                throw InvalidQuerySyntax("TEMPORAL_LOWER_INC requires exactly three arguments (longitude, latitude, timestamp), but got {}", helpers.top().functionBuilder.size());
+            }
+            {
+                const auto timestampFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto latitudeFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto longitudeFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+
+                if (!longitudeFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !latitudeFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
+                    throw InvalidQuerySyntax("TEMPORAL_LOWER_INC arguments must be field references");
+                }
+
+                helpers.top().windowAggs.push_back(
+                    TemporalLowerIncAggregationLogicalFunction::create(longitudeFunction.get<FieldAccessLogicalFunction>(),
+                                                                    latitudeFunction.get<FieldAccessLogicalFunction>(),
+                                                                    timestampFunction.get<FieldAccessLogicalFunction>()));
+                helpers.top().functionBuilder.push_back(longitudeFunction);
+            }
+            break;
+        /* END CODEGEN AGGREGATION GLUE: TEMPORAL_LOWER_INC (case-switch) */
+
+        /* BEGIN CODEGEN AGGREGATION GLUE: TEMPORAL_UPPER_INC (case-switch) */
+        case AntlrSQLLexer::TEMPORAL_UPPER_INC:
+            // True if the per-(window, group) tgeo trajectory's upper period bound is inclusive.
+            if (helpers.top().functionBuilder.size() != 3) {
+                throw InvalidQuerySyntax("TEMPORAL_UPPER_INC requires exactly three arguments (longitude, latitude, timestamp), but got {}", helpers.top().functionBuilder.size());
+            }
+            {
+                const auto timestampFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto latitudeFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto longitudeFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+
+                if (!longitudeFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !latitudeFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
+                    throw InvalidQuerySyntax("TEMPORAL_UPPER_INC arguments must be field references");
+                }
+
+                helpers.top().windowAggs.push_back(
+                    TemporalUpperIncAggregationLogicalFunction::create(longitudeFunction.get<FieldAccessLogicalFunction>(),
+                                                                    latitudeFunction.get<FieldAccessLogicalFunction>(),
+                                                                    timestampFunction.get<FieldAccessLogicalFunction>()));
+                helpers.top().functionBuilder.push_back(longitudeFunction);
+            }
+            break;
+        /* END CODEGEN AGGREGATION GLUE: TEMPORAL_UPPER_INC (case-switch) */
+
+        /* BEGIN CODEGEN AGGREGATION GLUE: TEMPORAL_TPOINT_IS_SIMPLE (case-switch) */
+        case AntlrSQLLexer::TEMPORAL_TPOINT_IS_SIMPLE:
+            // True if the per-(window, group) tgeo trajectory does not self-intersect.
+            if (helpers.top().functionBuilder.size() != 3) {
+                throw InvalidQuerySyntax("TEMPORAL_TPOINT_IS_SIMPLE requires exactly three arguments (longitude, latitude, timestamp), but got {}", helpers.top().functionBuilder.size());
+            }
+            {
+                const auto timestampFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto latitudeFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto longitudeFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+
+                if (!longitudeFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !latitudeFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
+                    throw InvalidQuerySyntax("TEMPORAL_TPOINT_IS_SIMPLE arguments must be field references");
+                }
+
+                helpers.top().windowAggs.push_back(
+                    TemporalTPointIsSimpleAggregationLogicalFunction::create(longitudeFunction.get<FieldAccessLogicalFunction>(),
+                                                                    latitudeFunction.get<FieldAccessLogicalFunction>(),
+                                                                    timestampFunction.get<FieldAccessLogicalFunction>()));
+                helpers.top().functionBuilder.push_back(longitudeFunction);
+            }
+            break;
+        /* END CODEGEN AGGREGATION GLUE: TEMPORAL_TPOINT_IS_SIMPLE (case-switch) */
+
 
 
 
@@ -2746,6 +2896,91 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
                 helpers.top().windowAggs.push_back(TemporalTIntAvgValueAggregationLogicalFunction::create(value, ts));
             }
             /* END CODEGEN AGGREGATION GLUE: TEMPORAL_TINT_AVG_VALUE (funcName chain) */
+            /* BEGIN CODEGEN AGGREGATION GLUE: TEMPORAL_START_TIMESTAMP (funcName chain) */
+            else if (funcName == "TEMPORAL_START_TIMESTAMP")
+            {
+                if (helpers.top().functionBuilder.size() < 3)
+                {
+                    throw InvalidQuerySyntax("TEMPORAL_START_TIMESTAMP requires three arguments at {}", context->getText());
+                }
+                const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto lat = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto lon = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                helpers.top().windowAggs.push_back(TemporalStartTimestampAggregationLogicalFunction::create(lon, lat, ts));
+            }
+            /* END CODEGEN AGGREGATION GLUE: TEMPORAL_START_TIMESTAMP (funcName chain) */
+
+            /* BEGIN CODEGEN AGGREGATION GLUE: TEMPORAL_END_TIMESTAMP (funcName chain) */
+            else if (funcName == "TEMPORAL_END_TIMESTAMP")
+            {
+                if (helpers.top().functionBuilder.size() < 3)
+                {
+                    throw InvalidQuerySyntax("TEMPORAL_END_TIMESTAMP requires three arguments at {}", context->getText());
+                }
+                const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto lat = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto lon = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                helpers.top().windowAggs.push_back(TemporalEndTimestampAggregationLogicalFunction::create(lon, lat, ts));
+            }
+            /* END CODEGEN AGGREGATION GLUE: TEMPORAL_END_TIMESTAMP (funcName chain) */
+
+            /* BEGIN CODEGEN AGGREGATION GLUE: TEMPORAL_LOWER_INC (funcName chain) */
+            else if (funcName == "TEMPORAL_LOWER_INC")
+            {
+                if (helpers.top().functionBuilder.size() < 3)
+                {
+                    throw InvalidQuerySyntax("TEMPORAL_LOWER_INC requires three arguments at {}", context->getText());
+                }
+                const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto lat = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto lon = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                helpers.top().windowAggs.push_back(TemporalLowerIncAggregationLogicalFunction::create(lon, lat, ts));
+            }
+            /* END CODEGEN AGGREGATION GLUE: TEMPORAL_LOWER_INC (funcName chain) */
+
+            /* BEGIN CODEGEN AGGREGATION GLUE: TEMPORAL_UPPER_INC (funcName chain) */
+            else if (funcName == "TEMPORAL_UPPER_INC")
+            {
+                if (helpers.top().functionBuilder.size() < 3)
+                {
+                    throw InvalidQuerySyntax("TEMPORAL_UPPER_INC requires three arguments at {}", context->getText());
+                }
+                const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto lat = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto lon = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                helpers.top().windowAggs.push_back(TemporalUpperIncAggregationLogicalFunction::create(lon, lat, ts));
+            }
+            /* END CODEGEN AGGREGATION GLUE: TEMPORAL_UPPER_INC (funcName chain) */
+
+            /* BEGIN CODEGEN AGGREGATION GLUE: TEMPORAL_TPOINT_IS_SIMPLE (funcName chain) */
+            else if (funcName == "TEMPORAL_TPOINT_IS_SIMPLE")
+            {
+                if (helpers.top().functionBuilder.size() < 3)
+                {
+                    throw InvalidQuerySyntax("TEMPORAL_TPOINT_IS_SIMPLE requires three arguments at {}", context->getText());
+                }
+                const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto lat = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto lon = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                helpers.top().windowAggs.push_back(TemporalTPointIsSimpleAggregationLogicalFunction::create(lon, lat, ts));
+            }
+            /* END CODEGEN AGGREGATION GLUE: TEMPORAL_TPOINT_IS_SIMPLE (funcName chain) */
+
 
                 auto vidBString = std::move(helpers.top().constantBuilder.back());
                 helpers.top().constantBuilder.pop_back();
