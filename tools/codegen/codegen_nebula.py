@@ -828,6 +828,8 @@ def emit_operator(op, output_root: Path):
         physical_cpp_path.write_text(PHYSICAL_CPP_TEMPLATE_TWO_TEMPORAL_POINTS.format(**physical_common))
     elif op.get("build_temporal_point_restriction"):
         physical_cpp_path.write_text(PHYSICAL_CPP_TEMPLATE_TEMPORAL_POINT_RESTRICTION.format(**physical_common))
+    elif op.get("build_tcbuffer_point"):
+        physical_cpp_path.write_text(PHYSICAL_CPP_TEMPLATE_TCBUFFER_POINT.format(**physical_common))
     elif op.get("build_temporal_point"):
         physical_cpp_path.write_text(PHYSICAL_CPP_TEMPLATE_TEMPORAL_POINT.format(**physical_common))
     elif op.get("build_tnumber_point_with_scalar"):
@@ -950,6 +952,128 @@ VarVal {nebula_name}PhysicalFunction::execute(const Record& record, ArenaRef& ar
             }}
         }},
         lon, lat, timestamp, geometry.getContent(), geometry.getContentSize());
+
+    return VarVal(result);
+}}
+
+PhysicalFunctionRegistryReturnType PhysicalFunctionGeneratedRegistrar::Register{nebula_name}PhysicalFunction(
+    PhysicalFunctionRegistryArguments arguments)
+{{
+    PRECONDITION(arguments.childFunctions.size() == {n_args},
+                 "{nebula_name}PhysicalFunction requires {n_args} children but got {{}}",
+                 arguments.childFunctions.size());
+{registrar_pushes}
+}}
+
+}} // namespace NES
+"""
+
+
+# Physical .cpp template for one-tcbuffer-point operators with a static
+# geometry — e.g. econtains_tcbuffer_geo. The MEOS call signature is
+# `<ret> fn(const Temporal*, const GSERIALIZED*)` where the Temporal is a
+# tcbuffer (Cbuffer instant) built per-event from (lon, lat, radius, ts).
+# WKT format: "Cbuffer(Point(lon lat),radius)@ts".
+# 5 SQL args: lon, lat, radius, ts, geometry.
+PHYSICAL_CPP_TEMPLATE_TCBUFFER_POINT = """\
+/*
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        https://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+*/
+
+#include <Functions/Meos/{nebula_name}PhysicalFunction.hpp>
+
+#include <Functions/PhysicalFunction.hpp>
+#include <MEOSWrapper.hpp>
+#include <Nautilus/DataTypes/VarVal.hpp>
+#include <Nautilus/DataTypes/VariableSizedData.hpp>
+#include <Nautilus/Interface/Record.hpp>
+#include <PhysicalFunctionRegistry.hpp>
+#include <ErrorHandling.hpp>
+#include <ExecutionContext.hpp>
+#include <fmt/format.h>
+#include <function.hpp>
+#include <string>
+#include <utility>
+#include <val.hpp>
+
+extern "C" {{
+#include <meos.h>
+#include <meos_cbuffer.h>
+}}
+
+namespace NES {{
+
+{nebula_name}PhysicalFunction::{nebula_name}PhysicalFunction({ctor_physical_args})
+{{
+    parameterFunctions.reserve({n_args});
+{ctor_physical_pushes}
+}}
+
+VarVal {nebula_name}PhysicalFunction::execute(const Record& record, ArenaRef& arena) const
+{{
+    std::vector<VarVal> parameterValues;
+    parameterValues.reserve(parameterFunctions.size());
+    for (const auto& function : parameterFunctions)
+    {{
+        parameterValues.emplace_back(function.execute(record, arena));
+    }}
+
+    auto lon       = parameterValues[0].cast<nautilus::val<double>>();
+    auto lat       = parameterValues[1].cast<nautilus::val<double>>();
+    auto radius    = parameterValues[2].cast<nautilus::val<double>>();
+    auto timestamp = parameterValues[3].cast<nautilus::val<uint64_t>>();
+    auto geometry  = parameterValues[4].cast<VariableSizedData>();
+
+    const auto result = nautilus::invoke(
+        +[](double lonValue,
+            double latValue,
+            double radiusValue,
+            uint64_t timestampValue,
+            const char* geometryPtr,
+            uint32_t geometrySize) -> {return_type} {{
+            try
+            {{
+                MEOS::Meos::ensureMeosInitialized();
+                if (!(lonValue >= -180.0 && lonValue <= 180.0 && latValue >= -90.0 && latValue <= 90.0)) return 0;
+                if (radiusValue < 0.0) return 0;
+
+                const std::string timestampString = MEOS::Meos::convertEpochToTimestamp(timestampValue);
+                std::string tcbufferWkt = fmt::format("Cbuffer(Point({{}} {{}}),{{}})@{{}}",
+                                                     lonValue, latValue, radiusValue, timestampString);
+                std::string staticGeometryWkt(geometryPtr, geometrySize);
+
+                while (!staticGeometryWkt.empty() && (staticGeometryWkt.front() == '\\'' || staticGeometryWkt.front() == '"'))
+                    staticGeometryWkt.erase(staticGeometryWkt.begin());
+                while (!staticGeometryWkt.empty() && (staticGeometryWkt.back() == '\\'' || staticGeometryWkt.back() == '"'))
+                    staticGeometryWkt.pop_back();
+
+                if (tcbufferWkt.empty() || staticGeometryWkt.empty()) return 0;
+
+                Temporal* tcbuffer = tcbuffer_in(tcbufferWkt.c_str());
+                if (!tcbuffer) return 0;
+                MEOS::Meos::StaticGeometry staticGeometry(staticGeometryWkt);
+                if (!staticGeometry.getGeometry()) {{ free(tcbuffer); return 0; }}
+
+                {return_type} r = {meos_call}(tcbuffer, staticGeometry.getGeometry());
+                free(tcbuffer);
+                return r;
+            }}
+            catch (const std::exception&)
+            {{
+                return 0;
+            }}
+        }},
+        lon, lat, radius, timestamp, geometry.getContent(), geometry.getContentSize());
 
     return VarVal(result);
 }}
@@ -1310,6 +1434,40 @@ DISPATCH_CASE_TWO_TEMPORAL_POINTS_WITH_DIST = """\
 """
 
 
+# 5-arg shape: lon, lat, radius, ts, geometry — tcbuffer × static geom.
+# Geometry is the only constant (lifted to FLOAT64 / VARSIZED via the same lift
+# pattern as the existing with-dist templates).
+DISPATCH_CASE_TCBUFFER_POINT = """\
+        /* BEGIN CODEGEN PARSER GLUE: {sql_token} */
+        case AntlrSQLLexer::{sql_token}:
+        {{
+            const auto argCount = context->expression().size();
+            if (argCount != 5)
+                throw InvalidQuerySyntax("{sql_token} requires exactly 5 arguments (lon, lat, radius, timestamp, geometry), but got {{}}", argCount);
+
+            /* Lift the WKT constant into the function builder */
+            while (!helpers.top().constantBuilder.empty())
+            {{
+                auto v = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                helpers.top().functionBuilder.emplace_back(
+                    ConstantValueLogicalFunction(
+                        DataTypeProvider::provideDataType(DataType::Type::VARSIZED), std::move(v)));
+            }}
+
+            auto geometry  = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto timestamp = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto radius    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto lat       = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto lon       = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                {nebula_name}LogicalFunction(lon, lat, radius, timestamp, geometry));
+        }}
+        break;
+        /* END CODEGEN PARSER GLUE: {sql_token} */
+"""
+
 # 3-arg shape: value, ts, scalar (scalar may be FLOAT64 or INT32, only one constant).
 DISPATCH_CASE_TNUMBER_POINT_WITH_SCALAR = """\
         /* BEGIN CODEGEN PARSER GLUE: {sql_token} */
@@ -1380,6 +1538,8 @@ def dispatch_case_for(op):
         # only the physical-cpp body differs (filter-predicate int return vs.
         # restriction-survival int return).
         return DISPATCH_CASE_ONE_TEMPORAL_POINT
+    if op.get("build_tcbuffer_point"):
+        return DISPATCH_CASE_TCBUFFER_POINT
     if op.get("build_tnumber_point_with_scalar"):
         return DISPATCH_CASE_TNUMBER_POINT_WITH_SCALAR
     if op.get("build_two_tnumber_points"):
