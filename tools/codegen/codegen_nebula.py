@@ -828,6 +828,8 @@ def emit_operator(op, output_root: Path):
         physical_cpp_path.write_text(PHYSICAL_CPP_TEMPLATE_TWO_TEMPORAL_POINTS.format(**physical_common))
     elif op.get("build_temporal_point_restriction"):
         physical_cpp_path.write_text(PHYSICAL_CPP_TEMPLATE_TEMPORAL_POINT_RESTRICTION.format(**physical_common))
+    elif op.get("build_tpose_point_via_composition"):
+        physical_cpp_path.write_text(PHYSICAL_CPP_TEMPLATE_TPOSE_POINT_VIA_COMPOSITION.format(**physical_common))
     elif op.get("build_two_tcbuffer_points_with_dist"):
         physical_cpp_path.write_text(PHYSICAL_CPP_TEMPLATE_TWO_TCBUFFER_POINTS_WITH_DIST.format(**physical_common))
     elif op.get("build_tcbuffer_point_cbuffer_with_dist"):
@@ -1084,6 +1086,128 @@ VarVal {nebula_name}PhysicalFunction::execute(const Record& record, ArenaRef& ar
             }}
         }},
         lon, lat, radius, timestamp, geometry.getContent(), geometry.getContentSize());
+
+    return VarVal(result);
+}}
+
+PhysicalFunctionRegistryReturnType PhysicalFunctionGeneratedRegistrar::Register{nebula_name}PhysicalFunction(
+    PhysicalFunctionRegistryArguments arguments)
+{{
+    PRECONDITION(arguments.childFunctions.size() == {n_args},
+                 "{nebula_name}PhysicalFunction requires {n_args} children but got {{}}",
+                 arguments.childFunctions.size());
+{registrar_pushes}
+}}
+
+}} // namespace NES
+"""
+
+
+# Physical .cpp template for tpose × static geom spatial-rels VIA
+# COMPOSITION — the existing _tgeo_geo MEOS call is applied to a tpose
+# converted to tgeompoint at run time. Per-event tpose instant from
+# (x, y, theta, ts), then tpose_to_tpoint(), then the MEOS spatial-rel
+# call. Matches MobilityDB PR #987's SQL-level composition recipe at the
+# binding layer (no new MEOS spatial-rel symbols are needed for tpose).
+# 5 SQL args: x, y, theta, ts, geometry.
+PHYSICAL_CPP_TEMPLATE_TPOSE_POINT_VIA_COMPOSITION = """\
+/*
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        https://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+*/
+
+#include <Functions/Meos/{nebula_name}PhysicalFunction.hpp>
+
+#include <Functions/PhysicalFunction.hpp>
+#include <MEOSWrapper.hpp>
+#include <Nautilus/DataTypes/VarVal.hpp>
+#include <Nautilus/DataTypes/VariableSizedData.hpp>
+#include <Nautilus/Interface/Record.hpp>
+#include <PhysicalFunctionRegistry.hpp>
+#include <ErrorHandling.hpp>
+#include <ExecutionContext.hpp>
+#include <fmt/format.h>
+#include <function.hpp>
+#include <string>
+#include <utility>
+#include <val.hpp>
+
+extern "C" {{
+#include <meos.h>
+#include <meos_geo.h>
+#include <meos_pose.h>
+}}
+
+namespace NES {{
+
+{nebula_name}PhysicalFunction::{nebula_name}PhysicalFunction({ctor_physical_args})
+{{
+    parameterFunctions.reserve({n_args});
+{ctor_physical_pushes}
+}}
+
+VarVal {nebula_name}PhysicalFunction::execute(const Record& record, ArenaRef& arena) const
+{{
+    std::vector<VarVal> parameterValues;
+    parameterValues.reserve(parameterFunctions.size());
+    for (const auto& function : parameterFunctions)
+    {{
+        parameterValues.emplace_back(function.execute(record, arena));
+    }}
+
+    auto x         = parameterValues[0].cast<nautilus::val<double>>();
+    auto y         = parameterValues[1].cast<nautilus::val<double>>();
+    auto theta     = parameterValues[2].cast<nautilus::val<double>>();
+    auto timestamp = parameterValues[3].cast<nautilus::val<uint64_t>>();
+    auto geometry  = parameterValues[4].cast<VariableSizedData>();
+
+    const auto result = nautilus::invoke(
+        +[](double xValue, double yValue, double thetaValue, uint64_t timestampValue,
+            const char* geometryPtr, uint32_t geometrySize) -> {return_type} {{
+            try
+            {{
+                MEOS::Meos::ensureMeosInitialized();
+                if (!(xValue >= -180.0 && xValue <= 180.0 && yValue >= -90.0 && yValue <= 90.0)) return 0;
+
+                const std::string timestampString = MEOS::Meos::convertEpochToTimestamp(timestampValue);
+                std::string tposeWkt = fmt::format("Pose(Point({{}} {{}}), {{}})@{{}}",
+                                                  xValue, yValue, thetaValue, timestampString);
+                std::string staticGeometryWkt(geometryPtr, geometrySize);
+
+                while (!staticGeometryWkt.empty() && (staticGeometryWkt.front() == '\\'' || staticGeometryWkt.front() == '"'))
+                    staticGeometryWkt.erase(staticGeometryWkt.begin());
+                while (!staticGeometryWkt.empty() && (staticGeometryWkt.back() == '\\'' || staticGeometryWkt.back() == '"'))
+                    staticGeometryWkt.pop_back();
+
+                if (tposeWkt.empty() || staticGeometryWkt.empty()) return 0;
+
+                Temporal* tpose = tpose_in(tposeWkt.c_str());
+                if (!tpose) return 0;
+                Temporal* tgeo = tpose_to_tpoint(tpose);
+                if (!tgeo) {{ free(tpose); return 0; }}
+                MEOS::Meos::StaticGeometry staticGeometry(staticGeometryWkt);
+                if (!staticGeometry.getGeometry()) {{ free(tgeo); free(tpose); return 0; }}
+
+                {return_type} r = {meos_call}(tgeo, staticGeometry.getGeometry());
+                free(tgeo);
+                free(tpose);
+                return r;
+            }}
+            catch (const std::exception&)
+            {{
+                return 0;
+            }}
+        }},
+        x, y, theta, timestamp, geometry.getContent(), geometry.getContentSize());
 
     return VarVal(result);
 }}
@@ -2230,9 +2354,11 @@ def dispatch_case_for(op):
         # only the physical-cpp body differs (filter-predicate int return vs.
         # restriction-survival int return).
         return DISPATCH_CASE_ONE_TEMPORAL_POINT
-    if op.get("build_tcbuffer_point") or op.get("build_tcbuffer_point_cbuffer"):
-        # Both shapes share the same 5-arg dispatch (lon, lat, radius, ts, blob);
-        # only the physical-cpp body differs (blob parsed as GSERIALIZED vs Cbuffer).
+    if op.get("build_tcbuffer_point") or op.get("build_tcbuffer_point_cbuffer") \
+       or op.get("build_tpose_point_via_composition"):
+        # All three shapes share the same 5-arg dispatch (lon/x, lat/y, radius/theta, ts, blob);
+        # only the physical-cpp body differs (blob parsed as GSERIALIZED vs Cbuffer; per-event
+        # type construction is tcbuffer vs tpose with optional tpose_to_tpoint composition).
         return DISPATCH_CASE_TCBUFFER_POINT
     if op.get("build_two_tcbuffer_points"):
         return DISPATCH_CASE_TWO_TCBUFFER_POINTS
