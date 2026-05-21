@@ -145,6 +145,12 @@
 #include <Functions/Meos/TemporalECoversTCbufferTCbufferLogicalFunction.hpp>
 #include <Functions/Meos/TemporalEIntersectsTCbufferTCbufferLogicalFunction.hpp>
 #include <Functions/Meos/TemporalETouchesTCbufferTCbufferLogicalFunction.hpp>
+#include <Functions/Meos/TemporalEDWithinTCbufferGeometryLogicalFunction.hpp>
+#include <Functions/Meos/TemporalADWithinTCbufferGeometryLogicalFunction.hpp>
+#include <Functions/Meos/TemporalEDWithinTCbufferCbufferLogicalFunction.hpp>
+#include <Functions/Meos/TemporalADWithinTCbufferCbufferLogicalFunction.hpp>
+#include <Functions/Meos/TemporalEDWithinTCbufferTCbufferLogicalFunction.hpp>
+#include <Functions/Meos/TemporalADWithinTCbufferTCbufferLogicalFunction.hpp>
 #include <Plans/LogicalPlan.hpp>
 #include <Plans/LogicalPlanBuilder.hpp>
 #include <Util/Overloaded.hpp>
@@ -2773,6 +2779,210 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TEMPORAL_ETOUCHES_TCBUFFER_TCBUFFER */
+        /* BEGIN CODEGEN PARSER GLUE: TEMPORAL_EDWITHIN_TCBUFFER_GEOMETRY */
+        case AntlrSQLLexer::TEMPORAL_EDWITHIN_TCBUFFER_GEOMETRY:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 6)
+                throw InvalidQuerySyntax("TEMPORAL_EDWITHIN_TCBUFFER_GEOMETRY requires exactly 6 arguments (lon, lat, radius, timestamp, blob, distance), but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto blobLast  = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto distLast  = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto timestamp = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto radius    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto lat       = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto lon       = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                TemporalEDWithinTCbufferGeometryLogicalFunction(lon, lat, radius, timestamp, blobLast, distLast));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: TEMPORAL_EDWITHIN_TCBUFFER_GEOMETRY */
+
+        /* BEGIN CODEGEN PARSER GLUE: TEMPORAL_ADWITHIN_TCBUFFER_GEOMETRY */
+        case AntlrSQLLexer::TEMPORAL_ADWITHIN_TCBUFFER_GEOMETRY:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 6)
+                throw InvalidQuerySyntax("TEMPORAL_ADWITHIN_TCBUFFER_GEOMETRY requires exactly 6 arguments (lon, lat, radius, timestamp, blob, distance), but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto blobLast  = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto distLast  = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto timestamp = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto radius    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto lat       = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto lon       = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                TemporalADWithinTCbufferGeometryLogicalFunction(lon, lat, radius, timestamp, blobLast, distLast));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: TEMPORAL_ADWITHIN_TCBUFFER_GEOMETRY */
+
+        /* BEGIN CODEGEN PARSER GLUE: TEMPORAL_EDWITHIN_TCBUFFER_CBUFFER */
+        case AntlrSQLLexer::TEMPORAL_EDWITHIN_TCBUFFER_CBUFFER:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 6)
+                throw InvalidQuerySyntax("TEMPORAL_EDWITHIN_TCBUFFER_CBUFFER requires exactly 6 arguments (lon, lat, radius, timestamp, blob, distance), but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto blobLast  = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto distLast  = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto timestamp = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto radius    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto lat       = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto lon       = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                TemporalEDWithinTCbufferCbufferLogicalFunction(lon, lat, radius, timestamp, blobLast, distLast));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: TEMPORAL_EDWITHIN_TCBUFFER_CBUFFER */
+
+        /* BEGIN CODEGEN PARSER GLUE: TEMPORAL_ADWITHIN_TCBUFFER_CBUFFER */
+        case AntlrSQLLexer::TEMPORAL_ADWITHIN_TCBUFFER_CBUFFER:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 6)
+                throw InvalidQuerySyntax("TEMPORAL_ADWITHIN_TCBUFFER_CBUFFER requires exactly 6 arguments (lon, lat, radius, timestamp, blob, distance), but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto blobLast  = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto distLast  = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto timestamp = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto radius    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto lat       = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto lon       = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                TemporalADWithinTCbufferCbufferLogicalFunction(lon, lat, radius, timestamp, blobLast, distLast));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: TEMPORAL_ADWITHIN_TCBUFFER_CBUFFER */
+
+        /* BEGIN CODEGEN PARSER GLUE: TEMPORAL_EDWITHIN_TCBUFFER_TCBUFFER */
+        case AntlrSQLLexer::TEMPORAL_EDWITHIN_TCBUFFER_TCBUFFER:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 9)
+                throw InvalidQuerySyntax("TEMPORAL_EDWITHIN_TCBUFFER_TCBUFFER requires exactly 9 arguments (lonA, latA, radiusA, tsA, lonB, latB, radiusB, tsB, distance), but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto v = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                helpers.top().functionBuilder.emplace_back(
+                    ConstantValueLogicalFunction(
+                        DataTypeProvider::provideDataType(DataType::Type::FLOAT64), std::move(v)));
+            }
+
+            auto dist    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto tsB     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto radiusB = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto latB    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto lonB    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto tsA     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto radiusA = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto latA    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto lonA    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                TemporalEDWithinTCbufferTCbufferLogicalFunction(lonA, latA, radiusA, tsA, lonB, latB, radiusB, tsB, dist));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: TEMPORAL_EDWITHIN_TCBUFFER_TCBUFFER */
+
+        /* BEGIN CODEGEN PARSER GLUE: TEMPORAL_ADWITHIN_TCBUFFER_TCBUFFER */
+        case AntlrSQLLexer::TEMPORAL_ADWITHIN_TCBUFFER_TCBUFFER:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 9)
+                throw InvalidQuerySyntax("TEMPORAL_ADWITHIN_TCBUFFER_TCBUFFER requires exactly 9 arguments (lonA, latA, radiusA, tsA, lonB, latB, radiusB, tsB, distance), but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto v = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                helpers.top().functionBuilder.emplace_back(
+                    ConstantValueLogicalFunction(
+                        DataTypeProvider::provideDataType(DataType::Type::FLOAT64), std::move(v)));
+            }
+
+            auto dist    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto tsB     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto radiusB = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto latB    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto lonB    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto tsA     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto radiusA = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto latA    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto lonA    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                TemporalADWithinTCbufferTCbufferLogicalFunction(lonA, latA, radiusA, tsA, lonB, latB, radiusB, tsB, dist));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: TEMPORAL_ADWITHIN_TCBUFFER_TCBUFFER */
+
 
 
 
