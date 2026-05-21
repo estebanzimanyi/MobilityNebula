@@ -350,16 +350,17 @@ VarVal {nebula_name}PhysicalFunction::execute(const Record& record, ArenaRef& ar
 
                 // MEOS spatial-relation call — same shape as TemporalEDWithin's
                 // edwithin_tgeo_geo, but specific MEOS function per generated operator.
+                // Real MEOS spatial-rel signature: int fn(const Temporal *, const GSERIALIZED *)
+                // (no `atstart` flag — that's specific to geog_dwithin / edwithin's 3-arg variant).
                 return {meos_call}(temporalGeometry.getGeometry(),
-                                   staticGeometry.getGeometry(),
-                                   true /* atstart */);
+                                   staticGeometry.getGeometry());
             }}
             catch (const std::exception&)
             {{
                 return 0;
             }}
         }},
-        lon, lat, timestamp, geometry.getRawByteRef(), geometry.size());
+        lon, lat, timestamp, geometry.getContent(), geometry.getContentSize());
 
     return VarVal(result);
 }}
@@ -367,9 +368,9 @@ VarVal {nebula_name}PhysicalFunction::execute(const Record& record, ArenaRef& ar
 PhysicalFunctionRegistryReturnType PhysicalFunctionGeneratedRegistrar::Register{nebula_name}PhysicalFunction(
     PhysicalFunctionRegistryArguments arguments)
 {{
-    PRECONDITION(arguments.children.size() == {n_args},
+    PRECONDITION(arguments.childFunctions.size() == {n_args},
                  "{nebula_name}PhysicalFunction requires {n_args} children but got {{}}",
-                 arguments.children.size());
+                 arguments.childFunctions.size());
 {registrar_pushes}
 }}
 
@@ -416,7 +417,9 @@ def build_registrar_pushes_logical(args, nebula_name):
 def build_registrar_pushes_physical(args, nebula_name):
     pushes = []
     for i, _ in enumerate(args):
-        pushes.append(f"    auto arg{i} = std::move(arguments.children[{i}]);")
+        # PhysicalFunctionRegistryArguments uses `childFunctions`, not `children`
+        # (LogicalFunctionRegistryArguments uses `children` — see registry headers).
+        pushes.append(f"    auto arg{i} = std::move(arguments.childFunctions[{i}]);")
     pushes.append(
         f"    return {nebula_name}PhysicalFunction(" + ", ".join(f"std::move(arg{i})" for i in range(len(args))) + ");"
     )
