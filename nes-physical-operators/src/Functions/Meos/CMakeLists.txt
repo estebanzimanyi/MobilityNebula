@@ -41,3 +41,5 @@ add_plugin(TemporalNADFloatScalar PhysicalFunction nes-physical-operators Tempor
 add_plugin(TemporalNADIntScalar PhysicalFunction nes-physical-operators TemporalNADIntScalarPhysicalFunction.cpp)
 add_plugin(TemporalNADTFloat PhysicalFunction nes-physical-operators TemporalNADTFloatPhysicalFunction.cpp)
 add_plugin(TemporalNADTInt PhysicalFunction nes-physical-operators TemporalNADTIntPhysicalFunction.cpp)
+add_plugin(TemporalAtGeometry PhysicalFunction nes-physical-operators TemporalAtGeometryPhysicalFunction.cpp)
+add_plugin(TemporalMinusGeometry PhysicalFunction nes-physical-operators TemporalMinusGeometryPhysicalFunction.cpp)
