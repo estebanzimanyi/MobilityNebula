@@ -488,6 +488,236 @@ PhysicalFunctionRegistryReturnType PhysicalFunctionGeneratedRegistrar::Register{
 """
 
 
+# Physical .cpp template for one-temporal-point operators with a trailing
+# `double dist` argument (e.g. edwithin_tgeo_geo / adwithin_tgeo_geo). Same
+# layout as PHYSICAL_CPP_TEMPLATE_TEMPORAL_POINT but the MEOS call passes
+# `dist` as the 3rd argument.
+PHYSICAL_CPP_TEMPLATE_TEMPORAL_POINT_WITH_DIST = """\
+/*
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        https://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+*/
+
+#include <Functions/Meos/{nebula_name}PhysicalFunction.hpp>
+
+#include <Functions/PhysicalFunction.hpp>
+#include <MEOSWrapper.hpp>
+#include <Nautilus/DataTypes/VarVal.hpp>
+#include <Nautilus/DataTypes/VariableSizedData.hpp>
+#include <Nautilus/Interface/Record.hpp>
+#include <PhysicalFunctionRegistry.hpp>
+#include <ErrorHandling.hpp>
+#include <ExecutionContext.hpp>
+#include <fmt/format.h>
+#include <function.hpp>
+#include <string>
+#include <utility>
+#include <val.hpp>
+
+extern "C" {{
+#include <meos.h>
+#include <meos_geo.h>
+}}
+
+namespace NES {{
+
+{nebula_name}PhysicalFunction::{nebula_name}PhysicalFunction({ctor_physical_args})
+{{
+    parameterFunctions.reserve({n_args});
+{ctor_physical_pushes}
+}}
+
+VarVal {nebula_name}PhysicalFunction::execute(const Record& record, ArenaRef& arena) const
+{{
+    std::vector<VarVal> parameterValues;
+    parameterValues.reserve(parameterFunctions.size());
+    for (const auto& function : parameterFunctions)
+    {{
+        parameterValues.emplace_back(function.execute(record, arena));
+    }}
+
+    auto lon       = parameterValues[0].cast<nautilus::val<double>>();
+    auto lat       = parameterValues[1].cast<nautilus::val<double>>();
+    auto timestamp = parameterValues[2].cast<nautilus::val<uint64_t>>();
+    auto geometry  = parameterValues[3].cast<VariableSizedData>();
+    auto dist      = parameterValues[4].cast<nautilus::val<double>>();
+
+    const auto result = nautilus::invoke(
+        +[](double lonValue,
+            double latValue,
+            uint64_t timestampValue,
+            const char* geometryPtr,
+            uint32_t geometrySize,
+            double distValue) -> {return_type} {{
+            try
+            {{
+                MEOS::Meos::ensureMeosInitialized();
+                if (!(lonValue >= -180.0 && lonValue <= 180.0 && latValue >= -90.0 && latValue <= 90.0)) return 0;
+
+                const std::string timestampString = MEOS::Meos::convertEpochToTimestamp(timestampValue);
+                std::string temporalGeometryWkt = fmt::format("SRID=4326;Point({{}} {{}})@{{}}", lonValue, latValue, timestampString);
+                std::string staticGeometryWkt(geometryPtr, geometrySize);
+
+                while (!staticGeometryWkt.empty() && (staticGeometryWkt.front() == '\\'' || staticGeometryWkt.front() == '"'))
+                    staticGeometryWkt.erase(staticGeometryWkt.begin());
+                while (!staticGeometryWkt.empty() && (staticGeometryWkt.back() == '\\'' || staticGeometryWkt.back() == '"'))
+                    staticGeometryWkt.pop_back();
+
+                if (temporalGeometryWkt.empty() || staticGeometryWkt.empty()) return 0;
+
+                MEOS::Meos::TemporalGeometry temporalGeometry(temporalGeometryWkt);
+                if (!temporalGeometry.getGeometry()) return 0;
+                MEOS::Meos::StaticGeometry staticGeometry(staticGeometryWkt);
+                if (!staticGeometry.getGeometry()) return 0;
+
+                // MEOS *_tgeo_geo with trailing distance arg
+                // — int fn(const Temporal*, const GSERIALIZED*, double).
+                return {meos_call}(temporalGeometry.getGeometry(),
+                                   staticGeometry.getGeometry(),
+                                   distValue);
+            }}
+            catch (const std::exception&)
+            {{
+                return 0;
+            }}
+        }},
+        lon, lat, timestamp, geometry.getContent(), geometry.getContentSize(), dist);
+
+    return VarVal(result);
+}}
+
+PhysicalFunctionRegistryReturnType PhysicalFunctionGeneratedRegistrar::Register{nebula_name}PhysicalFunction(
+    PhysicalFunctionRegistryArguments arguments)
+{{
+    PRECONDITION(arguments.childFunctions.size() == {n_args},
+                 "{nebula_name}PhysicalFunction requires {n_args} children but got {{}}",
+                 arguments.childFunctions.size());
+{registrar_pushes}
+}}
+
+}} // namespace NES
+"""
+
+# Physical .cpp template for two-temporal-points operators with a trailing
+# `double dist` argument (edwithin_tgeo_tgeo / adwithin_tgeo_tgeo).
+PHYSICAL_CPP_TEMPLATE_TWO_TEMPORAL_POINTS_WITH_DIST = """\
+/*
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        https://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+*/
+
+#include <Functions/Meos/{nebula_name}PhysicalFunction.hpp>
+
+#include <Functions/PhysicalFunction.hpp>
+#include <MEOSWrapper.hpp>
+#include <Nautilus/DataTypes/VarVal.hpp>
+#include <Nautilus/Interface/Record.hpp>
+#include <PhysicalFunctionRegistry.hpp>
+#include <ErrorHandling.hpp>
+#include <ExecutionContext.hpp>
+#include <fmt/format.h>
+#include <function.hpp>
+#include <string>
+#include <utility>
+#include <val.hpp>
+
+extern "C" {{
+#include <meos.h>
+#include <meos_geo.h>
+}}
+
+namespace NES {{
+
+{nebula_name}PhysicalFunction::{nebula_name}PhysicalFunction({ctor_physical_args})
+{{
+    parameterFunctions.reserve({n_args});
+{ctor_physical_pushes}
+}}
+
+VarVal {nebula_name}PhysicalFunction::execute(const Record& record, ArenaRef& arena) const
+{{
+    std::vector<VarVal> parameterValues;
+    parameterValues.reserve(parameterFunctions.size());
+    for (const auto& function : parameterFunctions)
+    {{
+        parameterValues.emplace_back(function.execute(record, arena));
+    }}
+
+    auto lonA = parameterValues[0].cast<nautilus::val<double>>();
+    auto latA = parameterValues[1].cast<nautilus::val<double>>();
+    auto tsA  = parameterValues[2].cast<nautilus::val<uint64_t>>();
+    auto lonB = parameterValues[3].cast<nautilus::val<double>>();
+    auto latB = parameterValues[4].cast<nautilus::val<double>>();
+    auto tsB  = parameterValues[5].cast<nautilus::val<uint64_t>>();
+    auto dist = parameterValues[6].cast<nautilus::val<double>>();
+
+    const auto result = nautilus::invoke(
+        +[](double lonAValue, double latAValue, uint64_t tsAValue,
+            double lonBValue, double latBValue, uint64_t tsBValue,
+            double distValue) -> {return_type} {{
+            try
+            {{
+                MEOS::Meos::ensureMeosInitialized();
+                if (!(lonAValue >= -180.0 && lonAValue <= 180.0 && latAValue >= -90.0 && latAValue <= 90.0)) return 0;
+                if (!(lonBValue >= -180.0 && lonBValue <= 180.0 && latBValue >= -90.0 && latBValue <= 90.0)) return 0;
+
+                const std::string tsAString = MEOS::Meos::convertEpochToTimestamp(tsAValue);
+                const std::string tsBString = MEOS::Meos::convertEpochToTimestamp(tsBValue);
+                std::string temporalGeometryAWkt = fmt::format("SRID=4326;Point({{}} {{}})@{{}}", lonAValue, latAValue, tsAString);
+                std::string temporalGeometryBWkt = fmt::format("SRID=4326;Point({{}} {{}})@{{}}", lonBValue, latBValue, tsBString);
+
+                MEOS::Meos::TemporalGeometry temporalGeometryA(temporalGeometryAWkt);
+                if (!temporalGeometryA.getGeometry()) return 0;
+                MEOS::Meos::TemporalGeometry temporalGeometryB(temporalGeometryBWkt);
+                if (!temporalGeometryB.getGeometry()) return 0;
+
+                // MEOS *_tgeo_tgeo with trailing distance arg
+                // — int fn(const Temporal*, const Temporal*, double).
+                return {meos_call}(temporalGeometryA.getGeometry(),
+                                   temporalGeometryB.getGeometry(),
+                                   distValue);
+            }}
+            catch (const std::exception&)
+            {{
+                return 0;
+            }}
+        }},
+        lonA, latA, tsA, lonB, latB, tsB, dist);
+
+    return VarVal(result);
+}}
+
+PhysicalFunctionRegistryReturnType PhysicalFunctionGeneratedRegistrar::Register{nebula_name}PhysicalFunction(
+    PhysicalFunctionRegistryArguments arguments)
+{{
+    PRECONDITION(arguments.childFunctions.size() == {n_args},
+                 "{nebula_name}PhysicalFunction requires {n_args} children but got {{}}",
+                 arguments.childFunctions.size());
+{registrar_pushes}
+}}
+
+}} // namespace NES
+"""
+
+
 def cpp_logical_type(arg):
     """C++ constructor-arg type for a LogicalFunction parameter."""
     return "LogicalFunction"
@@ -581,7 +811,11 @@ def emit_operator(op, output_root: Path):
 
     physical_common = dict(common)
     physical_common["registrar_pushes"] = registrar_p
-    if op.get("build_two_temporal_points"):
+    if op.get("build_two_temporal_points_with_dist"):
+        physical_cpp_path.write_text(PHYSICAL_CPP_TEMPLATE_TWO_TEMPORAL_POINTS_WITH_DIST.format(**physical_common))
+    elif op.get("build_temporal_point_with_dist"):
+        physical_cpp_path.write_text(PHYSICAL_CPP_TEMPLATE_TEMPORAL_POINT_WITH_DIST.format(**physical_common))
+    elif op.get("build_two_temporal_points"):
         physical_cpp_path.write_text(PHYSICAL_CPP_TEMPLATE_TWO_TEMPORAL_POINTS.format(**physical_common))
     elif op.get("build_temporal_point"):
         physical_cpp_path.write_text(PHYSICAL_CPP_TEMPLATE_TEMPORAL_POINT.format(**physical_common))
