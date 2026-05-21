@@ -77,6 +77,12 @@
 #include <Aggregation/Function/Meos/TemporalTIntEndValueAggregationPhysicalFunction.hpp>
 #include <Aggregation/Function/Meos/TemporalTIntMinValueAggregationPhysicalFunction.hpp>
 #include <Aggregation/Function/Meos/TemporalTIntMaxValueAggregationPhysicalFunction.hpp>
+#include <Aggregation/Function/Meos/TemporalTFloatAvgValueAggregationPhysicalFunction.hpp>
+#include <Aggregation/Function/Meos/TemporalTNumberTwAvgAggregationPhysicalFunction.hpp>
+#include <Aggregation/Function/Meos/TemporalTIntAvgValueAggregationPhysicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TemporalTFloatAvgValueAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TemporalTNumberTwAvgAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TemporalTIntAvgValueAggregationLogicalFunction.hpp>
 #include <Operators/Windows/Aggregations/Meos/TemporalNumInstantsAggregationLogicalFunction.hpp>
 #include <Operators/Windows/Aggregations/Meos/TemporalNumSequencesAggregationLogicalFunction.hpp>
 #include <Operators/Windows/Aggregations/Meos/TemporalNumTimestampsAggregationLogicalFunction.hpp>
@@ -609,6 +615,84 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             continue;
         }
         /* END CODEGEN AGGREGATION GLUE: TemporalTIntMaxValue (optimizer lowering) */
+        /* BEGIN CODEGEN AGGREGATION GLUE: TemporalTFloatAvgValue (optimizer lowering) */
+        if (name == std::string_view("TemporalTFloatAvgValue"))
+        {
+            auto specificDescriptor = std::dynamic_pointer_cast<TemporalTFloatAvgValueAggregationLogicalFunction>(descriptor);
+            INVARIANT(specificDescriptor != nullptr, "Expected TemporalTFloatAvgValueAggregationLogicalFunction for TemporalTFloatAvgValue");
+
+            auto valuePF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getValueField());
+            auto tsPF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getTimestampField());
+
+            Schema stateSchema;
+            stateSchema.addField("value", specificDescriptor->getValueField().getDataType());
+            stateSchema.addField("timestamp", specificDescriptor->getTimestampField().getDataType());
+            auto tupleBufferRef = Interface::BufferRef::TupleBufferRef::create(configuration.pageSize.getValue(), stateSchema);
+
+            auto phys = std::make_shared<TemporalTFloatAvgValueAggregationPhysicalFunction>(
+                std::move(physicalInputType),
+                std::move(physicalFinalType),
+                valuePF,
+                tsPF,
+                resultFieldIdentifier,
+                tupleBufferRef);
+            aggregationPhysicalFunctions.push_back(std::move(phys));
+            continue;
+        }
+        /* END CODEGEN AGGREGATION GLUE: TemporalTFloatAvgValue (optimizer lowering) */
+
+        /* BEGIN CODEGEN AGGREGATION GLUE: TemporalTNumberTwAvg (optimizer lowering) */
+        if (name == std::string_view("TemporalTNumberTwAvg"))
+        {
+            auto specificDescriptor = std::dynamic_pointer_cast<TemporalTNumberTwAvgAggregationLogicalFunction>(descriptor);
+            INVARIANT(specificDescriptor != nullptr, "Expected TemporalTNumberTwAvgAggregationLogicalFunction for TemporalTNumberTwAvg");
+
+            auto valuePF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getValueField());
+            auto tsPF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getTimestampField());
+
+            Schema stateSchema;
+            stateSchema.addField("value", specificDescriptor->getValueField().getDataType());
+            stateSchema.addField("timestamp", specificDescriptor->getTimestampField().getDataType());
+            auto tupleBufferRef = Interface::BufferRef::TupleBufferRef::create(configuration.pageSize.getValue(), stateSchema);
+
+            auto phys = std::make_shared<TemporalTNumberTwAvgAggregationPhysicalFunction>(
+                std::move(physicalInputType),
+                std::move(physicalFinalType),
+                valuePF,
+                tsPF,
+                resultFieldIdentifier,
+                tupleBufferRef);
+            aggregationPhysicalFunctions.push_back(std::move(phys));
+            continue;
+        }
+        /* END CODEGEN AGGREGATION GLUE: TemporalTNumberTwAvg (optimizer lowering) */
+
+        /* BEGIN CODEGEN AGGREGATION GLUE: TemporalTIntAvgValue (optimizer lowering) */
+        if (name == std::string_view("TemporalTIntAvgValue"))
+        {
+            auto specificDescriptor = std::dynamic_pointer_cast<TemporalTIntAvgValueAggregationLogicalFunction>(descriptor);
+            INVARIANT(specificDescriptor != nullptr, "Expected TemporalTIntAvgValueAggregationLogicalFunction for TemporalTIntAvgValue");
+
+            auto valuePF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getValueField());
+            auto tsPF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getTimestampField());
+
+            Schema stateSchema;
+            stateSchema.addField("value", specificDescriptor->getValueField().getDataType());
+            stateSchema.addField("timestamp", specificDescriptor->getTimestampField().getDataType());
+            auto tupleBufferRef = Interface::BufferRef::TupleBufferRef::create(configuration.pageSize.getValue(), stateSchema);
+
+            auto phys = std::make_shared<TemporalTIntAvgValueAggregationPhysicalFunction>(
+                std::move(physicalInputType),
+                std::move(physicalFinalType),
+                valuePF,
+                tsPF,
+                resultFieldIdentifier,
+                tupleBufferRef);
+            aggregationPhysicalFunctions.push_back(std::move(phys));
+            continue;
+        }
+        /* END CODEGEN AGGREGATION GLUE: TemporalTIntAvgValue (optimizer lowering) */
+
 
 
         // Default path: use registry for single-input aggregations
