@@ -74,23 +74,33 @@ All BerlinMOD predicates use operators already exposed by [`MobilityNebula/PR #1
 
 `PAIR_MEETING` and `CROSS_DISTANCE` are added by this PR (and `TEMPORAL_LENGTH` is added by the parent #16); the rest are pre-existing.
 
-## Not covered (15 cells / 5 queries)
+## Streaming-semantics tier overlay
 
-Marked as future work; each requires either a new MEOS operator or a NebulaStream-side extension:
+Each BerlinMOD-Q in this scaffold falls into one of the four streaming-execution tiers used by the per-binding wirings work across the ecosystem. The vocabulary is the closed 7-value set proposed for the MEOS-API catalog as `objectModel.streamingSemantics` (see the MEOS-API #10 sibling-facet RFC).
 
-| Q | Topic | Blocker |
-|---|---|---|
-| Q5 | pairs of vehicles meeting near P | Needs a stream-self-join across vehicles. NebulaStream's SQL needs join support OR a custom MEOS aggregation that consumes a per-vehicle map of last-known positions. |
-| Q6 | cumulative distance per vehicle | Needs a custom aggregation that returns the length of the per-window `TEMPORAL_SEQUENCE` trajectory; `temporal_length(tgeo) → double` would close this. |
-| Q7 | first passage of vehicles through POIs | Cartesian (vehicle × POI) state. Could be expressed as 1 query per (POI), each emitting the per-vehicle MIN(time_utc) WHERE edwithin near POI — but that's 3+ queries per snapshot form. A custom `first_passage(tgeo, geo, d) → tstzset` aggregation would close this. |
-| Q8 | vehicles close to a road segment | Needs a MEOS `distance(tgeo, geometry(LINESTRING))` operator surfaced as a NebulaStream PhysicalFunction; not present in the current `Functions/Meos/` set. |
-| Q9 | distance between vehicles X and Y at time T | Needs cross-vehicle pair state; same blocker as Q5 (stream-self-join or pair-aggregation). |
+The mapping makes the cross-binding picture explicit — a Q's tier on NebulaStream is the same tier it would land in on Flink / Kafka. The right-most column points to the equivalent generic wiring on Flink (where adopters consume the v4 baseline through generic DataStream wrappers).
+
+| Tier | BerlinMOD-Q | NebulaStream realization | Equivalent Flink wiring |
+|---|---|---|---|
+| `stateless` | Q1 (distinct-vehicle observation) | Simple SQL aggregation; no MEOS handle | `MeosStatelessMap` / `MeosStatelessFilter` |
+| `bounded-state` | Q2, Q3, Q4, Q7 (per-vehicle / per-POI predicate state), Q8 | Aggregations that hold per-key latest position (TEMPORAL_SEQUENCE pattern); single MEOS-temporal evaluation | `MeosBoundedStateMap` (per-key `ValueState<byte[]>`) |
+| `windowed` | Q6 (per-window trajectory length) | Custom MEOS aggregation closing the window once and emitting a scalar (`TEMPORAL_LENGTH`) | `MeosWindowedAggregate` (window-close-only) |
+| `cross-stream` | Q5 (pair meeting), Q9 (cross-vehicle distance) | Four-field aggregations holding per-(vehicle-pair) state inside one operator (`PAIR_MEETING`, `CROSS_DISTANCE`) — same row-set sees all vehicles, so the "stream-self-join" is a single-aggregation enumeration rather than two streams | `MeosCrossStreamJoin` (`KeyedStream.intervalJoin`) |
+| `io-meta` / `sequence-only` | — | not exercised by the BerlinMOD-9 set | n/a |
+
+### Why the cross-stream tier looks different on NebulaStream
+
+On Flink, the cross-stream tier maps to `KeyedStream.intervalJoin(other)` — two distinct keyed streams paired within a time bound. On NebulaStream, the same semantic is realized inside a single windowed aggregation that holds per-(vehicle-pair) state and enumerates pairs at window close. The two are equivalent: both materialize the Cartesian-product evaluation, just at different points in the operator topology. The tier classification is on the **MEOS semantic**, not on the engine pattern — and Q5 / Q9 are unambiguously `cross-stream` regardless of which engine realizes them.
+
+### Why Q7 is bounded-state, not windowed
+
+Q7 ("first passage of each vehicle through each POI") would naturally read as windowed (per-window minimum). It's classified bounded-state here because the NebulaStream scaffold expresses it as a per-POI fan-out (one YAML per POI), each YAML computing the per-vehicle latest-known position predicate and selecting the per-(vehicle, POI) earliest qualifying timestamp inside the window. The state per (vehicle, POI) is bounded; no per-window reduction across the full sequence is needed.
 
 ## Sibling parity references
 
-- **MobilityFlink #3** — same nine queries × three forms via Flink Java code, 27/27 cells, pure-Java predicates with `TODO(meos)` markers for future JMEOS bridges.
-- **MobilityKafka #1** — same nine queries × three forms via Kafka-Streams Processor API, 27/27 cells, same pure-Java predicates.
-- **MobilityDB-BerlinMOD** open PRs (#29/#27/#26/#24/#23) — batch BerlinMOD-9 cross-platform reports; the snapshot form converges to those outputs as the watermark advances.
+- **MobilityFlink** — same nine queries × three forms on Flink. Original scaffold landed; the per-tier wiring infrastructure that mechanically wraps any of the 2,097 generated MEOS facade methods into Flink DataStream operators lives in the [`org.mobilitydb.flink.meos.wirings`](https://github.com/MobilityDB/MobilityFlink/blob/main/flink-processor/src/main/java/org/mobilitydb/flink/meos/wirings) package (5 generic classes covering 100% of the streamable + io-meta surface; a capstone demo composes all four tiers into one pipeline).
+- **MobilityKafka** — same nine queries × three forms on Kafka Streams, with a codegen mirror of the MEOS facade in [`org.mobilitydb.kafka.meos`](https://github.com/MobilityDB/MobilityKafka/blob/main/kafka-streams-app/src/main/java/org/mobilitydb/kafka/meos).
+- **MobilityDB-BerlinMOD** — batch BerlinMOD-9 cross-platform reports; the snapshot form on the streaming side converges to those outputs as the watermark advances.
 
 ## Running
 
