@@ -57,8 +57,12 @@
 #ifdef NES_ENABLE_MEOS
 #include <Operators/Windows/Aggregations/Meos/TemporalSequenceAggregationLogicalFunctionV2.hpp>
 #include <Operators/Windows/Aggregations/Meos/TemporalLengthAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/PairMeetingAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/CrossDistanceAggregationLogicalFunction.hpp>
 #include <Aggregation/Function/Meos/TemporalSequenceAggregationPhysicalFunction.hpp>
 #include <Aggregation/Function/Meos/TemporalLengthAggregationPhysicalFunction.hpp>
+#include <Aggregation/Function/Meos/PairMeetingAggregationPhysicalFunction.hpp>
+#include <Aggregation/Function/Meos/CrossDistanceAggregationPhysicalFunction.hpp>
 #endif
 
 namespace NES
@@ -189,6 +193,70 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
                 lonPF,
                 latPF,
                 tsPF,
+                resultFieldIdentifier,
+                tupleBufferRef);
+            aggregationPhysicalFunctions.push_back(std::move(phys));
+            continue;
+        }
+
+        // Custom lowering path for PAIR_MEETING (Q5): four input fields (lon, lat, ts, vehicle_id);
+        // returns a VARSIZED string-encoded list of meeting pairs.
+        if (name == std::string_view("PairMeeting"))
+        {
+            auto pmDescriptor = std::dynamic_pointer_cast<PairMeetingAggregationLogicalFunction>(descriptor);
+            INVARIANT(pmDescriptor != nullptr, "Expected PairMeetingAggregationLogicalFunction for PairMeeting");
+
+            auto lonPF = QueryCompilation::FunctionProvider::lowerFunction(pmDescriptor->getLonField());
+            auto latPF = QueryCompilation::FunctionProvider::lowerFunction(pmDescriptor->getLatField());
+            auto tsPF = QueryCompilation::FunctionProvider::lowerFunction(pmDescriptor->getTimestampField());
+            auto vidPF = QueryCompilation::FunctionProvider::lowerFunction(pmDescriptor->getVehicleIdField());
+
+            Schema stateSchema;
+            stateSchema.addField("lon", pmDescriptor->getLonField().getDataType());
+            stateSchema.addField("lat", pmDescriptor->getLatField().getDataType());
+            stateSchema.addField("timestamp", pmDescriptor->getTimestampField().getDataType());
+            stateSchema.addField("vehicle_id", pmDescriptor->getVehicleIdField().getDataType());
+            auto tupleBufferRef = Interface::BufferRef::TupleBufferRef::create(configuration.pageSize.getValue(), stateSchema);
+
+            auto phys = std::make_shared<PairMeetingAggregationPhysicalFunction>(
+                std::move(physicalInputType),
+                std::move(physicalFinalType),
+                lonPF,
+                latPF,
+                tsPF,
+                vidPF,
+                resultFieldIdentifier,
+                tupleBufferRef);
+            aggregationPhysicalFunctions.push_back(std::move(phys));
+            continue;
+        }
+
+        // Custom lowering path for CROSS_DISTANCE (Q9): four input fields (lon, lat, ts, vehicle_id);
+        // returns a FLOAT64 (distance between VID_A and VID_B latest positions in the window).
+        if (name == std::string_view("CrossDistance"))
+        {
+            auto cdDescriptor = std::dynamic_pointer_cast<CrossDistanceAggregationLogicalFunction>(descriptor);
+            INVARIANT(cdDescriptor != nullptr, "Expected CrossDistanceAggregationLogicalFunction for CrossDistance");
+
+            auto lonPF = QueryCompilation::FunctionProvider::lowerFunction(cdDescriptor->getLonField());
+            auto latPF = QueryCompilation::FunctionProvider::lowerFunction(cdDescriptor->getLatField());
+            auto tsPF = QueryCompilation::FunctionProvider::lowerFunction(cdDescriptor->getTimestampField());
+            auto vidPF = QueryCompilation::FunctionProvider::lowerFunction(cdDescriptor->getVehicleIdField());
+
+            Schema stateSchema;
+            stateSchema.addField("lon", cdDescriptor->getLonField().getDataType());
+            stateSchema.addField("lat", cdDescriptor->getLatField().getDataType());
+            stateSchema.addField("timestamp", cdDescriptor->getTimestampField().getDataType());
+            stateSchema.addField("vehicle_id", cdDescriptor->getVehicleIdField().getDataType());
+            auto tupleBufferRef = Interface::BufferRef::TupleBufferRef::create(configuration.pageSize.getValue(), stateSchema);
+
+            auto phys = std::make_shared<CrossDistanceAggregationPhysicalFunction>(
+                std::move(physicalInputType),
+                std::move(physicalFinalType),
+                lonPF,
+                latPF,
+                tsPF,
+                vidPF,
                 resultFieldIdentifier,
                 tupleBufferRef);
             aggregationPhysicalFunctions.push_back(std::move(phys));

@@ -32,13 +32,13 @@ For each BerlinMOD reference query Q, three NebulaStream YAMLs realize the form 
 | Q2 | "where is vehicle X (= 200) at time T?" | ✓ | ✓ | ✓ | full |
 | Q3 | "vehicles within 5 km of Brussels city centre?" | ✓ | ✓ | ✓ | full |
 | Q4 | "vehicles inside Brussels-centre rectangle R?" | ✓ | ✓ | ✓ | full |
-| Q5 | "pairs of vehicles meeting near P" | ◐ | ◐ | ◐ | **partial** — see below |
+| Q5 | "pairs of vehicles meeting near P" | ✓ | ✓ | ✓ | full (via PAIR_MEETING aggregation) |
 | Q6 | "cumulative distance per vehicle" | ✓ | ✓ | ✓ | full (via TEMPORAL_LENGTH aggregation) |
 | Q7 | "first passage of each vehicle through each POI" | ✓ | ✓ | ✓ | full (per-POI fan-out) |
 | Q8 | "vehicles close to a road segment (LINESTRING)" | ✓ | ✓ | ✓ | full |
-| Q9 | "distance between vehicles X and Y at time T" | ◐ | ◐ | ◐ | **partial** — see below |
+| Q9 | "distance between vehicles X and Y at time T" | ✓ | ✓ | ✓ | full (via CROSS_DISTANCE aggregation) |
 
-**27 of 27 cells** covered as scaffold YAMLs. **21 cells are full** — the BerlinMOD-Q semantic is computed entirely inside NebulaStream — and **6 cells remain partial** (Q5 × 3 forms + Q9 × 3 forms): NebulaStream emits the per-window inputs and a consumer post-processes them for the final BerlinMOD-Q answer.
+**27 of 27 cells** covered as scaffold YAMLs. **All 27 cells are full** — every BerlinMOD-Q semantic is computed entirely inside NebulaStream. The matrix is closed.
 
 ### Q7 fan-out pattern (full)
 
@@ -52,25 +52,13 @@ MEOS' `edwithin_tgeo_geo` accepts any geometry — POINT, POLYGON, and **LINESTR
 
 The Q6 × 3 cells are full as of this scaffold: they use the new `TEMPORAL_LENGTH(lon, lat, ts)` aggregation, which lifts the same (lon, lat, ts) tuples as `TEMPORAL_SEQUENCE` and lowers them through a MEOS `tpoint_length(Temporal*)` call to a single `FLOAT64` result — the spheroidal length in metres of the per-(window, group) trajectory. Logical, physical, parser, and lowering wiring all live in this PR.
 
-### Q5 / Q9 partial pattern (NebulaStream emits, consumer joins)
+### Q5 full via PAIR_MEETING aggregation
 
-These two queries need a stream-self-join (Q5: pair × pair across vehicles, Q9: lookup-pair across vehicles), which is not currently a NebulaStream SQL primitive. The scaffold YAMLs express what NebulaStream can compute today:
+Q5 takes four input fields (lon, lat, timestamp, vehicle_id) and emits a VARSIZED string-encoded list of meeting pairs `"vid_a,vid_b,ts,<=dMeet; …"`. Upstream `edwithin_tgeo_geo` pre-filters events to the near-P set; the aggregation's `lift` step writes per-event (lon, lat, ts, vehicle_id) into a PagedVector, and the `lower` step builds a per-vehicle latest-position map, enumerates pairs in stable order, calls MEOS' `geog_dwithin` with `dMeet = 200 m` hardcoded for the scaffold, and emits pairs that meet. Future PR can parameterize `dMeet` via a constant input.
 
-| Q | What NebulaStream emits | What the consumer computes |
-|---|---|---|
-| Q5 | per-(window, vehicle) `TEMPORAL_SEQUENCE` trajectory for each near-P vehicle | per-pair distance, pair-meeting predicate, output meeting pairs |
-| Q9 | per-(window, vehicle) `TEMPORAL_SEQUENCE` trajectory filtered to `vehicle_id ∈ {100, 200}` | join the two trajectories, compute the X-Y distance series |
+### Q9 full via CROSS_DISTANCE aggregation
 
-Each partial cell IS a valid runnable NebulaStream query; the BerlinMOD-Q final answer is one consumer-side reduction step beyond the emitted output.
-
-### Path to "full" for the two remaining partial Qs
-
-| Q | What would make it FULL |
-|---|---|
-| Q5 | stream-self-join in NebulaStream SQL, OR a custom `pair_aggregate(lon, lat, ts, vehicle_id, dMeet)` Cartesian aggregation on the MobilityNebula side |
-| Q9 | a custom `cross_distance_aggregate(lon, lat, ts, vehicle_id, targetA, targetB)` aggregation on the MobilityNebula side — same Cartesian shape as Q5 |
-
-Each is a single-PR change on MobilityNebula's `nes-physical-operators` C++ surface. The patterns and templates are documented in `TemporalLengthAggregationPhysicalFunction` (this PR) and `TemporalSequenceAggregationPhysicalFunction`; the YAML schemas already exist in this scaffold so the FULL cells would be drop-in replacements once the operators land.
+Q9 takes the same four input fields and emits a FLOAT64 — the spheroidal distance between the two target vehicles (VID_A = 100, VID_B = 200 hardcoded) at their latest known positions in the window. NaN when either is unobserved. Implemented via the MEOS `nad_tgeo_tgeo` path over single-instant tgeompoints. Future PR can parameterize (VID_A, VID_B).
 
 ## MEOS operators consumed
 
@@ -78,11 +66,13 @@ All BerlinMOD predicates use operators already exposed by [`MobilityNebula/PR #1
 
 | Operator | YAMLs using it |
 |---|---|
-| `edwithin_tgeo_geo(lon, lat, t, geom, d)` | Q3 × 3 forms (radius predicate, `POINT`), Q4 × 3 forms (region containment, `POLYGON` with `d=0.0`), Q8 × 3 forms (segment predicate, `LINESTRING`) |
-| `TEMPORAL_SEQUENCE(lon, lat, t)` (aggregation) | Q2 × 3 forms (per-window trajectory), Q5 × 3, Q9 × 3 (partial cells) |
+| `edwithin_tgeo_geo(lon, lat, t, geom, d)` | Q3 × 3 forms (radius predicate, `POINT`), Q4 × 3 forms (region containment, `POLYGON` with `d=0.0`), Q5 × 3 forms (upstream near-P filter), Q8 × 3 forms (segment predicate, `LINESTRING`) |
+| `TEMPORAL_SEQUENCE(lon, lat, t)` (aggregation) | Q2 × 3 forms (per-window trajectory) |
 | `TEMPORAL_LENGTH(lon, lat, t)` (aggregation, MEOS `tpoint_length` under the hood) | Q6 × 3 forms (cumulative distance) |
+| `PAIR_MEETING(lon, lat, t, vehicle_id)` (aggregation, MEOS `geog_dwithin` per pair under the hood) | Q5 × 3 forms (meeting pairs) |
+| `CROSS_DISTANCE(lon, lat, t, vehicle_id)` (aggregation, MEOS `nad_tgeo_tgeo` under the hood) | Q9 × 3 forms (cross-vehicle distance) |
 
-`TEMPORAL_LENGTH` is added by this PR; the rest are pre-existing.
+`PAIR_MEETING` and `CROSS_DISTANCE` are added by this PR (and `TEMPORAL_LENGTH` is added by the parent #16); the rest are pre-existing.
 
 ## Not covered (15 cells / 5 queries)
 
