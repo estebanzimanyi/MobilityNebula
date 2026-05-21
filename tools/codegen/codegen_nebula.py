@@ -797,6 +797,13 @@ def emit_operator(op, output_root: Path):
         "ctor_logical_pushes": ctor_logical_pushes,
         "ctor_physical_pushes": ctor_physical_pushes,
         "registrar_pushes": registrar_l,
+        # tnumber-shape extras (only consumed by the two tnumber templates).
+        # tnumber_wkt_format is a fmt::format pattern that ends up in C++ as-is;
+        # Python single-pass .format() means we want raw `{}@{}` here (no doubling).
+        "tnumber_value_cpp_type": op.get("tnumber_value_cpp_type", "double"),
+        "scalar_cpp_type":        op.get("scalar_cpp_type", "double"),
+        "tnumber_wkt_format":     op.get("tnumber_wkt_format", "{}@{}"),
+        "tnumber_in_fn":          op.get("tnumber_in_fn", "tfloat_in"),
     }
 
     logical_hpp_path = output_root / "nes-logical-operators/include/Functions/Meos" / f"{nebula_name}LogicalFunction.hpp"
@@ -821,6 +828,10 @@ def emit_operator(op, output_root: Path):
         physical_cpp_path.write_text(PHYSICAL_CPP_TEMPLATE_TWO_TEMPORAL_POINTS.format(**physical_common))
     elif op.get("build_temporal_point"):
         physical_cpp_path.write_text(PHYSICAL_CPP_TEMPLATE_TEMPORAL_POINT.format(**physical_common))
+    elif op.get("build_tnumber_point_with_scalar"):
+        physical_cpp_path.write_text(PHYSICAL_CPP_TEMPLATE_TNUMBER_POINT_WITH_SCALAR.format(**physical_common))
+    elif op.get("build_two_tnumber_points"):
+        physical_cpp_path.write_text(PHYSICAL_CPP_TEMPLATE_TWO_TNUMBER_POINTS.format(**physical_common))
     else:
         sys.stderr.write(
             f"  ! {nebula_name}: physical-cpp template for non-temporal-point ops is not yet implemented; "
@@ -828,6 +839,203 @@ def emit_operator(op, output_root: Path):
         )
 
     sys.stderr.write(f"  ✓ {nebula_name}: emitted 4 files ({logical_hpp_path.relative_to(output_root)} + siblings)\n")
+
+
+# Physical .cpp template for one-tnumber-point operators with a trailing
+# scalar (double or int) — e.g. nad_tfloat_float, nad_tint_int. The MEOS
+# call signature is `<ret> fn(const Temporal*, <scalar>)`.
+# 3 args: value, timestamp, scalar.
+PHYSICAL_CPP_TEMPLATE_TNUMBER_POINT_WITH_SCALAR = """\
+/*
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        https://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+*/
+
+#include <Functions/Meos/{nebula_name}PhysicalFunction.hpp>
+
+#include <Functions/PhysicalFunction.hpp>
+#include <MEOSWrapper.hpp>
+#include <Nautilus/DataTypes/VarVal.hpp>
+#include <Nautilus/Interface/Record.hpp>
+#include <PhysicalFunctionRegistry.hpp>
+#include <ErrorHandling.hpp>
+#include <ExecutionContext.hpp>
+#include <fmt/format.h>
+#include <function.hpp>
+#include <string>
+#include <utility>
+#include <val.hpp>
+
+extern "C" {{
+#include <meos.h>
+}}
+
+namespace NES {{
+
+{nebula_name}PhysicalFunction::{nebula_name}PhysicalFunction({ctor_physical_args})
+{{
+    parameterFunctions.reserve({n_args});
+{ctor_physical_pushes}
+}}
+
+VarVal {nebula_name}PhysicalFunction::execute(const Record& record, ArenaRef& arena) const
+{{
+    std::vector<VarVal> parameterValues;
+    parameterValues.reserve(parameterFunctions.size());
+    for (const auto& function : parameterFunctions)
+    {{
+        parameterValues.emplace_back(function.execute(record, arena));
+    }}
+
+    auto value     = parameterValues[0].cast<nautilus::val<{tnumber_value_cpp_type}>>();
+    auto timestamp = parameterValues[1].cast<nautilus::val<uint64_t>>();
+    auto scalar    = parameterValues[2].cast<nautilus::val<{scalar_cpp_type}>>();
+
+    const auto result = nautilus::invoke(
+        +[]({tnumber_value_cpp_type} valueValue,
+            uint64_t timestampValue,
+            {scalar_cpp_type} scalarValue) -> {return_type} {{
+            try
+            {{
+                MEOS::Meos::ensureMeosInitialized();
+                const std::string tsString = MEOS::Meos::convertEpochToTimestamp(timestampValue);
+                std::string wkt = fmt::format("{tnumber_wkt_format}", valueValue, tsString);
+                Temporal* temp = {tnumber_in_fn}(wkt.c_str());
+                if (!temp) return 0;
+                {return_type} r = {meos_call}(temp, scalarValue);
+                free(temp);
+                return r;
+            }}
+            catch (const std::exception&)
+            {{
+                return 0;
+            }}
+        }},
+        value, timestamp, scalar);
+
+    return VarVal(result);
+}}
+
+PhysicalFunctionRegistryReturnType PhysicalFunctionGeneratedRegistrar::Register{nebula_name}PhysicalFunction(
+    PhysicalFunctionRegistryArguments arguments)
+{{
+    PRECONDITION(arguments.childFunctions.size() == {n_args},
+                 "{nebula_name}PhysicalFunction requires {n_args} children but got {{}}",
+                 arguments.childFunctions.size());
+{registrar_pushes}
+}}
+
+}} // namespace NES
+"""
+
+# Physical .cpp template for two-tnumber-point operators (e.g. nad_tfloat_tfloat,
+# nad_tint_tint). MEOS signature `<ret> fn(const Temporal*, const Temporal*)`.
+# 4 args: valueA, tsA, valueB, tsB.
+PHYSICAL_CPP_TEMPLATE_TWO_TNUMBER_POINTS = """\
+/*
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        https://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+*/
+
+#include <Functions/Meos/{nebula_name}PhysicalFunction.hpp>
+
+#include <Functions/PhysicalFunction.hpp>
+#include <MEOSWrapper.hpp>
+#include <Nautilus/DataTypes/VarVal.hpp>
+#include <Nautilus/Interface/Record.hpp>
+#include <PhysicalFunctionRegistry.hpp>
+#include <ErrorHandling.hpp>
+#include <ExecutionContext.hpp>
+#include <fmt/format.h>
+#include <function.hpp>
+#include <string>
+#include <utility>
+#include <val.hpp>
+
+extern "C" {{
+#include <meos.h>
+}}
+
+namespace NES {{
+
+{nebula_name}PhysicalFunction::{nebula_name}PhysicalFunction({ctor_physical_args})
+{{
+    parameterFunctions.reserve({n_args});
+{ctor_physical_pushes}
+}}
+
+VarVal {nebula_name}PhysicalFunction::execute(const Record& record, ArenaRef& arena) const
+{{
+    std::vector<VarVal> parameterValues;
+    parameterValues.reserve(parameterFunctions.size());
+    for (const auto& function : parameterFunctions)
+    {{
+        parameterValues.emplace_back(function.execute(record, arena));
+    }}
+
+    auto valueA = parameterValues[0].cast<nautilus::val<{tnumber_value_cpp_type}>>();
+    auto tsA    = parameterValues[1].cast<nautilus::val<uint64_t>>();
+    auto valueB = parameterValues[2].cast<nautilus::val<{tnumber_value_cpp_type}>>();
+    auto tsB    = parameterValues[3].cast<nautilus::val<uint64_t>>();
+
+    const auto result = nautilus::invoke(
+        +[]({tnumber_value_cpp_type} valueAValue, uint64_t tsAValue,
+            {tnumber_value_cpp_type} valueBValue, uint64_t tsBValue) -> {return_type} {{
+            try
+            {{
+                MEOS::Meos::ensureMeosInitialized();
+                const std::string tsAStr = MEOS::Meos::convertEpochToTimestamp(tsAValue);
+                const std::string tsBStr = MEOS::Meos::convertEpochToTimestamp(tsBValue);
+                std::string wktA = fmt::format("{tnumber_wkt_format}", valueAValue, tsAStr);
+                std::string wktB = fmt::format("{tnumber_wkt_format}", valueBValue, tsBStr);
+                Temporal* tempA = {tnumber_in_fn}(wktA.c_str());
+                if (!tempA) return 0;
+                Temporal* tempB = {tnumber_in_fn}(wktB.c_str());
+                if (!tempB) {{ free(tempA); return 0; }}
+                {return_type} r = {meos_call}(tempA, tempB);
+                free(tempA);
+                free(tempB);
+                return r;
+            }}
+            catch (const std::exception&)
+            {{
+                return 0;
+            }}
+        }},
+        valueA, tsA, valueB, tsB);
+
+    return VarVal(result);
+}}
+
+PhysicalFunctionRegistryReturnType PhysicalFunctionGeneratedRegistrar::Register{nebula_name}PhysicalFunction(
+    PhysicalFunctionRegistryArguments arguments)
+{{
+    PRECONDITION(arguments.childFunctions.size() == {n_args},
+                 "{nebula_name}PhysicalFunction requires {n_args} children but got {{}}",
+                 arguments.childFunctions.size());
+{registrar_pushes}
+}}
+
+}} // namespace NES
+"""
 
 
 # ===========================================================================
@@ -976,6 +1184,63 @@ DISPATCH_CASE_TWO_TEMPORAL_POINTS_WITH_DIST = """\
 """
 
 
+# 3-arg shape: value, ts, scalar (scalar may be FLOAT64 or INT32, only one constant).
+DISPATCH_CASE_TNUMBER_POINT_WITH_SCALAR = """\
+        /* BEGIN CODEGEN PARSER GLUE: {sql_token} */
+        case AntlrSQLLexer::{sql_token}:
+        {{
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("{sql_token} requires exactly 3 arguments (value, timestamp, scalar), but got {{}}", argCount);
+
+            /* Lift the scalar constant — accept FLOAT64 (strtod-clean) and INT32 */
+            while (!helpers.top().constantBuilder.empty())
+            {{
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }}
+
+            auto scalar    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto timestamp = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto value     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                {nebula_name}LogicalFunction(value, timestamp, scalar));
+        }}
+        break;
+        /* END CODEGEN PARSER GLUE: {sql_token} */
+"""
+
+# 4-arg shape: valueA, tsA, valueB, tsB (no constants).
+DISPATCH_CASE_TWO_TNUMBER_POINTS = """\
+        /* BEGIN CODEGEN PARSER GLUE: {sql_token} */
+        case AntlrSQLLexer::{sql_token}:
+        {{
+            const auto argCount = context->expression().size();
+            if (argCount != 4)
+                throw InvalidQuerySyntax("{sql_token} requires exactly 4 arguments (valueA, tsA, valueB, tsB), but got {{}}", argCount);
+
+            auto tsB    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto valueB = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto tsA    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto valueA = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                {nebula_name}LogicalFunction(valueA, tsA, valueB, tsB));
+        }}
+        break;
+        /* END CODEGEN PARSER GLUE: {sql_token} */
+"""
+
+
 def dispatch_case_for(op):
     """Pick the dispatch-case template that matches an operator's shape."""
     if op.get("build_two_temporal_points_with_dist"):
@@ -986,6 +1251,10 @@ def dispatch_case_for(op):
         return DISPATCH_CASE_TWO_TEMPORAL_POINTS
     if op.get("build_temporal_point"):
         return DISPATCH_CASE_ONE_TEMPORAL_POINT
+    if op.get("build_tnumber_point_with_scalar"):
+        return DISPATCH_CASE_TNUMBER_POINT_WITH_SCALAR
+    if op.get("build_two_tnumber_points"):
+        return DISPATCH_CASE_TWO_TNUMBER_POINTS
     return None
 
 
@@ -1132,17 +1401,27 @@ def inject_parser_cpp(operators, cpp_path: Path) -> int:
         cases_block.append(tmpl.format(sql_token=op["sql_token"], nebula_name=op["nebula_name"]))
         n_added += 1
     if cases_block:
-        # Insert before the `default:` immediately following the TGEO_AT_STBOX case block.
-        anchor_re = re.compile(
-            r"(case AntlrSQLLexer::TGEO_AT_STBOX:[\s\S]+?\n\s*break;\n)(\s*default:)",
-        )
-        m = anchor_re.search(body)
-        if m is None:
-            sys.stderr.write(f"  ! parser-cpp: TGEO_AT_STBOX→default anchor not found\n")
+        # Find the insertion point: prefer just after the LAST existing
+        # `/* END CODEGEN PARSER GLUE: ... */` marker (so successive codegen
+        # runs cluster their cases), else fall back to inserting before the
+        # `default:` that immediately follows the TGEO_AT_STBOX case block.
+        last_end_re = re.compile(r"/\* END CODEGEN PARSER GLUE: [^*]+\*/")
+        ends = list(last_end_re.finditer(body))
+        if ends:
+            insert_at = ends[-1].end()
+            body = body[:insert_at] + "\n" + "\n".join(cases_block) + body[insert_at:]
+            sys.stderr.write(f"  ✓ parser-cpp dispatch: added {len(cases_block)} case(s) after last codegen marker\n")
         else:
-            insertion = m.group(1) + "\n" + "\n".join(cases_block) + "\n" + m.group(2)
-            body = body[: m.start()] + insertion + body[m.end():]
-            sys.stderr.write(f"  ✓ parser-cpp dispatch: added {len(cases_block)} case(s)\n")
+            anchor_re = re.compile(
+                r"(case AntlrSQLLexer::TGEO_AT_STBOX:[\s\S]+?\n\s*break;\n)(\s*default:)",
+            )
+            m = anchor_re.search(body)
+            if m is None:
+                sys.stderr.write(f"  ! parser-cpp: no anchor (TGEO_AT_STBOX→default or codegen END marker) found\n")
+            else:
+                insertion = m.group(1) + "\n" + "\n".join(cases_block) + "\n" + m.group(2)
+                body = body[: m.start()] + insertion + body[m.end():]
+                sys.stderr.write(f"  ✓ parser-cpp dispatch: added {len(cases_block)} case(s) before default:\n")
 
     cpp_path.write_text(body)
     return n_added
