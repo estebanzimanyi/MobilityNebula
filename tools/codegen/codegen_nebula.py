@@ -836,6 +836,14 @@ def emit_operator(op, output_root: Path):
         physical_cpp_path.write_text(PHYSICAL_CPP_TEMPLATE_TWO_TNPOINT_POINTS_VIA_COMPOSITION.format(**physical_common))
     elif op.get("build_tnpoint_point_via_composition"):
         physical_cpp_path.write_text(PHYSICAL_CPP_TEMPLATE_TNPOINT_POINT_VIA_COMPOSITION.format(**physical_common))
+    elif op.get("build_two_tpose_points_with_dist_via_composition"):
+        physical_cpp_path.write_text(PHYSICAL_CPP_TEMPLATE_TWO_TPOSE_POINTS_WITH_DIST_VIA_COMPOSITION.format(**physical_common))
+    elif op.get("build_tpose_point_with_dist_via_composition"):
+        physical_cpp_path.write_text(PHYSICAL_CPP_TEMPLATE_TPOSE_POINT_WITH_DIST_VIA_COMPOSITION.format(**physical_common))
+    elif op.get("build_two_tnpoint_points_with_dist_via_composition"):
+        physical_cpp_path.write_text(PHYSICAL_CPP_TEMPLATE_TWO_TNPOINT_POINTS_WITH_DIST_VIA_COMPOSITION.format(**physical_common))
+    elif op.get("build_tnpoint_point_with_dist_via_composition"):
+        physical_cpp_path.write_text(PHYSICAL_CPP_TEMPLATE_TNPOINT_POINT_WITH_DIST_VIA_COMPOSITION.format(**physical_common))
     elif op.get("build_two_tcbuffer_points_with_dist"):
         physical_cpp_path.write_text(PHYSICAL_CPP_TEMPLATE_TWO_TCBUFFER_POINTS_WITH_DIST.format(**physical_common))
     elif op.get("build_tcbuffer_point_cbuffer_with_dist"):
@@ -1580,6 +1588,485 @@ VarVal {nebula_name}PhysicalFunction::execute(const Record& record, ArenaRef& ar
             }}
         }},
         ridA, fractionA, tsA, ridB, fractionB, tsB);
+
+    return VarVal(result);
+}}
+
+PhysicalFunctionRegistryReturnType PhysicalFunctionGeneratedRegistrar::Register{nebula_name}PhysicalFunction(
+    PhysicalFunctionRegistryArguments arguments)
+{{
+    PRECONDITION(arguments.childFunctions.size() == {n_args},
+                 "{nebula_name}PhysicalFunction requires {n_args} children but got {{}}",
+                 arguments.childFunctions.size());
+{registrar_pushes}
+}}
+
+}} // namespace NES
+"""
+
+
+# Physical .cpp template for tpose × static geom dwithin VIA COMPOSITION —
+# the tpose composition body (W14) plus a trailing `double dist` forwarded
+# to the 3-arg `_tgeo_geo` dwithin call. 6 SQL args: x, y, theta, ts,
+# geometry, dist.
+PHYSICAL_CPP_TEMPLATE_TPOSE_POINT_WITH_DIST_VIA_COMPOSITION = """\
+/*
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        https://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+*/
+
+#include <Functions/Meos/{nebula_name}PhysicalFunction.hpp>
+
+#include <Functions/PhysicalFunction.hpp>
+#include <MEOSWrapper.hpp>
+#include <Nautilus/DataTypes/VarVal.hpp>
+#include <Nautilus/DataTypes/VariableSizedData.hpp>
+#include <Nautilus/Interface/Record.hpp>
+#include <PhysicalFunctionRegistry.hpp>
+#include <ErrorHandling.hpp>
+#include <ExecutionContext.hpp>
+#include <fmt/format.h>
+#include <function.hpp>
+#include <string>
+#include <utility>
+#include <val.hpp>
+
+extern "C" {{
+#include <meos.h>
+#include <meos_geo.h>
+#include <meos_pose.h>
+}}
+
+namespace NES {{
+
+{nebula_name}PhysicalFunction::{nebula_name}PhysicalFunction({ctor_physical_args})
+{{
+    parameterFunctions.reserve({n_args});
+{ctor_physical_pushes}
+}}
+
+VarVal {nebula_name}PhysicalFunction::execute(const Record& record, ArenaRef& arena) const
+{{
+    std::vector<VarVal> parameterValues;
+    parameterValues.reserve(parameterFunctions.size());
+    for (const auto& function : parameterFunctions)
+    {{
+        parameterValues.emplace_back(function.execute(record, arena));
+    }}
+
+    auto x         = parameterValues[0].cast<nautilus::val<double>>();
+    auto y         = parameterValues[1].cast<nautilus::val<double>>();
+    auto theta     = parameterValues[2].cast<nautilus::val<double>>();
+    auto timestamp = parameterValues[3].cast<nautilus::val<uint64_t>>();
+    auto geometry  = parameterValues[4].cast<VariableSizedData>();
+    auto dist      = parameterValues[5].cast<nautilus::val<double>>();
+
+    const auto result = nautilus::invoke(
+        +[](double xValue, double yValue, double thetaValue, uint64_t timestampValue,
+            const char* geometryPtr, uint32_t geometrySize, double distValue) -> {return_type} {{
+            try
+            {{
+                MEOS::Meos::ensureMeosInitialized();
+                if (!(xValue >= -180.0 && xValue <= 180.0 && yValue >= -90.0 && yValue <= 90.0)) return 0;
+
+                const std::string timestampString = MEOS::Meos::convertEpochToTimestamp(timestampValue);
+                std::string tposeWkt = fmt::format("Pose(Point({{}} {{}}), {{}})@{{}}",
+                                                  xValue, yValue, thetaValue, timestampString);
+                std::string staticGeometryWkt(geometryPtr, geometrySize);
+
+                while (!staticGeometryWkt.empty() && (staticGeometryWkt.front() == '\\'' || staticGeometryWkt.front() == '"'))
+                    staticGeometryWkt.erase(staticGeometryWkt.begin());
+                while (!staticGeometryWkt.empty() && (staticGeometryWkt.back() == '\\'' || staticGeometryWkt.back() == '"'))
+                    staticGeometryWkt.pop_back();
+
+                if (tposeWkt.empty() || staticGeometryWkt.empty()) return 0;
+
+                Temporal* tpose = tpose_in(tposeWkt.c_str());
+                if (!tpose) return 0;
+                Temporal* tgeo = tpose_to_tpoint(tpose);
+                if (!tgeo) {{ free(tpose); return 0; }}
+                MEOS::Meos::StaticGeometry staticGeometry(staticGeometryWkt);
+                if (!staticGeometry.getGeometry()) {{ free(tgeo); free(tpose); return 0; }}
+
+                {return_type} r = {meos_call}(tgeo, staticGeometry.getGeometry(), distValue);
+                free(tgeo);
+                free(tpose);
+                return r;
+            }}
+            catch (const std::exception&)
+            {{
+                return 0;
+            }}
+        }},
+        x, y, theta, timestamp, geometry.getContent(), geometry.getContentSize(), dist);
+
+    return VarVal(result);
+}}
+
+PhysicalFunctionRegistryReturnType PhysicalFunctionGeneratedRegistrar::Register{nebula_name}PhysicalFunction(
+    PhysicalFunctionRegistryArguments arguments)
+{{
+    PRECONDITION(arguments.childFunctions.size() == {n_args},
+                 "{nebula_name}PhysicalFunction requires {n_args} children but got {{}}",
+                 arguments.childFunctions.size());
+{registrar_pushes}
+}}
+
+}} // namespace NES
+"""
+
+
+# Physical .cpp template for tpose × tpose dwithin VIA COMPOSITION — the
+# two-tpose composition body (W15) plus a trailing `double dist` forwarded
+# to the 3-arg `_tgeo_tgeo` dwithin call. 9 SQL args.
+PHYSICAL_CPP_TEMPLATE_TWO_TPOSE_POINTS_WITH_DIST_VIA_COMPOSITION = """\
+/*
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        https://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+*/
+
+#include <Functions/Meos/{nebula_name}PhysicalFunction.hpp>
+
+#include <Functions/PhysicalFunction.hpp>
+#include <MEOSWrapper.hpp>
+#include <Nautilus/DataTypes/VarVal.hpp>
+#include <Nautilus/DataTypes/VariableSizedData.hpp>
+#include <Nautilus/Interface/Record.hpp>
+#include <PhysicalFunctionRegistry.hpp>
+#include <ErrorHandling.hpp>
+#include <ExecutionContext.hpp>
+#include <fmt/format.h>
+#include <function.hpp>
+#include <string>
+#include <utility>
+#include <val.hpp>
+
+extern "C" {{
+#include <meos.h>
+#include <meos_geo.h>
+#include <meos_pose.h>
+}}
+
+namespace NES {{
+
+{nebula_name}PhysicalFunction::{nebula_name}PhysicalFunction({ctor_physical_args})
+{{
+    parameterFunctions.reserve({n_args});
+{ctor_physical_pushes}
+}}
+
+VarVal {nebula_name}PhysicalFunction::execute(const Record& record, ArenaRef& arena) const
+{{
+    std::vector<VarVal> parameterValues;
+    parameterValues.reserve(parameterFunctions.size());
+    for (const auto& function : parameterFunctions)
+    {{
+        parameterValues.emplace_back(function.execute(record, arena));
+    }}
+
+    auto xA     = parameterValues[0].cast<nautilus::val<double>>();
+    auto yA     = parameterValues[1].cast<nautilus::val<double>>();
+    auto thetaA = parameterValues[2].cast<nautilus::val<double>>();
+    auto tsA    = parameterValues[3].cast<nautilus::val<uint64_t>>();
+    auto xB     = parameterValues[4].cast<nautilus::val<double>>();
+    auto yB     = parameterValues[5].cast<nautilus::val<double>>();
+    auto thetaB = parameterValues[6].cast<nautilus::val<double>>();
+    auto tsB    = parameterValues[7].cast<nautilus::val<uint64_t>>();
+    auto dist   = parameterValues[8].cast<nautilus::val<double>>();
+
+    const auto result = nautilus::invoke(
+        +[](double xAValue, double yAValue, double thetaAValue, uint64_t tsAValue,
+            double xBValue, double yBValue, double thetaBValue, uint64_t tsBValue,
+            double distValue) -> {return_type} {{
+            try
+            {{
+                MEOS::Meos::ensureMeosInitialized();
+                if (!(xAValue >= -180.0 && xAValue <= 180.0 && yAValue >= -90.0 && yAValue <= 90.0)) return 0;
+                if (!(xBValue >= -180.0 && xBValue <= 180.0 && yBValue >= -90.0 && yBValue <= 90.0)) return 0;
+
+                const std::string tsAString = MEOS::Meos::convertEpochToTimestamp(tsAValue);
+                const std::string tsBString = MEOS::Meos::convertEpochToTimestamp(tsBValue);
+                std::string tposeAWkt = fmt::format("Pose(Point({{}} {{}}), {{}})@{{}}", xAValue, yAValue, thetaAValue, tsAString);
+                std::string tposeBWkt = fmt::format("Pose(Point({{}} {{}}), {{}})@{{}}", xBValue, yBValue, thetaBValue, tsBString);
+
+                if (tposeAWkt.empty() || tposeBWkt.empty()) return 0;
+
+                Temporal* tposeA = tpose_in(tposeAWkt.c_str());
+                if (!tposeA) return 0;
+                Temporal* tgeoA = tpose_to_tpoint(tposeA);
+                if (!tgeoA) {{ free(tposeA); return 0; }}
+                Temporal* tposeB = tpose_in(tposeBWkt.c_str());
+                if (!tposeB) {{ free(tgeoA); free(tposeA); return 0; }}
+                Temporal* tgeoB = tpose_to_tpoint(tposeB);
+                if (!tgeoB) {{ free(tposeB); free(tgeoA); free(tposeA); return 0; }}
+
+                {return_type} r = {meos_call}(tgeoA, tgeoB, distValue);
+                free(tgeoB);
+                free(tposeB);
+                free(tgeoA);
+                free(tposeA);
+                return r;
+            }}
+            catch (const std::exception&)
+            {{
+                return 0;
+            }}
+        }},
+        xA, yA, thetaA, tsA, xB, yB, thetaB, tsB, dist);
+
+    return VarVal(result);
+}}
+
+PhysicalFunctionRegistryReturnType PhysicalFunctionGeneratedRegistrar::Register{nebula_name}PhysicalFunction(
+    PhysicalFunctionRegistryArguments arguments)
+{{
+    PRECONDITION(arguments.childFunctions.size() == {n_args},
+                 "{nebula_name}PhysicalFunction requires {n_args} children but got {{}}",
+                 arguments.childFunctions.size());
+{registrar_pushes}
+}}
+
+}} // namespace NES
+"""
+
+
+# Physical .cpp template for tnpoint × static geom dwithin VIA COMPOSITION —
+# tnpoint composition body (W18) plus a trailing `double dist` forwarded to
+# the 3-arg `_tgeo_geo` dwithin call. 5 SQL args: rid, fraction, ts,
+# geometry, dist.
+PHYSICAL_CPP_TEMPLATE_TNPOINT_POINT_WITH_DIST_VIA_COMPOSITION = """\
+/*
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        https://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+*/
+
+#include <Functions/Meos/{nebula_name}PhysicalFunction.hpp>
+
+#include <Functions/PhysicalFunction.hpp>
+#include <MEOSWrapper.hpp>
+#include <Nautilus/DataTypes/VarVal.hpp>
+#include <Nautilus/DataTypes/VariableSizedData.hpp>
+#include <Nautilus/Interface/Record.hpp>
+#include <PhysicalFunctionRegistry.hpp>
+#include <ErrorHandling.hpp>
+#include <ExecutionContext.hpp>
+#include <fmt/format.h>
+#include <function.hpp>
+#include <string>
+#include <utility>
+#include <val.hpp>
+
+extern "C" {{
+#include <meos.h>
+#include <meos_geo.h>
+#include <meos_npoint.h>
+}}
+
+namespace NES {{
+
+{nebula_name}PhysicalFunction::{nebula_name}PhysicalFunction({ctor_physical_args})
+{{
+    parameterFunctions.reserve({n_args});
+{ctor_physical_pushes}
+}}
+
+VarVal {nebula_name}PhysicalFunction::execute(const Record& record, ArenaRef& arena) const
+{{
+    std::vector<VarVal> parameterValues;
+    parameterValues.reserve(parameterFunctions.size());
+    for (const auto& function : parameterFunctions)
+    {{
+        parameterValues.emplace_back(function.execute(record, arena));
+    }}
+
+    auto rid       = parameterValues[0].cast<nautilus::val<uint64_t>>();
+    auto fraction  = parameterValues[1].cast<nautilus::val<double>>();
+    auto timestamp = parameterValues[2].cast<nautilus::val<uint64_t>>();
+    auto geometry  = parameterValues[3].cast<VariableSizedData>();
+    auto dist      = parameterValues[4].cast<nautilus::val<double>>();
+
+    const auto result = nautilus::invoke(
+        +[](uint64_t ridValue, double fractionValue, uint64_t timestampValue,
+            const char* geometryPtr, uint32_t geometrySize, double distValue) -> {return_type} {{
+            try
+            {{
+                MEOS::Meos::ensureMeosInitialized();
+
+                const std::string timestampString = MEOS::Meos::convertEpochToTimestamp(timestampValue);
+                std::string tnpointWkt = fmt::format("NPoint({{}}, {{}})@{{}}", ridValue, fractionValue, timestampString);
+                std::string staticGeometryWkt(geometryPtr, geometrySize);
+
+                while (!staticGeometryWkt.empty() && (staticGeometryWkt.front() == '\\'' || staticGeometryWkt.front() == '"'))
+                    staticGeometryWkt.erase(staticGeometryWkt.begin());
+                while (!staticGeometryWkt.empty() && (staticGeometryWkt.back() == '\\'' || staticGeometryWkt.back() == '"'))
+                    staticGeometryWkt.pop_back();
+
+                if (tnpointWkt.empty() || staticGeometryWkt.empty()) return 0;
+
+                Temporal* tnpoint = tnpoint_in(tnpointWkt.c_str());
+                if (!tnpoint) return 0;
+                Temporal* tgeo = tnpoint_to_tgeompoint(tnpoint);
+                if (!tgeo) {{ free(tnpoint); return 0; }}
+                MEOS::Meos::StaticGeometry staticGeometry(staticGeometryWkt);
+                if (!staticGeometry.getGeometry()) {{ free(tgeo); free(tnpoint); return 0; }}
+
+                {return_type} r = {meos_call}(tgeo, staticGeometry.getGeometry(), distValue);
+                free(tgeo);
+                free(tnpoint);
+                return r;
+            }}
+            catch (const std::exception&)
+            {{
+                return 0;
+            }}
+        }},
+        rid, fraction, timestamp, geometry.getContent(), geometry.getContentSize(), dist);
+
+    return VarVal(result);
+}}
+
+PhysicalFunctionRegistryReturnType PhysicalFunctionGeneratedRegistrar::Register{nebula_name}PhysicalFunction(
+    PhysicalFunctionRegistryArguments arguments)
+{{
+    PRECONDITION(arguments.childFunctions.size() == {n_args},
+                 "{nebula_name}PhysicalFunction requires {n_args} children but got {{}}",
+                 arguments.childFunctions.size());
+{registrar_pushes}
+}}
+
+}} // namespace NES
+"""
+
+
+# Physical .cpp template for tnpoint × tnpoint dwithin VIA COMPOSITION — the
+# two-tnpoint composition body (W18) plus a trailing `double dist` forwarded
+# to the 3-arg `_tgeo_tgeo` dwithin call. 7 SQL args.
+PHYSICAL_CPP_TEMPLATE_TWO_TNPOINT_POINTS_WITH_DIST_VIA_COMPOSITION = """\
+/*
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        https://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+*/
+
+#include <Functions/Meos/{nebula_name}PhysicalFunction.hpp>
+
+#include <Functions/PhysicalFunction.hpp>
+#include <MEOSWrapper.hpp>
+#include <Nautilus/DataTypes/VarVal.hpp>
+#include <Nautilus/DataTypes/VariableSizedData.hpp>
+#include <Nautilus/Interface/Record.hpp>
+#include <PhysicalFunctionRegistry.hpp>
+#include <ErrorHandling.hpp>
+#include <ExecutionContext.hpp>
+#include <fmt/format.h>
+#include <function.hpp>
+#include <string>
+#include <utility>
+#include <val.hpp>
+
+extern "C" {{
+#include <meos.h>
+#include <meos_geo.h>
+#include <meos_npoint.h>
+}}
+
+namespace NES {{
+
+{nebula_name}PhysicalFunction::{nebula_name}PhysicalFunction({ctor_physical_args})
+{{
+    parameterFunctions.reserve({n_args});
+{ctor_physical_pushes}
+}}
+
+VarVal {nebula_name}PhysicalFunction::execute(const Record& record, ArenaRef& arena) const
+{{
+    std::vector<VarVal> parameterValues;
+    parameterValues.reserve(parameterFunctions.size());
+    for (const auto& function : parameterFunctions)
+    {{
+        parameterValues.emplace_back(function.execute(record, arena));
+    }}
+
+    auto ridA      = parameterValues[0].cast<nautilus::val<uint64_t>>();
+    auto fractionA = parameterValues[1].cast<nautilus::val<double>>();
+    auto tsA       = parameterValues[2].cast<nautilus::val<uint64_t>>();
+    auto ridB      = parameterValues[3].cast<nautilus::val<uint64_t>>();
+    auto fractionB = parameterValues[4].cast<nautilus::val<double>>();
+    auto tsB       = parameterValues[5].cast<nautilus::val<uint64_t>>();
+    auto dist      = parameterValues[6].cast<nautilus::val<double>>();
+
+    const auto result = nautilus::invoke(
+        +[](uint64_t ridAValue, double fractionAValue, uint64_t tsAValue,
+            uint64_t ridBValue, double fractionBValue, uint64_t tsBValue,
+            double distValue) -> {return_type} {{
+            try
+            {{
+                MEOS::Meos::ensureMeosInitialized();
+
+                const std::string tsAString = MEOS::Meos::convertEpochToTimestamp(tsAValue);
+                const std::string tsBString = MEOS::Meos::convertEpochToTimestamp(tsBValue);
+                std::string tnpointAWkt = fmt::format("NPoint({{}}, {{}})@{{}}", ridAValue, fractionAValue, tsAString);
+                std::string tnpointBWkt = fmt::format("NPoint({{}}, {{}})@{{}}", ridBValue, fractionBValue, tsBString);
+
+                if (tnpointAWkt.empty() || tnpointBWkt.empty()) return 0;
+
+                Temporal* tnpointA = tnpoint_in(tnpointAWkt.c_str());
+                if (!tnpointA) return 0;
+                Temporal* tgeoA = tnpoint_to_tgeompoint(tnpointA);
+                if (!tgeoA) {{ free(tnpointA); return 0; }}
+                Temporal* tnpointB = tnpoint_in(tnpointBWkt.c_str());
+                if (!tnpointB) {{ free(tgeoA); free(tnpointA); return 0; }}
+                Temporal* tgeoB = tnpoint_to_tgeompoint(tnpointB);
+                if (!tgeoB) {{ free(tnpointB); free(tgeoA); free(tnpointA); return 0; }}
+
+                {return_type} r = {meos_call}(tgeoA, tgeoB, distValue);
+                free(tgeoB);
+                free(tnpointB);
+                free(tgeoA);
+                free(tnpointA);
+                return r;
+            }}
+            catch (const std::exception&)
+            {{
+                return 0;
+            }}
+        }},
+        ridA, fractionA, tsA, ridB, fractionB, tsB, dist);
 
     return VarVal(result);
 }}
@@ -2757,6 +3244,21 @@ def dispatch_case_for(op):
         # 6-arg SQL shape (ridA, fracA, tsA, ridB, fracB, tsB) — same arity
         # as a two-temporal-points op.
         return DISPATCH_CASE_TWO_TEMPORAL_POINTS
+    # dwithin (W20): the with-dist composition shapes reuse existing with-dist
+    # dispatches by arity + constant pattern (geometry+dist or dist-only lifted).
+    if op.get("build_tpose_point_with_dist_via_composition"):
+        # 6-arg: x, y, theta, ts (cols) + geometry, dist (constants) — same
+        # shape as tcbuffer × geom + dist.
+        return DISPATCH_CASE_TCBUFFER_POINT_WITH_DIST
+    if op.get("build_two_tpose_points_with_dist_via_composition"):
+        # 9-arg: 8 cols + dist constant — same shape as two-tcbuffer + dist.
+        return DISPATCH_CASE_TWO_TCBUFFER_POINTS_WITH_DIST
+    if op.get("build_tnpoint_point_with_dist_via_composition"):
+        # 5-arg: rid, fraction, ts (cols) + geometry, dist (constants).
+        return DISPATCH_CASE_ONE_TEMPORAL_POINT_WITH_DIST
+    if op.get("build_two_tnpoint_points_with_dist_via_composition"):
+        # 7-arg: 6 cols + dist constant.
+        return DISPATCH_CASE_TWO_TEMPORAL_POINTS_WITH_DIST
     if op.get("build_temporal_point") or op.get("build_temporal_point_restriction"):
         # Both shapes share the same 4-arg dispatch (lon, lat, ts, geom);
         # only the physical-cpp body differs (filter-predicate int return vs.

@@ -191,6 +191,14 @@
 #include <Functions/Meos/TemporalNADTPoseTPoseLogicalFunction.hpp>
 #include <Functions/Meos/TemporalNADTNpointGeometryLogicalFunction.hpp>
 #include <Functions/Meos/TemporalNADTNpointTNpointLogicalFunction.hpp>
+#include <Functions/Meos/TemporalEDWithinTPoseGeometryLogicalFunction.hpp>
+#include <Functions/Meos/TemporalEDWithinTPoseTPoseLogicalFunction.hpp>
+#include <Functions/Meos/TemporalEDWithinTNpointGeometryLogicalFunction.hpp>
+#include <Functions/Meos/TemporalEDWithinTNpointTNpointLogicalFunction.hpp>
+#include <Functions/Meos/TemporalADWithinTPoseGeometryLogicalFunction.hpp>
+#include <Functions/Meos/TemporalADWithinTPoseTPoseLogicalFunction.hpp>
+#include <Functions/Meos/TemporalADWithinTNpointGeometryLogicalFunction.hpp>
+#include <Functions/Meos/TemporalADWithinTNpointTNpointLogicalFunction.hpp>
 #include <Plans/LogicalPlan.hpp>
 #include <Plans/LogicalPlanBuilder.hpp>
 #include <Util/Overloaded.hpp>
@@ -4008,6 +4016,290 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TEMPORAL_NAD_TNPOINT_TNPOINT */
+        /* BEGIN CODEGEN PARSER GLUE: TEMPORAL_EDWITHIN_TPOSE_GEOMETRY */
+        case AntlrSQLLexer::TEMPORAL_EDWITHIN_TPOSE_GEOMETRY:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 6)
+                throw InvalidQuerySyntax("TEMPORAL_EDWITHIN_TPOSE_GEOMETRY requires exactly 6 arguments (lon, lat, radius, timestamp, blob, distance), but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto blobLast  = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto distLast  = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto timestamp = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto radius    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto lat       = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto lon       = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                TemporalEDWithinTPoseGeometryLogicalFunction(lon, lat, radius, timestamp, blobLast, distLast));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: TEMPORAL_EDWITHIN_TPOSE_GEOMETRY */
+
+        /* BEGIN CODEGEN PARSER GLUE: TEMPORAL_EDWITHIN_TPOSE_TPOSE */
+        case AntlrSQLLexer::TEMPORAL_EDWITHIN_TPOSE_TPOSE:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 9)
+                throw InvalidQuerySyntax("TEMPORAL_EDWITHIN_TPOSE_TPOSE requires exactly 9 arguments (lonA, latA, radiusA, tsA, lonB, latB, radiusB, tsB, distance), but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto v = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                helpers.top().functionBuilder.emplace_back(
+                    ConstantValueLogicalFunction(
+                        DataTypeProvider::provideDataType(DataType::Type::FLOAT64), std::move(v)));
+            }
+
+            auto dist    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto tsB     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto radiusB = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto latB    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto lonB    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto tsA     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto radiusA = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto latA    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto lonA    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                TemporalEDWithinTPoseTPoseLogicalFunction(lonA, latA, radiusA, tsA, lonB, latB, radiusB, tsB, dist));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: TEMPORAL_EDWITHIN_TPOSE_TPOSE */
+
+        /* BEGIN CODEGEN PARSER GLUE: TEMPORAL_EDWITHIN_TNPOINT_GEOMETRY */
+        case AntlrSQLLexer::TEMPORAL_EDWITHIN_TNPOINT_GEOMETRY:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 5)
+                throw InvalidQuerySyntax("TEMPORAL_EDWITHIN_TNPOINT_GEOMETRY requires exactly 5 arguments (lon, lat, timestamp, geometry, distance), but got {}", argCount);
+
+            /* Lift constants (geometry + distance) — same shape as EDWITHIN_TGEO_GEO */
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+
+                DataType dataType;
+                const auto upperValue = Util::toUpperCase(constantValue);
+                if (upperValue == "TRUE" || upperValue == "FALSE")
+                {
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::BOOLEAN);
+                }
+                else
+                {
+                    char* endPtr = nullptr;
+                    std::strtod(constantValue.c_str(), &endPtr);
+                    if (endPtr != nullptr && *endPtr == '\0')
+                        dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                    else
+                        dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                }
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            /* After lift: [lon, lat, ts, distance, geometry] (geometry pushed last because lifted last in LIFO) */
+            auto geometry  = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto dist      = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto timestamp = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto lat       = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto lon       = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                TemporalEDWithinTNpointGeometryLogicalFunction(lon, lat, timestamp, geometry, dist));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: TEMPORAL_EDWITHIN_TNPOINT_GEOMETRY */
+
+        /* BEGIN CODEGEN PARSER GLUE: TEMPORAL_EDWITHIN_TNPOINT_TNPOINT */
+        case AntlrSQLLexer::TEMPORAL_EDWITHIN_TNPOINT_TNPOINT:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 7)
+                throw InvalidQuerySyntax("TEMPORAL_EDWITHIN_TNPOINT_TNPOINT requires exactly 7 arguments (lonA, latA, tsA, lonB, latB, tsB, distance), but got {}", argCount);
+
+            /* Lift the distance constant */
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto v = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                helpers.top().functionBuilder.emplace_back(
+                    ConstantValueLogicalFunction(
+                        DataTypeProvider::provideDataType(DataType::Type::FLOAT64), std::move(v)));
+            }
+
+            auto dist = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto tsB  = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto latB = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto lonB = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto tsA  = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto latA = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto lonA = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                TemporalEDWithinTNpointTNpointLogicalFunction(lonA, latA, tsA, lonB, latB, tsB, dist));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: TEMPORAL_EDWITHIN_TNPOINT_TNPOINT */
+
+        /* BEGIN CODEGEN PARSER GLUE: TEMPORAL_ADWITHIN_TPOSE_GEOMETRY */
+        case AntlrSQLLexer::TEMPORAL_ADWITHIN_TPOSE_GEOMETRY:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 6)
+                throw InvalidQuerySyntax("TEMPORAL_ADWITHIN_TPOSE_GEOMETRY requires exactly 6 arguments (lon, lat, radius, timestamp, blob, distance), but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto blobLast  = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto distLast  = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto timestamp = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto radius    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto lat       = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto lon       = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                TemporalADWithinTPoseGeometryLogicalFunction(lon, lat, radius, timestamp, blobLast, distLast));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: TEMPORAL_ADWITHIN_TPOSE_GEOMETRY */
+
+        /* BEGIN CODEGEN PARSER GLUE: TEMPORAL_ADWITHIN_TPOSE_TPOSE */
+        case AntlrSQLLexer::TEMPORAL_ADWITHIN_TPOSE_TPOSE:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 9)
+                throw InvalidQuerySyntax("TEMPORAL_ADWITHIN_TPOSE_TPOSE requires exactly 9 arguments (lonA, latA, radiusA, tsA, lonB, latB, radiusB, tsB, distance), but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto v = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                helpers.top().functionBuilder.emplace_back(
+                    ConstantValueLogicalFunction(
+                        DataTypeProvider::provideDataType(DataType::Type::FLOAT64), std::move(v)));
+            }
+
+            auto dist    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto tsB     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto radiusB = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto latB    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto lonB    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto tsA     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto radiusA = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto latA    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto lonA    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                TemporalADWithinTPoseTPoseLogicalFunction(lonA, latA, radiusA, tsA, lonB, latB, radiusB, tsB, dist));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: TEMPORAL_ADWITHIN_TPOSE_TPOSE */
+
+        /* BEGIN CODEGEN PARSER GLUE: TEMPORAL_ADWITHIN_TNPOINT_GEOMETRY */
+        case AntlrSQLLexer::TEMPORAL_ADWITHIN_TNPOINT_GEOMETRY:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 5)
+                throw InvalidQuerySyntax("TEMPORAL_ADWITHIN_TNPOINT_GEOMETRY requires exactly 5 arguments (lon, lat, timestamp, geometry, distance), but got {}", argCount);
+
+            /* Lift constants (geometry + distance) — same shape as EDWITHIN_TGEO_GEO */
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+
+                DataType dataType;
+                const auto upperValue = Util::toUpperCase(constantValue);
+                if (upperValue == "TRUE" || upperValue == "FALSE")
+                {
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::BOOLEAN);
+                }
+                else
+                {
+                    char* endPtr = nullptr;
+                    std::strtod(constantValue.c_str(), &endPtr);
+                    if (endPtr != nullptr && *endPtr == '\0')
+                        dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                    else
+                        dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                }
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            /* After lift: [lon, lat, ts, distance, geometry] (geometry pushed last because lifted last in LIFO) */
+            auto geometry  = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto dist      = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto timestamp = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto lat       = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto lon       = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                TemporalADWithinTNpointGeometryLogicalFunction(lon, lat, timestamp, geometry, dist));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: TEMPORAL_ADWITHIN_TNPOINT_GEOMETRY */
+
+        /* BEGIN CODEGEN PARSER GLUE: TEMPORAL_ADWITHIN_TNPOINT_TNPOINT */
+        case AntlrSQLLexer::TEMPORAL_ADWITHIN_TNPOINT_TNPOINT:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 7)
+                throw InvalidQuerySyntax("TEMPORAL_ADWITHIN_TNPOINT_TNPOINT requires exactly 7 arguments (lonA, latA, tsA, lonB, latB, tsB, distance), but got {}", argCount);
+
+            /* Lift the distance constant */
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto v = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                helpers.top().functionBuilder.emplace_back(
+                    ConstantValueLogicalFunction(
+                        DataTypeProvider::provideDataType(DataType::Type::FLOAT64), std::move(v)));
+            }
+
+            auto dist = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto tsB  = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto latB = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto lonB = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto tsA  = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto latA = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto lonA = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                TemporalADWithinTNpointTNpointLogicalFunction(lonA, latA, tsA, lonB, latB, tsB, dist));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: TEMPORAL_ADWITHIN_TNPOINT_TNPOINT */
+
 
 
 
