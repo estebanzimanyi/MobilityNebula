@@ -828,6 +828,8 @@ def emit_operator(op, output_root: Path):
         physical_cpp_path.write_text(PHYSICAL_CPP_TEMPLATE_TWO_TEMPORAL_POINTS.format(**physical_common))
     elif op.get("build_temporal_point_restriction"):
         physical_cpp_path.write_text(PHYSICAL_CPP_TEMPLATE_TEMPORAL_POINT_RESTRICTION.format(**physical_common))
+    elif op.get("build_two_tpose_points_via_composition"):
+        physical_cpp_path.write_text(PHYSICAL_CPP_TEMPLATE_TWO_TPOSE_POINTS_VIA_COMPOSITION.format(**physical_common))
     elif op.get("build_tpose_point_via_composition"):
         physical_cpp_path.write_text(PHYSICAL_CPP_TEMPLATE_TPOSE_POINT_VIA_COMPOSITION.format(**physical_common))
     elif op.get("build_two_tcbuffer_points_with_dist"):
@@ -1208,6 +1210,131 @@ VarVal {nebula_name}PhysicalFunction::execute(const Record& record, ArenaRef& ar
             }}
         }},
         x, y, theta, timestamp, geometry.getContent(), geometry.getContentSize());
+
+    return VarVal(result);
+}}
+
+PhysicalFunctionRegistryReturnType PhysicalFunctionGeneratedRegistrar::Register{nebula_name}PhysicalFunction(
+    PhysicalFunctionRegistryArguments arguments)
+{{
+    PRECONDITION(arguments.childFunctions.size() == {n_args},
+                 "{nebula_name}PhysicalFunction requires {n_args} children but got {{}}",
+                 arguments.childFunctions.size());
+{registrar_pushes}
+}}
+
+}} // namespace NES
+"""
+
+
+# Physical .cpp template for tpose × tpose spatial-rels VIA COMPOSITION —
+# the existing _tgeo_tgeo MEOS call is applied to two tposes each converted
+# to a single-instant tgeompoint at run time. Per-event tpose instants from
+# (xA, yA, thetaA, tsA) and (xB, yB, thetaB, tsB), each tpose_in() then
+# tpose_to_tpoint(), then the MEOS two-temporal spatial-rel call. Mirrors the
+# W14 one-tpose composition recipe; no new MEOS symbols are needed for tpose
+# (the _tgeo_tgeo row was shipped in W3). 8 SQL args.
+PHYSICAL_CPP_TEMPLATE_TWO_TPOSE_POINTS_VIA_COMPOSITION = """\
+/*
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        https://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+*/
+
+#include <Functions/Meos/{nebula_name}PhysicalFunction.hpp>
+
+#include <Functions/PhysicalFunction.hpp>
+#include <MEOSWrapper.hpp>
+#include <Nautilus/DataTypes/VarVal.hpp>
+#include <Nautilus/DataTypes/VariableSizedData.hpp>
+#include <Nautilus/Interface/Record.hpp>
+#include <PhysicalFunctionRegistry.hpp>
+#include <ErrorHandling.hpp>
+#include <ExecutionContext.hpp>
+#include <fmt/format.h>
+#include <function.hpp>
+#include <string>
+#include <utility>
+#include <val.hpp>
+
+extern "C" {{
+#include <meos.h>
+#include <meos_geo.h>
+#include <meos_pose.h>
+}}
+
+namespace NES {{
+
+{nebula_name}PhysicalFunction::{nebula_name}PhysicalFunction({ctor_physical_args})
+{{
+    parameterFunctions.reserve({n_args});
+{ctor_physical_pushes}
+}}
+
+VarVal {nebula_name}PhysicalFunction::execute(const Record& record, ArenaRef& arena) const
+{{
+    std::vector<VarVal> parameterValues;
+    parameterValues.reserve(parameterFunctions.size());
+    for (const auto& function : parameterFunctions)
+    {{
+        parameterValues.emplace_back(function.execute(record, arena));
+    }}
+
+    auto xA     = parameterValues[0].cast<nautilus::val<double>>();
+    auto yA     = parameterValues[1].cast<nautilus::val<double>>();
+    auto thetaA = parameterValues[2].cast<nautilus::val<double>>();
+    auto tsA    = parameterValues[3].cast<nautilus::val<uint64_t>>();
+    auto xB     = parameterValues[4].cast<nautilus::val<double>>();
+    auto yB     = parameterValues[5].cast<nautilus::val<double>>();
+    auto thetaB = parameterValues[6].cast<nautilus::val<double>>();
+    auto tsB    = parameterValues[7].cast<nautilus::val<uint64_t>>();
+
+    const auto result = nautilus::invoke(
+        +[](double xAValue, double yAValue, double thetaAValue, uint64_t tsAValue,
+            double xBValue, double yBValue, double thetaBValue, uint64_t tsBValue) -> {return_type} {{
+            try
+            {{
+                MEOS::Meos::ensureMeosInitialized();
+                if (!(xAValue >= -180.0 && xAValue <= 180.0 && yAValue >= -90.0 && yAValue <= 90.0)) return 0;
+                if (!(xBValue >= -180.0 && xBValue <= 180.0 && yBValue >= -90.0 && yBValue <= 90.0)) return 0;
+
+                const std::string tsAString = MEOS::Meos::convertEpochToTimestamp(tsAValue);
+                const std::string tsBString = MEOS::Meos::convertEpochToTimestamp(tsBValue);
+                std::string tposeAWkt = fmt::format("Pose(Point({{}} {{}}), {{}})@{{}}", xAValue, yAValue, thetaAValue, tsAString);
+                std::string tposeBWkt = fmt::format("Pose(Point({{}} {{}}), {{}})@{{}}", xBValue, yBValue, thetaBValue, tsBString);
+
+                if (tposeAWkt.empty() || tposeBWkt.empty()) return 0;
+
+                Temporal* tposeA = tpose_in(tposeAWkt.c_str());
+                if (!tposeA) return 0;
+                Temporal* tgeoA = tpose_to_tpoint(tposeA);
+                if (!tgeoA) {{ free(tposeA); return 0; }}
+                Temporal* tposeB = tpose_in(tposeBWkt.c_str());
+                if (!tposeB) {{ free(tgeoA); free(tposeA); return 0; }}
+                Temporal* tgeoB = tpose_to_tpoint(tposeB);
+                if (!tgeoB) {{ free(tposeB); free(tgeoA); free(tposeA); return 0; }}
+
+                {return_type} r = {meos_call}(tgeoA, tgeoB);
+                free(tgeoB);
+                free(tposeB);
+                free(tgeoA);
+                free(tposeA);
+                return r;
+            }}
+            catch (const std::exception&)
+            {{
+                return 0;
+            }}
+        }},
+        xA, yA, thetaA, tsA, xB, yB, thetaB, tsB);
 
     return VarVal(result);
 }}
@@ -2069,6 +2196,32 @@ DISPATCH_CASE_TWO_TEMPORAL_POINTS = """\
         /* END CODEGEN PARSER GLUE: {sql_token} */
 """
 
+# 8-arg shape: xA, yA, thetaA, tsA, xB, yB, thetaB, tsB — two tpose instants,
+# each lifted to a tgeompoint via tpose_to_tpoint at run time (W15 composition).
+DISPATCH_CASE_TWO_TPOSE_POINTS = """\
+        /* BEGIN CODEGEN PARSER GLUE: {sql_token} */
+        case AntlrSQLLexer::{sql_token}:
+        {{
+            const auto argCount = context->expression().size();
+            if (argCount != 8)
+                throw InvalidQuerySyntax("{sql_token} requires exactly 8 arguments (xA, yA, thetaA, tsA, xB, yB, thetaB, tsB), but got {{}}", argCount);
+
+            auto tsB    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto thetaB = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto yB     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto xB     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto tsA    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto thetaA = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto yA     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto xA     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                {nebula_name}LogicalFunction(xA, yA, thetaA, tsA, xB, yB, thetaB, tsB));
+        }}
+        break;
+        /* END CODEGEN PARSER GLUE: {sql_token} */
+"""
+
 # 5-arg shape: lon, lat, ts, geometry, dist (both geometry and dist are constants).
 # Constant lift uses mariana's pattern: TRUE/FALSE → BOOLEAN, strtod-clean → FLOAT64, else → VARSIZED.
 DISPATCH_CASE_ONE_TEMPORAL_POINT_WITH_DIST = """\
@@ -2349,6 +2502,8 @@ def dispatch_case_for(op):
         return DISPATCH_CASE_ONE_TEMPORAL_POINT_WITH_DIST
     if op.get("build_two_temporal_points"):
         return DISPATCH_CASE_TWO_TEMPORAL_POINTS
+    if op.get("build_two_tpose_points_via_composition"):
+        return DISPATCH_CASE_TWO_TPOSE_POINTS
     if op.get("build_temporal_point") or op.get("build_temporal_point_restriction"):
         # Both shapes share the same 4-arg dispatch (lon, lat, ts, geom);
         # only the physical-cpp body differs (filter-predicate int return vs.

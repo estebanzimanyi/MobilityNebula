@@ -160,6 +160,15 @@
 #include <Functions/Meos/TemporalADisjointTPoseGeometryLogicalFunction.hpp>
 #include <Functions/Meos/TemporalAIntersectsTPoseGeometryLogicalFunction.hpp>
 #include <Functions/Meos/TemporalATouchesTPoseGeometryLogicalFunction.hpp>
+#include <Functions/Meos/TemporalEContainsTPoseTPoseLogicalFunction.hpp>
+#include <Functions/Meos/TemporalECoversTPoseTPoseLogicalFunction.hpp>
+#include <Functions/Meos/TemporalEDisjointTPoseTPoseLogicalFunction.hpp>
+#include <Functions/Meos/TemporalEIntersectsTPoseTPoseLogicalFunction.hpp>
+#include <Functions/Meos/TemporalETouchesTPoseTPoseLogicalFunction.hpp>
+#include <Functions/Meos/TemporalAContainsTPoseTPoseLogicalFunction.hpp>
+#include <Functions/Meos/TemporalADisjointTPoseTPoseLogicalFunction.hpp>
+#include <Functions/Meos/TemporalAIntersectsTPoseTPoseLogicalFunction.hpp>
+#include <Functions/Meos/TemporalATouchesTPoseTPoseLogicalFunction.hpp>
 #include <Plans/LogicalPlan.hpp>
 #include <Plans/LogicalPlanBuilder.hpp>
 #include <Util/Overloaded.hpp>
@@ -3251,6 +3260,204 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TEMPORAL_ATOUCHES_TPOSE_GEOMETRY */
+        /* BEGIN CODEGEN PARSER GLUE: TEMPORAL_ECONTAINS_TPOSE_TPOSE */
+        case AntlrSQLLexer::TEMPORAL_ECONTAINS_TPOSE_TPOSE:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 8)
+                throw InvalidQuerySyntax("TEMPORAL_ECONTAINS_TPOSE_TPOSE requires exactly 8 arguments (xA, yA, thetaA, tsA, xB, yB, thetaB, tsB), but got {}", argCount);
+
+            auto tsB    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto thetaB = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto yB     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto xB     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto tsA    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto thetaA = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto yA     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto xA     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                TemporalEContainsTPoseTPoseLogicalFunction(xA, yA, thetaA, tsA, xB, yB, thetaB, tsB));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: TEMPORAL_ECONTAINS_TPOSE_TPOSE */
+
+        /* BEGIN CODEGEN PARSER GLUE: TEMPORAL_ECOVERS_TPOSE_TPOSE */
+        case AntlrSQLLexer::TEMPORAL_ECOVERS_TPOSE_TPOSE:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 8)
+                throw InvalidQuerySyntax("TEMPORAL_ECOVERS_TPOSE_TPOSE requires exactly 8 arguments (xA, yA, thetaA, tsA, xB, yB, thetaB, tsB), but got {}", argCount);
+
+            auto tsB    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto thetaB = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto yB     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto xB     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto tsA    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto thetaA = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto yA     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto xA     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                TemporalECoversTPoseTPoseLogicalFunction(xA, yA, thetaA, tsA, xB, yB, thetaB, tsB));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: TEMPORAL_ECOVERS_TPOSE_TPOSE */
+
+        /* BEGIN CODEGEN PARSER GLUE: TEMPORAL_EDISJOINT_TPOSE_TPOSE */
+        case AntlrSQLLexer::TEMPORAL_EDISJOINT_TPOSE_TPOSE:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 8)
+                throw InvalidQuerySyntax("TEMPORAL_EDISJOINT_TPOSE_TPOSE requires exactly 8 arguments (xA, yA, thetaA, tsA, xB, yB, thetaB, tsB), but got {}", argCount);
+
+            auto tsB    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto thetaB = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto yB     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto xB     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto tsA    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto thetaA = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto yA     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto xA     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                TemporalEDisjointTPoseTPoseLogicalFunction(xA, yA, thetaA, tsA, xB, yB, thetaB, tsB));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: TEMPORAL_EDISJOINT_TPOSE_TPOSE */
+
+        /* BEGIN CODEGEN PARSER GLUE: TEMPORAL_EINTERSECTS_TPOSE_TPOSE */
+        case AntlrSQLLexer::TEMPORAL_EINTERSECTS_TPOSE_TPOSE:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 8)
+                throw InvalidQuerySyntax("TEMPORAL_EINTERSECTS_TPOSE_TPOSE requires exactly 8 arguments (xA, yA, thetaA, tsA, xB, yB, thetaB, tsB), but got {}", argCount);
+
+            auto tsB    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto thetaB = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto yB     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto xB     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto tsA    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto thetaA = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto yA     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto xA     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                TemporalEIntersectsTPoseTPoseLogicalFunction(xA, yA, thetaA, tsA, xB, yB, thetaB, tsB));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: TEMPORAL_EINTERSECTS_TPOSE_TPOSE */
+
+        /* BEGIN CODEGEN PARSER GLUE: TEMPORAL_ETOUCHES_TPOSE_TPOSE */
+        case AntlrSQLLexer::TEMPORAL_ETOUCHES_TPOSE_TPOSE:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 8)
+                throw InvalidQuerySyntax("TEMPORAL_ETOUCHES_TPOSE_TPOSE requires exactly 8 arguments (xA, yA, thetaA, tsA, xB, yB, thetaB, tsB), but got {}", argCount);
+
+            auto tsB    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto thetaB = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto yB     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto xB     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto tsA    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto thetaA = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto yA     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto xA     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                TemporalETouchesTPoseTPoseLogicalFunction(xA, yA, thetaA, tsA, xB, yB, thetaB, tsB));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: TEMPORAL_ETOUCHES_TPOSE_TPOSE */
+
+        /* BEGIN CODEGEN PARSER GLUE: TEMPORAL_ACONTAINS_TPOSE_TPOSE */
+        case AntlrSQLLexer::TEMPORAL_ACONTAINS_TPOSE_TPOSE:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 8)
+                throw InvalidQuerySyntax("TEMPORAL_ACONTAINS_TPOSE_TPOSE requires exactly 8 arguments (xA, yA, thetaA, tsA, xB, yB, thetaB, tsB), but got {}", argCount);
+
+            auto tsB    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto thetaB = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto yB     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto xB     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto tsA    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto thetaA = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto yA     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto xA     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                TemporalAContainsTPoseTPoseLogicalFunction(xA, yA, thetaA, tsA, xB, yB, thetaB, tsB));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: TEMPORAL_ACONTAINS_TPOSE_TPOSE */
+
+        /* BEGIN CODEGEN PARSER GLUE: TEMPORAL_ADISJOINT_TPOSE_TPOSE */
+        case AntlrSQLLexer::TEMPORAL_ADISJOINT_TPOSE_TPOSE:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 8)
+                throw InvalidQuerySyntax("TEMPORAL_ADISJOINT_TPOSE_TPOSE requires exactly 8 arguments (xA, yA, thetaA, tsA, xB, yB, thetaB, tsB), but got {}", argCount);
+
+            auto tsB    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto thetaB = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto yB     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto xB     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto tsA    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto thetaA = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto yA     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto xA     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                TemporalADisjointTPoseTPoseLogicalFunction(xA, yA, thetaA, tsA, xB, yB, thetaB, tsB));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: TEMPORAL_ADISJOINT_TPOSE_TPOSE */
+
+        /* BEGIN CODEGEN PARSER GLUE: TEMPORAL_AINTERSECTS_TPOSE_TPOSE */
+        case AntlrSQLLexer::TEMPORAL_AINTERSECTS_TPOSE_TPOSE:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 8)
+                throw InvalidQuerySyntax("TEMPORAL_AINTERSECTS_TPOSE_TPOSE requires exactly 8 arguments (xA, yA, thetaA, tsA, xB, yB, thetaB, tsB), but got {}", argCount);
+
+            auto tsB    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto thetaB = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto yB     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto xB     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto tsA    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto thetaA = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto yA     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto xA     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                TemporalAIntersectsTPoseTPoseLogicalFunction(xA, yA, thetaA, tsA, xB, yB, thetaB, tsB));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: TEMPORAL_AINTERSECTS_TPOSE_TPOSE */
+
+        /* BEGIN CODEGEN PARSER GLUE: TEMPORAL_ATOUCHES_TPOSE_TPOSE */
+        case AntlrSQLLexer::TEMPORAL_ATOUCHES_TPOSE_TPOSE:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 8)
+                throw InvalidQuerySyntax("TEMPORAL_ATOUCHES_TPOSE_TPOSE requires exactly 8 arguments (xA, yA, thetaA, tsA, xB, yB, thetaB, tsB), but got {}", argCount);
+
+            auto tsB    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto thetaB = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto yB     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto xB     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto tsA    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto thetaA = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto yA     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto xA     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                TemporalATouchesTPoseTPoseLogicalFunction(xA, yA, thetaA, tsA, xB, yB, thetaB, tsB));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: TEMPORAL_ATOUCHES_TPOSE_TPOSE */
+
 
 
 
