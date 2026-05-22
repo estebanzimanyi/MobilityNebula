@@ -169,6 +169,24 @@
 #include <Functions/Meos/TemporalADisjointTPoseTPoseLogicalFunction.hpp>
 #include <Functions/Meos/TemporalAIntersectsTPoseTPoseLogicalFunction.hpp>
 #include <Functions/Meos/TemporalATouchesTPoseTPoseLogicalFunction.hpp>
+#include <Functions/Meos/TemporalEContainsTNpointGeometryLogicalFunction.hpp>
+#include <Functions/Meos/TemporalEContainsTNpointTNpointLogicalFunction.hpp>
+#include <Functions/Meos/TemporalECoversTNpointGeometryLogicalFunction.hpp>
+#include <Functions/Meos/TemporalECoversTNpointTNpointLogicalFunction.hpp>
+#include <Functions/Meos/TemporalEDisjointTNpointGeometryLogicalFunction.hpp>
+#include <Functions/Meos/TemporalEDisjointTNpointTNpointLogicalFunction.hpp>
+#include <Functions/Meos/TemporalEIntersectsTNpointGeometryLogicalFunction.hpp>
+#include <Functions/Meos/TemporalEIntersectsTNpointTNpointLogicalFunction.hpp>
+#include <Functions/Meos/TemporalETouchesTNpointGeometryLogicalFunction.hpp>
+#include <Functions/Meos/TemporalETouchesTNpointTNpointLogicalFunction.hpp>
+#include <Functions/Meos/TemporalAContainsTNpointGeometryLogicalFunction.hpp>
+#include <Functions/Meos/TemporalAContainsTNpointTNpointLogicalFunction.hpp>
+#include <Functions/Meos/TemporalADisjointTNpointGeometryLogicalFunction.hpp>
+#include <Functions/Meos/TemporalADisjointTNpointTNpointLogicalFunction.hpp>
+#include <Functions/Meos/TemporalAIntersectsTNpointGeometryLogicalFunction.hpp>
+#include <Functions/Meos/TemporalAIntersectsTNpointTNpointLogicalFunction.hpp>
+#include <Functions/Meos/TemporalATouchesTNpointGeometryLogicalFunction.hpp>
+#include <Functions/Meos/TemporalATouchesTNpointTNpointLogicalFunction.hpp>
 #include <Plans/LogicalPlan.hpp>
 #include <Plans/LogicalPlanBuilder.hpp>
 #include <Util/Overloaded.hpp>
@@ -3457,6 +3475,438 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TEMPORAL_ATOUCHES_TPOSE_TPOSE */
+        /* BEGIN CODEGEN PARSER GLUE: TEMPORAL_ECONTAINS_TNPOINT_GEOMETRY */
+        case AntlrSQLLexer::TEMPORAL_ECONTAINS_TNPOINT_GEOMETRY:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 4)
+                throw InvalidQuerySyntax("TEMPORAL_ECONTAINS_TNPOINT_GEOMETRY requires exactly 4 arguments (lon, lat, timestamp, geometry), but got {}", argCount);
+
+            /* Lift the WKT constant into the function builder */
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto v = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                helpers.top().functionBuilder.emplace_back(
+                    ConstantValueLogicalFunction(
+                        DataTypeProvider::provideDataType(DataType::Type::VARSIZED), std::move(v)));
+            }
+
+            auto geometry  = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto timestamp = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto lat       = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto lon       = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                TemporalEContainsTNpointGeometryLogicalFunction(lon, lat, timestamp, geometry));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: TEMPORAL_ECONTAINS_TNPOINT_GEOMETRY */
+
+        /* BEGIN CODEGEN PARSER GLUE: TEMPORAL_ECONTAINS_TNPOINT_TNPOINT */
+        case AntlrSQLLexer::TEMPORAL_ECONTAINS_TNPOINT_TNPOINT:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 6)
+                throw InvalidQuerySyntax("TEMPORAL_ECONTAINS_TNPOINT_TNPOINT requires exactly 6 arguments (lonA, latA, tsA, lonB, latB, tsB), but got {}", argCount);
+
+            auto tsB  = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto latB = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto lonB = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto tsA  = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto latA = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto lonA = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                TemporalEContainsTNpointTNpointLogicalFunction(lonA, latA, tsA, lonB, latB, tsB));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: TEMPORAL_ECONTAINS_TNPOINT_TNPOINT */
+
+        /* BEGIN CODEGEN PARSER GLUE: TEMPORAL_ECOVERS_TNPOINT_GEOMETRY */
+        case AntlrSQLLexer::TEMPORAL_ECOVERS_TNPOINT_GEOMETRY:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 4)
+                throw InvalidQuerySyntax("TEMPORAL_ECOVERS_TNPOINT_GEOMETRY requires exactly 4 arguments (lon, lat, timestamp, geometry), but got {}", argCount);
+
+            /* Lift the WKT constant into the function builder */
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto v = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                helpers.top().functionBuilder.emplace_back(
+                    ConstantValueLogicalFunction(
+                        DataTypeProvider::provideDataType(DataType::Type::VARSIZED), std::move(v)));
+            }
+
+            auto geometry  = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto timestamp = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto lat       = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto lon       = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                TemporalECoversTNpointGeometryLogicalFunction(lon, lat, timestamp, geometry));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: TEMPORAL_ECOVERS_TNPOINT_GEOMETRY */
+
+        /* BEGIN CODEGEN PARSER GLUE: TEMPORAL_ECOVERS_TNPOINT_TNPOINT */
+        case AntlrSQLLexer::TEMPORAL_ECOVERS_TNPOINT_TNPOINT:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 6)
+                throw InvalidQuerySyntax("TEMPORAL_ECOVERS_TNPOINT_TNPOINT requires exactly 6 arguments (lonA, latA, tsA, lonB, latB, tsB), but got {}", argCount);
+
+            auto tsB  = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto latB = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto lonB = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto tsA  = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto latA = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto lonA = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                TemporalECoversTNpointTNpointLogicalFunction(lonA, latA, tsA, lonB, latB, tsB));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: TEMPORAL_ECOVERS_TNPOINT_TNPOINT */
+
+        /* BEGIN CODEGEN PARSER GLUE: TEMPORAL_EDISJOINT_TNPOINT_GEOMETRY */
+        case AntlrSQLLexer::TEMPORAL_EDISJOINT_TNPOINT_GEOMETRY:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 4)
+                throw InvalidQuerySyntax("TEMPORAL_EDISJOINT_TNPOINT_GEOMETRY requires exactly 4 arguments (lon, lat, timestamp, geometry), but got {}", argCount);
+
+            /* Lift the WKT constant into the function builder */
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto v = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                helpers.top().functionBuilder.emplace_back(
+                    ConstantValueLogicalFunction(
+                        DataTypeProvider::provideDataType(DataType::Type::VARSIZED), std::move(v)));
+            }
+
+            auto geometry  = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto timestamp = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto lat       = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto lon       = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                TemporalEDisjointTNpointGeometryLogicalFunction(lon, lat, timestamp, geometry));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: TEMPORAL_EDISJOINT_TNPOINT_GEOMETRY */
+
+        /* BEGIN CODEGEN PARSER GLUE: TEMPORAL_EDISJOINT_TNPOINT_TNPOINT */
+        case AntlrSQLLexer::TEMPORAL_EDISJOINT_TNPOINT_TNPOINT:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 6)
+                throw InvalidQuerySyntax("TEMPORAL_EDISJOINT_TNPOINT_TNPOINT requires exactly 6 arguments (lonA, latA, tsA, lonB, latB, tsB), but got {}", argCount);
+
+            auto tsB  = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto latB = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto lonB = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto tsA  = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto latA = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto lonA = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                TemporalEDisjointTNpointTNpointLogicalFunction(lonA, latA, tsA, lonB, latB, tsB));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: TEMPORAL_EDISJOINT_TNPOINT_TNPOINT */
+
+        /* BEGIN CODEGEN PARSER GLUE: TEMPORAL_EINTERSECTS_TNPOINT_GEOMETRY */
+        case AntlrSQLLexer::TEMPORAL_EINTERSECTS_TNPOINT_GEOMETRY:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 4)
+                throw InvalidQuerySyntax("TEMPORAL_EINTERSECTS_TNPOINT_GEOMETRY requires exactly 4 arguments (lon, lat, timestamp, geometry), but got {}", argCount);
+
+            /* Lift the WKT constant into the function builder */
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto v = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                helpers.top().functionBuilder.emplace_back(
+                    ConstantValueLogicalFunction(
+                        DataTypeProvider::provideDataType(DataType::Type::VARSIZED), std::move(v)));
+            }
+
+            auto geometry  = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto timestamp = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto lat       = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto lon       = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                TemporalEIntersectsTNpointGeometryLogicalFunction(lon, lat, timestamp, geometry));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: TEMPORAL_EINTERSECTS_TNPOINT_GEOMETRY */
+
+        /* BEGIN CODEGEN PARSER GLUE: TEMPORAL_EINTERSECTS_TNPOINT_TNPOINT */
+        case AntlrSQLLexer::TEMPORAL_EINTERSECTS_TNPOINT_TNPOINT:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 6)
+                throw InvalidQuerySyntax("TEMPORAL_EINTERSECTS_TNPOINT_TNPOINT requires exactly 6 arguments (lonA, latA, tsA, lonB, latB, tsB), but got {}", argCount);
+
+            auto tsB  = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto latB = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto lonB = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto tsA  = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto latA = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto lonA = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                TemporalEIntersectsTNpointTNpointLogicalFunction(lonA, latA, tsA, lonB, latB, tsB));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: TEMPORAL_EINTERSECTS_TNPOINT_TNPOINT */
+
+        /* BEGIN CODEGEN PARSER GLUE: TEMPORAL_ETOUCHES_TNPOINT_GEOMETRY */
+        case AntlrSQLLexer::TEMPORAL_ETOUCHES_TNPOINT_GEOMETRY:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 4)
+                throw InvalidQuerySyntax("TEMPORAL_ETOUCHES_TNPOINT_GEOMETRY requires exactly 4 arguments (lon, lat, timestamp, geometry), but got {}", argCount);
+
+            /* Lift the WKT constant into the function builder */
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto v = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                helpers.top().functionBuilder.emplace_back(
+                    ConstantValueLogicalFunction(
+                        DataTypeProvider::provideDataType(DataType::Type::VARSIZED), std::move(v)));
+            }
+
+            auto geometry  = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto timestamp = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto lat       = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto lon       = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                TemporalETouchesTNpointGeometryLogicalFunction(lon, lat, timestamp, geometry));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: TEMPORAL_ETOUCHES_TNPOINT_GEOMETRY */
+
+        /* BEGIN CODEGEN PARSER GLUE: TEMPORAL_ETOUCHES_TNPOINT_TNPOINT */
+        case AntlrSQLLexer::TEMPORAL_ETOUCHES_TNPOINT_TNPOINT:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 6)
+                throw InvalidQuerySyntax("TEMPORAL_ETOUCHES_TNPOINT_TNPOINT requires exactly 6 arguments (lonA, latA, tsA, lonB, latB, tsB), but got {}", argCount);
+
+            auto tsB  = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto latB = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto lonB = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto tsA  = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto latA = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto lonA = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                TemporalETouchesTNpointTNpointLogicalFunction(lonA, latA, tsA, lonB, latB, tsB));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: TEMPORAL_ETOUCHES_TNPOINT_TNPOINT */
+
+        /* BEGIN CODEGEN PARSER GLUE: TEMPORAL_ACONTAINS_TNPOINT_GEOMETRY */
+        case AntlrSQLLexer::TEMPORAL_ACONTAINS_TNPOINT_GEOMETRY:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 4)
+                throw InvalidQuerySyntax("TEMPORAL_ACONTAINS_TNPOINT_GEOMETRY requires exactly 4 arguments (lon, lat, timestamp, geometry), but got {}", argCount);
+
+            /* Lift the WKT constant into the function builder */
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto v = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                helpers.top().functionBuilder.emplace_back(
+                    ConstantValueLogicalFunction(
+                        DataTypeProvider::provideDataType(DataType::Type::VARSIZED), std::move(v)));
+            }
+
+            auto geometry  = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto timestamp = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto lat       = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto lon       = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                TemporalAContainsTNpointGeometryLogicalFunction(lon, lat, timestamp, geometry));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: TEMPORAL_ACONTAINS_TNPOINT_GEOMETRY */
+
+        /* BEGIN CODEGEN PARSER GLUE: TEMPORAL_ACONTAINS_TNPOINT_TNPOINT */
+        case AntlrSQLLexer::TEMPORAL_ACONTAINS_TNPOINT_TNPOINT:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 6)
+                throw InvalidQuerySyntax("TEMPORAL_ACONTAINS_TNPOINT_TNPOINT requires exactly 6 arguments (lonA, latA, tsA, lonB, latB, tsB), but got {}", argCount);
+
+            auto tsB  = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto latB = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto lonB = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto tsA  = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto latA = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto lonA = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                TemporalAContainsTNpointTNpointLogicalFunction(lonA, latA, tsA, lonB, latB, tsB));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: TEMPORAL_ACONTAINS_TNPOINT_TNPOINT */
+
+        /* BEGIN CODEGEN PARSER GLUE: TEMPORAL_ADISJOINT_TNPOINT_GEOMETRY */
+        case AntlrSQLLexer::TEMPORAL_ADISJOINT_TNPOINT_GEOMETRY:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 4)
+                throw InvalidQuerySyntax("TEMPORAL_ADISJOINT_TNPOINT_GEOMETRY requires exactly 4 arguments (lon, lat, timestamp, geometry), but got {}", argCount);
+
+            /* Lift the WKT constant into the function builder */
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto v = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                helpers.top().functionBuilder.emplace_back(
+                    ConstantValueLogicalFunction(
+                        DataTypeProvider::provideDataType(DataType::Type::VARSIZED), std::move(v)));
+            }
+
+            auto geometry  = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto timestamp = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto lat       = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto lon       = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                TemporalADisjointTNpointGeometryLogicalFunction(lon, lat, timestamp, geometry));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: TEMPORAL_ADISJOINT_TNPOINT_GEOMETRY */
+
+        /* BEGIN CODEGEN PARSER GLUE: TEMPORAL_ADISJOINT_TNPOINT_TNPOINT */
+        case AntlrSQLLexer::TEMPORAL_ADISJOINT_TNPOINT_TNPOINT:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 6)
+                throw InvalidQuerySyntax("TEMPORAL_ADISJOINT_TNPOINT_TNPOINT requires exactly 6 arguments (lonA, latA, tsA, lonB, latB, tsB), but got {}", argCount);
+
+            auto tsB  = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto latB = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto lonB = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto tsA  = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto latA = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto lonA = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                TemporalADisjointTNpointTNpointLogicalFunction(lonA, latA, tsA, lonB, latB, tsB));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: TEMPORAL_ADISJOINT_TNPOINT_TNPOINT */
+
+        /* BEGIN CODEGEN PARSER GLUE: TEMPORAL_AINTERSECTS_TNPOINT_GEOMETRY */
+        case AntlrSQLLexer::TEMPORAL_AINTERSECTS_TNPOINT_GEOMETRY:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 4)
+                throw InvalidQuerySyntax("TEMPORAL_AINTERSECTS_TNPOINT_GEOMETRY requires exactly 4 arguments (lon, lat, timestamp, geometry), but got {}", argCount);
+
+            /* Lift the WKT constant into the function builder */
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto v = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                helpers.top().functionBuilder.emplace_back(
+                    ConstantValueLogicalFunction(
+                        DataTypeProvider::provideDataType(DataType::Type::VARSIZED), std::move(v)));
+            }
+
+            auto geometry  = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto timestamp = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto lat       = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto lon       = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                TemporalAIntersectsTNpointGeometryLogicalFunction(lon, lat, timestamp, geometry));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: TEMPORAL_AINTERSECTS_TNPOINT_GEOMETRY */
+
+        /* BEGIN CODEGEN PARSER GLUE: TEMPORAL_AINTERSECTS_TNPOINT_TNPOINT */
+        case AntlrSQLLexer::TEMPORAL_AINTERSECTS_TNPOINT_TNPOINT:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 6)
+                throw InvalidQuerySyntax("TEMPORAL_AINTERSECTS_TNPOINT_TNPOINT requires exactly 6 arguments (lonA, latA, tsA, lonB, latB, tsB), but got {}", argCount);
+
+            auto tsB  = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto latB = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto lonB = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto tsA  = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto latA = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto lonA = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                TemporalAIntersectsTNpointTNpointLogicalFunction(lonA, latA, tsA, lonB, latB, tsB));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: TEMPORAL_AINTERSECTS_TNPOINT_TNPOINT */
+
+        /* BEGIN CODEGEN PARSER GLUE: TEMPORAL_ATOUCHES_TNPOINT_GEOMETRY */
+        case AntlrSQLLexer::TEMPORAL_ATOUCHES_TNPOINT_GEOMETRY:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 4)
+                throw InvalidQuerySyntax("TEMPORAL_ATOUCHES_TNPOINT_GEOMETRY requires exactly 4 arguments (lon, lat, timestamp, geometry), but got {}", argCount);
+
+            /* Lift the WKT constant into the function builder */
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto v = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                helpers.top().functionBuilder.emplace_back(
+                    ConstantValueLogicalFunction(
+                        DataTypeProvider::provideDataType(DataType::Type::VARSIZED), std::move(v)));
+            }
+
+            auto geometry  = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto timestamp = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto lat       = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto lon       = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                TemporalATouchesTNpointGeometryLogicalFunction(lon, lat, timestamp, geometry));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: TEMPORAL_ATOUCHES_TNPOINT_GEOMETRY */
+
+        /* BEGIN CODEGEN PARSER GLUE: TEMPORAL_ATOUCHES_TNPOINT_TNPOINT */
+        case AntlrSQLLexer::TEMPORAL_ATOUCHES_TNPOINT_TNPOINT:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 6)
+                throw InvalidQuerySyntax("TEMPORAL_ATOUCHES_TNPOINT_TNPOINT requires exactly 6 arguments (lonA, latA, tsA, lonB, latB, tsB), but got {}", argCount);
+
+            auto tsB  = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto latB = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto lonB = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto tsA  = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto latA = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto lonA = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                TemporalATouchesTNpointTNpointLogicalFunction(lonA, latA, tsA, lonB, latB, tsB));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: TEMPORAL_ATOUCHES_TNPOINT_TNPOINT */
+
 
 
 
