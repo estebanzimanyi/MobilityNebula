@@ -94,6 +94,10 @@
 #include <Operators/Windows/Aggregations/Meos/IntExtentAggregationLogicalFunction.hpp>
 #include <Operators/Windows/Aggregations/Meos/BigintExtentAggregationLogicalFunction.hpp>
 #include <Operators/Windows/Aggregations/Meos/TimestamptzExtentAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/FloatUnionAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/IntUnionAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/BigintUnionAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TimestamptzUnionAggregationLogicalFunction.hpp>
 #include <Functions/Meos/TemporalIntersectsGeometryLogicalFunction.hpp>
 #include <Functions/Meos/TemporalAIntersectsGeometryLogicalFunction.hpp>
 #include <Functions/Meos/TemporalEDWithinGeometryLogicalFunction.hpp>
@@ -11124,6 +11128,106 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             }
             break;
         /* END CODEGEN AGGREGATION GLUE: TIMESTAMPTZ_EXTENT (case-switch) */
+        /* BEGIN CODEGEN AGGREGATION GLUE: FLOAT_UNION (case-switch) */
+        case AntlrSQLLexer::FLOAT_UNION:
+            // Windowed value union (FLOATSET) over a tfloat stream via float_union_transfn + set_union_finalfn.
+            if (helpers.top().functionBuilder.size() != 2) {
+                throw InvalidQuerySyntax("FLOAT_UNION requires exactly two arguments (value, timestamp), but got {}", helpers.top().functionBuilder.size());
+            }
+            {
+                const auto timestampFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto valueFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+
+                if (!valueFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
+                    throw InvalidQuerySyntax("FLOAT_UNION arguments must be field references");
+                }
+
+                helpers.top().windowAggs.push_back(
+                    FloatUnionAggregationLogicalFunction::create(valueFunction.get<FieldAccessLogicalFunction>(),
+                                                                    timestampFunction.get<FieldAccessLogicalFunction>()));
+                helpers.top().functionBuilder.push_back(valueFunction);
+            }
+            break;
+        /* END CODEGEN AGGREGATION GLUE: FLOAT_UNION (case-switch) */
+
+        /* BEGIN CODEGEN AGGREGATION GLUE: INT_UNION (case-switch) */
+        case AntlrSQLLexer::INT_UNION:
+            // Windowed value union (INTSET) over a tint stream via int_union_transfn + set_union_finalfn.
+            if (helpers.top().functionBuilder.size() != 2) {
+                throw InvalidQuerySyntax("INT_UNION requires exactly two arguments (value, timestamp), but got {}", helpers.top().functionBuilder.size());
+            }
+            {
+                const auto timestampFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto valueFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+
+                if (!valueFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
+                    throw InvalidQuerySyntax("INT_UNION arguments must be field references");
+                }
+
+                helpers.top().windowAggs.push_back(
+                    IntUnionAggregationLogicalFunction::create(valueFunction.get<FieldAccessLogicalFunction>(),
+                                                                    timestampFunction.get<FieldAccessLogicalFunction>()));
+                helpers.top().functionBuilder.push_back(valueFunction);
+            }
+            break;
+        /* END CODEGEN AGGREGATION GLUE: INT_UNION (case-switch) */
+
+        /* BEGIN CODEGEN AGGREGATION GLUE: BIGINT_UNION (case-switch) */
+        case AntlrSQLLexer::BIGINT_UNION:
+            // Windowed value union (BIGINTSET) over a tbigint stream via bigint_union_transfn + set_union_finalfn.
+            if (helpers.top().functionBuilder.size() != 2) {
+                throw InvalidQuerySyntax("BIGINT_UNION requires exactly two arguments (value, timestamp), but got {}", helpers.top().functionBuilder.size());
+            }
+            {
+                const auto timestampFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto valueFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+
+                if (!valueFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
+                    throw InvalidQuerySyntax("BIGINT_UNION arguments must be field references");
+                }
+
+                helpers.top().windowAggs.push_back(
+                    BigintUnionAggregationLogicalFunction::create(valueFunction.get<FieldAccessLogicalFunction>(),
+                                                                    timestampFunction.get<FieldAccessLogicalFunction>()));
+                helpers.top().functionBuilder.push_back(valueFunction);
+            }
+            break;
+        /* END CODEGEN AGGREGATION GLUE: BIGINT_UNION (case-switch) */
+
+        /* BEGIN CODEGEN AGGREGATION GLUE: TIMESTAMPTZ_UNION (case-switch) */
+        case AntlrSQLLexer::TIMESTAMPTZ_UNION:
+            // Windowed time union (TSTZSET) over an event-time field via timestamptz_union_transfn + set_union_finalfn.
+            if (helpers.top().functionBuilder.size() != 2) {
+                throw InvalidQuerySyntax("TIMESTAMPTZ_UNION requires exactly two arguments (value, timestamp), but got {}", helpers.top().functionBuilder.size());
+            }
+            {
+                const auto timestampFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto valueFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+
+                if (!valueFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
+                    throw InvalidQuerySyntax("TIMESTAMPTZ_UNION arguments must be field references");
+                }
+
+                helpers.top().windowAggs.push_back(
+                    TimestamptzUnionAggregationLogicalFunction::create(valueFunction.get<FieldAccessLogicalFunction>(),
+                                                                    timestampFunction.get<FieldAccessLogicalFunction>()));
+                helpers.top().functionBuilder.push_back(valueFunction);
+            }
+            break;
+        /* END CODEGEN AGGREGATION GLUE: TIMESTAMPTZ_UNION (case-switch) */
+
 
 
 
@@ -11629,6 +11733,66 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
                 helpers.top().windowAggs.push_back(TimestamptzExtentAggregationLogicalFunction::create(value, ts));
             }
             /* END CODEGEN AGGREGATION GLUE: TIMESTAMPTZ_EXTENT (funcName chain) */
+            /* BEGIN CODEGEN AGGREGATION GLUE: FLOAT_UNION (funcName chain) */
+            else if (funcName == "FLOAT_UNION")
+            {
+                if (helpers.top().functionBuilder.size() < 2)
+                {
+                    throw InvalidQuerySyntax("FLOAT_UNION requires two arguments at {}", context->getText());
+                }
+                const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto value = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                helpers.top().windowAggs.push_back(FloatUnionAggregationLogicalFunction::create(value, ts));
+            }
+            /* END CODEGEN AGGREGATION GLUE: FLOAT_UNION (funcName chain) */
+
+            /* BEGIN CODEGEN AGGREGATION GLUE: INT_UNION (funcName chain) */
+            else if (funcName == "INT_UNION")
+            {
+                if (helpers.top().functionBuilder.size() < 2)
+                {
+                    throw InvalidQuerySyntax("INT_UNION requires two arguments at {}", context->getText());
+                }
+                const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto value = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                helpers.top().windowAggs.push_back(IntUnionAggregationLogicalFunction::create(value, ts));
+            }
+            /* END CODEGEN AGGREGATION GLUE: INT_UNION (funcName chain) */
+
+            /* BEGIN CODEGEN AGGREGATION GLUE: BIGINT_UNION (funcName chain) */
+            else if (funcName == "BIGINT_UNION")
+            {
+                if (helpers.top().functionBuilder.size() < 2)
+                {
+                    throw InvalidQuerySyntax("BIGINT_UNION requires two arguments at {}", context->getText());
+                }
+                const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto value = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                helpers.top().windowAggs.push_back(BigintUnionAggregationLogicalFunction::create(value, ts));
+            }
+            /* END CODEGEN AGGREGATION GLUE: BIGINT_UNION (funcName chain) */
+
+            /* BEGIN CODEGEN AGGREGATION GLUE: TIMESTAMPTZ_UNION (funcName chain) */
+            else if (funcName == "TIMESTAMPTZ_UNION")
+            {
+                if (helpers.top().functionBuilder.size() < 2)
+                {
+                    throw InvalidQuerySyntax("TIMESTAMPTZ_UNION requires two arguments at {}", context->getText());
+                }
+                const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto value = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                helpers.top().windowAggs.push_back(TimestamptzUnionAggregationLogicalFunction::create(value, ts));
+            }
+            /* END CODEGEN AGGREGATION GLUE: TIMESTAMPTZ_UNION (funcName chain) */
+
 
 
 

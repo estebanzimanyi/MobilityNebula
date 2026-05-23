@@ -93,6 +93,7 @@ below_stbox_tspatial	wired
 below_tspatial_stbox	wired
 below_tspatial_tspatial	wired
 bigint_extent_transfn	wired
+bigint_union_transfn	wired
 contained_stbox_tspatial	wired
 contained_tbox_tnumber	wired
 contained_temporal_temporal	wired
@@ -175,12 +176,14 @@ ever_ne_tgeo_geo	wired
 ever_ne_tgeo_tgeo	wired
 ever_ne_tint_int	wired
 float_extent_transfn	wired
+float_union_transfn	wired
 front_stbox_tspatial	wired
 front_tspatial_stbox	wired
 front_tspatial_tspatial	wired
 geog_dwithin	wired
 geom_to_geog	wired
 int_extent_transfn	wired
+int_union_transfn	wired
 left_stbox_tspatial	wired
 left_tbox_tnumber	wired
 left_tnumber_tbox	wired
@@ -254,6 +257,7 @@ same_temporal_temporal	wired
 same_tnumber_tbox	wired
 same_tspatial_stbox	wired
 same_tspatial_tspatial	wired
+set_union_finalfn	wired
 tbool_end_value	wired
 tbool_start_value	wired
 tbool_to_tint	wired
@@ -289,6 +293,7 @@ tfloat_to_tint	wired
 tgeo_at_geom	wired
 tgeo_minus_geom	wired
 timestamptz_extent_transfn	wired
+timestamptz_union_transfn	wired
 tint_end_value	wired
 tint_max_value	wired
 tint_min_value	wired
