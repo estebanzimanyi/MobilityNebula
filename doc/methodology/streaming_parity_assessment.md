@@ -7,7 +7,7 @@ surface is the **1,945** streamable MEOS public functions (tiers
 
 | Platform | **L3 CALLABLE** (binding invokes it, confirmed) | L2 wired-only (registered, not yet confirmed callable) | gap (streamable, not wired) |
 |---|---|---|---|
-| **NebulaStream** | **6 — 0.3%** | 141 — 7.2% | 1,798 — 92.4% |
+| **NebulaStream** | **6 — 0.3%** | 159 — 8.2% | 1,780 — 91.5% |
 | **Flink** | **1,945 — 100.0%** | 0 — 0.0% | 0 — 0.0% |
 | **Kafka** | **1,945 — 100.0%** | 0 — 0.0% | 0 — 0.0% |
 
@@ -69,7 +69,7 @@ callability harness: `tools/streaming_parity/callability/`. The committed
   libmeos). The CI gate (`ci_gate.py` + `.github/workflows/streaming_parity_gate.yml`)
   holds the floor at 1,945 and blocks any regression or over-claim; the committed
   feed reproduces it without re-running the harness.
-- **NebulaStream: in progress.** 147 / 1,945 wired (operators emitted + parser-glued),
+- **NebulaStream: in progress.** 165 / 1,945 wired (operators emitted + parser-glued),
   6 confirmed callable via runnable systests. Every wired operator is **locally
   compile-verified**: the generated `nes-{physical,logical}-operators` +
   `nes-sql-parser` libraries link clean in the `nebulastream/nes-development`
@@ -77,7 +77,9 @@ callability harness: `tools/streaming_parity/callability/`. The committed
   added the 60-operator comparison family (`ever_`/`always_` scalar + two-temporal,
   tfloat/tint) via the descriptor-builder (`tools/codegen/build_descriptor.py`),
   which classifies gap functions by their exact in-header signature so emission
-  stays measured-not-guessed. The remaining path lifts more families
+  stays measured-not-guessed; Wave 23 added 18 spatial-relation + comparison
+  operators (`*_tgeo_geo` / `*_tgeo_tgeo` / `*_tcbuffer_*`) reusing existing
+  templates. The remaining path lifts more families
   (typed comparison, arithmetic, accessors, transforms) by the same generate →
   compile-check loop, and adds a systest per operator to raise the confirmed-callable
   count toward the JVM tools' 100%.

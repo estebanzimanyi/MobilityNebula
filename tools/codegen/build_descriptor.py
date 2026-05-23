@@ -149,10 +149,60 @@ def cmp_two_temporal(fn, ret, args):
     }
 
 
+def _args(spec):
+    return [{"name": n, "nautilus_type": t,
+             "cpp_type": "const char*" if t == "VariableSizedData" else t} for n, t in spec]
+
+
+# per-template SQL arg layouts (must match the physical-cpp template's parameterValues order)
+_A_TGEO_GEO = [("lon", "double"), ("lat", "double"), ("timestamp", "uint64_t"), ("geometry", "VariableSizedData")]
+_A_TWO_TGEO = [("lonA", "double"), ("latA", "double"), ("tsA", "uint64_t"),
+               ("lonB", "double"), ("latB", "double"), ("tsB", "uint64_t")]
+_A_TCB_CB   = [("lon", "double"), ("lat", "double"), ("radius", "double"), ("timestamp", "uint64_t"), ("cbuffer", "VariableSizedData")]
+_A_TWO_TCB  = [("lonA", "double"), ("latA", "double"), ("radiusA", "double"), ("tsA", "uint64_t"),
+               ("lonB", "double"), ("latB", "double"), ("radiusB", "double"), ("tsB", "uint64_t")]
+
+
+def _mk_int(fn, flag, argspec, note):
+    return {
+        "nebula_name": pascal(fn),
+        "sql_token": fn.upper(),
+        "meos_call": fn,
+        "args": _args(argspec),
+        "return_type": "int",
+        "nautilus_return": "INT32",
+        flag: True,
+        "comment_one_liner": note,
+    }
+
+
+def sprel_cmp_existing(fn, ret, args):
+    """int-returning spatial-relation / comparison whose per-event input build is
+    already covered by an existing physical-cpp template. Routes by arg-shape +
+    type token; returns None for shapes needing a new template (tnpoint/tpose
+    native, reversed-arg, text/bool, non-int return)."""
+    if ret != "int":
+        return None
+    if args == ("Temporal*", "GSERIALIZED*") and ("_tgeo_geo" in fn or "_tpoint_geo" in fn):
+        return _mk_int(fn, "build_temporal_point", _A_TGEO_GEO,
+                       f"Per-event {fn} between a single-instant tgeompoint and a static geometry.")
+    if args == ("Temporal*", "Temporal*") and "tcbuffer" in fn:
+        return _mk_int(fn, "build_two_tcbuffer_points", _A_TWO_TCB,
+                       f"Per-event {fn} between two single-instant tcbuffers.")
+    if args == ("Temporal*", "Temporal*") and not ("tnpoint" in fn or "tpose" in fn):
+        return _mk_int(fn, "build_two_temporal_points", _A_TWO_TGEO,
+                       f"Per-event {fn} between two single-instant tgeompoints.")
+    if args == ("Temporal*", "Cbuffer*"):
+        return _mk_int(fn, "build_tcbuffer_point_cbuffer", _A_TCB_CB,
+                       f"Per-event {fn} between a single-instant tcbuffer and a static cbuffer.")
+    return None
+
+
 SHAPES = {
     "cmp_scalar_tempfirst": cmp_scalar_tempfirst,
     "cmp_scalar_scalarfirst": cmp_scalar_scalarfirst,
     "cmp_two_temporal": cmp_two_temporal,
+    "sprel_cmp_existing": sprel_cmp_existing,
 }
 
 
