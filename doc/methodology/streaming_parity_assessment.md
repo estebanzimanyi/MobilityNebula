@@ -7,7 +7,7 @@ surface is the **1,945** streamable MEOS public functions (tiers
 
 | Platform | **L3 CALLABLE** (binding invokes it, confirmed) | L2 wired-only (registered, not yet confirmed callable) | gap (streamable, not wired) |
 |---|---|---|---|
-| **NebulaStream** | **6 — 0.3%** | 208 — 10.7% | 1,731 — 89.0% |
+| **NebulaStream** | **6 — 0.3%** | 218 — 11.2% | 1,721 — 88.5% |
 | **Flink** | **1,945 — 100.0%** | 0 — 0.0% | 0 — 0.0% |
 | **Kafka** | **1,945 — 100.0%** | 0 — 0.0% | 0 — 0.0% |
 
@@ -69,7 +69,7 @@ callability harness: `tools/streaming_parity/callability/`. The committed
   libmeos). The CI gate (`ci_gate.py` + `.github/workflows/streaming_parity_gate.yml`)
   holds the floor at 1,945 and blocks any regression or over-claim; the committed
   feed reproduces it without re-running the harness.
-- **NebulaStream: in progress.** 214 / 1,945 wired (operators emitted + parser-glued),
+- **NebulaStream: in progress.** 224 / 1,945 wired (operators emitted + parser-glued),
   6 confirmed callable via runnable systests. Every wired operator is **locally
   compile-verified**: the generated `nes-{physical,logical}-operators` +
   `nes-sql-parser` libraries link clean in the `nebulastream/nes-development`
