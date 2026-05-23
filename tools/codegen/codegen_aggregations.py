@@ -1283,6 +1283,240 @@ PHYSICAL_CPP_TNUMBER_BOX = _swap_once(
     _FINALIZE_SCALAR_TNUMBER, _FINALIZE_BOX_TNUMBER, "tnumber finalize tail")
 
 # ===========================================================================
+# Scalar-fold box-output template (value/time Span extents).
+#
+# Reuses the tnumber (value, ts) HPP / ctor / lift / combine / reset / cleanup
+# verbatim — only lower() differs. There is NO trajectory/sequence string and
+# NO MEOS parse: the chosen scalar field is folded DIRECTLY through the MEOS
+# extent transition fn (`float_extent_transfn`, `timestamptz_extent_transfn`,
+# …), the Span state threading across events as an opaque pointer (NULL initial
+# state -> first call allocates via span_make, later calls span_expand in place;
+# one allocation total, freed after serialization via the external typed
+# wrapper `floatspan_out` / `intspan_out` / `bigintspan_out` / `tstzspan_out`).
+# ===========================================================================
+PHYSICAL_CPP_SCALARFOLD = """\
+/*
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        https://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+*/
+
+#include <Aggregation/Function/Meos/{nebula_name}AggregationPhysicalFunction.hpp>
+
+#include <cstddef>
+#include <cstdint>
+#include <memory>
+#include <stdexcept>
+#include <utility>
+#include <string_view>
+#include <cstdlib>
+#include <mutex>
+#include <cstring>
+#include <string>
+
+#include <MemoryLayout/ColumnLayout.hpp>
+#include <Nautilus/Interface/BufferRef/TupleBufferRef.hpp>
+#include <Nautilus/Interface/PagedVector/PagedVector.hpp>
+#include <Nautilus/Interface/PagedVector/PagedVectorRef.hpp>
+#include <Nautilus/Interface/Record.hpp>
+#include <nautilus/function.hpp>
+
+#include <AggregationPhysicalFunctionRegistry.hpp>
+#include <ErrorHandling.hpp>
+#include <val.hpp>
+#include <val_concepts.hpp>
+#include <val_ptr.hpp>
+
+#include <MEOSWrapper.hpp>
+extern "C" {{
+#include <meos.h>
+}}
+
+namespace NES
+{{
+
+constexpr static std::string_view ValueFieldName = "value";
+constexpr static std::string_view TimestampFieldName = "timestamp";
+
+static std::mutex {mutex_name};
+
+
+{nebula_name}AggregationPhysicalFunction::{nebula_name}AggregationPhysicalFunction(
+    DataType inputType,
+    DataType resultType,
+    PhysicalFunction valueFunctionParam,
+    PhysicalFunction timestampFunctionParam,
+    Nautilus::Record::RecordFieldIdentifier resultFieldIdentifier,
+    std::shared_ptr<Nautilus::Interface::BufferRef::TupleBufferRef> bufferRef)
+    : AggregationPhysicalFunction(std::move(inputType), std::move(resultType), valueFunctionParam, std::move(resultFieldIdentifier))
+    , bufferRef(std::move(bufferRef))
+    , valueFunction(std::move(valueFunctionParam))
+    , timestampFunction(std::move(timestampFunctionParam))
+{{
+}}
+
+void {nebula_name}AggregationPhysicalFunction::lift(
+    const nautilus::val<AggregationState*>& aggregationState, PipelineMemoryProvider& pipelineMemoryProvider, const Nautilus::Record& record)
+{{
+    const auto pagedVectorPtr = static_cast<nautilus::val<Nautilus::Interface::PagedVector*>>(aggregationState);
+
+    auto valueValue = valueFunction.execute(record, pipelineMemoryProvider.arena);
+    auto timestampValue = timestampFunction.execute(record, pipelineMemoryProvider.arena);
+
+    Record aggregateStateRecord({{
+        {{std::string(ValueFieldName), valueValue}},
+        {{std::string(TimestampFieldName), timestampValue}}
+    }});
+
+    const Nautilus::Interface::PagedVectorRef pagedVectorRef(pagedVectorPtr, bufferRef);
+    pagedVectorRef.writeRecord(aggregateStateRecord, pipelineMemoryProvider.bufferProvider);
+}}
+
+void {nebula_name}AggregationPhysicalFunction::combine(
+    const nautilus::val<AggregationState*> aggregationState1,
+    const nautilus::val<AggregationState*> aggregationState2,
+    PipelineMemoryProvider&)
+{{
+    const auto memArea1 = static_cast<nautilus::val<Nautilus::Interface::PagedVector*>>(aggregationState1);
+    const auto memArea2 = static_cast<nautilus::val<Nautilus::Interface::PagedVector*>>(aggregationState2);
+
+    nautilus::invoke(
+        +[](Nautilus::Interface::PagedVector* vector1, const Nautilus::Interface::PagedVector* vector2) -> void
+        {{ vector1->copyFrom(*vector2); }},
+        memArea1,
+        memArea2);
+}}
+
+Nautilus::Record {nebula_name}AggregationPhysicalFunction::lower(
+    const nautilus::val<AggregationState*> aggregationState, [[maybe_unused]] PipelineMemoryProvider& pipelineMemoryProvider)
+{{
+    MEOS::Meos::ensureMeosInitialized();
+
+    const auto pagedVectorPtr = static_cast<nautilus::val<Nautilus::Interface::PagedVector*>>(aggregationState);
+    const Nautilus::Interface::PagedVectorRef pagedVectorRef(pagedVectorPtr, bufferRef);
+    const auto allFieldNames = bufferRef->getMemoryLayout()->getSchema().getFieldNames();
+    const auto numberOfEntries = invoke(
+        +[](const Nautilus::Interface::PagedVector* pagedVector)
+        {{
+            return pagedVector->getTotalNumberOfEntries();
+        }},
+        pagedVectorPtr);
+
+    if (numberOfEntries == nautilus::val<size_t>(0)) {{
+        auto emptyVarSized = pipelineMemoryProvider.arena.allocateVariableSizedData(0);
+        Nautilus::Record resultRecord;
+        resultRecord.write(resultFieldIdentifier, emptyVarSized);
+        return resultRecord;
+    }}
+
+    // Fold the windowed scalar field through the MEOS extent transition fn.
+    // The Span state threads across events as an opaque pointer; a NULL initial
+    // state makes the first call allocate, later calls expand in place.
+    auto spanState = nautilus::invoke(
+        +[](const Nautilus::Interface::PagedVector*) -> void* {{ return nullptr; }},
+        pagedVectorPtr);
+
+    const auto endIt = pagedVectorRef.end(allFieldNames);
+    for (auto candidateIt = pagedVectorRef.begin(allFieldNames); candidateIt != endIt; ++candidateIt)
+    {{
+        const auto itemRecord = *candidateIt;
+        const auto valueRaw = itemRecord.read(std::string(ValueFieldName));
+        auto value = valueRaw.cast<nautilus::val<{fold_field_cpp_type}>>();
+
+        spanState = nautilus::invoke(
+            +[](void* state, {fold_field_cpp_type} val) -> void*
+            {{
+                std::lock_guard<std::mutex> lock({mutex_name});
+                {fold_invoke_body}
+            }},
+            spanState,
+            value);
+    }}
+
+    auto boxStr = nautilus::invoke(
+        +[](void* state) -> char*
+        {{
+            if (!state) {{
+                return (char*)nullptr;
+            }}
+            std::lock_guard<std::mutex> lock({mutex_name});
+            Span* sp = static_cast<Span*>(state);
+            char* out = {box_out_call};
+            free(state);
+            return out;
+        }},
+        spanState);
+
+    const auto boxStrLen = nautilus::invoke(
+        +[](const char* s) -> size_t {{ return s ? strlen(s) : (size_t) 0; }},
+        boxStr);
+
+    auto variableSized = pipelineMemoryProvider.arena.allocateVariableSizedData(boxStrLen);
+
+    nautilus::invoke(
+        +[](int8_t* dest, const char* s, size_t len) -> void
+        {{
+            if (s) {{
+                memcpy(dest, s, len);
+                free((void*)s);
+            }}
+        }},
+        variableSized.getContent(),
+        boxStr,
+        boxStrLen);
+
+    Nautilus::Record resultRecord;
+    resultRecord.write(resultFieldIdentifier, variableSized);
+    return resultRecord;
+}}
+
+void {nebula_name}AggregationPhysicalFunction::reset(const nautilus::val<AggregationState*> aggregationState, PipelineMemoryProvider&)
+{{
+    nautilus::invoke(
+        +[](AggregationState* pagedVectorMemArea) -> void
+        {{
+            auto* pagedVector = reinterpret_cast<Nautilus::Interface::PagedVector*>(pagedVectorMemArea);
+            new (pagedVector) Nautilus::Interface::PagedVector();
+        }},
+        aggregationState);
+}}
+
+size_t {nebula_name}AggregationPhysicalFunction::getSizeOfStateInBytes() const
+{{
+    return sizeof(Nautilus::Interface::PagedVector);
+}}
+
+void {nebula_name}AggregationPhysicalFunction::cleanup(nautilus::val<AggregationState*> aggregationState)
+{{
+    nautilus::invoke(
+        +[](AggregationState* pagedVectorMemArea) -> void
+        {{
+            auto* pagedVector = reinterpret_cast<Nautilus::Interface::PagedVector*>(pagedVectorMemArea);
+            pagedVector->~PagedVector();
+        }},
+        aggregationState);
+}}
+
+
+AggregationPhysicalFunctionRegistryReturnType AggregationPhysicalFunctionGeneratedRegistrar::Register{nebula_name}AggregationPhysicalFunction(
+    AggregationPhysicalFunctionRegistryArguments)
+{{
+    throw std::runtime_error("{class_name_token} aggregation cannot be created through the registry. "
+                             "It requires two field functions (value, timestamp)");
+}}
+
+}} // namespace NES
+"""
+
+# ===========================================================================
 # Parser-glue templates: TWO dispatch sites in AntlrSQLQueryPlanCreator.cpp.
 # Site 1 is the dedicated-token case-switch (~line 965 in mariana's tree).
 # Site 2 is the IDENTIFIER fallback `else if (funcName == "TOKEN")` chain
@@ -1454,6 +1688,10 @@ def physical_template_for(op):
     if op["input_shape"] == "tgeo":
         return PHYSICAL_HPP_TGEO, (PHYSICAL_CPP_TGEO_BOX if box else PHYSICAL_CPP_TGEO)
     if op["input_shape"] == "tnumber":
+        # Scalar-fold reuses the tnumber (value, ts) HPP but folds the field
+        # directly through the MEOS extent transition fn (no string / no parse).
+        if op.get("fold") == "scalar":
+            return PHYSICAL_HPP_TNUMBER, PHYSICAL_CPP_SCALARFOLD
         return PHYSICAL_HPP_TNUMBER, (PHYSICAL_CPP_TNUMBER_BOX if box else PHYSICAL_CPP_TNUMBER)
     raise ValueError(f"unknown input_shape: {op['input_shape']}")
 
@@ -1502,6 +1740,10 @@ def emit_operator(op, output_root: Path):
         "extent_transfn":      op.get("extent_transfn", ""),
         "extent_box_type":     op.get("extent_box_type", "STBox"),
         "box_out_fn":          op.get("box_out_fn", ""),
+        # scalar-fold extras — only referenced by PHYSICAL_CPP_SCALARFOLD.
+        "fold_field_cpp_type": op.get("fold_field_cpp_type", "double"),
+        "fold_invoke_body":    op.get("fold_invoke_body", ""),
+        "box_out_call":        op.get("box_out_call", ""),
     }
 
     # value_compute (point/tgeo finalize): either fold the windowed sequence

@@ -69,7 +69,7 @@ callability harness: `tools/streaming_parity/callability/`. The committed
   libmeos). The CI gate (`ci_gate.py` + `.github/workflows/streaming_parity_gate.yml`)
   holds the floor at 1,945 and blocks any regression or over-claim; the committed
   feed reproduces it without re-running the harness.
-- **NebulaStream: 245 / 1,945 wired and locally compile-verified.** The
+- **NebulaStream: 249 / 1,945 wired and locally compile-verified.** The
   generated `nes-{physical,logical}-operators` + `nes-sql-parser` libraries link
   clean in the `nebulastream/nes-development` dev image against the `libmeos`
   under test; 6 are confirmed callable via runnable systests. The wired surface
@@ -80,13 +80,16 @@ callability harness: `tools/streaming_parity/callability/`. The committed
   exact in-header signature so emission is measured-not-guessed. Windowed
   extent aggregates emit a *box* — a value, not a scalar — through the
   variable-sized-data path: `tools/codegen/codegen_aggregations.py` has a
-  box-output (`VARSIZED`) mode whose `lower()` folds the windowed temporal with a
-  MEOS extent transition function and serializes the box to text —
-  `TSPATIAL_EXTENT` (per-window `STBox` via `tspatial_extent_transfn` →
-  `stbox_out`) and `TNUMBER_EXTENT` (per-window `TBox` via
-  `tnumber_extent_transfn` → `tbox_out`). Each operator carries a systest
+  box-output (`VARSIZED`) mode whose `lower()` folds the window with a MEOS
+  extent transition function and serializes the result to text. Two shapes are
+  wired: assemble-then-extent for the bounding-box aggregates — `TSPATIAL_EXTENT`
+  (`STBox` via `tspatial_extent_transfn` → `stbox_out`) and `TNUMBER_EXTENT`
+  (`TBox` via `tnumber_extent_transfn` → `tbox_out`) — and a direct scalar fold
+  for the typed value/time `Span` aggregates, `FLOAT_EXTENT` / `INT_EXTENT` /
+  `BIGINT_EXTENT` / `TIMESTAMPTZ_EXTENT` (`float/int/bigint/timestamptz_extent_transfn`,
+  serialized through the external typed wrappers `floatspan_out` / `intspan_out`
+  / `bigintspan_out` / `tstzspan_out`). Each operator carries a systest
   (`nes-systests/function/meos/`) that exercises it end-to-end and rides Nebula
   CI's address/undefined/thread sanitizer matrix as a per-operator memory-leak
   gate.
-  - Not wired: the remaining windowed extent transitions (value/time `Span`) and
-    the Set/Span/Box-input aggregation band.
+  - Not wired: the Set/Span/Box-input aggregation band.

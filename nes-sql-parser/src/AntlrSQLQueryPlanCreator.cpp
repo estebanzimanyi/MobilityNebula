@@ -90,6 +90,10 @@
 #include <Operators/Windows/Aggregations/Meos/TemporalTPointIsSimpleAggregationLogicalFunction.hpp>
 #include <Operators/Windows/Aggregations/Meos/TspatialExtentAggregationLogicalFunction.hpp>
 #include <Operators/Windows/Aggregations/Meos/TnumberExtentAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/FloatExtentAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/IntExtentAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/BigintExtentAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TimestamptzExtentAggregationLogicalFunction.hpp>
 #include <Functions/Meos/TemporalIntersectsGeometryLogicalFunction.hpp>
 #include <Functions/Meos/TemporalAIntersectsGeometryLogicalFunction.hpp>
 #include <Functions/Meos/TemporalEDWithinGeometryLogicalFunction.hpp>
@@ -9274,6 +9278,106 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             }
             break;
         /* END CODEGEN AGGREGATION GLUE: TNUMBER_EXTENT (case-switch) */
+        /* BEGIN CODEGEN AGGREGATION GLUE: FLOAT_EXTENT (case-switch) */
+        case AntlrSQLLexer::FLOAT_EXTENT:
+            // Windowed value extent (FLOATSPAN) over a tfloat stream via float_extent_transfn.
+            if (helpers.top().functionBuilder.size() != 2) {
+                throw InvalidQuerySyntax("FLOAT_EXTENT requires exactly two arguments (value, timestamp), but got {}", helpers.top().functionBuilder.size());
+            }
+            {
+                const auto timestampFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto valueFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+
+                if (!valueFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
+                    throw InvalidQuerySyntax("FLOAT_EXTENT arguments must be field references");
+                }
+
+                helpers.top().windowAggs.push_back(
+                    FloatExtentAggregationLogicalFunction::create(valueFunction.get<FieldAccessLogicalFunction>(),
+                                                                    timestampFunction.get<FieldAccessLogicalFunction>()));
+                helpers.top().functionBuilder.push_back(valueFunction);
+            }
+            break;
+        /* END CODEGEN AGGREGATION GLUE: FLOAT_EXTENT (case-switch) */
+
+        /* BEGIN CODEGEN AGGREGATION GLUE: INT_EXTENT (case-switch) */
+        case AntlrSQLLexer::INT_EXTENT:
+            // Windowed value extent (INTSPAN) over a tint stream via int_extent_transfn.
+            if (helpers.top().functionBuilder.size() != 2) {
+                throw InvalidQuerySyntax("INT_EXTENT requires exactly two arguments (value, timestamp), but got {}", helpers.top().functionBuilder.size());
+            }
+            {
+                const auto timestampFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto valueFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+
+                if (!valueFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
+                    throw InvalidQuerySyntax("INT_EXTENT arguments must be field references");
+                }
+
+                helpers.top().windowAggs.push_back(
+                    IntExtentAggregationLogicalFunction::create(valueFunction.get<FieldAccessLogicalFunction>(),
+                                                                    timestampFunction.get<FieldAccessLogicalFunction>()));
+                helpers.top().functionBuilder.push_back(valueFunction);
+            }
+            break;
+        /* END CODEGEN AGGREGATION GLUE: INT_EXTENT (case-switch) */
+
+        /* BEGIN CODEGEN AGGREGATION GLUE: BIGINT_EXTENT (case-switch) */
+        case AntlrSQLLexer::BIGINT_EXTENT:
+            // Windowed value extent (BIGINTSPAN) over a tbigint stream via bigint_extent_transfn.
+            if (helpers.top().functionBuilder.size() != 2) {
+                throw InvalidQuerySyntax("BIGINT_EXTENT requires exactly two arguments (value, timestamp), but got {}", helpers.top().functionBuilder.size());
+            }
+            {
+                const auto timestampFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto valueFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+
+                if (!valueFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
+                    throw InvalidQuerySyntax("BIGINT_EXTENT arguments must be field references");
+                }
+
+                helpers.top().windowAggs.push_back(
+                    BigintExtentAggregationLogicalFunction::create(valueFunction.get<FieldAccessLogicalFunction>(),
+                                                                    timestampFunction.get<FieldAccessLogicalFunction>()));
+                helpers.top().functionBuilder.push_back(valueFunction);
+            }
+            break;
+        /* END CODEGEN AGGREGATION GLUE: BIGINT_EXTENT (case-switch) */
+
+        /* BEGIN CODEGEN AGGREGATION GLUE: TIMESTAMPTZ_EXTENT (case-switch) */
+        case AntlrSQLLexer::TIMESTAMPTZ_EXTENT:
+            // Windowed time extent (TSTZSPAN) over an event-time field via timestamptz_extent_transfn.
+            if (helpers.top().functionBuilder.size() != 2) {
+                throw InvalidQuerySyntax("TIMESTAMPTZ_EXTENT requires exactly two arguments (value, timestamp), but got {}", helpers.top().functionBuilder.size());
+            }
+            {
+                const auto timestampFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto valueFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+
+                if (!valueFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
+                    throw InvalidQuerySyntax("TIMESTAMPTZ_EXTENT arguments must be field references");
+                }
+
+                helpers.top().windowAggs.push_back(
+                    TimestamptzExtentAggregationLogicalFunction::create(valueFunction.get<FieldAccessLogicalFunction>(),
+                                                                    timestampFunction.get<FieldAccessLogicalFunction>()));
+                helpers.top().functionBuilder.push_back(valueFunction);
+            }
+            break;
+        /* END CODEGEN AGGREGATION GLUE: TIMESTAMPTZ_EXTENT (case-switch) */
+
 
 
 
@@ -9719,6 +9823,66 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
                 helpers.top().windowAggs.push_back(TnumberExtentAggregationLogicalFunction::create(value, ts));
             }
             /* END CODEGEN AGGREGATION GLUE: TNUMBER_EXTENT (funcName chain) */
+            /* BEGIN CODEGEN AGGREGATION GLUE: FLOAT_EXTENT (funcName chain) */
+            else if (funcName == "FLOAT_EXTENT")
+            {
+                if (helpers.top().functionBuilder.size() < 2)
+                {
+                    throw InvalidQuerySyntax("FLOAT_EXTENT requires two arguments at {}", context->getText());
+                }
+                const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto value = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                helpers.top().windowAggs.push_back(FloatExtentAggregationLogicalFunction::create(value, ts));
+            }
+            /* END CODEGEN AGGREGATION GLUE: FLOAT_EXTENT (funcName chain) */
+
+            /* BEGIN CODEGEN AGGREGATION GLUE: INT_EXTENT (funcName chain) */
+            else if (funcName == "INT_EXTENT")
+            {
+                if (helpers.top().functionBuilder.size() < 2)
+                {
+                    throw InvalidQuerySyntax("INT_EXTENT requires two arguments at {}", context->getText());
+                }
+                const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto value = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                helpers.top().windowAggs.push_back(IntExtentAggregationLogicalFunction::create(value, ts));
+            }
+            /* END CODEGEN AGGREGATION GLUE: INT_EXTENT (funcName chain) */
+
+            /* BEGIN CODEGEN AGGREGATION GLUE: BIGINT_EXTENT (funcName chain) */
+            else if (funcName == "BIGINT_EXTENT")
+            {
+                if (helpers.top().functionBuilder.size() < 2)
+                {
+                    throw InvalidQuerySyntax("BIGINT_EXTENT requires two arguments at {}", context->getText());
+                }
+                const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto value = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                helpers.top().windowAggs.push_back(BigintExtentAggregationLogicalFunction::create(value, ts));
+            }
+            /* END CODEGEN AGGREGATION GLUE: BIGINT_EXTENT (funcName chain) */
+
+            /* BEGIN CODEGEN AGGREGATION GLUE: TIMESTAMPTZ_EXTENT (funcName chain) */
+            else if (funcName == "TIMESTAMPTZ_EXTENT")
+            {
+                if (helpers.top().functionBuilder.size() < 2)
+                {
+                    throw InvalidQuerySyntax("TIMESTAMPTZ_EXTENT requires two arguments at {}", context->getText());
+                }
+                const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto value = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                helpers.top().windowAggs.push_back(TimestamptzExtentAggregationLogicalFunction::create(value, ts));
+            }
+            /* END CODEGEN AGGREGATION GLUE: TIMESTAMPTZ_EXTENT (funcName chain) */
+
 
 
 
