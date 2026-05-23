@@ -100,6 +100,11 @@
 #include <Operators/Windows/Aggregations/Meos/TimestamptzUnionAggregationLogicalFunction.hpp>
 #include <Operators/Windows/Aggregations/Meos/TrajectoryWkbAggregationLogicalFunction.hpp>
 #include <Operators/Windows/Aggregations/Meos/TLengthExpAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TgeoCentroidExpAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TpointAzimuthExpAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TpointAngularDifferenceExpAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TgeompointToTgeometryExpAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TemporalCopyExpAggregationLogicalFunction.hpp>
 #include <Functions/Meos/TemporalIntersectsGeometryLogicalFunction.hpp>
 #include <Functions/Meos/TemporalAIntersectsGeometryLogicalFunction.hpp>
 #include <Functions/Meos/TemporalEDWithinGeometryLogicalFunction.hpp>
@@ -11314,6 +11319,151 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             }
             break;
         /* END CODEGEN AGGREGATION GLUE: TLENGTH_EXP (case-switch) */
+        /* BEGIN CODEGEN AGGREGATION GLUE: TGEO_CENTROID_EXP (case-switch) */
+        case AntlrSQLLexer::TGEO_CENTROID_EXP:
+            // Windowed centroid trajectory via tgeo_centroid over the expandable mini-trip, emitted as hex-WKB.
+            if (helpers.top().functionBuilder.size() != 3) {
+                throw InvalidQuerySyntax("TGEO_CENTROID_EXP requires exactly three arguments (longitude, latitude, timestamp), but got {}", helpers.top().functionBuilder.size());
+            }
+            {
+                const auto timestampFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto latitudeFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto longitudeFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+
+                if (!longitudeFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !latitudeFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
+                    throw InvalidQuerySyntax("TGEO_CENTROID_EXP arguments must be field references");
+                }
+
+                helpers.top().windowAggs.push_back(
+                    TgeoCentroidExpAggregationLogicalFunction::create(longitudeFunction.get<FieldAccessLogicalFunction>(),
+                                                                    latitudeFunction.get<FieldAccessLogicalFunction>(),
+                                                                    timestampFunction.get<FieldAccessLogicalFunction>()));
+                helpers.top().functionBuilder.push_back(longitudeFunction);
+            }
+            break;
+        /* END CODEGEN AGGREGATION GLUE: TGEO_CENTROID_EXP (case-switch) */
+
+        /* BEGIN CODEGEN AGGREGATION GLUE: TPOINT_AZIMUTH_EXP (case-switch) */
+        case AntlrSQLLexer::TPOINT_AZIMUTH_EXP:
+            // Windowed azimuth (tfloat) via tpoint_azimuth over the expandable mini-trip, emitted as hex-WKB.
+            if (helpers.top().functionBuilder.size() != 3) {
+                throw InvalidQuerySyntax("TPOINT_AZIMUTH_EXP requires exactly three arguments (longitude, latitude, timestamp), but got {}", helpers.top().functionBuilder.size());
+            }
+            {
+                const auto timestampFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto latitudeFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto longitudeFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+
+                if (!longitudeFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !latitudeFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
+                    throw InvalidQuerySyntax("TPOINT_AZIMUTH_EXP arguments must be field references");
+                }
+
+                helpers.top().windowAggs.push_back(
+                    TpointAzimuthExpAggregationLogicalFunction::create(longitudeFunction.get<FieldAccessLogicalFunction>(),
+                                                                    latitudeFunction.get<FieldAccessLogicalFunction>(),
+                                                                    timestampFunction.get<FieldAccessLogicalFunction>()));
+                helpers.top().functionBuilder.push_back(longitudeFunction);
+            }
+            break;
+        /* END CODEGEN AGGREGATION GLUE: TPOINT_AZIMUTH_EXP (case-switch) */
+
+        /* BEGIN CODEGEN AGGREGATION GLUE: TPOINT_ANGULAR_DIFFERENCE_EXP (case-switch) */
+        case AntlrSQLLexer::TPOINT_ANGULAR_DIFFERENCE_EXP:
+            // Windowed angular difference via tpoint_angular_difference over the expandable mini-trip, emitted as hex-WKB.
+            if (helpers.top().functionBuilder.size() != 3) {
+                throw InvalidQuerySyntax("TPOINT_ANGULAR_DIFFERENCE_EXP requires exactly three arguments (longitude, latitude, timestamp), but got {}", helpers.top().functionBuilder.size());
+            }
+            {
+                const auto timestampFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto latitudeFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto longitudeFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+
+                if (!longitudeFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !latitudeFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
+                    throw InvalidQuerySyntax("TPOINT_ANGULAR_DIFFERENCE_EXP arguments must be field references");
+                }
+
+                helpers.top().windowAggs.push_back(
+                    TpointAngularDifferenceExpAggregationLogicalFunction::create(longitudeFunction.get<FieldAccessLogicalFunction>(),
+                                                                    latitudeFunction.get<FieldAccessLogicalFunction>(),
+                                                                    timestampFunction.get<FieldAccessLogicalFunction>()));
+                helpers.top().functionBuilder.push_back(longitudeFunction);
+            }
+            break;
+        /* END CODEGEN AGGREGATION GLUE: TPOINT_ANGULAR_DIFFERENCE_EXP (case-switch) */
+
+        /* BEGIN CODEGEN AGGREGATION GLUE: TGEOMPOINT_TO_TGEOMETRY_EXP (case-switch) */
+        case AntlrSQLLexer::TGEOMPOINT_TO_TGEOMETRY_EXP:
+            // Windowed tgeompoint->tgeometry conversion over the expandable mini-trip, emitted as hex-WKB.
+            if (helpers.top().functionBuilder.size() != 3) {
+                throw InvalidQuerySyntax("TGEOMPOINT_TO_TGEOMETRY_EXP requires exactly three arguments (longitude, latitude, timestamp), but got {}", helpers.top().functionBuilder.size());
+            }
+            {
+                const auto timestampFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto latitudeFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto longitudeFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+
+                if (!longitudeFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !latitudeFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
+                    throw InvalidQuerySyntax("TGEOMPOINT_TO_TGEOMETRY_EXP arguments must be field references");
+                }
+
+                helpers.top().windowAggs.push_back(
+                    TgeompointToTgeometryExpAggregationLogicalFunction::create(longitudeFunction.get<FieldAccessLogicalFunction>(),
+                                                                    latitudeFunction.get<FieldAccessLogicalFunction>(),
+                                                                    timestampFunction.get<FieldAccessLogicalFunction>()));
+                helpers.top().functionBuilder.push_back(longitudeFunction);
+            }
+            break;
+        /* END CODEGEN AGGREGATION GLUE: TGEOMPOINT_TO_TGEOMETRY_EXP (case-switch) */
+
+        /* BEGIN CODEGEN AGGREGATION GLUE: TEMPORAL_COPY_EXP (case-switch) */
+        case AntlrSQLLexer::TEMPORAL_COPY_EXP:
+            // Windowed temporal_copy over the expandable mini-trip, emitted as hex-WKB.
+            if (helpers.top().functionBuilder.size() != 3) {
+                throw InvalidQuerySyntax("TEMPORAL_COPY_EXP requires exactly three arguments (longitude, latitude, timestamp), but got {}", helpers.top().functionBuilder.size());
+            }
+            {
+                const auto timestampFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto latitudeFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto longitudeFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+
+                if (!longitudeFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !latitudeFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
+                    throw InvalidQuerySyntax("TEMPORAL_COPY_EXP arguments must be field references");
+                }
+
+                helpers.top().windowAggs.push_back(
+                    TemporalCopyExpAggregationLogicalFunction::create(longitudeFunction.get<FieldAccessLogicalFunction>(),
+                                                                    latitudeFunction.get<FieldAccessLogicalFunction>(),
+                                                                    timestampFunction.get<FieldAccessLogicalFunction>()));
+                helpers.top().functionBuilder.push_back(longitudeFunction);
+            }
+            break;
+        /* END CODEGEN AGGREGATION GLUE: TEMPORAL_COPY_EXP (case-switch) */
+
 
 
 
@@ -11913,6 +12063,91 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
                 helpers.top().windowAggs.push_back(TLengthExpAggregationLogicalFunction::create(lon, lat, ts));
             }
             /* END CODEGEN AGGREGATION GLUE: TLENGTH_EXP (funcName chain) */
+            /* BEGIN CODEGEN AGGREGATION GLUE: TGEO_CENTROID_EXP (funcName chain) */
+            else if (funcName == "TGEO_CENTROID_EXP")
+            {
+                if (helpers.top().functionBuilder.size() < 3)
+                {
+                    throw InvalidQuerySyntax("TGEO_CENTROID_EXP requires three arguments at {}", context->getText());
+                }
+                const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto lat = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto lon = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                helpers.top().windowAggs.push_back(TgeoCentroidExpAggregationLogicalFunction::create(lon, lat, ts));
+            }
+            /* END CODEGEN AGGREGATION GLUE: TGEO_CENTROID_EXP (funcName chain) */
+
+            /* BEGIN CODEGEN AGGREGATION GLUE: TPOINT_AZIMUTH_EXP (funcName chain) */
+            else if (funcName == "TPOINT_AZIMUTH_EXP")
+            {
+                if (helpers.top().functionBuilder.size() < 3)
+                {
+                    throw InvalidQuerySyntax("TPOINT_AZIMUTH_EXP requires three arguments at {}", context->getText());
+                }
+                const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto lat = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto lon = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                helpers.top().windowAggs.push_back(TpointAzimuthExpAggregationLogicalFunction::create(lon, lat, ts));
+            }
+            /* END CODEGEN AGGREGATION GLUE: TPOINT_AZIMUTH_EXP (funcName chain) */
+
+            /* BEGIN CODEGEN AGGREGATION GLUE: TPOINT_ANGULAR_DIFFERENCE_EXP (funcName chain) */
+            else if (funcName == "TPOINT_ANGULAR_DIFFERENCE_EXP")
+            {
+                if (helpers.top().functionBuilder.size() < 3)
+                {
+                    throw InvalidQuerySyntax("TPOINT_ANGULAR_DIFFERENCE_EXP requires three arguments at {}", context->getText());
+                }
+                const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto lat = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto lon = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                helpers.top().windowAggs.push_back(TpointAngularDifferenceExpAggregationLogicalFunction::create(lon, lat, ts));
+            }
+            /* END CODEGEN AGGREGATION GLUE: TPOINT_ANGULAR_DIFFERENCE_EXP (funcName chain) */
+
+            /* BEGIN CODEGEN AGGREGATION GLUE: TGEOMPOINT_TO_TGEOMETRY_EXP (funcName chain) */
+            else if (funcName == "TGEOMPOINT_TO_TGEOMETRY_EXP")
+            {
+                if (helpers.top().functionBuilder.size() < 3)
+                {
+                    throw InvalidQuerySyntax("TGEOMPOINT_TO_TGEOMETRY_EXP requires three arguments at {}", context->getText());
+                }
+                const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto lat = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto lon = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                helpers.top().windowAggs.push_back(TgeompointToTgeometryExpAggregationLogicalFunction::create(lon, lat, ts));
+            }
+            /* END CODEGEN AGGREGATION GLUE: TGEOMPOINT_TO_TGEOMETRY_EXP (funcName chain) */
+
+            /* BEGIN CODEGEN AGGREGATION GLUE: TEMPORAL_COPY_EXP (funcName chain) */
+            else if (funcName == "TEMPORAL_COPY_EXP")
+            {
+                if (helpers.top().functionBuilder.size() < 3)
+                {
+                    throw InvalidQuerySyntax("TEMPORAL_COPY_EXP requires three arguments at {}", context->getText());
+                }
+                const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto lat = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto lon = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                helpers.top().windowAggs.push_back(TemporalCopyExpAggregationLogicalFunction::create(lon, lat, ts));
+            }
+            /* END CODEGEN AGGREGATION GLUE: TEMPORAL_COPY_EXP (funcName chain) */
+
 
 
 
