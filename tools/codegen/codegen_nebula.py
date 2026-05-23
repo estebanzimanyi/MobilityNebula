@@ -860,6 +860,8 @@ def emit_operator(op, output_root: Path):
         physical_cpp_path.write_text(PHYSICAL_CPP_TEMPLATE_TEMPORAL_POINT.format(**physical_common))
     elif op.get("build_tnumber_point_with_scalar"):
         physical_cpp_path.write_text(PHYSICAL_CPP_TEMPLATE_TNUMBER_POINT_WITH_SCALAR.format(**physical_common))
+    elif op.get("build_tnumber_scalar_first"):
+        physical_cpp_path.write_text(PHYSICAL_CPP_TEMPLATE_TNUMBER_SCALAR_FIRST.format(**physical_common))
     elif op.get("build_two_tnumber_points"):
         physical_cpp_path.write_text(PHYSICAL_CPP_TEMPLATE_TWO_TNUMBER_POINTS.format(**physical_common))
     else:
@@ -2865,6 +2867,104 @@ PhysicalFunctionRegistryReturnType PhysicalFunctionGeneratedRegistrar::Register{
 """
 
 
+# Physical .cpp for scalar-FIRST tnumber operators — the MEOS signature is
+# `<ret> fn(scalar, const Temporal*)` (e.g. ever_eq_float_tfloat,
+# always_lt_int_tint). Identical to TNUMBER_POINT_WITH_SCALAR except the MEOS
+# call passes the scalar as the FIRST argument. Per-event SQL shape is still
+# (value, timestamp, scalar) so it reuses DISPATCH_CASE_TNUMBER_POINT_WITH_SCALAR.
+PHYSICAL_CPP_TEMPLATE_TNUMBER_SCALAR_FIRST = """\
+/*
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        https://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+*/
+
+#include <Functions/Meos/{nebula_name}PhysicalFunction.hpp>
+
+#include <Functions/PhysicalFunction.hpp>
+#include <MEOSWrapper.hpp>
+#include <Nautilus/DataTypes/VarVal.hpp>
+#include <Nautilus/Interface/Record.hpp>
+#include <PhysicalFunctionRegistry.hpp>
+#include <ErrorHandling.hpp>
+#include <ExecutionContext.hpp>
+#include <fmt/format.h>
+#include <function.hpp>
+#include <string>
+#include <utility>
+#include <val.hpp>
+
+extern "C" {{
+#include <meos.h>
+}}
+
+namespace NES {{
+
+{nebula_name}PhysicalFunction::{nebula_name}PhysicalFunction({ctor_physical_args})
+{{
+    parameterFunctions.reserve({n_args});
+{ctor_physical_pushes}
+}}
+
+VarVal {nebula_name}PhysicalFunction::execute(const Record& record, ArenaRef& arena) const
+{{
+    std::vector<VarVal> parameterValues;
+    parameterValues.reserve(parameterFunctions.size());
+    for (const auto& function : parameterFunctions)
+    {{
+        parameterValues.emplace_back(function.execute(record, arena));
+    }}
+
+    auto value     = parameterValues[0].cast<nautilus::val<{tnumber_value_cpp_type}>>();
+    auto timestamp = parameterValues[1].cast<nautilus::val<uint64_t>>();
+    auto scalar    = parameterValues[2].cast<nautilus::val<{scalar_cpp_type}>>();
+
+    const auto result = nautilus::invoke(
+        +[]({tnumber_value_cpp_type} valueValue,
+            uint64_t timestampValue,
+            {scalar_cpp_type} scalarValue) -> {return_type} {{
+            try
+            {{
+                MEOS::Meos::ensureMeosInitialized();
+                const std::string tsString = MEOS::Meos::convertEpochToTimestamp(timestampValue);
+                std::string wkt = fmt::format("{tnumber_wkt_format}", valueValue, tsString);
+                Temporal* temp = {tnumber_in_fn}(wkt.c_str());
+                if (!temp) return 0;
+                {return_type} r = {meos_call}(scalarValue, temp);
+                free(temp);
+                return r;
+            }}
+            catch (const std::exception&)
+            {{
+                return 0;
+            }}
+        }},
+        value, timestamp, scalar);
+
+    return VarVal(result);
+}}
+
+PhysicalFunctionRegistryReturnType PhysicalFunctionGeneratedRegistrar::Register{nebula_name}PhysicalFunction(
+    PhysicalFunctionRegistryArguments arguments)
+{{
+    PRECONDITION(arguments.childFunctions.size() == {n_args},
+                 "{nebula_name}PhysicalFunction requires {n_args} children but got {{}}",
+                 arguments.childFunctions.size());
+{registrar_pushes}
+}}
+
+}} // namespace NES
+"""
+
+
 # ===========================================================================
 # Parser-glue dispatch-case templates (one per shape).
 # The shape is encoded by the build_* flag; the dispatch block produces a
@@ -3277,7 +3377,9 @@ def dispatch_case_for(op):
         return DISPATCH_CASE_TCBUFFER_POINT_WITH_DIST
     if op.get("build_two_tcbuffer_points_with_dist"):
         return DISPATCH_CASE_TWO_TCBUFFER_POINTS_WITH_DIST
-    if op.get("build_tnumber_point_with_scalar"):
+    if op.get("build_tnumber_point_with_scalar") or op.get("build_tnumber_scalar_first"):
+        # scalar-first reuses the same 3-arg (value, ts, scalar) SQL dispatch;
+        # only the physical-cpp body differs (MEOS call arg order).
         return DISPATCH_CASE_TNUMBER_POINT_WITH_SCALAR
     if op.get("build_two_tnumber_points"):
         return DISPATCH_CASE_TWO_TNUMBER_POINTS
