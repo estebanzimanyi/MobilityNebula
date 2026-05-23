@@ -339,3 +339,4 @@ add_plugin(RightTspatialStbox LogicalFunction nes-logical-operators RightTspatia
 add_plugin(SameStboxTspatial LogicalFunction nes-logical-operators SameStboxTspatialLogicalFunction.cpp)
 add_plugin(SameTboxTnumber LogicalFunction nes-logical-operators SameTboxTnumberLogicalFunction.cpp)
 add_plugin(SameTspatialStbox LogicalFunction nes-logical-operators SameTspatialStboxLogicalFunction.cpp)
+add_plugin(TpointLengthWkb LogicalFunction nes-logical-operators TpointLengthWkbLogicalFunction.cpp)

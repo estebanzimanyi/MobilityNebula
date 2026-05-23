@@ -3036,6 +3036,15 @@ GENERIC_INPUTS = {
         '                std::string {var}Wkt = fmt::format("{{}}@{{}}", value ? "t" : "f", MEOS::Meos::convertEpochToTimestamp(ts));\n'
         '                Temporal* {var} = tbool_in({var}Wkt.c_str());\n'
         '                if (!{var}) return {z};\n')),
+    # The efficient mechanism: the operand is an UPSTREAM MEOS value (a windowed
+    # mini-trip trajectory, or any temporal) carried as a VARSIZED hex-WKB field,
+    # not rebuilt from per-event scalars. The MEOS function library composes over
+    # such values like scalar functions over a float. hex-WKB is the (testable,
+    # ASCII) canonical form; raw WKB is a later optimization.
+    "wkb_temporal": dict(fields=[("traj", "VariableSizedData")], header="meos_geo.h", build=(
+        '                std::string {var}Hex(trajPtr, trajSize);\n'
+        '                Temporal* {var} = temporal_from_hexwkb({var}Hex.c_str());\n'
+        '                if (!{var}) return {z};\n')),
 }
 
 # return_kind -> (cpp_return_type, nautilus_return, zero_literal, extract_fn|None)

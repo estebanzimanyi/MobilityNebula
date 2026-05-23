@@ -338,4 +338,5 @@ add_plugin(RightTspatialStbox PhysicalFunction nes-physical-operators RightTspat
 add_plugin(SameStboxTspatial PhysicalFunction nes-physical-operators SameStboxTspatialPhysicalFunction.cpp)
 add_plugin(SameTboxTnumber PhysicalFunction nes-physical-operators SameTboxTnumberPhysicalFunction.cpp)
 add_plugin(SameTspatialStbox PhysicalFunction nes-physical-operators SameTspatialStboxPhysicalFunction.cpp)
+add_plugin(TpointLengthWkb PhysicalFunction nes-physical-operators TpointLengthWkbPhysicalFunction.cpp)
 endif()
