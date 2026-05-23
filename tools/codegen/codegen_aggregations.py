@@ -1062,6 +1062,227 @@ AggregationPhysicalFunctionRegistryReturnType AggregationPhysicalFunctionGenerat
 """
 
 # ===========================================================================
+# Box-output (VARSIZED) physical .cpp templates.
+#
+# The 11 MEOS `*_extent_transfn` aggregates do not fold a window to a scalar —
+# they fold it to a *box* (a Span / TBox / STBox). NebulaStream emits such a
+# windowed value through the same variable-sized-data path that
+# TemporalSequenceAggregationPhysicalFunction already uses: in lower() we
+# serialize the box to text (`*_out`) and write it as VARSIZED.
+#
+# To stay byte-identical to the proven scalar templates above (lift / combine /
+# reset / cleanup / the trajectory-assembly loop are unchanged), the box
+# templates are DERIVED from the scalar templates by swapping exactly two
+# well-delimited regions: the empty-window early-return and the finalize tail.
+# The swap is asserted (count == 1) so any drift in the scalar template fails
+# loudly at import time rather than emitting silently-wrong C++.
+# ===========================================================================
+
+# Empty-window early-return — identical in the TGEO and TNUMBER scalar templates.
+_EMPTY_SCALAR = """\
+    if (numberOfEntries == nautilus::val<size_t>(0)) {{
+        Nautilus::Record resultRecord;
+        resultRecord.write(resultFieldIdentifier, nautilus::val<{return_cpp_type}>(0));
+        return resultRecord;
+    }}"""
+
+_EMPTY_BOX = """\
+    if (numberOfEntries == nautilus::val<size_t>(0)) {{
+        auto emptyVarSized = pipelineMemoryProvider.arena.allocateVariableSizedData(0);
+        Nautilus::Record resultRecord;
+        resultRecord.write(resultFieldIdentifier, emptyVarSized);
+        return resultRecord;
+    }}"""
+
+# Finalize tail — TGEO scalar (parseTemporalPoint / trajectoryStr / freeTemporalObject).
+_FINALIZE_SCALAR_TGEO = """\
+    auto resultValue = nautilus::invoke(
+        +[](const char* trajStr) -> {return_cpp_type}
+        {{
+            if (!trajStr || strlen(trajStr) == 0) {{
+                free((void*)trajStr);
+                return ({return_cpp_type})0;
+            }}
+
+            std::lock_guard<std::mutex> lock({mutex_name});
+
+            std::string trajString(trajStr);
+            void* temp = MEOS::Meos::parseTemporalPoint(trajString);
+            if (!temp) {{
+                free((void*)trajStr);
+                return ({return_cpp_type})0;
+            }}
+
+            {value_compute}
+
+            MEOS::Meos::freeTemporalObject(temp);
+            free((void*)trajStr);
+            return value;
+        }},
+        trajectoryStr);
+
+    Nautilus::Record resultRecord;
+    resultRecord.write(resultFieldIdentifier, resultValue);
+    return resultRecord;"""
+
+# Finalize tail — TGEO box: fold the windowed trajectory's extent box and emit
+# its serialized text as VARSIZED. With a NULL initial state the MEOS extent
+# transition fn returns the bbox of the whole-window temporal (e.g.
+# tspatial_extent_transfn(NULL, traj) == tspatial_to_stbox(traj)).
+_FINALIZE_BOX_TGEO = """\
+    auto boxStr = nautilus::invoke(
+        +[](const char* trajStr) -> char*
+        {{
+            if (!trajStr || strlen(trajStr) == 0) {{
+                free((void*)trajStr);
+                return (char*)nullptr;
+            }}
+
+            std::lock_guard<std::mutex> lock({mutex_name});
+
+            std::string trajString(trajStr);
+            void* temp = MEOS::Meos::parseTemporalPoint(trajString);
+            free((void*)trajStr);
+            if (!temp) {{
+                return (char*)nullptr;
+            }}
+
+            {extent_box_type}* aggBox = {extent_transfn}(nullptr, static_cast<Temporal*>(temp));
+            MEOS::Meos::freeTemporalObject(temp);
+            if (!aggBox) {{
+                return (char*)nullptr;
+            }}
+
+            char* boxText = {box_out_fn}(aggBox, 15);
+            free(aggBox);
+            return boxText;
+        }},
+        trajectoryStr);
+
+    const auto boxStrLen = nautilus::invoke(
+        +[](const char* s) -> size_t {{ return s ? strlen(s) : (size_t) 0; }},
+        boxStr);
+
+    auto variableSized = pipelineMemoryProvider.arena.allocateVariableSizedData(boxStrLen);
+
+    nautilus::invoke(
+        +[](int8_t* dest, const char* s, size_t len) -> void
+        {{
+            if (s) {{
+                memcpy(dest, s, len);
+                free((void*)s);
+            }}
+        }},
+        variableSized.getContent(),
+        boxStr,
+        boxStrLen);
+
+    Nautilus::Record resultRecord;
+    resultRecord.write(resultFieldIdentifier, variableSized);
+    return resultRecord;"""
+
+# Finalize tail — TNUMBER scalar ({tnumber_in_fn} / sequenceStr / free(temp)).
+_FINALIZE_SCALAR_TNUMBER = """\
+    auto resultValue = nautilus::invoke(
+        +[](const char* seqStr) -> {return_cpp_type}
+        {{
+            if (!seqStr || strlen(seqStr) == 0) {{
+                free((void*)seqStr);
+                return ({return_cpp_type})0;
+            }}
+
+            std::lock_guard<std::mutex> lock({mutex_name});
+
+            Temporal* temp = {tnumber_in_fn}(seqStr);
+            if (!temp) {{
+                free((void*)seqStr);
+                return ({return_cpp_type})0;
+            }}
+
+            {return_cpp_type} value = {meos_scalar_fn}(temp);
+
+            free(temp);
+            free((void*)seqStr);
+            return value;
+        }},
+        sequenceStr);
+
+    Nautilus::Record resultRecord;
+    resultRecord.write(resultFieldIdentifier, resultValue);
+    return resultRecord;"""
+
+# Finalize tail — TNUMBER box.
+_FINALIZE_BOX_TNUMBER = """\
+    auto boxStr = nautilus::invoke(
+        +[](const char* seqStr) -> char*
+        {{
+            if (!seqStr || strlen(seqStr) == 0) {{
+                free((void*)seqStr);
+                return (char*)nullptr;
+            }}
+
+            std::lock_guard<std::mutex> lock({mutex_name});
+
+            Temporal* temp = {tnumber_in_fn}(seqStr);
+            free((void*)seqStr);
+            if (!temp) {{
+                return (char*)nullptr;
+            }}
+
+            {extent_box_type}* aggBox = {extent_transfn}(nullptr, temp);
+            free(temp);
+            if (!aggBox) {{
+                return (char*)nullptr;
+            }}
+
+            char* boxText = {box_out_fn}(aggBox, 15);
+            free(aggBox);
+            return boxText;
+        }},
+        sequenceStr);
+
+    const auto boxStrLen = nautilus::invoke(
+        +[](const char* s) -> size_t {{ return s ? strlen(s) : (size_t) 0; }},
+        boxStr);
+
+    auto variableSized = pipelineMemoryProvider.arena.allocateVariableSizedData(boxStrLen);
+
+    nautilus::invoke(
+        +[](int8_t* dest, const char* s, size_t len) -> void
+        {{
+            if (s) {{
+                memcpy(dest, s, len);
+                free((void*)s);
+            }}
+        }},
+        variableSized.getContent(),
+        boxStr,
+        boxStrLen);
+
+    Nautilus::Record resultRecord;
+    resultRecord.write(resultFieldIdentifier, variableSized);
+    return resultRecord;"""
+
+
+def _swap_once(template, old, new, what):
+    """Replace exactly one occurrence of `old` with `new`, asserting the count
+    so a drifted scalar template fails at import rather than emitting bad C++."""
+    n = template.count(old)
+    if n != 1:
+        raise AssertionError(
+            f"box-template derivation: expected exactly 1 occurrence of {what}, found {n}")
+    return template.replace(old, new)
+
+
+PHYSICAL_CPP_TGEO_BOX = _swap_once(
+    _swap_once(PHYSICAL_CPP_TGEO, _EMPTY_SCALAR, _EMPTY_BOX, "tgeo empty-window block"),
+    _FINALIZE_SCALAR_TGEO, _FINALIZE_BOX_TGEO, "tgeo finalize tail")
+
+PHYSICAL_CPP_TNUMBER_BOX = _swap_once(
+    _swap_once(PHYSICAL_CPP_TNUMBER, _EMPTY_SCALAR, _EMPTY_BOX, "tnumber empty-window block"),
+    _FINALIZE_SCALAR_TNUMBER, _FINALIZE_BOX_TNUMBER, "tnumber finalize tail")
+
+# ===========================================================================
 # Parser-glue templates: TWO dispatch sites in AntlrSQLQueryPlanCreator.cpp.
 # Site 1 is the dedicated-token case-switch (~line 965 in mariana's tree).
 # Site 2 is the IDENTIFIER fallback `else if (funcName == "TOKEN")` chain
@@ -1229,10 +1450,11 @@ OPTIMIZER_LOWERING_TNUMBER = """\
 # ===========================================================================
 
 def physical_template_for(op):
+    box = op.get("return_mode") == "box"
     if op["input_shape"] == "tgeo":
-        return PHYSICAL_HPP_TGEO, PHYSICAL_CPP_TGEO
+        return PHYSICAL_HPP_TGEO, (PHYSICAL_CPP_TGEO_BOX if box else PHYSICAL_CPP_TGEO)
     if op["input_shape"] == "tnumber":
-        return PHYSICAL_HPP_TNUMBER, PHYSICAL_CPP_TNUMBER
+        return PHYSICAL_HPP_TNUMBER, (PHYSICAL_CPP_TNUMBER_BOX if box else PHYSICAL_CPP_TNUMBER)
     raise ValueError(f"unknown input_shape: {op['input_shape']}")
 
 
@@ -1267,22 +1489,30 @@ def emit_operator(op, output_root: Path):
         "class_name_token":    op["class_name_token"],
         "sql_token":           op["sql_token"],
         "comment_one_liner":   op["comment_one_liner"],
-        "meos_scalar_fn":      op["meos_scalar_fn"],
-        "return_cpp_type":     op["return_cpp_type"],
+        "meos_scalar_fn":      op.get("meos_scalar_fn", ""),
+        "return_cpp_type":     op.get("return_cpp_type", "double"),
         "final_stamp_type":    op["final_stamp_type"],
         "mutex_name":          f"meos_{nebula_name.lower()}_mutex",
         # tnumber-only extras (harmless for tgeo since unused)
         "lift_value_cpp_type": op.get("lift_value_cpp_type", "double"),
         "value_printf_fmt":    op.get("value_printf_fmt", "%.6f"),
         "tnumber_in_fn":       op.get("tnumber_in_fn", "tfloat_in"),
+        # box-output (VARSIZED extent) extras — only referenced by the *_BOX
+        # physical templates; harmless for scalar ops.
+        "extent_transfn":      op.get("extent_transfn", ""),
+        "extent_box_type":     op.get("extent_box_type", "STBox"),
+        "box_out_fn":          op.get("box_out_fn", ""),
     }
 
     # value_compute (point/tgeo finalize): either fold the windowed sequence
     # directly with meos_scalar_fn, or — for the EXTENT shape — first reduce the
     # sequence to its bounding box (tspatial_to_stbox / ...) and apply a box
-    # accessor/predicate to that windowed extent.
+    # accessor/predicate to that windowed extent. In box-output mode the
+    # finalize is the serialized extent box itself (no value_compute).
     box_build = op.get("extent_box_build_fn")
-    if box_build:
+    if op.get("return_mode") == "box":
+        fmt["value_compute"] = ""
+    elif box_build:
         box_t = op.get("extent_box_type", "STBox")
         fmt["value_compute"] = (
             f'{box_t}* aggBox = {box_build}(static_cast<Temporal*>(temp));\n'

@@ -67,7 +67,7 @@ def operator_calls(root, streamable):
 
 def systest_token(path):
     for line in open(path):
-        m = re.search(r"\b(TEMPORAL_[A-Z0-9_]+|[A-Z][A-Z0-9_]*_TGEO_GEO|TGEO_AT_STBOX)\s*\(", line)
+        m = re.search(r"\b(TEMPORAL_[A-Z0-9_]+|[A-Z][A-Z0-9_]*_TGEO_GEO|[A-Z][A-Z0-9_]*_EXTENT|TGEO_AT_STBOX)\s*\(", line)
         if m:
             return m.group(1)
     return None

@@ -88,6 +88,8 @@
 #include <Operators/Windows/Aggregations/Meos/TemporalLowerIncAggregationLogicalFunction.hpp>
 #include <Operators/Windows/Aggregations/Meos/TemporalUpperIncAggregationLogicalFunction.hpp>
 #include <Operators/Windows/Aggregations/Meos/TemporalTPointIsSimpleAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TspatialExtentAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TnumberExtentAggregationLogicalFunction.hpp>
 #include <Functions/Meos/TemporalIntersectsGeometryLogicalFunction.hpp>
 #include <Functions/Meos/TemporalAIntersectsGeometryLogicalFunction.hpp>
 #include <Functions/Meos/TemporalEDWithinGeometryLogicalFunction.hpp>
@@ -9219,6 +9221,60 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             }
             break;
         /* END CODEGEN AGGREGATION GLUE: TEMPORAL_TPOINT_IS_SIMPLE (case-switch) */
+        /* BEGIN CODEGEN AGGREGATION GLUE: TSPATIAL_EXTENT (case-switch) */
+        case AntlrSQLLexer::TSPATIAL_EXTENT:
+            // Windowed spatiotemporal extent (STBox) over a tgeo trajectory via tspatial_extent_transfn.
+            if (helpers.top().functionBuilder.size() != 3) {
+                throw InvalidQuerySyntax("TSPATIAL_EXTENT requires exactly three arguments (longitude, latitude, timestamp), but got {}", helpers.top().functionBuilder.size());
+            }
+            {
+                const auto timestampFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto latitudeFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto longitudeFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+
+                if (!longitudeFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !latitudeFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
+                    throw InvalidQuerySyntax("TSPATIAL_EXTENT arguments must be field references");
+                }
+
+                helpers.top().windowAggs.push_back(
+                    TspatialExtentAggregationLogicalFunction::create(longitudeFunction.get<FieldAccessLogicalFunction>(),
+                                                                    latitudeFunction.get<FieldAccessLogicalFunction>(),
+                                                                    timestampFunction.get<FieldAccessLogicalFunction>()));
+                helpers.top().functionBuilder.push_back(longitudeFunction);
+            }
+            break;
+        /* END CODEGEN AGGREGATION GLUE: TSPATIAL_EXTENT (case-switch) */
+
+        /* BEGIN CODEGEN AGGREGATION GLUE: TNUMBER_EXTENT (case-switch) */
+        case AntlrSQLLexer::TNUMBER_EXTENT:
+            // Windowed numeric-temporal extent (TBox) over a tnumber sequence via tnumber_extent_transfn.
+            if (helpers.top().functionBuilder.size() != 2) {
+                throw InvalidQuerySyntax("TNUMBER_EXTENT requires exactly two arguments (value, timestamp), but got {}", helpers.top().functionBuilder.size());
+            }
+            {
+                const auto timestampFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto valueFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+
+                if (!valueFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
+                    throw InvalidQuerySyntax("TNUMBER_EXTENT arguments must be field references");
+                }
+
+                helpers.top().windowAggs.push_back(
+                    TnumberExtentAggregationLogicalFunction::create(valueFunction.get<FieldAccessLogicalFunction>(),
+                                                                    timestampFunction.get<FieldAccessLogicalFunction>()));
+                helpers.top().functionBuilder.push_back(valueFunction);
+            }
+            break;
+        /* END CODEGEN AGGREGATION GLUE: TNUMBER_EXTENT (case-switch) */
+
 
 
 
@@ -9632,6 +9688,38 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
                 helpers.top().windowAggs.push_back(TemporalTPointIsSimpleAggregationLogicalFunction::create(lon, lat, ts));
             }
             /* END CODEGEN AGGREGATION GLUE: TEMPORAL_TPOINT_IS_SIMPLE (funcName chain) */
+            /* BEGIN CODEGEN AGGREGATION GLUE: TSPATIAL_EXTENT (funcName chain) */
+            else if (funcName == "TSPATIAL_EXTENT")
+            {
+                if (helpers.top().functionBuilder.size() < 3)
+                {
+                    throw InvalidQuerySyntax("TSPATIAL_EXTENT requires three arguments at {}", context->getText());
+                }
+                const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto lat = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto lon = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                helpers.top().windowAggs.push_back(TspatialExtentAggregationLogicalFunction::create(lon, lat, ts));
+            }
+            /* END CODEGEN AGGREGATION GLUE: TSPATIAL_EXTENT (funcName chain) */
+
+            /* BEGIN CODEGEN AGGREGATION GLUE: TNUMBER_EXTENT (funcName chain) */
+            else if (funcName == "TNUMBER_EXTENT")
+            {
+                if (helpers.top().functionBuilder.size() < 2)
+                {
+                    throw InvalidQuerySyntax("TNUMBER_EXTENT requires two arguments at {}", context->getText());
+                }
+                const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto value = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                helpers.top().windowAggs.push_back(TnumberExtentAggregationLogicalFunction::create(value, ts));
+            }
+            /* END CODEGEN AGGREGATION GLUE: TNUMBER_EXTENT (funcName chain) */
+
 
 
                 auto vidBString = std::move(helpers.top().constantBuilder.back());

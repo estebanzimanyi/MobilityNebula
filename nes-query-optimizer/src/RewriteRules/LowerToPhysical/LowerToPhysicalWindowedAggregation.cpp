@@ -85,6 +85,10 @@
 #include <Aggregation/Function/Meos/TemporalLowerIncAggregationPhysicalFunction.hpp>
 #include <Aggregation/Function/Meos/TemporalUpperIncAggregationPhysicalFunction.hpp>
 #include <Aggregation/Function/Meos/TemporalTPointIsSimpleAggregationPhysicalFunction.hpp>
+#include <Aggregation/Function/Meos/TspatialExtentAggregationPhysicalFunction.hpp>
+#include <Aggregation/Function/Meos/TnumberExtentAggregationPhysicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TspatialExtentAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TnumberExtentAggregationLogicalFunction.hpp>
 #include <Operators/Windows/Aggregations/Meos/TemporalStartTimestampAggregationLogicalFunction.hpp>
 #include <Operators/Windows/Aggregations/Meos/TemporalEndTimestampAggregationLogicalFunction.hpp>
 #include <Operators/Windows/Aggregations/Meos/TemporalLowerIncAggregationLogicalFunction.hpp>
@@ -846,6 +850,61 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             continue;
         }
         /* END CODEGEN AGGREGATION GLUE: TemporalTPointIsSimple (optimizer lowering) */
+        /* BEGIN CODEGEN AGGREGATION GLUE: TSPATIAL_EXTENT (optimizer lowering) */
+        if (name == std::string_view("TSPATIAL_EXTENT"))
+        {
+            auto specificDescriptor = std::dynamic_pointer_cast<TspatialExtentAggregationLogicalFunction>(descriptor);
+            INVARIANT(specificDescriptor != nullptr, "Expected TspatialExtentAggregationLogicalFunction for TSPATIAL_EXTENT");
+
+            auto lonPF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getLonField());
+            auto latPF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getLatField());
+            auto tsPF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getTimestampField());
+
+            Schema stateSchema;
+            stateSchema.addField("lon", specificDescriptor->getLonField().getDataType());
+            stateSchema.addField("lat", specificDescriptor->getLatField().getDataType());
+            stateSchema.addField("timestamp", specificDescriptor->getTimestampField().getDataType());
+            auto tupleBufferRef = Interface::BufferRef::TupleBufferRef::create(configuration.pageSize.getValue(), stateSchema);
+
+            auto phys = std::make_shared<TspatialExtentAggregationPhysicalFunction>(
+                std::move(physicalInputType),
+                std::move(physicalFinalType),
+                lonPF,
+                latPF,
+                tsPF,
+                resultFieldIdentifier,
+                tupleBufferRef);
+            aggregationPhysicalFunctions.push_back(std::move(phys));
+            continue;
+        }
+        /* END CODEGEN AGGREGATION GLUE: TSPATIAL_EXTENT (optimizer lowering) */
+
+        /* BEGIN CODEGEN AGGREGATION GLUE: TNUMBER_EXTENT (optimizer lowering) */
+        if (name == std::string_view("TNUMBER_EXTENT"))
+        {
+            auto specificDescriptor = std::dynamic_pointer_cast<TnumberExtentAggregationLogicalFunction>(descriptor);
+            INVARIANT(specificDescriptor != nullptr, "Expected TnumberExtentAggregationLogicalFunction for TNUMBER_EXTENT");
+
+            auto valuePF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getValueField());
+            auto tsPF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getTimestampField());
+
+            Schema stateSchema;
+            stateSchema.addField("value", specificDescriptor->getValueField().getDataType());
+            stateSchema.addField("timestamp", specificDescriptor->getTimestampField().getDataType());
+            auto tupleBufferRef = Interface::BufferRef::TupleBufferRef::create(configuration.pageSize.getValue(), stateSchema);
+
+            auto phys = std::make_shared<TnumberExtentAggregationPhysicalFunction>(
+                std::move(physicalInputType),
+                std::move(physicalFinalType),
+                valuePF,
+                tsPF,
+                resultFieldIdentifier,
+                tupleBufferRef);
+            aggregationPhysicalFunctions.push_back(std::move(phys));
+            continue;
+        }
+        /* END CODEGEN AGGREGATION GLUE: TNUMBER_EXTENT (optimizer lowering) */
+
 
 
 

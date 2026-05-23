@@ -7,7 +7,7 @@ surface is the **1,945** streamable MEOS public functions (tiers
 
 | Platform | **L3 CALLABLE** (binding invokes it, confirmed) | L2 wired-only (registered, not yet confirmed callable) | gap (streamable, not wired) |
 |---|---|---|---|
-| **NebulaStream** | **6 — 0.3%** | 237 — 12.2% | 1,702 — 87.5% |
+| **NebulaStream** | **6 — 0.3%** | 239 — 12.3% | 1,700 — 87.4% |
 | **Flink** | **1,945 — 100.0%** | 0 — 0.0% | 0 — 0.0% |
 | **Kafka** | **1,945 — 100.0%** | 0 — 0.0% | 0 — 0.0% |
 
@@ -43,9 +43,9 @@ input from the function-name tokens, with native `T**` arrays
 (`Memory.allocateDirect`) for set/array constructors, a `trgeometryinst_make`
 sample for the `trgeometry` family, `Interval`/`OffsetDateTime`/`LocalDateTime`
 samples for the time functions, and an out-param buffer for the catalog/SRID
-out-params. The 4 functions the MEOS API cleanup removed (`tfloat_avg_value`,
-`geog_from_binary`, `srid_check_latlong`, `nad_stbox_trgeometry`) are no longer
-in the surface (1,949 → 1,945).
+out-params. Four functions (`tfloat_avg_value`, `geog_from_binary`,
+`srid_check_latlong`, `nad_stbox_trgeometry`) are not in the surface, which
+totals 1,945.
 
 ## Reason-marked (NOT streamable, never gaps)
 
@@ -69,17 +69,24 @@ callability harness: `tools/streaming_parity/callability/`. The committed
   libmeos). The CI gate (`ci_gate.py` + `.github/workflows/streaming_parity_gate.yml`)
   holds the floor at 1,945 and blocks any regression or over-claim; the committed
   feed reproduces it without re-running the harness.
-- **NebulaStream: in progress.** 243 / 1,945 wired (operators emitted + parser-glued),
-  6 confirmed callable via runnable systests. Every wired operator is **locally
-  compile-verified**: the generated `nes-{physical,logical}-operators` +
-  `nes-sql-parser` libraries link clean in the `nebulastream/nes-development`
-  dev image against the accumulate-PR `libmeos` (the build under test). Wave 22
-  added the 60-operator comparison family (`ever_`/`always_` scalar + two-temporal,
-  tfloat/tint) via the descriptor-builder (`tools/codegen/build_descriptor.py`),
-  which classifies gap functions by their exact in-header signature so emission
-  stays measured-not-guessed; Wave 23 added 18 spatial-relation + comparison
-  operators (`*_tgeo_geo` / `*_tgeo_tgeo` / `*_tcbuffer_*`) reusing existing
-  templates. The remaining path lifts more families
-  (typed comparison, arithmetic, accessors, transforms) by the same generate →
-  compile-check loop, and adds a systest per operator to raise the confirmed-callable
-  count toward the JVM tools' 100%.
+- **NebulaStream: 245 / 1,945 wired and locally compile-verified.** The
+  generated `nes-{physical,logical}-operators` + `nes-sql-parser` libraries link
+  clean in the `nebulastream/nes-development` dev image against the `libmeos`
+  under test; 6 are confirmed callable via runnable systests. The wired surface
+  spans per-event operators over the tgeompoint/tcbuffer/tpose/tnumber families
+  (comparison, spatial-relation, distance, scalar/extract/box-literal shapes),
+  emitted by the signature-driven descriptor-builder
+  (`tools/codegen/build_descriptor.py`), which classifies a gap function by its
+  exact in-header signature so emission is measured-not-guessed. Windowed
+  extent aggregates emit a *box* — a value, not a scalar — through the
+  variable-sized-data path: `tools/codegen/codegen_aggregations.py` has a
+  box-output (`VARSIZED`) mode whose `lower()` folds the windowed temporal with a
+  MEOS extent transition function and serializes the box to text —
+  `TSPATIAL_EXTENT` (per-window `STBox` via `tspatial_extent_transfn` →
+  `stbox_out`) and `TNUMBER_EXTENT` (per-window `TBox` via
+  `tnumber_extent_transfn` → `tbox_out`). Each operator carries a systest
+  (`nes-systests/function/meos/`) that exercises it end-to-end and rides Nebula
+  CI's address/undefined/thread sanitizer matrix as a per-operator memory-leak
+  gate.
+  - Not wired: the remaining windowed extent transitions (value/time `Span`) and
+    the Set/Span/Box-input aggregation band.
