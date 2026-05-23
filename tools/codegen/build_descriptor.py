@@ -307,6 +307,33 @@ def temporal_extract_scalar(fn, ret, args):
     }
 
 
+_BOX_PARSER = {  # name-suffix token -> (cpp box type, MEOS parser, header)
+    "stbox":    ("STBox", "stbox_in", "meos_geo.h"),
+    "tbox":     ("TBox", "tbox_in", "meos.h"),
+    "tstzspan": ("Span", "tstzspan_in", "meos.h"),
+}
+
+
+def temporal_x_box(fn, ret, args):
+    """int|double|bool fn(const Temporal*, STBox*/TBox*/Span). The box/span is a
+    query LITERAL parsed at runtime (stbox_in/tbox_in/tstzspan_in). numspan is
+    skipped (its parser needs a MeosType)."""
+    if len(args) != 2 or args[0] != "Temporal*" or args[1] not in ("STBox*", "TBox*", "Span*"):
+        return None
+    rk = {"int": "int", "double": "double", "bool": "bool"}.get(ret)
+    tok = next((t for t in _BOX_PARSER if fn.endswith("_" + t)), None)
+    inp = _infer_input(fn)
+    if not rk or not tok or not inp:
+        return None
+    bt, parser, hdr = _BOX_PARSER[tok]
+    return {
+        "nebula_name": pascal(fn), "sql_token": fn.upper(), "meos_call": fn,
+        "build_generic": True, "input_type": inp, "return_kind": rk,
+        "extra_args": [{"kind": "box", "box_type": bt, "parser": parser, "header": hdr}],
+        "comment_one_liner": f"Per-event {fn}: single-instant {inp} against a {tok} literal -> {rk}.",
+    }
+
+
 SHAPES = {
     "cmp_scalar_tempfirst": cmp_scalar_tempfirst,
     "cmp_scalar_scalarfirst": cmp_scalar_scalarfirst,
@@ -316,6 +343,7 @@ SHAPES = {
     "temporal_x_scalar": temporal_x_scalar,
     "temporal_x_geom": temporal_x_geom,
     "temporal_extract_scalar": temporal_extract_scalar,
+    "temporal_x_box": temporal_x_box,
 }
 
 

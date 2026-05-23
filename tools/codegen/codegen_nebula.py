@@ -3072,6 +3072,7 @@ def assemble_generic_physical(op):
     headers = {"meos.h", inp["header"]}
     call_terms = ["temp"]
     parse_lines = []
+    box_frees = []      # raw box/span literals to free after the MEOS call
     for i, ex in enumerate(extras):
         if ex["kind"] == "scalar":
             fields.append((f"arg{i}", ex["cpp"]))
@@ -3086,6 +3087,20 @@ def assemble_generic_physical(op):
                 f'                MEOS::Meos::StaticGeometry arg{i}G(arg{i}S);\n'
                 f'                if (!arg{i}G.getGeometry()) {{ free(temp); return {zero}; }}\n')
             call_terms.append(f"arg{i}G.getGeometry()")
+        elif ex["kind"] == "box":
+            # query-literal STBox/TBox/Span parsed from a text constant; freed
+            # after the call. parser = stbox_in / tbox_in / tstzspan_in; box_type
+            # = STBox / TBox / Span.
+            fields.append((f"arg{i}", "VariableSizedData"))
+            headers.add(ex.get("header", "meos.h"))
+            parse_lines.append(
+                f'                std::string arg{i}S(arg{i}Ptr, arg{i}Size);\n'
+                f'                while (!arg{i}S.empty() && (arg{i}S.front()==\'\\\'\' || arg{i}S.front()==\'"\')) arg{i}S.erase(arg{i}S.begin());\n'
+                f'                while (!arg{i}S.empty() && (arg{i}S.back()==\'\\\'\' || arg{i}S.back()==\'"\')) arg{i}S.pop_back();\n'
+                f'                {ex["box_type"]}* arg{i}B = {ex["parser"]}(arg{i}S.c_str());\n'
+                f'                if (!arg{i}B) {{ free(temp); return {zero}; }}\n')
+            call_terms.append(f"arg{i}B")
+            box_frees.append(f"free(arg{i}B);")
 
     # Build the parameterValues casts, lambda params, and invoke args from fields.
     casts, lparams, invoke = [], [], []
@@ -3107,15 +3122,18 @@ def assemble_generic_physical(op):
                     ["meos.h"] + sorted(h for h in headers if h != "meos.h"))
 
     callargs = ", ".join(call_terms)
+    bf = "".join(f"                {x}\n" for x in box_frees)
     if extract_fn is None:
         call_marshal = (f"                {ret_cpp} r = {op['meos_call']}({callargs});\n"
                         f"                free(temp);\n"
+                        f"{bf}"
                         f"                return r;")
     else:
         # Temporal*-returning transform: result is a single-instant temporal; take
         # its value via the result type's *_start_value accessor, free both.
         call_marshal = (f"                Temporal* res = {op['meos_call']}({callargs});\n"
                         f"                free(temp);\n"
+                        f"{bf}"
                         f"                if (!res) return {zero};\n"
                         f"                {ret_cpp} r = {extract_fn}(res);\n"
                         f"                free(res);\n"
