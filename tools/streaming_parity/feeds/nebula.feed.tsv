@@ -237,7 +237,9 @@ tint_start_value	wired
 tint_to_tfloat	wired
 tnpoint_length	wired
 tnumber_avg_value	wired
+tnumber_extent_transfn	wired
 tnumber_integral	wired
 tnumber_twavg	wired
 tpoint_is_simple	wired
 tpoint_length	wired
+tspatial_extent_transfn	wired
