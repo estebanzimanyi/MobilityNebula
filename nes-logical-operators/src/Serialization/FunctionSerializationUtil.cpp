@@ -77,6 +77,10 @@ deserializeWindowAggregationFunction(const SerializableAggregationFunction& seri
         {
             args.fields.push_back(f);
         }
+        for (const auto& lit : serializedFunction.literals())
+        {
+            args.literals.push_back(lit);
+        }
         if (auto function = AggregationLogicalFunctionRegistry::instance().create(type, args))
         {
             return function.value();
