@@ -163,46 +163,159 @@ _A_TWO_TCB  = [("lonA", "double"), ("latA", "double"), ("radiusA", "double"), ("
                ("lonB", "double"), ("latB", "double"), ("radiusB", "double"), ("tsB", "uint64_t")]
 
 
-def _mk_int(fn, flag, argspec, note):
+_SCALAR_RET = {"int": ("int", "INT32"), "double": ("double", "FLOAT64"), "bool": ("bool", "BOOLEAN")}
+
+
+def _mk_scalar(fn, flag, argspec, note, ret="int"):
+    rt, nr = _SCALAR_RET[ret]
     return {
         "nebula_name": pascal(fn),
         "sql_token": fn.upper(),
         "meos_call": fn,
         "args": _args(argspec),
-        "return_type": "int",
-        "nautilus_return": "INT32",
+        "return_type": rt,
+        "nautilus_return": nr,
         flag: True,
         "comment_one_liner": note,
     }
 
 
-def sprel_cmp_existing(fn, ret, args):
-    """int-returning spatial-relation / comparison whose per-event input build is
-    already covered by an existing physical-cpp template. Routes by arg-shape +
-    type token; returns None for shapes needing a new template (tnpoint/tpose
-    native, reversed-arg, text/bool, non-int return)."""
-    if ret != "int":
+def sprel_scalar_existing(fn, ret, args):
+    """Scalar-returning (int/double/bool) spatial-relation / comparison / topological /
+    distance whose per-event input build is already covered by an existing
+    physical-cpp template. Routes by arg-shape + type token; returns None for
+    shapes needing a new template (tnpoint/tpose native two-temporal, reversed-arg,
+    text/bool object args, non-scalar return)."""
+    if ret not in _SCALAR_RET:
         return None
-    if args == ("Temporal*", "GSERIALIZED*") and ("_tgeo_geo" in fn or "_tpoint_geo" in fn):
-        return _mk_int(fn, "build_temporal_point", _A_TGEO_GEO,
-                       f"Per-event {fn} between a single-instant tgeompoint and a static geometry.")
+    if args == ("Temporal*", "GSERIALIZED*") and ("_tgeo_" in fn or "_tpoint_" in fn or "_tspatial_" in fn):
+        return _mk_scalar(fn, "build_temporal_point", _A_TGEO_GEO,
+                          f"Per-event {fn}: single-instant tgeompoint vs a static geometry -> {ret}.", ret)
     if args == ("Temporal*", "Temporal*") and "tcbuffer" in fn:
-        return _mk_int(fn, "build_two_tcbuffer_points", _A_TWO_TCB,
-                       f"Per-event {fn} between two single-instant tcbuffers.")
-    if args == ("Temporal*", "Temporal*") and not ("tnpoint" in fn or "tpose" in fn):
-        return _mk_int(fn, "build_two_temporal_points", _A_TWO_TGEO,
-                       f"Per-event {fn} between two single-instant tgeompoints.")
+        return _mk_scalar(fn, "build_two_tcbuffer_points", _A_TWO_TCB,
+                          f"Per-event {fn} between two single-instant tcbuffers -> {ret}.", ret)
+    if args == ("Temporal*", "Temporal*") and not ("tnpoint" in fn or "tpose" in fn or "tnumber" in fn):
+        return _mk_scalar(fn, "build_two_temporal_points", _A_TWO_TGEO,
+                          f"Per-event {fn} between two single-instant tgeompoints -> {ret}.", ret)
     if args == ("Temporal*", "Cbuffer*"):
-        return _mk_int(fn, "build_tcbuffer_point_cbuffer", _A_TCB_CB,
-                       f"Per-event {fn} between a single-instant tcbuffer and a static cbuffer.")
+        return _mk_scalar(fn, "build_tcbuffer_point_cbuffer", _A_TCB_CB,
+                          f"Per-event {fn}: single-instant tcbuffer vs a static cbuffer -> {ret}.", ret)
     return None
+
+
+# leading/embedded type token -> generic input-builder key (codegen_nebula GENERIC_INPUTS)
+_GENERIC_INPUT_FOR = [
+    ("tgeompoint", "tgeompoint"), ("tgeogpoint", "tgeompoint"), ("tgeometry", "tgeometry"),
+    ("tcbuffer", "tcbuffer"), ("tnpoint", "tnpoint"), ("tpose", "tpose"),
+    ("tfloat", "tfloat"), ("tint", "tint"), ("tbool", "tbool"),
+    ("tnumber", "tfloat"), ("tgeo", "tgeompoint"), ("tpoint", "tgeompoint"),
+]
+
+
+def _infer_input(fn):
+    for tok, inp in _GENERIC_INPUT_FOR:
+        if fn.startswith(tok + "_") or ("_" + tok + "_") in fn or fn.endswith("_" + tok):
+            return inp
+    return None
+
+
+def temporal_unary_scalar(fn, ret, args):
+    """Unary scalar accessor: int|double|bool fn(const Temporal*). Generic shape;
+    input type inferred from the name token."""
+    if args != ("Temporal*",):
+        return None
+    rk = {"int": "int", "double": "double", "bool": "bool"}.get(ret)
+    if not rk:
+        return None
+    inp = _infer_input(fn)
+    if not inp:
+        return None
+    return {
+        "nebula_name": pascal(fn), "sql_token": fn.upper(), "meos_call": fn,
+        "build_generic": True, "input_type": inp, "extra_args": [], "return_kind": rk,
+        "comment_one_liner": f"Per-event {fn}: {rk} accessor over a single-instant {inp}.",
+    }
+
+
+_SCALAR_CPP = {"double": "double", "int": "int32_t", "bool": "bool"}
+
+
+def temporal_x_scalar(fn, ret, args):
+    """int|double|bool fn(const Temporal*, scalar). Generic shape, one scalar extra."""
+    if len(args) != 2 or args[0] != "Temporal*" or args[1] not in _SCALAR_CPP:
+        return None
+    rk = {"int": "int", "double": "double", "bool": "bool"}.get(ret)
+    inp = _infer_input(fn)
+    if not rk or not inp:
+        return None
+    return {
+        "nebula_name": pascal(fn), "sql_token": fn.upper(), "meos_call": fn,
+        "build_generic": True, "input_type": inp,
+        "extra_args": [{"kind": "scalar", "cpp": _SCALAR_CPP[args[1]]}], "return_kind": rk,
+        "comment_one_liner": f"Per-event {fn}: single-instant {inp} against a scalar -> {rk}.",
+    }
+
+
+def temporal_x_geom(fn, ret, args):
+    """int|double|bool fn(const Temporal*, const GSERIALIZED*). Generic shape, one geom extra."""
+    if args != ("Temporal*", "GSERIALIZED*"):
+        return None
+    rk = {"int": "int", "double": "double", "bool": "bool"}.get(ret)
+    inp = _infer_input(fn)
+    if not rk or not inp:
+        return None
+    return {
+        "nebula_name": pascal(fn), "sql_token": fn.upper(), "meos_call": fn,
+        "build_generic": True, "input_type": inp,
+        "extra_args": [{"kind": "geom"}], "return_kind": rk,
+        "comment_one_liner": f"Per-event {fn}: single-instant {inp} against a static geometry -> {rk}.",
+    }
+
+
+def _result_extract_kind(fn):
+    """Scalar return_kind for a Temporal*-returning transform whose single-instant
+    result carries a tint/tfloat/tbool value — inferred from the function name."""
+    if "_to_tint" in fn:
+        return "extract_int"
+    if "_to_tfloat" in fn:
+        return "extract_double"
+    if "_to_tbool" in fn:
+        return "extract_bool"
+    if fn.startswith("tfloat_"):
+        return "extract_double"
+    if fn.startswith("tint_"):
+        return "extract_int"
+    if fn.startswith("tbool_"):
+        return "extract_bool"
+    return None
+
+
+def temporal_extract_scalar(fn, ret, args):
+    """Unary Temporal->Temporal* transform whose single-instant result carries a
+    scalar value (tfloat_ceil, tbool_to_tint, ...). Generic shape with an extract
+    marshaler. Result/text/geo-returning transforms are deferred (varsize)."""
+    if ret != "Temporal*" or args != ("Temporal*",):
+        return None
+    inp = _infer_input(fn)
+    rk = _result_extract_kind(fn)
+    if not inp or not rk:
+        return None
+    return {
+        "nebula_name": pascal(fn), "sql_token": fn.upper(), "meos_call": fn,
+        "build_generic": True, "input_type": inp, "extra_args": [], "return_kind": rk,
+        "comment_one_liner": f"Per-event {fn}: single-instant {inp} transform, value extracted -> {rk[8:]}.",
+    }
 
 
 SHAPES = {
     "cmp_scalar_tempfirst": cmp_scalar_tempfirst,
     "cmp_scalar_scalarfirst": cmp_scalar_scalarfirst,
     "cmp_two_temporal": cmp_two_temporal,
-    "sprel_cmp_existing": sprel_cmp_existing,
+    "sprel_scalar_existing": sprel_scalar_existing,
+    "temporal_unary_scalar": temporal_unary_scalar,
+    "temporal_x_scalar": temporal_x_scalar,
+    "temporal_x_geom": temporal_x_geom,
+    "temporal_extract_scalar": temporal_extract_scalar,
 }
 
 

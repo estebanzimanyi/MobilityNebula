@@ -768,8 +768,24 @@ def build_registrar_pushes_physical(args, nebula_name):
     return "\n".join(pushes)
 
 
+def generic_fields(op):
+    """The ordered (name, cpp) event fields for a 'generic' operator:
+    the input type's fields followed by one per extra arg."""
+    fields = list(GENERIC_INPUTS[op["input_type"]]["fields"])
+    for i, ex in enumerate(op.get("extra_args", [])):
+        fields.append((f"arg{i}", ex["cpp"] if ex["kind"] == "scalar" else "VariableSizedData"))
+    return fields
+
+
 def emit_operator(op, output_root: Path):
     nebula_name = op["nebula_name"]
+    if op.get("build_generic"):
+        # Derive the canonical arg list + return metadata so the shared logical
+        # and physical-hpp templates match the assembled physical .cpp.
+        op["args"] = [{"name": n, "nautilus_type": c, "cpp_type": c} for n, c in generic_fields(op)]
+        rt, nr = GENERIC_RETURNS[op["return_kind"]][:2]
+        op.setdefault("return_type", rt)
+        op.setdefault("nautilus_return", nr)
     n_args = len(op["args"])
 
     # Logical .hpp constructor args (LogicalFunction type each)
@@ -820,7 +836,9 @@ def emit_operator(op, output_root: Path):
 
     physical_common = dict(common)
     physical_common["registrar_pushes"] = registrar_p
-    if op.get("build_two_temporal_points_with_dist"):
+    if op.get("build_generic"):
+        physical_cpp_path.write_text(assemble_generic_physical(op))
+    elif op.get("build_two_temporal_points_with_dist"):
         physical_cpp_path.write_text(PHYSICAL_CPP_TEMPLATE_TWO_TEMPORAL_POINTS_WITH_DIST.format(**physical_common))
     elif op.get("build_temporal_point_with_dist"):
         physical_cpp_path.write_text(PHYSICAL_CPP_TEMPLATE_TEMPORAL_POINT_WITH_DIST.format(**physical_common))
@@ -2966,6 +2984,245 @@ PhysicalFunctionRegistryReturnType PhysicalFunctionGeneratedRegistrar::Register{
 
 
 # ===========================================================================
+# Generalized per-event operator assembler (the "generic" shape).
+#
+# Composes a physical .cpp from three orthogonal parts instead of a hand-written
+# template per shape:
+#   - INPUT builder      : how to construct the primary `Temporal* temp` of a
+#                          given temporal type from per-event fields,
+#   - EXTRA args         : 0+ trailing MEOS args (scalar / static geometry),
+#   - RETURN marshaler   : how the scalar MEOS return becomes the VarVal.
+# Scope: Temporal-input operators with a SCALAR return (int/double/bool) — the
+# proven lambda-returns-scalar pattern. Variable-sized (text*/GSERIALIZED*) and
+# Temporal*-extract returns, and Set/Span/Box inputs, are out of this assembler.
+# ===========================================================================
+
+# input_type -> dict(fields=[(name,cpp)], header, build) where build is C++ that
+# defines `Temporal* {var}` (NULL-checked) from the fields. {z} = zero-return literal.
+GENERIC_INPUTS = {
+    "tgeompoint": dict(fields=[("lon", "double"), ("lat", "double"), ("ts", "uint64_t")], header="meos_geo.h", build=(
+        '                if (!(lon >= -180.0 && lon <= 180.0 && lat >= -90.0 && lat <= 90.0)) return {z};\n'
+        '                std::string {var}Wkt = fmt::format("SRID=4326;Point({{}} {{}})@{{}}", lon, lat, MEOS::Meos::convertEpochToTimestamp(ts));\n'
+        '                Temporal* {var} = tgeompoint_in({var}Wkt.c_str());\n'
+        '                if (!{var}) return {z};\n')),
+    "tgeometry": dict(fields=[("geomWkt", "VariableSizedData"), ("ts", "uint64_t")], header="meos_geo.h", build=(
+        '                std::string {var}G(geomWktPtr, geomWktSize);\n'
+        '                std::string {var}Wkt = {var}G + "@" + MEOS::Meos::convertEpochToTimestamp(ts);\n'
+        '                Temporal* {var} = tgeometry_in({var}Wkt.c_str());\n'
+        '                if (!{var}) return {z};\n')),
+    "tcbuffer": dict(fields=[("lon", "double"), ("lat", "double"), ("radius", "double"), ("ts", "uint64_t")], header="meos_cbuffer.h", build=(
+        '                if (!(lon >= -180.0 && lon <= 180.0 && lat >= -90.0 && lat <= 90.0) || radius < 0.0) return {z};\n'
+        '                std::string {var}Wkt = fmt::format("Cbuffer(Point({{}} {{}}),{{}})@{{}}", lon, lat, radius, MEOS::Meos::convertEpochToTimestamp(ts));\n'
+        '                Temporal* {var} = tcbuffer_in({var}Wkt.c_str());\n'
+        '                if (!{var}) return {z};\n')),
+    "tpose": dict(fields=[("x", "double"), ("y", "double"), ("theta", "double"), ("ts", "uint64_t")], header="meos_pose.h", build=(
+        '                std::string {var}Wkt = fmt::format("Pose(Point({{}} {{}}),{{}})@{{}}", x, y, theta, MEOS::Meos::convertEpochToTimestamp(ts));\n'
+        '                Temporal* {var} = tpose_in({var}Wkt.c_str());\n'
+        '                if (!{var}) return {z};\n')),
+    "tnpoint": dict(fields=[("rid", "int64_t"), ("frac", "double"), ("ts", "uint64_t")], header="meos_npoint.h", build=(
+        '                if (frac < 0.0 || frac > 1.0) return {z};\n'
+        '                std::string {var}Wkt = fmt::format("NPoint({{}},{{}})@{{}}", rid, frac, MEOS::Meos::convertEpochToTimestamp(ts));\n'
+        '                Temporal* {var} = tnpoint_in({var}Wkt.c_str());\n'
+        '                if (!{var}) return {z};\n')),
+    "tfloat": dict(fields=[("value", "double"), ("ts", "uint64_t")], header="meos_geo.h", build=(
+        '                std::string {var}Wkt = fmt::format("{{}}@{{}}", value, MEOS::Meos::convertEpochToTimestamp(ts));\n'
+        '                Temporal* {var} = tfloat_in({var}Wkt.c_str());\n'
+        '                if (!{var}) return {z};\n')),
+    "tint": dict(fields=[("value", "int32_t"), ("ts", "uint64_t")], header="meos_geo.h", build=(
+        '                std::string {var}Wkt = fmt::format("{{}}@{{}}", value, MEOS::Meos::convertEpochToTimestamp(ts));\n'
+        '                Temporal* {var} = tint_in({var}Wkt.c_str());\n'
+        '                if (!{var}) return {z};\n')),
+    "tbool": dict(fields=[("value", "bool"), ("ts", "uint64_t")], header="meos_geo.h", build=(
+        '                std::string {var}Wkt = fmt::format("{{}}@{{}}", value ? "t" : "f", MEOS::Meos::convertEpochToTimestamp(ts));\n'
+        '                Temporal* {var} = tbool_in({var}Wkt.c_str());\n'
+        '                if (!{var}) return {z};\n')),
+}
+
+# return_kind -> (cpp_return_type, nautilus_return, zero_literal, extract_fn|None)
+# For a direct scalar return extract_fn is None. For a Temporal*-returning
+# transform/restriction whose single-instant result carries a scalar value, the
+# extract_fn is the result type's *_start_value accessor (the value at the
+# single instant); the wrapper temporal is freed.
+GENERIC_RETURNS = {
+    "int":     ("int", "INT32", "0", None),
+    "double":  ("double", "FLOAT64", "0.0", None),
+    "bool":    ("bool", "BOOLEAN", "false", None),
+    "extract_int":    ("int", "INT32", "0", "tint_start_value"),
+    "extract_double": ("double", "FLOAT64", "0.0", "tfloat_start_value"),
+    "extract_bool":   ("bool", "BOOLEAN", "false", "tbool_start_value"),
+}
+
+
+def _generic_field_decl(name, cpp):
+    """Lambda parameter declaration + the cast expression for one event field."""
+    if cpp == "VariableSizedData":
+        return None  # handled specially (pointer + size pair)
+    return cpp
+
+
+def assemble_generic_physical(op):
+    """Build the physical .cpp for a 'generic' (build_generic) operator."""
+    name = op["nebula_name"]
+    inp = GENERIC_INPUTS[op["input_type"]]
+    ret_cpp, _, zero, extract_fn = GENERIC_RETURNS[op["return_kind"]]
+    extras = op.get("extra_args", [])
+
+    # Ordered (lambda-param) fields: primary input fields, then each extra arg's.
+    fields = list(inp["fields"])
+    headers = {"meos.h", inp["header"]}
+    call_terms = ["temp"]
+    parse_lines = []
+    for i, ex in enumerate(extras):
+        if ex["kind"] == "scalar":
+            fields.append((f"arg{i}", ex["cpp"]))
+            call_terms.append(f"arg{i}")
+        elif ex["kind"] == "geom":
+            fields.append((f"arg{i}", "VariableSizedData"))
+            headers.add("meos_geo.h")
+            parse_lines.append(
+                f'                std::string arg{i}S(arg{i}Ptr, arg{i}Size);\n'
+                f'                while (!arg{i}S.empty() && (arg{i}S.front()==\'\\\'\' || arg{i}S.front()==\'"\')) arg{i}S.erase(arg{i}S.begin());\n'
+                f'                while (!arg{i}S.empty() && (arg{i}S.back()==\'\\\'\' || arg{i}S.back()==\'"\')) arg{i}S.pop_back();\n'
+                f'                MEOS::Meos::StaticGeometry arg{i}G(arg{i}S);\n'
+                f'                if (!arg{i}G.getGeometry()) {{ free(temp); return {zero}; }}\n')
+            call_terms.append(f"arg{i}G.getGeometry()")
+
+    # Build the parameterValues casts, lambda params, and invoke args from fields.
+    casts, lparams, invoke = [], [], []
+    idx = 0
+    for fn, cpp in fields:
+        if cpp == "VariableSizedData":
+            casts.append(f"    auto {fn} = parameterValues[{idx}].cast<VariableSizedData>();")
+            lparams.append(f"const char* {fn}Ptr, uint32_t {fn}Size")
+            invoke.append(f"{fn}.getContent(), {fn}.getContentSize()")
+        else:
+            casts.append(f"    auto {fn} = parameterValues[{idx}].cast<nautilus::val<{cpp}>>();")
+            lparams.append(f"{cpp} {fn}")
+            invoke.append(fn)
+        idx += 1
+    n_args = idx
+
+    build = inp["build"].format(var="temp", z=zero) + "".join(parse_lines)
+    inc = "\n".join(f"#include <{h}>" for h in
+                    ["meos.h"] + sorted(h for h in headers if h != "meos.h"))
+
+    callargs = ", ".join(call_terms)
+    if extract_fn is None:
+        call_marshal = (f"                {ret_cpp} r = {op['meos_call']}({callargs});\n"
+                        f"                free(temp);\n"
+                        f"                return r;")
+    else:
+        # Temporal*-returning transform: result is a single-instant temporal; take
+        # its value via the result type's *_start_value accessor, free both.
+        call_marshal = (f"                Temporal* res = {op['meos_call']}({callargs});\n"
+                        f"                free(temp);\n"
+                        f"                if (!res) return {zero};\n"
+                        f"                {ret_cpp} r = {extract_fn}(res);\n"
+                        f"                free(res);\n"
+                        f"                return r;")
+
+    # physical-hpp/logical ctor args are PhysicalFunction/LogicalFunction per child.
+    physical_args = ",\n                                                          ".join(
+        f"PhysicalFunction {fn}Function" for fn, _ in fields)
+    pushes = "\n".join(f"    parameterFunctions.push_back(std::move({fn}Function));" for fn, _ in fields)
+    registrar = "\n".join(
+        [f"    auto arg{i} = std::move(arguments.childFunctions[{i}]);" for i in range(n_args)]
+        + [f"    return {name}PhysicalFunction(" + ", ".join(f"std::move(arg{i})" for i in range(n_args)) + ");"])
+
+    return GENERIC_PHYSICAL_TEMPLATE.format(
+        nebula_name=name, includes=inc,
+        ctor_physical_args=physical_args, n_args=n_args, ctor_physical_pushes=pushes,
+        casts="\n".join(casts), lambda_params=",\n            ".join(lparams),
+        return_type=ret_cpp, build=build, call_marshal=call_marshal,
+        zero=zero, invoke_args=", ".join(invoke), registrar_pushes=registrar)
+
+
+GENERIC_PHYSICAL_TEMPLATE = """\
+/*
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        https://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+*/
+
+#include <Functions/Meos/{nebula_name}PhysicalFunction.hpp>
+
+#include <Functions/PhysicalFunction.hpp>
+#include <MEOSWrapper.hpp>
+#include <Nautilus/DataTypes/VarVal.hpp>
+#include <Nautilus/DataTypes/VariableSizedData.hpp>
+#include <Nautilus/Interface/Record.hpp>
+#include <PhysicalFunctionRegistry.hpp>
+#include <ErrorHandling.hpp>
+#include <ExecutionContext.hpp>
+#include <fmt/format.h>
+#include <function.hpp>
+#include <string>
+#include <utility>
+#include <val.hpp>
+
+extern "C" {{
+{includes}
+}}
+
+namespace NES {{
+
+{nebula_name}PhysicalFunction::{nebula_name}PhysicalFunction({ctor_physical_args})
+{{
+    parameterFunctions.reserve({n_args});
+{ctor_physical_pushes}
+}}
+
+VarVal {nebula_name}PhysicalFunction::execute(const Record& record, ArenaRef& arena) const
+{{
+    std::vector<VarVal> parameterValues;
+    parameterValues.reserve(parameterFunctions.size());
+    for (const auto& function : parameterFunctions)
+    {{
+        parameterValues.emplace_back(function.execute(record, arena));
+    }}
+
+{casts}
+
+    const auto result = nautilus::invoke(
+        +[]({lambda_params}) -> {return_type} {{
+            try
+            {{
+                MEOS::Meos::ensureMeosInitialized();
+{build}
+{call_marshal}
+            }}
+            catch (const std::exception&)
+            {{
+                return {zero};
+            }}
+        }},
+        {invoke_args});
+
+    return VarVal(result);
+}}
+
+PhysicalFunctionRegistryReturnType PhysicalFunctionGeneratedRegistrar::Register{nebula_name}PhysicalFunction(
+    PhysicalFunctionRegistryArguments arguments)
+{{
+    PRECONDITION(arguments.childFunctions.size() == {n_args},
+                 "{nebula_name}PhysicalFunction requires {n_args} children but got {{}}",
+                 arguments.childFunctions.size());
+{registrar_pushes}
+}}
+
+}} // namespace NES
+"""
+
+
+# ===========================================================================
 # Parser-glue dispatch-case templates (one per shape).
 # The shape is encoded by the build_* flag; the dispatch block produces a
 # LogicalFunction ctor invocation matching the C++ operator's arg order.
@@ -3386,6 +3643,47 @@ def dispatch_case_for(op):
     return None
 
 
+def _generic_dispatch_case(op):
+    """Parser dispatch case for a 'generic' operator. Arity is baked in (n =
+    number of event fields); lifts string/number constants (geometry blobs,
+    scalars) then pops n children in reverse and builds the LogicalFunction.
+    Returns the final C++ string (no further .format)."""
+    n = len(op["args"])
+    tok, name = op["sql_token"], op["nebula_name"]
+    pops = "\n".join(
+        f"            auto a{i} = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();"
+        for i in range(n - 1, -1, -1))
+    ctor_args = ", ".join(f"a{i}" for i in range(n))
+    return f"""        /* BEGIN CODEGEN PARSER GLUE: {tok} */
+        case AntlrSQLLexer::{tok}:
+        {{
+            const auto argCount = context->expression().size();
+            if (argCount != {n})
+                throw InvalidQuerySyntax("{tok} requires exactly {n} arguments, but got {{}}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {{
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }}
+
+{pops}
+
+            helpers.top().functionBuilder.emplace_back({name}LogicalFunction({ctor_args}));
+        }}
+        break;
+        /* END CODEGEN PARSER GLUE: {tok} */
+"""
+
+
 # ===========================================================================
 # Idempotent injectors — each scans for a per-op marker and inserts only
 # if not present, so re-runs are safe.
@@ -3511,10 +3809,6 @@ def inject_parser_cpp(operators, cpp_path: Path) -> int:
     #    switch that already contains the TGEO_AT_STBOX case.
     cases_block = []
     for op in operators:
-        tmpl = dispatch_case_for(op)
-        if tmpl is None:
-            sys.stderr.write(f"  ! parser-cpp: {op['nebula_name']} has no dispatch shape, skipping case\n")
-            continue
         marker = f"/* BEGIN CODEGEN PARSER GLUE: {op['sql_token']} */"
         if marker in body:
             continue
@@ -3526,7 +3820,15 @@ def inject_parser_cpp(operators, cpp_path: Path) -> int:
                 f"skipping codegen injection (will not duplicate)\n"
             )
             continue
-        cases_block.append(tmpl.format(sql_token=op["sql_token"], nebula_name=op["nebula_name"]))
+        if op.get("build_generic"):
+            case_str = _generic_dispatch_case(op)          # arity baked in; final string
+        else:
+            tmpl = dispatch_case_for(op)
+            if tmpl is None:
+                sys.stderr.write(f"  ! parser-cpp: {op['nebula_name']} has no dispatch shape, skipping case\n")
+                continue
+            case_str = tmpl.format(sql_token=op["sql_token"], nebula_name=op["nebula_name"])
+        cases_block.append(case_str)
         n_added += 1
     if cases_block:
         # Find the insertion point: prefer just after the LAST existing
