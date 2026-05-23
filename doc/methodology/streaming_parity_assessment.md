@@ -63,13 +63,38 @@ callability harness: `tools/streaming_parity/callability/`. The committed
 `feeds/flink-kafka.feed.tsv` + `feeds/streamable.txt` reproduce the table via
 `ci_gate.py` without re-running the harness.
 
+## Running-aggregation realization (Flink/Kafka vs NebulaStream)
+
+The scope is identical on every platform: the full MEOS API over a MEOS value
+produced in the window (a per-group mini-trip trajectory). The MEOS operations
+are the invariant C calls; only how the running aggregate's value is held and
+the API is invoked differs, driven by each platform's state model.
+
+- **MobilityFlink / MobilityKafka** hold the windowed value as **WKB in
+  checkpointed, fault-tolerant managed state** — exactly-once recovery requires
+  the state to be serializable. The MEOS library is the JMEOS facade
+  (`MeosOps*` methods) over a native `Pointer`; the value is reconstructed from
+  WKB (`from_wkb`) for `append_tinstant` and for each function call. WKB is
+  mandatory here.
+- **MobilityNebula** materializes the windowed value inside a physical
+  aggregate operator and applies the MEOS library to it **directly**, in
+  process — no per-window WKB serialization. MEOS's expandable structures
+  (`count`/`maxcount`, `appendInstant`/`appendSequence`; the streaming design
+  in the libmeos data-structures documentation) are the in-process accumulator
+  for this model — amortized-O(1) in-place growth as each instant is appended.
+  WKB appears only when a value crosses an operator boundary.
+
+So WKB is the serialization/exchange form (mandatory in the JVM tools' state,
+boundary-only in NebulaStream) and the expandable `Temporal*` is the in-memory
+production form; both serve the one scope.
+
 ## Status
 
 - **Flink / Kafka: 100% PROVEN** (1,945 / 1,945 confirmed callable on real
   libmeos). The CI gate (`ci_gate.py` + `.github/workflows/streaming_parity_gate.yml`)
   holds the floor at 1,945 and blocks any regression or over-claim; the committed
   feed reproduces it without re-running the harness.
-- **NebulaStream: 309 / 1,945 wired and locally compile-verified.** The
+- **NebulaStream: 311 / 1,945 wired and locally compile-verified.** The
   generated `nes-{physical,logical}-operators` + `nes-sql-parser` libraries link
   clean in the `nebulastream/nes-development` dev image against the `libmeos`
   under test; 6 are confirmed callable via runnable systests. The wired surface

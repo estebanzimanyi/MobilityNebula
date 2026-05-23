@@ -47,4 +47,5 @@ add_plugin(IntUnion AggregationPhysicalFunction nes-physical-operators IntUnionA
 add_plugin(BigintUnion AggregationPhysicalFunction nes-physical-operators BigintUnionAggregationPhysicalFunction.cpp)
 add_plugin(TimestamptzUnion AggregationPhysicalFunction nes-physical-operators TimestamptzUnionAggregationPhysicalFunction.cpp)
 add_plugin(TrajectoryWkb AggregationPhysicalFunction nes-physical-operators TrajectoryWkbAggregationPhysicalFunction.cpp)
+add_plugin(TLengthExp AggregationPhysicalFunction nes-physical-operators TLengthExpAggregationPhysicalFunction.cpp)
 endif()

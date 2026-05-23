@@ -99,6 +99,7 @@
 #include <Operators/Windows/Aggregations/Meos/BigintUnionAggregationLogicalFunction.hpp>
 #include <Operators/Windows/Aggregations/Meos/TimestamptzUnionAggregationLogicalFunction.hpp>
 #include <Operators/Windows/Aggregations/Meos/TrajectoryWkbAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TLengthExpAggregationLogicalFunction.hpp>
 #include <Functions/Meos/TemporalIntersectsGeometryLogicalFunction.hpp>
 #include <Functions/Meos/TemporalAIntersectsGeometryLogicalFunction.hpp>
 #include <Functions/Meos/TemporalEDWithinGeometryLogicalFunction.hpp>
@@ -11285,6 +11286,35 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             }
             break;
         /* END CODEGEN AGGREGATION GLUE: TRAJECTORY_WKB (case-switch) */
+        /* BEGIN CODEGEN AGGREGATION GLUE: TLENGTH_EXP (case-switch) */
+        case AntlrSQLLexer::TLENGTH_EXP:
+            // Windowed trajectory length over an expandable Temporal* grown by appendInstant — the MEOS-native streaming aggregation (no string build, no WKB).
+            if (helpers.top().functionBuilder.size() != 3) {
+                throw InvalidQuerySyntax("TLENGTH_EXP requires exactly three arguments (longitude, latitude, timestamp), but got {}", helpers.top().functionBuilder.size());
+            }
+            {
+                const auto timestampFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto latitudeFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto longitudeFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+
+                if (!longitudeFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !latitudeFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
+                    throw InvalidQuerySyntax("TLENGTH_EXP arguments must be field references");
+                }
+
+                helpers.top().windowAggs.push_back(
+                    TLengthExpAggregationLogicalFunction::create(longitudeFunction.get<FieldAccessLogicalFunction>(),
+                                                                    latitudeFunction.get<FieldAccessLogicalFunction>(),
+                                                                    timestampFunction.get<FieldAccessLogicalFunction>()));
+                helpers.top().functionBuilder.push_back(longitudeFunction);
+            }
+            break;
+        /* END CODEGEN AGGREGATION GLUE: TLENGTH_EXP (case-switch) */
+
 
 
 
@@ -11867,6 +11897,23 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
                 helpers.top().windowAggs.push_back(TrajectoryWkbAggregationLogicalFunction::create(lon, lat, ts));
             }
             /* END CODEGEN AGGREGATION GLUE: TRAJECTORY_WKB (funcName chain) */
+            /* BEGIN CODEGEN AGGREGATION GLUE: TLENGTH_EXP (funcName chain) */
+            else if (funcName == "TLENGTH_EXP")
+            {
+                if (helpers.top().functionBuilder.size() < 3)
+                {
+                    throw InvalidQuerySyntax("TLENGTH_EXP requires three arguments at {}", context->getText());
+                }
+                const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto lat = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto lon = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                helpers.top().windowAggs.push_back(TLengthExpAggregationLogicalFunction::create(lon, lat, ts));
+            }
+            /* END CODEGEN AGGREGATION GLUE: TLENGTH_EXP (funcName chain) */
+
 
 
 
