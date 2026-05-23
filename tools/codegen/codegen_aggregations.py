@@ -757,7 +757,7 @@ Nautilus::Record {nebula_name}AggregationPhysicalFunction::lower(
                 return ({return_cpp_type})0;
             }}
 
-            {return_cpp_type} value = {meos_scalar_fn}(static_cast<Temporal*>(temp));
+            {value_compute}
 
             MEOS::Meos::freeTemporalObject(temp);
             free((void*)trajStr);
@@ -1276,6 +1276,23 @@ def emit_operator(op, output_root: Path):
         "value_printf_fmt":    op.get("value_printf_fmt", "%.6f"),
         "tnumber_in_fn":       op.get("tnumber_in_fn", "tfloat_in"),
     }
+
+    # value_compute (point/tgeo finalize): either fold the windowed sequence
+    # directly with meos_scalar_fn, or — for the EXTENT shape — first reduce the
+    # sequence to its bounding box (tspatial_to_stbox / ...) and apply a box
+    # accessor/predicate to that windowed extent.
+    box_build = op.get("extent_box_build_fn")
+    if box_build:
+        box_t = op.get("extent_box_type", "STBox")
+        fmt["value_compute"] = (
+            f'{box_t}* aggBox = {box_build}(static_cast<Temporal*>(temp));\n'
+            f'            {op["return_cpp_type"]} value = aggBox ? '
+            f'{op["meos_scalar_fn"]}(aggBox) : ({op["return_cpp_type"]})0;\n'
+            f'            if (aggBox) free(aggBox);')
+    else:
+        fmt["value_compute"] = (
+            f'{op["return_cpp_type"]} value = '
+            f'{op["meos_scalar_fn"]}(static_cast<Temporal*>(temp));')
 
     paths = {
         "logical_hpp":  output_root / "nes-logical-operators/include/Operators/Windows/Aggregations/Meos" / f"{nebula_name}AggregationLogicalFunction.hpp",
