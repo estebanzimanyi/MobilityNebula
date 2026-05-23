@@ -77,6 +77,7 @@ before_temporal_temporal	wired
 before_tnumber_tbox	wired
 before_tspatial_tspatial	wired
 below_tspatial_tspatial	wired
+bigint_extent_transfn	wired
 contained_temporal_temporal	wired
 contained_tnumber_tbox	wired
 contained_tspatial_tspatial	wired
@@ -152,9 +153,11 @@ ever_ne_tfloat_float	wired
 ever_ne_tgeo_geo	wired
 ever_ne_tgeo_tgeo	wired
 ever_ne_tint_int	wired
+float_extent_transfn	wired
 front_tspatial_tspatial	wired
 geog_dwithin	wired
 geom_to_geog	wired
+int_extent_transfn	wired
 left_tnumber_tbox	wired
 left_tspatial_tspatial	wired
 nad_tcbuffer_cbuffer	wired
@@ -230,6 +233,7 @@ tfloat_start_value	wired
 tfloat_to_tint	wired
 tgeo_at_geom	wired
 tgeo_minus_geom	wired
+timestamptz_extent_transfn	wired
 tint_end_value	wired
 tint_max_value	wired
 tint_min_value	wired
