@@ -22,14 +22,26 @@ import re
 import sys
 
 CALL_RE = re.compile(r"\b([a-z][a-z0-9_]*)\s*\(", )
-# MEOS spatial/temporal call shapes we treat as the operator's backing function.
-MEOS_CALL_HINT = re.compile(r"^(e|a|t)?[a-z]+_(tgeo|tnpoint|tpose|tcbuffer|tgeompoint)_"
-                            r"|^nad_|^tnumber_|^tfloat_|^tint_|^tpoint_|^temporal_|^tgeo_")
+
+# A call counts as the operator's backing MEOS function iff it is an actual
+# MEOS *streamable* symbol — i.e. it is in the parity surface itself. This is
+# measured-not-guessed and family-agnostic: spatial-rels, distance, comparison,
+# arithmetic, accessors all qualify automatically, with no per-family regex to
+# maintain. Input constructors (tfloat_in, tint_in, tcbuffer_in, …) are NOT in
+# the streamable surface (io-meta) so they self-exclude. The two type-conversion
+# helpers below ARE streamable but are used here only as composition plumbing
+# (e.g. tpose_to_tpoint before a tgeo spatial-rel), so they are not the wired op.
+CONVERSION_HELPERS = {"tpose_to_tpoint", "tnpoint_to_tgeompoint"}
 
 
-def operator_calls(root):
+def load_streamable(path):
+    return {ln.strip() for ln in open(path) if ln.strip()}
+
+
+def operator_calls(root, streamable):
     """Map operator NAME -> set(meos_call). NAME taken from the file stem
-    (…PhysicalFunction.cpp -> the operator name)."""
+    (…PhysicalFunction.cpp -> the operator name). A call counts iff it is a
+    streamable MEOS symbol and not a composition-plumbing conversion."""
     name2calls = {}
     dirs = ["nes-physical-operators/src/Functions/Meos",
             "nes-physical-operators/src/Aggregation/Function/Meos"]
@@ -44,11 +56,9 @@ def operator_calls(root):
             txt = open(os.path.join(full, f)).read()
             # find the MEOS backing call: the call assigned to result/returned
             calls = set()
-            for m in re.finditer(r"\b([a-z][a-z0-9_]+)\(", txt):
+            for m in CALL_RE.finditer(txt):
                 fn = m.group(1)
-                if MEOS_CALL_HINT.match(fn) and fn not in (
-                        "tpose_in", "tnpoint_in", "tfloat_in", "tgeompoint_in",
-                        "tpose_to_tpoint", "tnpoint_to_tgeompoint"):
+                if fn in streamable and fn not in CONVERSION_HELPERS:
                     calls.add(fn)
             if calls:
                 name2calls[name] = calls
@@ -87,9 +97,14 @@ def main():
     ap.add_argument("--root", default=".", help="Nebula repo root (accumulated build checkout)")
     ap.add_argument("--systests", default="nes-systests/function/meos")
     ap.add_argument("--passing", help="file: one passing-systest basename per line")
+    ap.add_argument("--streamable",
+                    default=os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                         "..", "feeds", "streamable.txt"),
+                    help="the streamable MEOS surface (parity universe)")
     a = ap.parse_args()
 
-    name2calls = operator_calls(a.root)
+    streamable = load_streamable(a.streamable)
+    name2calls = operator_calls(a.root, streamable)
     token2name = build_token2name(a.root)
     wired = set().union(*name2calls.values()) if name2calls else set()
 

@@ -202,6 +202,66 @@
 #include <Functions/Meos/TemporalNADTCbufferLogicalFunction.hpp>
 #include <Functions/Meos/TemporalNADTCbufferCbufferLogicalFunction.hpp>
 #include <Functions/Meos/TemporalNADTCbufferTCbufferLogicalFunction.hpp>
+#include <Functions/Meos/AlwaysEqTfloatFloatLogicalFunction.hpp>
+#include <Functions/Meos/AlwaysEqTintIntLogicalFunction.hpp>
+#include <Functions/Meos/AlwaysGeTfloatFloatLogicalFunction.hpp>
+#include <Functions/Meos/AlwaysGeTintIntLogicalFunction.hpp>
+#include <Functions/Meos/AlwaysGtTfloatFloatLogicalFunction.hpp>
+#include <Functions/Meos/AlwaysGtTintIntLogicalFunction.hpp>
+#include <Functions/Meos/AlwaysLeTfloatFloatLogicalFunction.hpp>
+#include <Functions/Meos/AlwaysLeTintIntLogicalFunction.hpp>
+#include <Functions/Meos/AlwaysLtTfloatFloatLogicalFunction.hpp>
+#include <Functions/Meos/AlwaysLtTintIntLogicalFunction.hpp>
+#include <Functions/Meos/AlwaysNeTfloatFloatLogicalFunction.hpp>
+#include <Functions/Meos/AlwaysNeTintIntLogicalFunction.hpp>
+#include <Functions/Meos/EverEqTfloatFloatLogicalFunction.hpp>
+#include <Functions/Meos/EverEqTintIntLogicalFunction.hpp>
+#include <Functions/Meos/EverGeTfloatFloatLogicalFunction.hpp>
+#include <Functions/Meos/EverGeTintIntLogicalFunction.hpp>
+#include <Functions/Meos/EverGtTfloatFloatLogicalFunction.hpp>
+#include <Functions/Meos/EverGtTintIntLogicalFunction.hpp>
+#include <Functions/Meos/EverLeTfloatFloatLogicalFunction.hpp>
+#include <Functions/Meos/EverLeTintIntLogicalFunction.hpp>
+#include <Functions/Meos/EverLtTfloatFloatLogicalFunction.hpp>
+#include <Functions/Meos/EverLtTintIntLogicalFunction.hpp>
+#include <Functions/Meos/EverNeTfloatFloatLogicalFunction.hpp>
+#include <Functions/Meos/EverNeTintIntLogicalFunction.hpp>
+#include <Functions/Meos/AlwaysEqFloatTfloatLogicalFunction.hpp>
+#include <Functions/Meos/AlwaysEqIntTintLogicalFunction.hpp>
+#include <Functions/Meos/AlwaysEqTemporalTemporalLogicalFunction.hpp>
+#include <Functions/Meos/AlwaysGeFloatTfloatLogicalFunction.hpp>
+#include <Functions/Meos/AlwaysGeIntTintLogicalFunction.hpp>
+#include <Functions/Meos/AlwaysGeTemporalTemporalLogicalFunction.hpp>
+#include <Functions/Meos/AlwaysGtFloatTfloatLogicalFunction.hpp>
+#include <Functions/Meos/AlwaysGtIntTintLogicalFunction.hpp>
+#include <Functions/Meos/AlwaysGtTemporalTemporalLogicalFunction.hpp>
+#include <Functions/Meos/AlwaysLeFloatTfloatLogicalFunction.hpp>
+#include <Functions/Meos/AlwaysLeIntTintLogicalFunction.hpp>
+#include <Functions/Meos/AlwaysLeTemporalTemporalLogicalFunction.hpp>
+#include <Functions/Meos/AlwaysLtFloatTfloatLogicalFunction.hpp>
+#include <Functions/Meos/AlwaysLtIntTintLogicalFunction.hpp>
+#include <Functions/Meos/AlwaysLtTemporalTemporalLogicalFunction.hpp>
+#include <Functions/Meos/AlwaysNeFloatTfloatLogicalFunction.hpp>
+#include <Functions/Meos/AlwaysNeIntTintLogicalFunction.hpp>
+#include <Functions/Meos/AlwaysNeTemporalTemporalLogicalFunction.hpp>
+#include <Functions/Meos/EverEqFloatTfloatLogicalFunction.hpp>
+#include <Functions/Meos/EverEqIntTintLogicalFunction.hpp>
+#include <Functions/Meos/EverEqTemporalTemporalLogicalFunction.hpp>
+#include <Functions/Meos/EverGeFloatTfloatLogicalFunction.hpp>
+#include <Functions/Meos/EverGeIntTintLogicalFunction.hpp>
+#include <Functions/Meos/EverGeTemporalTemporalLogicalFunction.hpp>
+#include <Functions/Meos/EverGtFloatTfloatLogicalFunction.hpp>
+#include <Functions/Meos/EverGtIntTintLogicalFunction.hpp>
+#include <Functions/Meos/EverGtTemporalTemporalLogicalFunction.hpp>
+#include <Functions/Meos/EverLeFloatTfloatLogicalFunction.hpp>
+#include <Functions/Meos/EverLeIntTintLogicalFunction.hpp>
+#include <Functions/Meos/EverLeTemporalTemporalLogicalFunction.hpp>
+#include <Functions/Meos/EverLtFloatTfloatLogicalFunction.hpp>
+#include <Functions/Meos/EverLtIntTintLogicalFunction.hpp>
+#include <Functions/Meos/EverLtTemporalTemporalLogicalFunction.hpp>
+#include <Functions/Meos/EverNeFloatTfloatLogicalFunction.hpp>
+#include <Functions/Meos/EverNeIntTintLogicalFunction.hpp>
+#include <Functions/Meos/EverNeTemporalTemporalLogicalFunction.hpp>
 #include <Plans/LogicalPlan.hpp>
 #include <Plans/LogicalPlanBuilder.hpp>
 #include <Util/Overloaded.hpp>
@@ -4381,6 +4441,1758 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TEMPORAL_NAD_TCBUFFER_TCBUFFER */
+        /* BEGIN CODEGEN PARSER GLUE: ALWAYS_EQ_TFLOAT_FLOAT */
+        case AntlrSQLLexer::ALWAYS_EQ_TFLOAT_FLOAT:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("ALWAYS_EQ_TFLOAT_FLOAT requires exactly 3 arguments (value, timestamp, scalar), but got {}", argCount);
+
+            /* Lift the scalar constant — accept FLOAT64 (strtod-clean) and INT32 */
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto scalar    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto timestamp = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto value     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                AlwaysEqTfloatFloatLogicalFunction(value, timestamp, scalar));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: ALWAYS_EQ_TFLOAT_FLOAT */
+
+        /* BEGIN CODEGEN PARSER GLUE: ALWAYS_EQ_TINT_INT */
+        case AntlrSQLLexer::ALWAYS_EQ_TINT_INT:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("ALWAYS_EQ_TINT_INT requires exactly 3 arguments (value, timestamp, scalar), but got {}", argCount);
+
+            /* Lift the scalar constant — accept FLOAT64 (strtod-clean) and INT32 */
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto scalar    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto timestamp = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto value     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                AlwaysEqTintIntLogicalFunction(value, timestamp, scalar));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: ALWAYS_EQ_TINT_INT */
+
+        /* BEGIN CODEGEN PARSER GLUE: ALWAYS_GE_TFLOAT_FLOAT */
+        case AntlrSQLLexer::ALWAYS_GE_TFLOAT_FLOAT:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("ALWAYS_GE_TFLOAT_FLOAT requires exactly 3 arguments (value, timestamp, scalar), but got {}", argCount);
+
+            /* Lift the scalar constant — accept FLOAT64 (strtod-clean) and INT32 */
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto scalar    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto timestamp = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto value     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                AlwaysGeTfloatFloatLogicalFunction(value, timestamp, scalar));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: ALWAYS_GE_TFLOAT_FLOAT */
+
+        /* BEGIN CODEGEN PARSER GLUE: ALWAYS_GE_TINT_INT */
+        case AntlrSQLLexer::ALWAYS_GE_TINT_INT:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("ALWAYS_GE_TINT_INT requires exactly 3 arguments (value, timestamp, scalar), but got {}", argCount);
+
+            /* Lift the scalar constant — accept FLOAT64 (strtod-clean) and INT32 */
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto scalar    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto timestamp = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto value     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                AlwaysGeTintIntLogicalFunction(value, timestamp, scalar));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: ALWAYS_GE_TINT_INT */
+
+        /* BEGIN CODEGEN PARSER GLUE: ALWAYS_GT_TFLOAT_FLOAT */
+        case AntlrSQLLexer::ALWAYS_GT_TFLOAT_FLOAT:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("ALWAYS_GT_TFLOAT_FLOAT requires exactly 3 arguments (value, timestamp, scalar), but got {}", argCount);
+
+            /* Lift the scalar constant — accept FLOAT64 (strtod-clean) and INT32 */
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto scalar    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto timestamp = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto value     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                AlwaysGtTfloatFloatLogicalFunction(value, timestamp, scalar));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: ALWAYS_GT_TFLOAT_FLOAT */
+
+        /* BEGIN CODEGEN PARSER GLUE: ALWAYS_GT_TINT_INT */
+        case AntlrSQLLexer::ALWAYS_GT_TINT_INT:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("ALWAYS_GT_TINT_INT requires exactly 3 arguments (value, timestamp, scalar), but got {}", argCount);
+
+            /* Lift the scalar constant — accept FLOAT64 (strtod-clean) and INT32 */
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto scalar    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto timestamp = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto value     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                AlwaysGtTintIntLogicalFunction(value, timestamp, scalar));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: ALWAYS_GT_TINT_INT */
+
+        /* BEGIN CODEGEN PARSER GLUE: ALWAYS_LE_TFLOAT_FLOAT */
+        case AntlrSQLLexer::ALWAYS_LE_TFLOAT_FLOAT:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("ALWAYS_LE_TFLOAT_FLOAT requires exactly 3 arguments (value, timestamp, scalar), but got {}", argCount);
+
+            /* Lift the scalar constant — accept FLOAT64 (strtod-clean) and INT32 */
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto scalar    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto timestamp = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto value     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                AlwaysLeTfloatFloatLogicalFunction(value, timestamp, scalar));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: ALWAYS_LE_TFLOAT_FLOAT */
+
+        /* BEGIN CODEGEN PARSER GLUE: ALWAYS_LE_TINT_INT */
+        case AntlrSQLLexer::ALWAYS_LE_TINT_INT:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("ALWAYS_LE_TINT_INT requires exactly 3 arguments (value, timestamp, scalar), but got {}", argCount);
+
+            /* Lift the scalar constant — accept FLOAT64 (strtod-clean) and INT32 */
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto scalar    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto timestamp = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto value     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                AlwaysLeTintIntLogicalFunction(value, timestamp, scalar));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: ALWAYS_LE_TINT_INT */
+
+        /* BEGIN CODEGEN PARSER GLUE: ALWAYS_LT_TFLOAT_FLOAT */
+        case AntlrSQLLexer::ALWAYS_LT_TFLOAT_FLOAT:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("ALWAYS_LT_TFLOAT_FLOAT requires exactly 3 arguments (value, timestamp, scalar), but got {}", argCount);
+
+            /* Lift the scalar constant — accept FLOAT64 (strtod-clean) and INT32 */
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto scalar    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto timestamp = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto value     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                AlwaysLtTfloatFloatLogicalFunction(value, timestamp, scalar));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: ALWAYS_LT_TFLOAT_FLOAT */
+
+        /* BEGIN CODEGEN PARSER GLUE: ALWAYS_LT_TINT_INT */
+        case AntlrSQLLexer::ALWAYS_LT_TINT_INT:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("ALWAYS_LT_TINT_INT requires exactly 3 arguments (value, timestamp, scalar), but got {}", argCount);
+
+            /* Lift the scalar constant — accept FLOAT64 (strtod-clean) and INT32 */
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto scalar    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto timestamp = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto value     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                AlwaysLtTintIntLogicalFunction(value, timestamp, scalar));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: ALWAYS_LT_TINT_INT */
+
+        /* BEGIN CODEGEN PARSER GLUE: ALWAYS_NE_TFLOAT_FLOAT */
+        case AntlrSQLLexer::ALWAYS_NE_TFLOAT_FLOAT:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("ALWAYS_NE_TFLOAT_FLOAT requires exactly 3 arguments (value, timestamp, scalar), but got {}", argCount);
+
+            /* Lift the scalar constant — accept FLOAT64 (strtod-clean) and INT32 */
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto scalar    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto timestamp = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto value     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                AlwaysNeTfloatFloatLogicalFunction(value, timestamp, scalar));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: ALWAYS_NE_TFLOAT_FLOAT */
+
+        /* BEGIN CODEGEN PARSER GLUE: ALWAYS_NE_TINT_INT */
+        case AntlrSQLLexer::ALWAYS_NE_TINT_INT:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("ALWAYS_NE_TINT_INT requires exactly 3 arguments (value, timestamp, scalar), but got {}", argCount);
+
+            /* Lift the scalar constant — accept FLOAT64 (strtod-clean) and INT32 */
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto scalar    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto timestamp = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto value     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                AlwaysNeTintIntLogicalFunction(value, timestamp, scalar));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: ALWAYS_NE_TINT_INT */
+
+        /* BEGIN CODEGEN PARSER GLUE: EVER_EQ_TFLOAT_FLOAT */
+        case AntlrSQLLexer::EVER_EQ_TFLOAT_FLOAT:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("EVER_EQ_TFLOAT_FLOAT requires exactly 3 arguments (value, timestamp, scalar), but got {}", argCount);
+
+            /* Lift the scalar constant — accept FLOAT64 (strtod-clean) and INT32 */
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto scalar    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto timestamp = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto value     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                EverEqTfloatFloatLogicalFunction(value, timestamp, scalar));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: EVER_EQ_TFLOAT_FLOAT */
+
+        /* BEGIN CODEGEN PARSER GLUE: EVER_EQ_TINT_INT */
+        case AntlrSQLLexer::EVER_EQ_TINT_INT:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("EVER_EQ_TINT_INT requires exactly 3 arguments (value, timestamp, scalar), but got {}", argCount);
+
+            /* Lift the scalar constant — accept FLOAT64 (strtod-clean) and INT32 */
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto scalar    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto timestamp = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto value     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                EverEqTintIntLogicalFunction(value, timestamp, scalar));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: EVER_EQ_TINT_INT */
+
+        /* BEGIN CODEGEN PARSER GLUE: EVER_GE_TFLOAT_FLOAT */
+        case AntlrSQLLexer::EVER_GE_TFLOAT_FLOAT:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("EVER_GE_TFLOAT_FLOAT requires exactly 3 arguments (value, timestamp, scalar), but got {}", argCount);
+
+            /* Lift the scalar constant — accept FLOAT64 (strtod-clean) and INT32 */
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto scalar    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto timestamp = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto value     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                EverGeTfloatFloatLogicalFunction(value, timestamp, scalar));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: EVER_GE_TFLOAT_FLOAT */
+
+        /* BEGIN CODEGEN PARSER GLUE: EVER_GE_TINT_INT */
+        case AntlrSQLLexer::EVER_GE_TINT_INT:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("EVER_GE_TINT_INT requires exactly 3 arguments (value, timestamp, scalar), but got {}", argCount);
+
+            /* Lift the scalar constant — accept FLOAT64 (strtod-clean) and INT32 */
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto scalar    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto timestamp = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto value     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                EverGeTintIntLogicalFunction(value, timestamp, scalar));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: EVER_GE_TINT_INT */
+
+        /* BEGIN CODEGEN PARSER GLUE: EVER_GT_TFLOAT_FLOAT */
+        case AntlrSQLLexer::EVER_GT_TFLOAT_FLOAT:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("EVER_GT_TFLOAT_FLOAT requires exactly 3 arguments (value, timestamp, scalar), but got {}", argCount);
+
+            /* Lift the scalar constant — accept FLOAT64 (strtod-clean) and INT32 */
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto scalar    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto timestamp = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto value     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                EverGtTfloatFloatLogicalFunction(value, timestamp, scalar));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: EVER_GT_TFLOAT_FLOAT */
+
+        /* BEGIN CODEGEN PARSER GLUE: EVER_GT_TINT_INT */
+        case AntlrSQLLexer::EVER_GT_TINT_INT:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("EVER_GT_TINT_INT requires exactly 3 arguments (value, timestamp, scalar), but got {}", argCount);
+
+            /* Lift the scalar constant — accept FLOAT64 (strtod-clean) and INT32 */
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto scalar    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto timestamp = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto value     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                EverGtTintIntLogicalFunction(value, timestamp, scalar));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: EVER_GT_TINT_INT */
+
+        /* BEGIN CODEGEN PARSER GLUE: EVER_LE_TFLOAT_FLOAT */
+        case AntlrSQLLexer::EVER_LE_TFLOAT_FLOAT:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("EVER_LE_TFLOAT_FLOAT requires exactly 3 arguments (value, timestamp, scalar), but got {}", argCount);
+
+            /* Lift the scalar constant — accept FLOAT64 (strtod-clean) and INT32 */
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto scalar    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto timestamp = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto value     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                EverLeTfloatFloatLogicalFunction(value, timestamp, scalar));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: EVER_LE_TFLOAT_FLOAT */
+
+        /* BEGIN CODEGEN PARSER GLUE: EVER_LE_TINT_INT */
+        case AntlrSQLLexer::EVER_LE_TINT_INT:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("EVER_LE_TINT_INT requires exactly 3 arguments (value, timestamp, scalar), but got {}", argCount);
+
+            /* Lift the scalar constant — accept FLOAT64 (strtod-clean) and INT32 */
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto scalar    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto timestamp = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto value     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                EverLeTintIntLogicalFunction(value, timestamp, scalar));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: EVER_LE_TINT_INT */
+
+        /* BEGIN CODEGEN PARSER GLUE: EVER_LT_TFLOAT_FLOAT */
+        case AntlrSQLLexer::EVER_LT_TFLOAT_FLOAT:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("EVER_LT_TFLOAT_FLOAT requires exactly 3 arguments (value, timestamp, scalar), but got {}", argCount);
+
+            /* Lift the scalar constant — accept FLOAT64 (strtod-clean) and INT32 */
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto scalar    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto timestamp = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto value     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                EverLtTfloatFloatLogicalFunction(value, timestamp, scalar));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: EVER_LT_TFLOAT_FLOAT */
+
+        /* BEGIN CODEGEN PARSER GLUE: EVER_LT_TINT_INT */
+        case AntlrSQLLexer::EVER_LT_TINT_INT:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("EVER_LT_TINT_INT requires exactly 3 arguments (value, timestamp, scalar), but got {}", argCount);
+
+            /* Lift the scalar constant — accept FLOAT64 (strtod-clean) and INT32 */
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto scalar    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto timestamp = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto value     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                EverLtTintIntLogicalFunction(value, timestamp, scalar));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: EVER_LT_TINT_INT */
+
+        /* BEGIN CODEGEN PARSER GLUE: EVER_NE_TFLOAT_FLOAT */
+        case AntlrSQLLexer::EVER_NE_TFLOAT_FLOAT:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("EVER_NE_TFLOAT_FLOAT requires exactly 3 arguments (value, timestamp, scalar), but got {}", argCount);
+
+            /* Lift the scalar constant — accept FLOAT64 (strtod-clean) and INT32 */
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto scalar    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto timestamp = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto value     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                EverNeTfloatFloatLogicalFunction(value, timestamp, scalar));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: EVER_NE_TFLOAT_FLOAT */
+
+        /* BEGIN CODEGEN PARSER GLUE: EVER_NE_TINT_INT */
+        case AntlrSQLLexer::EVER_NE_TINT_INT:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("EVER_NE_TINT_INT requires exactly 3 arguments (value, timestamp, scalar), but got {}", argCount);
+
+            /* Lift the scalar constant — accept FLOAT64 (strtod-clean) and INT32 */
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto scalar    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto timestamp = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto value     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                EverNeTintIntLogicalFunction(value, timestamp, scalar));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: EVER_NE_TINT_INT */
+        /* BEGIN CODEGEN PARSER GLUE: ALWAYS_EQ_FLOAT_TFLOAT */
+        case AntlrSQLLexer::ALWAYS_EQ_FLOAT_TFLOAT:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("ALWAYS_EQ_FLOAT_TFLOAT requires exactly 3 arguments (value, timestamp, scalar), but got {}", argCount);
+
+            /* Lift the scalar constant — accept FLOAT64 (strtod-clean) and INT32 */
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto scalar    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto timestamp = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto value     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                AlwaysEqFloatTfloatLogicalFunction(value, timestamp, scalar));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: ALWAYS_EQ_FLOAT_TFLOAT */
+
+        /* BEGIN CODEGEN PARSER GLUE: ALWAYS_EQ_INT_TINT */
+        case AntlrSQLLexer::ALWAYS_EQ_INT_TINT:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("ALWAYS_EQ_INT_TINT requires exactly 3 arguments (value, timestamp, scalar), but got {}", argCount);
+
+            /* Lift the scalar constant — accept FLOAT64 (strtod-clean) and INT32 */
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto scalar    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto timestamp = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto value     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                AlwaysEqIntTintLogicalFunction(value, timestamp, scalar));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: ALWAYS_EQ_INT_TINT */
+
+        /* BEGIN CODEGEN PARSER GLUE: ALWAYS_EQ_TEMPORAL_TEMPORAL */
+        case AntlrSQLLexer::ALWAYS_EQ_TEMPORAL_TEMPORAL:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 4)
+                throw InvalidQuerySyntax("ALWAYS_EQ_TEMPORAL_TEMPORAL requires exactly 4 arguments (valueA, tsA, valueB, tsB), but got {}", argCount);
+
+            auto tsB    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto valueB = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto tsA    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto valueA = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                AlwaysEqTemporalTemporalLogicalFunction(valueA, tsA, valueB, tsB));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: ALWAYS_EQ_TEMPORAL_TEMPORAL */
+
+        /* BEGIN CODEGEN PARSER GLUE: ALWAYS_GE_FLOAT_TFLOAT */
+        case AntlrSQLLexer::ALWAYS_GE_FLOAT_TFLOAT:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("ALWAYS_GE_FLOAT_TFLOAT requires exactly 3 arguments (value, timestamp, scalar), but got {}", argCount);
+
+            /* Lift the scalar constant — accept FLOAT64 (strtod-clean) and INT32 */
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto scalar    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto timestamp = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto value     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                AlwaysGeFloatTfloatLogicalFunction(value, timestamp, scalar));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: ALWAYS_GE_FLOAT_TFLOAT */
+
+        /* BEGIN CODEGEN PARSER GLUE: ALWAYS_GE_INT_TINT */
+        case AntlrSQLLexer::ALWAYS_GE_INT_TINT:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("ALWAYS_GE_INT_TINT requires exactly 3 arguments (value, timestamp, scalar), but got {}", argCount);
+
+            /* Lift the scalar constant — accept FLOAT64 (strtod-clean) and INT32 */
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto scalar    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto timestamp = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto value     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                AlwaysGeIntTintLogicalFunction(value, timestamp, scalar));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: ALWAYS_GE_INT_TINT */
+
+        /* BEGIN CODEGEN PARSER GLUE: ALWAYS_GE_TEMPORAL_TEMPORAL */
+        case AntlrSQLLexer::ALWAYS_GE_TEMPORAL_TEMPORAL:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 4)
+                throw InvalidQuerySyntax("ALWAYS_GE_TEMPORAL_TEMPORAL requires exactly 4 arguments (valueA, tsA, valueB, tsB), but got {}", argCount);
+
+            auto tsB    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto valueB = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto tsA    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto valueA = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                AlwaysGeTemporalTemporalLogicalFunction(valueA, tsA, valueB, tsB));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: ALWAYS_GE_TEMPORAL_TEMPORAL */
+
+        /* BEGIN CODEGEN PARSER GLUE: ALWAYS_GT_FLOAT_TFLOAT */
+        case AntlrSQLLexer::ALWAYS_GT_FLOAT_TFLOAT:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("ALWAYS_GT_FLOAT_TFLOAT requires exactly 3 arguments (value, timestamp, scalar), but got {}", argCount);
+
+            /* Lift the scalar constant — accept FLOAT64 (strtod-clean) and INT32 */
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto scalar    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto timestamp = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto value     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                AlwaysGtFloatTfloatLogicalFunction(value, timestamp, scalar));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: ALWAYS_GT_FLOAT_TFLOAT */
+
+        /* BEGIN CODEGEN PARSER GLUE: ALWAYS_GT_INT_TINT */
+        case AntlrSQLLexer::ALWAYS_GT_INT_TINT:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("ALWAYS_GT_INT_TINT requires exactly 3 arguments (value, timestamp, scalar), but got {}", argCount);
+
+            /* Lift the scalar constant — accept FLOAT64 (strtod-clean) and INT32 */
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto scalar    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto timestamp = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto value     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                AlwaysGtIntTintLogicalFunction(value, timestamp, scalar));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: ALWAYS_GT_INT_TINT */
+
+        /* BEGIN CODEGEN PARSER GLUE: ALWAYS_GT_TEMPORAL_TEMPORAL */
+        case AntlrSQLLexer::ALWAYS_GT_TEMPORAL_TEMPORAL:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 4)
+                throw InvalidQuerySyntax("ALWAYS_GT_TEMPORAL_TEMPORAL requires exactly 4 arguments (valueA, tsA, valueB, tsB), but got {}", argCount);
+
+            auto tsB    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto valueB = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto tsA    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto valueA = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                AlwaysGtTemporalTemporalLogicalFunction(valueA, tsA, valueB, tsB));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: ALWAYS_GT_TEMPORAL_TEMPORAL */
+
+        /* BEGIN CODEGEN PARSER GLUE: ALWAYS_LE_FLOAT_TFLOAT */
+        case AntlrSQLLexer::ALWAYS_LE_FLOAT_TFLOAT:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("ALWAYS_LE_FLOAT_TFLOAT requires exactly 3 arguments (value, timestamp, scalar), but got {}", argCount);
+
+            /* Lift the scalar constant — accept FLOAT64 (strtod-clean) and INT32 */
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto scalar    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto timestamp = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto value     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                AlwaysLeFloatTfloatLogicalFunction(value, timestamp, scalar));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: ALWAYS_LE_FLOAT_TFLOAT */
+
+        /* BEGIN CODEGEN PARSER GLUE: ALWAYS_LE_INT_TINT */
+        case AntlrSQLLexer::ALWAYS_LE_INT_TINT:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("ALWAYS_LE_INT_TINT requires exactly 3 arguments (value, timestamp, scalar), but got {}", argCount);
+
+            /* Lift the scalar constant — accept FLOAT64 (strtod-clean) and INT32 */
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto scalar    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto timestamp = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto value     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                AlwaysLeIntTintLogicalFunction(value, timestamp, scalar));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: ALWAYS_LE_INT_TINT */
+
+        /* BEGIN CODEGEN PARSER GLUE: ALWAYS_LE_TEMPORAL_TEMPORAL */
+        case AntlrSQLLexer::ALWAYS_LE_TEMPORAL_TEMPORAL:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 4)
+                throw InvalidQuerySyntax("ALWAYS_LE_TEMPORAL_TEMPORAL requires exactly 4 arguments (valueA, tsA, valueB, tsB), but got {}", argCount);
+
+            auto tsB    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto valueB = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto tsA    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto valueA = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                AlwaysLeTemporalTemporalLogicalFunction(valueA, tsA, valueB, tsB));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: ALWAYS_LE_TEMPORAL_TEMPORAL */
+
+        /* BEGIN CODEGEN PARSER GLUE: ALWAYS_LT_FLOAT_TFLOAT */
+        case AntlrSQLLexer::ALWAYS_LT_FLOAT_TFLOAT:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("ALWAYS_LT_FLOAT_TFLOAT requires exactly 3 arguments (value, timestamp, scalar), but got {}", argCount);
+
+            /* Lift the scalar constant — accept FLOAT64 (strtod-clean) and INT32 */
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto scalar    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto timestamp = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto value     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                AlwaysLtFloatTfloatLogicalFunction(value, timestamp, scalar));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: ALWAYS_LT_FLOAT_TFLOAT */
+
+        /* BEGIN CODEGEN PARSER GLUE: ALWAYS_LT_INT_TINT */
+        case AntlrSQLLexer::ALWAYS_LT_INT_TINT:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("ALWAYS_LT_INT_TINT requires exactly 3 arguments (value, timestamp, scalar), but got {}", argCount);
+
+            /* Lift the scalar constant — accept FLOAT64 (strtod-clean) and INT32 */
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto scalar    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto timestamp = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto value     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                AlwaysLtIntTintLogicalFunction(value, timestamp, scalar));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: ALWAYS_LT_INT_TINT */
+
+        /* BEGIN CODEGEN PARSER GLUE: ALWAYS_LT_TEMPORAL_TEMPORAL */
+        case AntlrSQLLexer::ALWAYS_LT_TEMPORAL_TEMPORAL:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 4)
+                throw InvalidQuerySyntax("ALWAYS_LT_TEMPORAL_TEMPORAL requires exactly 4 arguments (valueA, tsA, valueB, tsB), but got {}", argCount);
+
+            auto tsB    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto valueB = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto tsA    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto valueA = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                AlwaysLtTemporalTemporalLogicalFunction(valueA, tsA, valueB, tsB));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: ALWAYS_LT_TEMPORAL_TEMPORAL */
+
+        /* BEGIN CODEGEN PARSER GLUE: ALWAYS_NE_FLOAT_TFLOAT */
+        case AntlrSQLLexer::ALWAYS_NE_FLOAT_TFLOAT:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("ALWAYS_NE_FLOAT_TFLOAT requires exactly 3 arguments (value, timestamp, scalar), but got {}", argCount);
+
+            /* Lift the scalar constant — accept FLOAT64 (strtod-clean) and INT32 */
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto scalar    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto timestamp = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto value     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                AlwaysNeFloatTfloatLogicalFunction(value, timestamp, scalar));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: ALWAYS_NE_FLOAT_TFLOAT */
+
+        /* BEGIN CODEGEN PARSER GLUE: ALWAYS_NE_INT_TINT */
+        case AntlrSQLLexer::ALWAYS_NE_INT_TINT:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("ALWAYS_NE_INT_TINT requires exactly 3 arguments (value, timestamp, scalar), but got {}", argCount);
+
+            /* Lift the scalar constant — accept FLOAT64 (strtod-clean) and INT32 */
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto scalar    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto timestamp = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto value     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                AlwaysNeIntTintLogicalFunction(value, timestamp, scalar));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: ALWAYS_NE_INT_TINT */
+
+        /* BEGIN CODEGEN PARSER GLUE: ALWAYS_NE_TEMPORAL_TEMPORAL */
+        case AntlrSQLLexer::ALWAYS_NE_TEMPORAL_TEMPORAL:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 4)
+                throw InvalidQuerySyntax("ALWAYS_NE_TEMPORAL_TEMPORAL requires exactly 4 arguments (valueA, tsA, valueB, tsB), but got {}", argCount);
+
+            auto tsB    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto valueB = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto tsA    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto valueA = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                AlwaysNeTemporalTemporalLogicalFunction(valueA, tsA, valueB, tsB));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: ALWAYS_NE_TEMPORAL_TEMPORAL */
+
+        /* BEGIN CODEGEN PARSER GLUE: EVER_EQ_FLOAT_TFLOAT */
+        case AntlrSQLLexer::EVER_EQ_FLOAT_TFLOAT:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("EVER_EQ_FLOAT_TFLOAT requires exactly 3 arguments (value, timestamp, scalar), but got {}", argCount);
+
+            /* Lift the scalar constant — accept FLOAT64 (strtod-clean) and INT32 */
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto scalar    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto timestamp = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto value     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                EverEqFloatTfloatLogicalFunction(value, timestamp, scalar));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: EVER_EQ_FLOAT_TFLOAT */
+
+        /* BEGIN CODEGEN PARSER GLUE: EVER_EQ_INT_TINT */
+        case AntlrSQLLexer::EVER_EQ_INT_TINT:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("EVER_EQ_INT_TINT requires exactly 3 arguments (value, timestamp, scalar), but got {}", argCount);
+
+            /* Lift the scalar constant — accept FLOAT64 (strtod-clean) and INT32 */
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto scalar    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto timestamp = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto value     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                EverEqIntTintLogicalFunction(value, timestamp, scalar));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: EVER_EQ_INT_TINT */
+
+        /* BEGIN CODEGEN PARSER GLUE: EVER_EQ_TEMPORAL_TEMPORAL */
+        case AntlrSQLLexer::EVER_EQ_TEMPORAL_TEMPORAL:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 4)
+                throw InvalidQuerySyntax("EVER_EQ_TEMPORAL_TEMPORAL requires exactly 4 arguments (valueA, tsA, valueB, tsB), but got {}", argCount);
+
+            auto tsB    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto valueB = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto tsA    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto valueA = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                EverEqTemporalTemporalLogicalFunction(valueA, tsA, valueB, tsB));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: EVER_EQ_TEMPORAL_TEMPORAL */
+
+        /* BEGIN CODEGEN PARSER GLUE: EVER_GE_FLOAT_TFLOAT */
+        case AntlrSQLLexer::EVER_GE_FLOAT_TFLOAT:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("EVER_GE_FLOAT_TFLOAT requires exactly 3 arguments (value, timestamp, scalar), but got {}", argCount);
+
+            /* Lift the scalar constant — accept FLOAT64 (strtod-clean) and INT32 */
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto scalar    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto timestamp = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto value     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                EverGeFloatTfloatLogicalFunction(value, timestamp, scalar));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: EVER_GE_FLOAT_TFLOAT */
+
+        /* BEGIN CODEGEN PARSER GLUE: EVER_GE_INT_TINT */
+        case AntlrSQLLexer::EVER_GE_INT_TINT:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("EVER_GE_INT_TINT requires exactly 3 arguments (value, timestamp, scalar), but got {}", argCount);
+
+            /* Lift the scalar constant — accept FLOAT64 (strtod-clean) and INT32 */
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto scalar    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto timestamp = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto value     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                EverGeIntTintLogicalFunction(value, timestamp, scalar));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: EVER_GE_INT_TINT */
+
+        /* BEGIN CODEGEN PARSER GLUE: EVER_GE_TEMPORAL_TEMPORAL */
+        case AntlrSQLLexer::EVER_GE_TEMPORAL_TEMPORAL:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 4)
+                throw InvalidQuerySyntax("EVER_GE_TEMPORAL_TEMPORAL requires exactly 4 arguments (valueA, tsA, valueB, tsB), but got {}", argCount);
+
+            auto tsB    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto valueB = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto tsA    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto valueA = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                EverGeTemporalTemporalLogicalFunction(valueA, tsA, valueB, tsB));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: EVER_GE_TEMPORAL_TEMPORAL */
+
+        /* BEGIN CODEGEN PARSER GLUE: EVER_GT_FLOAT_TFLOAT */
+        case AntlrSQLLexer::EVER_GT_FLOAT_TFLOAT:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("EVER_GT_FLOAT_TFLOAT requires exactly 3 arguments (value, timestamp, scalar), but got {}", argCount);
+
+            /* Lift the scalar constant — accept FLOAT64 (strtod-clean) and INT32 */
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto scalar    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto timestamp = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto value     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                EverGtFloatTfloatLogicalFunction(value, timestamp, scalar));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: EVER_GT_FLOAT_TFLOAT */
+
+        /* BEGIN CODEGEN PARSER GLUE: EVER_GT_INT_TINT */
+        case AntlrSQLLexer::EVER_GT_INT_TINT:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("EVER_GT_INT_TINT requires exactly 3 arguments (value, timestamp, scalar), but got {}", argCount);
+
+            /* Lift the scalar constant — accept FLOAT64 (strtod-clean) and INT32 */
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto scalar    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto timestamp = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto value     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                EverGtIntTintLogicalFunction(value, timestamp, scalar));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: EVER_GT_INT_TINT */
+
+        /* BEGIN CODEGEN PARSER GLUE: EVER_GT_TEMPORAL_TEMPORAL */
+        case AntlrSQLLexer::EVER_GT_TEMPORAL_TEMPORAL:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 4)
+                throw InvalidQuerySyntax("EVER_GT_TEMPORAL_TEMPORAL requires exactly 4 arguments (valueA, tsA, valueB, tsB), but got {}", argCount);
+
+            auto tsB    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto valueB = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto tsA    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto valueA = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                EverGtTemporalTemporalLogicalFunction(valueA, tsA, valueB, tsB));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: EVER_GT_TEMPORAL_TEMPORAL */
+
+        /* BEGIN CODEGEN PARSER GLUE: EVER_LE_FLOAT_TFLOAT */
+        case AntlrSQLLexer::EVER_LE_FLOAT_TFLOAT:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("EVER_LE_FLOAT_TFLOAT requires exactly 3 arguments (value, timestamp, scalar), but got {}", argCount);
+
+            /* Lift the scalar constant — accept FLOAT64 (strtod-clean) and INT32 */
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto scalar    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto timestamp = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto value     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                EverLeFloatTfloatLogicalFunction(value, timestamp, scalar));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: EVER_LE_FLOAT_TFLOAT */
+
+        /* BEGIN CODEGEN PARSER GLUE: EVER_LE_INT_TINT */
+        case AntlrSQLLexer::EVER_LE_INT_TINT:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("EVER_LE_INT_TINT requires exactly 3 arguments (value, timestamp, scalar), but got {}", argCount);
+
+            /* Lift the scalar constant — accept FLOAT64 (strtod-clean) and INT32 */
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto scalar    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto timestamp = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto value     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                EverLeIntTintLogicalFunction(value, timestamp, scalar));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: EVER_LE_INT_TINT */
+
+        /* BEGIN CODEGEN PARSER GLUE: EVER_LE_TEMPORAL_TEMPORAL */
+        case AntlrSQLLexer::EVER_LE_TEMPORAL_TEMPORAL:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 4)
+                throw InvalidQuerySyntax("EVER_LE_TEMPORAL_TEMPORAL requires exactly 4 arguments (valueA, tsA, valueB, tsB), but got {}", argCount);
+
+            auto tsB    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto valueB = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto tsA    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto valueA = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                EverLeTemporalTemporalLogicalFunction(valueA, tsA, valueB, tsB));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: EVER_LE_TEMPORAL_TEMPORAL */
+
+        /* BEGIN CODEGEN PARSER GLUE: EVER_LT_FLOAT_TFLOAT */
+        case AntlrSQLLexer::EVER_LT_FLOAT_TFLOAT:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("EVER_LT_FLOAT_TFLOAT requires exactly 3 arguments (value, timestamp, scalar), but got {}", argCount);
+
+            /* Lift the scalar constant — accept FLOAT64 (strtod-clean) and INT32 */
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto scalar    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto timestamp = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto value     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                EverLtFloatTfloatLogicalFunction(value, timestamp, scalar));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: EVER_LT_FLOAT_TFLOAT */
+
+        /* BEGIN CODEGEN PARSER GLUE: EVER_LT_INT_TINT */
+        case AntlrSQLLexer::EVER_LT_INT_TINT:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("EVER_LT_INT_TINT requires exactly 3 arguments (value, timestamp, scalar), but got {}", argCount);
+
+            /* Lift the scalar constant — accept FLOAT64 (strtod-clean) and INT32 */
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto scalar    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto timestamp = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto value     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                EverLtIntTintLogicalFunction(value, timestamp, scalar));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: EVER_LT_INT_TINT */
+
+        /* BEGIN CODEGEN PARSER GLUE: EVER_LT_TEMPORAL_TEMPORAL */
+        case AntlrSQLLexer::EVER_LT_TEMPORAL_TEMPORAL:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 4)
+                throw InvalidQuerySyntax("EVER_LT_TEMPORAL_TEMPORAL requires exactly 4 arguments (valueA, tsA, valueB, tsB), but got {}", argCount);
+
+            auto tsB    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto valueB = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto tsA    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto valueA = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                EverLtTemporalTemporalLogicalFunction(valueA, tsA, valueB, tsB));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: EVER_LT_TEMPORAL_TEMPORAL */
+
+        /* BEGIN CODEGEN PARSER GLUE: EVER_NE_FLOAT_TFLOAT */
+        case AntlrSQLLexer::EVER_NE_FLOAT_TFLOAT:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("EVER_NE_FLOAT_TFLOAT requires exactly 3 arguments (value, timestamp, scalar), but got {}", argCount);
+
+            /* Lift the scalar constant — accept FLOAT64 (strtod-clean) and INT32 */
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto scalar    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto timestamp = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto value     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                EverNeFloatTfloatLogicalFunction(value, timestamp, scalar));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: EVER_NE_FLOAT_TFLOAT */
+
+        /* BEGIN CODEGEN PARSER GLUE: EVER_NE_INT_TINT */
+        case AntlrSQLLexer::EVER_NE_INT_TINT:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("EVER_NE_INT_TINT requires exactly 3 arguments (value, timestamp, scalar), but got {}", argCount);
+
+            /* Lift the scalar constant — accept FLOAT64 (strtod-clean) and INT32 */
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto scalar    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto timestamp = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto value     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                EverNeIntTintLogicalFunction(value, timestamp, scalar));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: EVER_NE_INT_TINT */
+
+        /* BEGIN CODEGEN PARSER GLUE: EVER_NE_TEMPORAL_TEMPORAL */
+        case AntlrSQLLexer::EVER_NE_TEMPORAL_TEMPORAL:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 4)
+                throw InvalidQuerySyntax("EVER_NE_TEMPORAL_TEMPORAL requires exactly 4 arguments (valueA, tsA, valueB, tsB), but got {}", argCount);
+
+            auto tsB    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto valueB = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto tsA    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto valueA = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(
+                EverNeTemporalTemporalLogicalFunction(valueA, tsA, valueB, tsB));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: EVER_NE_TEMPORAL_TEMPORAL */
+
+
 
 
 
