@@ -94,6 +94,8 @@
 #include <Aggregation/Function/Meos/BigintUnionAggregationPhysicalFunction.hpp>
 #include <Aggregation/Function/Meos/TimestamptzUnionAggregationPhysicalFunction.hpp>
 #include <Aggregation/Function/Meos/TrajectoryWkbAggregationPhysicalFunction.hpp>
+#include <Aggregation/Function/Meos/TLengthExpAggregationPhysicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TLengthExpAggregationLogicalFunction.hpp>
 #include <Operators/Windows/Aggregations/Meos/TrajectoryWkbAggregationLogicalFunction.hpp>
 #include <Operators/Windows/Aggregations/Meos/FloatUnionAggregationLogicalFunction.hpp>
 #include <Operators/Windows/Aggregations/Meos/IntUnionAggregationLogicalFunction.hpp>
@@ -1152,6 +1154,35 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             continue;
         }
         /* END CODEGEN AGGREGATION GLUE: TRAJECTORY_WKB (optimizer lowering) */
+        /* BEGIN CODEGEN AGGREGATION GLUE: TLENGTH_EXP (optimizer lowering) */
+        if (name == std::string_view("TLENGTH_EXP"))
+        {
+            auto specificDescriptor = std::dynamic_pointer_cast<TLengthExpAggregationLogicalFunction>(descriptor);
+            INVARIANT(specificDescriptor != nullptr, "Expected TLengthExpAggregationLogicalFunction for TLENGTH_EXP");
+
+            auto lonPF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getLonField());
+            auto latPF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getLatField());
+            auto tsPF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getTimestampField());
+
+            Schema stateSchema;
+            stateSchema.addField("lon", specificDescriptor->getLonField().getDataType());
+            stateSchema.addField("lat", specificDescriptor->getLatField().getDataType());
+            stateSchema.addField("timestamp", specificDescriptor->getTimestampField().getDataType());
+            auto tupleBufferRef = Interface::BufferRef::TupleBufferRef::create(configuration.pageSize.getValue(), stateSchema);
+
+            auto phys = std::make_shared<TLengthExpAggregationPhysicalFunction>(
+                std::move(physicalInputType),
+                std::move(physicalFinalType),
+                lonPF,
+                latPF,
+                tsPF,
+                resultFieldIdentifier,
+                tupleBufferRef);
+            aggregationPhysicalFunctions.push_back(std::move(phys));
+            continue;
+        }
+        /* END CODEGEN AGGREGATION GLUE: TLENGTH_EXP (optimizer lowering) */
+
 
 
 

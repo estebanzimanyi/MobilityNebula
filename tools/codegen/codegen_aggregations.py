@@ -1346,6 +1346,222 @@ PHYSICAL_CPP_TGEO_WKB = _swap_once(
     _FINALIZE_SCALAR_TGEO, _FINALIZE_WKB_TGEO, "tgeo-wkb finalize tail")
 
 # ===========================================================================
+# Expandable-Temporal* aggregate (return_mode "expand"): the MEOS-native
+# streaming model — the aggregate STATE is a live expandable `Temporal*` (a
+# mini-trip trajectory), grown in place per event via the public streaming
+# primitive `temporal_append_tinstant(..., expand=true)` (amortized-O(1),
+# doubling). lower() applies the invariant MEOS scalar fn DIRECTLY to the live
+# trajectory — no per-event string build, no parse-the-whole-window, no WKB.
+# State is a `Temporal*` slot (sizeof(Temporal*)); public funcs only
+# (tgeompoint_in / tsequence_make / temporal_append_tinstant / temporal_merge).
+# ===========================================================================
+PHYSICAL_CPP_TGEO_EXPAND = """\
+/*
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        https://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+*/
+
+#include <Aggregation/Function/Meos/{nebula_name}AggregationPhysicalFunction.hpp>
+
+#include <cstddef>
+#include <cstdint>
+#include <memory>
+#include <stdexcept>
+#include <utility>
+#include <string_view>
+#include <cstdlib>
+#include <mutex>
+#include <cstring>
+#include <cstdio>
+#include <string>
+
+#include <MemoryLayout/ColumnLayout.hpp>
+#include <Nautilus/Interface/BufferRef/TupleBufferRef.hpp>
+#include <Nautilus/Interface/Record.hpp>
+#include <nautilus/function.hpp>
+
+#include <AggregationPhysicalFunctionRegistry.hpp>
+#include <ErrorHandling.hpp>
+#include <val.hpp>
+#include <val_concepts.hpp>
+#include <val_ptr.hpp>
+
+#include <MEOSWrapper.hpp>
+extern "C" {{
+#include <meos.h>
+#include <meos_geo.h>
+}}
+
+namespace NES
+{{
+
+static std::mutex {mutex_name};
+
+
+{nebula_name}AggregationPhysicalFunction::{nebula_name}AggregationPhysicalFunction(
+    DataType inputType,
+    DataType resultType,
+    PhysicalFunction lonFunctionParam,
+    PhysicalFunction latFunctionParam,
+    PhysicalFunction timestampFunctionParam,
+    Nautilus::Record::RecordFieldIdentifier resultFieldIdentifier,
+    std::shared_ptr<Nautilus::Interface::BufferRef::TupleBufferRef> bufferRef)
+    : AggregationPhysicalFunction(std::move(inputType), std::move(resultType), lonFunctionParam, std::move(resultFieldIdentifier))
+    , bufferRef(std::move(bufferRef))
+    , lonFunction(std::move(lonFunctionParam))
+    , latFunction(std::move(latFunctionParam))
+    , timestampFunction(std::move(timestampFunctionParam))
+{{
+}}
+
+void {nebula_name}AggregationPhysicalFunction::lift(
+    const nautilus::val<AggregationState*>& aggregationState, PipelineMemoryProvider& pipelineMemoryProvider, const Nautilus::Record& record)
+{{
+    auto lonValue = lonFunction.execute(record, pipelineMemoryProvider.arena);
+    auto latValue = latFunction.execute(record, pipelineMemoryProvider.arena);
+    auto timestampValue = timestampFunction.execute(record, pipelineMemoryProvider.arena);
+
+    auto lon = lonValue.cast<nautilus::val<double>>();
+    auto lat = latValue.cast<nautilus::val<double>>();
+    auto timestamp = timestampValue.cast<nautilus::val<int64_t>>();
+
+    nautilus::invoke(
+        +[](AggregationState* st, double lonVal, double latVal, int64_t tsVal) -> void
+        {{
+            MEOS::Meos::ensureMeosInitialized();
+            std::lock_guard<std::mutex> lock({mutex_name});
+            Temporal** slot = reinterpret_cast<Temporal**>(st);
+
+            long long sec = (tsVal > 1000000000000LL) ? (tsVal / 1000) : tsVal;
+            std::string ts = MEOS::Meos::convertSecondsToTimestamp(sec);
+            char wkt[120];
+            snprintf(wkt, sizeof(wkt), "SRID=4326;Point(%.6f %.6f)@%s", lonVal, latVal, ts.c_str());
+
+            // Public instant constructor: a single-instant tgeompoint Temporal.
+            Temporal* instTemp = tgeompoint_in(wkt);
+            if (!instTemp) {{
+                return;
+            }}
+            if (*slot == nullptr) {{
+                // First event: a 1-instant sequence; subsequent appendInstant calls
+                // grow it in place (expand=true doubles maxcount when full).
+                TInstant* arr[1];
+                arr[0] = (TInstant*) instTemp;
+                *slot = (Temporal*) tsequence_make((TInstant**) arr, 1, true, true, LINEAR, false);
+            }} else {{
+                *slot = temporal_append_tinstant(*slot, (const TInstant*) instTemp, LINEAR, 0.0, nullptr, true);
+            }}
+            free(instTemp);  // copied by tsequence_make / temporal_append_tinstant
+        }},
+        aggregationState,
+        lon,
+        lat,
+        timestamp);
+}}
+
+void {nebula_name}AggregationPhysicalFunction::combine(
+    const nautilus::val<AggregationState*> aggregationState1,
+    const nautilus::val<AggregationState*> aggregationState2,
+    PipelineMemoryProvider&)
+{{
+    nautilus::invoke(
+        +[](AggregationState* st1, AggregationState* st2) -> void
+        {{
+            std::lock_guard<std::mutex> lock({mutex_name});
+            Temporal** s1 = reinterpret_cast<Temporal**>(st1);
+            Temporal** s2 = reinterpret_cast<Temporal**>(st2);
+            if (*s2 == nullptr) {{
+                return;
+            }}
+            if (*s1 == nullptr) {{
+                *s1 = *s2;
+                *s2 = nullptr;
+                return;
+            }}
+            // temporal_merge returns a fresh temporal (copies inputs, frees nothing).
+            Temporal* merged = temporal_merge(*s1, *s2);
+            free(*s1);
+            free(*s2);
+            *s2 = nullptr;
+            *s1 = merged;
+        }},
+        aggregationState1,
+        aggregationState2);
+}}
+
+Nautilus::Record {nebula_name}AggregationPhysicalFunction::lower(
+    const nautilus::val<AggregationState*> aggregationState, [[maybe_unused]] PipelineMemoryProvider& pipelineMemoryProvider)
+{{
+    MEOS::Meos::ensureMeosInitialized();
+
+    auto resultValue = nautilus::invoke(
+        +[](AggregationState* st) -> {return_cpp_type}
+        {{
+            std::lock_guard<std::mutex> lock({mutex_name});
+            Temporal** slot = reinterpret_cast<Temporal**>(st);
+            if (*slot == nullptr) {{
+                return ({return_cpp_type})0;
+            }}
+            return {meos_scalar_fn}(*slot);
+        }},
+        aggregationState);
+
+    Nautilus::Record resultRecord;
+    resultRecord.write(resultFieldIdentifier, resultValue);
+    return resultRecord;
+}}
+
+void {nebula_name}AggregationPhysicalFunction::reset(const nautilus::val<AggregationState*> aggregationState, PipelineMemoryProvider&)
+{{
+    nautilus::invoke(
+        +[](AggregationState* st) -> void
+        {{
+            Temporal** slot = reinterpret_cast<Temporal**>(st);
+            *slot = nullptr;
+        }},
+        aggregationState);
+}}
+
+size_t {nebula_name}AggregationPhysicalFunction::getSizeOfStateInBytes() const
+{{
+    return sizeof(Temporal*);
+}}
+
+void {nebula_name}AggregationPhysicalFunction::cleanup(nautilus::val<AggregationState*> aggregationState)
+{{
+    nautilus::invoke(
+        +[](AggregationState* st) -> void
+        {{
+            Temporal** slot = reinterpret_cast<Temporal**>(st);
+            if (*slot != nullptr) {{
+                free(*slot);
+                *slot = nullptr;
+            }}
+        }},
+        aggregationState);
+}}
+
+
+AggregationPhysicalFunctionRegistryReturnType AggregationPhysicalFunctionGeneratedRegistrar::Register{nebula_name}AggregationPhysicalFunction(
+    AggregationPhysicalFunctionRegistryArguments)
+{{
+    throw std::runtime_error("{class_name_token} aggregation cannot be created through the registry. "
+                             "It requires three field functions (longitude, latitude, timestamp)");
+}}
+
+}} // namespace NES
+"""
+
+# ===========================================================================
 # Scalar-fold box-output template (value/time Span extents).
 #
 # Reuses the tnumber (value, ts) HPP / ctor / lift / combine / reset / cleanup
@@ -1800,6 +2016,8 @@ def physical_template_for(op):
     if op["input_shape"] == "tgeo":
         if op.get("return_mode") == "wkb":
             return PHYSICAL_HPP_TGEO, PHYSICAL_CPP_TGEO_WKB
+        if op.get("return_mode") == "expand":
+            return PHYSICAL_HPP_TGEO, PHYSICAL_CPP_TGEO_EXPAND
         return PHYSICAL_HPP_TGEO, (PHYSICAL_CPP_TGEO_BOX if box else PHYSICAL_CPP_TGEO)
     if op["input_shape"] == "tnumber":
         # Scalar-fold reuses the tnumber (value, ts) HPP but folds the field

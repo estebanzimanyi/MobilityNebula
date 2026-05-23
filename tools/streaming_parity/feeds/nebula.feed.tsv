@@ -262,6 +262,7 @@ tbool_end_value	wired
 tbool_start_value	wired
 tbool_to_tint	wired
 tcbuffer_to_tfloat	wired
+temporal_append_tinstant	wired
 temporal_cmp	wired
 temporal_dyntimewarp_distance	wired
 temporal_end_timestamptz	wired
@@ -273,6 +274,7 @@ temporal_hausdorff_distance	wired
 temporal_le	wired
 temporal_lower_inc	wired
 temporal_lt	wired
+temporal_merge	wired
 temporal_ne	wired
 temporal_num_instants	wired
 temporal_num_sequences	wired
