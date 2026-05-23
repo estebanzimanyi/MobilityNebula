@@ -3121,6 +3121,10 @@ def assemble_generic_physical(op):
     inc = "\n".join(f"#include <{h}>" for h in
                     ["meos.h"] + sorted(h for h in headers if h != "meos.h"))
 
+    # box_first ops (e.g. above_stbox_tspatial(box, temp)) call with the box/span
+    # literal before the temporal; the default order is temporal-first.
+    if op.get("box_first") and len(call_terms) == 2:
+        call_terms = [call_terms[1], call_terms[0]]
     callargs = ", ".join(call_terms)
     bf = "".join(f"                {x}\n" for x in box_frees)
     if extract_fn is None:
