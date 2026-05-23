@@ -209,6 +209,7 @@ _GENERIC_INPUT_FOR = [
     ("tcbuffer", "tcbuffer"), ("tnpoint", "tnpoint"), ("tpose", "tpose"),
     ("tfloat", "tfloat"), ("tint", "tint"), ("tbool", "tbool"),
     ("tnumber", "tfloat"), ("tgeo", "tgeompoint"), ("tpoint", "tgeompoint"),
+    ("tspatial", "tgeompoint"),
 ]
 
 
@@ -314,24 +315,49 @@ _BOX_PARSER = {  # name-suffix token -> (cpp box type, MEOS parser, header)
 }
 
 
+# C arg-type -> (cpp box type, MEOS parser, header). Used for the box-first form
+# where the box token is not the function-name suffix. STBox/TBox only: a bare
+# `Span*` is ambiguous (tstzspan vs floatspan/numspan) so the box-first path
+# skips it — the temporal-first path keeps resolving Span via the name suffix.
+_BOXTYPE_PARSER = {
+    "STBox*": ("STBox", "stbox_in", "meos_geo.h"),
+    "TBox*":  ("TBox", "tbox_in", "meos.h"),
+}
+
+
 def temporal_x_box(fn, ret, args):
-    """int|double|bool fn(const Temporal*, STBox*/TBox*/Span). The box/span is a
-    query LITERAL parsed at runtime (stbox_in/tbox_in/tstzspan_in). numspan is
-    skipped (its parser needs a MeosType)."""
-    if len(args) != 2 or args[0] != "Temporal*" or args[1] not in ("STBox*", "TBox*", "Span*"):
+    """int|double|bool fn over a Temporal and an STBox/TBox/Span query LITERAL,
+    in EITHER argument order (e.g. `left_tspatial_stbox(temp, box)` and
+    `above_stbox_tspatial(box, temp)`). The literal is parsed at runtime
+    (stbox_in/tbox_in/tstzspan_in). For the temporal-first form the box type is
+    the name suffix (distinguishing tstzspan from numspan); for the box-first
+    form it is the C arg type (STBox/TBox)."""
+    if len(args) != 2:
         return None
     rk = {"int": "int", "double": "double", "bool": "bool"}.get(ret)
-    tok = next((t for t in _BOX_PARSER if fn.endswith("_" + t)), None)
     inp = _infer_input(fn)
-    if not rk or not tok or not inp:
+    if not rk or not inp:
         return None
-    bt, parser, hdr = _BOX_PARSER[tok]
-    return {
+    box_first = False
+    if args[0] == "Temporal*" and args[1] in ("STBox*", "TBox*", "Span*"):
+        tok = next((t for t in _BOX_PARSER if fn.endswith("_" + t)), None)
+        if not tok:
+            return None
+        bt, parser, hdr = _BOX_PARSER[tok]
+    elif args[1] == "Temporal*" and args[0] in _BOXTYPE_PARSER:
+        bt, parser, hdr = _BOXTYPE_PARSER[args[0]]
+        box_first = True
+    else:
+        return None
+    d = {
         "nebula_name": pascal(fn), "sql_token": fn.upper(), "meos_call": fn,
         "build_generic": True, "input_type": inp, "return_kind": rk,
         "extra_args": [{"kind": "box", "box_type": bt, "parser": parser, "header": hdr}],
-        "comment_one_liner": f"Per-event {fn}: single-instant {inp} against a {tok} literal -> {rk}.",
+        "comment_one_liner": f"Per-event {fn}: single-instant {inp} against a {bt} literal -> {rk}.",
     }
+    if box_first:
+        d["box_first"] = True
+    return d
 
 
 SHAPES = {

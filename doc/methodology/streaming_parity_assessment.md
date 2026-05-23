@@ -69,12 +69,15 @@ callability harness: `tools/streaming_parity/callability/`. The committed
   libmeos). The CI gate (`ci_gate.py` + `.github/workflows/streaming_parity_gate.yml`)
   holds the floor at 1,945 and blocks any regression or over-claim; the committed
   feed reproduces it without re-running the harness.
-- **NebulaStream: 249 / 1,945 wired and locally compile-verified.** The
+- **NebulaStream: 304 / 1,945 wired and locally compile-verified.** The
   generated `nes-{physical,logical}-operators` + `nes-sql-parser` libraries link
   clean in the `nebulastream/nes-development` dev image against the `libmeos`
   under test; 6 are confirmed callable via runnable systests. The wired surface
   spans per-event operators over the tgeompoint/tcbuffer/tpose/tnumber families
-  (comparison, spatial-relation, distance, scalar/extract/box-literal shapes),
+  (comparison, spatial-relation, distance, scalar/extract/box-literal shapes, and
+  position/topological predicates of a temporal against an `STBox`/`TBox` query
+  literal in either argument order — `left`/`right`/`above`/`below`/`front`/`back`,
+  `before`/`after`, the `over*` half-predicates, `adjacent`/`contains`/`contained`/`overlaps`/`same`),
   emitted by the signature-driven descriptor-builder
   (`tools/codegen/build_descriptor.py`), which classifies a gap function by its
   exact in-header signature so emission is measured-not-guessed. Windowed
