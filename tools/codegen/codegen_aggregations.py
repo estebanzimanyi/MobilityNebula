@@ -2008,6 +2008,78 @@ OPTIMIZER_LOWERING_TNUMBER = """\
 """
 
 # ===========================================================================
+# Expandable-Temporal* VALUE-OUTPUT: f(live mini-trip) -> Temporal* result,
+# serialized to hex-WKB as VARSIZED (the proven box-output VARSIZED tail).
+# Derived from PHYSICAL_CPP_TGEO_EXPAND by swapping only the scalar lower() for
+# the value-output one. Wires the Temporal-returning single-temporal transforms
+# (tgeo_centroid, tpoint_azimuth, tgeompoint_to_tgeometry, …) as windowed
+# aggregates over the expandable trajectory.
+# ===========================================================================
+_EXPAND_LOWER_SCALAR = """\
+    auto resultValue = nautilus::invoke(
+        +[](AggregationState* st) -> {return_cpp_type}
+        {{
+            std::lock_guard<std::mutex> lock({mutex_name});
+            Temporal** slot = reinterpret_cast<Temporal**>(st);
+            if (*slot == nullptr) {{
+                return ({return_cpp_type})0;
+            }}
+            return {meos_scalar_fn}(*slot);
+        }},
+        aggregationState);
+
+    Nautilus::Record resultRecord;
+    resultRecord.write(resultFieldIdentifier, resultValue);
+    return resultRecord;"""
+
+_EXPAND_LOWER_WKB = """\
+    auto hexStr = nautilus::invoke(
+        +[](AggregationState* st) -> char*
+        {{
+            std::lock_guard<std::mutex> lock({mutex_name});
+            Temporal** slot = reinterpret_cast<Temporal**>(st);
+            if (*slot == nullptr) {{
+                return (char*)nullptr;
+            }}
+            Temporal* res = {meos_scalar_fn}(*slot);
+            if (!res) {{
+                return (char*)nullptr;
+            }}
+            size_t hexSize = 0;
+            char* hexOut = temporal_as_hexwkb(res, 0, &hexSize);
+            free(res);
+            return hexOut;
+        }},
+        aggregationState);
+
+    const auto hexLen = nautilus::invoke(
+        +[](const char* s) -> size_t {{ return s ? strlen(s) : (size_t) 0; }},
+        hexStr);
+
+    auto variableSized = pipelineMemoryProvider.arena.allocateVariableSizedData(hexLen);
+
+    nautilus::invoke(
+        +[](int8_t* dest, const char* s, size_t len) -> void
+        {{
+            if (s) {{
+                memcpy(dest, s, len);
+                free((void*)s);
+            }}
+        }},
+        variableSized.getContent(),
+        hexStr,
+        hexLen);
+
+    Nautilus::Record resultRecord;
+    resultRecord.write(resultFieldIdentifier, variableSized);
+    return resultRecord;"""
+
+PHYSICAL_CPP_TGEO_EXPAND_WKB = _swap_once(
+    PHYSICAL_CPP_TGEO_EXPAND, _EXPAND_LOWER_SCALAR, _EXPAND_LOWER_WKB,
+    "expand scalar lower -> value-output (hex-WKB) lower")
+
+
+# ===========================================================================
 # Shape dispatchers + emit_operator.
 # ===========================================================================
 
@@ -2018,6 +2090,8 @@ def physical_template_for(op):
             return PHYSICAL_HPP_TGEO, PHYSICAL_CPP_TGEO_WKB
         if op.get("return_mode") == "expand":
             return PHYSICAL_HPP_TGEO, PHYSICAL_CPP_TGEO_EXPAND
+        if op.get("return_mode") == "expand_wkb":
+            return PHYSICAL_HPP_TGEO, PHYSICAL_CPP_TGEO_EXPAND_WKB
         return PHYSICAL_HPP_TGEO, (PHYSICAL_CPP_TGEO_BOX if box else PHYSICAL_CPP_TGEO)
     if op["input_shape"] == "tnumber":
         # Scalar-fold reuses the tnumber (value, ts) HPP but folds the field

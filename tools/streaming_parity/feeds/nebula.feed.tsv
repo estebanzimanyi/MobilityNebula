@@ -264,6 +264,7 @@ tbool_to_tint	wired
 tcbuffer_to_tfloat	wired
 temporal_append_tinstant	wired
 temporal_cmp	wired
+temporal_copy	wired
 temporal_dyntimewarp_distance	wired
 temporal_end_timestamptz	wired
 temporal_eq	wired
@@ -293,7 +294,9 @@ tfloat_radians	wired
 tfloat_start_value	wired
 tfloat_to_tint	wired
 tgeo_at_geom	wired
+tgeo_centroid	wired
 tgeo_minus_geom	wired
+tgeompoint_to_tgeometry	wired
 timestamptz_extent_transfn	wired
 timestamptz_union_transfn	wired
 tint_end_value	wired
@@ -306,6 +309,8 @@ tnumber_avg_value	wired
 tnumber_extent_transfn	wired
 tnumber_integral	wired
 tnumber_twavg	wired
+tpoint_angular_difference	wired
+tpoint_azimuth	wired
 tpoint_is_simple	wired
 tpoint_length	wired
 tspatial_extent_transfn	wired
