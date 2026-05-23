@@ -45,3 +45,4 @@ add_plugin(FloatUnion AggregationPhysicalFunction nes-physical-operators FloatUn
 add_plugin(IntUnion AggregationPhysicalFunction nes-physical-operators IntUnionAggregationPhysicalFunction.cpp)
 add_plugin(BigintUnion AggregationPhysicalFunction nes-physical-operators BigintUnionAggregationPhysicalFunction.cpp)
 add_plugin(TimestamptzUnion AggregationPhysicalFunction nes-physical-operators TimestamptzUnionAggregationPhysicalFunction.cpp)
+add_plugin(TrajectoryWkb AggregationPhysicalFunction nes-physical-operators TrajectoryWkbAggregationPhysicalFunction.cpp)

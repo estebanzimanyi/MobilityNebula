@@ -1283,6 +1283,69 @@ PHYSICAL_CPP_TNUMBER_BOX = _swap_once(
     _FINALIZE_SCALAR_TNUMBER, _FINALIZE_BOX_TNUMBER, "tnumber finalize tail")
 
 # ===========================================================================
+# WKB-trajectory output (return_mode "wkb"): materialize the windowed mini-trip
+# as a SEQUENCE ([ ... ], linear interpolation — so trajectory functions like
+# length are meaningful) and emit its hex-WKB. This is the value the MEOS
+# function library composes over (the efficient materialize-once mechanism).
+# Derived from the tgeo scalar template by swapping the empty-window write, the
+# instant-set braces for sequence brackets, and the finalize.
+# ===========================================================================
+_FINALIZE_WKB_TGEO = """\
+    auto boxStr = nautilus::invoke(
+        +[](const char* trajStr) -> char*
+        {{
+            if (!trajStr || strlen(trajStr) == 0) {{
+                free((void*)trajStr);
+                return (char*)nullptr;
+            }}
+
+            std::lock_guard<std::mutex> lock({mutex_name});
+
+            std::string trajString(trajStr);
+            void* temp = MEOS::Meos::parseTemporalPoint(trajString);
+            free((void*)trajStr);
+            if (!temp) {{
+                return (char*)nullptr;
+            }}
+
+            size_t hexSize = 0;
+            char* hexOut = temporal_as_hexwkb(static_cast<Temporal*>(temp), 0, &hexSize);
+            MEOS::Meos::freeTemporalObject(temp);
+            return hexOut;
+        }},
+        trajectoryStr);
+
+    const auto boxStrLen = nautilus::invoke(
+        +[](const char* s) -> size_t {{ return s ? strlen(s) : (size_t) 0; }},
+        boxStr);
+
+    auto variableSized = pipelineMemoryProvider.arena.allocateVariableSizedData(boxStrLen);
+
+    nautilus::invoke(
+        +[](int8_t* dest, const char* s, size_t len) -> void
+        {{
+            if (s) {{
+                memcpy(dest, s, len);
+                free((void*)s);
+            }}
+        }},
+        variableSized.getContent(),
+        boxStr,
+        boxStrLen);
+
+    Nautilus::Record resultRecord;
+    resultRecord.write(resultFieldIdentifier, variableSized);
+    return resultRecord;"""
+
+PHYSICAL_CPP_TGEO_WKB = _swap_once(
+    _swap_once(
+        _swap_once(
+            _swap_once(PHYSICAL_CPP_TGEO, _EMPTY_SCALAR, _EMPTY_BOX, "tgeo-wkb empty-window block"),
+            '            strcpy(buffer, "{{");', '            strcpy(buffer, "[");', "tgeo-wkb open bracket -> sequence"),
+        '            strcat(buffer, "}}");', '            strcat(buffer, "]");', "tgeo-wkb close bracket -> sequence"),
+    _FINALIZE_SCALAR_TGEO, _FINALIZE_WKB_TGEO, "tgeo-wkb finalize tail")
+
+# ===========================================================================
 # Scalar-fold box-output template (value/time Span extents).
 #
 # Reuses the tnumber (value, ts) HPP / ctor / lift / combine / reset / cleanup
@@ -1735,6 +1798,8 @@ OPTIMIZER_LOWERING_TNUMBER = """\
 def physical_template_for(op):
     box = op.get("return_mode") == "box"
     if op["input_shape"] == "tgeo":
+        if op.get("return_mode") == "wkb":
+            return PHYSICAL_HPP_TGEO, PHYSICAL_CPP_TGEO_WKB
         return PHYSICAL_HPP_TGEO, (PHYSICAL_CPP_TGEO_BOX if box else PHYSICAL_CPP_TGEO)
     if op["input_shape"] == "tnumber":
         # Scalar-fold reuses the tnumber (value, ts) HPP but folds the field
@@ -1805,7 +1870,7 @@ def emit_operator(op, output_root: Path):
     # accessor/predicate to that windowed extent. In box-output mode the
     # finalize is the serialized extent box itself (no value_compute).
     box_build = op.get("extent_box_build_fn")
-    if op.get("return_mode") == "box":
+    if op.get("return_mode") in ("box", "wkb"):
         fmt["value_compute"] = ""
     elif box_build:
         box_t = op.get("extent_box_type", "STBox")

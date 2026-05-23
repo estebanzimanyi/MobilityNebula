@@ -98,6 +98,7 @@
 #include <Operators/Windows/Aggregations/Meos/IntUnionAggregationLogicalFunction.hpp>
 #include <Operators/Windows/Aggregations/Meos/BigintUnionAggregationLogicalFunction.hpp>
 #include <Operators/Windows/Aggregations/Meos/TimestamptzUnionAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TrajectoryWkbAggregationLogicalFunction.hpp>
 #include <Functions/Meos/TemporalIntersectsGeometryLogicalFunction.hpp>
 #include <Functions/Meos/TemporalAIntersectsGeometryLogicalFunction.hpp>
 #include <Functions/Meos/TemporalEDWithinGeometryLogicalFunction.hpp>
@@ -11256,6 +11257,35 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             }
             break;
         /* END CODEGEN AGGREGATION GLUE: TIMESTAMPTZ_UNION (case-switch) */
+        /* BEGIN CODEGEN AGGREGATION GLUE: TRAJECTORY_WKB (case-switch) */
+        case AntlrSQLLexer::TRAJECTORY_WKB:
+            // Windowed mini-trip trajectory materialized as hex-WKB — the value the MEOS function library composes over.
+            if (helpers.top().functionBuilder.size() != 3) {
+                throw InvalidQuerySyntax("TRAJECTORY_WKB requires exactly three arguments (longitude, latitude, timestamp), but got {}", helpers.top().functionBuilder.size());
+            }
+            {
+                const auto timestampFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto latitudeFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto longitudeFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+
+                if (!longitudeFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !latitudeFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
+                    throw InvalidQuerySyntax("TRAJECTORY_WKB arguments must be field references");
+                }
+
+                helpers.top().windowAggs.push_back(
+                    TrajectoryWkbAggregationLogicalFunction::create(longitudeFunction.get<FieldAccessLogicalFunction>(),
+                                                                    latitudeFunction.get<FieldAccessLogicalFunction>(),
+                                                                    timestampFunction.get<FieldAccessLogicalFunction>()));
+                helpers.top().functionBuilder.push_back(longitudeFunction);
+            }
+            break;
+        /* END CODEGEN AGGREGATION GLUE: TRAJECTORY_WKB (case-switch) */
+
 
 
 
@@ -11821,6 +11851,23 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
                 helpers.top().windowAggs.push_back(TimestamptzUnionAggregationLogicalFunction::create(value, ts));
             }
             /* END CODEGEN AGGREGATION GLUE: TIMESTAMPTZ_UNION (funcName chain) */
+            /* BEGIN CODEGEN AGGREGATION GLUE: TRAJECTORY_WKB (funcName chain) */
+            else if (funcName == "TRAJECTORY_WKB")
+            {
+                if (helpers.top().functionBuilder.size() < 3)
+                {
+                    throw InvalidQuerySyntax("TRAJECTORY_WKB requires three arguments at {}", context->getText());
+                }
+                const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto lat = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto lon = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                helpers.top().windowAggs.push_back(TrajectoryWkbAggregationLogicalFunction::create(lon, lat, ts));
+            }
+            /* END CODEGEN AGGREGATION GLUE: TRAJECTORY_WKB (funcName chain) */
+
 
 
 

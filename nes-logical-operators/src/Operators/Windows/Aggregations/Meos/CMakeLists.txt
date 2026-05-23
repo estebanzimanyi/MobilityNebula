@@ -45,3 +45,4 @@ add_plugin(FloatUnion AggregationLogicalFunction nes-logical-operators FloatUnio
 add_plugin(IntUnion AggregationLogicalFunction nes-logical-operators IntUnionAggregationLogicalFunction.cpp)
 add_plugin(BigintUnion AggregationLogicalFunction nes-logical-operators BigintUnionAggregationLogicalFunction.cpp)
 add_plugin(TimestamptzUnion AggregationLogicalFunction nes-logical-operators TimestamptzUnionAggregationLogicalFunction.cpp)
+add_plugin(TrajectoryWkb AggregationLogicalFunction nes-logical-operators TrajectoryWkbAggregationLogicalFunction.cpp)
