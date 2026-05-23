@@ -89,6 +89,14 @@
 #include <Aggregation/Function/Meos/IntExtentAggregationPhysicalFunction.hpp>
 #include <Aggregation/Function/Meos/BigintExtentAggregationPhysicalFunction.hpp>
 #include <Aggregation/Function/Meos/TimestamptzExtentAggregationPhysicalFunction.hpp>
+#include <Aggregation/Function/Meos/FloatUnionAggregationPhysicalFunction.hpp>
+#include <Aggregation/Function/Meos/IntUnionAggregationPhysicalFunction.hpp>
+#include <Aggregation/Function/Meos/BigintUnionAggregationPhysicalFunction.hpp>
+#include <Aggregation/Function/Meos/TimestamptzUnionAggregationPhysicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/FloatUnionAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/IntUnionAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/BigintUnionAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TimestamptzUnionAggregationLogicalFunction.hpp>
 #include <Operators/Windows/Aggregations/Meos/FloatExtentAggregationLogicalFunction.hpp>
 #include <Operators/Windows/Aggregations/Meos/IntExtentAggregationLogicalFunction.hpp>
 #include <Operators/Windows/Aggregations/Meos/BigintExtentAggregationLogicalFunction.hpp>
@@ -1011,6 +1019,110 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             continue;
         }
         /* END CODEGEN AGGREGATION GLUE: TIMESTAMPTZ_EXTENT (optimizer lowering) */
+        /* BEGIN CODEGEN AGGREGATION GLUE: FLOAT_UNION (optimizer lowering) */
+        if (name == std::string_view("FLOAT_UNION"))
+        {
+            auto specificDescriptor = std::dynamic_pointer_cast<FloatUnionAggregationLogicalFunction>(descriptor);
+            INVARIANT(specificDescriptor != nullptr, "Expected FloatUnionAggregationLogicalFunction for FLOAT_UNION");
+
+            auto valuePF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getValueField());
+            auto tsPF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getTimestampField());
+
+            Schema stateSchema;
+            stateSchema.addField("value", specificDescriptor->getValueField().getDataType());
+            stateSchema.addField("timestamp", specificDescriptor->getTimestampField().getDataType());
+            auto tupleBufferRef = Interface::BufferRef::TupleBufferRef::create(configuration.pageSize.getValue(), stateSchema);
+
+            auto phys = std::make_shared<FloatUnionAggregationPhysicalFunction>(
+                std::move(physicalInputType),
+                std::move(physicalFinalType),
+                valuePF,
+                tsPF,
+                resultFieldIdentifier,
+                tupleBufferRef);
+            aggregationPhysicalFunctions.push_back(std::move(phys));
+            continue;
+        }
+        /* END CODEGEN AGGREGATION GLUE: FLOAT_UNION (optimizer lowering) */
+
+        /* BEGIN CODEGEN AGGREGATION GLUE: INT_UNION (optimizer lowering) */
+        if (name == std::string_view("INT_UNION"))
+        {
+            auto specificDescriptor = std::dynamic_pointer_cast<IntUnionAggregationLogicalFunction>(descriptor);
+            INVARIANT(specificDescriptor != nullptr, "Expected IntUnionAggregationLogicalFunction for INT_UNION");
+
+            auto valuePF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getValueField());
+            auto tsPF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getTimestampField());
+
+            Schema stateSchema;
+            stateSchema.addField("value", specificDescriptor->getValueField().getDataType());
+            stateSchema.addField("timestamp", specificDescriptor->getTimestampField().getDataType());
+            auto tupleBufferRef = Interface::BufferRef::TupleBufferRef::create(configuration.pageSize.getValue(), stateSchema);
+
+            auto phys = std::make_shared<IntUnionAggregationPhysicalFunction>(
+                std::move(physicalInputType),
+                std::move(physicalFinalType),
+                valuePF,
+                tsPF,
+                resultFieldIdentifier,
+                tupleBufferRef);
+            aggregationPhysicalFunctions.push_back(std::move(phys));
+            continue;
+        }
+        /* END CODEGEN AGGREGATION GLUE: INT_UNION (optimizer lowering) */
+
+        /* BEGIN CODEGEN AGGREGATION GLUE: BIGINT_UNION (optimizer lowering) */
+        if (name == std::string_view("BIGINT_UNION"))
+        {
+            auto specificDescriptor = std::dynamic_pointer_cast<BigintUnionAggregationLogicalFunction>(descriptor);
+            INVARIANT(specificDescriptor != nullptr, "Expected BigintUnionAggregationLogicalFunction for BIGINT_UNION");
+
+            auto valuePF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getValueField());
+            auto tsPF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getTimestampField());
+
+            Schema stateSchema;
+            stateSchema.addField("value", specificDescriptor->getValueField().getDataType());
+            stateSchema.addField("timestamp", specificDescriptor->getTimestampField().getDataType());
+            auto tupleBufferRef = Interface::BufferRef::TupleBufferRef::create(configuration.pageSize.getValue(), stateSchema);
+
+            auto phys = std::make_shared<BigintUnionAggregationPhysicalFunction>(
+                std::move(physicalInputType),
+                std::move(physicalFinalType),
+                valuePF,
+                tsPF,
+                resultFieldIdentifier,
+                tupleBufferRef);
+            aggregationPhysicalFunctions.push_back(std::move(phys));
+            continue;
+        }
+        /* END CODEGEN AGGREGATION GLUE: BIGINT_UNION (optimizer lowering) */
+
+        /* BEGIN CODEGEN AGGREGATION GLUE: TIMESTAMPTZ_UNION (optimizer lowering) */
+        if (name == std::string_view("TIMESTAMPTZ_UNION"))
+        {
+            auto specificDescriptor = std::dynamic_pointer_cast<TimestamptzUnionAggregationLogicalFunction>(descriptor);
+            INVARIANT(specificDescriptor != nullptr, "Expected TimestamptzUnionAggregationLogicalFunction for TIMESTAMPTZ_UNION");
+
+            auto valuePF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getValueField());
+            auto tsPF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getTimestampField());
+
+            Schema stateSchema;
+            stateSchema.addField("value", specificDescriptor->getValueField().getDataType());
+            stateSchema.addField("timestamp", specificDescriptor->getTimestampField().getDataType());
+            auto tupleBufferRef = Interface::BufferRef::TupleBufferRef::create(configuration.pageSize.getValue(), stateSchema);
+
+            auto phys = std::make_shared<TimestamptzUnionAggregationPhysicalFunction>(
+                std::move(physicalInputType),
+                std::move(physicalFinalType),
+                valuePF,
+                tsPF,
+                resultFieldIdentifier,
+                tupleBufferRef);
+            aggregationPhysicalFunctions.push_back(std::move(phys));
+            continue;
+        }
+        /* END CODEGEN AGGREGATION GLUE: TIMESTAMPTZ_UNION (optimizer lowering) */
+
 
 
 

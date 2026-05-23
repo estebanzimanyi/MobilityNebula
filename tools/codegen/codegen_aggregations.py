@@ -1517,6 +1517,55 @@ AggregationPhysicalFunctionRegistryReturnType AggregationPhysicalFunctionGenerat
 """
 
 # ===========================================================================
+# Set-collect aggregate template (windowed union -> Set).
+#
+# Same scalar-fold mechanism as PHYSICAL_CPP_SCALARFOLD, but the per-event
+# `*_union_transfn` accumulates an unordered Set state (not a Span); the window
+# is finalized with `set_union_finalfn` into the canonical Set before
+# serialization through an external typed wrapper (floatset_out / intset_out /
+# bigintset_out / tstzset_out). Derived from the scalar-fold template by an
+# asserted swap of only the serialize lambda — the fold loop / lift / combine /
+# reset / cleanup stay byte-identical.
+# ===========================================================================
+_SCALARFOLD_SERIALIZE_SPAN = """\
+    auto boxStr = nautilus::invoke(
+        +[](void* state) -> char*
+        {{
+            if (!state) {{
+                return (char*)nullptr;
+            }}
+            std::lock_guard<std::mutex> lock({mutex_name});
+            Span* sp = static_cast<Span*>(state);
+            char* out = {box_out_call};
+            free(state);
+            return out;
+        }},
+        spanState);"""
+
+_SCALARFOLD_SERIALIZE_SET = """\
+    auto boxStr = nautilus::invoke(
+        +[](void* state) -> char*
+        {{
+            if (!state) {{
+                return (char*)nullptr;
+            }}
+            std::lock_guard<std::mutex> lock({mutex_name});
+            Set* sp = {finalfn}(static_cast<Set*>(state));
+            free(state);
+            if (!sp) {{
+                return (char*)nullptr;
+            }}
+            char* out = {box_out_call};
+            free(sp);
+            return out;
+        }},
+        spanState);"""
+
+PHYSICAL_CPP_SETFOLD = _swap_once(
+    PHYSICAL_CPP_SCALARFOLD, _SCALARFOLD_SERIALIZE_SPAN, _SCALARFOLD_SERIALIZE_SET,
+    "scalarfold serialize -> setfold (finalfn)")
+
+# ===========================================================================
 # Parser-glue templates: TWO dispatch sites in AntlrSQLQueryPlanCreator.cpp.
 # Site 1 is the dedicated-token case-switch (~line 965 in mariana's tree).
 # Site 2 is the IDENTIFIER fallback `else if (funcName == "TOKEN")` chain
@@ -1689,9 +1738,12 @@ def physical_template_for(op):
         return PHYSICAL_HPP_TGEO, (PHYSICAL_CPP_TGEO_BOX if box else PHYSICAL_CPP_TGEO)
     if op["input_shape"] == "tnumber":
         # Scalar-fold reuses the tnumber (value, ts) HPP but folds the field
-        # directly through the MEOS extent transition fn (no string / no parse).
+        # directly through the MEOS extent transition fn (no string / no parse);
+        # set-collect is the same shape with a Set state + a union finalfn.
         if op.get("fold") == "scalar":
             return PHYSICAL_HPP_TNUMBER, PHYSICAL_CPP_SCALARFOLD
+        if op.get("fold") == "set":
+            return PHYSICAL_HPP_TNUMBER, PHYSICAL_CPP_SETFOLD
         return PHYSICAL_HPP_TNUMBER, (PHYSICAL_CPP_TNUMBER_BOX if box else PHYSICAL_CPP_TNUMBER)
     raise ValueError(f"unknown input_shape: {op['input_shape']}")
 
@@ -1740,10 +1792,11 @@ def emit_operator(op, output_root: Path):
         "extent_transfn":      op.get("extent_transfn", ""),
         "extent_box_type":     op.get("extent_box_type", "STBox"),
         "box_out_fn":          op.get("box_out_fn", ""),
-        # scalar-fold extras — only referenced by PHYSICAL_CPP_SCALARFOLD.
+        # scalar-fold / set-collect extras — referenced by the *FOLD templates.
         "fold_field_cpp_type": op.get("fold_field_cpp_type", "double"),
         "fold_invoke_body":    op.get("fold_invoke_body", ""),
         "box_out_call":        op.get("box_out_call", ""),
+        "finalfn":             op.get("finalfn", ""),
     }
 
     # value_compute (point/tgeo finalize): either fold the windowed sequence
