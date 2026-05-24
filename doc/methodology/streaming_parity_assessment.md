@@ -7,7 +7,7 @@ surface is the **1,945** streamable MEOS public functions (tiers
 
 | Platform | **L3 CALLABLE** (binding invokes it, confirmed) | L2 wired-only (registered, not yet confirmed callable) | gap (streamable, not wired) |
 |---|---|---|---|
-| **NebulaStream** | **43 — 2.2%** | 289 — 14.9% | 1,613 — 82.9% |
+| **NebulaStream** | **47 — 2.4%** | 289 — 14.9% | 1,609 — 82.7% |
 | **Flink** | **1,945 — 100.0%** | 0 — 0.0% | 0 — 0.0% |
 | **Kafka** | **1,945 — 100.0%** | 0 — 0.0% | 0 — 0.0% |
 
@@ -94,10 +94,10 @@ production form; both serve the one scope.
   libmeos). The CI gate (`ci_gate.py` + `.github/workflows/streaming_parity_gate.yml`)
   holds the floor at 1,945 and blocks any regression or over-claim; the committed
   feed reproduces it without re-running the harness.
-- **NebulaStream: 332 / 1,945 wired and locally compile-verified.** The
+- **NebulaStream: 336 / 1,945 wired and locally compile-verified.** The
   generated `nes-{physical,logical}-operators` + `nes-sql-parser` libraries link
   clean in the `nebulastream/nes-development` dev image against the `libmeos`
-  under test; 43 are confirmed callable via systests that run end-to-end against
+  under test; 47 are confirmed callable via systests that run end-to-end against
   a local single-node worker (query plan serialized, deserialized, compiled, and
   executed; result matched against the value a faithful MEOS probe produces). The wired surface
   spans per-event operators over the tgeompoint/tcbuffer/tpose/tnumber families
