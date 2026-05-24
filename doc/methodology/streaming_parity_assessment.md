@@ -7,7 +7,7 @@ surface is the **1,945** streamable MEOS public functions (tiers
 
 | Platform | **L3 CALLABLE** (binding invokes it, confirmed) | L2 wired-only (registered, not yet confirmed callable) | gap (streamable, not wired) |
 |---|---|---|---|
-| **NebulaStream** | **49 — 2.5%** | 316 — 16.2% | 1,580 — 81.2% |
+| **NebulaStream** | **57 — 2.9%** | 327 — 16.8% | 1,561 — 80.3% |
 | **Flink** | **1,945 — 100.0%** | 0 — 0.0% | 0 — 0.0% |
 | **Kafka** | **1,945 — 100.0%** | 0 — 0.0% | 0 — 0.0% |
 
@@ -94,10 +94,10 @@ production form; both serve the one scope.
   libmeos). The CI gate (`ci_gate.py` + `.github/workflows/streaming_parity_gate.yml`)
   holds the floor at 1,945 and blocks any regression or over-claim; the committed
   feed reproduces it without re-running the harness.
-- **NebulaStream: 365 / 1,945 wired and locally compile-verified.** The
+- **NebulaStream: 384 / 1,945 wired and locally compile-verified.** The
   generated `nes-{physical,logical}-operators` + `nes-sql-parser` libraries link
   clean in the `nebulastream/nes-development` dev image against the `libmeos`
-  under test; 49 are confirmed callable via systests that run end-to-end against
+  under test; 57 are confirmed callable via systests that run end-to-end against
   a local single-node worker (query plan serialized, deserialized, compiled, and
   executed; result matched against the value a faithful MEOS probe produces). The wired surface
   spans per-event operators over the tgeompoint/tcbuffer/tpose/tnumber families
@@ -147,14 +147,17 @@ production form; both serve the one scope.
     freed) — the topological/position predicates (overlaps/contains/contained/
     left/right/above/below/front/back/adjacent/same + `over*` + `nad`) and the
     comparators (`stbox_eq/ne/lt/le/gt/ge`, `stbox_cmp`), via `codegen_nebula`'s
-    `stbox_text` input + the `stbox_x_stbox` classifier. The overall (all-vehicles)
-    view is a derivation over the per-vehicle aggregates, not a separate aggregate;
-    `PAIR_MEETING` (`geog_dwithin`) and `CROSS_DISTANCE` (`nad_tgeo_tgeo`) are the
-    BerlinMOD-scaffold single-aggregate convenience (one window over all vehicles,
-    pairwise enumeration in `lower()`).
+    `stbox_text` input + the `stbox_x_stbox` classifier. The 13 `tnumber`-vs-`tnumber`
+    position predicates (adjacent/after/before/contained/contains/left/right/`over*`/
+    same) are wired the same way over two hex-WKB temporal operands (each
+    `temporal_from_hexwkb`, freed) — `codegen_nebula`'s `wkb_temporal` extra-arg +
+    the `two_temporal_scalar` classifier — the value/time counterpart of the STBox
+    predicates. The overall (all-vehicles) view is a derivation over the per-vehicle
+    aggregates, not a separate aggregate; `PAIR_MEETING` (`geog_dwithin`) and
+    `CROSS_DISTANCE` (`nad_tgeo_tgeo`) are the BerlinMOD-scaffold single-aggregate
+    convenience (one window over all vehicles, pairwise enumeration in `lower()`).
   - Not wired: the Set/Span/Box-input aggregation band, and the cross-vehicle
-    `f(trajA, trajB)` family that operates on two per-vehicle temporal outputs
-    rather than their extents — `Temporal*` (27, e.g. `tdistance_tgeo_tgeo`,
-    `tcontains/tcovers/tdwithin_tgeo_tgeo`, `add/sub/mul/div_tnumber_tnumber`),
-    `TInstant*` `nai_*` (4), `GSERIALIZED*` `shortestline_*` (4), and the
-    `tbox`-vs-`tbox` numeric-box counterparts of the spatial predicates above.
+    `f(trajA, trajB)` family that returns a `Temporal*` rather than a scalar —
+    `tdistance_tgeo_tgeo`, `tcontains/tcovers/tdwithin_tgeo_tgeo`,
+    `add/sub/mul/div_tnumber_tnumber` (27), `TInstant*` `nai_*` (4), and
+    `GSERIALIZED*` `shortestline_*` (4).
