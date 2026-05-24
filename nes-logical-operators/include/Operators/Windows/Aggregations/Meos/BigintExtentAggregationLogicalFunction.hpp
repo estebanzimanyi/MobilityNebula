@@ -47,7 +47,7 @@ public:
     [[nodiscard]] const FieldAccessLogicalFunction& getTimestampField() const noexcept { return timestampField; }
 
 private:
-    static constexpr std::string_view NAME = "BIGINT_EXTENT";
+    static constexpr std::string_view NAME = "BigintExtent";
     static constexpr DataType::Type partialAggregateStampType = DataType::Type::UNDEFINED;
     static constexpr DataType::Type finalAggregateStampType = DataType::Type::VARSIZED;
 

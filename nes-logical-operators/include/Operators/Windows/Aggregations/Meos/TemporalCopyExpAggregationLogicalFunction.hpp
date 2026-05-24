@@ -49,7 +49,7 @@ public:
     [[nodiscard]] const FieldAccessLogicalFunction& getTimestampField() const noexcept { return timestampField; }
 
 private:
-    static constexpr std::string_view NAME = "TEMPORAL_COPY_EXP";
+    static constexpr std::string_view NAME = "TemporalCopyExp";
     static constexpr DataType::Type partialAggregateStampType = DataType::Type::UNDEFINED;
     static constexpr DataType::Type finalAggregateStampType = DataType::Type::VARSIZED;
 

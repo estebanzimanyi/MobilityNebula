@@ -47,7 +47,7 @@ public:
     [[nodiscard]] const FieldAccessLogicalFunction& getTimestampField() const noexcept { return timestampField; }
 
 private:
-    static constexpr std::string_view NAME = "TEMPORAL_MINUS_MAX_EXP";
+    static constexpr std::string_view NAME = "TemporalMinusMaxExp";
     static constexpr DataType::Type partialAggregateStampType = DataType::Type::UNDEFINED;
     static constexpr DataType::Type finalAggregateStampType = DataType::Type::VARSIZED;
 

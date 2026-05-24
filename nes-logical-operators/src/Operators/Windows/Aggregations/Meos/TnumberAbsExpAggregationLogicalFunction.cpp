@@ -98,10 +98,13 @@ NES::SerializableAggregationFunction TnumberAbsExpAggregationLogicalFunction::se
 AggregationLogicalFunctionRegistryReturnType AggregationLogicalFunctionGeneratedRegistrar::RegisterTnumberAbsExpAggregationLogicalFunction(
     AggregationLogicalFunctionRegistryArguments arguments)
 {
-    if (arguments.fields.size() == 3)
+    // serializeTemporalSequence only has a 4-field (lon, lat, ts, as) form, so
+    // the two-field (value, ts) shape packs the value field twice; fields[2] is
+    // that duplicate and is ignored here — the alias is fields[3].
+    if (arguments.fields.size() == 4)
     {
         auto ptr = std::make_shared<TnumberAbsExpAggregationLogicalFunction>(
-            arguments.fields[0], arguments.fields[1], arguments.fields[2]);
+            arguments.fields[0], arguments.fields[1], arguments.fields[3]);
         return ptr;
     }
     throw CannotDeserialize(
