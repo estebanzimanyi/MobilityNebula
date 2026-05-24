@@ -201,6 +201,7 @@ Nautilus::Record TspatialExtentAggregationPhysicalFunction::lower(
                 return (char*)nullptr;
             }
 
+            MEOS::Meos::ensureMeosInitialized();
             std::lock_guard<std::mutex> lock(meos_tspatialextent_mutex);
 
             std::string trajString(trajStr);

@@ -191,6 +191,7 @@ Nautilus::Record TemporalTFloatEndValueAggregationPhysicalFunction::lower(
                 return (double)0;
             }
 
+            MEOS::Meos::ensureMeosInitialized();
             std::lock_guard<std::mutex> lock(meos_temporaltfloatendvalue_mutex);
 
             Temporal* temp = tfloat_in(seqStr);

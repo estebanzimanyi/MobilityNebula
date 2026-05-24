@@ -200,6 +200,7 @@ Nautilus::Record TemporalTPointIsSimpleAggregationPhysicalFunction::lower(
                 return (bool)0;
             }
 
+            MEOS::Meos::ensureMeosInitialized();
             std::lock_guard<std::mutex> lock(meos_temporaltpointissimple_mutex);
 
             std::string trajString(trajStr);

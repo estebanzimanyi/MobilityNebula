@@ -191,6 +191,7 @@ Nautilus::Record TemporalTIntAvgValueAggregationPhysicalFunction::lower(
                 return (double)0;
             }
 
+            MEOS::Meos::ensureMeosInitialized();
             std::lock_guard<std::mutex> lock(meos_temporaltintavgvalue_mutex);
 
             Temporal* temp = tint_in(seqStr);

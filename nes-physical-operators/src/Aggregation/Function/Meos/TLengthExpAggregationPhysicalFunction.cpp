@@ -118,6 +118,7 @@ void TLengthExpAggregationPhysicalFunction::combine(
     nautilus::invoke(
         +[](AggregationState* st1, AggregationState* st2) -> void
         {
+            MEOS::Meos::ensureMeosInitialized();
             std::lock_guard<std::mutex> lock(meos_tlengthexp_mutex);
             Temporal** s1 = reinterpret_cast<Temporal**>(st1);
             Temporal** s2 = reinterpret_cast<Temporal**>(st2);
@@ -148,6 +149,7 @@ Nautilus::Record TLengthExpAggregationPhysicalFunction::lower(
     auto resultValue = nautilus::invoke(
         +[](AggregationState* st) -> double
         {
+            MEOS::Meos::ensureMeosInitialized();
             std::lock_guard<std::mutex> lock(meos_tlengthexp_mutex);
             Temporal** slot = reinterpret_cast<Temporal**>(st);
             if (*slot == nullptr) {

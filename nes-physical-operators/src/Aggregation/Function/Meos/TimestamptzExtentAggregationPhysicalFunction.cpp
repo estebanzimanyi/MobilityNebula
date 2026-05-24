@@ -137,6 +137,7 @@ Nautilus::Record TimestamptzExtentAggregationPhysicalFunction::lower(
         spanState = nautilus::invoke(
             +[](void* state, int64_t val) -> void*
             {
+                MEOS::Meos::ensureMeosInitialized();
                 std::lock_guard<std::mutex> lock(meos_timestamptzextent_mutex);
                 long long sec = (val > 1000000000000LL) ? (val / 1000) : val; TimestampTz ts = ((int64_t)sec - 946684800LL) * 1000000LL; return (void*) timestamptz_extent_transfn(static_cast<Span*>(state), ts);
             },
@@ -150,6 +151,7 @@ Nautilus::Record TimestamptzExtentAggregationPhysicalFunction::lower(
             if (!state) {
                 return (char*)nullptr;
             }
+            MEOS::Meos::ensureMeosInitialized();
             std::lock_guard<std::mutex> lock(meos_timestamptzextent_mutex);
             Span* sp = static_cast<Span*>(state);
             char* out = tstzspan_out(sp);

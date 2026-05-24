@@ -751,6 +751,7 @@ Nautilus::Record {nebula_name}AggregationPhysicalFunction::lower(
                 return ({return_cpp_type})0;
             }}
 
+            MEOS::Meos::ensureMeosInitialized();
             std::lock_guard<std::mutex> lock({mutex_name});
 
             std::string trajString(trajStr);
@@ -1005,6 +1006,7 @@ Nautilus::Record {nebula_name}AggregationPhysicalFunction::lower(
                 return ({return_cpp_type})0;
             }}
 
+            MEOS::Meos::ensureMeosInitialized();
             std::lock_guard<std::mutex> lock({mutex_name});
 
             Temporal* temp = {tnumber_in_fn}(seqStr);
@@ -1107,6 +1109,7 @@ _FINALIZE_SCALAR_TGEO = """\
                 return ({return_cpp_type})0;
             }}
 
+            MEOS::Meos::ensureMeosInitialized();
             std::lock_guard<std::mutex> lock({mutex_name});
 
             std::string trajString(trajStr);
@@ -1141,6 +1144,7 @@ _FINALIZE_BOX_TGEO = """\
                 return (char*)nullptr;
             }}
 
+            MEOS::Meos::ensureMeosInitialized();
             std::lock_guard<std::mutex> lock({mutex_name});
 
             std::string trajString(trajStr);
@@ -1194,6 +1198,7 @@ _FINALIZE_SCALAR_TNUMBER = """\
                 return ({return_cpp_type})0;
             }}
 
+            MEOS::Meos::ensureMeosInitialized();
             std::lock_guard<std::mutex> lock({mutex_name});
 
             Temporal* temp = {tnumber_in_fn}(seqStr);
@@ -1224,6 +1229,7 @@ _FINALIZE_BOX_TNUMBER = """\
                 return (char*)nullptr;
             }}
 
+            MEOS::Meos::ensureMeosInitialized();
             std::lock_guard<std::mutex> lock({mutex_name});
 
             Temporal* temp = {tnumber_in_fn}(seqStr);
@@ -1302,6 +1308,7 @@ _FINALIZE_WKB_TGEO = """\
                 return (char*)nullptr;
             }}
 
+            MEOS::Meos::ensureMeosInitialized();
             std::lock_guard<std::mutex> lock({mutex_name});
 
             std::string trajString(trajStr);
@@ -1479,6 +1486,7 @@ void {nebula_name}AggregationPhysicalFunction::combine(
     nautilus::invoke(
         +[](AggregationState* st1, AggregationState* st2) -> void
         {{
+            MEOS::Meos::ensureMeosInitialized();
             std::lock_guard<std::mutex> lock({mutex_name});
             Temporal** s1 = reinterpret_cast<Temporal**>(st1);
             Temporal** s2 = reinterpret_cast<Temporal**>(st2);
@@ -1509,6 +1517,7 @@ Nautilus::Record {nebula_name}AggregationPhysicalFunction::lower(
     auto resultValue = nautilus::invoke(
         +[](AggregationState* st) -> {return_cpp_type}
         {{
+            MEOS::Meos::ensureMeosInitialized();
             std::lock_guard<std::mutex> lock({mutex_name});
             Temporal** slot = reinterpret_cast<Temporal**>(st);
             if (*slot == nullptr) {{
@@ -1716,7 +1725,8 @@ Nautilus::Record {nebula_name}AggregationPhysicalFunction::lower(
         spanState = nautilus::invoke(
             +[](void* state, {fold_field_cpp_type} val) -> void*
             {{
-                std::lock_guard<std::mutex> lock({mutex_name});
+                MEOS::Meos::ensureMeosInitialized();
+            std::lock_guard<std::mutex> lock({mutex_name});
                 {fold_invoke_body}
             }},
             spanState,
@@ -1729,6 +1739,7 @@ Nautilus::Record {nebula_name}AggregationPhysicalFunction::lower(
             if (!state) {{
                 return (char*)nullptr;
             }}
+            MEOS::Meos::ensureMeosInitialized();
             std::lock_guard<std::mutex> lock({mutex_name});
             Span* sp = static_cast<Span*>(state);
             char* out = {box_out_call};
@@ -1816,6 +1827,7 @@ _SCALARFOLD_SERIALIZE_SPAN = """\
             if (!state) {{
                 return (char*)nullptr;
             }}
+            MEOS::Meos::ensureMeosInitialized();
             std::lock_guard<std::mutex> lock({mutex_name});
             Span* sp = static_cast<Span*>(state);
             char* out = {box_out_call};
@@ -1831,6 +1843,7 @@ _SCALARFOLD_SERIALIZE_SET = """\
             if (!state) {{
                 return (char*)nullptr;
             }}
+            MEOS::Meos::ensureMeosInitialized();
             std::lock_guard<std::mutex> lock({mutex_name});
             // set_union_finalfn pfree()s the state internally and returns a new
             // Set, so the state must NOT be freed again here (double free).
@@ -2023,6 +2036,7 @@ _EXPAND_LOWER_SCALAR = """\
     auto resultValue = nautilus::invoke(
         +[](AggregationState* st) -> {return_cpp_type}
         {{
+            MEOS::Meos::ensureMeosInitialized();
             std::lock_guard<std::mutex> lock({mutex_name});
             Temporal** slot = reinterpret_cast<Temporal**>(st);
             if (*slot == nullptr) {{
@@ -2040,6 +2054,7 @@ _EXPAND_LOWER_WKB = """\
     auto hexStr = nautilus::invoke(
         +[](AggregationState* st) -> char*
         {{
+            MEOS::Meos::ensureMeosInitialized();
             std::lock_guard<std::mutex> lock({mutex_name});
             Temporal** slot = reinterpret_cast<Temporal**>(st);
             if (*slot == nullptr) {{

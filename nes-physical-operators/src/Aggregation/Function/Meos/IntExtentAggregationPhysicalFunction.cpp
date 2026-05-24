@@ -137,6 +137,7 @@ Nautilus::Record IntExtentAggregationPhysicalFunction::lower(
         spanState = nautilus::invoke(
             +[](void* state, int32_t val) -> void*
             {
+                MEOS::Meos::ensureMeosInitialized();
                 std::lock_guard<std::mutex> lock(meos_intextent_mutex);
                 return (void*) int_extent_transfn(static_cast<Span*>(state), val);
             },
@@ -150,6 +151,7 @@ Nautilus::Record IntExtentAggregationPhysicalFunction::lower(
             if (!state) {
                 return (char*)nullptr;
             }
+            MEOS::Meos::ensureMeosInitialized();
             std::lock_guard<std::mutex> lock(meos_intextent_mutex);
             Span* sp = static_cast<Span*>(state);
             char* out = intspan_out(sp);

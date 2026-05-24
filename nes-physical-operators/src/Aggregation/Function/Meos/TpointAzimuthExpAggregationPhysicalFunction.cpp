@@ -118,6 +118,7 @@ void TpointAzimuthExpAggregationPhysicalFunction::combine(
     nautilus::invoke(
         +[](AggregationState* st1, AggregationState* st2) -> void
         {
+            MEOS::Meos::ensureMeosInitialized();
             std::lock_guard<std::mutex> lock(meos_tpointazimuthexp_mutex);
             Temporal** s1 = reinterpret_cast<Temporal**>(st1);
             Temporal** s2 = reinterpret_cast<Temporal**>(st2);
@@ -148,6 +149,7 @@ Nautilus::Record TpointAzimuthExpAggregationPhysicalFunction::lower(
     auto hexStr = nautilus::invoke(
         +[](AggregationState* st) -> char*
         {
+            MEOS::Meos::ensureMeosInitialized();
             std::lock_guard<std::mutex> lock(meos_tpointazimuthexp_mutex);
             Temporal** slot = reinterpret_cast<Temporal**>(st);
             if (*slot == nullptr) {

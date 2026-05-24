@@ -200,6 +200,7 @@ Nautilus::Record TemporalNumTimestampsAggregationPhysicalFunction::lower(
                 return (int)0;
             }
 
+            MEOS::Meos::ensureMeosInitialized();
             std::lock_guard<std::mutex> lock(meos_temporalnumtimestamps_mutex);
 
             std::string trajString(trajStr);

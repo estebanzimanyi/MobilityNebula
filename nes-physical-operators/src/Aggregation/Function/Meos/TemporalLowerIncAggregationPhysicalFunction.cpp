@@ -200,6 +200,7 @@ Nautilus::Record TemporalLowerIncAggregationPhysicalFunction::lower(
                 return (bool)0;
             }
 
+            MEOS::Meos::ensureMeosInitialized();
             std::lock_guard<std::mutex> lock(meos_temporallowerinc_mutex);
 
             std::string trajString(trajStr);
