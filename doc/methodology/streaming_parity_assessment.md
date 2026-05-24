@@ -107,21 +107,17 @@ production form; both serve the one scope.
   `before`/`after`, the `over*` half-predicates, `adjacent`/`contains`/`contained`/`overlaps`/`same`),
   emitted by the signature-driven descriptor-builder
   (`tools/codegen/build_descriptor.py`), which classifies a gap function by its
-  exact in-header signature so emission is measured-not-guessed. Windowed
-  extent aggregates emit a *box* — a value, not a scalar — through the
-  variable-sized-data path: `tools/codegen/codegen_aggregations.py` has a
-  box-output (`VARSIZED`) mode whose `lower()` folds the window with a MEOS
-  extent transition function and serializes the result to text. Two shapes are
-  wired: assemble-then-extent for the bounding-box aggregates — `TSPATIAL_EXTENT`
-  (`STBox` via `tspatial_extent_transfn` → `stbox_out`) and `TNUMBER_EXTENT`
-  (`TBox` via `tnumber_extent_transfn` → `tbox_out`) — and a direct scalar fold
-  for the typed value/time `Span` aggregates, `FLOAT_EXTENT` / `INT_EXTENT` /
-  `BIGINT_EXTENT` / `TIMESTAMPTZ_EXTENT` (`float/int/bigint/timestamptz_extent_transfn`,
-  serialized through the external typed wrappers `floatspan_out` / `intspan_out`
-  / `bigintspan_out` / `tstzspan_out`). Windowed value-union aggregates collect a
-  window's values into a deduplicated, sorted `Set` — `FLOAT_UNION` / `INT_UNION`
-  / `BIGINT_UNION` / `TIMESTAMPTZ_UNION` (`*_union_transfn` + `set_union_finalfn`,
-  serialized through `floatset_out` / `intset_out` / `bigintset_out` / `tstzset_out`).
+  exact in-header signature so emission is measured-not-guessed. Every
+  single-accumulator windowed aggregate holds one incremental MEOS accumulator in
+  its `AggregationState` slot, folded per event in `lift()` (O(1) state, no event
+  buffer) and merged in `combine()` — the bounding extent box for `TSPATIAL_EXTENT`
+  (`STBox` via `tspatial_extent_transfn` → `stbox_out`, merge `union_stbox_stbox`)
+  and `TNUMBER_EXTENT` (`TBox`, `union_tbox_tbox`); the value/time `Span` for
+  `FLOAT_EXTENT` / `INT_EXTENT` / `BIGINT_EXTENT` / `TIMESTAMPTZ_EXTENT`
+  (`*_extent_transfn` → typed `*span_out`, merge `super_union_span_span`); and the
+  deduplicated `Set` for `FLOAT_UNION` / `INT_UNION` / `BIGINT_UNION` /
+  `TIMESTAMPTZ_UNION` (`*_union_transfn` → `set_union_finalfn` → typed `*set_out`,
+  merge `set_union_transfn`). The result is serialized to text/VARSIZED in `lower()`.
   Windowed value-output aggregates grow the per-group mini-trip on the in-process
   expandable `Temporal*` (`appendInstant`) and emit a MEOS function over it as
   hex-WKB — `TRAJECTORY_WKB` (the materialized trajectory), `TLENGTH_EXP`,
