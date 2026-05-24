@@ -451,6 +451,35 @@
 #include <Functions/Meos/SameTboxTnumberLogicalFunction.hpp>
 #include <Functions/Meos/SameTspatialStboxLogicalFunction.hpp>
 #include <Functions/Meos/TpointLengthWkbLogicalFunction.hpp>
+#include <Functions/Meos/AboveStboxStboxLogicalFunction.hpp>
+#include <Functions/Meos/AdjacentStboxStboxLogicalFunction.hpp>
+#include <Functions/Meos/AfterStboxStboxLogicalFunction.hpp>
+#include <Functions/Meos/BackStboxStboxLogicalFunction.hpp>
+#include <Functions/Meos/BeforeStboxStboxLogicalFunction.hpp>
+#include <Functions/Meos/BelowStboxStboxLogicalFunction.hpp>
+#include <Functions/Meos/ContainedStboxStboxLogicalFunction.hpp>
+#include <Functions/Meos/ContainsStboxStboxLogicalFunction.hpp>
+#include <Functions/Meos/FrontStboxStboxLogicalFunction.hpp>
+#include <Functions/Meos/LeftStboxStboxLogicalFunction.hpp>
+#include <Functions/Meos/NadStboxStboxLogicalFunction.hpp>
+#include <Functions/Meos/OveraboveStboxStboxLogicalFunction.hpp>
+#include <Functions/Meos/OverafterStboxStboxLogicalFunction.hpp>
+#include <Functions/Meos/OverbackStboxStboxLogicalFunction.hpp>
+#include <Functions/Meos/OverbeforeStboxStboxLogicalFunction.hpp>
+#include <Functions/Meos/OverbelowStboxStboxLogicalFunction.hpp>
+#include <Functions/Meos/OverfrontStboxStboxLogicalFunction.hpp>
+#include <Functions/Meos/OverlapsStboxStboxLogicalFunction.hpp>
+#include <Functions/Meos/OverleftStboxStboxLogicalFunction.hpp>
+#include <Functions/Meos/OverrightStboxStboxLogicalFunction.hpp>
+#include <Functions/Meos/RightStboxStboxLogicalFunction.hpp>
+#include <Functions/Meos/SameStboxStboxLogicalFunction.hpp>
+#include <Functions/Meos/StboxCmpLogicalFunction.hpp>
+#include <Functions/Meos/StboxEqLogicalFunction.hpp>
+#include <Functions/Meos/StboxGeLogicalFunction.hpp>
+#include <Functions/Meos/StboxGtLogicalFunction.hpp>
+#include <Functions/Meos/StboxLeLogicalFunction.hpp>
+#include <Functions/Meos/StboxLtLogicalFunction.hpp>
+#include <Functions/Meos/StboxNeLogicalFunction.hpp>
 #include <Plans/LogicalPlan.hpp>
 #include <Plans/LogicalPlanBuilder.hpp>
 #include <Util/Overloaded.hpp>
@@ -10485,6 +10514,847 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TPOINT_LENGTH_WKB */
+        /* BEGIN CODEGEN PARSER GLUE: ABOVE_STBOX_STBOX */
+        case AntlrSQLLexer::ABOVE_STBOX_STBOX:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 2)
+                throw InvalidQuerySyntax("ABOVE_STBOX_STBOX requires exactly 2 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(AboveStboxStboxLogicalFunction(a0, a1));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: ABOVE_STBOX_STBOX */
+
+        /* BEGIN CODEGEN PARSER GLUE: ADJACENT_STBOX_STBOX */
+        case AntlrSQLLexer::ADJACENT_STBOX_STBOX:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 2)
+                throw InvalidQuerySyntax("ADJACENT_STBOX_STBOX requires exactly 2 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(AdjacentStboxStboxLogicalFunction(a0, a1));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: ADJACENT_STBOX_STBOX */
+
+        /* BEGIN CODEGEN PARSER GLUE: AFTER_STBOX_STBOX */
+        case AntlrSQLLexer::AFTER_STBOX_STBOX:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 2)
+                throw InvalidQuerySyntax("AFTER_STBOX_STBOX requires exactly 2 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(AfterStboxStboxLogicalFunction(a0, a1));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: AFTER_STBOX_STBOX */
+
+        /* BEGIN CODEGEN PARSER GLUE: BACK_STBOX_STBOX */
+        case AntlrSQLLexer::BACK_STBOX_STBOX:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 2)
+                throw InvalidQuerySyntax("BACK_STBOX_STBOX requires exactly 2 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(BackStboxStboxLogicalFunction(a0, a1));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: BACK_STBOX_STBOX */
+
+        /* BEGIN CODEGEN PARSER GLUE: BEFORE_STBOX_STBOX */
+        case AntlrSQLLexer::BEFORE_STBOX_STBOX:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 2)
+                throw InvalidQuerySyntax("BEFORE_STBOX_STBOX requires exactly 2 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(BeforeStboxStboxLogicalFunction(a0, a1));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: BEFORE_STBOX_STBOX */
+
+        /* BEGIN CODEGEN PARSER GLUE: BELOW_STBOX_STBOX */
+        case AntlrSQLLexer::BELOW_STBOX_STBOX:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 2)
+                throw InvalidQuerySyntax("BELOW_STBOX_STBOX requires exactly 2 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(BelowStboxStboxLogicalFunction(a0, a1));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: BELOW_STBOX_STBOX */
+
+        /* BEGIN CODEGEN PARSER GLUE: CONTAINED_STBOX_STBOX */
+        case AntlrSQLLexer::CONTAINED_STBOX_STBOX:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 2)
+                throw InvalidQuerySyntax("CONTAINED_STBOX_STBOX requires exactly 2 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(ContainedStboxStboxLogicalFunction(a0, a1));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: CONTAINED_STBOX_STBOX */
+
+        /* BEGIN CODEGEN PARSER GLUE: CONTAINS_STBOX_STBOX */
+        case AntlrSQLLexer::CONTAINS_STBOX_STBOX:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 2)
+                throw InvalidQuerySyntax("CONTAINS_STBOX_STBOX requires exactly 2 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(ContainsStboxStboxLogicalFunction(a0, a1));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: CONTAINS_STBOX_STBOX */
+
+        /* BEGIN CODEGEN PARSER GLUE: FRONT_STBOX_STBOX */
+        case AntlrSQLLexer::FRONT_STBOX_STBOX:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 2)
+                throw InvalidQuerySyntax("FRONT_STBOX_STBOX requires exactly 2 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(FrontStboxStboxLogicalFunction(a0, a1));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: FRONT_STBOX_STBOX */
+
+        /* BEGIN CODEGEN PARSER GLUE: LEFT_STBOX_STBOX */
+        case AntlrSQLLexer::LEFT_STBOX_STBOX:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 2)
+                throw InvalidQuerySyntax("LEFT_STBOX_STBOX requires exactly 2 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(LeftStboxStboxLogicalFunction(a0, a1));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: LEFT_STBOX_STBOX */
+
+        /* BEGIN CODEGEN PARSER GLUE: NAD_STBOX_STBOX */
+        case AntlrSQLLexer::NAD_STBOX_STBOX:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 2)
+                throw InvalidQuerySyntax("NAD_STBOX_STBOX requires exactly 2 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(NadStboxStboxLogicalFunction(a0, a1));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: NAD_STBOX_STBOX */
+
+        /* BEGIN CODEGEN PARSER GLUE: OVERABOVE_STBOX_STBOX */
+        case AntlrSQLLexer::OVERABOVE_STBOX_STBOX:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 2)
+                throw InvalidQuerySyntax("OVERABOVE_STBOX_STBOX requires exactly 2 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(OveraboveStboxStboxLogicalFunction(a0, a1));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: OVERABOVE_STBOX_STBOX */
+
+        /* BEGIN CODEGEN PARSER GLUE: OVERAFTER_STBOX_STBOX */
+        case AntlrSQLLexer::OVERAFTER_STBOX_STBOX:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 2)
+                throw InvalidQuerySyntax("OVERAFTER_STBOX_STBOX requires exactly 2 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(OverafterStboxStboxLogicalFunction(a0, a1));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: OVERAFTER_STBOX_STBOX */
+
+        /* BEGIN CODEGEN PARSER GLUE: OVERBACK_STBOX_STBOX */
+        case AntlrSQLLexer::OVERBACK_STBOX_STBOX:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 2)
+                throw InvalidQuerySyntax("OVERBACK_STBOX_STBOX requires exactly 2 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(OverbackStboxStboxLogicalFunction(a0, a1));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: OVERBACK_STBOX_STBOX */
+
+        /* BEGIN CODEGEN PARSER GLUE: OVERBEFORE_STBOX_STBOX */
+        case AntlrSQLLexer::OVERBEFORE_STBOX_STBOX:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 2)
+                throw InvalidQuerySyntax("OVERBEFORE_STBOX_STBOX requires exactly 2 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(OverbeforeStboxStboxLogicalFunction(a0, a1));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: OVERBEFORE_STBOX_STBOX */
+
+        /* BEGIN CODEGEN PARSER GLUE: OVERBELOW_STBOX_STBOX */
+        case AntlrSQLLexer::OVERBELOW_STBOX_STBOX:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 2)
+                throw InvalidQuerySyntax("OVERBELOW_STBOX_STBOX requires exactly 2 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(OverbelowStboxStboxLogicalFunction(a0, a1));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: OVERBELOW_STBOX_STBOX */
+
+        /* BEGIN CODEGEN PARSER GLUE: OVERFRONT_STBOX_STBOX */
+        case AntlrSQLLexer::OVERFRONT_STBOX_STBOX:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 2)
+                throw InvalidQuerySyntax("OVERFRONT_STBOX_STBOX requires exactly 2 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(OverfrontStboxStboxLogicalFunction(a0, a1));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: OVERFRONT_STBOX_STBOX */
+
+        /* BEGIN CODEGEN PARSER GLUE: OVERLAPS_STBOX_STBOX */
+        case AntlrSQLLexer::OVERLAPS_STBOX_STBOX:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 2)
+                throw InvalidQuerySyntax("OVERLAPS_STBOX_STBOX requires exactly 2 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(OverlapsStboxStboxLogicalFunction(a0, a1));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: OVERLAPS_STBOX_STBOX */
+
+        /* BEGIN CODEGEN PARSER GLUE: OVERLEFT_STBOX_STBOX */
+        case AntlrSQLLexer::OVERLEFT_STBOX_STBOX:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 2)
+                throw InvalidQuerySyntax("OVERLEFT_STBOX_STBOX requires exactly 2 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(OverleftStboxStboxLogicalFunction(a0, a1));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: OVERLEFT_STBOX_STBOX */
+
+        /* BEGIN CODEGEN PARSER GLUE: OVERRIGHT_STBOX_STBOX */
+        case AntlrSQLLexer::OVERRIGHT_STBOX_STBOX:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 2)
+                throw InvalidQuerySyntax("OVERRIGHT_STBOX_STBOX requires exactly 2 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(OverrightStboxStboxLogicalFunction(a0, a1));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: OVERRIGHT_STBOX_STBOX */
+
+        /* BEGIN CODEGEN PARSER GLUE: RIGHT_STBOX_STBOX */
+        case AntlrSQLLexer::RIGHT_STBOX_STBOX:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 2)
+                throw InvalidQuerySyntax("RIGHT_STBOX_STBOX requires exactly 2 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(RightStboxStboxLogicalFunction(a0, a1));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: RIGHT_STBOX_STBOX */
+
+        /* BEGIN CODEGEN PARSER GLUE: SAME_STBOX_STBOX */
+        case AntlrSQLLexer::SAME_STBOX_STBOX:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 2)
+                throw InvalidQuerySyntax("SAME_STBOX_STBOX requires exactly 2 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(SameStboxStboxLogicalFunction(a0, a1));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: SAME_STBOX_STBOX */
+
+        /* BEGIN CODEGEN PARSER GLUE: STBOX_CMP */
+        case AntlrSQLLexer::STBOX_CMP:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 2)
+                throw InvalidQuerySyntax("STBOX_CMP requires exactly 2 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(StboxCmpLogicalFunction(a0, a1));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: STBOX_CMP */
+
+        /* BEGIN CODEGEN PARSER GLUE: STBOX_EQ */
+        case AntlrSQLLexer::STBOX_EQ:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 2)
+                throw InvalidQuerySyntax("STBOX_EQ requires exactly 2 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(StboxEqLogicalFunction(a0, a1));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: STBOX_EQ */
+
+        /* BEGIN CODEGEN PARSER GLUE: STBOX_GE */
+        case AntlrSQLLexer::STBOX_GE:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 2)
+                throw InvalidQuerySyntax("STBOX_GE requires exactly 2 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(StboxGeLogicalFunction(a0, a1));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: STBOX_GE */
+
+        /* BEGIN CODEGEN PARSER GLUE: STBOX_GT */
+        case AntlrSQLLexer::STBOX_GT:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 2)
+                throw InvalidQuerySyntax("STBOX_GT requires exactly 2 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(StboxGtLogicalFunction(a0, a1));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: STBOX_GT */
+
+        /* BEGIN CODEGEN PARSER GLUE: STBOX_LE */
+        case AntlrSQLLexer::STBOX_LE:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 2)
+                throw InvalidQuerySyntax("STBOX_LE requires exactly 2 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(StboxLeLogicalFunction(a0, a1));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: STBOX_LE */
+
+        /* BEGIN CODEGEN PARSER GLUE: STBOX_LT */
+        case AntlrSQLLexer::STBOX_LT:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 2)
+                throw InvalidQuerySyntax("STBOX_LT requires exactly 2 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(StboxLtLogicalFunction(a0, a1));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: STBOX_LT */
+
+        /* BEGIN CODEGEN PARSER GLUE: STBOX_NE */
+        case AntlrSQLLexer::STBOX_NE:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 2)
+                throw InvalidQuerySyntax("STBOX_NE requires exactly 2 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(StboxNeLogicalFunction(a0, a1));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: STBOX_NE */
+
 
 
 
