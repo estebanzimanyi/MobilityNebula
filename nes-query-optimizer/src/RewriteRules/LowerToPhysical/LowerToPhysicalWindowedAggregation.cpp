@@ -118,6 +118,14 @@
 #include <Aggregation/Function/Meos/TpointGetXExpAggregationPhysicalFunction.hpp>
 #include <Aggregation/Function/Meos/TpointGetYExpAggregationPhysicalFunction.hpp>
 #include <Aggregation/Function/Meos/TnumberTrendExpAggregationPhysicalFunction.hpp>
+#include <Aggregation/Function/Meos/TgeoStartValueExpAggregationPhysicalFunction.hpp>
+#include <Aggregation/Function/Meos/TgeoEndValueExpAggregationPhysicalFunction.hpp>
+#include <Aggregation/Function/Meos/TgeoConvexHullExpAggregationPhysicalFunction.hpp>
+#include <Aggregation/Function/Meos/TpointTwcentroidExpAggregationPhysicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TgeoStartValueExpAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TgeoEndValueExpAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TgeoConvexHullExpAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TpointTwcentroidExpAggregationLogicalFunction.hpp>
 #include <Operators/Windows/Aggregations/Meos/TpointCumulativeLengthExpAggregationLogicalFunction.hpp>
 #include <Operators/Windows/Aggregations/Meos/TpointSpeedExpAggregationLogicalFunction.hpp>
 #include <Operators/Windows/Aggregations/Meos/TpointGetXExpAggregationLogicalFunction.hpp>
@@ -1806,6 +1814,122 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             continue;
         }
         /* END CODEGEN AGGREGATION GLUE: TnumberTrendExp (optimizer lowering) */
+        /* BEGIN CODEGEN AGGREGATION GLUE: TgeoStartValueExp (optimizer lowering) */
+        if (name == std::string_view("TgeoStartValueExp"))
+        {
+            auto specificDescriptor = std::dynamic_pointer_cast<TgeoStartValueExpAggregationLogicalFunction>(descriptor);
+            INVARIANT(specificDescriptor != nullptr, "Expected TgeoStartValueExpAggregationLogicalFunction for TgeoStartValueExp");
+
+            auto lonPF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getLonField());
+            auto latPF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getLatField());
+            auto tsPF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getTimestampField());
+
+            Schema stateSchema;
+            stateSchema.addField("lon", specificDescriptor->getLonField().getDataType());
+            stateSchema.addField("lat", specificDescriptor->getLatField().getDataType());
+            stateSchema.addField("timestamp", specificDescriptor->getTimestampField().getDataType());
+            auto tupleBufferRef = Interface::BufferRef::TupleBufferRef::create(configuration.pageSize.getValue(), stateSchema);
+
+            auto phys = std::make_shared<TgeoStartValueExpAggregationPhysicalFunction>(
+                std::move(physicalInputType),
+                std::move(physicalFinalType),
+                lonPF,
+                latPF,
+                tsPF,
+                resultFieldIdentifier,
+                tupleBufferRef);
+            aggregationPhysicalFunctions.push_back(std::move(phys));
+            continue;
+        }
+        /* END CODEGEN AGGREGATION GLUE: TgeoStartValueExp (optimizer lowering) */
+
+        /* BEGIN CODEGEN AGGREGATION GLUE: TgeoEndValueExp (optimizer lowering) */
+        if (name == std::string_view("TgeoEndValueExp"))
+        {
+            auto specificDescriptor = std::dynamic_pointer_cast<TgeoEndValueExpAggregationLogicalFunction>(descriptor);
+            INVARIANT(specificDescriptor != nullptr, "Expected TgeoEndValueExpAggregationLogicalFunction for TgeoEndValueExp");
+
+            auto lonPF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getLonField());
+            auto latPF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getLatField());
+            auto tsPF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getTimestampField());
+
+            Schema stateSchema;
+            stateSchema.addField("lon", specificDescriptor->getLonField().getDataType());
+            stateSchema.addField("lat", specificDescriptor->getLatField().getDataType());
+            stateSchema.addField("timestamp", specificDescriptor->getTimestampField().getDataType());
+            auto tupleBufferRef = Interface::BufferRef::TupleBufferRef::create(configuration.pageSize.getValue(), stateSchema);
+
+            auto phys = std::make_shared<TgeoEndValueExpAggregationPhysicalFunction>(
+                std::move(physicalInputType),
+                std::move(physicalFinalType),
+                lonPF,
+                latPF,
+                tsPF,
+                resultFieldIdentifier,
+                tupleBufferRef);
+            aggregationPhysicalFunctions.push_back(std::move(phys));
+            continue;
+        }
+        /* END CODEGEN AGGREGATION GLUE: TgeoEndValueExp (optimizer lowering) */
+
+        /* BEGIN CODEGEN AGGREGATION GLUE: TgeoConvexHullExp (optimizer lowering) */
+        if (name == std::string_view("TgeoConvexHullExp"))
+        {
+            auto specificDescriptor = std::dynamic_pointer_cast<TgeoConvexHullExpAggregationLogicalFunction>(descriptor);
+            INVARIANT(specificDescriptor != nullptr, "Expected TgeoConvexHullExpAggregationLogicalFunction for TgeoConvexHullExp");
+
+            auto lonPF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getLonField());
+            auto latPF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getLatField());
+            auto tsPF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getTimestampField());
+
+            Schema stateSchema;
+            stateSchema.addField("lon", specificDescriptor->getLonField().getDataType());
+            stateSchema.addField("lat", specificDescriptor->getLatField().getDataType());
+            stateSchema.addField("timestamp", specificDescriptor->getTimestampField().getDataType());
+            auto tupleBufferRef = Interface::BufferRef::TupleBufferRef::create(configuration.pageSize.getValue(), stateSchema);
+
+            auto phys = std::make_shared<TgeoConvexHullExpAggregationPhysicalFunction>(
+                std::move(physicalInputType),
+                std::move(physicalFinalType),
+                lonPF,
+                latPF,
+                tsPF,
+                resultFieldIdentifier,
+                tupleBufferRef);
+            aggregationPhysicalFunctions.push_back(std::move(phys));
+            continue;
+        }
+        /* END CODEGEN AGGREGATION GLUE: TgeoConvexHullExp (optimizer lowering) */
+
+        /* BEGIN CODEGEN AGGREGATION GLUE: TpointTwcentroidExp (optimizer lowering) */
+        if (name == std::string_view("TpointTwcentroidExp"))
+        {
+            auto specificDescriptor = std::dynamic_pointer_cast<TpointTwcentroidExpAggregationLogicalFunction>(descriptor);
+            INVARIANT(specificDescriptor != nullptr, "Expected TpointTwcentroidExpAggregationLogicalFunction for TpointTwcentroidExp");
+
+            auto lonPF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getLonField());
+            auto latPF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getLatField());
+            auto tsPF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getTimestampField());
+
+            Schema stateSchema;
+            stateSchema.addField("lon", specificDescriptor->getLonField().getDataType());
+            stateSchema.addField("lat", specificDescriptor->getLatField().getDataType());
+            stateSchema.addField("timestamp", specificDescriptor->getTimestampField().getDataType());
+            auto tupleBufferRef = Interface::BufferRef::TupleBufferRef::create(configuration.pageSize.getValue(), stateSchema);
+
+            auto phys = std::make_shared<TpointTwcentroidExpAggregationPhysicalFunction>(
+                std::move(physicalInputType),
+                std::move(physicalFinalType),
+                lonPF,
+                latPF,
+                tsPF,
+                resultFieldIdentifier,
+                tupleBufferRef);
+            aggregationPhysicalFunctions.push_back(std::move(phys));
+            continue;
+        }
+        /* END CODEGEN AGGREGATION GLUE: TpointTwcentroidExp (optimizer lowering) */
+
 
 
 

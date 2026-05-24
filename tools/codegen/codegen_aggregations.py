@@ -2097,6 +2097,24 @@ PHYSICAL_CPP_TGEO_EXPAND_WKB = _swap_once(
     PHYSICAL_CPP_TGEO_EXPAND, _EXPAND_LOWER_SCALAR, _EXPAND_LOWER_WKB,
     "expand scalar lower -> value-output (hex-WKB) lower")
 
+# geometry value-output: f(traj) returns a GSERIALIZED (start/end point, convex
+# hull, time-weighted centroid of the windowed trajectory), serialized as
+# canonical hex-EWKB via geo_out. Same Temporal* slot/lift/append; only the
+# finalize differs from the temporal value-output (GSERIALIZED + geo_out, no
+# hexSize out-param).
+_EXPAND_LOWER_GEO_WKB = _swap_once(
+    _swap_once(_EXPAND_LOWER_WKB,
+               "Temporal* res = {meos_scalar_fn}(*slot);",
+               "GSERIALIZED* res = {meos_scalar_fn}(*slot);",
+               "value-output res type Temporal -> GSERIALIZED"),
+    "size_t hexSize = 0;\n            char* hexOut = temporal_as_hexwkb(res, 0, &hexSize);",
+    "char* hexOut = geo_out(res);",
+    "temporal hex-WKB -> geometry hex-EWKB (geo_out)")
+
+PHYSICAL_CPP_TGEO_EXPAND_GEO_WKB = _swap_once(
+    PHYSICAL_CPP_TGEO_EXPAND, _EXPAND_LOWER_SCALAR, _EXPAND_LOWER_GEO_WKB,
+    "expand scalar lower -> geometry value-output (hex-EWKB) lower")
+
 # tnumber expandable value-output: same Temporal*-slot lower/reset/cleanup, but
 # the per-event instant is a tfloat ("value@ts" via tfloat_in) and the ctor takes
 # (value, ts). Derived from the tgeo expand-wkb template by swapping only the ctor
@@ -2275,6 +2293,8 @@ def physical_template_for(op):
             return PHYSICAL_HPP_TGEO, PHYSICAL_CPP_TGEO_EXPAND
         if op.get("return_mode") == "expand_wkb":
             return PHYSICAL_HPP_TGEO, PHYSICAL_CPP_TGEO_EXPAND_WKB
+        if op.get("return_mode") == "expand_geo_wkb":
+            return PHYSICAL_HPP_TGEO, PHYSICAL_CPP_TGEO_EXPAND_GEO_WKB
         if op.get("return_mode") == "expand_wkb_tnpoint":
             return PHYSICAL_HPP_TGEO, PHYSICAL_CPP_TNPOINT_EXPAND_WKB
         return PHYSICAL_HPP_TGEO, (PHYSICAL_CPP_TGEO_BOX if box else PHYSICAL_CPP_TGEO)

@@ -121,6 +121,10 @@
 #include <Operators/Windows/Aggregations/Meos/TpointGetXExpAggregationLogicalFunction.hpp>
 #include <Operators/Windows/Aggregations/Meos/TpointGetYExpAggregationLogicalFunction.hpp>
 #include <Operators/Windows/Aggregations/Meos/TnumberTrendExpAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TgeoStartValueExpAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TgeoEndValueExpAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TgeoConvexHullExpAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TpointTwcentroidExpAggregationLogicalFunction.hpp>
 #include <Functions/Meos/TemporalIntersectsGeometryLogicalFunction.hpp>
 #include <Functions/Meos/TemporalAIntersectsGeometryLogicalFunction.hpp>
 #include <Functions/Meos/TemporalEDWithinGeometryLogicalFunction.hpp>
@@ -11904,6 +11908,122 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             }
             break;
         /* END CODEGEN AGGREGATION GLUE: TNUMBER_TREND_EXP (case-switch) */
+        /* BEGIN CODEGEN AGGREGATION GLUE: TGEO_START_VALUE_EXP (case-switch) */
+        case AntlrSQLLexer::TGEO_START_VALUE_EXP:
+            // Windowed tgeompoint mini-trip; tgeo_start_value emits the first point geometry as hex-EWKB.
+            if (helpers.top().functionBuilder.size() != 3) {
+                throw InvalidQuerySyntax("TGEO_START_VALUE_EXP requires exactly three arguments (longitude, latitude, timestamp), but got {}", helpers.top().functionBuilder.size());
+            }
+            {
+                const auto timestampFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto latitudeFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto longitudeFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+
+                if (!longitudeFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !latitudeFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
+                    throw InvalidQuerySyntax("TGEO_START_VALUE_EXP arguments must be field references");
+                }
+
+                helpers.top().windowAggs.push_back(
+                    TgeoStartValueExpAggregationLogicalFunction::create(longitudeFunction.get<FieldAccessLogicalFunction>(),
+                                                                    latitudeFunction.get<FieldAccessLogicalFunction>(),
+                                                                    timestampFunction.get<FieldAccessLogicalFunction>()));
+                helpers.top().functionBuilder.push_back(longitudeFunction);
+            }
+            break;
+        /* END CODEGEN AGGREGATION GLUE: TGEO_START_VALUE_EXP (case-switch) */
+
+        /* BEGIN CODEGEN AGGREGATION GLUE: TGEO_END_VALUE_EXP (case-switch) */
+        case AntlrSQLLexer::TGEO_END_VALUE_EXP:
+            // Windowed tgeompoint mini-trip; tgeo_end_value emits the last point geometry as hex-EWKB.
+            if (helpers.top().functionBuilder.size() != 3) {
+                throw InvalidQuerySyntax("TGEO_END_VALUE_EXP requires exactly three arguments (longitude, latitude, timestamp), but got {}", helpers.top().functionBuilder.size());
+            }
+            {
+                const auto timestampFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto latitudeFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto longitudeFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+
+                if (!longitudeFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !latitudeFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
+                    throw InvalidQuerySyntax("TGEO_END_VALUE_EXP arguments must be field references");
+                }
+
+                helpers.top().windowAggs.push_back(
+                    TgeoEndValueExpAggregationLogicalFunction::create(longitudeFunction.get<FieldAccessLogicalFunction>(),
+                                                                    latitudeFunction.get<FieldAccessLogicalFunction>(),
+                                                                    timestampFunction.get<FieldAccessLogicalFunction>()));
+                helpers.top().functionBuilder.push_back(longitudeFunction);
+            }
+            break;
+        /* END CODEGEN AGGREGATION GLUE: TGEO_END_VALUE_EXP (case-switch) */
+
+        /* BEGIN CODEGEN AGGREGATION GLUE: TGEO_CONVEX_HULL_EXP (case-switch) */
+        case AntlrSQLLexer::TGEO_CONVEX_HULL_EXP:
+            // Windowed tgeompoint mini-trip; tgeo_convex_hull emits the trajectory convex hull as hex-EWKB.
+            if (helpers.top().functionBuilder.size() != 3) {
+                throw InvalidQuerySyntax("TGEO_CONVEX_HULL_EXP requires exactly three arguments (longitude, latitude, timestamp), but got {}", helpers.top().functionBuilder.size());
+            }
+            {
+                const auto timestampFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto latitudeFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto longitudeFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+
+                if (!longitudeFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !latitudeFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
+                    throw InvalidQuerySyntax("TGEO_CONVEX_HULL_EXP arguments must be field references");
+                }
+
+                helpers.top().windowAggs.push_back(
+                    TgeoConvexHullExpAggregationLogicalFunction::create(longitudeFunction.get<FieldAccessLogicalFunction>(),
+                                                                    latitudeFunction.get<FieldAccessLogicalFunction>(),
+                                                                    timestampFunction.get<FieldAccessLogicalFunction>()));
+                helpers.top().functionBuilder.push_back(longitudeFunction);
+            }
+            break;
+        /* END CODEGEN AGGREGATION GLUE: TGEO_CONVEX_HULL_EXP (case-switch) */
+
+        /* BEGIN CODEGEN AGGREGATION GLUE: TPOINT_TWCENTROID_EXP (case-switch) */
+        case AntlrSQLLexer::TPOINT_TWCENTROID_EXP:
+            // Windowed tgeompoint mini-trip; tpoint_twcentroid emits the time-weighted centroid point as hex-EWKB.
+            if (helpers.top().functionBuilder.size() != 3) {
+                throw InvalidQuerySyntax("TPOINT_TWCENTROID_EXP requires exactly three arguments (longitude, latitude, timestamp), but got {}", helpers.top().functionBuilder.size());
+            }
+            {
+                const auto timestampFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto latitudeFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto longitudeFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+
+                if (!longitudeFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !latitudeFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
+                    throw InvalidQuerySyntax("TPOINT_TWCENTROID_EXP arguments must be field references");
+                }
+
+                helpers.top().windowAggs.push_back(
+                    TpointTwcentroidExpAggregationLogicalFunction::create(longitudeFunction.get<FieldAccessLogicalFunction>(),
+                                                                    latitudeFunction.get<FieldAccessLogicalFunction>(),
+                                                                    timestampFunction.get<FieldAccessLogicalFunction>()));
+                helpers.top().functionBuilder.push_back(longitudeFunction);
+            }
+            break;
+        /* END CODEGEN AGGREGATION GLUE: TPOINT_TWCENTROID_EXP (case-switch) */
+
 
 
 
@@ -12842,6 +12962,74 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
                 helpers.top().windowAggs.push_back(TnumberTrendExpAggregationLogicalFunction::create(value, ts));
             }
             /* END CODEGEN AGGREGATION GLUE: TNUMBER_TREND_EXP (funcName chain) */
+            /* BEGIN CODEGEN AGGREGATION GLUE: TGEO_START_VALUE_EXP (funcName chain) */
+            else if (funcName == "TGEO_START_VALUE_EXP")
+            {
+                if (helpers.top().functionBuilder.size() < 3)
+                {
+                    throw InvalidQuerySyntax("TGEO_START_VALUE_EXP requires three arguments at {}", context->getText());
+                }
+                const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto lat = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto lon = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                helpers.top().windowAggs.push_back(TgeoStartValueExpAggregationLogicalFunction::create(lon, lat, ts));
+            }
+            /* END CODEGEN AGGREGATION GLUE: TGEO_START_VALUE_EXP (funcName chain) */
+
+            /* BEGIN CODEGEN AGGREGATION GLUE: TGEO_END_VALUE_EXP (funcName chain) */
+            else if (funcName == "TGEO_END_VALUE_EXP")
+            {
+                if (helpers.top().functionBuilder.size() < 3)
+                {
+                    throw InvalidQuerySyntax("TGEO_END_VALUE_EXP requires three arguments at {}", context->getText());
+                }
+                const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto lat = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto lon = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                helpers.top().windowAggs.push_back(TgeoEndValueExpAggregationLogicalFunction::create(lon, lat, ts));
+            }
+            /* END CODEGEN AGGREGATION GLUE: TGEO_END_VALUE_EXP (funcName chain) */
+
+            /* BEGIN CODEGEN AGGREGATION GLUE: TGEO_CONVEX_HULL_EXP (funcName chain) */
+            else if (funcName == "TGEO_CONVEX_HULL_EXP")
+            {
+                if (helpers.top().functionBuilder.size() < 3)
+                {
+                    throw InvalidQuerySyntax("TGEO_CONVEX_HULL_EXP requires three arguments at {}", context->getText());
+                }
+                const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto lat = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto lon = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                helpers.top().windowAggs.push_back(TgeoConvexHullExpAggregationLogicalFunction::create(lon, lat, ts));
+            }
+            /* END CODEGEN AGGREGATION GLUE: TGEO_CONVEX_HULL_EXP (funcName chain) */
+
+            /* BEGIN CODEGEN AGGREGATION GLUE: TPOINT_TWCENTROID_EXP (funcName chain) */
+            else if (funcName == "TPOINT_TWCENTROID_EXP")
+            {
+                if (helpers.top().functionBuilder.size() < 3)
+                {
+                    throw InvalidQuerySyntax("TPOINT_TWCENTROID_EXP requires three arguments at {}", context->getText());
+                }
+                const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto lat = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto lon = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                helpers.top().windowAggs.push_back(TpointTwcentroidExpAggregationLogicalFunction::create(lon, lat, ts));
+            }
+            /* END CODEGEN AGGREGATION GLUE: TPOINT_TWCENTROID_EXP (funcName chain) */
+
 
 
 
