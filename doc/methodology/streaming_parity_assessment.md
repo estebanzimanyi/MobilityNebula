@@ -7,7 +7,7 @@ surface is the **1,945** streamable MEOS public functions (tiers
 
 | Platform | **L3 CALLABLE** (binding invokes it, confirmed) | L2 wired-only (registered, not yet confirmed callable) | gap (streamable, not wired) |
 |---|---|---|---|
-| **NebulaStream** | **6 — 0.3%** | 239 — 12.3% | 1,700 — 87.4% |
+| **NebulaStream** | **38 — 2.0%** | 289 — 14.9% | 1,618 — 83.2% |
 | **Flink** | **1,945 — 100.0%** | 0 — 0.0% | 0 — 0.0% |
 | **Kafka** | **1,945 — 100.0%** | 0 — 0.0% | 0 — 0.0% |
 
@@ -55,7 +55,7 @@ totals 1,945.
 
 | Platform | L2 WIRED | L3 CALLABLE |
 |---|---|---|
-| NebulaStream | operators' `meos_call` in `*PhysicalFunction.cpp` | systest tokens (resolved via the parser dispatch) whose test passed |
+| NebulaStream | operators' `meos_call` in `*PhysicalFunction.cpp` | systest tokens (resolved to the operator by normalized-name match) whose test passes end-to-end on a local worker |
 | Flink / Kafka | `public static` methods of `MeosOps*.java` facade | facade methods the type-aware per-method callability harness invoked on real libmeos without a binding failure (`callability/PerMethodCallability.java` + `run_callability.sh::run_per_method`) |
 
 Adapters: `tools/streaming_parity/adapters/{nebula.py, jvm_facade.py}`;
@@ -94,10 +94,12 @@ production form; both serve the one scope.
   libmeos). The CI gate (`ci_gate.py` + `.github/workflows/streaming_parity_gate.yml`)
   holds the floor at 1,945 and blocks any regression or over-claim; the committed
   feed reproduces it without re-running the harness.
-- **NebulaStream: 324 / 1,945 wired and locally compile-verified.** The
+- **NebulaStream: 327 / 1,945 wired and locally compile-verified.** The
   generated `nes-{physical,logical}-operators` + `nes-sql-parser` libraries link
   clean in the `nebulastream/nes-development` dev image against the `libmeos`
-  under test; 6 are confirmed callable via runnable systests. The wired surface
+  under test; 38 are confirmed callable via systests that run end-to-end against
+  a local single-node worker (query plan serialized, deserialized, compiled, and
+  executed; result matched against the value a faithful MEOS probe produces). The wired surface
   spans per-event operators over the tgeompoint/tcbuffer/tpose/tnumber families
   (comparison, spatial-relation, distance, scalar/extract/box-literal shapes, and
   position/topological predicates of a temporal against an `STBox`/`TBox` query
@@ -119,7 +121,17 @@ production form; both serve the one scope.
   / `bigintspan_out` / `tstzspan_out`). Windowed value-union aggregates collect a
   window's values into a deduplicated, sorted `Set` — `FLOAT_UNION` / `INT_UNION`
   / `BIGINT_UNION` / `TIMESTAMPTZ_UNION` (`*_union_transfn` + `set_union_finalfn`,
-  serialized through `floatset_out` / `intset_out` / `bigintset_out` / `tstzset_out`). Each operator carries a systest
+  serialized through `floatset_out` / `intset_out` / `bigintset_out` / `tstzset_out`).
+  Windowed value-output aggregates grow the per-group mini-trip on the in-process
+  expandable `Temporal*` (`appendInstant`) and emit a MEOS function over it as
+  hex-WKB — `TRAJECTORY_WKB` (the materialized trajectory), `TLENGTH_EXP`,
+  `TEMPORAL_COPY_EXP`, `TNUMBER_ABS_EXP`, and the tgeo/tnumber value-output family.
+  The network-constrained `tnpoint` aggregates run the same way over a windowed
+  npoint mini-series, resolving each route+fraction against the loaded ways
+  network: `TNPOINT_CUMULATIVE_LENGTH_EXP` (`tnpoint_cumulative_length`),
+  `TNPOINT_SPEED_EXP` (`tnpoint_speed`), and the dedicated conversion
+  `TNPOINT_TO_TGEOMPOINT_EXP` (`tnpoint_to_tgeompoint`, the network-resolved
+  spatial trajectory). Each operator carries a systest
   (`nes-systests/function/meos/`) that exercises it end-to-end and rides Nebula
   CI's address/undefined/thread sanitizer matrix as a per-operator memory-leak
   gate.
