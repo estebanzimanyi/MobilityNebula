@@ -69,18 +69,20 @@ FloatUnionAggregationPhysicalFunction::FloatUnionAggregationPhysicalFunction(
 void FloatUnionAggregationPhysicalFunction::lift(
     const nautilus::val<AggregationState*>& aggregationState, PipelineMemoryProvider& pipelineMemoryProvider, const Nautilus::Record& record)
 {
-    const auto pagedVectorPtr = static_cast<nautilus::val<Nautilus::Interface::PagedVector*>>(aggregationState);
-
+    // Incremental Set accumulator slot: each event folds its value into the
+    // running set; O(1)-amortized state, no event buffer.
     auto valueValue = valueFunction.execute(record, pipelineMemoryProvider.arena);
-    auto timestampValue = timestampFunction.execute(record, pipelineMemoryProvider.arena);
+    auto value = valueValue.cast<nautilus::val<double>>();
 
-    Record aggregateStateRecord({
-        {std::string(ValueFieldName), valueValue},
-        {std::string(TimestampFieldName), timestampValue}
-    });
-
-    const Nautilus::Interface::PagedVectorRef pagedVectorRef(pagedVectorPtr, bufferRef);
-    pagedVectorRef.writeRecord(aggregateStateRecord, pipelineMemoryProvider.bufferProvider);
+    nautilus::invoke(
+        +[](AggregationState* st, double val) -> void
+        {
+            MEOS::Meos::ensureMeosInitialized();
+            std::lock_guard<std::mutex> lock(meos_floatunion_mutex);
+            Set** slot = reinterpret_cast<Set**>(st);
+            *slot = float_union_transfn(*slot, val);
+        },
+        aggregationState, value);
 }
 
 void FloatUnionAggregationPhysicalFunction::combine(
@@ -88,100 +90,49 @@ void FloatUnionAggregationPhysicalFunction::combine(
     const nautilus::val<AggregationState*> aggregationState2,
     PipelineMemoryProvider&)
 {
-    const auto memArea1 = static_cast<nautilus::val<Nautilus::Interface::PagedVector*>>(aggregationState1);
-    const auto memArea2 = static_cast<nautilus::val<Nautilus::Interface::PagedVector*>>(aggregationState2);
-
     nautilus::invoke(
-        +[](Nautilus::Interface::PagedVector* vector1, const Nautilus::Interface::PagedVector* vector2) -> void
-        { vector1->copyFrom(*vector2); },
-        memArea1,
-        memArea2);
+        +[](AggregationState* s1, AggregationState* s2) -> void
+        {
+            MEOS::Meos::ensureMeosInitialized();
+            std::lock_guard<std::mutex> lock(meos_floatunion_mutex);
+            Set** slot1 = reinterpret_cast<Set**>(s1);
+            Set** slot2 = reinterpret_cast<Set**>(s2);
+            if (!*slot2) { return; }
+            // set_union_transfn appends slot2's values into slot1 (creates from
+            // slot2 if slot1 is null); slot2 is freed by its own cleanup.
+            *slot1 = set_union_transfn(*slot1, *slot2);
+        },
+        aggregationState1, aggregationState2);
 }
 
 Nautilus::Record FloatUnionAggregationPhysicalFunction::lower(
-    const nautilus::val<AggregationState*> aggregationState, [[maybe_unused]] PipelineMemoryProvider& pipelineMemoryProvider)
+    const nautilus::val<AggregationState*> aggregationState, PipelineMemoryProvider& pipelineMemoryProvider)
 {
     MEOS::Meos::ensureMeosInitialized();
-
-    const auto pagedVectorPtr = static_cast<nautilus::val<Nautilus::Interface::PagedVector*>>(aggregationState);
-    const Nautilus::Interface::PagedVectorRef pagedVectorRef(pagedVectorPtr, bufferRef);
-    const auto allFieldNames = bufferRef->getMemoryLayout()->getSchema().getFieldNames();
-    const auto numberOfEntries = invoke(
-        +[](const Nautilus::Interface::PagedVector* pagedVector)
+    auto setStr = nautilus::invoke(
+        +[](AggregationState* st) -> char*
         {
-            return pagedVector->getTotalNumberOfEntries();
-        },
-        pagedVectorPtr);
-
-    if (numberOfEntries == nautilus::val<size_t>(0)) {
-        auto emptyVarSized = pipelineMemoryProvider.arena.allocateVariableSizedData(0);
-        Nautilus::Record resultRecord;
-        resultRecord.write(resultFieldIdentifier, emptyVarSized);
-        return resultRecord;
-    }
-
-    // Fold the windowed scalar field through the MEOS extent transition fn.
-    // The Span state threads across events as an opaque pointer; a NULL initial
-    // state makes the first call allocate, later calls expand in place.
-    auto spanState = nautilus::invoke(
-        +[](const Nautilus::Interface::PagedVector*) -> void* { return nullptr; },
-        pagedVectorPtr);
-
-    const auto endIt = pagedVectorRef.end(allFieldNames);
-    for (auto candidateIt = pagedVectorRef.begin(allFieldNames); candidateIt != endIt; ++candidateIt)
-    {
-        const auto itemRecord = *candidateIt;
-        const auto valueRaw = itemRecord.read(std::string(ValueFieldName));
-        auto value = valueRaw.cast<nautilus::val<double>>();
-
-        spanState = nautilus::invoke(
-            +[](void* state, double val) -> void*
-            {
-                MEOS::Meos::ensureMeosInitialized();
-                std::lock_guard<std::mutex> lock(meos_floatunion_mutex);
-                return (void*) float_union_transfn(static_cast<Set*>(state), val);
-            },
-            spanState,
-            value);
-    }
-
-    auto boxStr = nautilus::invoke(
-        +[](void* state) -> char*
-        {
-            if (!state) {
-                return (char*)nullptr;
-            }
-            MEOS::Meos::ensureMeosInitialized();
             std::lock_guard<std::mutex> lock(meos_floatunion_mutex);
-            // set_union_finalfn pfree()s the state internally and returns a new
-            // Set, so the state must NOT be freed again here (double free).
-            Set* sp = set_union_finalfn(static_cast<Set*>(state));
-            if (!sp) {
-                return (char*)nullptr;
-            }
-            char* out = floatset_out(sp, 15);
-            free(sp);
+            Set** slot = reinterpret_cast<Set**>(st);
+            if (!*slot) { return (char*) nullptr; }
+            // set_union_finalfn consumes (frees) the state and returns the
+            // deduplicated, sorted Set; the slot must not be freed again.
+            Set* fin = set_union_finalfn(*slot);
+            *slot = nullptr;
+            if (!fin) { return (char*) nullptr; }
+            char* out = floatset_out(fin, 15);
+            free(fin);
             return out;
         },
-        spanState);
+        aggregationState);
 
-    const auto boxStrLen = nautilus::invoke(
-        +[](const char* s) -> size_t { return s ? strlen(s) : (size_t) 0; },
-        boxStr);
-
-    auto variableSized = pipelineMemoryProvider.arena.allocateVariableSizedData(boxStrLen);
-
+    const auto setLen = nautilus::invoke(
+        +[](const char* s) -> size_t { return s ? strlen(s) : (size_t) 0; }, setStr);
+    auto variableSized = pipelineMemoryProvider.arena.allocateVariableSizedData(setLen);
     nautilus::invoke(
         +[](int8_t* dest, const char* s, size_t len) -> void
-        {
-            if (s) {
-                memcpy(dest, s, len);
-                free((void*)s);
-            }
-        },
-        variableSized.getContent(),
-        boxStr,
-        boxStrLen);
+        { if (s) { memcpy(dest, s, len); free((void*) s); } },
+        variableSized.getContent(), setStr, setLen);
 
     Nautilus::Record resultRecord;
     resultRecord.write(resultFieldIdentifier, variableSized);
@@ -190,31 +141,20 @@ Nautilus::Record FloatUnionAggregationPhysicalFunction::lower(
 
 void FloatUnionAggregationPhysicalFunction::reset(const nautilus::val<AggregationState*> aggregationState, PipelineMemoryProvider&)
 {
-    nautilus::invoke(
-        +[](AggregationState* pagedVectorMemArea) -> void
-        {
-            auto* pagedVector = reinterpret_cast<Nautilus::Interface::PagedVector*>(pagedVectorMemArea);
-            new (pagedVector) Nautilus::Interface::PagedVector();
-        },
-        aggregationState);
+    nautilus::invoke(+[](AggregationState* st) -> void
+        { Set** slot = reinterpret_cast<Set**>(st); *slot = nullptr; }, aggregationState);
 }
 
 size_t FloatUnionAggregationPhysicalFunction::getSizeOfStateInBytes() const
 {
-    return sizeof(Nautilus::Interface::PagedVector);
+    return sizeof(Set*);
 }
 
 void FloatUnionAggregationPhysicalFunction::cleanup(nautilus::val<AggregationState*> aggregationState)
 {
-    nautilus::invoke(
-        +[](AggregationState* pagedVectorMemArea) -> void
-        {
-            auto* pagedVector = reinterpret_cast<Nautilus::Interface::PagedVector*>(pagedVectorMemArea);
-            pagedVector->~PagedVector();
-        },
-        aggregationState);
+    nautilus::invoke(+[](AggregationState* st) -> void
+        { Set** slot = reinterpret_cast<Set**>(st); if (*slot) { free(*slot); *slot = nullptr; } }, aggregationState);
 }
-
 
 AggregationPhysicalFunctionRegistryReturnType AggregationPhysicalFunctionGeneratedRegistrar::RegisterFloatUnionAggregationPhysicalFunction(
     AggregationPhysicalFunctionRegistryArguments)
@@ -223,4 +163,4 @@ AggregationPhysicalFunctionRegistryReturnType AggregationPhysicalFunctionGenerat
                              "It requires two field functions (value, timestamp)");
 }
 
-} // namespace NES
+}
