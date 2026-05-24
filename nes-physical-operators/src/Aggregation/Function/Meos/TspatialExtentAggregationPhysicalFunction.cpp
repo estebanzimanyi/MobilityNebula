@@ -75,20 +75,34 @@ TspatialExtentAggregationPhysicalFunction::TspatialExtentAggregationPhysicalFunc
 void TspatialExtentAggregationPhysicalFunction::lift(
     const nautilus::val<AggregationState*>& aggregationState, PipelineMemoryProvider& pipelineMemoryProvider, const Nautilus::Record& record)
 {
-    const auto pagedVectorPtr = static_cast<nautilus::val<Nautilus::Interface::PagedVector*>>(aggregationState);
-
+    // Incremental accumulator slot (no event buffer): each event folds into the
+    // running extent STBox via tspatial_extent_transfn. O(1) state, like the
+    // expandable-Temporal* value-output operators.
     auto lonValue = lonFunction.execute(record, pipelineMemoryProvider.arena);
     auto latValue = latFunction.execute(record, pipelineMemoryProvider.arena);
     auto timestampValue = timestampFunction.execute(record, pipelineMemoryProvider.arena);
+    auto lon = lonValue.cast<nautilus::val<double>>();
+    auto lat = latValue.cast<nautilus::val<double>>();
+    auto timestamp = timestampValue.cast<nautilus::val<int64_t>>();
 
-    Record aggregateStateRecord({
-        {std::string(LonFieldName), lonValue},
-        {std::string(LatFieldName), latValue},
-        {std::string(TimestampFieldName), timestampValue}
-    });
-
-    const Nautilus::Interface::PagedVectorRef pagedVectorRef(pagedVectorPtr, bufferRef);
-    pagedVectorRef.writeRecord(aggregateStateRecord, pipelineMemoryProvider.bufferProvider);
+    nautilus::invoke(
+        +[](AggregationState* st, double lonVal, double latVal, int64_t tsVal) -> void
+        {
+            MEOS::Meos::ensureMeosInitialized();
+            std::lock_guard<std::mutex> lock(meos_tspatialextent_mutex);
+            STBox** slot = reinterpret_cast<STBox**>(st);
+            long long sec = (tsVal > 1000000000000LL) ? (tsVal / 1000) : tsVal;
+            std::string ts = MEOS::Meos::convertSecondsToTimestamp(sec);
+            char wkt[96];
+            snprintf(wkt, sizeof(wkt), "Point(%.6f %.6f)@%s", lonVal, latVal, ts.c_str());
+            Temporal* inst = tgeompoint_in(wkt);
+            if (!inst) {
+                return;
+            }
+            *slot = tspatial_extent_transfn(*slot, inst);
+            free(inst);
+        },
+        aggregationState, lon, lat, timestamp);
 }
 
 void TspatialExtentAggregationPhysicalFunction::combine(
@@ -96,150 +110,55 @@ void TspatialExtentAggregationPhysicalFunction::combine(
     const nautilus::val<AggregationState*> aggregationState2,
     PipelineMemoryProvider&)
 {
-    const auto memArea1 = static_cast<nautilus::val<Nautilus::Interface::PagedVector*>>(aggregationState1);
-    const auto memArea2 = static_cast<nautilus::val<Nautilus::Interface::PagedVector*>>(aggregationState2);
-
     nautilus::invoke(
-        +[](Nautilus::Interface::PagedVector* vector1, const Nautilus::Interface::PagedVector* vector2) -> void
-        { vector1->copyFrom(*vector2); },
-        memArea1,
-        memArea2);
+        +[](AggregationState* s1, AggregationState* s2) -> void
+        {
+            MEOS::Meos::ensureMeosInitialized();
+            std::lock_guard<std::mutex> lock(meos_tspatialextent_mutex);
+            STBox** slot1 = reinterpret_cast<STBox**>(s1);
+            STBox** slot2 = reinterpret_cast<STBox**>(s2);
+            if (!*slot2) {
+                return;
+            }
+            if (!*slot1) {
+                *slot1 = stbox_copy(*slot2);
+                return;
+            }
+            STBox* merged = union_stbox_stbox(*slot1, *slot2, false);
+            free(*slot1);
+            *slot1 = merged;
+        },
+        aggregationState1, aggregationState2);
 }
 
 Nautilus::Record TspatialExtentAggregationPhysicalFunction::lower(
-    const nautilus::val<AggregationState*> aggregationState, [[maybe_unused]] PipelineMemoryProvider& pipelineMemoryProvider)
+    const nautilus::val<AggregationState*> aggregationState, PipelineMemoryProvider& pipelineMemoryProvider)
 {
     MEOS::Meos::ensureMeosInitialized();
-
-    const auto pagedVectorPtr = static_cast<nautilus::val<Nautilus::Interface::PagedVector*>>(aggregationState);
-    const Nautilus::Interface::PagedVectorRef pagedVectorRef(pagedVectorPtr, bufferRef);
-    const auto allFieldNames = bufferRef->getMemoryLayout()->getSchema().getFieldNames();
-    const auto numberOfEntries = invoke(
-        +[](const Nautilus::Interface::PagedVector* pagedVector)
-        {
-            return pagedVector->getTotalNumberOfEntries();
-        },
-        pagedVectorPtr);
-
-    if (numberOfEntries == nautilus::val<size_t>(0)) {
-        auto emptyVarSized = pipelineMemoryProvider.arena.allocateVariableSizedData(0);
-        Nautilus::Record resultRecord;
-        resultRecord.write(resultFieldIdentifier, emptyVarSized);
-        return resultRecord;
-    }
-
-    auto trajectoryStr = nautilus::invoke(
-        +[](const Nautilus::Interface::PagedVector* pagedVector) -> char*
-        {
-            size_t bufferSize = pagedVector->getTotalNumberOfEntries() * 150 + 50;
-            char* buffer = (char*)malloc(bufferSize);
-            memset(buffer, 0, bufferSize);
-            strcpy(buffer, "{");
-            return buffer;
-        },
-        pagedVectorPtr);
-
-    auto pointCounter = nautilus::val<int64_t>(0);
-
-    const auto endIt = pagedVectorRef.end(allFieldNames);
-    for (auto candidateIt = pagedVectorRef.begin(allFieldNames); candidateIt != endIt; ++candidateIt)
-    {
-        const auto itemRecord = *candidateIt;
-
-        const auto lonValue = itemRecord.read(std::string(LonFieldName));
-        const auto latValue = itemRecord.read(std::string(LatFieldName));
-        const auto timestampValue = itemRecord.read(std::string(TimestampFieldName));
-
-        auto lon = lonValue.cast<nautilus::val<double>>();
-        auto lat = latValue.cast<nautilus::val<double>>();
-        auto timestamp = timestampValue.cast<nautilus::val<int64_t>>();
-
-        trajectoryStr = nautilus::invoke(
-            +[](char* buffer, double lonVal, double latVal, int64_t tsVal, int64_t counter) -> char*
-            {
-                if (counter > 0) {
-                    strcat(buffer, ", ");
-                }
-
-                long long adjustedTime;
-                if (tsVal > 1000000000000LL) {
-                    adjustedTime = tsVal / 1000;
-                } else {
-                    adjustedTime = tsVal;
-                }
-
-                std::string timestampString = MEOS::Meos::convertSecondsToTimestamp(adjustedTime);
-                const char* timestampStr = timestampString.c_str();
-
-                char pointStr[120];
-                sprintf(pointStr, "Point(%.6f %.6f)@%s", lonVal, latVal, timestampStr);
-                strcat(buffer, pointStr);
-                return buffer;
-            },
-            trajectoryStr,
-            lon,
-            lat,
-            timestamp,
-            pointCounter);
-
-        pointCounter = pointCounter + nautilus::val<int64_t>(1);
-    }
-
-    trajectoryStr = nautilus::invoke(
-        +[](char* buffer) -> char*
-        {
-            strcat(buffer, "}");
-            return buffer;
-        },
-        trajectoryStr);
-
     auto boxStr = nautilus::invoke(
-        +[](const char* trajStr) -> char*
+        +[](AggregationState* st) -> char*
         {
-            if (!trajStr || strlen(trajStr) == 0) {
-                free((void*)trajStr);
-                return (char*)nullptr;
-            }
-
-            MEOS::Meos::ensureMeosInitialized();
             std::lock_guard<std::mutex> lock(meos_tspatialextent_mutex);
-
-            std::string trajString(trajStr);
-            void* temp = MEOS::Meos::parseTemporalPoint(trajString);
-            free((void*)trajStr);
-            if (!temp) {
-                return (char*)nullptr;
+            STBox** slot = reinterpret_cast<STBox**>(st);
+            if (!*slot) {
+                return (char*) nullptr;
             }
-
-            STBox* aggBox = tspatial_extent_transfn(nullptr, static_cast<Temporal*>(temp));
-            MEOS::Meos::freeTemporalObject(temp);
-            if (!aggBox) {
-                return (char*)nullptr;
-            }
-
-            char* boxText = stbox_out(aggBox, 15);
-            free(aggBox);
-            return boxText;
+            char* out = stbox_out(*slot, 15);
+            free(*slot);
+            *slot = nullptr;
+            return out;
         },
-        trajectoryStr);
+        aggregationState);
 
-    const auto boxStrLen = nautilus::invoke(
-        +[](const char* s) -> size_t { return s ? strlen(s) : (size_t) 0; },
-        boxStr);
-
-    auto variableSized = pipelineMemoryProvider.arena.allocateVariableSizedData(boxStrLen);
-
+    const auto boxLen = nautilus::invoke(
+        +[](const char* s) -> size_t { return s ? strlen(s) : (size_t) 0; }, boxStr);
+    auto variableSized = pipelineMemoryProvider.arena.allocateVariableSizedData(boxLen);
     nautilus::invoke(
         +[](int8_t* dest, const char* s, size_t len) -> void
         {
-            if (s) {
-                memcpy(dest, s, len);
-                free((void*)s);
-            }
+            if (s) { memcpy(dest, s, len); free((void*) s); }
         },
-        variableSized.getContent(),
-        boxStr,
-        boxStrLen);
+        variableSized.getContent(), boxStr, boxLen);
 
     Nautilus::Record resultRecord;
     resultRecord.write(resultFieldIdentifier, variableSized);
@@ -249,27 +168,21 @@ Nautilus::Record TspatialExtentAggregationPhysicalFunction::lower(
 void TspatialExtentAggregationPhysicalFunction::reset(const nautilus::val<AggregationState*> aggregationState, PipelineMemoryProvider&)
 {
     nautilus::invoke(
-        +[](AggregationState* pagedVectorMemArea) -> void
-        {
-            auto* pagedVector = reinterpret_cast<Nautilus::Interface::PagedVector*>(pagedVectorMemArea);
-            new (pagedVector) Nautilus::Interface::PagedVector();
-        },
+        +[](AggregationState* st) -> void
+        { STBox** slot = reinterpret_cast<STBox**>(st); *slot = nullptr; },
         aggregationState);
 }
 
 size_t TspatialExtentAggregationPhysicalFunction::getSizeOfStateInBytes() const
 {
-    return sizeof(Nautilus::Interface::PagedVector);
+    return sizeof(STBox*);
 }
 
 void TspatialExtentAggregationPhysicalFunction::cleanup(nautilus::val<AggregationState*> aggregationState)
 {
     nautilus::invoke(
-        +[](AggregationState* pagedVectorMemArea) -> void
-        {
-            auto* pagedVector = reinterpret_cast<Nautilus::Interface::PagedVector*>(pagedVectorMemArea);
-            pagedVector->~PagedVector();
-        },
+        +[](AggregationState* st) -> void
+        { STBox** slot = reinterpret_cast<STBox**>(st); if (*slot) { free(*slot); *slot = nullptr; } },
         aggregationState);
 }
 
@@ -281,4 +194,4 @@ AggregationPhysicalFunctionRegistryReturnType AggregationPhysicalFunctionGenerat
                              "It requires three field functions (longitude, latitude, timestamp)");
 }
 
-} // namespace NES
+}
