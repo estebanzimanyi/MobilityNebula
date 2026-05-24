@@ -3045,6 +3045,16 @@ GENERIC_INPUTS = {
         '                std::string {var}Hex(trajPtr, trajSize);\n'
         '                Temporal* {var} = temporal_from_hexwkb({var}Hex.c_str());\n'
         '                if (!{var}) return {z};\n')),
+    # A bounding STBox carried as a VARSIZED text field — the per-vehicle
+    # TSPATIAL_EXTENT output (stbox_out). Used as the first operand of a
+    # cross-vehicle predicate f(boxA, boxB); the second box is a `box` extra arg
+    # (also stbox_in). Freed via free(temp) by the generic cleanup.
+    "stbox_text": dict(fields=[("box", "VariableSizedData")], header="meos_geo.h", build=(
+        '                std::string {var}S(boxPtr, boxSize);\n'
+        '                while (!{var}S.empty() && ({var}S.front()==\'\\\'\' || {var}S.front()==\'"\')) {var}S.erase({var}S.begin());\n'
+        '                while (!{var}S.empty() && ({var}S.back()==\'\\\'\' || {var}S.back()==\'"\')) {var}S.pop_back();\n'
+        '                STBox* {var} = stbox_in({var}S.c_str());\n'
+        '                if (!{var}) return {z};\n')),
 }
 
 # return_kind -> (cpp_return_type, nautilus_return, zero_literal, extract_fn|None)

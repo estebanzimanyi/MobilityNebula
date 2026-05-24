@@ -360,6 +360,26 @@ def temporal_x_box(fn, ret, args):
     return d
 
 
+def stbox_x_stbox(fn, ret, args):
+    """bool|double fn(const STBox*, const STBox*) — a cross-vehicle comparison over
+    two per-vehicle extent boxes (each carried as a VARSIZED stbox-text field, e.g.
+    two TSPATIAL_EXTENT outputs in a self-join). The first box is the primary
+    stbox_text input; the second is a `box` extra arg; both are stbox_in-parsed and
+    freed. This is the production-faithful cross-stream shape: per-vehicle
+    aggregates (GROUP BY vehicle_id) compared pairwise downstream."""
+    if len(args) != 2 or args[0] != "STBox*" or args[1] != "STBox*":
+        return None
+    rk = {"bool": "bool", "double": "double", "int": "int"}.get(ret)
+    if not rk:
+        return None
+    return {
+        "nebula_name": pascal(fn), "sql_token": fn.upper(), "meos_call": fn,
+        "build_generic": True, "input_type": "stbox_text", "return_kind": rk,
+        "extra_args": [{"kind": "box", "box_type": "STBox", "parser": "stbox_in", "header": "meos_geo.h"}],
+        "comment_one_liner": f"Per-event {fn}: two per-vehicle extent STBoxes -> {rk}.",
+    }
+
+
 SHAPES = {
     "cmp_scalar_tempfirst": cmp_scalar_tempfirst,
     "cmp_scalar_scalarfirst": cmp_scalar_scalarfirst,
@@ -370,6 +390,7 @@ SHAPES = {
     "temporal_x_geom": temporal_x_geom,
     "temporal_extract_scalar": temporal_extract_scalar,
     "temporal_x_box": temporal_x_box,
+    "stbox_x_stbox": stbox_x_stbox,
 }
 
 
