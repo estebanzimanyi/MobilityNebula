@@ -116,6 +116,11 @@
 #include <Operators/Windows/Aggregations/Meos/TnpointCumulativeLengthExpAggregationLogicalFunction.hpp>
 #include <Operators/Windows/Aggregations/Meos/TnpointSpeedExpAggregationLogicalFunction.hpp>
 #include <Operators/Windows/Aggregations/Meos/TnpointToTgeompointExpAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TpointCumulativeLengthExpAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TpointSpeedExpAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TpointGetXExpAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TpointGetYExpAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TnumberTrendExpAggregationLogicalFunction.hpp>
 #include <Functions/Meos/TemporalIntersectsGeometryLogicalFunction.hpp>
 #include <Functions/Meos/TemporalAIntersectsGeometryLogicalFunction.hpp>
 #include <Functions/Meos/TemporalEDWithinGeometryLogicalFunction.hpp>
@@ -11759,6 +11764,147 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             }
             break;
         /* END CODEGEN AGGREGATION GLUE: TNPOINT_TO_TGEOMPOINT_EXP (case-switch) */
+        /* BEGIN CODEGEN AGGREGATION GLUE: TPOINT_CUMULATIVE_LENGTH_EXP (case-switch) */
+        case AntlrSQLLexer::TPOINT_CUMULATIVE_LENGTH_EXP:
+            // Windowed tgeompoint mini-trip grown by appendInstant; tpoint_cumulative_length emits the running planar length as a tfloat (hex-WKB).
+            if (helpers.top().functionBuilder.size() != 3) {
+                throw InvalidQuerySyntax("TPOINT_CUMULATIVE_LENGTH_EXP requires exactly three arguments (longitude, latitude, timestamp), but got {}", helpers.top().functionBuilder.size());
+            }
+            {
+                const auto timestampFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto latitudeFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto longitudeFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+
+                if (!longitudeFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !latitudeFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
+                    throw InvalidQuerySyntax("TPOINT_CUMULATIVE_LENGTH_EXP arguments must be field references");
+                }
+
+                helpers.top().windowAggs.push_back(
+                    TpointCumulativeLengthExpAggregationLogicalFunction::create(longitudeFunction.get<FieldAccessLogicalFunction>(),
+                                                                    latitudeFunction.get<FieldAccessLogicalFunction>(),
+                                                                    timestampFunction.get<FieldAccessLogicalFunction>()));
+                helpers.top().functionBuilder.push_back(longitudeFunction);
+            }
+            break;
+        /* END CODEGEN AGGREGATION GLUE: TPOINT_CUMULATIVE_LENGTH_EXP (case-switch) */
+
+        /* BEGIN CODEGEN AGGREGATION GLUE: TPOINT_SPEED_EXP (case-switch) */
+        case AntlrSQLLexer::TPOINT_SPEED_EXP:
+            // Windowed tgeompoint mini-trip; tpoint_speed differentiates it into a speed tfloat (hex-WKB).
+            if (helpers.top().functionBuilder.size() != 3) {
+                throw InvalidQuerySyntax("TPOINT_SPEED_EXP requires exactly three arguments (longitude, latitude, timestamp), but got {}", helpers.top().functionBuilder.size());
+            }
+            {
+                const auto timestampFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto latitudeFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto longitudeFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+
+                if (!longitudeFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !latitudeFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
+                    throw InvalidQuerySyntax("TPOINT_SPEED_EXP arguments must be field references");
+                }
+
+                helpers.top().windowAggs.push_back(
+                    TpointSpeedExpAggregationLogicalFunction::create(longitudeFunction.get<FieldAccessLogicalFunction>(),
+                                                                    latitudeFunction.get<FieldAccessLogicalFunction>(),
+                                                                    timestampFunction.get<FieldAccessLogicalFunction>()));
+                helpers.top().functionBuilder.push_back(longitudeFunction);
+            }
+            break;
+        /* END CODEGEN AGGREGATION GLUE: TPOINT_SPEED_EXP (case-switch) */
+
+        /* BEGIN CODEGEN AGGREGATION GLUE: TPOINT_GET_X_EXP (case-switch) */
+        case AntlrSQLLexer::TPOINT_GET_X_EXP:
+            // Windowed tgeompoint mini-trip; tpoint_get_x projects the X coordinate as a tfloat (hex-WKB).
+            if (helpers.top().functionBuilder.size() != 3) {
+                throw InvalidQuerySyntax("TPOINT_GET_X_EXP requires exactly three arguments (longitude, latitude, timestamp), but got {}", helpers.top().functionBuilder.size());
+            }
+            {
+                const auto timestampFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto latitudeFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto longitudeFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+
+                if (!longitudeFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !latitudeFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
+                    throw InvalidQuerySyntax("TPOINT_GET_X_EXP arguments must be field references");
+                }
+
+                helpers.top().windowAggs.push_back(
+                    TpointGetXExpAggregationLogicalFunction::create(longitudeFunction.get<FieldAccessLogicalFunction>(),
+                                                                    latitudeFunction.get<FieldAccessLogicalFunction>(),
+                                                                    timestampFunction.get<FieldAccessLogicalFunction>()));
+                helpers.top().functionBuilder.push_back(longitudeFunction);
+            }
+            break;
+        /* END CODEGEN AGGREGATION GLUE: TPOINT_GET_X_EXP (case-switch) */
+
+        /* BEGIN CODEGEN AGGREGATION GLUE: TPOINT_GET_Y_EXP (case-switch) */
+        case AntlrSQLLexer::TPOINT_GET_Y_EXP:
+            // Windowed tgeompoint mini-trip; tpoint_get_y projects the Y coordinate as a tfloat (hex-WKB).
+            if (helpers.top().functionBuilder.size() != 3) {
+                throw InvalidQuerySyntax("TPOINT_GET_Y_EXP requires exactly three arguments (longitude, latitude, timestamp), but got {}", helpers.top().functionBuilder.size());
+            }
+            {
+                const auto timestampFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto latitudeFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto longitudeFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+
+                if (!longitudeFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !latitudeFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
+                    throw InvalidQuerySyntax("TPOINT_GET_Y_EXP arguments must be field references");
+                }
+
+                helpers.top().windowAggs.push_back(
+                    TpointGetYExpAggregationLogicalFunction::create(longitudeFunction.get<FieldAccessLogicalFunction>(),
+                                                                    latitudeFunction.get<FieldAccessLogicalFunction>(),
+                                                                    timestampFunction.get<FieldAccessLogicalFunction>()));
+                helpers.top().functionBuilder.push_back(longitudeFunction);
+            }
+            break;
+        /* END CODEGEN AGGREGATION GLUE: TPOINT_GET_Y_EXP (case-switch) */
+
+        /* BEGIN CODEGEN AGGREGATION GLUE: TNUMBER_TREND_EXP (case-switch) */
+        case AntlrSQLLexer::TNUMBER_TREND_EXP:
+            // Windowed tnumber mini-series; tnumber_trend emits the rising/falling trend as a tint (hex-WKB).
+            if (helpers.top().functionBuilder.size() != 2) {
+                throw InvalidQuerySyntax("TNUMBER_TREND_EXP requires exactly two arguments (value, timestamp), but got {}", helpers.top().functionBuilder.size());
+            }
+            {
+                const auto timestampFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto valueFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+
+                if (!valueFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
+                    throw InvalidQuerySyntax("TNUMBER_TREND_EXP arguments must be field references");
+                }
+
+                helpers.top().windowAggs.push_back(
+                    TnumberTrendExpAggregationLogicalFunction::create(valueFunction.get<FieldAccessLogicalFunction>(),
+                                                                    timestampFunction.get<FieldAccessLogicalFunction>()));
+                helpers.top().functionBuilder.push_back(valueFunction);
+            }
+            break;
+        /* END CODEGEN AGGREGATION GLUE: TNUMBER_TREND_EXP (case-switch) */
+
 
 
 
@@ -12614,6 +12760,89 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
                 helpers.top().windowAggs.push_back(TnpointToTgeompointExpAggregationLogicalFunction::create(lon, lat, ts));
             }
             /* END CODEGEN AGGREGATION GLUE: TNPOINT_TO_TGEOMPOINT_EXP (funcName chain) */
+            /* BEGIN CODEGEN AGGREGATION GLUE: TPOINT_CUMULATIVE_LENGTH_EXP (funcName chain) */
+            else if (funcName == "TPOINT_CUMULATIVE_LENGTH_EXP")
+            {
+                if (helpers.top().functionBuilder.size() < 3)
+                {
+                    throw InvalidQuerySyntax("TPOINT_CUMULATIVE_LENGTH_EXP requires three arguments at {}", context->getText());
+                }
+                const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto lat = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto lon = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                helpers.top().windowAggs.push_back(TpointCumulativeLengthExpAggregationLogicalFunction::create(lon, lat, ts));
+            }
+            /* END CODEGEN AGGREGATION GLUE: TPOINT_CUMULATIVE_LENGTH_EXP (funcName chain) */
+
+            /* BEGIN CODEGEN AGGREGATION GLUE: TPOINT_SPEED_EXP (funcName chain) */
+            else if (funcName == "TPOINT_SPEED_EXP")
+            {
+                if (helpers.top().functionBuilder.size() < 3)
+                {
+                    throw InvalidQuerySyntax("TPOINT_SPEED_EXP requires three arguments at {}", context->getText());
+                }
+                const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto lat = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto lon = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                helpers.top().windowAggs.push_back(TpointSpeedExpAggregationLogicalFunction::create(lon, lat, ts));
+            }
+            /* END CODEGEN AGGREGATION GLUE: TPOINT_SPEED_EXP (funcName chain) */
+
+            /* BEGIN CODEGEN AGGREGATION GLUE: TPOINT_GET_X_EXP (funcName chain) */
+            else if (funcName == "TPOINT_GET_X_EXP")
+            {
+                if (helpers.top().functionBuilder.size() < 3)
+                {
+                    throw InvalidQuerySyntax("TPOINT_GET_X_EXP requires three arguments at {}", context->getText());
+                }
+                const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto lat = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto lon = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                helpers.top().windowAggs.push_back(TpointGetXExpAggregationLogicalFunction::create(lon, lat, ts));
+            }
+            /* END CODEGEN AGGREGATION GLUE: TPOINT_GET_X_EXP (funcName chain) */
+
+            /* BEGIN CODEGEN AGGREGATION GLUE: TPOINT_GET_Y_EXP (funcName chain) */
+            else if (funcName == "TPOINT_GET_Y_EXP")
+            {
+                if (helpers.top().functionBuilder.size() < 3)
+                {
+                    throw InvalidQuerySyntax("TPOINT_GET_Y_EXP requires three arguments at {}", context->getText());
+                }
+                const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto lat = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto lon = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                helpers.top().windowAggs.push_back(TpointGetYExpAggregationLogicalFunction::create(lon, lat, ts));
+            }
+            /* END CODEGEN AGGREGATION GLUE: TPOINT_GET_Y_EXP (funcName chain) */
+
+            /* BEGIN CODEGEN AGGREGATION GLUE: TNUMBER_TREND_EXP (funcName chain) */
+            else if (funcName == "TNUMBER_TREND_EXP")
+            {
+                if (helpers.top().functionBuilder.size() < 2)
+                {
+                    throw InvalidQuerySyntax("TNUMBER_TREND_EXP requires two arguments at {}", context->getText());
+                }
+                const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto value = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                helpers.top().windowAggs.push_back(TnumberTrendExpAggregationLogicalFunction::create(value, ts));
+            }
+            /* END CODEGEN AGGREGATION GLUE: TNUMBER_TREND_EXP (funcName chain) */
+
 
 
 
