@@ -3120,6 +3120,18 @@ def assemble_generic_physical(op):
                 f'                if (!arg{i}B) {{ free(temp); return {zero}; }}\n')
             call_terms.append(f"arg{i}B")
             box_frees.append(f"free(arg{i}B);")
+        elif ex["kind"] == "wkb_temporal":
+            # a SECOND temporal operand carried as a VARSIZED hex-WKB field (e.g.
+            # another per-vehicle aggregate output) — parsed via temporal_from_hexwkb,
+            # freed after the call. For cross-vehicle f(trajA, trajB).
+            fields.append((f"arg{i}", "VariableSizedData"))
+            headers.add("meos_geo.h")
+            parse_lines.append(
+                f'                std::string arg{i}Hex(arg{i}Ptr, arg{i}Size);\n'
+                f'                Temporal* arg{i}T = temporal_from_hexwkb(arg{i}Hex.c_str());\n'
+                f'                if (!arg{i}T) {{ free(temp); return {zero}; }}\n')
+            call_terms.append(f"arg{i}T")
+            box_frees.append(f"free(arg{i}T);")
 
     # Build the parameterValues casts, lambda params, and invoke args from fields.
     casts, lparams, invoke = [], [], []
