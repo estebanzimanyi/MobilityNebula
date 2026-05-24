@@ -380,10 +380,30 @@ def stbox_x_stbox(fn, ret, args):
     }
 
 
+def two_temporal_scalar(fn, ret, args):
+    """bool|int|double fn(const Temporal*, const Temporal*) over TWO temporal
+    operands carried as hex-WKB VARSIZED fields — the cross-vehicle f(trajA, trajB)
+    scalar shape (e.g. two per-vehicle aggregate outputs compared in a self-join).
+    The first temporal is the primary wkb_temporal input; the second is a
+    wkb_temporal extra arg; both temporal_from_hexwkb-parsed and freed."""
+    if len(args) != 2 or args[0] != "Temporal*" or args[1] != "Temporal*":
+        return None
+    rk = {"bool": "bool", "int": "int", "double": "double"}.get(ret)
+    if not rk:
+        return None
+    return {
+        "nebula_name": pascal(fn), "sql_token": fn.upper(), "meos_call": fn,
+        "build_generic": True, "input_type": "wkb_temporal", "return_kind": rk,
+        "extra_args": [{"kind": "wkb_temporal"}],
+        "comment_one_liner": f"Per-event {fn}: two hex-WKB temporal operands -> {rk}.",
+    }
+
+
 SHAPES = {
     "cmp_scalar_tempfirst": cmp_scalar_tempfirst,
     "cmp_scalar_scalarfirst": cmp_scalar_scalarfirst,
     "cmp_two_temporal": cmp_two_temporal,
+    "two_temporal_scalar": two_temporal_scalar,
     "sprel_scalar_existing": sprel_scalar_existing,
     "temporal_unary_scalar": temporal_unary_scalar,
     "temporal_x_scalar": temporal_x_scalar,
