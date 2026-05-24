@@ -81,31 +81,14 @@ def operator_calls(root, streamable):
     return name2calls
 
 
-def systest_token(path):
+def _all_tokens(path):
+    """Every UPPER_SNAKE identifier called (followed by `(`) in a systest — the
+    candidate SQL function tokens the test exercises, in file order."""
+    out = []
     for line in open(path):
-        m = re.search(r"\b(TEMPORAL_[A-Z0-9_]+|[A-Z][A-Z0-9_]*_TGEO_GEO|[A-Z][A-Z0-9_]*_(EXTENT|UNION)|TGEO_AT_STBOX)\s*\(", line)
-        if m:
-            return m.group(1)
-    return None
-
-
-def build_token2name(root):
-    """Authoritative token -> LogicalFunction operator NAME, parsed from the
-    parser dispatch (case AntlrSQLLexer::<TOKEN>: … <Name>LogicalFunction(…))."""
-    t2n = {}
-    parser = os.path.join(root, "nes-sql-parser/src/AntlrSQLQueryPlanCreator.cpp")
-    if not os.path.exists(parser):
-        return t2n
-    cur = None
-    for line in open(parser):
-        mc = re.search(r"case AntlrSQLLexer::([A-Z0-9_]+):", line)
-        if mc:
-            cur = mc.group(1)
-        m = re.search(r"\b([A-Z][A-Za-z0-9]+)LogicalFunction\(", line)
-        if m and cur:
-            t2n[cur] = m.group(1)
-            cur = None
-    return t2n
+        for m in re.finditer(r"\b([A-Z][A-Z0-9_]{2,})\s*\(", line):
+            out.append(m.group(1))
+    return out
 
 
 def main():
@@ -121,8 +104,20 @@ def main():
 
     streamable = load_streamable(a.streamable)
     name2calls = operator_calls(a.root, streamable)
-    token2name = build_token2name(a.root)
     wired = set().union(*name2calls.values()) if name2calls else set()
+
+    # Map a systest's SQL token to its operator by normalizing both to
+    # underscore-free lowercase (TLENGTH_EXP -> tlengthexp; the operator key
+    # TLengthExpAggregation, minus its Aggregation suffix, -> tlengthexp). This
+    # covers every family (per-event, …_EXP, …_WKB, …_EXTENT/UNION, TNPOINT_…)
+    # without a per-family pattern — the parser-dispatch token map only captures
+    # per-event functions, not windowed aggregates.
+    def _norm(s):
+        return s.replace("_", "").lower()
+    norm2name = {}
+    for k in name2calls:
+        base = k[:-len("Aggregation")] if k.endswith("Aggregation") else k
+        norm2name[_norm(base)] = k
 
     passing = set()
     if a.passing and os.path.exists(a.passing):
@@ -137,12 +132,12 @@ def main():
             base = f[:-len(".test")]
             if passing and base not in passing:
                 continue
-            tok = systest_token(os.path.join(sysdir, f))
-            if not tok:
-                continue
-            name = token2name.get(tok)              # authoritative token -> operator
-            if name and name in name2calls:
-                proven |= name2calls[name]
+            # The first called UPPER_SNAKE token that resolves to an operator.
+            for cand in _all_tokens(os.path.join(sysdir, f)):
+                name = norm2name.get(_norm(cand))
+                if name:
+                    proven |= name2calls[name]
+                    break
 
     for fn in sorted(wired):
         print(f"{fn}\t{'proven' if fn in proven else 'wired'}")
