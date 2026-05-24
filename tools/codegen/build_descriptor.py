@@ -391,12 +391,21 @@ def two_temporal_scalar(fn, ret, args):
     rk = {"bool": "bool", "int": "int", "double": "double"}.get(ret)
     if not rk:
         return None
-    return {
+    # the meos_call's type may live outside meos.h/meos_geo.h
+    extra_headers = []
+    if "tnpoint" in fn:
+        extra_headers = ["meos_npoint.h"]
+    elif "tpose" in fn or "trgeometry" in fn:
+        extra_headers = ["meos_pose.h"]
+    d = {
         "nebula_name": pascal(fn), "sql_token": fn.upper(), "meos_call": fn,
         "build_generic": True, "input_type": "wkb_temporal", "return_kind": rk,
         "extra_args": [{"kind": "wkb_temporal"}],
         "comment_one_liner": f"Per-event {fn}: two hex-WKB temporal operands -> {rk}.",
     }
+    if extra_headers:
+        d["extra_headers"] = extra_headers
+    return d
 
 
 SHAPES = {
