@@ -2078,6 +2078,123 @@ PHYSICAL_CPP_TGEO_EXPAND_WKB = _swap_once(
     PHYSICAL_CPP_TGEO_EXPAND, _EXPAND_LOWER_SCALAR, _EXPAND_LOWER_WKB,
     "expand scalar lower -> value-output (hex-WKB) lower")
 
+# tnumber expandable value-output: same Temporal*-slot lower/reset/cleanup, but
+# the per-event instant is a tfloat ("value@ts" via tfloat_in) and the ctor takes
+# (value, ts). Derived from the tgeo expand-wkb template by swapping only the ctor
+# and lift (the rest — Temporal* slot, appendInstant, value-output finalize — is
+# input-shape-independent).
+_EXPAND_CTOR_TGEO = """\
+{nebula_name}AggregationPhysicalFunction::{nebula_name}AggregationPhysicalFunction(
+    DataType inputType,
+    DataType resultType,
+    PhysicalFunction lonFunctionParam,
+    PhysicalFunction latFunctionParam,
+    PhysicalFunction timestampFunctionParam,
+    Nautilus::Record::RecordFieldIdentifier resultFieldIdentifier,
+    std::shared_ptr<Nautilus::Interface::BufferRef::TupleBufferRef> bufferRef)
+    : AggregationPhysicalFunction(std::move(inputType), std::move(resultType), lonFunctionParam, std::move(resultFieldIdentifier))
+    , bufferRef(std::move(bufferRef))
+    , lonFunction(std::move(lonFunctionParam))
+    , latFunction(std::move(latFunctionParam))
+    , timestampFunction(std::move(timestampFunctionParam))
+{{
+}}"""
+_EXPAND_CTOR_TNUMBER = """\
+{nebula_name}AggregationPhysicalFunction::{nebula_name}AggregationPhysicalFunction(
+    DataType inputType,
+    DataType resultType,
+    PhysicalFunction valueFunctionParam,
+    PhysicalFunction timestampFunctionParam,
+    Nautilus::Record::RecordFieldIdentifier resultFieldIdentifier,
+    std::shared_ptr<Nautilus::Interface::BufferRef::TupleBufferRef> bufferRef)
+    : AggregationPhysicalFunction(std::move(inputType), std::move(resultType), valueFunctionParam, std::move(resultFieldIdentifier))
+    , bufferRef(std::move(bufferRef))
+    , valueFunction(std::move(valueFunctionParam))
+    , timestampFunction(std::move(timestampFunctionParam))
+{{
+}}"""
+_EXPAND_LIFT_TGEO = """\
+    auto lonValue = lonFunction.execute(record, pipelineMemoryProvider.arena);
+    auto latValue = latFunction.execute(record, pipelineMemoryProvider.arena);
+    auto timestampValue = timestampFunction.execute(record, pipelineMemoryProvider.arena);
+
+    auto lon = lonValue.cast<nautilus::val<double>>();
+    auto lat = latValue.cast<nautilus::val<double>>();
+    auto timestamp = timestampValue.cast<nautilus::val<int64_t>>();
+
+    nautilus::invoke(
+        +[](AggregationState* st, double lonVal, double latVal, int64_t tsVal) -> void
+        {{
+            MEOS::Meos::ensureMeosInitialized();
+            std::lock_guard<std::mutex> lock({mutex_name});
+            Temporal** slot = reinterpret_cast<Temporal**>(st);
+
+            long long sec = (tsVal > 1000000000000LL) ? (tsVal / 1000) : tsVal;
+            std::string ts = MEOS::Meos::convertSecondsToTimestamp(sec);
+            char wkt[120];
+            snprintf(wkt, sizeof(wkt), "SRID=4326;Point(%.6f %.6f)@%s", lonVal, latVal, ts.c_str());
+
+            // Public instant constructor: a single-instant tgeompoint Temporal.
+            Temporal* instTemp = tgeompoint_in(wkt);
+            if (!instTemp) {{
+                return;
+            }}
+            if (*slot == nullptr) {{
+                // First event: a 1-instant sequence; subsequent appendInstant calls
+                // grow it in place (expand=true doubles maxcount when full).
+                TInstant* arr[1];
+                arr[0] = (TInstant*) instTemp;
+                *slot = (Temporal*) tsequence_make((TInstant**) arr, 1, true, true, LINEAR, false);
+            }} else {{
+                *slot = temporal_append_tinstant(*slot, (const TInstant*) instTemp, LINEAR, 0.0, nullptr, true);
+            }}
+            free(instTemp);  // copied by tsequence_make / temporal_append_tinstant
+        }},
+        aggregationState,
+        lon,
+        lat,
+        timestamp);"""
+_EXPAND_LIFT_TNUMBER = """\
+    auto valueValue = valueFunction.execute(record, pipelineMemoryProvider.arena);
+    auto timestampValue = timestampFunction.execute(record, pipelineMemoryProvider.arena);
+
+    auto value = valueValue.cast<nautilus::val<double>>();
+    auto timestamp = timestampValue.cast<nautilus::val<int64_t>>();
+
+    nautilus::invoke(
+        +[](AggregationState* st, double valueVal, int64_t tsVal) -> void
+        {{
+            MEOS::Meos::ensureMeosInitialized();
+            std::lock_guard<std::mutex> lock({mutex_name});
+            Temporal** slot = reinterpret_cast<Temporal**>(st);
+
+            long long sec = (tsVal > 1000000000000LL) ? (tsVal / 1000) : tsVal;
+            std::string ts = MEOS::Meos::convertSecondsToTimestamp(sec);
+            char wkt[80];
+            snprintf(wkt, sizeof(wkt), "%.6f@%s", valueVal, ts.c_str());
+
+            // Public instant constructor: a single-instant tfloat Temporal.
+            Temporal* instTemp = tfloat_in(wkt);
+            if (!instTemp) {{
+                return;
+            }}
+            if (*slot == nullptr) {{
+                TInstant* arr[1];
+                arr[0] = (TInstant*) instTemp;
+                *slot = (Temporal*) tsequence_make((TInstant**) arr, 1, true, true, LINEAR, false);
+            }} else {{
+                *slot = temporal_append_tinstant(*slot, (const TInstant*) instTemp, LINEAR, 0.0, nullptr, true);
+            }}
+            free(instTemp);
+        }},
+        aggregationState,
+        value,
+        timestamp);"""
+
+PHYSICAL_CPP_TNUMBER_EXPAND_WKB = _swap_once(
+    _swap_once(PHYSICAL_CPP_TGEO_EXPAND_WKB, _EXPAND_CTOR_TGEO, _EXPAND_CTOR_TNUMBER, "expand ctor tgeo->tnumber"),
+    _EXPAND_LIFT_TGEO, _EXPAND_LIFT_TNUMBER, "expand lift tgeo->tnumber")
+
 
 # ===========================================================================
 # Shape dispatchers + emit_operator.
@@ -2097,6 +2214,8 @@ def physical_template_for(op):
         # Scalar-fold reuses the tnumber (value, ts) HPP but folds the field
         # directly through the MEOS extent transition fn (no string / no parse);
         # set-collect is the same shape with a Set state + a union finalfn.
+        if op.get("return_mode") == "expand_wkb":
+            return PHYSICAL_HPP_TNUMBER, PHYSICAL_CPP_TNUMBER_EXPAND_WKB
         if op.get("fold") == "scalar":
             return PHYSICAL_HPP_TNUMBER, PHYSICAL_CPP_SCALARFOLD
         if op.get("fold") == "set":
