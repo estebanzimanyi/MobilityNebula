@@ -191,6 +191,7 @@ Nautilus::Record TemporalTIntMinValueAggregationPhysicalFunction::lower(
                 return (int)0;
             }
 
+            MEOS::Meos::ensureMeosInitialized();
             std::lock_guard<std::mutex> lock(meos_temporaltintminvalue_mutex);
 
             Temporal* temp = tint_in(seqStr);

@@ -192,6 +192,7 @@ Nautilus::Record TnumberExtentAggregationPhysicalFunction::lower(
                 return (char*)nullptr;
             }
 
+            MEOS::Meos::ensureMeosInitialized();
             std::lock_guard<std::mutex> lock(meos_tnumberextent_mutex);
 
             Temporal* temp = tfloat_in(seqStr);

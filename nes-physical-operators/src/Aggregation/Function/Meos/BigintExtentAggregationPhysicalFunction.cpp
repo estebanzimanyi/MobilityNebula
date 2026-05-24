@@ -137,6 +137,7 @@ Nautilus::Record BigintExtentAggregationPhysicalFunction::lower(
         spanState = nautilus::invoke(
             +[](void* state, int64_t val) -> void*
             {
+                MEOS::Meos::ensureMeosInitialized();
                 std::lock_guard<std::mutex> lock(meos_bigintextent_mutex);
                 return (void*) bigint_extent_transfn(static_cast<Span*>(state), val);
             },
@@ -150,6 +151,7 @@ Nautilus::Record BigintExtentAggregationPhysicalFunction::lower(
             if (!state) {
                 return (char*)nullptr;
             }
+            MEOS::Meos::ensureMeosInitialized();
             std::lock_guard<std::mutex> lock(meos_bigintextent_mutex);
             Span* sp = static_cast<Span*>(state);
             char* out = bigintspan_out(sp);

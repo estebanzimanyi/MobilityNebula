@@ -137,6 +137,7 @@ Nautilus::Record TimestamptzUnionAggregationPhysicalFunction::lower(
         spanState = nautilus::invoke(
             +[](void* state, int64_t val) -> void*
             {
+                MEOS::Meos::ensureMeosInitialized();
                 std::lock_guard<std::mutex> lock(meos_timestamptzunion_mutex);
                 long long sec = (val > 1000000000000LL) ? (val / 1000) : val; TimestampTz ts = ((int64_t)sec - 946684800LL) * 1000000LL; return (void*) timestamptz_union_transfn(static_cast<Set*>(state), ts);
             },
@@ -150,6 +151,7 @@ Nautilus::Record TimestamptzUnionAggregationPhysicalFunction::lower(
             if (!state) {
                 return (char*)nullptr;
             }
+            MEOS::Meos::ensureMeosInitialized();
             std::lock_guard<std::mutex> lock(meos_timestamptzunion_mutex);
             // set_union_finalfn pfree()s the state internally and returns a new
             // Set, so the state must NOT be freed again here (double free).

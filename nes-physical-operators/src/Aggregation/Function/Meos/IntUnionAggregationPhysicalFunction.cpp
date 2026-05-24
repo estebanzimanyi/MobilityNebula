@@ -137,6 +137,7 @@ Nautilus::Record IntUnionAggregationPhysicalFunction::lower(
         spanState = nautilus::invoke(
             +[](void* state, int32_t val) -> void*
             {
+                MEOS::Meos::ensureMeosInitialized();
                 std::lock_guard<std::mutex> lock(meos_intunion_mutex);
                 return (void*) int_union_transfn(static_cast<Set*>(state), val);
             },
@@ -150,6 +151,7 @@ Nautilus::Record IntUnionAggregationPhysicalFunction::lower(
             if (!state) {
                 return (char*)nullptr;
             }
+            MEOS::Meos::ensureMeosInitialized();
             std::lock_guard<std::mutex> lock(meos_intunion_mutex);
             // set_union_finalfn pfree()s the state internally and returns a new
             // Set, so the state must NOT be freed again here (double free).

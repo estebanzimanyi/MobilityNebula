@@ -201,6 +201,7 @@ Nautilus::Record TrajectoryWkbAggregationPhysicalFunction::lower(
                 return (char*)nullptr;
             }
 
+            MEOS::Meos::ensureMeosInitialized();
             std::lock_guard<std::mutex> lock(meos_trajectorywkb_mutex);
 
             std::string trajString(trajStr);
