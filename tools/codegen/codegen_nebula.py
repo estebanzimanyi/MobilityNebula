@@ -3089,6 +3089,10 @@ def assemble_generic_physical(op):
     # Ordered (lambda-param) fields: primary input fields, then each extra arg's.
     fields = list(inp["fields"])
     headers = {"meos.h", inp["header"]}
+    # op-level extra headers (e.g. meos_npoint.h / meos_pose.h for a meos_call
+    # whose type lives outside meos.h/meos_geo.h).
+    for h in op.get("extra_headers", []):
+        headers.add(h)
     call_terms = ["temp"]
     parse_lines = []
     box_frees = []      # raw box/span literals to free after the MEOS call

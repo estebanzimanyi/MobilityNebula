@@ -7,7 +7,7 @@ surface is the **1,945** streamable MEOS public functions (tiers
 
 | Platform | **L3 CALLABLE** (binding invokes it, confirmed) | L2 wired-only (registered, not yet confirmed callable) | gap (streamable, not wired) |
 |---|---|---|---|
-| **NebulaStream** | **57 — 2.9%** | 327 — 16.8% | 1,561 — 80.3% |
+| **NebulaStream** | **59 — 3.0%** | 335 — 17.2% | 1,551 — 79.7% |
 | **Flink** | **1,945 — 100.0%** | 0 — 0.0% | 0 — 0.0% |
 | **Kafka** | **1,945 — 100.0%** | 0 — 0.0% | 0 — 0.0% |
 
@@ -94,10 +94,10 @@ production form; both serve the one scope.
   libmeos). The CI gate (`ci_gate.py` + `.github/workflows/streaming_parity_gate.yml`)
   holds the floor at 1,945 and blocks any regression or over-claim; the committed
   feed reproduces it without re-running the harness.
-- **NebulaStream: 384 / 1,945 wired and locally compile-verified.** The
+- **NebulaStream: 394 / 1,945 wired and locally compile-verified.** The
   generated `nes-{physical,logical}-operators` + `nes-sql-parser` libraries link
   clean in the `nebulastream/nes-development` dev image against the `libmeos`
-  under test; 57 are confirmed callable via systests that run end-to-end against
+  under test; 59 are confirmed callable via systests that run end-to-end against
   a local single-node worker (query plan serialized, deserialized, compiled, and
   executed; result matched against the value a faithful MEOS probe produces). The wired surface
   spans per-event operators over the tgeompoint/tcbuffer/tpose/tnumber families
@@ -152,8 +152,14 @@ production form; both serve the one scope.
     same) are wired the same way over two hex-WKB temporal operands (each
     `temporal_from_hexwkb`, freed) — `codegen_nebula`'s `wkb_temporal` extra-arg +
     the `two_temporal_scalar` classifier — the value/time counterpart of the STBox
-    predicates. The overall (all-vehicles) view is a derivation over the per-vehicle
-    aggregates, not a separate aggregate; `PAIR_MEETING` (`geog_dwithin`) and
+    predicates. The `tnpoint`-vs-`tnpoint` and `tpose`-vs-`tpose` value-comparison
+    predicates ride the same `two_temporal_scalar` path (its `extra_headers` pulls
+    `meos_npoint.h` / `meos_pose.h`): the ever/always equality tests
+    (`always_eq`/`always_ne`/`ever_eq`/`ever_ne`, `int` result over two
+    per-vehicle mini-trajectories) and the network-/pose-resolved nearest-approach
+    distance `nad_tnpoint_tnpoint` / `nad_tpose_tpose` — so two trains' route-bound
+    or pose-bound windows compare directly. The overall (all-vehicles) view is a
+    derivation over the per-vehicle aggregates, not a separate aggregate; `PAIR_MEETING` (`geog_dwithin`) and
     `CROSS_DISTANCE` (`nad_tgeo_tgeo`) are the BerlinMOD-scaffold single-aggregate
     convenience (one window over all vehicles, pairwise enumeration in `lower()`).
   - Not wired: the Set/Span/Box-input aggregation band, and the cross-vehicle
