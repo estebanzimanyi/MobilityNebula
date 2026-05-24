@@ -2199,6 +2199,53 @@ PHYSICAL_CPP_TNUMBER_EXPAND_WKB = _swap_once(
     _swap_once(PHYSICAL_CPP_TGEO_EXPAND_WKB, _EXPAND_CTOR_TGEO, _EXPAND_CTOR_TNUMBER, "expand ctor tgeo->tnumber"),
     _EXPAND_LIFT_TGEO, _EXPAND_LIFT_TNUMBER, "expand lift tgeo->tnumber")
 
+# tnpoint expandable value-output: reuses the 3-field tgeo HPP/parser/optimizer
+# (the 3 args are rid, frac, ts); only the lift (NPoint instant via tnpoint_in)
+# and the npoint include change. Wires tnpoint trajectory transforms over the
+# windowed tnpoint mini-series.
+_EXPAND_LIFT_TNPOINT = """\
+    auto ridValue = lonFunction.execute(record, pipelineMemoryProvider.arena);
+    auto fracValue = latFunction.execute(record, pipelineMemoryProvider.arena);
+    auto timestampValue = timestampFunction.execute(record, pipelineMemoryProvider.arena);
+
+    auto rid = ridValue.cast<nautilus::val<int64_t>>();
+    auto frac = fracValue.cast<nautilus::val<double>>();
+    auto timestamp = timestampValue.cast<nautilus::val<int64_t>>();
+
+    nautilus::invoke(
+        +[](AggregationState* st, int64_t ridVal, double fracVal, int64_t tsVal) -> void
+        {{
+            MEOS::Meos::ensureMeosInitialized();
+            std::lock_guard<std::mutex> lock({mutex_name});
+            Temporal** slot = reinterpret_cast<Temporal**>(st);
+
+            long long sec = (tsVal > 1000000000000LL) ? (tsVal / 1000) : tsVal;
+            std::string ts = MEOS::Meos::convertSecondsToTimestamp(sec);
+            char wkt[80];
+            snprintf(wkt, sizeof(wkt), "NPoint(%lld,%.6f)@%s", (long long) ridVal, fracVal, ts.c_str());
+
+            Temporal* instTemp = tnpoint_in(wkt);
+            if (!instTemp) {{
+                return;
+            }}
+            if (*slot == nullptr) {{
+                TInstant* arr[1];
+                arr[0] = (TInstant*) instTemp;
+                *slot = (Temporal*) tsequence_make((TInstant**) arr, 1, true, true, LINEAR, false);
+            }} else {{
+                *slot = temporal_append_tinstant(*slot, (const TInstant*) instTemp, LINEAR, 0.0, nullptr, true);
+            }}
+            free(instTemp);
+        }},
+        aggregationState,
+        rid,
+        frac,
+        timestamp);"""
+
+PHYSICAL_CPP_TNPOINT_EXPAND_WKB = _swap_once(
+    _swap_once(PHYSICAL_CPP_TGEO_EXPAND_WKB, _EXPAND_LIFT_TGEO, _EXPAND_LIFT_TNPOINT, "expand lift tgeo->tnpoint"),
+    "#include <meos_geo.h>", "#include <meos_geo.h>\n#include <meos_npoint.h>", "tnpoint include")
+
 
 # ===========================================================================
 # Shape dispatchers + emit_operator.
@@ -2213,6 +2260,8 @@ def physical_template_for(op):
             return PHYSICAL_HPP_TGEO, PHYSICAL_CPP_TGEO_EXPAND
         if op.get("return_mode") == "expand_wkb":
             return PHYSICAL_HPP_TGEO, PHYSICAL_CPP_TGEO_EXPAND_WKB
+        if op.get("return_mode") == "expand_wkb_tnpoint":
+            return PHYSICAL_HPP_TGEO, PHYSICAL_CPP_TNPOINT_EXPAND_WKB
         return PHYSICAL_HPP_TGEO, (PHYSICAL_CPP_TGEO_BOX if box else PHYSICAL_CPP_TGEO)
     if op["input_shape"] == "tnumber":
         # Scalar-fold reuses the tnumber (value, ts) HPP but folds the field

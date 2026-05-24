@@ -29,8 +29,12 @@ CALL_RE = re.compile(r"\b([a-z][a-z0-9_]*)\s*\(", )
 # arithmetic, accessors all qualify automatically, with no per-family regex to
 # maintain. Input constructors (tfloat_in, tint_in, tcbuffer_in, …) are NOT in
 # the streamable surface (io-meta) so they self-exclude. The two type-conversion
-# helpers below ARE streamable but are used here only as composition plumbing
-# (e.g. tpose_to_tpoint before a tgeo spatial-rel), so they are not the wired op.
+# helpers below ARE streamable: they are composition plumbing (and not the wired
+# op) ONLY when they co-occur with another streamable call in the same operator
+# (e.g. tpose_to_tpoint before a tgeo spatial-rel). When such a helper is an
+# operator's SOLE streamable call, the operator is a dedicated conversion (e.g.
+# TNPOINT_TO_TGEOMPOINT_EXP materializing a network-resolved trajectory) and the
+# helper IS its wired op — see operator_calls().
 CONVERSION_HELPERS = {"tpose_to_tpoint", "tnpoint_to_tgeompoint"}
 
 
@@ -56,10 +60,22 @@ def operator_calls(root, streamable):
             txt = open(os.path.join(full, f)).read()
             # find the MEOS backing call: the call assigned to result/returned
             calls = set()
+            helpers = set()
             for m in CALL_RE.finditer(txt):
                 fn = m.group(1)
-                if fn in streamable and fn not in CONVERSION_HELPERS:
-                    calls.add(fn)
+                if fn not in streamable:
+                    continue
+                (helpers if fn in CONVERSION_HELPERS else calls).add(fn)
+            # A conversion helper is plumbing and is dropped, EXCEPT when the
+            # operator is named for it (a dedicated conversion operator, e.g.
+            # TnpointToTgeompointExp -> tnpoint_to_tgeompoint): there the helper
+            # IS the operator's headline op. (The expand substrate's accumulator
+            # calls temporal_append_tinstant/temporal_merge co-occur in every
+            # aggregate, so co-occurrence alone cannot distinguish the two.)
+            snake = re.sub(r"(?<!^)(?=[A-Z])", "_", name).lower()
+            for h in helpers:
+                if snake == h or snake.startswith(h + "_"):
+                    calls.add(h)
             if calls:
                 name2calls[name] = calls
     return name2calls
