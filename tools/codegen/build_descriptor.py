@@ -408,11 +408,43 @@ def two_temporal_scalar(fn, ret, args):
     return d
 
 
+def two_temporal_temporal(fn, ret, args):
+    """Temporal* fn(const Temporal*, const Temporal*) over TWO temporal operands
+    carried as hex-WKB VARSIZED fields, returning a Temporal* serialized back to
+    hex-WKB VARSIZED — the cross-vehicle f(trajA, trajB) -> trajectory shape
+    (temporal distance / arithmetic / topology between two per-vehicle aggregate
+    outputs in a self-join). Both operands temporal_from_hexwkb-parsed and freed;
+    the result temporal_as_hexwkb-serialized into the arena and the MEOS result
+    freed. The output VARSIZED can itself feed another per-event MEOS operator."""
+    if len(args) != 2 or args[0] != "Temporal*" or args[1] != "Temporal*":
+        return None
+    if ret != "Temporal*":
+        return None
+    # the meos_call symbol may live outside meos.h/meos_geo.h
+    extra_headers = []
+    if "tcbuffer" in fn:
+        extra_headers = ["meos_cbuffer.h"]
+    elif "tnpoint" in fn:
+        extra_headers = ["meos_npoint.h"]
+    elif "tpose" in fn or "trgeometry" in fn:
+        extra_headers = ["meos_pose.h"]
+    d = {
+        "nebula_name": pascal(fn), "sql_token": fn.upper(), "meos_call": fn,
+        "build_generic": True, "input_type": "wkb_temporal", "return_kind": "wkb",
+        "extra_args": [{"kind": "wkb_temporal"}],
+        "comment_one_liner": f"Per-event {fn}: two hex-WKB temporal operands -> hex-WKB temporal.",
+    }
+    if extra_headers:
+        d["extra_headers"] = extra_headers
+    return d
+
+
 SHAPES = {
     "cmp_scalar_tempfirst": cmp_scalar_tempfirst,
     "cmp_scalar_scalarfirst": cmp_scalar_scalarfirst,
     "cmp_two_temporal": cmp_two_temporal,
     "two_temporal_scalar": two_temporal_scalar,
+    "two_temporal_temporal": two_temporal_temporal,
     "sprel_scalar_existing": sprel_scalar_existing,
     "temporal_unary_scalar": temporal_unary_scalar,
     "temporal_x_scalar": temporal_x_scalar,

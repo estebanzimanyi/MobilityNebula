@@ -7,7 +7,7 @@ surface is the **1,945** streamable MEOS public functions (tiers
 
 | Platform | **L3 CALLABLE** (binding invokes it, confirmed) | L2 wired-only (registered, not yet confirmed callable) | gap (streamable, not wired) |
 |---|---|---|---|
-| **NebulaStream** | **59 — 3.0%** | 335 — 17.2% | 1,551 — 79.7% |
+| **NebulaStream** | **61 — 3.1%** | 345 — 17.7% | 1,539 — 79.1% |
 | **Flink** | **1,945 — 100.0%** | 0 — 0.0% | 0 — 0.0% |
 | **Kafka** | **1,945 — 100.0%** | 0 — 0.0% | 0 — 0.0% |
 
@@ -94,10 +94,10 @@ production form; both serve the one scope.
   libmeos). The CI gate (`ci_gate.py` + `.github/workflows/streaming_parity_gate.yml`)
   holds the floor at 1,945 and blocks any regression or over-claim; the committed
   feed reproduces it without re-running the harness.
-- **NebulaStream: 394 / 1,945 wired and locally compile-verified.** The
+- **NebulaStream: 406 / 1,945 wired and locally compile-verified.** The
   generated `nes-{physical,logical}-operators` + `nes-sql-parser` libraries link
   clean in the `nebulastream/nes-development` dev image against the `libmeos`
-  under test; 59 are confirmed callable via systests that run end-to-end against
+  under test; 61 are confirmed callable via systests that run end-to-end against
   a local single-node worker (query plan serialized, deserialized, compiled, and
   executed; result matched against the value a faithful MEOS probe produces). The wired surface
   spans per-event operators over the tgeompoint/tcbuffer/tpose/tnumber families
@@ -162,8 +162,20 @@ production form; both serve the one scope.
     derivation over the per-vehicle aggregates, not a separate aggregate; `PAIR_MEETING` (`geog_dwithin`) and
     `CROSS_DISTANCE` (`nad_tgeo_tgeo`) are the BerlinMOD-scaffold single-aggregate
     convenience (one window over all vehicles, pairwise enumeration in `lower()`).
-  - Not wired: the Set/Span/Box-input aggregation band, and the cross-vehicle
-    `f(trajA, trajB)` family that returns a `Temporal*` rather than a scalar —
-    `tdistance_tgeo_tgeo`, `tcontains/tcovers/tdwithin_tgeo_tgeo`,
-    `add/sub/mul/div_tnumber_tnumber` (27), `TInstant*` `nai_*` (4), and
-    `GSERIALIZED*` `shortestline_*` (4).
+  - **Cross-vehicle `f(trajA, trajB) -> Temporal*`.** The temporal-valued
+    cross-vehicle combinators are wired as per-event operators over two hex-WKB
+    temporal operands that serialize the resulting `Temporal*` back to a hex-WKB
+    VARSIZED field (`temporal_from_hexwkb` on each input, `temporal_as_hexwkb` on
+    the result into an arena-allocated buffer) — `codegen_nebula`'s `wkb` return
+    mode + the `two_temporal_temporal` classifier. The temporal distance between
+    two trajectories `tdistance_{tgeo,tnumber,tcbuffer,tnpoint,tpose}_*`, the
+    temporal topology `tcontains`/`tcovers` for `tgeo`/`tcbuffer`, and the
+    pointwise arithmetic `add`/`sub`/`mult`/`div_tnumber_tnumber` each take two
+    per-vehicle aggregate outputs and produce a new temporal that itself feeds the
+    next per-event operator. `tdistance_tgeo_tgeo` and `add_tnumber_tnumber` carry
+    systests that round-trip the VARSIZED hex-WKB result against a faithful MEOS
+    probe.
+  - Not wired: the Set/Span/Box-input aggregation band, and the remaining
+    cross-vehicle shapes that return a non-`Temporal*` value or carry an extra
+    argument — `tdwithin_tgeo_tgeo` (extra `double` distance), the `TInstant*`
+    `nai_*` (4), and the `GSERIALIZED*` `shortestline_*` (4).
