@@ -151,8 +151,9 @@ Nautilus::Record BigintUnionAggregationPhysicalFunction::lower(
                 return (char*)nullptr;
             }
             std::lock_guard<std::mutex> lock(meos_bigintunion_mutex);
+            // set_union_finalfn pfree()s the state internally and returns a new
+            // Set, so the state must NOT be freed again here (double free).
             Set* sp = set_union_finalfn(static_cast<Set*>(state));
-            free(state);
             if (!sp) {
                 return (char*)nullptr;
             }

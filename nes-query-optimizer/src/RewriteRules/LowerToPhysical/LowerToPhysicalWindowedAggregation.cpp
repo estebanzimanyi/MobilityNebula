@@ -896,11 +896,11 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             continue;
         }
         /* END CODEGEN AGGREGATION GLUE: TemporalTPointIsSimple (optimizer lowering) */
-        /* BEGIN CODEGEN AGGREGATION GLUE: TSPATIAL_EXTENT (optimizer lowering) */
-        if (name == std::string_view("TSPATIAL_EXTENT"))
+        /* BEGIN CODEGEN AGGREGATION GLUE: TspatialExtent (optimizer lowering) */
+        if (name == std::string_view("TspatialExtent"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<TspatialExtentAggregationLogicalFunction>(descriptor);
-            INVARIANT(specificDescriptor != nullptr, "Expected TspatialExtentAggregationLogicalFunction for TSPATIAL_EXTENT");
+            INVARIANT(specificDescriptor != nullptr, "Expected TspatialExtentAggregationLogicalFunction for TspatialExtent");
 
             auto lonPF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getLonField());
             auto latPF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getLatField());
@@ -923,13 +923,13 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: TSPATIAL_EXTENT (optimizer lowering) */
+        /* END CODEGEN AGGREGATION GLUE: TspatialExtent (optimizer lowering) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: TNUMBER_EXTENT (optimizer lowering) */
-        if (name == std::string_view("TNUMBER_EXTENT"))
+        /* BEGIN CODEGEN AGGREGATION GLUE: TnumberExtent (optimizer lowering) */
+        if (name == std::string_view("TnumberExtent"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<TnumberExtentAggregationLogicalFunction>(descriptor);
-            INVARIANT(specificDescriptor != nullptr, "Expected TnumberExtentAggregationLogicalFunction for TNUMBER_EXTENT");
+            INVARIANT(specificDescriptor != nullptr, "Expected TnumberExtentAggregationLogicalFunction for TnumberExtent");
 
             auto valuePF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getValueField());
             auto tsPF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getTimestampField());
@@ -949,12 +949,12 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: TNUMBER_EXTENT (optimizer lowering) */
-        /* BEGIN CODEGEN AGGREGATION GLUE: FLOAT_EXTENT (optimizer lowering) */
-        if (name == std::string_view("FLOAT_EXTENT"))
+        /* END CODEGEN AGGREGATION GLUE: TnumberExtent (optimizer lowering) */
+        /* BEGIN CODEGEN AGGREGATION GLUE: FloatExtent (optimizer lowering) */
+        if (name == std::string_view("FloatExtent"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<FloatExtentAggregationLogicalFunction>(descriptor);
-            INVARIANT(specificDescriptor != nullptr, "Expected FloatExtentAggregationLogicalFunction for FLOAT_EXTENT");
+            INVARIANT(specificDescriptor != nullptr, "Expected FloatExtentAggregationLogicalFunction for FloatExtent");
 
             auto valuePF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getValueField());
             auto tsPF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getTimestampField());
@@ -974,13 +974,13 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: FLOAT_EXTENT (optimizer lowering) */
+        /* END CODEGEN AGGREGATION GLUE: FloatExtent (optimizer lowering) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: INT_EXTENT (optimizer lowering) */
-        if (name == std::string_view("INT_EXTENT"))
+        /* BEGIN CODEGEN AGGREGATION GLUE: IntExtent (optimizer lowering) */
+        if (name == std::string_view("IntExtent"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<IntExtentAggregationLogicalFunction>(descriptor);
-            INVARIANT(specificDescriptor != nullptr, "Expected IntExtentAggregationLogicalFunction for INT_EXTENT");
+            INVARIANT(specificDescriptor != nullptr, "Expected IntExtentAggregationLogicalFunction for IntExtent");
 
             auto valuePF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getValueField());
             auto tsPF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getTimestampField());
@@ -1000,13 +1000,13 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: INT_EXTENT (optimizer lowering) */
+        /* END CODEGEN AGGREGATION GLUE: IntExtent (optimizer lowering) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: BIGINT_EXTENT (optimizer lowering) */
-        if (name == std::string_view("BIGINT_EXTENT"))
+        /* BEGIN CODEGEN AGGREGATION GLUE: BigintExtent (optimizer lowering) */
+        if (name == std::string_view("BigintExtent"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<BigintExtentAggregationLogicalFunction>(descriptor);
-            INVARIANT(specificDescriptor != nullptr, "Expected BigintExtentAggregationLogicalFunction for BIGINT_EXTENT");
+            INVARIANT(specificDescriptor != nullptr, "Expected BigintExtentAggregationLogicalFunction for BigintExtent");
 
             auto valuePF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getValueField());
             auto tsPF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getTimestampField());
@@ -1026,13 +1026,13 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: BIGINT_EXTENT (optimizer lowering) */
+        /* END CODEGEN AGGREGATION GLUE: BigintExtent (optimizer lowering) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: TIMESTAMPTZ_EXTENT (optimizer lowering) */
-        if (name == std::string_view("TIMESTAMPTZ_EXTENT"))
+        /* BEGIN CODEGEN AGGREGATION GLUE: TimestamptzExtent (optimizer lowering) */
+        if (name == std::string_view("TimestamptzExtent"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<TimestamptzExtentAggregationLogicalFunction>(descriptor);
-            INVARIANT(specificDescriptor != nullptr, "Expected TimestamptzExtentAggregationLogicalFunction for TIMESTAMPTZ_EXTENT");
+            INVARIANT(specificDescriptor != nullptr, "Expected TimestamptzExtentAggregationLogicalFunction for TimestamptzExtent");
 
             auto valuePF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getValueField());
             auto tsPF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getTimestampField());
@@ -1052,12 +1052,12 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: TIMESTAMPTZ_EXTENT (optimizer lowering) */
-        /* BEGIN CODEGEN AGGREGATION GLUE: FLOAT_UNION (optimizer lowering) */
-        if (name == std::string_view("FLOAT_UNION"))
+        /* END CODEGEN AGGREGATION GLUE: TimestamptzExtent (optimizer lowering) */
+        /* BEGIN CODEGEN AGGREGATION GLUE: FloatUnion (optimizer lowering) */
+        if (name == std::string_view("FloatUnion"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<FloatUnionAggregationLogicalFunction>(descriptor);
-            INVARIANT(specificDescriptor != nullptr, "Expected FloatUnionAggregationLogicalFunction for FLOAT_UNION");
+            INVARIANT(specificDescriptor != nullptr, "Expected FloatUnionAggregationLogicalFunction for FloatUnion");
 
             auto valuePF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getValueField());
             auto tsPF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getTimestampField());
@@ -1077,13 +1077,13 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: FLOAT_UNION (optimizer lowering) */
+        /* END CODEGEN AGGREGATION GLUE: FloatUnion (optimizer lowering) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: INT_UNION (optimizer lowering) */
-        if (name == std::string_view("INT_UNION"))
+        /* BEGIN CODEGEN AGGREGATION GLUE: IntUnion (optimizer lowering) */
+        if (name == std::string_view("IntUnion"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<IntUnionAggregationLogicalFunction>(descriptor);
-            INVARIANT(specificDescriptor != nullptr, "Expected IntUnionAggregationLogicalFunction for INT_UNION");
+            INVARIANT(specificDescriptor != nullptr, "Expected IntUnionAggregationLogicalFunction for IntUnion");
 
             auto valuePF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getValueField());
             auto tsPF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getTimestampField());
@@ -1103,13 +1103,13 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: INT_UNION (optimizer lowering) */
+        /* END CODEGEN AGGREGATION GLUE: IntUnion (optimizer lowering) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: BIGINT_UNION (optimizer lowering) */
-        if (name == std::string_view("BIGINT_UNION"))
+        /* BEGIN CODEGEN AGGREGATION GLUE: BigintUnion (optimizer lowering) */
+        if (name == std::string_view("BigintUnion"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<BigintUnionAggregationLogicalFunction>(descriptor);
-            INVARIANT(specificDescriptor != nullptr, "Expected BigintUnionAggregationLogicalFunction for BIGINT_UNION");
+            INVARIANT(specificDescriptor != nullptr, "Expected BigintUnionAggregationLogicalFunction for BigintUnion");
 
             auto valuePF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getValueField());
             auto tsPF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getTimestampField());
@@ -1129,13 +1129,13 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: BIGINT_UNION (optimizer lowering) */
+        /* END CODEGEN AGGREGATION GLUE: BigintUnion (optimizer lowering) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: TIMESTAMPTZ_UNION (optimizer lowering) */
-        if (name == std::string_view("TIMESTAMPTZ_UNION"))
+        /* BEGIN CODEGEN AGGREGATION GLUE: TimestamptzUnion (optimizer lowering) */
+        if (name == std::string_view("TimestamptzUnion"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<TimestamptzUnionAggregationLogicalFunction>(descriptor);
-            INVARIANT(specificDescriptor != nullptr, "Expected TimestamptzUnionAggregationLogicalFunction for TIMESTAMPTZ_UNION");
+            INVARIANT(specificDescriptor != nullptr, "Expected TimestamptzUnionAggregationLogicalFunction for TimestamptzUnion");
 
             auto valuePF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getValueField());
             auto tsPF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getTimestampField());
@@ -1155,12 +1155,12 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: TIMESTAMPTZ_UNION (optimizer lowering) */
-        /* BEGIN CODEGEN AGGREGATION GLUE: TRAJECTORY_WKB (optimizer lowering) */
-        if (name == std::string_view("TRAJECTORY_WKB"))
+        /* END CODEGEN AGGREGATION GLUE: TimestamptzUnion (optimizer lowering) */
+        /* BEGIN CODEGEN AGGREGATION GLUE: TrajectoryWkb (optimizer lowering) */
+        if (name == std::string_view("TrajectoryWkb"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<TrajectoryWkbAggregationLogicalFunction>(descriptor);
-            INVARIANT(specificDescriptor != nullptr, "Expected TrajectoryWkbAggregationLogicalFunction for TRAJECTORY_WKB");
+            INVARIANT(specificDescriptor != nullptr, "Expected TrajectoryWkbAggregationLogicalFunction for TrajectoryWkb");
 
             auto lonPF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getLonField());
             auto latPF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getLatField());
@@ -1183,9 +1183,9 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: TRAJECTORY_WKB (optimizer lowering) */
+        /* END CODEGEN AGGREGATION GLUE: TrajectoryWkb (optimizer lowering) */
         /* BEGIN CODEGEN AGGREGATION GLUE: TLENGTH_EXP (optimizer lowering) */
-        if (name == std::string_view("TLENGTH_EXP"))
+        if (name == std::string_view("TLengthExp"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<TLengthExpAggregationLogicalFunction>(descriptor);
             INVARIANT(specificDescriptor != nullptr, "Expected TLengthExpAggregationLogicalFunction for TLENGTH_EXP");
@@ -1212,11 +1212,11 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             continue;
         }
         /* END CODEGEN AGGREGATION GLUE: TLENGTH_EXP (optimizer lowering) */
-        /* BEGIN CODEGEN AGGREGATION GLUE: TGEO_CENTROID_EXP (optimizer lowering) */
-        if (name == std::string_view("TGEO_CENTROID_EXP"))
+        /* BEGIN CODEGEN AGGREGATION GLUE: TgeoCentroidExp (optimizer lowering) */
+        if (name == std::string_view("TgeoCentroidExp"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<TgeoCentroidExpAggregationLogicalFunction>(descriptor);
-            INVARIANT(specificDescriptor != nullptr, "Expected TgeoCentroidExpAggregationLogicalFunction for TGEO_CENTROID_EXP");
+            INVARIANT(specificDescriptor != nullptr, "Expected TgeoCentroidExpAggregationLogicalFunction for TgeoCentroidExp");
 
             auto lonPF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getLonField());
             auto latPF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getLatField());
@@ -1239,13 +1239,13 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: TGEO_CENTROID_EXP (optimizer lowering) */
+        /* END CODEGEN AGGREGATION GLUE: TgeoCentroidExp (optimizer lowering) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: TPOINT_AZIMUTH_EXP (optimizer lowering) */
-        if (name == std::string_view("TPOINT_AZIMUTH_EXP"))
+        /* BEGIN CODEGEN AGGREGATION GLUE: TpointAzimuthExp (optimizer lowering) */
+        if (name == std::string_view("TpointAzimuthExp"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<TpointAzimuthExpAggregationLogicalFunction>(descriptor);
-            INVARIANT(specificDescriptor != nullptr, "Expected TpointAzimuthExpAggregationLogicalFunction for TPOINT_AZIMUTH_EXP");
+            INVARIANT(specificDescriptor != nullptr, "Expected TpointAzimuthExpAggregationLogicalFunction for TpointAzimuthExp");
 
             auto lonPF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getLonField());
             auto latPF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getLatField());
@@ -1268,13 +1268,13 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: TPOINT_AZIMUTH_EXP (optimizer lowering) */
+        /* END CODEGEN AGGREGATION GLUE: TpointAzimuthExp (optimizer lowering) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: TPOINT_ANGULAR_DIFFERENCE_EXP (optimizer lowering) */
-        if (name == std::string_view("TPOINT_ANGULAR_DIFFERENCE_EXP"))
+        /* BEGIN CODEGEN AGGREGATION GLUE: TpointAngularDifferenceExp (optimizer lowering) */
+        if (name == std::string_view("TpointAngularDifferenceExp"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<TpointAngularDifferenceExpAggregationLogicalFunction>(descriptor);
-            INVARIANT(specificDescriptor != nullptr, "Expected TpointAngularDifferenceExpAggregationLogicalFunction for TPOINT_ANGULAR_DIFFERENCE_EXP");
+            INVARIANT(specificDescriptor != nullptr, "Expected TpointAngularDifferenceExpAggregationLogicalFunction for TpointAngularDifferenceExp");
 
             auto lonPF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getLonField());
             auto latPF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getLatField());
@@ -1297,13 +1297,13 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: TPOINT_ANGULAR_DIFFERENCE_EXP (optimizer lowering) */
+        /* END CODEGEN AGGREGATION GLUE: TpointAngularDifferenceExp (optimizer lowering) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: TGEOMPOINT_TO_TGEOMETRY_EXP (optimizer lowering) */
-        if (name == std::string_view("TGEOMPOINT_TO_TGEOMETRY_EXP"))
+        /* BEGIN CODEGEN AGGREGATION GLUE: TgeompointToTgeometryExp (optimizer lowering) */
+        if (name == std::string_view("TgeompointToTgeometryExp"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<TgeompointToTgeometryExpAggregationLogicalFunction>(descriptor);
-            INVARIANT(specificDescriptor != nullptr, "Expected TgeompointToTgeometryExpAggregationLogicalFunction for TGEOMPOINT_TO_TGEOMETRY_EXP");
+            INVARIANT(specificDescriptor != nullptr, "Expected TgeompointToTgeometryExpAggregationLogicalFunction for TgeompointToTgeometryExp");
 
             auto lonPF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getLonField());
             auto latPF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getLatField());
@@ -1326,13 +1326,13 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: TGEOMPOINT_TO_TGEOMETRY_EXP (optimizer lowering) */
+        /* END CODEGEN AGGREGATION GLUE: TgeompointToTgeometryExp (optimizer lowering) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: TEMPORAL_COPY_EXP (optimizer lowering) */
-        if (name == std::string_view("TEMPORAL_COPY_EXP"))
+        /* BEGIN CODEGEN AGGREGATION GLUE: TemporalCopyExp (optimizer lowering) */
+        if (name == std::string_view("TemporalCopyExp"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<TemporalCopyExpAggregationLogicalFunction>(descriptor);
-            INVARIANT(specificDescriptor != nullptr, "Expected TemporalCopyExpAggregationLogicalFunction for TEMPORAL_COPY_EXP");
+            INVARIANT(specificDescriptor != nullptr, "Expected TemporalCopyExpAggregationLogicalFunction for TemporalCopyExp");
 
             auto lonPF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getLonField());
             auto latPF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getLatField());
@@ -1355,12 +1355,12 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: TEMPORAL_COPY_EXP (optimizer lowering) */
-        /* BEGIN CODEGEN AGGREGATION GLUE: TNUMBER_ABS_EXP (optimizer lowering) */
-        if (name == std::string_view("TNUMBER_ABS_EXP"))
+        /* END CODEGEN AGGREGATION GLUE: TemporalCopyExp (optimizer lowering) */
+        /* BEGIN CODEGEN AGGREGATION GLUE: TnumberAbsExp (optimizer lowering) */
+        if (name == std::string_view("TnumberAbsExp"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<TnumberAbsExpAggregationLogicalFunction>(descriptor);
-            INVARIANT(specificDescriptor != nullptr, "Expected TnumberAbsExpAggregationLogicalFunction for TNUMBER_ABS_EXP");
+            INVARIANT(specificDescriptor != nullptr, "Expected TnumberAbsExpAggregationLogicalFunction for TnumberAbsExp");
 
             auto valuePF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getValueField());
             auto tsPF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getTimestampField());
@@ -1380,13 +1380,13 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: TNUMBER_ABS_EXP (optimizer lowering) */
+        /* END CODEGEN AGGREGATION GLUE: TnumberAbsExp (optimizer lowering) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: TNUMBER_DELTA_VALUE_EXP (optimizer lowering) */
-        if (name == std::string_view("TNUMBER_DELTA_VALUE_EXP"))
+        /* BEGIN CODEGEN AGGREGATION GLUE: TnumberDeltaValueExp (optimizer lowering) */
+        if (name == std::string_view("TnumberDeltaValueExp"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<TnumberDeltaValueExpAggregationLogicalFunction>(descriptor);
-            INVARIANT(specificDescriptor != nullptr, "Expected TnumberDeltaValueExpAggregationLogicalFunction for TNUMBER_DELTA_VALUE_EXP");
+            INVARIANT(specificDescriptor != nullptr, "Expected TnumberDeltaValueExpAggregationLogicalFunction for TnumberDeltaValueExp");
 
             auto valuePF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getValueField());
             auto tsPF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getTimestampField());
@@ -1406,13 +1406,13 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: TNUMBER_DELTA_VALUE_EXP (optimizer lowering) */
+        /* END CODEGEN AGGREGATION GLUE: TnumberDeltaValueExp (optimizer lowering) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: TNUMBER_ANGULAR_DIFFERENCE_EXP (optimizer lowering) */
-        if (name == std::string_view("TNUMBER_ANGULAR_DIFFERENCE_EXP"))
+        /* BEGIN CODEGEN AGGREGATION GLUE: TnumberAngularDifferenceExp (optimizer lowering) */
+        if (name == std::string_view("TnumberAngularDifferenceExp"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<TnumberAngularDifferenceExpAggregationLogicalFunction>(descriptor);
-            INVARIANT(specificDescriptor != nullptr, "Expected TnumberAngularDifferenceExpAggregationLogicalFunction for TNUMBER_ANGULAR_DIFFERENCE_EXP");
+            INVARIANT(specificDescriptor != nullptr, "Expected TnumberAngularDifferenceExpAggregationLogicalFunction for TnumberAngularDifferenceExp");
 
             auto valuePF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getValueField());
             auto tsPF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getTimestampField());
@@ -1432,13 +1432,13 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: TNUMBER_ANGULAR_DIFFERENCE_EXP (optimizer lowering) */
+        /* END CODEGEN AGGREGATION GLUE: TnumberAngularDifferenceExp (optimizer lowering) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: TEMPORAL_DERIVATIVE_EXP (optimizer lowering) */
-        if (name == std::string_view("TEMPORAL_DERIVATIVE_EXP"))
+        /* BEGIN CODEGEN AGGREGATION GLUE: TemporalDerivativeExp (optimizer lowering) */
+        if (name == std::string_view("TemporalDerivativeExp"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<TemporalDerivativeExpAggregationLogicalFunction>(descriptor);
-            INVARIANT(specificDescriptor != nullptr, "Expected TemporalDerivativeExpAggregationLogicalFunction for TEMPORAL_DERIVATIVE_EXP");
+            INVARIANT(specificDescriptor != nullptr, "Expected TemporalDerivativeExpAggregationLogicalFunction for TemporalDerivativeExp");
 
             auto valuePF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getValueField());
             auto tsPF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getTimestampField());
@@ -1458,13 +1458,13 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: TEMPORAL_DERIVATIVE_EXP (optimizer lowering) */
+        /* END CODEGEN AGGREGATION GLUE: TemporalDerivativeExp (optimizer lowering) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: TEMPORAL_AT_MAX_EXP (optimizer lowering) */
-        if (name == std::string_view("TEMPORAL_AT_MAX_EXP"))
+        /* BEGIN CODEGEN AGGREGATION GLUE: TemporalAtMaxExp (optimizer lowering) */
+        if (name == std::string_view("TemporalAtMaxExp"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<TemporalAtMaxExpAggregationLogicalFunction>(descriptor);
-            INVARIANT(specificDescriptor != nullptr, "Expected TemporalAtMaxExpAggregationLogicalFunction for TEMPORAL_AT_MAX_EXP");
+            INVARIANT(specificDescriptor != nullptr, "Expected TemporalAtMaxExpAggregationLogicalFunction for TemporalAtMaxExp");
 
             auto valuePF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getValueField());
             auto tsPF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getTimestampField());
@@ -1484,13 +1484,13 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: TEMPORAL_AT_MAX_EXP (optimizer lowering) */
+        /* END CODEGEN AGGREGATION GLUE: TemporalAtMaxExp (optimizer lowering) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: TEMPORAL_AT_MIN_EXP (optimizer lowering) */
-        if (name == std::string_view("TEMPORAL_AT_MIN_EXP"))
+        /* BEGIN CODEGEN AGGREGATION GLUE: TemporalAtMinExp (optimizer lowering) */
+        if (name == std::string_view("TemporalAtMinExp"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<TemporalAtMinExpAggregationLogicalFunction>(descriptor);
-            INVARIANT(specificDescriptor != nullptr, "Expected TemporalAtMinExpAggregationLogicalFunction for TEMPORAL_AT_MIN_EXP");
+            INVARIANT(specificDescriptor != nullptr, "Expected TemporalAtMinExpAggregationLogicalFunction for TemporalAtMinExp");
 
             auto valuePF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getValueField());
             auto tsPF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getTimestampField());
@@ -1510,13 +1510,13 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: TEMPORAL_AT_MIN_EXP (optimizer lowering) */
+        /* END CODEGEN AGGREGATION GLUE: TemporalAtMinExp (optimizer lowering) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: TEMPORAL_MINUS_MAX_EXP (optimizer lowering) */
-        if (name == std::string_view("TEMPORAL_MINUS_MAX_EXP"))
+        /* BEGIN CODEGEN AGGREGATION GLUE: TemporalMinusMaxExp (optimizer lowering) */
+        if (name == std::string_view("TemporalMinusMaxExp"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<TemporalMinusMaxExpAggregationLogicalFunction>(descriptor);
-            INVARIANT(specificDescriptor != nullptr, "Expected TemporalMinusMaxExpAggregationLogicalFunction for TEMPORAL_MINUS_MAX_EXP");
+            INVARIANT(specificDescriptor != nullptr, "Expected TemporalMinusMaxExpAggregationLogicalFunction for TemporalMinusMaxExp");
 
             auto valuePF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getValueField());
             auto tsPF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getTimestampField());
@@ -1536,13 +1536,13 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: TEMPORAL_MINUS_MAX_EXP (optimizer lowering) */
+        /* END CODEGEN AGGREGATION GLUE: TemporalMinusMaxExp (optimizer lowering) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: TEMPORAL_MINUS_MIN_EXP (optimizer lowering) */
-        if (name == std::string_view("TEMPORAL_MINUS_MIN_EXP"))
+        /* BEGIN CODEGEN AGGREGATION GLUE: TemporalMinusMinExp (optimizer lowering) */
+        if (name == std::string_view("TemporalMinusMinExp"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<TemporalMinusMinExpAggregationLogicalFunction>(descriptor);
-            INVARIANT(specificDescriptor != nullptr, "Expected TemporalMinusMinExpAggregationLogicalFunction for TEMPORAL_MINUS_MIN_EXP");
+            INVARIANT(specificDescriptor != nullptr, "Expected TemporalMinusMinExpAggregationLogicalFunction for TemporalMinusMinExp");
 
             auto valuePF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getValueField());
             auto tsPF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getTimestampField());
@@ -1562,7 +1562,10 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: TEMPORAL_MINUS_MIN_EXP (optimizer lowering) */
+        /* END CODEGEN AGGREGATION GLUE: TemporalMinusMinExp (optimizer lowering) */
+
+
+
 
 
 

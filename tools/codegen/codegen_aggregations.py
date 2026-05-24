@@ -404,10 +404,13 @@ NES::SerializableAggregationFunction {nebula_name}AggregationLogicalFunction::se
 AggregationLogicalFunctionRegistryReturnType AggregationLogicalFunctionGeneratedRegistrar::Register{nebula_name}AggregationLogicalFunction(
     AggregationLogicalFunctionRegistryArguments arguments)
 {{
-    if (arguments.fields.size() == 3)
+    // serializeTemporalSequence only has a 4-field (lon, lat, ts, as) form, so
+    // the two-field (value, ts) shape packs the value field twice; fields[2] is
+    // that duplicate and is ignored here — the alias is fields[3].
+    if (arguments.fields.size() == 4)
     {{
         auto ptr = std::make_shared<{nebula_name}AggregationLogicalFunction>(
-            arguments.fields[0], arguments.fields[1], arguments.fields[2]);
+            arguments.fields[0], arguments.fields[1], arguments.fields[3]);
         return ptr;
     }}
     throw CannotDeserialize(
@@ -1829,8 +1832,9 @@ _SCALARFOLD_SERIALIZE_SET = """\
                 return (char*)nullptr;
             }}
             std::lock_guard<std::mutex> lock({mutex_name});
+            // set_union_finalfn pfree()s the state internally and returns a new
+            // Set, so the state must NOT be freed again here (double free).
             Set* sp = {finalfn}(static_cast<Set*>(state));
-            free(state);
             if (!sp) {{
                 return (char*)nullptr;
             }}
@@ -2615,6 +2619,19 @@ def main():
     with open(args.input) as f:
         config = json.load(f)
     operators = config["operators"]
+
+    # The serialized aggregation type (NAME), the optimizer-lowering match, and
+    # the registry key must be the same string for the query plan to round-trip
+    # (serialize set_type(NAME) -> worker create(type) -> registry key). The
+    # registry key is the add_plugin target = nebula_name (PascalCase), so
+    # class_name_token (which drives NAME + the optimizer match) MUST equal
+    # nebula_name. Earlier specs set it to the SQL token (UPPER_SNAKE), which
+    # made create(type) miss the registry and throw UnknownLogicalOperator at
+    # deserialize. The SQL spelling lives in sql_token (lexer/parser); it never
+    # belongs in NAME. Normalize here so a stray spec value cannot reintroduce
+    # the mismatch.
+    for op in operators:
+        op["class_name_token"] = op["nebula_name"]
 
     output_root = Path(args.output_root).resolve()
     if not (output_root / "nes-logical-operators").exists():
