@@ -263,8 +263,11 @@ tbool_start_value	wired
 tbool_to_tint	wired
 tcbuffer_to_tfloat	wired
 temporal_append_tinstant	wired
+temporal_at_max	wired
+temporal_at_min	wired
 temporal_cmp	wired
 temporal_copy	wired
+temporal_derivative	wired
 temporal_dyntimewarp_distance	wired
 temporal_end_timestamptz	wired
 temporal_eq	wired
@@ -276,6 +279,8 @@ temporal_le	wired
 temporal_lower_inc	wired
 temporal_lt	wired
 temporal_merge	wired
+temporal_minus_max	wired
+temporal_minus_min	wired
 temporal_ne	wired
 temporal_num_instants	wired
 temporal_num_sequences	wired
@@ -305,7 +310,10 @@ tint_min_value	wired
 tint_start_value	wired
 tint_to_tfloat	wired
 tnpoint_length	wired
+tnumber_abs	wired
+tnumber_angular_difference	wired
 tnumber_avg_value	wired
+tnumber_delta_value	wired
 tnumber_extent_transfn	wired
 tnumber_integral	wired
 tnumber_twavg	wired

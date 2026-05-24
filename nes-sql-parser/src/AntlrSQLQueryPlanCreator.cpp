@@ -105,6 +105,14 @@
 #include <Operators/Windows/Aggregations/Meos/TpointAngularDifferenceExpAggregationLogicalFunction.hpp>
 #include <Operators/Windows/Aggregations/Meos/TgeompointToTgeometryExpAggregationLogicalFunction.hpp>
 #include <Operators/Windows/Aggregations/Meos/TemporalCopyExpAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TnumberAbsExpAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TnumberDeltaValueExpAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TnumberAngularDifferenceExpAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TemporalDerivativeExpAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TemporalAtMaxExpAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TemporalAtMinExpAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TemporalMinusMaxExpAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TemporalMinusMinExpAggregationLogicalFunction.hpp>
 #include <Functions/Meos/TemporalIntersectsGeometryLogicalFunction.hpp>
 #include <Functions/Meos/TemporalAIntersectsGeometryLogicalFunction.hpp>
 #include <Functions/Meos/TemporalEDWithinGeometryLogicalFunction.hpp>
@@ -11463,6 +11471,206 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             }
             break;
         /* END CODEGEN AGGREGATION GLUE: TEMPORAL_COPY_EXP (case-switch) */
+        /* BEGIN CODEGEN AGGREGATION GLUE: TNUMBER_ABS_EXP (case-switch) */
+        case AntlrSQLLexer::TNUMBER_ABS_EXP:
+            // Windowed tnumber_abs over the expandable tfloat mini-series, emitted as hex-WKB.
+            if (helpers.top().functionBuilder.size() != 2) {
+                throw InvalidQuerySyntax("TNUMBER_ABS_EXP requires exactly two arguments (value, timestamp), but got {}", helpers.top().functionBuilder.size());
+            }
+            {
+                const auto timestampFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto valueFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+
+                if (!valueFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
+                    throw InvalidQuerySyntax("TNUMBER_ABS_EXP arguments must be field references");
+                }
+
+                helpers.top().windowAggs.push_back(
+                    TnumberAbsExpAggregationLogicalFunction::create(valueFunction.get<FieldAccessLogicalFunction>(),
+                                                                    timestampFunction.get<FieldAccessLogicalFunction>()));
+                helpers.top().functionBuilder.push_back(valueFunction);
+            }
+            break;
+        /* END CODEGEN AGGREGATION GLUE: TNUMBER_ABS_EXP (case-switch) */
+
+        /* BEGIN CODEGEN AGGREGATION GLUE: TNUMBER_DELTA_VALUE_EXP (case-switch) */
+        case AntlrSQLLexer::TNUMBER_DELTA_VALUE_EXP:
+            // Windowed tnumber_delta_value over the expandable tfloat mini-series, emitted as hex-WKB.
+            if (helpers.top().functionBuilder.size() != 2) {
+                throw InvalidQuerySyntax("TNUMBER_DELTA_VALUE_EXP requires exactly two arguments (value, timestamp), but got {}", helpers.top().functionBuilder.size());
+            }
+            {
+                const auto timestampFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto valueFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+
+                if (!valueFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
+                    throw InvalidQuerySyntax("TNUMBER_DELTA_VALUE_EXP arguments must be field references");
+                }
+
+                helpers.top().windowAggs.push_back(
+                    TnumberDeltaValueExpAggregationLogicalFunction::create(valueFunction.get<FieldAccessLogicalFunction>(),
+                                                                    timestampFunction.get<FieldAccessLogicalFunction>()));
+                helpers.top().functionBuilder.push_back(valueFunction);
+            }
+            break;
+        /* END CODEGEN AGGREGATION GLUE: TNUMBER_DELTA_VALUE_EXP (case-switch) */
+
+        /* BEGIN CODEGEN AGGREGATION GLUE: TNUMBER_ANGULAR_DIFFERENCE_EXP (case-switch) */
+        case AntlrSQLLexer::TNUMBER_ANGULAR_DIFFERENCE_EXP:
+            // Windowed tnumber_angular_difference over the expandable tfloat mini-series, emitted as hex-WKB.
+            if (helpers.top().functionBuilder.size() != 2) {
+                throw InvalidQuerySyntax("TNUMBER_ANGULAR_DIFFERENCE_EXP requires exactly two arguments (value, timestamp), but got {}", helpers.top().functionBuilder.size());
+            }
+            {
+                const auto timestampFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto valueFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+
+                if (!valueFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
+                    throw InvalidQuerySyntax("TNUMBER_ANGULAR_DIFFERENCE_EXP arguments must be field references");
+                }
+
+                helpers.top().windowAggs.push_back(
+                    TnumberAngularDifferenceExpAggregationLogicalFunction::create(valueFunction.get<FieldAccessLogicalFunction>(),
+                                                                    timestampFunction.get<FieldAccessLogicalFunction>()));
+                helpers.top().functionBuilder.push_back(valueFunction);
+            }
+            break;
+        /* END CODEGEN AGGREGATION GLUE: TNUMBER_ANGULAR_DIFFERENCE_EXP (case-switch) */
+
+        /* BEGIN CODEGEN AGGREGATION GLUE: TEMPORAL_DERIVATIVE_EXP (case-switch) */
+        case AntlrSQLLexer::TEMPORAL_DERIVATIVE_EXP:
+            // Windowed temporal_derivative over the expandable tfloat mini-series, emitted as hex-WKB.
+            if (helpers.top().functionBuilder.size() != 2) {
+                throw InvalidQuerySyntax("TEMPORAL_DERIVATIVE_EXP requires exactly two arguments (value, timestamp), but got {}", helpers.top().functionBuilder.size());
+            }
+            {
+                const auto timestampFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto valueFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+
+                if (!valueFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
+                    throw InvalidQuerySyntax("TEMPORAL_DERIVATIVE_EXP arguments must be field references");
+                }
+
+                helpers.top().windowAggs.push_back(
+                    TemporalDerivativeExpAggregationLogicalFunction::create(valueFunction.get<FieldAccessLogicalFunction>(),
+                                                                    timestampFunction.get<FieldAccessLogicalFunction>()));
+                helpers.top().functionBuilder.push_back(valueFunction);
+            }
+            break;
+        /* END CODEGEN AGGREGATION GLUE: TEMPORAL_DERIVATIVE_EXP (case-switch) */
+
+        /* BEGIN CODEGEN AGGREGATION GLUE: TEMPORAL_AT_MAX_EXP (case-switch) */
+        case AntlrSQLLexer::TEMPORAL_AT_MAX_EXP:
+            // Windowed temporal_at_max over the expandable tfloat mini-series, emitted as hex-WKB.
+            if (helpers.top().functionBuilder.size() != 2) {
+                throw InvalidQuerySyntax("TEMPORAL_AT_MAX_EXP requires exactly two arguments (value, timestamp), but got {}", helpers.top().functionBuilder.size());
+            }
+            {
+                const auto timestampFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto valueFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+
+                if (!valueFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
+                    throw InvalidQuerySyntax("TEMPORAL_AT_MAX_EXP arguments must be field references");
+                }
+
+                helpers.top().windowAggs.push_back(
+                    TemporalAtMaxExpAggregationLogicalFunction::create(valueFunction.get<FieldAccessLogicalFunction>(),
+                                                                    timestampFunction.get<FieldAccessLogicalFunction>()));
+                helpers.top().functionBuilder.push_back(valueFunction);
+            }
+            break;
+        /* END CODEGEN AGGREGATION GLUE: TEMPORAL_AT_MAX_EXP (case-switch) */
+
+        /* BEGIN CODEGEN AGGREGATION GLUE: TEMPORAL_AT_MIN_EXP (case-switch) */
+        case AntlrSQLLexer::TEMPORAL_AT_MIN_EXP:
+            // Windowed temporal_at_min over the expandable tfloat mini-series, emitted as hex-WKB.
+            if (helpers.top().functionBuilder.size() != 2) {
+                throw InvalidQuerySyntax("TEMPORAL_AT_MIN_EXP requires exactly two arguments (value, timestamp), but got {}", helpers.top().functionBuilder.size());
+            }
+            {
+                const auto timestampFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto valueFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+
+                if (!valueFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
+                    throw InvalidQuerySyntax("TEMPORAL_AT_MIN_EXP arguments must be field references");
+                }
+
+                helpers.top().windowAggs.push_back(
+                    TemporalAtMinExpAggregationLogicalFunction::create(valueFunction.get<FieldAccessLogicalFunction>(),
+                                                                    timestampFunction.get<FieldAccessLogicalFunction>()));
+                helpers.top().functionBuilder.push_back(valueFunction);
+            }
+            break;
+        /* END CODEGEN AGGREGATION GLUE: TEMPORAL_AT_MIN_EXP (case-switch) */
+
+        /* BEGIN CODEGEN AGGREGATION GLUE: TEMPORAL_MINUS_MAX_EXP (case-switch) */
+        case AntlrSQLLexer::TEMPORAL_MINUS_MAX_EXP:
+            // Windowed temporal_minus_max over the expandable tfloat mini-series, emitted as hex-WKB.
+            if (helpers.top().functionBuilder.size() != 2) {
+                throw InvalidQuerySyntax("TEMPORAL_MINUS_MAX_EXP requires exactly two arguments (value, timestamp), but got {}", helpers.top().functionBuilder.size());
+            }
+            {
+                const auto timestampFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto valueFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+
+                if (!valueFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
+                    throw InvalidQuerySyntax("TEMPORAL_MINUS_MAX_EXP arguments must be field references");
+                }
+
+                helpers.top().windowAggs.push_back(
+                    TemporalMinusMaxExpAggregationLogicalFunction::create(valueFunction.get<FieldAccessLogicalFunction>(),
+                                                                    timestampFunction.get<FieldAccessLogicalFunction>()));
+                helpers.top().functionBuilder.push_back(valueFunction);
+            }
+            break;
+        /* END CODEGEN AGGREGATION GLUE: TEMPORAL_MINUS_MAX_EXP (case-switch) */
+
+        /* BEGIN CODEGEN AGGREGATION GLUE: TEMPORAL_MINUS_MIN_EXP (case-switch) */
+        case AntlrSQLLexer::TEMPORAL_MINUS_MIN_EXP:
+            // Windowed temporal_minus_min over the expandable tfloat mini-series, emitted as hex-WKB.
+            if (helpers.top().functionBuilder.size() != 2) {
+                throw InvalidQuerySyntax("TEMPORAL_MINUS_MIN_EXP requires exactly two arguments (value, timestamp), but got {}", helpers.top().functionBuilder.size());
+            }
+            {
+                const auto timestampFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto valueFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+
+                if (!valueFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
+                    throw InvalidQuerySyntax("TEMPORAL_MINUS_MIN_EXP arguments must be field references");
+                }
+
+                helpers.top().windowAggs.push_back(
+                    TemporalMinusMinExpAggregationLogicalFunction::create(valueFunction.get<FieldAccessLogicalFunction>(),
+                                                                    timestampFunction.get<FieldAccessLogicalFunction>()));
+                helpers.top().functionBuilder.push_back(valueFunction);
+            }
+            break;
+        /* END CODEGEN AGGREGATION GLUE: TEMPORAL_MINUS_MIN_EXP (case-switch) */
+
 
 
 
@@ -12147,6 +12355,126 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
                 helpers.top().windowAggs.push_back(TemporalCopyExpAggregationLogicalFunction::create(lon, lat, ts));
             }
             /* END CODEGEN AGGREGATION GLUE: TEMPORAL_COPY_EXP (funcName chain) */
+            /* BEGIN CODEGEN AGGREGATION GLUE: TNUMBER_ABS_EXP (funcName chain) */
+            else if (funcName == "TNUMBER_ABS_EXP")
+            {
+                if (helpers.top().functionBuilder.size() < 2)
+                {
+                    throw InvalidQuerySyntax("TNUMBER_ABS_EXP requires two arguments at {}", context->getText());
+                }
+                const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto value = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                helpers.top().windowAggs.push_back(TnumberAbsExpAggregationLogicalFunction::create(value, ts));
+            }
+            /* END CODEGEN AGGREGATION GLUE: TNUMBER_ABS_EXP (funcName chain) */
+
+            /* BEGIN CODEGEN AGGREGATION GLUE: TNUMBER_DELTA_VALUE_EXP (funcName chain) */
+            else if (funcName == "TNUMBER_DELTA_VALUE_EXP")
+            {
+                if (helpers.top().functionBuilder.size() < 2)
+                {
+                    throw InvalidQuerySyntax("TNUMBER_DELTA_VALUE_EXP requires two arguments at {}", context->getText());
+                }
+                const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto value = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                helpers.top().windowAggs.push_back(TnumberDeltaValueExpAggregationLogicalFunction::create(value, ts));
+            }
+            /* END CODEGEN AGGREGATION GLUE: TNUMBER_DELTA_VALUE_EXP (funcName chain) */
+
+            /* BEGIN CODEGEN AGGREGATION GLUE: TNUMBER_ANGULAR_DIFFERENCE_EXP (funcName chain) */
+            else if (funcName == "TNUMBER_ANGULAR_DIFFERENCE_EXP")
+            {
+                if (helpers.top().functionBuilder.size() < 2)
+                {
+                    throw InvalidQuerySyntax("TNUMBER_ANGULAR_DIFFERENCE_EXP requires two arguments at {}", context->getText());
+                }
+                const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto value = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                helpers.top().windowAggs.push_back(TnumberAngularDifferenceExpAggregationLogicalFunction::create(value, ts));
+            }
+            /* END CODEGEN AGGREGATION GLUE: TNUMBER_ANGULAR_DIFFERENCE_EXP (funcName chain) */
+
+            /* BEGIN CODEGEN AGGREGATION GLUE: TEMPORAL_DERIVATIVE_EXP (funcName chain) */
+            else if (funcName == "TEMPORAL_DERIVATIVE_EXP")
+            {
+                if (helpers.top().functionBuilder.size() < 2)
+                {
+                    throw InvalidQuerySyntax("TEMPORAL_DERIVATIVE_EXP requires two arguments at {}", context->getText());
+                }
+                const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto value = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                helpers.top().windowAggs.push_back(TemporalDerivativeExpAggregationLogicalFunction::create(value, ts));
+            }
+            /* END CODEGEN AGGREGATION GLUE: TEMPORAL_DERIVATIVE_EXP (funcName chain) */
+
+            /* BEGIN CODEGEN AGGREGATION GLUE: TEMPORAL_AT_MAX_EXP (funcName chain) */
+            else if (funcName == "TEMPORAL_AT_MAX_EXP")
+            {
+                if (helpers.top().functionBuilder.size() < 2)
+                {
+                    throw InvalidQuerySyntax("TEMPORAL_AT_MAX_EXP requires two arguments at {}", context->getText());
+                }
+                const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto value = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                helpers.top().windowAggs.push_back(TemporalAtMaxExpAggregationLogicalFunction::create(value, ts));
+            }
+            /* END CODEGEN AGGREGATION GLUE: TEMPORAL_AT_MAX_EXP (funcName chain) */
+
+            /* BEGIN CODEGEN AGGREGATION GLUE: TEMPORAL_AT_MIN_EXP (funcName chain) */
+            else if (funcName == "TEMPORAL_AT_MIN_EXP")
+            {
+                if (helpers.top().functionBuilder.size() < 2)
+                {
+                    throw InvalidQuerySyntax("TEMPORAL_AT_MIN_EXP requires two arguments at {}", context->getText());
+                }
+                const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto value = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                helpers.top().windowAggs.push_back(TemporalAtMinExpAggregationLogicalFunction::create(value, ts));
+            }
+            /* END CODEGEN AGGREGATION GLUE: TEMPORAL_AT_MIN_EXP (funcName chain) */
+
+            /* BEGIN CODEGEN AGGREGATION GLUE: TEMPORAL_MINUS_MAX_EXP (funcName chain) */
+            else if (funcName == "TEMPORAL_MINUS_MAX_EXP")
+            {
+                if (helpers.top().functionBuilder.size() < 2)
+                {
+                    throw InvalidQuerySyntax("TEMPORAL_MINUS_MAX_EXP requires two arguments at {}", context->getText());
+                }
+                const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto value = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                helpers.top().windowAggs.push_back(TemporalMinusMaxExpAggregationLogicalFunction::create(value, ts));
+            }
+            /* END CODEGEN AGGREGATION GLUE: TEMPORAL_MINUS_MAX_EXP (funcName chain) */
+
+            /* BEGIN CODEGEN AGGREGATION GLUE: TEMPORAL_MINUS_MIN_EXP (funcName chain) */
+            else if (funcName == "TEMPORAL_MINUS_MIN_EXP")
+            {
+                if (helpers.top().functionBuilder.size() < 2)
+                {
+                    throw InvalidQuerySyntax("TEMPORAL_MINUS_MIN_EXP requires two arguments at {}", context->getText());
+                }
+                const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto value = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                helpers.top().windowAggs.push_back(TemporalMinusMinExpAggregationLogicalFunction::create(value, ts));
+            }
+            /* END CODEGEN AGGREGATION GLUE: TEMPORAL_MINUS_MIN_EXP (funcName chain) */
+
 
 
 
