@@ -128,7 +128,10 @@ production form; both serve the one scope.
   `TEMPORAL_COPY_EXP`, `TNUMBER_ABS_EXP`, and the single-argument temporal
   transforms `TPOINT_CUMULATIVE_LENGTH_EXP` / `TPOINT_SPEED_EXP` /
   `TPOINT_GET_X_EXP` / `TPOINT_GET_Y_EXP` (tgeompoint → tfloat) and
-  `TNUMBER_TREND_EXP` (tnumber → tint).
+  `TNUMBER_TREND_EXP` (tnumber → tint). The geometry value-output family reduces
+  the mini-trip to a `GSERIALIZED` serialized as hex-EWKB via `geo_out` —
+  `TGEO_START_VALUE_EXP` / `TGEO_END_VALUE_EXP` / `TGEO_CONVEX_HULL_EXP` /
+  `TPOINT_TWCENTROID_EXP`.
   The network-constrained `tnpoint` aggregates run the same way over a windowed
   npoint mini-series, resolving each route+fraction against the loaded ways
   network: `TNPOINT_CUMULATIVE_LENGTH_EXP` (`tnpoint_cumulative_length`),
@@ -138,4 +141,17 @@ production form; both serve the one scope.
   (`nes-systests/function/meos/`) that exercises it end-to-end and rides Nebula
   CI's address/undefined/thread sanitizer matrix as a per-operator memory-leak
   gate.
-  - Not wired: the Set/Span/Box-input aggregation band.
+  - **Cross-stream (pairwise).** `PAIR_MEETING` (`geog_dwithin` proximity) and
+    `CROSS_DISTANCE` (`nad_tgeo_tgeo`) realize the cross-stream tier: the window
+    accumulates every group's events in a `PagedVector`, then `lower()` builds a
+    per-group state map and enumerates pairs, applying a MEOS function to each
+    pair `(A, B)`. The general shape is `f(trajA, trajB)` over two groups'
+    windowed mini-trips (e.g. two trips whose running extent boxes overlap, via
+    `overlaps_stbox_stbox` on each group's `tspatial_extent` — the SNCB
+    box-overlap alert).
+  - Not wired: the Set/Span/Box-input aggregation band, and the cross-stream
+    `binary_temporal` family beyond the two operators above — `f(trajA, trajB)`
+    for 58 functions in five output shapes: `Temporal*` (27, e.g.
+    `tdistance_tgeo_tgeo`, `tcontains/tcovers/tdwithin_tgeo_tgeo`,
+    `add/sub/mul/div_tnumber_tnumber`), scalar `bool`/`int` (21), `TInstant*`
+    `nai_*` (4), `GSERIALIZED*` `shortestline_*` (4), and `double` `nad_*` (2).
