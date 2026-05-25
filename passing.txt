@@ -206,6 +206,8 @@ mult_tnumber_tnumber
 nad_tcbuffer_tcbuffer
 nad_tfloat_float
 nad_tfloat_tfloat
+nad_tint_int
+nad_tint_tbox
 nad_tpose_tpose
 overabove_stbox_stbox
 overabove_stbox_tspatial

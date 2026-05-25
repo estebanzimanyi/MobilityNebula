@@ -226,8 +226,8 @@ nad_tfloat_tfloat	proven
 nad_tgeo_geo	wired
 nad_tgeo_stbox	wired
 nad_tgeo_tgeo	proven
-nad_tint_int	wired
-nad_tint_tbox	wired
+nad_tint_int	proven
+nad_tint_tbox	proven
 nad_tint_tint	wired
 nad_tnpoint_geo	wired
 nad_tnpoint_stbox	wired
