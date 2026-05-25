@@ -4,7 +4,7 @@ above_tspatial_stbox	wired
 above_tspatial_tspatial	wired
 acontains_tcbuffer_cbuffer	wired
 acontains_tcbuffer_geo	wired
-acontains_tgeo_geo	wired
+acontains_tgeo_geo	proven
 acontains_tgeo_tgeo	proven
 acovers_tcbuffer_cbuffer	wired
 acovers_tcbuffer_geo	wired
@@ -12,7 +12,7 @@ add_tnumber_tnumber	proven
 adisjoint_tcbuffer_cbuffer	wired
 adisjoint_tcbuffer_geo	wired
 adisjoint_tcbuffer_tcbuffer	wired
-adisjoint_tgeo_geo	wired
+adisjoint_tgeo_geo	proven
 adisjoint_tgeo_tgeo	wired
 adjacent_stbox_stbox	wired
 adjacent_stbox_tspatial	wired
@@ -87,7 +87,7 @@ always_ne_tpose_tpose	wired
 atouches_tcbuffer_cbuffer	wired
 atouches_tcbuffer_geo	wired
 atouches_tcbuffer_tcbuffer	wired
-atouches_tgeo_geo	wired
+atouches_tgeo_geo	proven
 atouches_tgeo_tgeo	proven
 atouches_tpoint_geo	wired
 back_stbox_stbox	wired
@@ -132,7 +132,7 @@ econtains_tgeo_tgeo	proven
 ecovers_tcbuffer_cbuffer	wired
 ecovers_tcbuffer_geo	wired
 ecovers_tcbuffer_tcbuffer	wired
-ecovers_tgeo_geo	wired
+ecovers_tgeo_geo	proven
 ecovers_tgeo_tgeo	proven
 edisjoint_tcbuffer_cbuffer	wired
 edisjoint_tcbuffer_geo	wired
@@ -146,12 +146,12 @@ edwithin_tgeo_tgeo	proven
 eintersects_tcbuffer_cbuffer	wired
 eintersects_tcbuffer_geo	wired
 eintersects_tcbuffer_tcbuffer	proven
-eintersects_tgeo_geo	wired
+eintersects_tgeo_geo	proven
 eintersects_tgeo_tgeo	proven
 etouches_tcbuffer_cbuffer	wired
 etouches_tcbuffer_geo	wired
 etouches_tcbuffer_tcbuffer	wired
-etouches_tgeo_geo	wired
+etouches_tgeo_geo	proven
 etouches_tgeo_tgeo	proven
 etouches_tpoint_geo	wired
 ever_eq_float_tfloat	wired
