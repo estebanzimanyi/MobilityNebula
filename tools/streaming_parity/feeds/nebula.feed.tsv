@@ -331,8 +331,8 @@ tdistance_tnpoint_tnpoint	wired
 tdistance_tnumber_tnumber	proven
 tdistance_tpose_tpose	wired
 temporal_append_tinstant	proven
-temporal_at_max	wired
-temporal_at_min	wired
+temporal_at_max	proven
+temporal_at_min	proven
 temporal_cmp	wired
 temporal_copy	proven
 temporal_derivative	wired
@@ -344,7 +344,7 @@ temporal_ge	wired
 temporal_gt	wired
 temporal_hausdorff_distance	wired
 temporal_le	wired
-temporal_lower_inc	wired
+temporal_lower_inc	proven
 temporal_lt	wired
 temporal_merge	proven
 temporal_minus_max	wired
@@ -354,7 +354,7 @@ temporal_num_instants	proven
 temporal_num_sequences	wired
 temporal_num_timestamps	proven
 temporal_start_timestamptz	wired
-temporal_upper_inc	wired
+temporal_upper_inc	proven
 tfloat_ceil	wired
 tfloat_end_value	wired
 tfloat_exp	wired
@@ -367,7 +367,7 @@ tfloat_radians	wired
 tfloat_start_value	wired
 tfloat_to_tint	proven
 tgeo_at_geom	proven
-tgeo_centroid	wired
+tgeo_centroid	proven
 tgeo_convex_hull	proven
 tgeo_end_value	proven
 tgeo_minus_geom	wired
