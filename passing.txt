@@ -1,9 +1,12 @@
+acontains_tgeo_tgeo
 add_tnumber_tnumber
 adjacent_tnumber_tnumber
 adwithin_tgeo_geo
 after_tnumber_tnumber
+aintersects_tgeo_tgeo
 always_eq_tnpoint_tnpoint
 at_geometry
+atouches_tgeo_tgeo
 before_tnumber_tnumber
 bigint_extent
 bigint_union
@@ -12,7 +15,9 @@ contains_tnumber_tnumber
 div_tnumber_tnumber
 econtains_tcbuffer_cbuffer
 econtains_tcbuffer_geo
+econtains_tgeo_tgeo
 econtains_tpose_geo
+ecovers_tgeo_tgeo
 edisjoint_tgeo_geo
 edisjoint_tgeo_tgeo
 edwithin_tcbuffer_tcbuffer
@@ -21,6 +26,7 @@ edwithin_tpose_tpose
 eintersects_tcbuffer_tcbuffer
 eintersects_tnpoint_tnpoint
 eintersects_tpose_tpose
+etouches_tgeo_tgeo
 ever_ne_tnpoint_tnpoint
 float_extent
 float_union

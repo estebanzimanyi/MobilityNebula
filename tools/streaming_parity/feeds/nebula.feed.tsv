@@ -5,7 +5,7 @@ above_tspatial_tspatial	wired
 acontains_tcbuffer_cbuffer	wired
 acontains_tcbuffer_geo	wired
 acontains_tgeo_geo	wired
-acontains_tgeo_tgeo	wired
+acontains_tgeo_tgeo	proven
 acovers_tcbuffer_cbuffer	wired
 acovers_tcbuffer_geo	wired
 add_tnumber_tnumber	proven
@@ -39,7 +39,7 @@ aintersects_tcbuffer_cbuffer	wired
 aintersects_tcbuffer_geo	wired
 aintersects_tcbuffer_tcbuffer	wired
 aintersects_tgeo_geo	wired
-aintersects_tgeo_tgeo	wired
+aintersects_tgeo_tgeo	proven
 always_eq_float_tfloat	wired
 always_eq_int_tint	wired
 always_eq_tbool_bool	wired
@@ -88,7 +88,7 @@ atouches_tcbuffer_cbuffer	wired
 atouches_tcbuffer_geo	wired
 atouches_tcbuffer_tcbuffer	wired
 atouches_tgeo_geo	wired
-atouches_tgeo_tgeo	wired
+atouches_tgeo_tgeo	proven
 atouches_tpoint_geo	wired
 back_stbox_stbox	wired
 back_stbox_tspatial	wired
@@ -128,12 +128,12 @@ div_tnumber_tnumber	proven
 econtains_tcbuffer_cbuffer	proven
 econtains_tcbuffer_geo	proven
 econtains_tgeo_geo	proven
-econtains_tgeo_tgeo	wired
+econtains_tgeo_tgeo	proven
 ecovers_tcbuffer_cbuffer	wired
 ecovers_tcbuffer_geo	wired
 ecovers_tcbuffer_tcbuffer	wired
 ecovers_tgeo_geo	wired
-ecovers_tgeo_tgeo	wired
+ecovers_tgeo_tgeo	proven
 edisjoint_tcbuffer_cbuffer	wired
 edisjoint_tcbuffer_geo	wired
 edisjoint_tgeo_geo	proven
@@ -152,7 +152,7 @@ etouches_tcbuffer_cbuffer	wired
 etouches_tcbuffer_geo	wired
 etouches_tcbuffer_tcbuffer	wired
 etouches_tgeo_geo	wired
-etouches_tgeo_tgeo	wired
+etouches_tgeo_tgeo	proven
 etouches_tpoint_geo	wired
 ever_eq_float_tfloat	wired
 ever_eq_int_tint	wired
