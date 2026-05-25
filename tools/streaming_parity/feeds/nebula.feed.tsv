@@ -352,7 +352,7 @@ temporal_minus_min	wired
 temporal_ne	wired
 temporal_num_instants	proven
 temporal_num_sequences	wired
-temporal_num_timestamps	wired
+temporal_num_timestamps	proven
 temporal_start_timestamptz	wired
 temporal_upper_inc	wired
 tfloat_ceil	wired
@@ -375,9 +375,9 @@ tgeo_start_value	proven
 tgeompoint_to_tgeometry	wired
 timestamptz_extent_transfn	proven
 timestamptz_union_transfn	proven
-tint_end_value	wired
-tint_max_value	wired
-tint_min_value	wired
+tint_end_value	proven
+tint_max_value	proven
+tint_min_value	proven
 tint_start_value	proven
 tint_to_tfloat	wired
 tnpoint_cumulative_length	proven

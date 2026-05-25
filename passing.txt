@@ -286,6 +286,7 @@ tdistance_tgeo_tgeo
 tdistance_tnumber_tnumber
 temporal_copy_exp
 temporal_num_instants
+temporal_num_timestamps
 temporal_tfloat_max_value
 temporal_tnumber_twavg
 temporal_tpoint_is_simple
@@ -295,6 +296,9 @@ tgeo_end_value_exp
 tgeo_start_value_exp
 timestamptz_extent
 timestamptz_union
+tint_end_value
+tint_max_value
+tint_min_value
 tlength_exp
 tnpoint_cumulative_length_exp
 tnpoint_speed_exp
