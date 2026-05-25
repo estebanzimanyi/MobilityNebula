@@ -11,6 +11,7 @@ acovers_tcbuffer_geo
 add_tnumber_tnumber
 adisjoint_tcbuffer_cbuffer
 adisjoint_tcbuffer_geo
+adisjoint_tcbuffer_tcbuffer
 adisjoint_tgeo_geo
 adjacent_stbox_stbox
 adjacent_stbox_tspatial
@@ -29,12 +30,14 @@ after_tspatial_stbox
 after_tspatial_tspatial
 aintersects_tcbuffer_cbuffer
 aintersects_tcbuffer_geo
+aintersects_tcbuffer_tcbuffer
 aintersects_tgeo_geo
 aintersects_tgeo_tgeo
 always_eq_tnpoint_tnpoint
 at_geometry
 atouches_tcbuffer_cbuffer
 atouches_tcbuffer_geo
+atouches_tcbuffer_tcbuffer
 atouches_tgeo_geo
 atouches_tgeo_tgeo
 back_stbox_stbox
@@ -72,6 +75,7 @@ econtains_tgeo_tgeo
 econtains_tpose_geo
 ecovers_tcbuffer_cbuffer
 ecovers_tcbuffer_geo
+ecovers_tcbuffer_tcbuffer
 ecovers_tgeo_geo
 ecovers_tgeo_tgeo
 edisjoint_tcbuffer_cbuffer
@@ -89,6 +93,7 @@ eintersects_tnpoint_tnpoint
 eintersects_tpose_tpose
 etouches_tcbuffer_cbuffer
 etouches_tcbuffer_geo
+etouches_tcbuffer_tcbuffer
 etouches_tgeo_geo
 etouches_tgeo_tgeo
 ever_ne_tnpoint_tnpoint
