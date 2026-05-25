@@ -51,6 +51,7 @@ always_eq_tgeo_geo
 always_eq_tgeo_tgeo
 always_eq_tint_int
 always_eq_tnpoint_tnpoint
+always_eq_tpose_tpose
 always_ge_float_tfloat
 always_ge_int_tint
 always_ge_temporal_temporal
@@ -81,6 +82,8 @@ always_ne_tfloat_float
 always_ne_tgeo_geo
 always_ne_tgeo_tgeo
 always_ne_tint_int
+always_ne_tnpoint_tnpoint
+always_ne_tpose_tpose
 at_geometry
 atouches_tcbuffer_cbuffer
 atouches_tcbuffer_geo
@@ -159,6 +162,8 @@ ever_eq_tfloat_float
 ever_eq_tgeo_geo
 ever_eq_tgeo_tgeo
 ever_eq_tint_int
+ever_eq_tnpoint_tnpoint
+ever_eq_tpose_tpose
 ever_ge_float_tfloat
 ever_ge_int_tint
 ever_ge_temporal_temporal
@@ -190,6 +195,7 @@ ever_ne_tgeo_geo
 ever_ne_tgeo_tgeo
 ever_ne_tint_int
 ever_ne_tnpoint_tnpoint
+ever_ne_tpose_tpose
 float_extent
 float_union
 front_stbox_stbox
@@ -292,10 +298,15 @@ sub_tnumber_tnumber
 tbool_end_value
 tbool_start_value
 tcbuffer_to_tfloat
+tcontains_tcbuffer_tcbuffer
 tcontains_tgeo_tgeo
+tcovers_tcbuffer_tcbuffer
 tcovers_tgeo_tgeo
+tdistance_tcbuffer_tcbuffer
 tdistance_tgeo_tgeo
+tdistance_tnpoint_tnpoint
 tdistance_tnumber_tnumber
+tdistance_tpose_tpose
 temporal_at_max
 temporal_at_min
 temporal_cmp
