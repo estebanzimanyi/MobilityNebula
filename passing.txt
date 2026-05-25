@@ -4,6 +4,7 @@ always_eq_tnpoint_tnpoint
 at_geometry
 bigint_extent
 bigint_union
+div_tnumber_tnumber
 econtains_tcbuffer_cbuffer
 econtains_tcbuffer_geo
 econtains_tpose_geo
@@ -22,12 +23,14 @@ int_extent
 int_union
 left_stbox_stbox
 left_tnumber_tnumber
+mult_tnumber_tnumber
 nad_tcbuffer_tcbuffer
 nad_tfloat_float
 nad_tfloat_tfloat
 nad_tpose_tpose
 overlaps_stbox_stbox
 overlaps_tnumber_tnumber
+sub_tnumber_tnumber
 tdistance_tgeo_tgeo
 temporal_copy_exp
 temporal_num_instants

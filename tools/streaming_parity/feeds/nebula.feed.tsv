@@ -124,7 +124,7 @@ contains_tnumber_tbox	wired
 contains_tnumber_tnumber	wired
 contains_tspatial_stbox	wired
 contains_tspatial_tspatial	wired
-div_tnumber_tnumber	wired
+div_tnumber_tnumber	proven
 econtains_tcbuffer_cbuffer	proven
 econtains_tcbuffer_geo	proven
 econtains_tgeo_geo	proven
@@ -315,7 +315,7 @@ stbox_gt	wired
 stbox_le	wired
 stbox_lt	wired
 stbox_ne	wired
-sub_tnumber_tnumber	wired
+sub_tnumber_tnumber	proven
 tbool_end_value	wired
 tbool_start_value	wired
 tbool_to_tint	wired
