@@ -22,7 +22,10 @@ adjacent_tnumber_tbox
 adjacent_tnumber_tnumber
 adjacent_tspatial_stbox
 adjacent_tspatial_tspatial
+adwithin_tcbuffer_geo
+adwithin_tcbuffer_tcbuffer
 adwithin_tgeo_geo
+adwithin_tgeo_tgeo
 after_stbox_stbox
 after_stbox_tspatial
 after_tbox_tnumber
@@ -120,7 +123,9 @@ edisjoint_tcbuffer_cbuffer
 edisjoint_tcbuffer_geo
 edisjoint_tgeo_geo
 edisjoint_tgeo_tgeo
+edwithin_tcbuffer_geo
 edwithin_tcbuffer_tcbuffer
+edwithin_tgeo_geo
 edwithin_tgeo_tgeo
 edwithin_tpose_tpose
 eintersects_tcbuffer_cbuffer
