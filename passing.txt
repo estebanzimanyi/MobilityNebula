@@ -221,9 +221,11 @@ nad_tgeo_geo
 nad_tgeo_stbox
 nad_tint_int
 nad_tint_tbox
+nad_tnpoint_tnpoint
 nad_tpose_geo
 nad_tpose_stbox
 nad_tpose_tpose
+nad_tpose_tpose_hex
 overabove_stbox_stbox
 overabove_stbox_tspatial
 overabove_tspatial_stbox
@@ -352,6 +354,7 @@ tint_max_value
 tint_min_value
 tlength_exp
 tnpoint_cumulative_length_exp
+tnpoint_length
 tnpoint_speed_exp
 tnpoint_to_tgeompoint_exp
 tnumber_abs_exp

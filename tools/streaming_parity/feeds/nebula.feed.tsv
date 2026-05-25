@@ -232,10 +232,10 @@ nad_tint_tbox	proven
 nad_tint_tint	wired
 nad_tnpoint_geo	wired
 nad_tnpoint_stbox	wired
-nad_tnpoint_tnpoint	wired
+nad_tnpoint_tnpoint	proven
 nad_tpose_geo	proven
 nad_tpose_stbox	proven
-nad_tpose_tpose	wired
+nad_tpose_tpose	proven
 overabove_stbox_stbox	proven
 overabove_stbox_tspatial	proven
 overabove_tspatial_stbox	proven
@@ -383,7 +383,7 @@ tint_min_value	proven
 tint_start_value	proven
 tint_to_tfloat	wired
 tnpoint_cumulative_length	proven
-tnpoint_length	wired
+tnpoint_length	proven
 tnpoint_speed	proven
 tnpoint_to_tgeompoint	proven
 tnumber_abs	proven
