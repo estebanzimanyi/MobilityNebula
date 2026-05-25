@@ -322,13 +322,13 @@ tbool_to_tint	wired
 tbox_copy	proven
 tcbuffer_to_tfloat	wired
 tcontains_tcbuffer_tcbuffer	wired
-tcontains_tgeo_tgeo	wired
+tcontains_tgeo_tgeo	proven
 tcovers_tcbuffer_tcbuffer	wired
-tcovers_tgeo_tgeo	wired
+tcovers_tgeo_tgeo	proven
 tdistance_tcbuffer_tcbuffer	wired
 tdistance_tgeo_tgeo	proven
 tdistance_tnpoint_tnpoint	wired
-tdistance_tnumber_tnumber	wired
+tdistance_tnumber_tnumber	proven
 tdistance_tpose_tpose	wired
 temporal_append_tinstant	proven
 temporal_at_max	wired

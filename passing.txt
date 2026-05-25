@@ -255,7 +255,10 @@ same_tnumber_tnumber
 same_tspatial_stbox
 same_tspatial_tspatial
 sub_tnumber_tnumber
+tcontains_tgeo_tgeo
+tcovers_tgeo_tgeo
 tdistance_tgeo_tgeo
+tdistance_tnumber_tnumber
 temporal_copy_exp
 temporal_num_instants
 temporal_tfloat_max_value
