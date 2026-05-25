@@ -89,7 +89,7 @@ atouches_tcbuffer_geo	proven
 atouches_tcbuffer_tcbuffer	proven
 atouches_tgeo_geo	proven
 atouches_tgeo_tgeo	proven
-atouches_tpoint_geo	wired
+atouches_tpoint_geo	proven
 back_stbox_stbox	proven
 back_stbox_tspatial	wired
 back_tspatial_stbox	wired
@@ -154,7 +154,7 @@ etouches_tcbuffer_geo	proven
 etouches_tcbuffer_tcbuffer	proven
 etouches_tgeo_geo	proven
 etouches_tgeo_tgeo	proven
-etouches_tpoint_geo	wired
+etouches_tpoint_geo	proven
 ever_eq_float_tfloat	proven
 ever_eq_int_tint	proven
 ever_eq_tbool_bool	proven

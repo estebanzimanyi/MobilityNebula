@@ -90,6 +90,7 @@ atouches_tcbuffer_geo
 atouches_tcbuffer_tcbuffer
 atouches_tgeo_geo
 atouches_tgeo_tgeo
+atouches_tpoint_geo
 back_stbox_stbox
 before_stbox_stbox
 before_stbox_tspatial
@@ -152,6 +153,7 @@ etouches_tcbuffer_geo
 etouches_tcbuffer_tcbuffer
 etouches_tgeo_geo
 etouches_tgeo_tgeo
+etouches_tpoint_geo
 ever_eq_float_tfloat
 ever_eq_int_tint
 ever_eq_tbool_bool
