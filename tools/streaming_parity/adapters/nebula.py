@@ -22,6 +22,14 @@ import re
 import sys
 
 CALL_RE = re.compile(r"\b([a-z][a-z0-9_]*)\s*\(", )
+# Any called identifier (camelCase wrapper methods included), with or without a
+# `.`/`->`/`::` qualifier — used to spot MEOSWrapper method/function call sites
+# inside an operator (e.g. `temporalGeometryA.aintersectsStatic(` or
+# `MEOS::Meos::safe_edwithin_tgeo_geo(`).
+ANY_CALL_RE = re.compile(r"\b([A-Za-z_]\w*)\s*\(")
+# A MEOSWrapper member/free-function definition header: `<ret> Meos::[Class::]name(`.
+WRAPPER_DEF_RE = re.compile(r"\bMeos::(?:\w+::)*(\w+)\s*\(")
+WRAPPER_SRC = "nes-plugins/MEOS/MEOSWrapper.cpp"
 
 # A call counts as the operator's backing MEOS function iff it is an actual
 # MEOS *streamable* symbol — i.e. it is in the parity surface itself. This is
@@ -42,7 +50,31 @@ def load_streamable(path):
     return {ln.strip() for ln in open(path) if ln.strip()}
 
 
-def operator_calls(root, streamable):
+def wrapper_calls(root, streamable):
+    """Map MEOSWrapper symbol -> set(meos_call). Some operators don't call a MEOS
+    C function directly: they go through a C++ wrapper member/free-function in
+    MEOSWrapper.cpp (e.g. `TemporalGeometry::aintersectsStatic` ->
+    aintersects_tgeo_geo, `Meos::safe_edwithin_tgeo_geo` -> edwithin_tgeo_geo).
+    Parse each `<ret> Meos::[Class::]name(` definition and attribute the streamable
+    C calls in its body to that bare name, so operator_calls() can credit a
+    wrapper-based operator for the function it ultimately invokes. Generic — no
+    per-symbol table to maintain."""
+    path = os.path.join(root, WRAPPER_SRC)
+    if not os.path.isfile(path):
+        return {}
+    txt = open(path).read()
+    heads = [(m.start(), m.group(1)) for m in WRAPPER_DEF_RE.finditer(txt)]
+    out = {}
+    for i, (pos, name) in enumerate(heads):
+        end = heads[i + 1][0] if i + 1 < len(heads) else len(txt)
+        body = txt[pos:end]
+        calls = {fn for fn in CALL_RE.findall(body) if fn in streamable and fn != name}
+        if calls:
+            out.setdefault(name, set()).update(calls)
+    return out
+
+
+def operator_calls(root, streamable, wrap=None):
     """Map operator NAME -> set(meos_call). NAME taken from the file stem
     (…PhysicalFunction.cpp -> the operator name). A call counts iff it is a
     streamable MEOS symbol and not a composition-plumbing conversion."""
@@ -66,6 +98,13 @@ def operator_calls(root, streamable):
                 if fn not in streamable:
                     continue
                 (helpers if fn in CONVERSION_HELPERS else calls).add(fn)
+            # Credit MEOS calls reached only through a MEOSWrapper method/function
+            # (e.g. `.aintersectsStatic(` -> aintersects_tgeo_geo). The mapped
+            # calls are already streamable by construction in wrapper_calls().
+            if wrap:
+                for m in ANY_CALL_RE.finditer(txt):
+                    for fn in wrap.get(m.group(1), ()):
+                        (helpers if fn in CONVERSION_HELPERS else calls).add(fn)
             # A conversion helper is plumbing and is dropped, EXCEPT when the
             # operator is named for it (a dedicated conversion operator, e.g.
             # TnpointToTgeompointExp -> tnpoint_to_tgeompoint): there the helper
@@ -103,7 +142,8 @@ def main():
     a = ap.parse_args()
 
     streamable = load_streamable(a.streamable)
-    name2calls = operator_calls(a.root, streamable)
+    wrap = wrapper_calls(a.root, streamable)
+    name2calls = operator_calls(a.root, streamable, wrap)
     wired = set().union(*name2calls.values()) if name2calls else set()
 
     # Map a systest's SQL token to its operator by normalizing both to

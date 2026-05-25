@@ -38,7 +38,7 @@ after_tspatial_tspatial	proven
 aintersects_tcbuffer_cbuffer	proven
 aintersects_tcbuffer_geo	proven
 aintersects_tcbuffer_tcbuffer	proven
-aintersects_tgeo_geo	wired
+aintersects_tgeo_geo	proven
 aintersects_tgeo_tgeo	proven
 always_eq_float_tfloat	proven
 always_eq_int_tint	proven
@@ -125,6 +125,7 @@ contains_tnumber_tnumber	proven
 contains_tspatial_stbox	proven
 contains_tspatial_tspatial	proven
 div_tnumber_tnumber	proven
+econtains_geo_tgeo	wired
 econtains_tcbuffer_cbuffer	proven
 econtains_tcbuffer_geo	proven
 econtains_tgeo_geo	proven
@@ -367,6 +368,7 @@ tfloat_radians	proven
 tfloat_start_value	proven
 tfloat_to_tint	proven
 tgeo_at_geom	proven
+tgeo_at_stbox	wired
 tgeo_centroid	proven
 tgeo_convex_hull	proven
 tgeo_end_value	proven
