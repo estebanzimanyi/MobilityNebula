@@ -16,6 +16,7 @@ adisjoint_tgeo_geo
 adjacent_stbox_stbox
 adjacent_stbox_tspatial
 adjacent_tbox_tnumber
+adjacent_temporal_temporal
 adjacent_tnumber_tbox
 adjacent_tnumber_tnumber
 adjacent_tspatial_stbox
@@ -24,6 +25,7 @@ adwithin_tgeo_geo
 after_stbox_stbox
 after_stbox_tspatial
 after_tbox_tnumber
+after_temporal_temporal
 after_tnumber_tbox
 after_tnumber_tnumber
 after_tspatial_stbox
@@ -44,6 +46,7 @@ back_stbox_stbox
 before_stbox_stbox
 before_stbox_tspatial
 before_tbox_tnumber
+before_temporal_temporal
 before_tnumber_tbox
 before_tnumber_tnumber
 before_tspatial_stbox
@@ -57,6 +60,7 @@ bigint_union
 contained_stbox_stbox
 contained_stbox_tspatial
 contained_tbox_tnumber
+contained_temporal_temporal
 contained_tnumber_tbox
 contained_tnumber_tnumber
 contained_tspatial_stbox
@@ -64,6 +68,7 @@ contained_tspatial_tspatial
 contains_stbox_stbox
 contains_stbox_tspatial
 contains_tbox_tnumber
+contains_temporal_temporal
 contains_tnumber_tbox
 contains_tnumber_tnumber
 contains_tspatial_stbox
@@ -121,6 +126,7 @@ overabove_tspatial_tspatial
 overafter_stbox_stbox
 overafter_stbox_tspatial
 overafter_tbox_tnumber
+overafter_temporal_temporal
 overafter_tnumber_tbox
 overafter_tnumber_tnumber
 overafter_tspatial_stbox
@@ -129,6 +135,7 @@ overback_stbox_stbox
 overbefore_stbox_stbox
 overbefore_stbox_tspatial
 overbefore_tbox_tnumber
+overbefore_temporal_temporal
 overbefore_tnumber_tbox
 overbefore_tnumber_tnumber
 overbefore_tspatial_stbox
@@ -141,6 +148,7 @@ overfront_stbox_stbox
 overlaps_stbox_stbox
 overlaps_stbox_tspatial
 overlaps_tbox_tnumber
+overlaps_temporal_temporal
 overlaps_tnumber_tbox
 overlaps_tnumber_tnumber
 overlaps_tspatial_stbox
@@ -169,6 +177,7 @@ right_tspatial_tspatial
 same_stbox_stbox
 same_stbox_tspatial
 same_tbox_tnumber
+same_temporal_temporal
 same_tnumber_tbox
 same_tnumber_tnumber
 same_tspatial_stbox

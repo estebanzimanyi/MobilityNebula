@@ -17,7 +17,7 @@ adisjoint_tgeo_tgeo	wired
 adjacent_stbox_stbox	proven
 adjacent_stbox_tspatial	proven
 adjacent_tbox_tnumber	proven
-adjacent_temporal_temporal	wired
+adjacent_temporal_temporal	proven
 adjacent_tnumber_tbox	proven
 adjacent_tnumber_tnumber	proven
 adjacent_tspatial_stbox	proven
@@ -30,7 +30,7 @@ adwithin_tgeo_tgeo	wired
 after_stbox_stbox	proven
 after_stbox_tspatial	proven
 after_tbox_tnumber	proven
-after_temporal_temporal	wired
+after_temporal_temporal	proven
 after_tnumber_tbox	proven
 after_tnumber_tnumber	proven
 after_tspatial_stbox	proven
@@ -97,7 +97,7 @@ back_tspatial_tspatial	wired
 before_stbox_stbox	proven
 before_stbox_tspatial	proven
 before_tbox_tnumber	proven
-before_temporal_temporal	wired
+before_temporal_temporal	proven
 before_tnumber_tbox	proven
 before_tnumber_tnumber	proven
 before_tspatial_stbox	proven
@@ -111,7 +111,7 @@ bigint_union_transfn	proven
 contained_stbox_stbox	proven
 contained_stbox_tspatial	proven
 contained_tbox_tnumber	proven
-contained_temporal_temporal	wired
+contained_temporal_temporal	proven
 contained_tnumber_tbox	proven
 contained_tnumber_tnumber	proven
 contained_tspatial_stbox	proven
@@ -119,7 +119,7 @@ contained_tspatial_tspatial	proven
 contains_stbox_stbox	proven
 contains_stbox_tspatial	proven
 contains_tbox_tnumber	proven
-contains_temporal_temporal	wired
+contains_temporal_temporal	proven
 contains_tnumber_tbox	proven
 contains_tnumber_tnumber	proven
 contains_tspatial_stbox	proven
@@ -242,7 +242,7 @@ overabove_tspatial_tspatial	proven
 overafter_stbox_stbox	proven
 overafter_stbox_tspatial	proven
 overafter_tbox_tnumber	proven
-overafter_temporal_temporal	wired
+overafter_temporal_temporal	proven
 overafter_tnumber_tbox	proven
 overafter_tnumber_tnumber	proven
 overafter_tspatial_stbox	proven
@@ -254,7 +254,7 @@ overback_tspatial_tspatial	wired
 overbefore_stbox_stbox	proven
 overbefore_stbox_tspatial	proven
 overbefore_tbox_tnumber	proven
-overbefore_temporal_temporal	wired
+overbefore_temporal_temporal	proven
 overbefore_tnumber_tbox	proven
 overbefore_tnumber_tnumber	proven
 overbefore_tspatial_stbox	proven
@@ -270,7 +270,7 @@ overfront_tspatial_tspatial	wired
 overlaps_stbox_stbox	proven
 overlaps_stbox_tspatial	proven
 overlaps_tbox_tnumber	proven
-overlaps_temporal_temporal	wired
+overlaps_temporal_temporal	proven
 overlaps_tnumber_tbox	proven
 overlaps_tnumber_tnumber	proven
 overlaps_tspatial_stbox	proven
@@ -299,7 +299,7 @@ right_tspatial_tspatial	proven
 same_stbox_stbox	proven
 same_stbox_tspatial	proven
 same_tbox_tnumber	proven
-same_temporal_temporal	wired
+same_temporal_temporal	proven
 same_tnumber_tbox	proven
 same_tnumber_tnumber	proven
 same_tspatial_stbox	proven
