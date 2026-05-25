@@ -1,0 +1,14 @@
+# name: MEOS_TINT_AVG_VALUE
+# groups: [Function, MEOS, Aggregation]
+CREATE LOGICAL SOURCE tiavgv(gid UINT64, reading INT32, ts UINT64);
+CREATE PHYSICAL SOURCE FOR tiavgv TYPE File SET('|' AS PARSER.FIELD_DELIMITER);
+ATTACH INLINE
+1|10|1609459200
+1|22|1609459201
+2|5|1609459200
+
+CREATE SINK tiavgv_out(tiavgv.gid UINT64, tiavgv.r FLOAT64) TYPE File;
+SELECT gid, TEMPORAL_TINT_AVG_VALUE(reading, ts) AS r FROM tiavgv GROUP BY gid WINDOW TUMBLING(ts, size 1 hour) INTO tiavgv_out;
+----
+1,16.0
+2,5.0
