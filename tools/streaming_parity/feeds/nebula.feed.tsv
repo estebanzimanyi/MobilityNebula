@@ -22,7 +22,7 @@ adjacent_tnumber_tbox	proven
 adjacent_tnumber_tnumber	proven
 adjacent_tspatial_stbox	proven
 adjacent_tspatial_tspatial	proven
-adwithin_tcbuffer_cbuffer	wired
+adwithin_tcbuffer_cbuffer	proven
 adwithin_tcbuffer_geo	proven
 adwithin_tcbuffer_tcbuffer	proven
 adwithin_tgeo_geo	proven
@@ -138,7 +138,7 @@ edisjoint_tcbuffer_cbuffer	proven
 edisjoint_tcbuffer_geo	proven
 edisjoint_tgeo_geo	proven
 edisjoint_tgeo_tgeo	proven
-edwithin_tcbuffer_cbuffer	wired
+edwithin_tcbuffer_cbuffer	proven
 edwithin_tcbuffer_geo	proven
 edwithin_tcbuffer_tcbuffer	proven
 edwithin_tgeo_geo	wired

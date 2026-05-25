@@ -22,6 +22,7 @@ adjacent_tnumber_tbox
 adjacent_tnumber_tnumber
 adjacent_tspatial_stbox
 adjacent_tspatial_tspatial
+adwithin_tcbuffer_cbuffer
 adwithin_tcbuffer_geo
 adwithin_tcbuffer_tcbuffer
 adwithin_tgeo_geo
@@ -123,6 +124,7 @@ edisjoint_tcbuffer_cbuffer
 edisjoint_tcbuffer_geo
 edisjoint_tgeo_geo
 edisjoint_tgeo_tgeo
+edwithin_tcbuffer_cbuffer
 edwithin_tcbuffer_geo
 edwithin_tcbuffer_tcbuffer
 edwithin_tgeo_geo
