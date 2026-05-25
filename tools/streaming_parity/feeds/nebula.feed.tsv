@@ -232,7 +232,7 @@ nad_tint_tint	wired
 nad_tnpoint_geo	wired
 nad_tnpoint_stbox	wired
 nad_tnpoint_tnpoint	wired
-nad_tpose_geo	wired
+nad_tpose_geo	proven
 nad_tpose_stbox	proven
 nad_tpose_tpose	wired
 overabove_stbox_stbox	proven

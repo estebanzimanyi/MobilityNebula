@@ -7,7 +7,7 @@ ATTACH INLINE
 2|5.0|51.0|0.3|1609459200
 
 CREATE SINK ndpg_out(ndpg.id UINT64, r FLOAT64) TYPE File;
-SELECT id, TEMPORAL_NAD_TPOSE_GEOMETRY(x, y, theta, ts, 'POINT(0 0)') AS r FROM ndpg INTO ndpg_out;
+SELECT id, NAD_TPOSE_GEO(x, y, theta, ts, 'POINT(0 0)') AS r FROM ndpg INTO ndpg_out;
 ----
 1,50.159745
 2,51.244512
