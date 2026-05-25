@@ -19,7 +19,7 @@ adjacent_stbox_tspatial	wired
 adjacent_tbox_tnumber	wired
 adjacent_temporal_temporal	wired
 adjacent_tnumber_tbox	wired
-adjacent_tnumber_tnumber	wired
+adjacent_tnumber_tnumber	proven
 adjacent_tspatial_stbox	wired
 adjacent_tspatial_tspatial	wired
 adwithin_tcbuffer_cbuffer	wired
@@ -32,7 +32,7 @@ after_stbox_tspatial	wired
 after_tbox_tnumber	wired
 after_temporal_temporal	wired
 after_tnumber_tbox	wired
-after_tnumber_tnumber	wired
+after_tnumber_tnumber	proven
 after_tspatial_stbox	wired
 after_tspatial_tspatial	wired
 aintersects_tcbuffer_cbuffer	wired
@@ -99,7 +99,7 @@ before_stbox_tspatial	wired
 before_tbox_tnumber	wired
 before_temporal_temporal	wired
 before_tnumber_tbox	wired
-before_tnumber_tnumber	wired
+before_tnumber_tnumber	proven
 before_tspatial_stbox	wired
 before_tspatial_tspatial	wired
 below_stbox_stbox	wired
@@ -113,7 +113,7 @@ contained_stbox_tspatial	wired
 contained_tbox_tnumber	wired
 contained_temporal_temporal	wired
 contained_tnumber_tbox	wired
-contained_tnumber_tnumber	wired
+contained_tnumber_tnumber	proven
 contained_tspatial_stbox	wired
 contained_tspatial_tspatial	wired
 contains_stbox_stbox	wired
@@ -121,7 +121,7 @@ contains_stbox_tspatial	wired
 contains_tbox_tnumber	wired
 contains_temporal_temporal	wired
 contains_tnumber_tbox	wired
-contains_tnumber_tnumber	wired
+contains_tnumber_tnumber	proven
 contains_tspatial_stbox	wired
 contains_tspatial_tspatial	wired
 div_tnumber_tnumber	proven
@@ -244,7 +244,7 @@ overafter_stbox_tspatial	wired
 overafter_tbox_tnumber	wired
 overafter_temporal_temporal	wired
 overafter_tnumber_tbox	wired
-overafter_tnumber_tnumber	wired
+overafter_tnumber_tnumber	proven
 overafter_tspatial_stbox	wired
 overafter_tspatial_tspatial	wired
 overback_stbox_stbox	wired
@@ -256,7 +256,7 @@ overbefore_stbox_tspatial	wired
 overbefore_tbox_tnumber	wired
 overbefore_temporal_temporal	wired
 overbefore_tnumber_tbox	wired
-overbefore_tnumber_tnumber	wired
+overbefore_tnumber_tnumber	proven
 overbefore_tspatial_stbox	wired
 overbefore_tspatial_tspatial	wired
 overbelow_stbox_stbox	wired
@@ -279,21 +279,21 @@ overleft_stbox_stbox	wired
 overleft_stbox_tspatial	wired
 overleft_tbox_tnumber	wired
 overleft_tnumber_tbox	wired
-overleft_tnumber_tnumber	wired
+overleft_tnumber_tnumber	proven
 overleft_tspatial_stbox	wired
 overleft_tspatial_tspatial	wired
 overright_stbox_stbox	wired
 overright_stbox_tspatial	wired
 overright_tbox_tnumber	wired
 overright_tnumber_tbox	wired
-overright_tnumber_tnumber	wired
+overright_tnumber_tnumber	proven
 overright_tspatial_stbox	wired
 overright_tspatial_tspatial	wired
 right_stbox_stbox	wired
 right_stbox_tspatial	wired
 right_tbox_tnumber	wired
 right_tnumber_tbox	wired
-right_tnumber_tnumber	wired
+right_tnumber_tnumber	proven
 right_tspatial_stbox	wired
 right_tspatial_tspatial	wired
 same_stbox_stbox	wired
@@ -301,7 +301,7 @@ same_stbox_tspatial	wired
 same_tbox_tnumber	wired
 same_temporal_temporal	wired
 same_tnumber_tbox	wired
-same_tnumber_tnumber	wired
+same_tnumber_tnumber	proven
 same_tspatial_stbox	wired
 same_tspatial_tspatial	wired
 set_union_finalfn	proven
