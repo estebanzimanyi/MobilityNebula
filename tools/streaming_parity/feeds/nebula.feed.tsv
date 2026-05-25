@@ -307,7 +307,7 @@ same_tspatial_tspatial	proven
 set_union_finalfn	proven
 set_union_transfn	proven
 span_copy	proven
-stbox_cmp	wired
+stbox_cmp	proven
 stbox_copy	proven
 stbox_eq	proven
 stbox_ge	proven
@@ -316,8 +316,8 @@ stbox_le	proven
 stbox_lt	proven
 stbox_ne	proven
 sub_tnumber_tnumber	proven
-tbool_end_value	wired
-tbool_start_value	wired
+tbool_end_value	proven
+tbool_start_value	proven
 tbool_to_tint	wired
 tbox_copy	proven
 tcbuffer_to_tfloat	wired
@@ -365,7 +365,7 @@ tfloat_max_value	proven
 tfloat_min_value	wired
 tfloat_radians	wired
 tfloat_start_value	wired
-tfloat_to_tint	wired
+tfloat_to_tint	proven
 tgeo_at_geom	proven
 tgeo_centroid	wired
 tgeo_convex_hull	proven
@@ -378,7 +378,7 @@ timestamptz_union_transfn	proven
 tint_end_value	wired
 tint_max_value	wired
 tint_min_value	wired
-tint_start_value	wired
+tint_start_value	proven
 tint_to_tfloat	wired
 tnpoint_cumulative_length	proven
 tnpoint_length	wired

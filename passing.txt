@@ -270,6 +270,7 @@ same_tnumber_tbox
 same_tnumber_tnumber
 same_tspatial_stbox
 same_tspatial_tspatial
+stbox_cmp
 stbox_eq
 stbox_ge
 stbox_gt
@@ -277,6 +278,8 @@ stbox_le
 stbox_lt
 stbox_ne
 sub_tnumber_tnumber
+tbool_end_value
+tbool_start_value
 tcontains_tgeo_tgeo
 tcovers_tgeo_tgeo
 tdistance_tgeo_tgeo
@@ -286,6 +289,7 @@ temporal_num_instants
 temporal_tfloat_max_value
 temporal_tnumber_twavg
 temporal_tpoint_is_simple
+tfloat_to_tint
 tgeo_convex_hull_exp
 tgeo_end_value_exp
 tgeo_start_value_exp
