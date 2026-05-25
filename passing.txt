@@ -215,6 +215,8 @@ nad_tgeo_geo
 nad_tgeo_stbox
 nad_tint_int
 nad_tint_tbox
+nad_tpose_geo
+nad_tpose_stbox
 nad_tpose_tpose
 overabove_stbox_stbox
 overabove_stbox_tspatial
@@ -289,6 +291,7 @@ stbox_ne
 sub_tnumber_tnumber
 tbool_end_value
 tbool_start_value
+tcbuffer_to_tfloat
 tcontains_tgeo_tgeo
 tcovers_tgeo_tgeo
 tdistance_tgeo_tgeo
@@ -296,6 +299,7 @@ tdistance_tnumber_tnumber
 temporal_at_max
 temporal_at_min
 temporal_copy_exp
+temporal_derivative
 temporal_lower_inc
 temporal_num_instants
 temporal_num_timestamps
@@ -328,10 +332,13 @@ tnpoint_cumulative_length_exp
 tnpoint_speed_exp
 tnpoint_to_tgeompoint_exp
 tnumber_abs_exp
+tnumber_angular_difference
+tnumber_delta_value
 tnumber_extent
 tnumber_integral
 tnumber_trend_exp
 tnumber_twavg
+tpoint_angular_difference
 tpoint_cumulative_length_exp
 tpoint_get_x_exp
 tpoint_get_y_exp
