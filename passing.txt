@@ -214,6 +214,11 @@ float_union
 front_stbox_stbox
 int_extent
 int_union
+intersection_set_set
+intersection_span_span
+intersection_span_spanset
+intersection_spanset_span
+intersection_spanset_spanset
 left_set_set
 left_span_span
 left_spanset_span
@@ -225,6 +230,11 @@ left_tnumber_tbox
 left_tnumber_tnumber
 left_tspatial_stbox
 left_tspatial_tspatial
+minus_set_set
+minus_span_span
+minus_span_spanset
+minus_spanset_span
+minus_spanset_spanset
 mult_tnumber_tnumber
 nad_stbox_stbox
 nad_tcbuffer_cbuffer
@@ -407,3 +417,8 @@ tpoint_speed_exp
 tpoint_twcentroid_exp
 trajectory_wkb
 tspatial_extent
+union_set_set
+union_span_span
+union_span_spanset
+union_spanset_span
+union_spanset_spanset

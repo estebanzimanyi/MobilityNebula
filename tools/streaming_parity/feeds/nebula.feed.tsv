@@ -220,6 +220,11 @@ geog_dwithin	wired
 geom_to_geog	wired
 int_extent_transfn	proven
 int_union_transfn	proven
+intersection_set_set	proven
+intersection_span_span	proven
+intersection_span_spanset	proven
+intersection_spanset_span	proven
+intersection_spanset_spanset	proven
 left_set_set	proven
 left_span_span	proven
 left_spanset_span	proven
@@ -231,6 +236,11 @@ left_tnumber_tbox	proven
 left_tnumber_tnumber	proven
 left_tspatial_stbox	proven
 left_tspatial_tspatial	proven
+minus_set_set	proven
+minus_span_span	proven
+minus_span_spanset	proven
+minus_spanset_span	proven
+minus_spanset_spanset	proven
 nad_stbox_stbox	proven
 nad_tcbuffer_cbuffer	proven
 nad_tcbuffer_geo	proven
@@ -282,7 +292,6 @@ overbelow_tspatial_tspatial	proven
 overfront_stbox_stbox	proven
 overfront_stbox_tspatial	wired
 overfront_tspatial_stbox	wired
-[nebula adapter] operators=482 wired-calls=439 proven-calls=412 passing-systests=409
 overfront_tspatial_tspatial	wired
 overlaps_set_set	proven
 overlaps_span_span	proven
@@ -436,5 +445,10 @@ tpoint_length	proven
 tpoint_speed	proven
 tpoint_twcentroid	proven
 tspatial_extent_transfn	proven
+union_set_set	proven
+union_span_span	proven
+union_span_spanset	proven
+union_spanset_span	proven
+union_spanset_spanset	proven
 union_stbox_stbox	proven
 union_tbox_tbox	proven

@@ -3119,6 +3119,23 @@ GENERIC_RETURNS = {
     # and emitted as a VARSIZED field (the cross-operator exchange form). Handled
     # by assemble_wkb_output, not the scalar GENERIC_PHYSICAL_TEMPLATE.
     "wkb":     ("VariableSizedData", "VARSIZED", "nullptr", None),
+    # Set/span/spanset-algebra results (union/intersection/minus) — the MEOS call
+    # returns a NEW Span*/Set*/SpanSet* which is serialized to its canonical text
+    # via the subtype *_out and emitted as a VARSIZED field. Handled by
+    # assemble_generic_varsized_output (reuses the flexible *_in input shapes).
+    # The logical/physical-hpp see a plain VARSIZED return like "wkb"; the result
+    # C type + serializer live in VARSIZED_OUT_RETURNS.
+    "intspan_text":    ("VariableSizedData", "VARSIZED", "(char*) nullptr", None),
+    "intset_text":     ("VariableSizedData", "VARSIZED", "(char*) nullptr", None),
+    "intspanset_text": ("VariableSizedData", "VARSIZED", "(char*) nullptr", None),
+}
+
+# return_kind -> (result C type, subtype text serializer). The MEOS algebra call
+# yields `<ctype>* res`; `<out_fn>(res)` is the heap text copied into the arena.
+VARSIZED_OUT_RETURNS = {
+    "intspan_text":    ("Span",    "intspan_out"),
+    "intset_text":     ("Set",     "intset_out"),
+    "intspanset_text": ("SpanSet", "intspanset_out"),
 }
 
 
@@ -3156,11 +3173,97 @@ def assemble_wkb_output(op):
         registrar_pushes=registrar)
 
 
+def assemble_generic_varsized_output(op):
+    """Physical .cpp for a span/set/spanset-algebra op (union/intersection/minus):
+    parse the operands via the flexible *_in input shapes (input_type + extra_args,
+    identical to the scalar path), call f(...) -> Span*/Set*/SpanSet*, serialize the
+    result via its subtype *_out, and emit it as a VARSIZED text field. The result
+    string is heap-allocated inside the invoke then arena-copied (the canonical
+    VARSIZED-output idiom, see assemble_wkb_output). A null result (empty
+    intersection/minus) yields a zero-length VARSIZED."""
+    name = op["nebula_name"]
+    inp = GENERIC_INPUTS[op["input_type"]]
+    res_ctype, out_fn = VARSIZED_OUT_RETURNS[op["return_kind"]]
+    zero = "(char*) nullptr"
+    extras = op.get("extra_args", [])
+
+    fields = list(inp["fields"])
+    headers = {"meos.h", inp["header"]}
+    for h in op.get("extra_headers", []):
+        headers.add(h)
+    call_terms = ["temp"]
+    parse_lines = []
+    box_frees = []
+    for i, ex in enumerate(extras):
+        if ex["kind"] == "scalar":
+            fields.append((f"arg{i}", ex["cpp"]))
+            call_terms.append(f"arg{i}")
+        elif ex["kind"] == "box":
+            fields.append((f"arg{i}", "VariableSizedData"))
+            headers.add(ex.get("header", "meos.h"))
+            parse_lines.append(
+                f'                std::string arg{i}S(arg{i}Ptr, arg{i}Size);\n'
+                f'                while (!arg{i}S.empty() && (arg{i}S.front()==\'\\\'\' || arg{i}S.front()==\'"\')) arg{i}S.erase(arg{i}S.begin());\n'
+                f'                while (!arg{i}S.empty() && (arg{i}S.back()==\'\\\'\' || arg{i}S.back()==\'"\')) arg{i}S.pop_back();\n'
+                f'                {ex["box_type"]}* arg{i}B = {ex["parser"]}(arg{i}S.c_str());\n'
+                f'                if (!arg{i}B) {{ free(temp); return {zero}; }}\n')
+            call_terms.append(f"arg{i}B")
+            box_frees.append(f"free(arg{i}B);")
+        else:
+            raise SystemExit(f"varsized-output op {name}: unsupported extra-arg kind {ex['kind']}")
+
+    casts, lparams, invoke = [], [], []
+    idx = 0
+    for fn, cpp in fields:
+        if cpp == "VariableSizedData":
+            casts.append(f"    auto {fn} = parameterValues[{idx}].cast<VariableSizedData>();")
+            lparams.append(f"const char* {fn}Ptr, uint32_t {fn}Size")
+            invoke.append(f"{fn}.getContent(), {fn}.getContentSize()")
+        else:
+            casts.append(f"    auto {fn} = parameterValues[{idx}].cast<nautilus::val<{cpp}>>();")
+            lparams.append(f"{cpp} {fn}")
+            invoke.append(fn)
+        idx += 1
+    n_args = idx
+
+    build = inp["build"].format(var="temp", z=zero) + "".join(parse_lines)
+    inc = "\n".join(f"#include <{h}>" for h in
+                    ["meos.h"] + sorted(h for h in headers if h != "meos.h"))
+    if op.get("box_first") and len(call_terms) == 2:
+        call_terms = [call_terms[1], call_terms[0]]
+    callargs = ", ".join(call_terms)
+    bf = "".join(f"                {x}\n" for x in box_frees)
+    call_marshal = (
+        f"                {res_ctype}* res = {op['meos_call']}({callargs});\n"
+        f"                free(temp);\n"
+        f"{bf}"
+        f"                if (!res) return (char*) nullptr;\n"
+        f"                char* outStr = {out_fn}(res);\n"
+        f"                free(res);\n"
+        f"                return outStr;")
+
+    physical_args = ",\n                                                          ".join(
+        f"PhysicalFunction {fn}Function" for fn, _ in fields)
+    pushes = "\n".join(f"    parameterFunctions.push_back(std::move({fn}Function));" for fn, _ in fields)
+    registrar = "\n".join(
+        [f"    auto arg{i} = std::move(arguments.childFunctions[{i}]);" for i in range(n_args)]
+        + [f"    return {name}PhysicalFunction(" + ", ".join(f"std::move(arg{i})" for i in range(n_args)) + ");"])
+
+    return GENERIC_PHYSICAL_VARSIZED_OUT_TEMPLATE.format(
+        nebula_name=name, includes=inc, n_args=n_args,
+        ctor_physical_args=physical_args, ctor_physical_pushes=pushes,
+        casts="\n".join(casts), lambda_params=",\n            ".join(lparams),
+        build=build, call_marshal=call_marshal,
+        invoke_args=", ".join(invoke), registrar_pushes=registrar)
+
+
 def assemble_generic_physical(op):
     """Build the physical .cpp for a 'generic' (build_generic) operator."""
     name = op["nebula_name"]
     if op["return_kind"] == "wkb":
         return assemble_wkb_output(op)
+    if op["return_kind"] in VARSIZED_OUT_RETURNS:
+        return assemble_generic_varsized_output(op)
     inp = GENERIC_INPUTS[op["input_type"]]
     ret_cpp, _, zero, extract_fn = GENERIC_RETURNS[op["return_kind"]]
     extras = op.get("extra_args", [])
@@ -3471,6 +3574,114 @@ PhysicalFunctionRegistryReturnType PhysicalFunctionGeneratedRegistrar::Register{
 {{
     PRECONDITION(arguments.childFunctions.size() == 2,
                  "{nebula_name}PhysicalFunction requires 2 children but got {{}}",
+                 arguments.childFunctions.size());
+{registrar_pushes}
+}}
+
+}} // namespace NES
+"""
+
+
+GENERIC_PHYSICAL_VARSIZED_OUT_TEMPLATE = """\
+/*
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        https://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+*/
+
+#include <Functions/Meos/{nebula_name}PhysicalFunction.hpp>
+
+#include <Functions/PhysicalFunction.hpp>
+#include <MEOSWrapper.hpp>
+#include <Nautilus/DataTypes/VarVal.hpp>
+#include <Nautilus/DataTypes/VariableSizedData.hpp>
+#include <Nautilus/Interface/Record.hpp>
+#include <PhysicalFunctionRegistry.hpp>
+#include <ErrorHandling.hpp>
+#include <ExecutionContext.hpp>
+#include <cstdlib>
+#include <cstring>
+#include <function.hpp>
+#include <string>
+#include <utility>
+#include <val.hpp>
+
+extern "C" {{
+{includes}
+}}
+
+namespace NES {{
+
+{nebula_name}PhysicalFunction::{nebula_name}PhysicalFunction({ctor_physical_args})
+{{
+    parameterFunctions.reserve({n_args});
+{ctor_physical_pushes}
+}}
+
+VarVal {nebula_name}PhysicalFunction::execute(const Record& record, ArenaRef& arena) const
+{{
+    std::vector<VarVal> parameterValues;
+    parameterValues.reserve(parameterFunctions.size());
+    for (const auto& function : parameterFunctions)
+    {{
+        parameterValues.emplace_back(function.execute(record, arena));
+    }}
+
+{casts}
+
+    // Parse the operands, call the MEOS set-algebra function, and serialize the
+    // resulting span/set/spanset to its canonical text — all inside one invoke.
+    // The heap string is copied into the arena below; operands and the MEOS
+    // result are freed here. A null result yields a zero-length VARSIZED.
+    auto outStr = nautilus::invoke(
+        +[]({lambda_params}) -> char*
+        {{
+            try
+            {{
+                MEOS::Meos::ensureMeosInitialized();
+{build}
+{call_marshal}
+            }}
+            catch (const std::exception&)
+            {{
+                return (char*) nullptr;
+            }}
+        }},
+        {invoke_args});
+
+    const auto outLen = nautilus::invoke(
+        +[](const char* s) -> uint32_t {{ return s ? (uint32_t) strlen(s) : (uint32_t) 0; }},
+        outStr);
+
+    auto variableSized = arena.allocateVariableSizedData(outLen);
+
+    nautilus::invoke(
+        +[](int8_t* dest, const char* s, uint32_t len) -> void
+        {{
+            if (s)
+            {{
+                memcpy(dest, s, len);
+                free((void*) s);
+            }}
+        }},
+        variableSized.getContent(), outStr, outLen);
+
+    return variableSized;
+}}
+
+PhysicalFunctionRegistryReturnType PhysicalFunctionGeneratedRegistrar::Register{nebula_name}PhysicalFunction(
+    PhysicalFunctionRegistryArguments arguments)
+{{
+    PRECONDITION(arguments.childFunctions.size() == {n_args},
+                 "{nebula_name}PhysicalFunction requires {n_args} children but got {{}}",
                  arguments.childFunctions.size());
 {registrar_pushes}
 }}
