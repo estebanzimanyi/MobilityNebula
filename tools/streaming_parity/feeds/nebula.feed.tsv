@@ -14,6 +14,7 @@ adisjoint_tcbuffer_geo	proven
 adisjoint_tcbuffer_tcbuffer	proven
 adisjoint_tgeo_geo	proven
 adisjoint_tgeo_tgeo	proven
+adjacent_span_span	proven
 adjacent_stbox_stbox	proven
 adjacent_stbox_tspatial	proven
 adjacent_tbox_tnumber	proven
@@ -108,6 +109,7 @@ below_tspatial_stbox	proven
 below_tspatial_tspatial	proven
 bigint_extent_transfn	proven
 bigint_union_transfn	proven
+contained_span_span	proven
 contained_stbox_stbox	proven
 contained_stbox_tspatial	proven
 contained_tbox_tnumber	proven
@@ -116,6 +118,7 @@ contained_tnumber_tbox	proven
 contained_tnumber_tnumber	proven
 contained_tspatial_stbox	proven
 contained_tspatial_tspatial	proven
+contains_span_span	proven
 contains_stbox_stbox	proven
 contains_stbox_tspatial	proven
 contains_tbox_tnumber	proven
@@ -209,6 +212,7 @@ geog_dwithin	wired
 geom_to_geog	wired
 int_extent_transfn	proven
 int_union_transfn	proven
+left_span_span	proven
 left_stbox_stbox	proven
 left_stbox_tspatial	proven
 left_tbox_tnumber	proven
@@ -268,6 +272,7 @@ overfront_stbox_stbox	proven
 overfront_stbox_tspatial	wired
 overfront_tspatial_stbox	wired
 overfront_tspatial_tspatial	wired
+overlaps_span_span	proven
 overlaps_stbox_stbox	proven
 overlaps_stbox_tspatial	proven
 overlaps_tbox_tnumber	proven
@@ -276,6 +281,8 @@ overlaps_tnumber_tbox	proven
 overlaps_tnumber_tnumber	proven
 overlaps_tspatial_stbox	proven
 overlaps_tspatial_tspatial	proven
+[nebula adapter] operators=459 wired-calls=416 proven-calls=389 passing-systests=386
+overleft_span_span	proven
 overleft_stbox_stbox	proven
 overleft_stbox_tspatial	proven
 overleft_tbox_tnumber	proven
@@ -283,6 +290,7 @@ overleft_tnumber_tbox	proven
 overleft_tnumber_tnumber	proven
 overleft_tspatial_stbox	proven
 overleft_tspatial_tspatial	proven
+overright_span_span	proven
 overright_stbox_stbox	proven
 overright_stbox_tspatial	proven
 overright_tbox_tnumber	proven
@@ -290,6 +298,7 @@ overright_tnumber_tbox	proven
 overright_tnumber_tnumber	proven
 overright_tspatial_stbox	proven
 overright_tspatial_tspatial	proven
+right_span_span	proven
 right_stbox_stbox	proven
 right_stbox_tspatial	proven
 right_tbox_tnumber	proven

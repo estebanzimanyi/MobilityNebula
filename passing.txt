@@ -14,6 +14,7 @@ adisjoint_tcbuffer_geo
 adisjoint_tcbuffer_tcbuffer
 adisjoint_tgeo_geo
 adisjoint_tgeo_tgeo
+adjacent_span_span
 adjacent_stbox_stbox
 adjacent_stbox_tspatial
 adjacent_tbox_tnumber
@@ -106,6 +107,7 @@ below_tspatial_stbox
 below_tspatial_tspatial
 bigint_extent
 bigint_union
+contained_span_span
 contained_stbox_stbox
 contained_stbox_tspatial
 contained_tbox_tnumber
@@ -114,6 +116,7 @@ contained_tnumber_tbox
 contained_tnumber_tnumber
 contained_tspatial_stbox
 contained_tspatial_tspatial
+contains_span_span
 contains_stbox_stbox
 contains_stbox_tspatial
 contains_tbox_tnumber
@@ -203,6 +206,7 @@ float_union
 front_stbox_stbox
 int_extent
 int_union
+left_span_span
 left_stbox_stbox
 left_stbox_tspatial
 left_tbox_tnumber
@@ -254,6 +258,7 @@ overbelow_stbox_tspatial
 overbelow_tspatial_stbox
 overbelow_tspatial_tspatial
 overfront_stbox_stbox
+overlaps_span_span
 overlaps_stbox_stbox
 overlaps_stbox_tspatial
 overlaps_tbox_tnumber
@@ -262,6 +267,7 @@ overlaps_tnumber_tbox
 overlaps_tnumber_tnumber
 overlaps_tspatial_stbox
 overlaps_tspatial_tspatial
+overleft_span_span
 overleft_stbox_stbox
 overleft_stbox_tspatial
 overleft_tbox_tnumber
@@ -269,6 +275,7 @@ overleft_tnumber_tbox
 overleft_tnumber_tnumber
 overleft_tspatial_stbox
 overleft_tspatial_tspatial
+overright_span_span
 overright_stbox_stbox
 overright_stbox_tspatial
 overright_tbox_tnumber
@@ -276,6 +283,7 @@ overright_tnumber_tbox
 overright_tnumber_tnumber
 overright_tspatial_stbox
 overright_tspatial_tspatial
+right_span_span
 right_stbox_stbox
 right_stbox_tspatial
 right_tbox_tnumber

@@ -3055,6 +3055,52 @@ GENERIC_INPUTS = {
         '                while (!{var}S.empty() && ({var}S.back()==\'\\\'\' || {var}S.back()==\'"\')) {var}S.pop_back();\n'
         '                STBox* {var} = stbox_in({var}S.c_str());\n'
         '                if (!{var}) return {z};\n')),
+    # First operand of a set/span/spanset/box-algebra predicate, parsed from a
+    # VARSIZED text literal via a typed single-arg parser. The second operand is
+    # a `box` extra arg with the matching parser. Concrete (int/bigint/date)
+    # subtypes exercise the type-generic MEOS function (contains_span_span etc.).
+    "intspan": dict(fields=[("lit", "VariableSizedData")], header="meos.h", build=(
+        '                std::string {var}S(litPtr, litSize);\n'
+        '                while (!{var}S.empty() && ({var}S.front()==\'\\\'\' || {var}S.front()==\'"\')) {var}S.erase({var}S.begin());\n'
+        '                while (!{var}S.empty() && ({var}S.back()==\'\\\'\' || {var}S.back()==\'"\')) {var}S.pop_back();\n'
+        '                Span* {var} = intspan_in({var}S.c_str());\n'
+        '                if (!{var}) return {z};\n')),
+    "bigintspan": dict(fields=[("lit", "VariableSizedData")], header="meos.h", build=(
+        '                std::string {var}S(litPtr, litSize);\n'
+        '                while (!{var}S.empty() && ({var}S.front()==\'\\\'\' || {var}S.front()==\'"\')) {var}S.erase({var}S.begin());\n'
+        '                while (!{var}S.empty() && ({var}S.back()==\'\\\'\' || {var}S.back()==\'"\')) {var}S.pop_back();\n'
+        '                Span* {var} = bigintspan_in({var}S.c_str());\n'
+        '                if (!{var}) return {z};\n')),
+    "datespan": dict(fields=[("lit", "VariableSizedData")], header="meos.h", build=(
+        '                std::string {var}S(litPtr, litSize);\n'
+        '                while (!{var}S.empty() && ({var}S.front()==\'\\\'\' || {var}S.front()==\'"\')) {var}S.erase({var}S.begin());\n'
+        '                while (!{var}S.empty() && ({var}S.back()==\'\\\'\' || {var}S.back()==\'"\')) {var}S.pop_back();\n'
+        '                Span* {var} = datespan_in({var}S.c_str());\n'
+        '                if (!{var}) return {z};\n')),
+    "intspanset": dict(fields=[("lit", "VariableSizedData")], header="meos.h", build=(
+        '                std::string {var}S(litPtr, litSize);\n'
+        '                while (!{var}S.empty() && ({var}S.front()==\'\\\'\' || {var}S.front()==\'"\')) {var}S.erase({var}S.begin());\n'
+        '                while (!{var}S.empty() && ({var}S.back()==\'\\\'\' || {var}S.back()==\'"\')) {var}S.pop_back();\n'
+        '                SpanSet* {var} = intspanset_in({var}S.c_str());\n'
+        '                if (!{var}) return {z};\n')),
+    "intset": dict(fields=[("lit", "VariableSizedData")], header="meos.h", build=(
+        '                std::string {var}S(litPtr, litSize);\n'
+        '                while (!{var}S.empty() && ({var}S.front()==\'\\\'\' || {var}S.front()==\'"\')) {var}S.erase({var}S.begin());\n'
+        '                while (!{var}S.empty() && ({var}S.back()==\'\\\'\' || {var}S.back()==\'"\')) {var}S.pop_back();\n'
+        '                Set* {var} = intset_in({var}S.c_str());\n'
+        '                if (!{var}) return {z};\n')),
+    "dateset": dict(fields=[("lit", "VariableSizedData")], header="meos.h", build=(
+        '                std::string {var}S(litPtr, litSize);\n'
+        '                while (!{var}S.empty() && ({var}S.front()==\'\\\'\' || {var}S.front()==\'"\')) {var}S.erase({var}S.begin());\n'
+        '                while (!{var}S.empty() && ({var}S.back()==\'\\\'\' || {var}S.back()==\'"\')) {var}S.pop_back();\n'
+        '                Set* {var} = dateset_in({var}S.c_str());\n'
+        '                if (!{var}) return {z};\n')),
+    "tbox_text": dict(fields=[("lit", "VariableSizedData")], header="meos.h", build=(
+        '                std::string {var}S(litPtr, litSize);\n'
+        '                while (!{var}S.empty() && ({var}S.front()==\'\\\'\' || {var}S.front()==\'"\')) {var}S.erase({var}S.begin());\n'
+        '                while (!{var}S.empty() && ({var}S.back()==\'\\\'\' || {var}S.back()==\'"\')) {var}S.pop_back();\n'
+        '                TBox* {var} = tbox_in({var}S.c_str());\n'
+        '                if (!{var}) return {z};\n')),
 }
 
 # return_kind -> (cpp_return_type, nautilus_return, zero_literal, extract_fn|None)
