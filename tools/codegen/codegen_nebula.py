@@ -3197,6 +3197,14 @@ for _rk, _ct, _of, _md in [
     ("tstzspanset_text", "SpanSet", "tstzspanset_out", False),
     ("stbox_text_out", "STBox", "stbox_out", True),
     ("tbox_text_out", "TBox", "tbox_out", True),
+    # Temporal* results serialized to their canonical WKT (value@timestamp ...)
+    # via the subtype *_out. Used by the temporal-instant ⊗ scalar wave: the op
+    # returns a tint/tfloat (arithmetic, at/minus, shift/scale) or a tbool
+    # (temporal comparison), emitted as a VARSIZED text field. tfloat_out takes a
+    # maxdd precision arg; tint_out/tbool_out take only the pointer.
+    ("tint_out", "Temporal", "tint_out", False),
+    ("tfloat_out", "Temporal", "tfloat_out", True),
+    ("tbool_out", "Temporal", "tbool_out", False),
 ]:
     GENERIC_RETURNS.setdefault(_rk, ("VariableSizedData", "VARSIZED", "(char*) nullptr", None))
     VARSIZED_OUT_RETURNS.setdefault(_rk, (_ct, _of, _md))

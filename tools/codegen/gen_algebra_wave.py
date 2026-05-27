@@ -104,6 +104,20 @@ OBJECT_TYPES = {"Cbuffer": ("cbuffer", "cbuffer_in", "meos_cbuffer.h"),
                 "Npoint": ("npoint", "npoint_in", "meos_npoint.h"),
                 "Nsegment": ("nsegment", "nsegment_in", "meos_npoint.h")}
 
+# Temporal-instant ⊗ scalar ops returning a Temporal* (arithmetic / at-value /
+# minus / shift / scale -> same numeric subtype; temporal comparison -> tbool;
+# tdistance -> tfloat). The temporal operand is built from a single (value, ts)
+# instant; the result is serialized to WKT via its subtype *_out (clean: a tint/
+# tfloat/tbool WKT is 'value@timestamp...', no interior '('). value samples + the
+# scalar samples differ per subtype. ts samples are epoch seconds (proven-good).
+# subtype -> (value SQL col, value cpp, value sample a, value sample b).
+TEMPORAL_INPUTS = {"tint": ("INT32", "int32_t", "5", "8"),
+                   "tfloat": ("FLOAT64", "double", "5.5", "8.5")}
+# scalar base C type -> (SQL col, cpp, sample a, sample b).
+TSCALAR_COL = {"int": ("INT32", "int32_t", "3", "2"),
+               "double": ("FLOAT64", "double", "3.5", "2.5")}
+TCMP = ("tlt", "tle", "tgt", "tge", "teq", "tne")
+
 
 def load_sigs():
     txt = re.sub(r"\s+", " ", open(HEADERS).read())
@@ -168,6 +182,32 @@ def classify(name, ret, plist):
         return entry, tmeta
     if len(plist) != 2:
         return None, f"arity {len(plist)} (not 2)"
+    # ---- temporal-instant ⊗ scalar -> Temporal* (per-event, WKT-serialized) ----
+    tidx = [i for i, (b, p) in enumerate(plist) if b == "Temporal"]
+    nidx = [i for i, (b, p) in enumerate(plist) if b in ("int", "double")]
+    if ret.replace("*", "").strip() == "Temporal" and len(tidx) == 1 and len(nidx) == 1:
+        toks = name.split("_")
+        insub = "tint" if "tint" in toks else ("tfloat" if "tfloat" in toks else None)
+        if insub is None:
+            return None, "no tint/tfloat subtype token"
+        pref = toks[0]
+        # result subtype: a temporal comparison yields a tbool; everything else
+        # (arithmetic, minus, shift, tdistance) keeps the INPUT subtype — MEOS
+        # tdistance sets restype = temp->temptype, so tdistance_tint_int -> tint.
+        serializer = "tbool_out" if pref in TCMP else insub + "_out"
+        vsql, vcpp, va, vb = TEMPORAL_INPUTS[insub]
+        scbase = plist[nidx[0]][0]
+        ssql, scpp, sa, sb = TSCALAR_COL[scbase]
+        entry = dict(nebula_name=camel(name), sql_token=name.upper(), meos_call=name,
+                     build_generic=True, input_type=insub, return_kind=serializer,
+                     extra_args=[dict(kind="scalar", cpp=scpp)],
+                     comment_one_liner=f"{name} ({ret.strip()}) — temporal {insub} ⊗ scalar -> {serializer}.")
+        if tidx[0] == 1:               # scalar-first: call = f(scalar, temp)
+            entry["box_first"] = True
+        tmeta = dict(cols=[("value", vsql), ("ts", "UINT64"), ("arg", ssql)],
+                     rows=[(va, "1609459200", sa), (vb, "1609545600", sb)],
+                     token=name.upper(), sink="VARSIZED")
+        return entry, tmeta
     # ---- same-type object-scalar comparison / relation (cbuffer/pose/npoint/
     # nsegment cmp/eq/.../same + cbuffer spatial rels): two literals -> bool/int ----
     (b0, p0), (b1, p1) = plist
