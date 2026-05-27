@@ -3110,6 +3110,7 @@ GENERIC_INPUTS = {
 # single instant); the wrapper temporal is freed.
 GENERIC_RETURNS = {
     "int":     ("int", "INT32", "0", None),
+    "int64":   ("int64_t", "INT64", "0", None),
     "double":  ("double", "FLOAT64", "0.0", None),
     "bool":    ("bool", "BOOLEAN", "false", None),
     "extract_int":    ("int", "INT32", "0", "tint_start_value"),
