@@ -3249,6 +3249,15 @@ def assemble_generic_varsized_output(op):
         if ex["kind"] == "scalar":
             fields.append((f"arg{i}", ex["cpp"]))
             call_terms.append(f"arg{i}")
+        elif ex["kind"] == "scalar_text":
+            fields.append((f"arg{i}", "VariableSizedData"))
+            headers.add(ex.get("header", "meos.h"))
+            parse_lines.append(
+                f'                std::string arg{i}S(arg{i}Ptr, arg{i}Size);\n'
+                f'                while (!arg{i}S.empty() && (arg{i}S.front()==\'\\\'\' || arg{i}S.front()==\'"\')) arg{i}S.erase(arg{i}S.begin());\n'
+                f'                while (!arg{i}S.empty() && (arg{i}S.back()==\'\\\'\' || arg{i}S.back()==\'"\')) arg{i}S.pop_back();\n'
+                f'                {ex["ctype"]} arg{i}V = {ex["parser"]}(arg{i}S.c_str(){ex.get("parser_extra", "")});\n')
+            call_terms.append(f"arg{i}V")
         elif ex["kind"] == "box":
             fields.append((f"arg{i}", "VariableSizedData"))
             headers.add(ex.get("header", "meos.h"))
@@ -3333,6 +3342,18 @@ def assemble_generic_physical(op):
         if ex["kind"] == "scalar":
             fields.append((f"arg{i}", ex["cpp"]))
             call_terms.append(f"arg{i}")
+        elif ex["kind"] == "scalar_text":
+            # a scalar VALUE parsed from a quoted text field via a typed parser
+            # (date_in -> DateADT, timestamptz_in -> TimestampTz). The parser
+            # returns a plain value, so there is nothing to free.
+            fields.append((f"arg{i}", "VariableSizedData"))
+            headers.add(ex.get("header", "meos.h"))
+            parse_lines.append(
+                f'                std::string arg{i}S(arg{i}Ptr, arg{i}Size);\n'
+                f'                while (!arg{i}S.empty() && (arg{i}S.front()==\'\\\'\' || arg{i}S.front()==\'"\')) arg{i}S.erase(arg{i}S.begin());\n'
+                f'                while (!arg{i}S.empty() && (arg{i}S.back()==\'\\\'\' || arg{i}S.back()==\'"\')) arg{i}S.pop_back();\n'
+                f'                {ex["ctype"]} arg{i}V = {ex["parser"]}(arg{i}S.c_str(){ex.get("parser_extra", "")});\n')
+            call_terms.append(f"arg{i}V")
         elif ex["kind"] == "geom":
             fields.append((f"arg{i}", "VariableSizedData"))
             headers.add("meos_geo.h")

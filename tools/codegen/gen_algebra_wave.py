@@ -29,10 +29,20 @@ SCALARS = {
     "int64":       ("int64_t", "INT64",   "3",   "7"),
     "double":      ("double",  "FLOAT64", "3.5", "7.5"),
 }
+# scalar parsed from a quoted text field -> (parser, parser_extra, sample a, sample b).
+# date_in -> DateADT and timestamptz_in -> TimestampTz return plain values (no free).
+SCALARS_TEXT = {
+    "DateADT":     ("date_in", "", "2020-01-03", "2020-06-15"),
+    "TimestampTz": ("timestamptz_in", ", -1",
+                    "2020-01-03 00:00:00+00", "2020-06-15 12:00:00+00"),
+}
 # container kind + subtype -> (input_type key / box parser, box_type, return *_text)
-SUBSPAN = {"int": "intspan", "bigint": "bigintspan", "float": "floatspan"}
-SUBSET  = {"int": "intset",  "bigint": "bigintset",  "float": "floatset"}
-SUBSS   = {"int": "intspanset", "bigint": "bigintspanset", "float": "floatspanset"}
+SUBSPAN = {"int": "intspan", "bigint": "bigintspan", "float": "floatspan",
+           "date": "datespan", "timestamptz": "tstzspan"}
+SUBSET  = {"int": "intset",  "bigint": "bigintset",  "float": "floatset",
+           "date": "dateset", "timestamptz": "tstzset"}
+SUBSS   = {"int": "intspanset", "bigint": "bigintspanset", "float": "floatspanset",
+           "date": "datespanset", "timestamptz": "tstzspanset"}
 # per (input_type key) -> a pair of valid text literals for the .test
 LITERALS = {
     "intspan": ("[1, 5)", "[3, 9)"), "bigintspan": ("[1, 5)", "[3, 9)"),
@@ -42,6 +52,15 @@ LITERALS = {
     "intspanset": ("{[1, 5), [10, 15)}", "{[3, 7)}"),
     "bigintspanset": ("{[1, 5), [10, 15)}", "{[3, 7)}"),
     "floatspanset": ("{[1.5, 5.5), [10.5, 15.5)}", "{[3.5, 7.5)}"),
+    "datespan": ("[2020-01-01, 2020-01-10)", "[2020-01-05, 2020-01-20)"),
+    "dateset": ("{2020-01-01, 2020-01-05, 2020-01-10}", "{2020-01-03, 2020-01-08}"),
+    "datespanset": ("{[2020-01-01, 2020-01-10)}", "{[2020-01-05, 2020-01-20)}"),
+    "tstzspan": ("[2020-01-01 00:00:00+00, 2020-01-10 00:00:00+00)",
+                 "[2020-01-05 00:00:00+00, 2020-01-20 00:00:00+00)"),
+    "tstzset": ("{2020-01-01 00:00:00+00, 2020-01-05 00:00:00+00}",
+                "{2020-01-03 00:00:00+00, 2020-01-08 00:00:00+00}"),
+    "tstzspanset": ("{[2020-01-01 00:00:00+00, 2020-01-10 00:00:00+00)}",
+                    "{[2020-01-05 00:00:00+00, 2020-01-20 00:00:00+00)}"),
     "stbox_text": ("STBOX X((1,1),(5,5))", "STBOX X((3,3),(7,7))"),
     "tbox_text": ("TBOXFLOAT XT([1, 5],[2020-01-01, 2020-01-05])",
                   "TBOXFLOAT XT([3, 7],[2020-01-03, 2020-01-07])"),
@@ -89,7 +108,7 @@ def ctype_of(base, ptr):
 
 
 def subtype_of(name):
-    for s in ("bigint", "int", "float"):
+    for s in ("bigint", "int", "float", "timestamptz", "date"):
         if re.search(r"_" + s + r"(_|$)", name):
             return s
     return None
@@ -105,7 +124,7 @@ def classify(name, ret, plist):
         cc = ctype_of(base, ptr)
         if cc:
             kinds.append(("box", cc))
-        elif base in ("int", "int64", "double"):
+        elif base in ("int", "int64", "double", "DateADT", "TimestampTz"):
             kinds.append(("scalar", base))
         else:
             return None, f"unsupported param {base}{'*' if ptr else ''}"
@@ -125,40 +144,63 @@ def classify(name, ret, plist):
             return None, f"subtype {sub} unsupported"
         input_type = keymap[sub]
         scbase = kinds[si][1]
-        cpp = SCALARS[scbase][0]
         rkind = ret_kind(ret, sub)
         if rkind is None:
             return None, f"return {ret} unmapped"
         box_first = (bi == 1)  # container is the 2nd param -> swap so call=(scalar,container)
+        if scbase in SCALARS:
+            cpp, col_sql, sa, sb = SCALARS[scbase]
+            extra = dict(kind="scalar", cpp=cpp)
+        else:  # date/tstz: a scalar VALUE parsed from a quoted text field
+            parser, pextra, sa, sb = SCALARS_TEXT[scbase]
+            col_sql = "VARSIZED"
+            extra = dict(kind="scalar_text", ctype=scbase, parser=parser,
+                         parser_extra=pextra, header="meos.h")
         entry = dict(nebula_name=camel(name), sql_token=name.upper(), meos_call=name,
                      build_generic=True, input_type=input_type, return_kind=rkind,
-                     extra_args=[dict(kind="scalar", cpp=cpp)],
+                     extra_args=[extra],
                      comment_one_liner=f"{name} ({ret.strip()}) — generic set-algebra/predicate, container⊕value.")
         if box_first:
             entry["box_first"] = True
-        tmeta = dict(cols=[("a", "VARSIZED"), ("b", SCALARS[scbase][1])],
-                     rows=[(LITERALS[input_type][0], SCALARS[scbase][2]),
-                           (LITERALS[input_type][1], SCALARS[scbase][3])],
+        tmeta = dict(cols=[("a", "VARSIZED"), ("b", col_sql)],
+                     rows=[(LITERALS[input_type][0], sa), (LITERALS[input_type][1], sb)],
                      token=name.upper(), sink=sink_of(rkind))
         return entry, tmeta
     # ---- container + container (box∩box algebra OR box/box predicate) ----
     if len(box_idx) == 2:
         c0 = kinds[0][1]; c1 = kinds[1][1]
-        if c0 != c1:
-            return None, f"mixed boxes {c0}/{c1}"
-        if c0 not in ("STBox", "TBox"):
-            return None, "only stbox/tbox box-box handled here"
-        input_type = "stbox_text" if c0 == "STBox" else "tbox_text"
-        rkind = ret_kind(ret, None)              # bool/int predicate -> "int"; box result -> *_text_out
+        if c0 in ("STBox", "TBox") or c1 in ("STBox", "TBox"):
+            if c0 != c1:
+                return None, f"mixed boxes {c0}/{c1}"
+            input_type = "stbox_text" if c0 == "STBox" else "tbox_text"
+            rkind = ret_kind(ret, None)          # bool/int predicate -> "int"; box result -> *_text_out
+            if rkind is None:
+                return None, f"box-box return {ret} unmapped"
+            entry = dict(nebula_name=camel(name), sql_token=name.upper(), meos_call=name,
+                         build_generic=True, input_type=input_type, return_kind=rkind,
+                         extra_args=[dict(kind="box", box_type=c0, parser=BOX_PARSER[input_type], header="meos.h")],
+                         comment_one_liner=f"{name} ({ret.strip()}) — {c0} box-box operator over two literals.")
+            l0, l1 = LITERALS[input_type]
+            tmeta = dict(cols=[("a", "VARSIZED"), ("b", "VARSIZED")],
+                         rows=[(l0, l1), (l1, l0)], token=name.upper(), sink=sink_of(rkind))
+            return entry, tmeta
+        # type-generic Span/Set/SpanSet over two literals (e.g. contains_span_spanset);
+        # one MEOS symbol covers all subtypes, so int-subtype literals exercise it.
+        INTKEY = {"Span": "intspan", "Set": "intset", "SpanSet": "intspanset"}
+        if c0 not in INTKEY or c1 not in INTKEY:
+            return None, f"unhandled box-box {c0}/{c1}"
+        rkind = ret_kind(ret, "int")
         if rkind is None:
             return None, f"box-box return {ret} unmapped"
+        prim, sec = INTKEY[c0], INTKEY[c1]
         entry = dict(nebula_name=camel(name), sql_token=name.upper(), meos_call=name,
-                     build_generic=True, input_type=input_type, return_kind=rkind,
-                     extra_args=[dict(kind="box", box_type=c0, parser=BOX_PARSER[input_type], header="meos.h")],
-                     comment_one_liner=f"{name} ({ret.strip()}) — {c0} box-box operator over two literals.")
-        l0, l1 = LITERALS[input_type]
+                     build_generic=True, input_type=prim, return_kind=rkind,
+                     extra_args=[dict(kind="box", box_type=c1, parser=BOX_PARSER[sec], header="meos.h")],
+                     comment_one_liner=f"{name} ({ret.strip()}) — {c0}/{c1} operator over two literals.")
         tmeta = dict(cols=[("a", "VARSIZED"), ("b", "VARSIZED")],
-                     rows=[(l0, l1), (l1, l0)], token=name.upper(), sink=sink_of(rkind))
+                     rows=[(LITERALS[prim][0], LITERALS[sec][0]),
+                           (LITERALS[prim][1], LITERALS[sec][1])],
+                     token=name.upper(), sink=sink_of(rkind))
         return entry, tmeta
     return None, "unhandled operand mix"
 
