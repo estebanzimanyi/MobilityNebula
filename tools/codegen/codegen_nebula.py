@@ -3166,6 +3166,19 @@ for _k, _c, _p in [
 ]:
     GENERIC_INPUTS.setdefault(_k, _text_literal_input(_c, _p))
 
+# Object scalar types (cbuffer/pose/npoint/nsegment) as a primary text-literal
+# input: parse the quoted literal via the type's *_in into the object pointer.
+# Their parsers live outside meos.h, so carry the right header.
+for _k, _c, _p, _h in [
+    ("cbuffer", "Cbuffer", "cbuffer_in", "meos_cbuffer.h"),
+    ("pose", "Pose", "pose_in", "meos_pose.h"),
+    ("npoint", "Npoint", "npoint_in", "meos_npoint.h"),
+    ("nsegment", "Nsegment", "nsegment_in", "meos_npoint.h"),
+]:
+    _inp = _text_literal_input(_c, _p)
+    _inp["header"] = _h
+    GENERIC_INPUTS.setdefault(_k, _inp)
+
 # return_kind -> (result C type, *_out serializer, takes_maxdd). float/STBox/TBox
 # serializers take a trailing maxdd arg; the others take only the pointer.
 for _rk, _ct, _of, _md in [

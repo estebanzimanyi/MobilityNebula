@@ -61,14 +61,21 @@ LITERALS = {
                 "{2020-01-03 00:00:00+00, 2020-01-08 00:00:00+00}"),
     "tstzspanset": ("{[2020-01-01 00:00:00+00, 2020-01-10 00:00:00+00)}",
                     "{[2020-01-05 00:00:00+00, 2020-01-20 00:00:00+00)}"),
+    "cbuffer": ("Cbuffer(Point(1 1),1.0)", "Cbuffer(Point(2 2),0.5)"),
+    "pose": ("Pose(Point(1 1), 0.5)", "Pose(Point(2 2), 1.0)"),
+    "npoint": ("NPoint(1, 0.5)", "NPoint(1, 0.7)"),
+    "nsegment": ("NSegment(1, 0.2, 0.8)", "NSegment(1, 0.5, 0.7)"),
     "stbox_text": ("STBOX X((1,1),(5,5))", "STBOX X((3,3),(7,7))"),
     "tbox_text": ("TBOXFLOAT XT([1, 5],[2020-01-01, 2020-01-05])",
                   "TBOXFLOAT XT([3, 7],[2020-01-03, 2020-01-07])"),
 }
 BOX_PARSER = {"intspan": "intspan_in", "bigintspan": "bigintspan_in", "floatspan": "floatspan_in",
+              "datespan": "datespan_in", "tstzspan": "tstzspan_in",
               "intset": "intset_in", "bigintset": "bigintset_in", "floatset": "floatset_in",
+              "dateset": "dateset_in", "tstzset": "tstzset_in",
               "intspanset": "intspanset_in", "bigintspanset": "bigintspanset_in",
-              "floatspanset": "floatspanset_in", "stbox_text": "stbox_in", "tbox_text": "tbox_in"}
+              "floatspanset": "floatspanset_in", "datespanset": "datespanset_in",
+              "tstzspanset": "tstzspanset_in", "stbox_text": "stbox_in", "tbox_text": "tbox_in"}
 BOX_CTYPE  = {"intspan": "Span", "bigintspan": "Span", "floatspan": "Span",
               "intset": "Set", "bigintset": "Set", "floatset": "Set",
               "intspanset": "SpanSet", "bigintspanset": "SpanSet", "floatspanset": "SpanSet",
@@ -87,6 +94,15 @@ CONTAINER_C = {"Span": "span", "Set": "set", "SpanSet": "spanset", "STBox": "stb
 GENERIC_CONTAINER = {"span": "intspan", "set": "intset", "spanset": "intspanset"}
 SCALAR_RET = {"int": "int", "int64": "int64", "double": "double", "bool": "bool",
               "DateADT": "int", "TimestampTz": "int64"}
+
+# Object scalar types compared/related to another value of the same type
+# (cbuffer/pose/npoint/nsegment cmp/eq/ne/lt/le/gt/ge/same and the cbuffer
+# spatial rels). Both operands parse from a quoted text literal; bool/int sink.
+# value -> (input_type key, *_in parser, header).
+OBJECT_TYPES = {"Cbuffer": ("cbuffer", "cbuffer_in", "meos_cbuffer.h"),
+                "Pose": ("pose", "pose_in", "meos_pose.h"),
+                "Npoint": ("npoint", "npoint_in", "meos_npoint.h"),
+                "Nsegment": ("nsegment", "nsegment_in", "meos_npoint.h")}
 
 
 def load_sigs():
@@ -152,6 +168,23 @@ def classify(name, ret, plist):
         return entry, tmeta
     if len(plist) != 2:
         return None, f"arity {len(plist)} (not 2)"
+    # ---- same-type object-scalar comparison / relation (cbuffer/pose/npoint/
+    # nsegment cmp/eq/.../same + cbuffer spatial rels): two literals -> bool/int ----
+    (b0, p0), (b1, p1) = plist
+    if p0 and p1 and b0 == b1 and b0 in OBJECT_TYPES:
+        key, parser, header = OBJECT_TYPES[b0]
+        rkind = ret_kind(ret, None)
+        if rkind is None:
+            return None, f"obj-cmp return {ret} unmapped"
+        entry = dict(nebula_name=camel(name), sql_token=name.upper(), meos_call=name,
+                     build_generic=True, input_type=key, return_kind=rkind,
+                     extra_args=[dict(kind="box", box_type=b0, parser=parser, header=header)],
+                     extra_headers=[header],
+                     comment_one_liner=f"{name} ({ret.strip()}) — {b0} scalar comparison/relation.")
+        l0, l1 = LITERALS[key]
+        tmeta = dict(cols=[("a", "VARSIZED"), ("b", "VARSIZED")],
+                     rows=[(l0, l1), (l1, l0)], token=name.upper(), sink=sink_of(rkind))
+        return entry, tmeta
     # identify container params (pointer to Span/Set/SpanSet/STBox/TBox) vs scalars
     kinds = []
     for base, ptr in plist:
@@ -218,15 +251,27 @@ def classify(name, ret, plist):
             tmeta = dict(cols=[("a", "VARSIZED"), ("b", "VARSIZED")],
                          rows=[(l0, l1), (l1, l0)], token=name.upper(), sink=sink_of(rkind))
             return entry, tmeta
-        # type-generic Span/Set/SpanSet over two literals (e.g. contains_span_spanset);
-        # one MEOS symbol covers all subtypes, so int-subtype literals exercise it.
-        INTKEY = {"Span": "intspan", "Set": "intset", "SpanSet": "intspanset"}
-        if c0 not in INTKEY or c1 not in INTKEY:
-            return None, f"unhandled box-box {c0}/{c1}"
-        rkind = ret_kind(ret, "int")
+        # Span/Set/SpanSet over two literals. Subtype-SPECIFIC symbols name their
+        # operand types as the last two underscore tokens (distance_datespanset_
+        # datespan -> datespanset, datespan); TYPE-GENERIC symbols (span_cmp,
+        # contains_span_spanset) don't, so fall back to the int subtype.
+        KEY_CTYPE = {**BOX_CTYPE, "datespan": "Span", "tstzspan": "Span",
+                     "dateset": "Set", "tstzset": "Set",
+                     "datespanset": "SpanSet", "tstzspanset": "SpanSet"}
+        toks = name.split("_")
+        k0, k1 = (toks[-2], toks[-1]) if len(toks) >= 3 else (None, None)
+        if (k0 in KEY_CTYPE and k1 in KEY_CTYPE
+                and KEY_CTYPE[k0] == c0 and KEY_CTYPE[k1] == c1):
+            prim, sec = k0, k1
+            rkind = ret_kind(ret, None)
+        else:
+            INTKEY = {"Span": "intspan", "Set": "intset", "SpanSet": "intspanset"}
+            if c0 not in INTKEY or c1 not in INTKEY:
+                return None, f"unhandled box-box {c0}/{c1}"
+            prim, sec = INTKEY[c0], INTKEY[c1]
+            rkind = ret_kind(ret, "int")
         if rkind is None:
             return None, f"box-box return {ret} unmapped"
-        prim, sec = INTKEY[c0], INTKEY[c1]
         entry = dict(nebula_name=camel(name), sql_token=name.upper(), meos_call=name,
                      build_generic=True, input_type=prim, return_kind=rkind,
                      extra_args=[dict(kind="box", box_type=c1, parser=BOX_PARSER[sec], header="meos.h")],
@@ -255,6 +300,8 @@ def ret_kind(ret, sub):
     ret = ret.strip()
     if ret in ("bool", "int"):
         return "int"
+    if ret == "int64":
+        return "int64"
     if ret == "double":
         return "double"
     base = ret.replace("*", "").strip()
