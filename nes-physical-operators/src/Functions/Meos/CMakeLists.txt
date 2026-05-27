@@ -392,7 +392,7 @@ add_plugin(NadTnpointTnpoint PhysicalFunction nes-physical-operators NadTnpointT
 add_plugin(NadTposeTpose PhysicalFunction nes-physical-operators NadTposeTposePhysicalFunction.cpp)
 add_plugin(AddTnumberTnumber PhysicalFunction nes-physical-operators AddTnumberTnumberPhysicalFunction.cpp)
 add_plugin(DivTnumberTnumber PhysicalFunction nes-physical-operators DivTnumberTnumberPhysicalFunction.cpp)
-add_plugin(MultTnumberTnumber PhysicalFunction nes-physical-operators MultTnumberTnumberPhysicalFunction.cpp)
+add_plugin(MulTnumberTnumber PhysicalFunction nes-physical-operators MulTnumberTnumberPhysicalFunction.cpp)
 add_plugin(SubTnumberTnumber PhysicalFunction nes-physical-operators SubTnumberTnumberPhysicalFunction.cpp)
 add_plugin(TcontainsTcbufferTcbuffer PhysicalFunction nes-physical-operators TcontainsTcbufferTcbufferPhysicalFunction.cpp)
 add_plugin(TcontainsTgeoTgeo PhysicalFunction nes-physical-operators TcontainsTgeoTgeoPhysicalFunction.cpp)

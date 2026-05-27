@@ -12,7 +12,7 @@
     limitations under the License.
 */
 
-#include <Functions/Meos/MultTnumberTnumberLogicalFunction.hpp>
+#include <Functions/Meos/MulTnumberTnumberLogicalFunction.hpp>
 
 #include <DataTypes/DataType.hpp>
 #include <DataTypes/DataTypeProvider.hpp>
@@ -26,7 +26,7 @@
 namespace NES
 {
 
-MultTnumberTnumberLogicalFunction::MultTnumberTnumberLogicalFunction(LogicalFunction traj,
+MulTnumberTnumberLogicalFunction::MulTnumberTnumberLogicalFunction(LogicalFunction traj,
                                           LogicalFunction arg0)
     : dataType(DataTypeProvider::provideDataType(DataType::Type::VARSIZED))
 {
@@ -35,46 +35,46 @@ MultTnumberTnumberLogicalFunction::MultTnumberTnumberLogicalFunction(LogicalFunc
     parameters.push_back(std::move(arg0));
 }
 
-DataType MultTnumberTnumberLogicalFunction::getDataType() const
+DataType MulTnumberTnumberLogicalFunction::getDataType() const
 {
     return dataType;
 }
 
-LogicalFunction MultTnumberTnumberLogicalFunction::withDataType(const DataType& newDataType) const
+LogicalFunction MulTnumberTnumberLogicalFunction::withDataType(const DataType& newDataType) const
 {
     auto copy = *this;
     copy.dataType = newDataType;
     return copy;
 }
 
-std::vector<LogicalFunction> MultTnumberTnumberLogicalFunction::getChildren() const
+std::vector<LogicalFunction> MulTnumberTnumberLogicalFunction::getChildren() const
 {
     return parameters;
 }
 
-LogicalFunction MultTnumberTnumberLogicalFunction::withChildren(const std::vector<LogicalFunction>& children) const
+LogicalFunction MulTnumberTnumberLogicalFunction::withChildren(const std::vector<LogicalFunction>& children) const
 {
-    PRECONDITION(children.size() == 2, "MultTnumberTnumberLogicalFunction requires 2 children, but got {}", children.size());
+    PRECONDITION(children.size() == 2, "MulTnumberTnumberLogicalFunction requires 2 children, but got {}", children.size());
     auto copy = *this;
     copy.parameters = children;
     return copy;
 }
 
-std::string_view MultTnumberTnumberLogicalFunction::getType() const
+std::string_view MulTnumberTnumberLogicalFunction::getType() const
 {
     return NAME;
 }
 
-bool MultTnumberTnumberLogicalFunction::operator==(const LogicalFunctionConcept& rhs) const
+bool MulTnumberTnumberLogicalFunction::operator==(const LogicalFunctionConcept& rhs) const
 {
-    if (const auto* other = dynamic_cast<const MultTnumberTnumberLogicalFunction*>(&rhs))
+    if (const auto* other = dynamic_cast<const MulTnumberTnumberLogicalFunction*>(&rhs))
     {
         return parameters == other->parameters;
     }
     return false;
 }
 
-std::string MultTnumberTnumberLogicalFunction::explain(ExplainVerbosity verbosity) const
+std::string MulTnumberTnumberLogicalFunction::explain(ExplainVerbosity verbosity) const
 {
     std::string args;
     for (size_t index = 0; index < parameters.size(); ++index)
@@ -88,7 +88,7 @@ std::string MultTnumberTnumberLogicalFunction::explain(ExplainVerbosity verbosit
     return fmt::format("{}({})", NAME, args);
 }
 
-LogicalFunction MultTnumberTnumberLogicalFunction::withInferredDataType(const Schema& schema) const
+LogicalFunction MulTnumberTnumberLogicalFunction::withInferredDataType(const Schema& schema) const
 {
     std::vector<LogicalFunction> newChildren;
     newChildren.reserve(parameters.size());
@@ -99,7 +99,7 @@ LogicalFunction MultTnumberTnumberLogicalFunction::withInferredDataType(const Sc
     return withChildren(newChildren);
 }
 
-SerializableFunction MultTnumberTnumberLogicalFunction::serialize() const
+SerializableFunction MulTnumberTnumberLogicalFunction::serialize() const
 {
     SerializableFunction proto;
     proto.set_function_type(std::string(NAME));
@@ -111,15 +111,15 @@ SerializableFunction MultTnumberTnumberLogicalFunction::serialize() const
     return proto;
 }
 
-LogicalFunctionRegistryReturnType LogicalFunctionGeneratedRegistrar::RegisterMultTnumberTnumberLogicalFunction(
+LogicalFunctionRegistryReturnType LogicalFunctionGeneratedRegistrar::RegisterMulTnumberTnumberLogicalFunction(
     LogicalFunctionRegistryArguments arguments)
 {
     PRECONDITION(arguments.children.size() == 2,
-                 "MultTnumberTnumberLogicalFunction requires 2 children but got {}",
+                 "MulTnumberTnumberLogicalFunction requires 2 children but got {}",
                  arguments.children.size());
     auto arg0 = std::move(arguments.children[0]);
     auto arg1 = std::move(arguments.children[1]);
-    return MultTnumberTnumberLogicalFunction(std::move(arg0), std::move(arg1));
+    return MulTnumberTnumberLogicalFunction(std::move(arg0), std::move(arg1));
 }
 
 } // namespace NES

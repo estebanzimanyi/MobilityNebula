@@ -235,7 +235,7 @@ minus_span_span
 minus_span_spanset
 minus_spanset_span
 minus_spanset_spanset
-mult_tnumber_tnumber
+mul_tnumber_tnumber
 nad_stbox_stbox
 nad_tcbuffer_cbuffer
 nad_tcbuffer_geo

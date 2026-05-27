@@ -12,7 +12,7 @@
     limitations under the License.
 */
 
-#include <Functions/Meos/MultTnumberTnumberPhysicalFunction.hpp>
+#include <Functions/Meos/MulTnumberTnumberPhysicalFunction.hpp>
 
 #include <Functions/PhysicalFunction.hpp>
 #include <MEOSWrapper.hpp>
@@ -36,7 +36,7 @@ extern "C" {
 
 namespace NES {
 
-MultTnumberTnumberPhysicalFunction::MultTnumberTnumberPhysicalFunction(PhysicalFunction trajFunction,
+MulTnumberTnumberPhysicalFunction::MulTnumberTnumberPhysicalFunction(PhysicalFunction trajFunction,
                                                           PhysicalFunction arg0Function)
 {
     parameterFunctions.reserve(2);
@@ -44,7 +44,7 @@ MultTnumberTnumberPhysicalFunction::MultTnumberTnumberPhysicalFunction(PhysicalF
     parameterFunctions.push_back(std::move(arg0Function));
 }
 
-VarVal MultTnumberTnumberPhysicalFunction::execute(const Record& record, ArenaRef& arena) const
+VarVal MulTnumberTnumberPhysicalFunction::execute(const Record& record, ArenaRef& arena) const
 {
     std::vector<VarVal> parameterValues;
     parameterValues.reserve(parameterFunctions.size());
@@ -72,7 +72,7 @@ VarVal MultTnumberTnumberPhysicalFunction::execute(const Record& record, ArenaRe
                 if (!a) return (char*) nullptr;
                 Temporal* b = temporal_from_hexwkb(bHex.c_str());
                 if (!b) { free(a); return (char*) nullptr; }
-                Temporal* res = mult_tnumber_tnumber(a, b);
+                Temporal* res = mul_tnumber_tnumber(a, b);
                 free(a);
                 free(b);
                 if (!res) return (char*) nullptr;
@@ -108,15 +108,15 @@ VarVal MultTnumberTnumberPhysicalFunction::execute(const Record& record, ArenaRe
     return variableSized;
 }
 
-PhysicalFunctionRegistryReturnType PhysicalFunctionGeneratedRegistrar::RegisterMultTnumberTnumberPhysicalFunction(
+PhysicalFunctionRegistryReturnType PhysicalFunctionGeneratedRegistrar::RegisterMulTnumberTnumberPhysicalFunction(
     PhysicalFunctionRegistryArguments arguments)
 {
     PRECONDITION(arguments.childFunctions.size() == 2,
-                 "MultTnumberTnumberPhysicalFunction requires 2 children but got {}",
+                 "MulTnumberTnumberPhysicalFunction requires 2 children but got {}",
                  arguments.childFunctions.size());
     auto arg0 = std::move(arguments.childFunctions[0]);
     auto arg1 = std::move(arguments.childFunctions[1]);
-    return MultTnumberTnumberPhysicalFunction(std::move(arg0), std::move(arg1));
+    return MulTnumberTnumberPhysicalFunction(std::move(arg0), std::move(arg1));
 }
 
 } // namespace NES

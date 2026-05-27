@@ -505,7 +505,7 @@
 #include <Functions/Meos/NadTposeTposeLogicalFunction.hpp>
 #include <Functions/Meos/AddTnumberTnumberLogicalFunction.hpp>
 #include <Functions/Meos/DivTnumberTnumberLogicalFunction.hpp>
-#include <Functions/Meos/MultTnumberTnumberLogicalFunction.hpp>
+#include <Functions/Meos/MulTnumberTnumberLogicalFunction.hpp>
 #include <Functions/Meos/SubTnumberTnumberLogicalFunction.hpp>
 #include <Functions/Meos/TcontainsTcbufferTcbufferLogicalFunction.hpp>
 #include <Functions/Meos/TcontainsTgeoTgeoLogicalFunction.hpp>
@@ -12159,12 +12159,12 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         break;
         /* END CODEGEN PARSER GLUE: DIV_TNUMBER_TNUMBER */
 
-        /* BEGIN CODEGEN PARSER GLUE: MULT_TNUMBER_TNUMBER */
-        case AntlrSQLLexer::MULT_TNUMBER_TNUMBER:
+        /* BEGIN CODEGEN PARSER GLUE: MUL_TNUMBER_TNUMBER */
+        case AntlrSQLLexer::MUL_TNUMBER_TNUMBER:
         {
             const auto argCount = context->expression().size();
             if (argCount != 2)
-                throw InvalidQuerySyntax("MULT_TNUMBER_TNUMBER requires exactly 2 arguments, but got {}", argCount);
+                throw InvalidQuerySyntax("MUL_TNUMBER_TNUMBER requires exactly 2 arguments, but got {}", argCount);
 
             while (!helpers.top().constantBuilder.empty())
             {
@@ -12183,10 +12183,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
             auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
 
-            helpers.top().functionBuilder.emplace_back(MultTnumberTnumberLogicalFunction(a0, a1));
+            helpers.top().functionBuilder.emplace_back(MulTnumberTnumberLogicalFunction(a0, a1));
         }
         break;
-        /* END CODEGEN PARSER GLUE: MULT_TNUMBER_TNUMBER */
+        /* END CODEGEN PARSER GLUE: MUL_TNUMBER_TNUMBER */
 
         /* BEGIN CODEGEN PARSER GLUE: SUB_TNUMBER_TNUMBER */
         case AntlrSQLLexer::SUB_TNUMBER_TNUMBER:
