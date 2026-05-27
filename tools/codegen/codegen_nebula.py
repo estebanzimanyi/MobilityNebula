@@ -3139,6 +3139,55 @@ VARSIZED_OUT_RETURNS = {
 }
 
 
+def _text_literal_input(ctype, parser):
+    """A primary input_type that parses a quoted text literal field 'lit' via
+    <parser> into a <ctype>* — the uniform set/span/spanset/box text-input shape
+    (mirrors the hand-written intspan/intset entries)."""
+    return dict(fields=[("lit", "VariableSizedData")], header="meos.h", build=(
+        '                std::string {var}S(litPtr, litSize);\n'
+        '                while (!{var}S.empty() && ({var}S.front()==\'\\\'\' || {var}S.front()==\'"\')) {var}S.erase({var}S.begin());\n'
+        '                while (!{var}S.empty() && ({var}S.back()==\'\\\'\' || {var}S.back()==\'"\')) {var}S.pop_back();\n'
+        '                ' + ctype + '* {var} = ' + parser + '({var}S.c_str());\n'
+        '                if (!{var}) return {z};\n'))
+
+
+# Subtype matrix for the set/span/spanset algebra and box intersection waves:
+# extend the primary text-literal inputs and the VARSIZED *_out return serializers
+# to every span/set/spanset subtype plus STBox/TBox, so the generic path covers
+# the full union/intersection/minus + topology surface, not just the int subtype.
+for _k, _c, _p in [
+    ("floatspan", "Span", "floatspan_in"), ("floatset", "Set", "floatset_in"),
+    ("floatspanset", "SpanSet", "floatspanset_in"),
+    ("bigintset", "Set", "bigintset_in"), ("bigintspanset", "SpanSet", "bigintspanset_in"),
+    ("datespanset", "SpanSet", "datespanset_in"),
+    ("tstzspan", "Span", "tstzspan_in"), ("tstzset", "Set", "tstzset_in"),
+    ("tstzspanset", "SpanSet", "tstzspanset_in"), ("textset", "Set", "textset_in"),
+]:
+    GENERIC_INPUTS.setdefault(_k, _text_literal_input(_c, _p))
+
+# return_kind -> (result C type, *_out serializer, takes_maxdd). float/STBox/TBox
+# serializers take a trailing maxdd arg; the others take only the pointer.
+for _rk, _ct, _of, _md in [
+    ("floatspan_text", "Span", "floatspan_out", True),
+    ("bigintspan_text", "Span", "bigintspan_out", False),
+    ("datespan_text", "Span", "datespan_out", False),
+    ("tstzspan_text", "Span", "tstzspan_out", False),
+    ("floatset_text", "Set", "floatset_out", True),
+    ("bigintset_text", "Set", "bigintset_out", False),
+    ("dateset_text", "Set", "dateset_out", False),
+    ("tstzset_text", "Set", "tstzset_out", False),
+    ("textset_text", "Set", "textset_out", False),
+    ("floatspanset_text", "SpanSet", "floatspanset_out", True),
+    ("bigintspanset_text", "SpanSet", "bigintspanset_out", False),
+    ("datespanset_text", "SpanSet", "datespanset_out", False),
+    ("tstzspanset_text", "SpanSet", "tstzspanset_out", False),
+    ("stbox_text_out", "STBox", "stbox_out", True),
+    ("tbox_text_out", "TBox", "tbox_out", True),
+]:
+    GENERIC_RETURNS.setdefault(_rk, ("VariableSizedData", "VARSIZED", "(char*) nullptr", None))
+    VARSIZED_OUT_RETURNS.setdefault(_rk, (_ct, _of, _md))
+
+
 def _generic_field_decl(name, cpp):
     """Lambda parameter declaration + the cast expression for one event field."""
     if cpp == "VariableSizedData":
@@ -3183,7 +3232,9 @@ def assemble_generic_varsized_output(op):
     intersection/minus) yields a zero-length VARSIZED."""
     name = op["nebula_name"]
     inp = GENERIC_INPUTS[op["input_type"]]
-    res_ctype, out_fn = VARSIZED_OUT_RETURNS[op["return_kind"]]
+    _ret = VARSIZED_OUT_RETURNS[op["return_kind"]]
+    res_ctype, out_fn = _ret[0], _ret[1]
+    out_maxdd = len(_ret) > 2 and _ret[2]   # float/STBox/TBox *_out take a maxdd arg
     zero = "(char*) nullptr"
     extras = op.get("extra_args", [])
 
@@ -3238,7 +3289,7 @@ def assemble_generic_varsized_output(op):
         f"                free(temp);\n"
         f"{bf}"
         f"                if (!res) return (char*) nullptr;\n"
-        f"                char* outStr = {out_fn}(res);\n"
+        f"                char* outStr = {out_fn}(res{', 15' if out_maxdd else ''});\n"
         f"                free(res);\n"
         f"                return outStr;")
 
