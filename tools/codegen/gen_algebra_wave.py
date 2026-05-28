@@ -118,6 +118,28 @@ TSCALAR_COL = {"int": ("INT32", "int32_t", "3", "2"),
                "double": ("FLOAT64", "double", "3.5", "2.5")}
 TCMP = ("tlt", "tle", "tgt", "tge", "teq", "tne")
 
+# always_/ever_ reductions: a temporal ⊗ a base value -> bool. The temporal is
+# built from a single multi-column instant (mirrors codegen_nebula GENERIC_INPUTS
+# field layouts); the base is a bool scalar (BOOLEAN source field) or an object
+# text literal (npoint/pose/cbuffer). ts (UINT64) is appended automatically.
+# subtype -> [(col, SQL, sample a, sample b), ...] for the value columns.
+ALWAYS_TINPUT = {
+    "tbool":    [("value", "BOOLEAN", "true", "false")],
+    "tnpoint":  [("rid", "INT64", "1", "1"), ("frac", "FLOAT64", "0.5", "0.7")],
+    "tpose":    [("x", "FLOAT64", "1.0", "2.0"), ("y", "FLOAT64", "1.0", "2.0"),
+                 ("theta", "FLOAT64", "0.5", "1.0")],
+    "tcbuffer": [("lon", "FLOAT64", "1.0", "2.0"), ("lat", "FLOAT64", "1.0", "2.0"),
+                 ("radius", "FLOAT64", "1.0", "0.5")],
+}
+# base operand -> (extra-arg dict builder, column SQL, sample a, sample b).
+ALWAYS_BASE = {
+    "bool":    ("scalar", "BOOLEAN", "true", "false"),
+    "Npoint":  ("npoint_in", "VARSIZED", "NPoint(1, 0.5)", "NPoint(1, 0.7)"),
+    "Pose":    ("pose_in", "VARSIZED", "Pose(Point(1 1), 0.5)", "Pose(Point(2 2), 1.0)"),
+    "Cbuffer": ("cbuffer_in", "VARSIZED", "Cbuffer(Point(1 1),1.0)", "Cbuffer(Point(2 2),0.5)"),
+}
+ALWAYS_BASE_HDR = {"Npoint": "meos_npoint.h", "Pose": "meos_pose.h", "Cbuffer": "meos_cbuffer.h"}
+
 
 def load_sigs():
     txt = re.sub(r"\s+", " ", open(HEADERS).read())
@@ -208,6 +230,34 @@ def classify(name, ret, plist):
                      rows=[(va, "1609459200", sa), (vb, "1609545600", sb)],
                      token=name.upper(), sink="VARSIZED")
         return entry, tmeta
+    # ---- always_/ever_ reduction: temporal-instant ⊗ base value -> bool ----
+    if ret.strip() in ("bool", "int") and (name.startswith("always_") or name.startswith("ever_")):
+        toks = name.split("_")
+        tsub = next((t for t in ALWAYS_TINPUT if t in toks), None)
+        tix = [i for i, (b, p) in enumerate(plist) if b == "Temporal"]
+        oix = [i for i, (b, p) in enumerate(plist) if b != "Temporal"]
+        if tsub and len(tix) == 1 and len(oix) == 1 and plist[oix[0]][0] in ALWAYS_BASE:
+            bbase = plist[oix[0]][0]
+            parser, bsql, ba, bb = ALWAYS_BASE[bbase]
+            if parser == "scalar":
+                extra = dict(kind="scalar", cpp="bool")
+            else:
+                extra = dict(kind="box", box_type=bbase, parser=parser,
+                             header=ALWAYS_BASE_HDR[bbase])
+            entry = dict(nebula_name=camel(name), sql_token=name.upper(), meos_call=name,
+                         build_generic=True, input_type=tsub, return_kind=ret_kind(ret, None),
+                         extra_args=[extra],
+                         comment_one_liner=f"{name} ({ret.strip()}) — always/ever {tsub} ⊗ {bbase}.")
+            if parser != "scalar":
+                entry["extra_headers"] = [ALWAYS_BASE_HDR[bbase]]
+            if oix[0] == 0:                 # base-first: call = f(base, temp)
+                entry["box_first"] = True
+            tcols = ALWAYS_TINPUT[tsub]
+            cols = [(c, s) for c, s, _, _ in tcols] + [("ts", "UINT64"), ("arg", bsql)]
+            rowa = tuple([a for _, _, a, _ in tcols] + ["1609459200", ba])
+            rowb = tuple([b for _, _, _, b in tcols] + ["1609545600", bb])
+            tmeta = dict(cols=cols, rows=[rowa, rowb], token=name.upper(), sink=sink_of(ret_kind(ret, None)))
+            return entry, tmeta
     # ---- same-type object-scalar comparison / relation (cbuffer/pose/npoint/
     # nsegment cmp/eq/.../same + cbuffer spatial rels): two literals -> bool/int ----
     (b0, p0), (b1, p1) = plist
