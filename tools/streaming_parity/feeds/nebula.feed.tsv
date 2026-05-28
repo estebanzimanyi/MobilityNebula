@@ -806,7 +806,9 @@ tdisjoint_geo_tcbuffer	proven
 tdisjoint_geo_tgeo	proven
 tdisjoint_tcbuffer_cbuffer	proven
 tdisjoint_tcbuffer_geo	proven
+tdisjoint_tcbuffer_tcbuffer	proven
 tdisjoint_tgeo_geo	proven
+tdisjoint_tgeo_tgeo	proven
 tdistance_tcbuffer_cbuffer	proven
 tdistance_tcbuffer_geo	proven
 tdistance_tcbuffer_tcbuffer	proven
@@ -872,6 +874,7 @@ teq_tpose_pose	proven
 teq_ttext_text	proven
 textcat_text_ttext	proven
 textcat_ttext_text	proven
+textcat_ttext_ttext	proven
 tfloat_ceil	proven
 tfloat_end_value	proven
 tfloat_exp	proven
@@ -923,7 +926,9 @@ tintersects_geo_tcbuffer	proven
 tintersects_geo_tgeo	proven
 tintersects_tcbuffer_cbuffer	proven
 tintersects_tcbuffer_geo	proven
+tintersects_tcbuffer_tcbuffer	proven
 tintersects_tgeo_geo	proven
+tintersects_tgeo_tgeo	proven
 tle_float_tfloat	proven
 tle_int_tint	proven
 tle_temporal_temporal	proven
@@ -999,7 +1004,9 @@ ttouches_geo_tcbuffer	proven
 ttouches_geo_tgeo	proven
 ttouches_tcbuffer_cbuffer	proven
 ttouches_tcbuffer_geo	proven
+ttouches_tcbuffer_tcbuffer	proven
 ttouches_tgeo_geo	proven
+ttouches_tgeo_tgeo	proven
 union_bigint_set	proven
 union_bigint_span	proven
 union_bigint_spanset	proven

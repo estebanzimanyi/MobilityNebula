@@ -176,6 +176,41 @@ TWO_TEMPORAL = {
         t2_build=('                std::string {var}W = fmt::format("{{}}@{{}}", value2, MEOS::Meos::convertEpochToTimestamp(ts2));\n'
                   '                Temporal* {var} = tint_in({var}W.c_str());\n'
                   '                if (!{var}) {{ free(temp); return {z}; }}\n')),
+    "tgeompoint": dict(
+        input_type="tgeompoint",
+        make_cols=[("lon", "FLOAT64"), ("lat", "FLOAT64"), ("ts", "UINT64"),
+                   ("lon2", "FLOAT64"), ("lat2", "FLOAT64"), ("ts2", "UINT64")],
+        rows=[("1.0", "1.0", "1609459200", "2.0", "2.0", "1609459200"),
+              ("3.0", "3.0", "1609545600", "4.0", "4.0", "1609545600")],
+        t2_fields=[("lon2", "double"), ("lat2", "double"), ("ts2", "uint64_t")],
+        header="meos_geo.h",
+        t2_build=('                if (!(lon2 >= -180.0 && lon2 <= 180.0 && lat2 >= -90.0 && lat2 <= 90.0)) {{ free(temp); return {z}; }}\n'
+                  '                std::string {var}W = fmt::format("SRID=4326;Point({{}} {{}})@{{}}", lon2, lat2, MEOS::Meos::convertEpochToTimestamp(ts2));\n'
+                  '                Temporal* {var} = tgeompoint_in({var}W.c_str());\n'
+                  '                if (!{var}) {{ free(temp); return {z}; }}\n')),
+    "tcbuffer": dict(
+        input_type="tcbuffer",
+        make_cols=[("lon", "FLOAT64"), ("lat", "FLOAT64"), ("radius", "FLOAT64"), ("ts", "UINT64"),
+                   ("lon2", "FLOAT64"), ("lat2", "FLOAT64"), ("radius2", "FLOAT64"), ("ts2", "UINT64")],
+        rows=[("1.0", "1.0", "1.0", "1609459200", "2.0", "2.0", "0.5", "1609459200"),
+              ("3.0", "3.0", "1.0", "1609545600", "4.0", "4.0", "0.5", "1609545600")],
+        t2_fields=[("lon2", "double"), ("lat2", "double"), ("radius2", "double"), ("ts2", "uint64_t")],
+        header="meos_cbuffer.h",
+        t2_build=('                std::string {var}W = fmt::format("Cbuffer(Point({{}} {{}}),{{}})@{{}}", lon2, lat2, radius2, MEOS::Meos::convertEpochToTimestamp(ts2));\n'
+                  '                Temporal* {var} = tcbuffer_in({var}W.c_str());\n'
+                  '                if (!{var}) {{ free(temp); return {z}; }}\n')),
+    "ttext": dict(
+        input_type="ttext",
+        make_cols=[("value", "VARSIZED"), ("ts", "UINT64"), ("value2", "VARSIZED"), ("ts2", "UINT64")],
+        rows=[("ABC", "1609459200", "DEF", "1609459200"), ("GHI", "1609545600", "JKL", "1609545600")],
+        t2_fields=[("value2", "VariableSizedData"), ("ts2", "uint64_t")],
+        header="meos.h",
+        t2_build=('                std::string {var}S(value2Ptr, value2Size);\n'
+                  '                while (!{var}S.empty() && ({var}S.front()==\'\\\'\' || {var}S.front()==\'"\')) {var}S.erase({var}S.begin());\n'
+                  '                while (!{var}S.empty() && ({var}S.back()==\'\\\'\' || {var}S.back()==\'"\')) {var}S.pop_back();\n'
+                  '                std::string {var}W = fmt::format("\\"{{}}\\"@{{}}", {var}S, MEOS::Meos::convertEpochToTimestamp(ts2));\n'
+                  '                Temporal* {var} = ttext_in({var}W.c_str());\n'
+                  '                if (!{var}) {{ free(temp); return {z}; }}\n')),
 }
 # base operand -> (extra-arg builder tag, column SQL, sample a, sample b). The tag
 # is "scalar" (bool source field), "text" (text* via text_in), or a *_in parser.
