@@ -3312,6 +3312,16 @@ def assemble_generic_varsized_output(op):
                 f'                if (!arg{i}T) {{ free(temp); return {zero}; }}\n')
             call_terms.append(f"arg{i}T")
             box_frees.append(f"free(arg{i}T);")
+        elif ex["kind"] == "geom":
+            fields.append((f"arg{i}", "VariableSizedData"))
+            headers.add("meos_geo.h")
+            parse_lines.append(
+                f'                std::string arg{i}S(arg{i}Ptr, arg{i}Size);\n'
+                f'                while (!arg{i}S.empty() && (arg{i}S.front()==\'\\\'\' || arg{i}S.front()==\'"\')) arg{i}S.erase(arg{i}S.begin());\n'
+                f'                while (!arg{i}S.empty() && (arg{i}S.back()==\'\\\'\' || arg{i}S.back()==\'"\')) arg{i}S.pop_back();\n'
+                f'                MEOS::Meos::StaticGeometry arg{i}G(arg{i}S);\n'
+                f'                if (!arg{i}G.getGeometry()) {{ free(temp); return {zero}; }}\n')
+            call_terms.append(f"arg{i}G.getGeometry()")
         else:
             raise SystemExit(f"varsized-output op {name}: unsupported extra-arg kind {ex['kind']}")
 

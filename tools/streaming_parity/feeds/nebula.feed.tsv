@@ -2,6 +2,7 @@ above_stbox_stbox	proven
 above_stbox_tspatial	proven
 above_tspatial_stbox	proven
 above_tspatial_tspatial	proven
+acontains_geo_tgeo	proven
 acontains_tcbuffer_cbuffer	proven
 acontains_tcbuffer_geo	proven
 acontains_tgeo_geo	proven
@@ -75,6 +76,7 @@ aintersects_tgeo_tgeo	proven
 always_eq_bool_tbool	proven
 always_eq_cbuffer_tcbuffer	proven
 always_eq_float_tfloat	proven
+always_eq_geo_tgeo	proven
 always_eq_int_tint	proven
 always_eq_npoint_tnpoint	proven
 always_eq_pose_tpose	proven
@@ -123,6 +125,7 @@ always_lt_ttext_text	proven
 always_ne_bool_tbool	proven
 always_ne_cbuffer_tcbuffer	proven
 always_ne_float_tfloat	proven
+always_ne_geo_tgeo	proven
 always_ne_int_tint	proven
 always_ne_npoint_tnpoint	proven
 always_ne_pose_tpose	proven
@@ -308,6 +311,7 @@ econtains_tcbuffer_cbuffer	proven
 econtains_tcbuffer_geo	proven
 econtains_tgeo_geo	proven
 econtains_tgeo_tgeo	proven
+ecovers_geo_tgeo	proven
 ecovers_tcbuffer_cbuffer	proven
 ecovers_tcbuffer_geo	proven
 ecovers_tcbuffer_tcbuffer	proven
@@ -336,6 +340,7 @@ etouches_tpoint_geo	proven
 ever_eq_bool_tbool	proven
 ever_eq_cbuffer_tcbuffer	proven
 ever_eq_float_tfloat	proven
+ever_eq_geo_tgeo	proven
 ever_eq_int_tint	proven
 ever_eq_npoint_tnpoint	proven
 ever_eq_pose_tpose	proven
@@ -384,6 +389,7 @@ ever_lt_ttext_text	proven
 ever_ne_bool_tbool	proven
 ever_ne_cbuffer_tcbuffer	proven
 ever_ne_float_tfloat	proven
+ever_ne_geo_tgeo	proven
 ever_ne_int_tint	proven
 ever_ne_npoint_tnpoint	proven
 ever_ne_pose_tpose	proven
@@ -773,12 +779,19 @@ tbox_le	proven
 tbox_lt	proven
 tbox_ne	proven
 tcbuffer_to_tfloat	proven
+tcontains_geo_tgeo	proven
 tcontains_tcbuffer_tcbuffer	proven
+tcontains_tgeo_geo	proven
 tcontains_tgeo_tgeo	proven
+tcovers_geo_tgeo	proven
 tcovers_tcbuffer_tcbuffer	proven
+tcovers_tgeo_geo	proven
 tcovers_tgeo_tgeo	proven
+tdisjoint_geo_tgeo	proven
+tdisjoint_tgeo_geo	proven
 tdistance_tcbuffer_tcbuffer	proven
 tdistance_tfloat_float	proven
+tdistance_tgeo_geo	proven
 tdistance_tgeo_tgeo	proven
 tdistance_tint_int	proven
 tdistance_tnpoint_tnpoint	proven
@@ -810,9 +823,11 @@ temporal_num_timestamps	proven
 temporal_start_timestamptz	wired
 temporal_upper_inc	proven
 teq_float_tfloat	proven
+teq_geo_tgeo	proven
 teq_int_tint	proven
 teq_text_ttext	proven
 teq_tfloat_float	proven
+teq_tgeo_geo	proven
 teq_tint_int	proven
 teq_ttext_text	proven
 textcat_text_ttext	proven
@@ -861,6 +876,8 @@ tint_minus_value	proven
 tint_shift_value	proven
 tint_start_value	proven
 tint_to_tfloat	wired
+tintersects_geo_tgeo	proven
+tintersects_tgeo_geo	proven
 tle_float_tfloat	proven
 tle_int_tint	proven
 tle_text_ttext	proven
@@ -874,9 +891,11 @@ tlt_tfloat_float	proven
 tlt_tint_int	proven
 tlt_ttext_text	proven
 tne_float_tfloat	proven
+tne_geo_tgeo	proven
 tne_int_tint	proven
 tne_text_ttext	proven
 tne_tfloat_float	proven
+tne_tgeo_geo	proven
 tne_tint_int	proven
 tne_ttext_text	proven
 tnpoint_cumulative_length	proven
@@ -913,6 +932,8 @@ tstzspanset_start_timestamptz	proven
 tstzspanset_upper	proven
 ttext_from_base_temp	proven
 ttext_minus_value	proven
+ttouches_geo_tgeo	proven
+ttouches_tgeo_geo	proven
 union_bigint_set	proven
 union_bigint_span	proven
 union_bigint_spanset	proven

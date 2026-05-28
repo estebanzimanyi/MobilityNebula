@@ -135,7 +135,15 @@ ALWAYS_TINPUT = {
     "tcbuffer": [("lon", "FLOAT64", "1.0", "2.0"), ("lat", "FLOAT64", "1.0", "2.0"),
                  ("radius", "FLOAT64", "1.0", "0.5")],
     "ttext":    [("value", "VARSIZED", "ABC", "DEF")],
+    "tgeo":     [("lon", "FLOAT64", "1.0", "2.0"), ("lat", "FLOAT64", "1.0", "2.0")],
 }
+# temporal subtype token -> codegen GENERIC_INPUTS builder key (when they differ).
+ALWAYS_INPUT_TYPE = {"tgeo": "tgeompoint"}
+# Temporal-returning result families: a temporal comparison / spatial relation
+# yields a tbool; tdistance yields a tfloat. (Everything else temporal-returning —
+# e.g. a tgeo restriction — serializes to geo WKT with '(' and is deferred.)
+TBOOL_PREFIX = {"teq", "tne", "tlt", "tle", "tgt", "tge",
+                "tcontains", "tcovers", "tdisjoint", "tintersects", "ttouches", "tdwithin"}
 # base operand -> (extra-arg builder tag, column SQL, sample a, sample b). The tag
 # is "scalar" (bool source field), "text" (text* via text_in), or a *_in parser.
 ALWAYS_BASE = {
@@ -144,6 +152,7 @@ ALWAYS_BASE = {
     "Npoint":  ("npoint_in", "VARSIZED", "NPoint(1, 0.5)", "NPoint(1, 0.7)"),
     "Pose":    ("pose_in", "VARSIZED", "Pose(Point(1 1), 0.5)", "Pose(Point(2 2), 1.0)"),
     "Cbuffer": ("cbuffer_in", "VARSIZED", "Cbuffer(Point(1 1),1.0)", "Cbuffer(Point(2 2),0.5)"),
+    "GSERIALIZED": ("geom", "VARSIZED", "SRID=4326;Point(1 1)", "SRID=4326;Point(2 2)"),
 }
 ALWAYS_BASE_HDR = {"Npoint": "meos_npoint.h", "Pose": "meos_pose.h", "Cbuffer": "meos_cbuffer.h"}
 
@@ -238,27 +247,43 @@ def classify(name, ret, plist):
                      rows=[(va, "1609459200", sa), (vb, "1609545600", sb)],
                      token=name.upper(), sink="VARSIZED")
         return entry, tmeta
-    # ---- always_/ever_ reduction: temporal-instant ⊗ base value -> bool ----
-    if ret.strip() in ("bool", "int") and (name.startswith("always_") or name.startswith("ever_")):
+    # ---- multi-column temporal-instant ⊗ base value: reductions (always/ever,
+    #      a*/e* spatial rels) -> int; temporal comparison / spatial relation ->
+    #      tbool; tdistance -> tfloat. base = bool / text / npoint / pose / cbuffer
+    #      / geo literal. (tgeo restriction returning a tgeo is deferred — geo WKT
+    #      output carries '(' and is unrecordable.) ----
+    rb = ret.replace("*", "").strip()
+    if rb in ("bool", "int", "Temporal"):
         toks = name.split("_")
         tsub = next((t for t in ALWAYS_TINPUT if t in toks), None)
         tix = [i for i, (b, p) in enumerate(plist) if b == "Temporal"]
         oix = [i for i, (b, p) in enumerate(plist) if b != "Temporal"]
         if tsub and len(tix) == 1 and len(oix) == 1 and plist[oix[0]][0] in ALWAYS_BASE:
+            pref = toks[0]
+            if rb in ("bool", "int"):
+                rkind = ret_kind(ret, None)
+            elif pref in TBOOL_PREFIX:
+                rkind = "tbool_out"
+            elif pref == "tdistance":
+                rkind = "tfloat_out"
+            else:
+                return None, f"temporal-return {pref} not a clean tbool/tfloat family"
             bbase = plist[oix[0]][0]
             parser, bsql, ba, bb = ALWAYS_BASE[bbase]
             if parser == "scalar":
                 extra = dict(kind="scalar", cpp="bool")
             elif parser == "text":
                 extra = dict(kind="text")
+            elif parser == "geom":
+                extra = dict(kind="geom")
             else:
                 extra = dict(kind="box", box_type=bbase, parser=parser,
                              header=ALWAYS_BASE_HDR[bbase])
             entry = dict(nebula_name=camel(name), sql_token=name.upper(), meos_call=name,
-                         build_generic=True, input_type=tsub, return_kind=ret_kind(ret, None),
-                         extra_args=[extra],
-                         comment_one_liner=f"{name} ({ret.strip()}) — always/ever {tsub} ⊗ {bbase}.")
-            if parser not in ("scalar", "text"):
+                         build_generic=True, input_type=ALWAYS_INPUT_TYPE.get(tsub, tsub),
+                         return_kind=rkind, extra_args=[extra],
+                         comment_one_liner=f"{name} ({ret.strip()}) — temporal {tsub} ⊗ {bbase} -> {rkind}.")
+            if parser not in ("scalar", "text", "geom"):
                 entry["extra_headers"] = [ALWAYS_BASE_HDR[bbase]]
             if oix[0] == 0:                 # base-first: call = f(base, temp)
                 entry["box_first"] = True
