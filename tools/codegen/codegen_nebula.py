@@ -3036,6 +3036,16 @@ GENERIC_INPUTS = {
         '                std::string {var}Wkt = fmt::format("{{}}@{{}}", value ? "t" : "f", MEOS::Meos::convertEpochToTimestamp(ts));\n'
         '                Temporal* {var} = tbool_in({var}Wkt.c_str());\n'
         '                if (!{var}) return {z};\n')),
+    # ttext single instant: the text value arrives as a quoted VARSIZED field; strip
+    # the field quotes, then build the ttext WKT 'doublequoted-value @ timestamp'
+    # (MEOS form e.g. "ABC"@2001-07-03) and parse via ttext_in.
+    "ttext": dict(fields=[("value", "VariableSizedData"), ("ts", "uint64_t")], header="meos.h", build=(
+        '                std::string {var}S(valuePtr, valueSize);\n'
+        '                while (!{var}S.empty() && ({var}S.front()==\'\\\'\' || {var}S.front()==\'"\')) {var}S.erase({var}S.begin());\n'
+        '                while (!{var}S.empty() && ({var}S.back()==\'\\\'\' || {var}S.back()==\'"\')) {var}S.pop_back();\n'
+        '                std::string {var}Wkt = fmt::format("\\"{{}}\\"@{{}}", {var}S, MEOS::Meos::convertEpochToTimestamp(ts));\n'
+        '                Temporal* {var} = ttext_in({var}Wkt.c_str());\n'
+        '                if (!{var}) return {z};\n')),
     # The efficient mechanism: the operand is an UPSTREAM MEOS value (a windowed
     # mini-trip trajectory, or any temporal) carried as a VARSIZED hex-WKB field,
     # not rebuilt from per-event scalars. The MEOS function library composes over
@@ -3205,6 +3215,7 @@ for _rk, _ct, _of, _md in [
     ("tint_out", "Temporal", "tint_out", False),
     ("tfloat_out", "Temporal", "tfloat_out", True),
     ("tbool_out", "Temporal", "tbool_out", False),
+    ("ttext_out", "Temporal", "ttext_out", False),
 ]:
     GENERIC_RETURNS.setdefault(_rk, ("VariableSizedData", "VARSIZED", "(char*) nullptr", None))
     VARSIZED_OUT_RETURNS.setdefault(_rk, (_ct, _of, _md))
@@ -3291,6 +3302,16 @@ def assemble_generic_varsized_output(op):
                 f'                if (!arg{i}B) {{ free(temp); return {zero}; }}\n')
             call_terms.append(f"arg{i}B")
             box_frees.append(f"free(arg{i}B);")
+        elif ex["kind"] == "text":
+            fields.append((f"arg{i}", "VariableSizedData"))
+            parse_lines.append(
+                f'                std::string arg{i}S(arg{i}Ptr, arg{i}Size);\n'
+                f'                while (!arg{i}S.empty() && (arg{i}S.front()==\'\\\'\' || arg{i}S.front()==\'"\')) arg{i}S.erase(arg{i}S.begin());\n'
+                f'                while (!arg{i}S.empty() && (arg{i}S.back()==\'\\\'\' || arg{i}S.back()==\'"\')) arg{i}S.pop_back();\n'
+                f'                text* arg{i}T = text_in(arg{i}S.c_str());\n'
+                f'                if (!arg{i}T) {{ free(temp); return {zero}; }}\n')
+            call_terms.append(f"arg{i}T")
+            box_frees.append(f"free(arg{i}T);")
         else:
             raise SystemExit(f"varsized-output op {name}: unsupported extra-arg kind {ex['kind']}")
 
@@ -3400,6 +3421,16 @@ def assemble_generic_physical(op):
                 f'                if (!arg{i}B) {{ free(temp); return {zero}; }}\n')
             call_terms.append(f"arg{i}B")
             box_frees.append(f"free(arg{i}B);")
+        elif ex["kind"] == "text":
+            fields.append((f"arg{i}", "VariableSizedData"))
+            parse_lines.append(
+                f'                std::string arg{i}S(arg{i}Ptr, arg{i}Size);\n'
+                f'                while (!arg{i}S.empty() && (arg{i}S.front()==\'\\\'\' || arg{i}S.front()==\'"\')) arg{i}S.erase(arg{i}S.begin());\n'
+                f'                while (!arg{i}S.empty() && (arg{i}S.back()==\'\\\'\' || arg{i}S.back()==\'"\')) arg{i}S.pop_back();\n'
+                f'                text* arg{i}T = text_in(arg{i}S.c_str());\n'
+                f'                if (!arg{i}T) {{ free(temp); return {zero}; }}\n')
+            call_terms.append(f"arg{i}T")
+            box_frees.append(f"free(arg{i}T);")
         elif ex["kind"] == "wkb_temporal":
             # a SECOND temporal operand carried as a VARSIZED hex-WKB field (e.g.
             # another per-vehicle aggregate output) — parsed via temporal_from_hexwkb,

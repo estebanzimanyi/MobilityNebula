@@ -112,10 +112,14 @@ OBJECT_TYPES = {"Cbuffer": ("cbuffer", "cbuffer_in", "meos_cbuffer.h"),
 # scalar samples differ per subtype. ts samples are epoch seconds (proven-good).
 # subtype -> (value SQL col, value cpp, value sample a, value sample b).
 TEMPORAL_INPUTS = {"tint": ("INT32", "int32_t", "5", "8"),
-                   "tfloat": ("FLOAT64", "double", "5.5", "8.5")}
-# scalar base C type -> (SQL col, cpp, sample a, sample b).
+                   "tfloat": ("FLOAT64", "double", "5.5", "8.5"),
+                   "ttext": ("VARSIZED", "text", "ABC", "DEF")}
+# base C type -> (SQL col, cpp, sample a, sample b). 'text' is a text* literal
+# (held in a constant XYZ, distinct from the ttext values so minus_value keeps a
+# non-empty result and textcat is non-trivial).
 TSCALAR_COL = {"int": ("INT32", "int32_t", "3", "2"),
-               "double": ("FLOAT64", "double", "3.5", "2.5")}
+               "double": ("FLOAT64", "double", "3.5", "2.5"),
+               "text": ("VARSIZED", "text", "XYZ", "XYZ")}
 TCMP = ("tlt", "tle", "tgt", "tge", "teq", "tne")
 
 # always_/ever_ reductions: a temporal ⊗ a base value -> bool. The temporal is
@@ -130,10 +134,13 @@ ALWAYS_TINPUT = {
                  ("theta", "FLOAT64", "0.5", "1.0")],
     "tcbuffer": [("lon", "FLOAT64", "1.0", "2.0"), ("lat", "FLOAT64", "1.0", "2.0"),
                  ("radius", "FLOAT64", "1.0", "0.5")],
+    "ttext":    [("value", "VARSIZED", "ABC", "DEF")],
 }
-# base operand -> (extra-arg dict builder, column SQL, sample a, sample b).
+# base operand -> (extra-arg builder tag, column SQL, sample a, sample b). The tag
+# is "scalar" (bool source field), "text" (text* via text_in), or a *_in parser.
 ALWAYS_BASE = {
     "bool":    ("scalar", "BOOLEAN", "true", "false"),
+    "text":    ("text", "VARSIZED", "ABC", "DEF"),
     "Npoint":  ("npoint_in", "VARSIZED", "NPoint(1, 0.5)", "NPoint(1, 0.7)"),
     "Pose":    ("pose_in", "VARSIZED", "Pose(Point(1 1), 0.5)", "Pose(Point(2 2), 1.0)"),
     "Cbuffer": ("cbuffer_in", "VARSIZED", "Cbuffer(Point(1 1),1.0)", "Cbuffer(Point(2 2),0.5)"),
@@ -206,24 +213,25 @@ def classify(name, ret, plist):
         return None, f"arity {len(plist)} (not 2)"
     # ---- temporal-instant ⊗ scalar -> Temporal* (per-event, WKT-serialized) ----
     tidx = [i for i, (b, p) in enumerate(plist) if b == "Temporal"]
-    nidx = [i for i, (b, p) in enumerate(plist) if b in ("int", "double")]
-    if ret.replace("*", "").strip() == "Temporal" and len(tidx) == 1 and len(nidx) == 1:
+    bidx = [i for i, (b, p) in enumerate(plist) if b in ("int", "double", "text")]
+    if ret.replace("*", "").strip() == "Temporal" and len(tidx) == 1 and len(bidx) == 1:
         toks = name.split("_")
-        insub = "tint" if "tint" in toks else ("tfloat" if "tfloat" in toks else None)
+        insub = next((t for t in ("tint", "tfloat", "ttext") if t in toks), None)
         if insub is None:
-            return None, "no tint/tfloat subtype token"
+            return None, "no tint/tfloat/ttext subtype token"
         pref = toks[0]
         # result subtype: a temporal comparison yields a tbool; everything else
-        # (arithmetic, minus, shift, tdistance) keeps the INPUT subtype — MEOS
-        # tdistance sets restype = temp->temptype, so tdistance_tint_int -> tint.
+        # (arithmetic, minus, shift, tdistance, textcat) keeps the INPUT subtype —
+        # MEOS tdistance sets restype = temp->temptype (tdistance_tint_int -> tint).
         serializer = "tbool_out" if pref in TCMP else insub + "_out"
         vsql, vcpp, va, vb = TEMPORAL_INPUTS[insub]
-        scbase = plist[nidx[0]][0]
-        ssql, scpp, sa, sb = TSCALAR_COL[scbase]
+        bbase = plist[bidx[0]][0]
+        ssql, scpp, sa, sb = TSCALAR_COL[bbase]
+        extra = dict(kind="text") if bbase == "text" else dict(kind="scalar", cpp=scpp)
         entry = dict(nebula_name=camel(name), sql_token=name.upper(), meos_call=name,
                      build_generic=True, input_type=insub, return_kind=serializer,
-                     extra_args=[dict(kind="scalar", cpp=scpp)],
-                     comment_one_liner=f"{name} ({ret.strip()}) — temporal {insub} ⊗ scalar -> {serializer}.")
+                     extra_args=[extra],
+                     comment_one_liner=f"{name} ({ret.strip()}) — temporal {insub} ⊗ {bbase} -> {serializer}.")
         if tidx[0] == 1:               # scalar-first: call = f(scalar, temp)
             entry["box_first"] = True
         tmeta = dict(cols=[("value", vsql), ("ts", "UINT64"), ("arg", ssql)],
@@ -241,6 +249,8 @@ def classify(name, ret, plist):
             parser, bsql, ba, bb = ALWAYS_BASE[bbase]
             if parser == "scalar":
                 extra = dict(kind="scalar", cpp="bool")
+            elif parser == "text":
+                extra = dict(kind="text")
             else:
                 extra = dict(kind="box", box_type=bbase, parser=parser,
                              header=ALWAYS_BASE_HDR[bbase])
@@ -248,7 +258,7 @@ def classify(name, ret, plist):
                          build_generic=True, input_type=tsub, return_kind=ret_kind(ret, None),
                          extra_args=[extra],
                          comment_one_liner=f"{name} ({ret.strip()}) — always/ever {tsub} ⊗ {bbase}.")
-            if parser != "scalar":
+            if parser not in ("scalar", "text"):
                 entry["extra_headers"] = [ALWAYS_BASE_HDR[bbase]]
             if oix[0] == 0:                 # base-first: call = f(base, temp)
                 entry["box_first"] = True
