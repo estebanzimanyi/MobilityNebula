@@ -270,6 +270,12 @@ def classify(name, ret, plist):
                 return None, f"temporal-return {pref} not a clean tbool/tfloat family"
             bbase = plist[oix[0]][0]
             parser, bsql, ba, bb = ALWAYS_BASE[bbase]
+            # geometry base SRID must match the temporal: tgeo (tgeompoint) is
+            # built SRID=4326, but tcbuffer/tpose/tnpoint instants carry no SRID,
+            # so use a planar (SRID 0) point literal for those to avoid a
+            # mixed-SRID guard.
+            if bbase == "GSERIALIZED" and tsub != "tgeo":
+                ba, bb = "Point(1 1)", "Point(2 2)"
             if parser == "scalar":
                 extra = dict(kind="scalar", cpp="bool")
             elif parser == "text":
