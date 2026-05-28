@@ -1,5 +1,5 @@
 # name: MEOS_ACOVERS_TCBUFFER_GEO
-# description: TEMPORAL_ACOVERS_TCBUFFER: single-instant tcbuffer (lon,lat,radius) r a static geometry constant.
+# description: ACOVERS_TCBUFFER_GEO: single-instant tcbuffer (lon,lat,radius) r a static geometry constant.
 # groups: [Function, MEOS, SpatioTemporal, TCbuffer, EContains]
 CREATE LOGICAL SOURCE tcg01(id UINT32, lon FLOAT64, lat FLOAT64, radius FLOAT64, timestamp UINT64);
 CREATE PHYSICAL SOURCE FOR tcg01 TYPE File SET('|' AS PARSER.FIELD_DELIMITER);
@@ -8,7 +8,7 @@ ATTACH INLINE
 2|10.0|10.0|0.5|1609459200
 
 CREATE SINK tcg01_out(tcg01.id UINT32, r INT32) TYPE File;
-SELECT id, TEMPORAL_ACOVERS_TCBUFFER(lon, lat, radius, timestamp, 'POINT(4.3658 50.6456)') AS r FROM tcg01 INTO tcg01_out;
+SELECT id, ACOVERS_TCBUFFER_GEO(lon, lat, radius, timestamp, 'POINT(4.3658 50.6456)') AS r FROM tcg01 INTO tcg01_out;
 ----
 1,1
 2,0

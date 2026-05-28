@@ -10,7 +10,7 @@ ATTACH INLINE
 
 CREATE SINK at_geom_results(at_geom_tests.id UINT32, inside INT32) TYPE File;
 SELECT id,
-       TEMPORAL_AT_GEOMETRY(lon, lat, timestamp, polygon_wkt) AS inside
+       TGEO_AT_GEOM(lon, lat, timestamp, polygon_wkt) AS inside
 FROM at_geom_tests
 INTO at_geom_results;
 ----

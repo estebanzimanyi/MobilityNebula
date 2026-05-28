@@ -10,7 +10,7 @@ ATTACH INLINE
 
 CREATE SINK tct01_out(tct01.id UINT32, r INT32) TYPE File;
 SELECT id,
-       TEMPORAL_AINTERSECTS_TCBUFFER_TCBUFFER(lonA, latA, radiusA, tsA, lonB, latB, radiusB, tsB) AS r
+       AINTERSECTS_TCBUFFER_TCBUFFER(lonA, latA, radiusA, tsA, lonB, latB, radiusB, tsB) AS r
 FROM tct01
 INTO tct01_out;
 ----

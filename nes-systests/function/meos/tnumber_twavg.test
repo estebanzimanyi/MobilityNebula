@@ -8,7 +8,7 @@ ATTACH INLINE
 2|5.0|1609459200
 
 CREATE SINK tntw_out(tntw.gid UINT64, tntw.r FLOAT64) TYPE File;
-SELECT gid, TEMPORAL_TNUMBER_TWAVG(reading, ts) AS r FROM tntw GROUP BY gid WINDOW TUMBLING(ts, size 1 hour) INTO tntw_out;
+SELECT gid, TNUMBER_TWAVG(reading, ts) AS r FROM tntw GROUP BY gid WINDOW TUMBLING(ts, size 1 hour) INTO tntw_out;
 ----
 1,16.6
 2,5.0

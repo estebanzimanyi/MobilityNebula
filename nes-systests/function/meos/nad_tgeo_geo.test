@@ -7,7 +7,7 @@ ATTACH INLINE
 2|5.0|51.0|1609459200
 
 CREATE SINK ndgg_out(ndgg.id UINT64, r FLOAT64) TYPE File;
-SELECT id, TEMPORAL_NAD_GEOMETRY(lon, lat, ts, 'SRID=4326;POINT(0 0)') AS r FROM ndgg INTO ndgg_out;
+SELECT id, NAD_TGEO_GEO(lon, lat, ts, 'SRID=4326;POINT(0 0)') AS r FROM ndgg INTO ndgg_out;
 ----
 1,50.159745
 2,51.244512

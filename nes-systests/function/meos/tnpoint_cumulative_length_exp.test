@@ -9,6 +9,6 @@ ATTACH INLINE
 1|1|0.9|1609459220
 
 CREATE SINK tncl_out(tncl.vehicle_id UINT64, tncl.cumlen VARSIZED) TYPE File;
-SELECT vehicle_id, TNPOINT_CUMULATIVE_LENGTH_EXP(rid, frac, timestamp) AS cumlen FROM tncl GROUP BY vehicle_id WINDOW TUMBLING(timestamp, size 1 hour) INTO tncl_out;
+SELECT vehicle_id, TNPOINT_CUMULATIVE_LENGTH(rid, frac, timestamp) AS cumlen FROM tncl GROUP BY vehicle_id WINDOW TUMBLING(timestamp, size 1 hour) INTO tncl_out;
 ----
 1,0121000E0200000003000000000000000000A0AD30CA5A02009A151B561B894C4000CDDE31CA5A0200

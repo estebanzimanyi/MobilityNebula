@@ -8,7 +8,7 @@ ATTACH INLINE
 2|5.0|1609459200
 
 CREATE SINK tfminv_out(tfminv.gid UINT64, tfminv.r FLOAT64) TYPE File;
-SELECT gid, TEMPORAL_TFLOAT_MIN_VALUE(reading, ts) AS r FROM tfminv GROUP BY gid WINDOW TUMBLING(ts, size 1 hour) INTO tfminv_out;
+SELECT gid, TFLOAT_MIN_VALUE(reading, ts) AS r FROM tfminv GROUP BY gid WINDOW TUMBLING(ts, size 1 hour) INTO tfminv_out;
 ----
 1,10.5
 2,5.0

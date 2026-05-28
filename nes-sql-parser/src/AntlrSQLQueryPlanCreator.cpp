@@ -71,60 +71,60 @@
 #include <Operators/Windows/Aggregations/Meos/TemporalNumInstantsAggregationLogicalFunction.hpp>
 #include <Operators/Windows/Aggregations/Meos/TemporalNumSequencesAggregationLogicalFunction.hpp>
 #include <Operators/Windows/Aggregations/Meos/TemporalNumTimestampsAggregationLogicalFunction.hpp>
-#include <Operators/Windows/Aggregations/Meos/TemporalTFloatStartValueAggregationLogicalFunction.hpp>
-#include <Operators/Windows/Aggregations/Meos/TemporalTFloatEndValueAggregationLogicalFunction.hpp>
-#include <Operators/Windows/Aggregations/Meos/TemporalTFloatMinValueAggregationLogicalFunction.hpp>
-#include <Operators/Windows/Aggregations/Meos/TemporalTFloatMaxValueAggregationLogicalFunction.hpp>
-#include <Operators/Windows/Aggregations/Meos/TemporalTNumberIntegralAggregationLogicalFunction.hpp>
-#include <Operators/Windows/Aggregations/Meos/TemporalTIntStartValueAggregationLogicalFunction.hpp>
-#include <Operators/Windows/Aggregations/Meos/TemporalTIntEndValueAggregationLogicalFunction.hpp>
-#include <Operators/Windows/Aggregations/Meos/TemporalTIntMinValueAggregationLogicalFunction.hpp>
-#include <Operators/Windows/Aggregations/Meos/TemporalTIntMaxValueAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TfloatStartValueAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TfloatEndValueAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TfloatMinValueAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TfloatMaxValueAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TnumberIntegralAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TintStartValueAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TintEndValueAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TintMinValueAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TintMaxValueAggregationLogicalFunction.hpp>
 #include <Operators/Windows/Aggregations/Meos/TemporalTFloatAvgValueAggregationLogicalFunction.hpp>
-#include <Operators/Windows/Aggregations/Meos/TemporalTNumberTwAvgAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TnumberTwavgAggregationLogicalFunction.hpp>
 #include <Operators/Windows/Aggregations/Meos/TemporalTIntAvgValueAggregationLogicalFunction.hpp>
-#include <Operators/Windows/Aggregations/Meos/TemporalStartTimestampAggregationLogicalFunction.hpp>
-#include <Operators/Windows/Aggregations/Meos/TemporalEndTimestampAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TemporalStartTimestamptzAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TemporalEndTimestamptzAggregationLogicalFunction.hpp>
 #include <Operators/Windows/Aggregations/Meos/TemporalLowerIncAggregationLogicalFunction.hpp>
 #include <Operators/Windows/Aggregations/Meos/TemporalUpperIncAggregationLogicalFunction.hpp>
-#include <Operators/Windows/Aggregations/Meos/TemporalTPointIsSimpleAggregationLogicalFunction.hpp>
-#include <Operators/Windows/Aggregations/Meos/TspatialExtentAggregationLogicalFunction.hpp>
-#include <Operators/Windows/Aggregations/Meos/TnumberExtentAggregationLogicalFunction.hpp>
-#include <Operators/Windows/Aggregations/Meos/FloatExtentAggregationLogicalFunction.hpp>
-#include <Operators/Windows/Aggregations/Meos/IntExtentAggregationLogicalFunction.hpp>
-#include <Operators/Windows/Aggregations/Meos/BigintExtentAggregationLogicalFunction.hpp>
-#include <Operators/Windows/Aggregations/Meos/TimestamptzExtentAggregationLogicalFunction.hpp>
-#include <Operators/Windows/Aggregations/Meos/FloatUnionAggregationLogicalFunction.hpp>
-#include <Operators/Windows/Aggregations/Meos/IntUnionAggregationLogicalFunction.hpp>
-#include <Operators/Windows/Aggregations/Meos/BigintUnionAggregationLogicalFunction.hpp>
-#include <Operators/Windows/Aggregations/Meos/TimestamptzUnionAggregationLogicalFunction.hpp>
-#include <Operators/Windows/Aggregations/Meos/TrajectoryWkbAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TpointIsSimpleAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TspatialExtentTransfnAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TnumberExtentTransfnAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/FloatExtentTransfnAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/IntExtentTransfnAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/BigintExtentTransfnAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TimestamptzExtentTransfnAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/FloatUnionTransfnAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/IntUnionTransfnAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/BigintUnionTransfnAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TimestamptzUnionTransfnAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TpointTrajectoryAggregationLogicalFunction.hpp>
 #include <Operators/Windows/Aggregations/Meos/TLengthExpAggregationLogicalFunction.hpp>
-#include <Operators/Windows/Aggregations/Meos/TgeoCentroidExpAggregationLogicalFunction.hpp>
-#include <Operators/Windows/Aggregations/Meos/TpointAzimuthExpAggregationLogicalFunction.hpp>
-#include <Operators/Windows/Aggregations/Meos/TpointAngularDifferenceExpAggregationLogicalFunction.hpp>
-#include <Operators/Windows/Aggregations/Meos/TgeompointToTgeometryExpAggregationLogicalFunction.hpp>
-#include <Operators/Windows/Aggregations/Meos/TemporalCopyExpAggregationLogicalFunction.hpp>
-#include <Operators/Windows/Aggregations/Meos/TnumberAbsExpAggregationLogicalFunction.hpp>
-#include <Operators/Windows/Aggregations/Meos/TnumberDeltaValueExpAggregationLogicalFunction.hpp>
-#include <Operators/Windows/Aggregations/Meos/TnumberAngularDifferenceExpAggregationLogicalFunction.hpp>
-#include <Operators/Windows/Aggregations/Meos/TemporalDerivativeExpAggregationLogicalFunction.hpp>
-#include <Operators/Windows/Aggregations/Meos/TemporalAtMaxExpAggregationLogicalFunction.hpp>
-#include <Operators/Windows/Aggregations/Meos/TemporalAtMinExpAggregationLogicalFunction.hpp>
-#include <Operators/Windows/Aggregations/Meos/TemporalMinusMaxExpAggregationLogicalFunction.hpp>
-#include <Operators/Windows/Aggregations/Meos/TemporalMinusMinExpAggregationLogicalFunction.hpp>
-#include <Operators/Windows/Aggregations/Meos/TnpointCumulativeLengthExpAggregationLogicalFunction.hpp>
-#include <Operators/Windows/Aggregations/Meos/TnpointSpeedExpAggregationLogicalFunction.hpp>
-#include <Operators/Windows/Aggregations/Meos/TnpointToTgeompointExpAggregationLogicalFunction.hpp>
-#include <Operators/Windows/Aggregations/Meos/TpointCumulativeLengthExpAggregationLogicalFunction.hpp>
-#include <Operators/Windows/Aggregations/Meos/TpointSpeedExpAggregationLogicalFunction.hpp>
-#include <Operators/Windows/Aggregations/Meos/TpointGetXExpAggregationLogicalFunction.hpp>
-#include <Operators/Windows/Aggregations/Meos/TpointGetYExpAggregationLogicalFunction.hpp>
-#include <Operators/Windows/Aggregations/Meos/TnumberTrendExpAggregationLogicalFunction.hpp>
-#include <Operators/Windows/Aggregations/Meos/TgeoStartValueExpAggregationLogicalFunction.hpp>
-#include <Operators/Windows/Aggregations/Meos/TgeoEndValueExpAggregationLogicalFunction.hpp>
-#include <Operators/Windows/Aggregations/Meos/TgeoConvexHullExpAggregationLogicalFunction.hpp>
-#include <Operators/Windows/Aggregations/Meos/TpointTwcentroidExpAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TgeoCentroidAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TpointAzimuthAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TpointAngularDifferenceAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TgeompointToTgeometryAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TemporalCopyAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TnumberAbsAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TnumberDeltaValueAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TnumberAngularDifferenceAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TemporalDerivativeAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TemporalAtMaxAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TemporalAtMinAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TemporalMinusMaxAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TemporalMinusMinAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TnpointCumulativeLengthAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TnpointSpeedAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TnpointToTgeompointAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TpointCumulativeLengthAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TpointSpeedAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TpointGetXAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TpointGetYAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TnumberTrendAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TgeoStartValueAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TgeoEndValueAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TgeoConvexHullAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TpointTwcentroidAggregationLogicalFunction.hpp>
 #include <Functions/Meos/TemporalIntersectsGeometryLogicalFunction.hpp>
 #include <Functions/Meos/TemporalAIntersectsGeometryLogicalFunction.hpp>
 #include <Functions/Meos/TemporalEDWithinGeometryLogicalFunction.hpp>
@@ -140,8 +140,8 @@
 #include <Functions/Meos/TemporalADisjointTGeometryLogicalFunction.hpp>
 #include <Functions/Meos/TemporalAIntersectsTGeometryLogicalFunction.hpp>
 #include <Functions/Meos/TemporalATouchesTGeometryLogicalFunction.hpp>
-#include <Functions/Meos/TemporalNADGeometryLogicalFunction.hpp>
-#include <Functions/Meos/TemporalNADTGeometryLogicalFunction.hpp>
+#include <Functions/Meos/NadTgeoGeoLogicalFunction.hpp>
+#include <Functions/Meos/NadTgeoTgeoLogicalFunction.hpp>
 #include <Functions/Meos/TemporalEDWithinTGeometryLogicalFunction.hpp>
 #include <Functions/Meos/TemporalADWithinGeometryLogicalFunction.hpp>
 #include <Functions/Meos/TemporalADWithinTGeometryLogicalFunction.hpp>
@@ -150,44 +150,44 @@
 #include <Functions/Meos/TemporalECoversGeometryLogicalFunction.hpp>
 #include <Functions/Meos/TemporalAContainsGeometryLogicalFunction.hpp>
 #include <Functions/Meos/TemporalETouchesGeometryLogicalFunction.hpp>
-#include <Functions/Meos/TemporalNADFloatScalarLogicalFunction.hpp>
-#include <Functions/Meos/TemporalNADIntScalarLogicalFunction.hpp>
-#include <Functions/Meos/TemporalNADTFloatLogicalFunction.hpp>
-#include <Functions/Meos/TemporalNADTIntLogicalFunction.hpp>
-#include <Functions/Meos/TemporalAtGeometryLogicalFunction.hpp>
-#include <Functions/Meos/TemporalMinusGeometryLogicalFunction.hpp>
-#include <Functions/Meos/TemporalEContainsTCbufferLogicalFunction.hpp>
-#include <Functions/Meos/TemporalECoversTCbufferLogicalFunction.hpp>
-#include <Functions/Meos/TemporalEDisjointTCbufferLogicalFunction.hpp>
-#include <Functions/Meos/TemporalEIntersectsTCbufferLogicalFunction.hpp>
-#include <Functions/Meos/TemporalETouchesTCbufferLogicalFunction.hpp>
-#include <Functions/Meos/TemporalAContainsTCbufferLogicalFunction.hpp>
-#include <Functions/Meos/TemporalACoversTCbufferLogicalFunction.hpp>
-#include <Functions/Meos/TemporalADisjointTCbufferLogicalFunction.hpp>
-#include <Functions/Meos/TemporalAIntersectsTCbufferLogicalFunction.hpp>
-#include <Functions/Meos/TemporalATouchesTCbufferLogicalFunction.hpp>
-#include <Functions/Meos/TemporalEContainsTCbufferCbufferLogicalFunction.hpp>
-#include <Functions/Meos/TemporalECoversTCbufferCbufferLogicalFunction.hpp>
-#include <Functions/Meos/TemporalEDisjointTCbufferCbufferLogicalFunction.hpp>
-#include <Functions/Meos/TemporalEIntersectsTCbufferCbufferLogicalFunction.hpp>
-#include <Functions/Meos/TemporalETouchesTCbufferCbufferLogicalFunction.hpp>
-#include <Functions/Meos/TemporalAContainsTCbufferCbufferLogicalFunction.hpp>
-#include <Functions/Meos/TemporalACoversTCbufferCbufferLogicalFunction.hpp>
-#include <Functions/Meos/TemporalADisjointTCbufferCbufferLogicalFunction.hpp>
-#include <Functions/Meos/TemporalAIntersectsTCbufferCbufferLogicalFunction.hpp>
-#include <Functions/Meos/TemporalATouchesTCbufferCbufferLogicalFunction.hpp>
-#include <Functions/Meos/TemporalADisjointTCbufferTCbufferLogicalFunction.hpp>
-#include <Functions/Meos/TemporalAIntersectsTCbufferTCbufferLogicalFunction.hpp>
-#include <Functions/Meos/TemporalATouchesTCbufferTCbufferLogicalFunction.hpp>
-#include <Functions/Meos/TemporalECoversTCbufferTCbufferLogicalFunction.hpp>
-#include <Functions/Meos/TemporalEIntersectsTCbufferTCbufferLogicalFunction.hpp>
-#include <Functions/Meos/TemporalETouchesTCbufferTCbufferLogicalFunction.hpp>
-#include <Functions/Meos/TemporalEDWithinTCbufferGeometryLogicalFunction.hpp>
-#include <Functions/Meos/TemporalADWithinTCbufferGeometryLogicalFunction.hpp>
-#include <Functions/Meos/TemporalEDWithinTCbufferCbufferLogicalFunction.hpp>
-#include <Functions/Meos/TemporalADWithinTCbufferCbufferLogicalFunction.hpp>
-#include <Functions/Meos/TemporalEDWithinTCbufferTCbufferLogicalFunction.hpp>
-#include <Functions/Meos/TemporalADWithinTCbufferTCbufferLogicalFunction.hpp>
+#include <Functions/Meos/NadTfloatFloatLogicalFunction.hpp>
+#include <Functions/Meos/NadTintIntLogicalFunction.hpp>
+#include <Functions/Meos/NadTfloatTfloatLogicalFunction.hpp>
+#include <Functions/Meos/NadTintTintLogicalFunction.hpp>
+#include <Functions/Meos/TgeoAtGeomLogicalFunction.hpp>
+#include <Functions/Meos/TgeoMinusGeomLogicalFunction.hpp>
+#include <Functions/Meos/EcontainsTcbufferGeoLogicalFunction.hpp>
+#include <Functions/Meos/EcoversTcbufferGeoLogicalFunction.hpp>
+#include <Functions/Meos/EdisjointTcbufferGeoLogicalFunction.hpp>
+#include <Functions/Meos/EintersectsTcbufferGeoLogicalFunction.hpp>
+#include <Functions/Meos/EtouchesTcbufferGeoLogicalFunction.hpp>
+#include <Functions/Meos/AcontainsTcbufferGeoLogicalFunction.hpp>
+#include <Functions/Meos/AcoversTcbufferGeoLogicalFunction.hpp>
+#include <Functions/Meos/AdisjointTcbufferGeoLogicalFunction.hpp>
+#include <Functions/Meos/AintersectsTcbufferGeoLogicalFunction.hpp>
+#include <Functions/Meos/AtouchesTcbufferGeoLogicalFunction.hpp>
+#include <Functions/Meos/EcontainsTcbufferCbufferLogicalFunction.hpp>
+#include <Functions/Meos/EcoversTcbufferCbufferLogicalFunction.hpp>
+#include <Functions/Meos/EdisjointTcbufferCbufferLogicalFunction.hpp>
+#include <Functions/Meos/EintersectsTcbufferCbufferLogicalFunction.hpp>
+#include <Functions/Meos/EtouchesTcbufferCbufferLogicalFunction.hpp>
+#include <Functions/Meos/AcontainsTcbufferCbufferLogicalFunction.hpp>
+#include <Functions/Meos/AcoversTcbufferCbufferLogicalFunction.hpp>
+#include <Functions/Meos/AdisjointTcbufferCbufferLogicalFunction.hpp>
+#include <Functions/Meos/AintersectsTcbufferCbufferLogicalFunction.hpp>
+#include <Functions/Meos/AtouchesTcbufferCbufferLogicalFunction.hpp>
+#include <Functions/Meos/AdisjointTcbufferTcbufferLogicalFunction.hpp>
+#include <Functions/Meos/AintersectsTcbufferTcbufferLogicalFunction.hpp>
+#include <Functions/Meos/AtouchesTcbufferTcbufferLogicalFunction.hpp>
+#include <Functions/Meos/EcoversTcbufferTcbufferLogicalFunction.hpp>
+#include <Functions/Meos/EintersectsTcbufferTcbufferLogicalFunction.hpp>
+#include <Functions/Meos/EtouchesTcbufferTcbufferLogicalFunction.hpp>
+#include <Functions/Meos/EdwithinTcbufferGeoLogicalFunction.hpp>
+#include <Functions/Meos/AdwithinTcbufferGeoLogicalFunction.hpp>
+#include <Functions/Meos/EdwithinTcbufferCbufferLogicalFunction.hpp>
+#include <Functions/Meos/AdwithinTcbufferCbufferLogicalFunction.hpp>
+#include <Functions/Meos/EdwithinTcbufferTcbufferLogicalFunction.hpp>
+#include <Functions/Meos/AdwithinTcbufferTcbufferLogicalFunction.hpp>
 #include <Functions/Meos/TemporalEContainsTPoseGeometryLogicalFunction.hpp>
 #include <Functions/Meos/TemporalECoversTPoseGeometryLogicalFunction.hpp>
 #include <Functions/Meos/TemporalEDisjointTPoseGeometryLogicalFunction.hpp>
@@ -236,9 +236,9 @@
 #include <Functions/Meos/TemporalADWithinTPoseTPoseLogicalFunction.hpp>
 #include <Functions/Meos/TemporalADWithinTNpointGeometryLogicalFunction.hpp>
 #include <Functions/Meos/TemporalADWithinTNpointTNpointLogicalFunction.hpp>
-#include <Functions/Meos/TemporalNADTCbufferLogicalFunction.hpp>
-#include <Functions/Meos/TemporalNADTCbufferCbufferLogicalFunction.hpp>
-#include <Functions/Meos/TemporalNADTCbufferTCbufferLogicalFunction.hpp>
+#include <Functions/Meos/NadTcbufferGeoLogicalFunction.hpp>
+#include <Functions/Meos/NadTcbufferCbufferLogicalFunction.hpp>
+#include <Functions/Meos/NadTcbufferTcbufferLogicalFunction.hpp>
 #include <Functions/Meos/AlwaysEqTfloatFloatLogicalFunction.hpp>
 #include <Functions/Meos/AlwaysEqTintIntLogicalFunction.hpp>
 #include <Functions/Meos/AlwaysGeTfloatFloatLogicalFunction.hpp>
@@ -2614,12 +2614,12 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         break;
         /* END CODEGEN PARSER GLUE: TEMPORAL_ATOUCHES_TGEOMETRY */
 
-        /* BEGIN CODEGEN PARSER GLUE: TEMPORAL_NAD_GEOMETRY */
-        case AntlrSQLLexer::TEMPORAL_NAD_GEOMETRY:
+        /* BEGIN CODEGEN PARSER GLUE: NAD_TGEO_GEO */
+        case AntlrSQLLexer::NAD_TGEO_GEO:
         {
             const auto argCount = context->expression().size();
             if (argCount != 4)
-                throw InvalidQuerySyntax("TEMPORAL_NAD_GEOMETRY requires exactly 4 arguments (lon, lat, timestamp, geometry), but got {}", argCount);
+                throw InvalidQuerySyntax("NAD_TGEO_GEO requires exactly 4 arguments (lon, lat, timestamp, geometry), but got {}", argCount);
 
             /* Lift the WKT constant into the function builder */
             while (!helpers.top().constantBuilder.empty())
@@ -2637,17 +2637,17 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             auto lon       = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
 
             helpers.top().functionBuilder.emplace_back(
-                TemporalNADGeometryLogicalFunction(lon, lat, timestamp, geometry));
+                NadTgeoGeoLogicalFunction(lon, lat, timestamp, geometry));
         }
         break;
-        /* END CODEGEN PARSER GLUE: TEMPORAL_NAD_GEOMETRY */
+        /* END CODEGEN PARSER GLUE: NAD_TGEO_GEO */
 
-        /* BEGIN CODEGEN PARSER GLUE: TEMPORAL_NAD_TGEOMETRY */
-        case AntlrSQLLexer::TEMPORAL_NAD_TGEOMETRY:
+        /* BEGIN CODEGEN PARSER GLUE: NAD_TGEO_TGEO */
+        case AntlrSQLLexer::NAD_TGEO_TGEO:
         {
             const auto argCount = context->expression().size();
             if (argCount != 6)
-                throw InvalidQuerySyntax("TEMPORAL_NAD_TGEOMETRY requires exactly 6 arguments (lonA, latA, tsA, lonB, latB, tsB), but got {}", argCount);
+                throw InvalidQuerySyntax("NAD_TGEO_TGEO requires exactly 6 arguments (lonA, latA, tsA, lonB, latB, tsB), but got {}", argCount);
 
             auto tsB  = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
             auto latB = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
@@ -2657,10 +2657,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             auto lonA = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
 
             helpers.top().functionBuilder.emplace_back(
-                TemporalNADTGeometryLogicalFunction(lonA, latA, tsA, lonB, latB, tsB));
+                NadTgeoTgeoLogicalFunction(lonA, latA, tsA, lonB, latB, tsB));
         }
         break;
-        /* END CODEGEN PARSER GLUE: TEMPORAL_NAD_TGEOMETRY */
+        /* END CODEGEN PARSER GLUE: NAD_TGEO_TGEO */
 
         /* BEGIN CODEGEN PARSER GLUE: TEMPORAL_EDWITHIN_TGEOMETRY */
         case AntlrSQLLexer::TEMPORAL_EDWITHIN_TGEOMETRY:
@@ -2907,12 +2907,12 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TEMPORAL_ETOUCHES_GEOMETRY */
-        /* BEGIN CODEGEN PARSER GLUE: TEMPORAL_NAD_FLOAT_SCALAR */
-        case AntlrSQLLexer::TEMPORAL_NAD_FLOAT_SCALAR:
+        /* BEGIN CODEGEN PARSER GLUE: NAD_TFLOAT_FLOAT */
+        case AntlrSQLLexer::NAD_TFLOAT_FLOAT:
         {
             const auto argCount = context->expression().size();
             if (argCount != 3)
-                throw InvalidQuerySyntax("TEMPORAL_NAD_FLOAT_SCALAR requires exactly 3 arguments (value, timestamp, scalar), but got {}", argCount);
+                throw InvalidQuerySyntax("NAD_TFLOAT_FLOAT requires exactly 3 arguments (value, timestamp, scalar), but got {}", argCount);
 
             /* Lift the scalar constant — accept FLOAT64 (strtod-clean) and INT32 */
             while (!helpers.top().constantBuilder.empty())
@@ -2934,17 +2934,17 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             auto value     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
 
             helpers.top().functionBuilder.emplace_back(
-                TemporalNADFloatScalarLogicalFunction(value, timestamp, scalar));
+                NadTfloatFloatLogicalFunction(value, timestamp, scalar));
         }
         break;
-        /* END CODEGEN PARSER GLUE: TEMPORAL_NAD_FLOAT_SCALAR */
+        /* END CODEGEN PARSER GLUE: NAD_TFLOAT_FLOAT */
 
-        /* BEGIN CODEGEN PARSER GLUE: TEMPORAL_NAD_INT_SCALAR */
-        case AntlrSQLLexer::TEMPORAL_NAD_INT_SCALAR:
+        /* BEGIN CODEGEN PARSER GLUE: NAD_TINT_INT */
+        case AntlrSQLLexer::NAD_TINT_INT:
         {
             const auto argCount = context->expression().size();
             if (argCount != 3)
-                throw InvalidQuerySyntax("TEMPORAL_NAD_INT_SCALAR requires exactly 3 arguments (value, timestamp, scalar), but got {}", argCount);
+                throw InvalidQuerySyntax("NAD_TINT_INT requires exactly 3 arguments (value, timestamp, scalar), but got {}", argCount);
 
             /* Lift the scalar constant — accept FLOAT64 (strtod-clean) and INT32 */
             while (!helpers.top().constantBuilder.empty())
@@ -2966,17 +2966,17 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             auto value     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
 
             helpers.top().functionBuilder.emplace_back(
-                TemporalNADIntScalarLogicalFunction(value, timestamp, scalar));
+                NadTintIntLogicalFunction(value, timestamp, scalar));
         }
         break;
-        /* END CODEGEN PARSER GLUE: TEMPORAL_NAD_INT_SCALAR */
+        /* END CODEGEN PARSER GLUE: NAD_TINT_INT */
 
-        /* BEGIN CODEGEN PARSER GLUE: TEMPORAL_NAD_TFLOAT */
-        case AntlrSQLLexer::TEMPORAL_NAD_TFLOAT:
+        /* BEGIN CODEGEN PARSER GLUE: NAD_TFLOAT_TFLOAT */
+        case AntlrSQLLexer::NAD_TFLOAT_TFLOAT:
         {
             const auto argCount = context->expression().size();
             if (argCount != 4)
-                throw InvalidQuerySyntax("TEMPORAL_NAD_TFLOAT requires exactly 4 arguments (valueA, tsA, valueB, tsB), but got {}", argCount);
+                throw InvalidQuerySyntax("NAD_TFLOAT_TFLOAT requires exactly 4 arguments (valueA, tsA, valueB, tsB), but got {}", argCount);
 
             auto tsB    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
             auto valueB = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
@@ -2984,17 +2984,17 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             auto valueA = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
 
             helpers.top().functionBuilder.emplace_back(
-                TemporalNADTFloatLogicalFunction(valueA, tsA, valueB, tsB));
+                NadTfloatTfloatLogicalFunction(valueA, tsA, valueB, tsB));
         }
         break;
-        /* END CODEGEN PARSER GLUE: TEMPORAL_NAD_TFLOAT */
+        /* END CODEGEN PARSER GLUE: NAD_TFLOAT_TFLOAT */
 
-        /* BEGIN CODEGEN PARSER GLUE: TEMPORAL_NAD_TINT */
-        case AntlrSQLLexer::TEMPORAL_NAD_TINT:
+        /* BEGIN CODEGEN PARSER GLUE: NAD_TINT_TINT */
+        case AntlrSQLLexer::NAD_TINT_TINT:
         {
             const auto argCount = context->expression().size();
             if (argCount != 4)
-                throw InvalidQuerySyntax("TEMPORAL_NAD_TINT requires exactly 4 arguments (valueA, tsA, valueB, tsB), but got {}", argCount);
+                throw InvalidQuerySyntax("NAD_TINT_TINT requires exactly 4 arguments (valueA, tsA, valueB, tsB), but got {}", argCount);
 
             auto tsB    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
             auto valueB = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
@@ -3002,16 +3002,16 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             auto valueA = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
 
             helpers.top().functionBuilder.emplace_back(
-                TemporalNADTIntLogicalFunction(valueA, tsA, valueB, tsB));
+                NadTintTintLogicalFunction(valueA, tsA, valueB, tsB));
         }
         break;
-        /* END CODEGEN PARSER GLUE: TEMPORAL_NAD_TINT */
-        /* BEGIN CODEGEN PARSER GLUE: TEMPORAL_AT_GEOMETRY */
-        case AntlrSQLLexer::TEMPORAL_AT_GEOMETRY:
+        /* END CODEGEN PARSER GLUE: NAD_TINT_TINT */
+        /* BEGIN CODEGEN PARSER GLUE: TGEO_AT_GEOM */
+        case AntlrSQLLexer::TGEO_AT_GEOM:
         {
             const auto argCount = context->expression().size();
             if (argCount != 4)
-                throw InvalidQuerySyntax("TEMPORAL_AT_GEOMETRY requires exactly 4 arguments (lon, lat, timestamp, geometry), but got {}", argCount);
+                throw InvalidQuerySyntax("TGEO_AT_GEOM requires exactly 4 arguments (lon, lat, timestamp, geometry), but got {}", argCount);
 
             /* Lift the WKT constant into the function builder */
             while (!helpers.top().constantBuilder.empty())
@@ -3029,17 +3029,17 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             auto lon       = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
 
             helpers.top().functionBuilder.emplace_back(
-                TemporalAtGeometryLogicalFunction(lon, lat, timestamp, geometry));
+                TgeoAtGeomLogicalFunction(lon, lat, timestamp, geometry));
         }
         break;
-        /* END CODEGEN PARSER GLUE: TEMPORAL_AT_GEOMETRY */
+        /* END CODEGEN PARSER GLUE: TGEO_AT_GEOM */
 
-        /* BEGIN CODEGEN PARSER GLUE: TEMPORAL_MINUS_GEOMETRY */
-        case AntlrSQLLexer::TEMPORAL_MINUS_GEOMETRY:
+        /* BEGIN CODEGEN PARSER GLUE: TGEO_MINUS_GEOM */
+        case AntlrSQLLexer::TGEO_MINUS_GEOM:
         {
             const auto argCount = context->expression().size();
             if (argCount != 4)
-                throw InvalidQuerySyntax("TEMPORAL_MINUS_GEOMETRY requires exactly 4 arguments (lon, lat, timestamp, geometry), but got {}", argCount);
+                throw InvalidQuerySyntax("TGEO_MINUS_GEOM requires exactly 4 arguments (lon, lat, timestamp, geometry), but got {}", argCount);
 
             /* Lift the WKT constant into the function builder */
             while (!helpers.top().constantBuilder.empty())
@@ -3057,16 +3057,16 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             auto lon       = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
 
             helpers.top().functionBuilder.emplace_back(
-                TemporalMinusGeometryLogicalFunction(lon, lat, timestamp, geometry));
+                TgeoMinusGeomLogicalFunction(lon, lat, timestamp, geometry));
         }
         break;
-        /* END CODEGEN PARSER GLUE: TEMPORAL_MINUS_GEOMETRY */
-        /* BEGIN CODEGEN PARSER GLUE: TEMPORAL_ECONTAINS_TCBUFFER */
-        case AntlrSQLLexer::TEMPORAL_ECONTAINS_TCBUFFER:
+        /* END CODEGEN PARSER GLUE: TGEO_MINUS_GEOM */
+        /* BEGIN CODEGEN PARSER GLUE: ECONTAINS_TCBUFFER_GEO */
+        case AntlrSQLLexer::ECONTAINS_TCBUFFER_GEO:
         {
             const auto argCount = context->expression().size();
             if (argCount != 5)
-                throw InvalidQuerySyntax("TEMPORAL_ECONTAINS_TCBUFFER requires exactly 5 arguments (lon, lat, radius, timestamp, geometry), but got {}", argCount);
+                throw InvalidQuerySyntax("ECONTAINS_TCBUFFER_GEO requires exactly 5 arguments (lon, lat, radius, timestamp, geometry), but got {}", argCount);
 
             /* Lift the WKT constant into the function builder */
             while (!helpers.top().constantBuilder.empty())
@@ -3085,17 +3085,17 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             auto lon       = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
 
             helpers.top().functionBuilder.emplace_back(
-                TemporalEContainsTCbufferLogicalFunction(lon, lat, radius, timestamp, geometry));
+                EcontainsTcbufferGeoLogicalFunction(lon, lat, radius, timestamp, geometry));
         }
         break;
-        /* END CODEGEN PARSER GLUE: TEMPORAL_ECONTAINS_TCBUFFER */
+        /* END CODEGEN PARSER GLUE: ECONTAINS_TCBUFFER_GEO */
 
-        /* BEGIN CODEGEN PARSER GLUE: TEMPORAL_ECOVERS_TCBUFFER */
-        case AntlrSQLLexer::TEMPORAL_ECOVERS_TCBUFFER:
+        /* BEGIN CODEGEN PARSER GLUE: ECOVERS_TCBUFFER_GEO */
+        case AntlrSQLLexer::ECOVERS_TCBUFFER_GEO:
         {
             const auto argCount = context->expression().size();
             if (argCount != 5)
-                throw InvalidQuerySyntax("TEMPORAL_ECOVERS_TCBUFFER requires exactly 5 arguments (lon, lat, radius, timestamp, geometry), but got {}", argCount);
+                throw InvalidQuerySyntax("ECOVERS_TCBUFFER_GEO requires exactly 5 arguments (lon, lat, radius, timestamp, geometry), but got {}", argCount);
 
             /* Lift the WKT constant into the function builder */
             while (!helpers.top().constantBuilder.empty())
@@ -3114,17 +3114,17 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             auto lon       = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
 
             helpers.top().functionBuilder.emplace_back(
-                TemporalECoversTCbufferLogicalFunction(lon, lat, radius, timestamp, geometry));
+                EcoversTcbufferGeoLogicalFunction(lon, lat, radius, timestamp, geometry));
         }
         break;
-        /* END CODEGEN PARSER GLUE: TEMPORAL_ECOVERS_TCBUFFER */
+        /* END CODEGEN PARSER GLUE: ECOVERS_TCBUFFER_GEO */
 
-        /* BEGIN CODEGEN PARSER GLUE: TEMPORAL_EDISJOINT_TCBUFFER */
-        case AntlrSQLLexer::TEMPORAL_EDISJOINT_TCBUFFER:
+        /* BEGIN CODEGEN PARSER GLUE: EDISJOINT_TCBUFFER_GEO */
+        case AntlrSQLLexer::EDISJOINT_TCBUFFER_GEO:
         {
             const auto argCount = context->expression().size();
             if (argCount != 5)
-                throw InvalidQuerySyntax("TEMPORAL_EDISJOINT_TCBUFFER requires exactly 5 arguments (lon, lat, radius, timestamp, geometry), but got {}", argCount);
+                throw InvalidQuerySyntax("EDISJOINT_TCBUFFER_GEO requires exactly 5 arguments (lon, lat, radius, timestamp, geometry), but got {}", argCount);
 
             /* Lift the WKT constant into the function builder */
             while (!helpers.top().constantBuilder.empty())
@@ -3143,17 +3143,17 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             auto lon       = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
 
             helpers.top().functionBuilder.emplace_back(
-                TemporalEDisjointTCbufferLogicalFunction(lon, lat, radius, timestamp, geometry));
+                EdisjointTcbufferGeoLogicalFunction(lon, lat, radius, timestamp, geometry));
         }
         break;
-        /* END CODEGEN PARSER GLUE: TEMPORAL_EDISJOINT_TCBUFFER */
+        /* END CODEGEN PARSER GLUE: EDISJOINT_TCBUFFER_GEO */
 
-        /* BEGIN CODEGEN PARSER GLUE: TEMPORAL_EINTERSECTS_TCBUFFER */
-        case AntlrSQLLexer::TEMPORAL_EINTERSECTS_TCBUFFER:
+        /* BEGIN CODEGEN PARSER GLUE: EINTERSECTS_TCBUFFER_GEO */
+        case AntlrSQLLexer::EINTERSECTS_TCBUFFER_GEO:
         {
             const auto argCount = context->expression().size();
             if (argCount != 5)
-                throw InvalidQuerySyntax("TEMPORAL_EINTERSECTS_TCBUFFER requires exactly 5 arguments (lon, lat, radius, timestamp, geometry), but got {}", argCount);
+                throw InvalidQuerySyntax("EINTERSECTS_TCBUFFER_GEO requires exactly 5 arguments (lon, lat, radius, timestamp, geometry), but got {}", argCount);
 
             /* Lift the WKT constant into the function builder */
             while (!helpers.top().constantBuilder.empty())
@@ -3172,17 +3172,17 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             auto lon       = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
 
             helpers.top().functionBuilder.emplace_back(
-                TemporalEIntersectsTCbufferLogicalFunction(lon, lat, radius, timestamp, geometry));
+                EintersectsTcbufferGeoLogicalFunction(lon, lat, radius, timestamp, geometry));
         }
         break;
-        /* END CODEGEN PARSER GLUE: TEMPORAL_EINTERSECTS_TCBUFFER */
+        /* END CODEGEN PARSER GLUE: EINTERSECTS_TCBUFFER_GEO */
 
-        /* BEGIN CODEGEN PARSER GLUE: TEMPORAL_ETOUCHES_TCBUFFER */
-        case AntlrSQLLexer::TEMPORAL_ETOUCHES_TCBUFFER:
+        /* BEGIN CODEGEN PARSER GLUE: ETOUCHES_TCBUFFER_GEO */
+        case AntlrSQLLexer::ETOUCHES_TCBUFFER_GEO:
         {
             const auto argCount = context->expression().size();
             if (argCount != 5)
-                throw InvalidQuerySyntax("TEMPORAL_ETOUCHES_TCBUFFER requires exactly 5 arguments (lon, lat, radius, timestamp, geometry), but got {}", argCount);
+                throw InvalidQuerySyntax("ETOUCHES_TCBUFFER_GEO requires exactly 5 arguments (lon, lat, radius, timestamp, geometry), but got {}", argCount);
 
             /* Lift the WKT constant into the function builder */
             while (!helpers.top().constantBuilder.empty())
@@ -3201,17 +3201,17 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             auto lon       = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
 
             helpers.top().functionBuilder.emplace_back(
-                TemporalETouchesTCbufferLogicalFunction(lon, lat, radius, timestamp, geometry));
+                EtouchesTcbufferGeoLogicalFunction(lon, lat, radius, timestamp, geometry));
         }
         break;
-        /* END CODEGEN PARSER GLUE: TEMPORAL_ETOUCHES_TCBUFFER */
+        /* END CODEGEN PARSER GLUE: ETOUCHES_TCBUFFER_GEO */
 
-        /* BEGIN CODEGEN PARSER GLUE: TEMPORAL_ACONTAINS_TCBUFFER */
-        case AntlrSQLLexer::TEMPORAL_ACONTAINS_TCBUFFER:
+        /* BEGIN CODEGEN PARSER GLUE: ACONTAINS_TCBUFFER_GEO */
+        case AntlrSQLLexer::ACONTAINS_TCBUFFER_GEO:
         {
             const auto argCount = context->expression().size();
             if (argCount != 5)
-                throw InvalidQuerySyntax("TEMPORAL_ACONTAINS_TCBUFFER requires exactly 5 arguments (lon, lat, radius, timestamp, geometry), but got {}", argCount);
+                throw InvalidQuerySyntax("ACONTAINS_TCBUFFER_GEO requires exactly 5 arguments (lon, lat, radius, timestamp, geometry), but got {}", argCount);
 
             /* Lift the WKT constant into the function builder */
             while (!helpers.top().constantBuilder.empty())
@@ -3230,17 +3230,17 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             auto lon       = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
 
             helpers.top().functionBuilder.emplace_back(
-                TemporalAContainsTCbufferLogicalFunction(lon, lat, radius, timestamp, geometry));
+                AcontainsTcbufferGeoLogicalFunction(lon, lat, radius, timestamp, geometry));
         }
         break;
-        /* END CODEGEN PARSER GLUE: TEMPORAL_ACONTAINS_TCBUFFER */
+        /* END CODEGEN PARSER GLUE: ACONTAINS_TCBUFFER_GEO */
 
-        /* BEGIN CODEGEN PARSER GLUE: TEMPORAL_ACOVERS_TCBUFFER */
-        case AntlrSQLLexer::TEMPORAL_ACOVERS_TCBUFFER:
+        /* BEGIN CODEGEN PARSER GLUE: ACOVERS_TCBUFFER_GEO */
+        case AntlrSQLLexer::ACOVERS_TCBUFFER_GEO:
         {
             const auto argCount = context->expression().size();
             if (argCount != 5)
-                throw InvalidQuerySyntax("TEMPORAL_ACOVERS_TCBUFFER requires exactly 5 arguments (lon, lat, radius, timestamp, geometry), but got {}", argCount);
+                throw InvalidQuerySyntax("ACOVERS_TCBUFFER_GEO requires exactly 5 arguments (lon, lat, radius, timestamp, geometry), but got {}", argCount);
 
             /* Lift the WKT constant into the function builder */
             while (!helpers.top().constantBuilder.empty())
@@ -3259,17 +3259,17 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             auto lon       = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
 
             helpers.top().functionBuilder.emplace_back(
-                TemporalACoversTCbufferLogicalFunction(lon, lat, radius, timestamp, geometry));
+                AcoversTcbufferGeoLogicalFunction(lon, lat, radius, timestamp, geometry));
         }
         break;
-        /* END CODEGEN PARSER GLUE: TEMPORAL_ACOVERS_TCBUFFER */
+        /* END CODEGEN PARSER GLUE: ACOVERS_TCBUFFER_GEO */
 
-        /* BEGIN CODEGEN PARSER GLUE: TEMPORAL_ADISJOINT_TCBUFFER */
-        case AntlrSQLLexer::TEMPORAL_ADISJOINT_TCBUFFER:
+        /* BEGIN CODEGEN PARSER GLUE: ADISJOINT_TCBUFFER_GEO */
+        case AntlrSQLLexer::ADISJOINT_TCBUFFER_GEO:
         {
             const auto argCount = context->expression().size();
             if (argCount != 5)
-                throw InvalidQuerySyntax("TEMPORAL_ADISJOINT_TCBUFFER requires exactly 5 arguments (lon, lat, radius, timestamp, geometry), but got {}", argCount);
+                throw InvalidQuerySyntax("ADISJOINT_TCBUFFER_GEO requires exactly 5 arguments (lon, lat, radius, timestamp, geometry), but got {}", argCount);
 
             /* Lift the WKT constant into the function builder */
             while (!helpers.top().constantBuilder.empty())
@@ -3288,17 +3288,17 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             auto lon       = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
 
             helpers.top().functionBuilder.emplace_back(
-                TemporalADisjointTCbufferLogicalFunction(lon, lat, radius, timestamp, geometry));
+                AdisjointTcbufferGeoLogicalFunction(lon, lat, radius, timestamp, geometry));
         }
         break;
-        /* END CODEGEN PARSER GLUE: TEMPORAL_ADISJOINT_TCBUFFER */
+        /* END CODEGEN PARSER GLUE: ADISJOINT_TCBUFFER_GEO */
 
-        /* BEGIN CODEGEN PARSER GLUE: TEMPORAL_AINTERSECTS_TCBUFFER */
-        case AntlrSQLLexer::TEMPORAL_AINTERSECTS_TCBUFFER:
+        /* BEGIN CODEGEN PARSER GLUE: AINTERSECTS_TCBUFFER_GEO */
+        case AntlrSQLLexer::AINTERSECTS_TCBUFFER_GEO:
         {
             const auto argCount = context->expression().size();
             if (argCount != 5)
-                throw InvalidQuerySyntax("TEMPORAL_AINTERSECTS_TCBUFFER requires exactly 5 arguments (lon, lat, radius, timestamp, geometry), but got {}", argCount);
+                throw InvalidQuerySyntax("AINTERSECTS_TCBUFFER_GEO requires exactly 5 arguments (lon, lat, radius, timestamp, geometry), but got {}", argCount);
 
             /* Lift the WKT constant into the function builder */
             while (!helpers.top().constantBuilder.empty())
@@ -3317,17 +3317,17 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             auto lon       = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
 
             helpers.top().functionBuilder.emplace_back(
-                TemporalAIntersectsTCbufferLogicalFunction(lon, lat, radius, timestamp, geometry));
+                AintersectsTcbufferGeoLogicalFunction(lon, lat, radius, timestamp, geometry));
         }
         break;
-        /* END CODEGEN PARSER GLUE: TEMPORAL_AINTERSECTS_TCBUFFER */
+        /* END CODEGEN PARSER GLUE: AINTERSECTS_TCBUFFER_GEO */
 
-        /* BEGIN CODEGEN PARSER GLUE: TEMPORAL_ATOUCHES_TCBUFFER */
-        case AntlrSQLLexer::TEMPORAL_ATOUCHES_TCBUFFER:
+        /* BEGIN CODEGEN PARSER GLUE: ATOUCHES_TCBUFFER_GEO */
+        case AntlrSQLLexer::ATOUCHES_TCBUFFER_GEO:
         {
             const auto argCount = context->expression().size();
             if (argCount != 5)
-                throw InvalidQuerySyntax("TEMPORAL_ATOUCHES_TCBUFFER requires exactly 5 arguments (lon, lat, radius, timestamp, geometry), but got {}", argCount);
+                throw InvalidQuerySyntax("ATOUCHES_TCBUFFER_GEO requires exactly 5 arguments (lon, lat, radius, timestamp, geometry), but got {}", argCount);
 
             /* Lift the WKT constant into the function builder */
             while (!helpers.top().constantBuilder.empty())
@@ -3346,16 +3346,16 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             auto lon       = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
 
             helpers.top().functionBuilder.emplace_back(
-                TemporalATouchesTCbufferLogicalFunction(lon, lat, radius, timestamp, geometry));
+                AtouchesTcbufferGeoLogicalFunction(lon, lat, radius, timestamp, geometry));
         }
         break;
-        /* END CODEGEN PARSER GLUE: TEMPORAL_ATOUCHES_TCBUFFER */
-        /* BEGIN CODEGEN PARSER GLUE: TEMPORAL_ECONTAINS_TCBUFFER_CBUFFER */
-        case AntlrSQLLexer::TEMPORAL_ECONTAINS_TCBUFFER_CBUFFER:
+        /* END CODEGEN PARSER GLUE: ATOUCHES_TCBUFFER_GEO */
+        /* BEGIN CODEGEN PARSER GLUE: ECONTAINS_TCBUFFER_CBUFFER */
+        case AntlrSQLLexer::ECONTAINS_TCBUFFER_CBUFFER:
         {
             const auto argCount = context->expression().size();
             if (argCount != 5)
-                throw InvalidQuerySyntax("TEMPORAL_ECONTAINS_TCBUFFER_CBUFFER requires exactly 5 arguments (lon, lat, radius, timestamp, geometry), but got {}", argCount);
+                throw InvalidQuerySyntax("ECONTAINS_TCBUFFER_CBUFFER requires exactly 5 arguments (lon, lat, radius, timestamp, geometry), but got {}", argCount);
 
             /* Lift the WKT constant into the function builder */
             while (!helpers.top().constantBuilder.empty())
@@ -3374,17 +3374,17 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             auto lon       = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
 
             helpers.top().functionBuilder.emplace_back(
-                TemporalEContainsTCbufferCbufferLogicalFunction(lon, lat, radius, timestamp, geometry));
+                EcontainsTcbufferCbufferLogicalFunction(lon, lat, radius, timestamp, geometry));
         }
         break;
-        /* END CODEGEN PARSER GLUE: TEMPORAL_ECONTAINS_TCBUFFER_CBUFFER */
+        /* END CODEGEN PARSER GLUE: ECONTAINS_TCBUFFER_CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: TEMPORAL_ECOVERS_TCBUFFER_CBUFFER */
-        case AntlrSQLLexer::TEMPORAL_ECOVERS_TCBUFFER_CBUFFER:
+        /* BEGIN CODEGEN PARSER GLUE: ECOVERS_TCBUFFER_CBUFFER */
+        case AntlrSQLLexer::ECOVERS_TCBUFFER_CBUFFER:
         {
             const auto argCount = context->expression().size();
             if (argCount != 5)
-                throw InvalidQuerySyntax("TEMPORAL_ECOVERS_TCBUFFER_CBUFFER requires exactly 5 arguments (lon, lat, radius, timestamp, geometry), but got {}", argCount);
+                throw InvalidQuerySyntax("ECOVERS_TCBUFFER_CBUFFER requires exactly 5 arguments (lon, lat, radius, timestamp, geometry), but got {}", argCount);
 
             /* Lift the WKT constant into the function builder */
             while (!helpers.top().constantBuilder.empty())
@@ -3403,17 +3403,17 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             auto lon       = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
 
             helpers.top().functionBuilder.emplace_back(
-                TemporalECoversTCbufferCbufferLogicalFunction(lon, lat, radius, timestamp, geometry));
+                EcoversTcbufferCbufferLogicalFunction(lon, lat, radius, timestamp, geometry));
         }
         break;
-        /* END CODEGEN PARSER GLUE: TEMPORAL_ECOVERS_TCBUFFER_CBUFFER */
+        /* END CODEGEN PARSER GLUE: ECOVERS_TCBUFFER_CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: TEMPORAL_EDISJOINT_TCBUFFER_CBUFFER */
-        case AntlrSQLLexer::TEMPORAL_EDISJOINT_TCBUFFER_CBUFFER:
+        /* BEGIN CODEGEN PARSER GLUE: EDISJOINT_TCBUFFER_CBUFFER */
+        case AntlrSQLLexer::EDISJOINT_TCBUFFER_CBUFFER:
         {
             const auto argCount = context->expression().size();
             if (argCount != 5)
-                throw InvalidQuerySyntax("TEMPORAL_EDISJOINT_TCBUFFER_CBUFFER requires exactly 5 arguments (lon, lat, radius, timestamp, geometry), but got {}", argCount);
+                throw InvalidQuerySyntax("EDISJOINT_TCBUFFER_CBUFFER requires exactly 5 arguments (lon, lat, radius, timestamp, geometry), but got {}", argCount);
 
             /* Lift the WKT constant into the function builder */
             while (!helpers.top().constantBuilder.empty())
@@ -3432,17 +3432,17 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             auto lon       = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
 
             helpers.top().functionBuilder.emplace_back(
-                TemporalEDisjointTCbufferCbufferLogicalFunction(lon, lat, radius, timestamp, geometry));
+                EdisjointTcbufferCbufferLogicalFunction(lon, lat, radius, timestamp, geometry));
         }
         break;
-        /* END CODEGEN PARSER GLUE: TEMPORAL_EDISJOINT_TCBUFFER_CBUFFER */
+        /* END CODEGEN PARSER GLUE: EDISJOINT_TCBUFFER_CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: TEMPORAL_EINTERSECTS_TCBUFFER_CBUFFER */
-        case AntlrSQLLexer::TEMPORAL_EINTERSECTS_TCBUFFER_CBUFFER:
+        /* BEGIN CODEGEN PARSER GLUE: EINTERSECTS_TCBUFFER_CBUFFER */
+        case AntlrSQLLexer::EINTERSECTS_TCBUFFER_CBUFFER:
         {
             const auto argCount = context->expression().size();
             if (argCount != 5)
-                throw InvalidQuerySyntax("TEMPORAL_EINTERSECTS_TCBUFFER_CBUFFER requires exactly 5 arguments (lon, lat, radius, timestamp, geometry), but got {}", argCount);
+                throw InvalidQuerySyntax("EINTERSECTS_TCBUFFER_CBUFFER requires exactly 5 arguments (lon, lat, radius, timestamp, geometry), but got {}", argCount);
 
             /* Lift the WKT constant into the function builder */
             while (!helpers.top().constantBuilder.empty())
@@ -3461,17 +3461,17 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             auto lon       = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
 
             helpers.top().functionBuilder.emplace_back(
-                TemporalEIntersectsTCbufferCbufferLogicalFunction(lon, lat, radius, timestamp, geometry));
+                EintersectsTcbufferCbufferLogicalFunction(lon, lat, radius, timestamp, geometry));
         }
         break;
-        /* END CODEGEN PARSER GLUE: TEMPORAL_EINTERSECTS_TCBUFFER_CBUFFER */
+        /* END CODEGEN PARSER GLUE: EINTERSECTS_TCBUFFER_CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: TEMPORAL_ETOUCHES_TCBUFFER_CBUFFER */
-        case AntlrSQLLexer::TEMPORAL_ETOUCHES_TCBUFFER_CBUFFER:
+        /* BEGIN CODEGEN PARSER GLUE: ETOUCHES_TCBUFFER_CBUFFER */
+        case AntlrSQLLexer::ETOUCHES_TCBUFFER_CBUFFER:
         {
             const auto argCount = context->expression().size();
             if (argCount != 5)
-                throw InvalidQuerySyntax("TEMPORAL_ETOUCHES_TCBUFFER_CBUFFER requires exactly 5 arguments (lon, lat, radius, timestamp, geometry), but got {}", argCount);
+                throw InvalidQuerySyntax("ETOUCHES_TCBUFFER_CBUFFER requires exactly 5 arguments (lon, lat, radius, timestamp, geometry), but got {}", argCount);
 
             /* Lift the WKT constant into the function builder */
             while (!helpers.top().constantBuilder.empty())
@@ -3490,17 +3490,17 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             auto lon       = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
 
             helpers.top().functionBuilder.emplace_back(
-                TemporalETouchesTCbufferCbufferLogicalFunction(lon, lat, radius, timestamp, geometry));
+                EtouchesTcbufferCbufferLogicalFunction(lon, lat, radius, timestamp, geometry));
         }
         break;
-        /* END CODEGEN PARSER GLUE: TEMPORAL_ETOUCHES_TCBUFFER_CBUFFER */
+        /* END CODEGEN PARSER GLUE: ETOUCHES_TCBUFFER_CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: TEMPORAL_ACONTAINS_TCBUFFER_CBUFFER */
-        case AntlrSQLLexer::TEMPORAL_ACONTAINS_TCBUFFER_CBUFFER:
+        /* BEGIN CODEGEN PARSER GLUE: ACONTAINS_TCBUFFER_CBUFFER */
+        case AntlrSQLLexer::ACONTAINS_TCBUFFER_CBUFFER:
         {
             const auto argCount = context->expression().size();
             if (argCount != 5)
-                throw InvalidQuerySyntax("TEMPORAL_ACONTAINS_TCBUFFER_CBUFFER requires exactly 5 arguments (lon, lat, radius, timestamp, geometry), but got {}", argCount);
+                throw InvalidQuerySyntax("ACONTAINS_TCBUFFER_CBUFFER requires exactly 5 arguments (lon, lat, radius, timestamp, geometry), but got {}", argCount);
 
             /* Lift the WKT constant into the function builder */
             while (!helpers.top().constantBuilder.empty())
@@ -3519,17 +3519,17 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             auto lon       = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
 
             helpers.top().functionBuilder.emplace_back(
-                TemporalAContainsTCbufferCbufferLogicalFunction(lon, lat, radius, timestamp, geometry));
+                AcontainsTcbufferCbufferLogicalFunction(lon, lat, radius, timestamp, geometry));
         }
         break;
-        /* END CODEGEN PARSER GLUE: TEMPORAL_ACONTAINS_TCBUFFER_CBUFFER */
+        /* END CODEGEN PARSER GLUE: ACONTAINS_TCBUFFER_CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: TEMPORAL_ACOVERS_TCBUFFER_CBUFFER */
-        case AntlrSQLLexer::TEMPORAL_ACOVERS_TCBUFFER_CBUFFER:
+        /* BEGIN CODEGEN PARSER GLUE: ACOVERS_TCBUFFER_CBUFFER */
+        case AntlrSQLLexer::ACOVERS_TCBUFFER_CBUFFER:
         {
             const auto argCount = context->expression().size();
             if (argCount != 5)
-                throw InvalidQuerySyntax("TEMPORAL_ACOVERS_TCBUFFER_CBUFFER requires exactly 5 arguments (lon, lat, radius, timestamp, geometry), but got {}", argCount);
+                throw InvalidQuerySyntax("ACOVERS_TCBUFFER_CBUFFER requires exactly 5 arguments (lon, lat, radius, timestamp, geometry), but got {}", argCount);
 
             /* Lift the WKT constant into the function builder */
             while (!helpers.top().constantBuilder.empty())
@@ -3548,17 +3548,17 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             auto lon       = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
 
             helpers.top().functionBuilder.emplace_back(
-                TemporalACoversTCbufferCbufferLogicalFunction(lon, lat, radius, timestamp, geometry));
+                AcoversTcbufferCbufferLogicalFunction(lon, lat, radius, timestamp, geometry));
         }
         break;
-        /* END CODEGEN PARSER GLUE: TEMPORAL_ACOVERS_TCBUFFER_CBUFFER */
+        /* END CODEGEN PARSER GLUE: ACOVERS_TCBUFFER_CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: TEMPORAL_ADISJOINT_TCBUFFER_CBUFFER */
-        case AntlrSQLLexer::TEMPORAL_ADISJOINT_TCBUFFER_CBUFFER:
+        /* BEGIN CODEGEN PARSER GLUE: ADISJOINT_TCBUFFER_CBUFFER */
+        case AntlrSQLLexer::ADISJOINT_TCBUFFER_CBUFFER:
         {
             const auto argCount = context->expression().size();
             if (argCount != 5)
-                throw InvalidQuerySyntax("TEMPORAL_ADISJOINT_TCBUFFER_CBUFFER requires exactly 5 arguments (lon, lat, radius, timestamp, geometry), but got {}", argCount);
+                throw InvalidQuerySyntax("ADISJOINT_TCBUFFER_CBUFFER requires exactly 5 arguments (lon, lat, radius, timestamp, geometry), but got {}", argCount);
 
             /* Lift the WKT constant into the function builder */
             while (!helpers.top().constantBuilder.empty())
@@ -3577,17 +3577,17 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             auto lon       = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
 
             helpers.top().functionBuilder.emplace_back(
-                TemporalADisjointTCbufferCbufferLogicalFunction(lon, lat, radius, timestamp, geometry));
+                AdisjointTcbufferCbufferLogicalFunction(lon, lat, radius, timestamp, geometry));
         }
         break;
-        /* END CODEGEN PARSER GLUE: TEMPORAL_ADISJOINT_TCBUFFER_CBUFFER */
+        /* END CODEGEN PARSER GLUE: ADISJOINT_TCBUFFER_CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: TEMPORAL_AINTERSECTS_TCBUFFER_CBUFFER */
-        case AntlrSQLLexer::TEMPORAL_AINTERSECTS_TCBUFFER_CBUFFER:
+        /* BEGIN CODEGEN PARSER GLUE: AINTERSECTS_TCBUFFER_CBUFFER */
+        case AntlrSQLLexer::AINTERSECTS_TCBUFFER_CBUFFER:
         {
             const auto argCount = context->expression().size();
             if (argCount != 5)
-                throw InvalidQuerySyntax("TEMPORAL_AINTERSECTS_TCBUFFER_CBUFFER requires exactly 5 arguments (lon, lat, radius, timestamp, geometry), but got {}", argCount);
+                throw InvalidQuerySyntax("AINTERSECTS_TCBUFFER_CBUFFER requires exactly 5 arguments (lon, lat, radius, timestamp, geometry), but got {}", argCount);
 
             /* Lift the WKT constant into the function builder */
             while (!helpers.top().constantBuilder.empty())
@@ -3606,17 +3606,17 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             auto lon       = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
 
             helpers.top().functionBuilder.emplace_back(
-                TemporalAIntersectsTCbufferCbufferLogicalFunction(lon, lat, radius, timestamp, geometry));
+                AintersectsTcbufferCbufferLogicalFunction(lon, lat, radius, timestamp, geometry));
         }
         break;
-        /* END CODEGEN PARSER GLUE: TEMPORAL_AINTERSECTS_TCBUFFER_CBUFFER */
+        /* END CODEGEN PARSER GLUE: AINTERSECTS_TCBUFFER_CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: TEMPORAL_ATOUCHES_TCBUFFER_CBUFFER */
-        case AntlrSQLLexer::TEMPORAL_ATOUCHES_TCBUFFER_CBUFFER:
+        /* BEGIN CODEGEN PARSER GLUE: ATOUCHES_TCBUFFER_CBUFFER */
+        case AntlrSQLLexer::ATOUCHES_TCBUFFER_CBUFFER:
         {
             const auto argCount = context->expression().size();
             if (argCount != 5)
-                throw InvalidQuerySyntax("TEMPORAL_ATOUCHES_TCBUFFER_CBUFFER requires exactly 5 arguments (lon, lat, radius, timestamp, geometry), but got {}", argCount);
+                throw InvalidQuerySyntax("ATOUCHES_TCBUFFER_CBUFFER requires exactly 5 arguments (lon, lat, radius, timestamp, geometry), but got {}", argCount);
 
             /* Lift the WKT constant into the function builder */
             while (!helpers.top().constantBuilder.empty())
@@ -3635,16 +3635,16 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             auto lon       = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
 
             helpers.top().functionBuilder.emplace_back(
-                TemporalATouchesTCbufferCbufferLogicalFunction(lon, lat, radius, timestamp, geometry));
+                AtouchesTcbufferCbufferLogicalFunction(lon, lat, radius, timestamp, geometry));
         }
         break;
-        /* END CODEGEN PARSER GLUE: TEMPORAL_ATOUCHES_TCBUFFER_CBUFFER */
-        /* BEGIN CODEGEN PARSER GLUE: TEMPORAL_ADISJOINT_TCBUFFER_TCBUFFER */
-        case AntlrSQLLexer::TEMPORAL_ADISJOINT_TCBUFFER_TCBUFFER:
+        /* END CODEGEN PARSER GLUE: ATOUCHES_TCBUFFER_CBUFFER */
+        /* BEGIN CODEGEN PARSER GLUE: ADISJOINT_TCBUFFER_TCBUFFER */
+        case AntlrSQLLexer::ADISJOINT_TCBUFFER_TCBUFFER:
         {
             const auto argCount = context->expression().size();
             if (argCount != 8)
-                throw InvalidQuerySyntax("TEMPORAL_ADISJOINT_TCBUFFER_TCBUFFER requires exactly 8 arguments (lonA, latA, radiusA, tsA, lonB, latB, radiusB, tsB), but got {}", argCount);
+                throw InvalidQuerySyntax("ADISJOINT_TCBUFFER_TCBUFFER requires exactly 8 arguments (lonA, latA, radiusA, tsA, lonB, latB, radiusB, tsB), but got {}", argCount);
 
             auto tsB     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
             auto radiusB = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
@@ -3656,17 +3656,17 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             auto lonA    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
 
             helpers.top().functionBuilder.emplace_back(
-                TemporalADisjointTCbufferTCbufferLogicalFunction(lonA, latA, radiusA, tsA, lonB, latB, radiusB, tsB));
+                AdisjointTcbufferTcbufferLogicalFunction(lonA, latA, radiusA, tsA, lonB, latB, radiusB, tsB));
         }
         break;
-        /* END CODEGEN PARSER GLUE: TEMPORAL_ADISJOINT_TCBUFFER_TCBUFFER */
+        /* END CODEGEN PARSER GLUE: ADISJOINT_TCBUFFER_TCBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: TEMPORAL_AINTERSECTS_TCBUFFER_TCBUFFER */
-        case AntlrSQLLexer::TEMPORAL_AINTERSECTS_TCBUFFER_TCBUFFER:
+        /* BEGIN CODEGEN PARSER GLUE: AINTERSECTS_TCBUFFER_TCBUFFER */
+        case AntlrSQLLexer::AINTERSECTS_TCBUFFER_TCBUFFER:
         {
             const auto argCount = context->expression().size();
             if (argCount != 8)
-                throw InvalidQuerySyntax("TEMPORAL_AINTERSECTS_TCBUFFER_TCBUFFER requires exactly 8 arguments (lonA, latA, radiusA, tsA, lonB, latB, radiusB, tsB), but got {}", argCount);
+                throw InvalidQuerySyntax("AINTERSECTS_TCBUFFER_TCBUFFER requires exactly 8 arguments (lonA, latA, radiusA, tsA, lonB, latB, radiusB, tsB), but got {}", argCount);
 
             auto tsB     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
             auto radiusB = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
@@ -3678,17 +3678,17 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             auto lonA    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
 
             helpers.top().functionBuilder.emplace_back(
-                TemporalAIntersectsTCbufferTCbufferLogicalFunction(lonA, latA, radiusA, tsA, lonB, latB, radiusB, tsB));
+                AintersectsTcbufferTcbufferLogicalFunction(lonA, latA, radiusA, tsA, lonB, latB, radiusB, tsB));
         }
         break;
-        /* END CODEGEN PARSER GLUE: TEMPORAL_AINTERSECTS_TCBUFFER_TCBUFFER */
+        /* END CODEGEN PARSER GLUE: AINTERSECTS_TCBUFFER_TCBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: TEMPORAL_ATOUCHES_TCBUFFER_TCBUFFER */
-        case AntlrSQLLexer::TEMPORAL_ATOUCHES_TCBUFFER_TCBUFFER:
+        /* BEGIN CODEGEN PARSER GLUE: ATOUCHES_TCBUFFER_TCBUFFER */
+        case AntlrSQLLexer::ATOUCHES_TCBUFFER_TCBUFFER:
         {
             const auto argCount = context->expression().size();
             if (argCount != 8)
-                throw InvalidQuerySyntax("TEMPORAL_ATOUCHES_TCBUFFER_TCBUFFER requires exactly 8 arguments (lonA, latA, radiusA, tsA, lonB, latB, radiusB, tsB), but got {}", argCount);
+                throw InvalidQuerySyntax("ATOUCHES_TCBUFFER_TCBUFFER requires exactly 8 arguments (lonA, latA, radiusA, tsA, lonB, latB, radiusB, tsB), but got {}", argCount);
 
             auto tsB     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
             auto radiusB = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
@@ -3700,17 +3700,17 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             auto lonA    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
 
             helpers.top().functionBuilder.emplace_back(
-                TemporalATouchesTCbufferTCbufferLogicalFunction(lonA, latA, radiusA, tsA, lonB, latB, radiusB, tsB));
+                AtouchesTcbufferTcbufferLogicalFunction(lonA, latA, radiusA, tsA, lonB, latB, radiusB, tsB));
         }
         break;
-        /* END CODEGEN PARSER GLUE: TEMPORAL_ATOUCHES_TCBUFFER_TCBUFFER */
+        /* END CODEGEN PARSER GLUE: ATOUCHES_TCBUFFER_TCBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: TEMPORAL_ECOVERS_TCBUFFER_TCBUFFER */
-        case AntlrSQLLexer::TEMPORAL_ECOVERS_TCBUFFER_TCBUFFER:
+        /* BEGIN CODEGEN PARSER GLUE: ECOVERS_TCBUFFER_TCBUFFER */
+        case AntlrSQLLexer::ECOVERS_TCBUFFER_TCBUFFER:
         {
             const auto argCount = context->expression().size();
             if (argCount != 8)
-                throw InvalidQuerySyntax("TEMPORAL_ECOVERS_TCBUFFER_TCBUFFER requires exactly 8 arguments (lonA, latA, radiusA, tsA, lonB, latB, radiusB, tsB), but got {}", argCount);
+                throw InvalidQuerySyntax("ECOVERS_TCBUFFER_TCBUFFER requires exactly 8 arguments (lonA, latA, radiusA, tsA, lonB, latB, radiusB, tsB), but got {}", argCount);
 
             auto tsB     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
             auto radiusB = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
@@ -3722,17 +3722,17 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             auto lonA    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
 
             helpers.top().functionBuilder.emplace_back(
-                TemporalECoversTCbufferTCbufferLogicalFunction(lonA, latA, radiusA, tsA, lonB, latB, radiusB, tsB));
+                EcoversTcbufferTcbufferLogicalFunction(lonA, latA, radiusA, tsA, lonB, latB, radiusB, tsB));
         }
         break;
-        /* END CODEGEN PARSER GLUE: TEMPORAL_ECOVERS_TCBUFFER_TCBUFFER */
+        /* END CODEGEN PARSER GLUE: ECOVERS_TCBUFFER_TCBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: TEMPORAL_EINTERSECTS_TCBUFFER_TCBUFFER */
-        case AntlrSQLLexer::TEMPORAL_EINTERSECTS_TCBUFFER_TCBUFFER:
+        /* BEGIN CODEGEN PARSER GLUE: EINTERSECTS_TCBUFFER_TCBUFFER */
+        case AntlrSQLLexer::EINTERSECTS_TCBUFFER_TCBUFFER:
         {
             const auto argCount = context->expression().size();
             if (argCount != 8)
-                throw InvalidQuerySyntax("TEMPORAL_EINTERSECTS_TCBUFFER_TCBUFFER requires exactly 8 arguments (lonA, latA, radiusA, tsA, lonB, latB, radiusB, tsB), but got {}", argCount);
+                throw InvalidQuerySyntax("EINTERSECTS_TCBUFFER_TCBUFFER requires exactly 8 arguments (lonA, latA, radiusA, tsA, lonB, latB, radiusB, tsB), but got {}", argCount);
 
             auto tsB     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
             auto radiusB = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
@@ -3744,17 +3744,17 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             auto lonA    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
 
             helpers.top().functionBuilder.emplace_back(
-                TemporalEIntersectsTCbufferTCbufferLogicalFunction(lonA, latA, radiusA, tsA, lonB, latB, radiusB, tsB));
+                EintersectsTcbufferTcbufferLogicalFunction(lonA, latA, radiusA, tsA, lonB, latB, radiusB, tsB));
         }
         break;
-        /* END CODEGEN PARSER GLUE: TEMPORAL_EINTERSECTS_TCBUFFER_TCBUFFER */
+        /* END CODEGEN PARSER GLUE: EINTERSECTS_TCBUFFER_TCBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: TEMPORAL_ETOUCHES_TCBUFFER_TCBUFFER */
-        case AntlrSQLLexer::TEMPORAL_ETOUCHES_TCBUFFER_TCBUFFER:
+        /* BEGIN CODEGEN PARSER GLUE: ETOUCHES_TCBUFFER_TCBUFFER */
+        case AntlrSQLLexer::ETOUCHES_TCBUFFER_TCBUFFER:
         {
             const auto argCount = context->expression().size();
             if (argCount != 8)
-                throw InvalidQuerySyntax("TEMPORAL_ETOUCHES_TCBUFFER_TCBUFFER requires exactly 8 arguments (lonA, latA, radiusA, tsA, lonB, latB, radiusB, tsB), but got {}", argCount);
+                throw InvalidQuerySyntax("ETOUCHES_TCBUFFER_TCBUFFER requires exactly 8 arguments (lonA, latA, radiusA, tsA, lonB, latB, radiusB, tsB), but got {}", argCount);
 
             auto tsB     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
             auto radiusB = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
@@ -3766,16 +3766,16 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             auto lonA    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
 
             helpers.top().functionBuilder.emplace_back(
-                TemporalETouchesTCbufferTCbufferLogicalFunction(lonA, latA, radiusA, tsA, lonB, latB, radiusB, tsB));
+                EtouchesTcbufferTcbufferLogicalFunction(lonA, latA, radiusA, tsA, lonB, latB, radiusB, tsB));
         }
         break;
-        /* END CODEGEN PARSER GLUE: TEMPORAL_ETOUCHES_TCBUFFER_TCBUFFER */
-        /* BEGIN CODEGEN PARSER GLUE: TEMPORAL_EDWITHIN_TCBUFFER_GEOMETRY */
-        case AntlrSQLLexer::TEMPORAL_EDWITHIN_TCBUFFER_GEOMETRY:
+        /* END CODEGEN PARSER GLUE: ETOUCHES_TCBUFFER_TCBUFFER */
+        /* BEGIN CODEGEN PARSER GLUE: EDWITHIN_TCBUFFER_GEO */
+        case AntlrSQLLexer::EDWITHIN_TCBUFFER_GEO:
         {
             const auto argCount = context->expression().size();
             if (argCount != 6)
-                throw InvalidQuerySyntax("TEMPORAL_EDWITHIN_TCBUFFER_GEOMETRY requires exactly 6 arguments (lon, lat, radius, timestamp, blob, distance), but got {}", argCount);
+                throw InvalidQuerySyntax("EDWITHIN_TCBUFFER_GEO requires exactly 6 arguments (lon, lat, radius, timestamp, blob, distance), but got {}", argCount);
 
             while (!helpers.top().constantBuilder.empty())
             {
@@ -3800,17 +3800,17 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             auto lon       = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
 
             helpers.top().functionBuilder.emplace_back(
-                TemporalEDWithinTCbufferGeometryLogicalFunction(lon, lat, radius, timestamp, blobLast, distLast));
+                EdwithinTcbufferGeoLogicalFunction(lon, lat, radius, timestamp, blobLast, distLast));
         }
         break;
-        /* END CODEGEN PARSER GLUE: TEMPORAL_EDWITHIN_TCBUFFER_GEOMETRY */
+        /* END CODEGEN PARSER GLUE: EDWITHIN_TCBUFFER_GEO */
 
-        /* BEGIN CODEGEN PARSER GLUE: TEMPORAL_ADWITHIN_TCBUFFER_GEOMETRY */
-        case AntlrSQLLexer::TEMPORAL_ADWITHIN_TCBUFFER_GEOMETRY:
+        /* BEGIN CODEGEN PARSER GLUE: ADWITHIN_TCBUFFER_GEO */
+        case AntlrSQLLexer::ADWITHIN_TCBUFFER_GEO:
         {
             const auto argCount = context->expression().size();
             if (argCount != 6)
-                throw InvalidQuerySyntax("TEMPORAL_ADWITHIN_TCBUFFER_GEOMETRY requires exactly 6 arguments (lon, lat, radius, timestamp, blob, distance), but got {}", argCount);
+                throw InvalidQuerySyntax("ADWITHIN_TCBUFFER_GEO requires exactly 6 arguments (lon, lat, radius, timestamp, blob, distance), but got {}", argCount);
 
             while (!helpers.top().constantBuilder.empty())
             {
@@ -3835,17 +3835,17 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             auto lon       = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
 
             helpers.top().functionBuilder.emplace_back(
-                TemporalADWithinTCbufferGeometryLogicalFunction(lon, lat, radius, timestamp, blobLast, distLast));
+                AdwithinTcbufferGeoLogicalFunction(lon, lat, radius, timestamp, blobLast, distLast));
         }
         break;
-        /* END CODEGEN PARSER GLUE: TEMPORAL_ADWITHIN_TCBUFFER_GEOMETRY */
+        /* END CODEGEN PARSER GLUE: ADWITHIN_TCBUFFER_GEO */
 
-        /* BEGIN CODEGEN PARSER GLUE: TEMPORAL_EDWITHIN_TCBUFFER_CBUFFER */
-        case AntlrSQLLexer::TEMPORAL_EDWITHIN_TCBUFFER_CBUFFER:
+        /* BEGIN CODEGEN PARSER GLUE: EDWITHIN_TCBUFFER_CBUFFER */
+        case AntlrSQLLexer::EDWITHIN_TCBUFFER_CBUFFER:
         {
             const auto argCount = context->expression().size();
             if (argCount != 6)
-                throw InvalidQuerySyntax("TEMPORAL_EDWITHIN_TCBUFFER_CBUFFER requires exactly 6 arguments (lon, lat, radius, timestamp, blob, distance), but got {}", argCount);
+                throw InvalidQuerySyntax("EDWITHIN_TCBUFFER_CBUFFER requires exactly 6 arguments (lon, lat, radius, timestamp, blob, distance), but got {}", argCount);
 
             while (!helpers.top().constantBuilder.empty())
             {
@@ -3870,17 +3870,17 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             auto lon       = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
 
             helpers.top().functionBuilder.emplace_back(
-                TemporalEDWithinTCbufferCbufferLogicalFunction(lon, lat, radius, timestamp, blobLast, distLast));
+                EdwithinTcbufferCbufferLogicalFunction(lon, lat, radius, timestamp, blobLast, distLast));
         }
         break;
-        /* END CODEGEN PARSER GLUE: TEMPORAL_EDWITHIN_TCBUFFER_CBUFFER */
+        /* END CODEGEN PARSER GLUE: EDWITHIN_TCBUFFER_CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: TEMPORAL_ADWITHIN_TCBUFFER_CBUFFER */
-        case AntlrSQLLexer::TEMPORAL_ADWITHIN_TCBUFFER_CBUFFER:
+        /* BEGIN CODEGEN PARSER GLUE: ADWITHIN_TCBUFFER_CBUFFER */
+        case AntlrSQLLexer::ADWITHIN_TCBUFFER_CBUFFER:
         {
             const auto argCount = context->expression().size();
             if (argCount != 6)
-                throw InvalidQuerySyntax("TEMPORAL_ADWITHIN_TCBUFFER_CBUFFER requires exactly 6 arguments (lon, lat, radius, timestamp, blob, distance), but got {}", argCount);
+                throw InvalidQuerySyntax("ADWITHIN_TCBUFFER_CBUFFER requires exactly 6 arguments (lon, lat, radius, timestamp, blob, distance), but got {}", argCount);
 
             while (!helpers.top().constantBuilder.empty())
             {
@@ -3905,17 +3905,17 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             auto lon       = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
 
             helpers.top().functionBuilder.emplace_back(
-                TemporalADWithinTCbufferCbufferLogicalFunction(lon, lat, radius, timestamp, blobLast, distLast));
+                AdwithinTcbufferCbufferLogicalFunction(lon, lat, radius, timestamp, blobLast, distLast));
         }
         break;
-        /* END CODEGEN PARSER GLUE: TEMPORAL_ADWITHIN_TCBUFFER_CBUFFER */
+        /* END CODEGEN PARSER GLUE: ADWITHIN_TCBUFFER_CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: TEMPORAL_EDWITHIN_TCBUFFER_TCBUFFER */
-        case AntlrSQLLexer::TEMPORAL_EDWITHIN_TCBUFFER_TCBUFFER:
+        /* BEGIN CODEGEN PARSER GLUE: EDWITHIN_TCBUFFER_TCBUFFER */
+        case AntlrSQLLexer::EDWITHIN_TCBUFFER_TCBUFFER:
         {
             const auto argCount = context->expression().size();
             if (argCount != 9)
-                throw InvalidQuerySyntax("TEMPORAL_EDWITHIN_TCBUFFER_TCBUFFER requires exactly 9 arguments (lonA, latA, radiusA, tsA, lonB, latB, radiusB, tsB, distance), but got {}", argCount);
+                throw InvalidQuerySyntax("EDWITHIN_TCBUFFER_TCBUFFER requires exactly 9 arguments (lonA, latA, radiusA, tsA, lonB, latB, radiusB, tsB, distance), but got {}", argCount);
 
             while (!helpers.top().constantBuilder.empty())
             {
@@ -3937,17 +3937,17 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             auto lonA    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
 
             helpers.top().functionBuilder.emplace_back(
-                TemporalEDWithinTCbufferTCbufferLogicalFunction(lonA, latA, radiusA, tsA, lonB, latB, radiusB, tsB, dist));
+                EdwithinTcbufferTcbufferLogicalFunction(lonA, latA, radiusA, tsA, lonB, latB, radiusB, tsB, dist));
         }
         break;
-        /* END CODEGEN PARSER GLUE: TEMPORAL_EDWITHIN_TCBUFFER_TCBUFFER */
+        /* END CODEGEN PARSER GLUE: EDWITHIN_TCBUFFER_TCBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: TEMPORAL_ADWITHIN_TCBUFFER_TCBUFFER */
-        case AntlrSQLLexer::TEMPORAL_ADWITHIN_TCBUFFER_TCBUFFER:
+        /* BEGIN CODEGEN PARSER GLUE: ADWITHIN_TCBUFFER_TCBUFFER */
+        case AntlrSQLLexer::ADWITHIN_TCBUFFER_TCBUFFER:
         {
             const auto argCount = context->expression().size();
             if (argCount != 9)
-                throw InvalidQuerySyntax("TEMPORAL_ADWITHIN_TCBUFFER_TCBUFFER requires exactly 9 arguments (lonA, latA, radiusA, tsA, lonB, latB, radiusB, tsB, distance), but got {}", argCount);
+                throw InvalidQuerySyntax("ADWITHIN_TCBUFFER_TCBUFFER requires exactly 9 arguments (lonA, latA, radiusA, tsA, lonB, latB, radiusB, tsB, distance), but got {}", argCount);
 
             while (!helpers.top().constantBuilder.empty())
             {
@@ -3969,10 +3969,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             auto lonA    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
 
             helpers.top().functionBuilder.emplace_back(
-                TemporalADWithinTCbufferTCbufferLogicalFunction(lonA, latA, radiusA, tsA, lonB, latB, radiusB, tsB, dist));
+                AdwithinTcbufferTcbufferLogicalFunction(lonA, latA, radiusA, tsA, lonB, latB, radiusB, tsB, dist));
         }
         break;
-        /* END CODEGEN PARSER GLUE: TEMPORAL_ADWITHIN_TCBUFFER_TCBUFFER */
+        /* END CODEGEN PARSER GLUE: ADWITHIN_TCBUFFER_TCBUFFER */
         /* BEGIN CODEGEN PARSER GLUE: TEMPORAL_ECONTAINS_TPOSE_GEOMETRY */
         case AntlrSQLLexer::TEMPORAL_ECONTAINS_TPOSE_GEOMETRY:
         {
@@ -5242,12 +5242,12 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TEMPORAL_ADWITHIN_TNPOINT_TNPOINT */
-        /* BEGIN CODEGEN PARSER GLUE: TEMPORAL_NAD_TCBUFFER */
-        case AntlrSQLLexer::TEMPORAL_NAD_TCBUFFER:
+        /* BEGIN CODEGEN PARSER GLUE: NAD_TCBUFFER_GEO */
+        case AntlrSQLLexer::NAD_TCBUFFER_GEO:
         {
             const auto argCount = context->expression().size();
             if (argCount != 5)
-                throw InvalidQuerySyntax("TEMPORAL_NAD_TCBUFFER requires exactly 5 arguments (lon, lat, radius, timestamp, geometry), but got {}", argCount);
+                throw InvalidQuerySyntax("NAD_TCBUFFER_GEO requires exactly 5 arguments (lon, lat, radius, timestamp, geometry), but got {}", argCount);
 
             /* Lift the WKT constant into the function builder */
             while (!helpers.top().constantBuilder.empty())
@@ -5266,17 +5266,17 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             auto lon       = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
 
             helpers.top().functionBuilder.emplace_back(
-                TemporalNADTCbufferLogicalFunction(lon, lat, radius, timestamp, geometry));
+                NadTcbufferGeoLogicalFunction(lon, lat, radius, timestamp, geometry));
         }
         break;
-        /* END CODEGEN PARSER GLUE: TEMPORAL_NAD_TCBUFFER */
+        /* END CODEGEN PARSER GLUE: NAD_TCBUFFER_GEO */
 
-        /* BEGIN CODEGEN PARSER GLUE: TEMPORAL_NAD_TCBUFFER_CBUFFER */
-        case AntlrSQLLexer::TEMPORAL_NAD_TCBUFFER_CBUFFER:
+        /* BEGIN CODEGEN PARSER GLUE: NAD_TCBUFFER_CBUFFER */
+        case AntlrSQLLexer::NAD_TCBUFFER_CBUFFER:
         {
             const auto argCount = context->expression().size();
             if (argCount != 5)
-                throw InvalidQuerySyntax("TEMPORAL_NAD_TCBUFFER_CBUFFER requires exactly 5 arguments (lon, lat, radius, timestamp, geometry), but got {}", argCount);
+                throw InvalidQuerySyntax("NAD_TCBUFFER_CBUFFER requires exactly 5 arguments (lon, lat, radius, timestamp, geometry), but got {}", argCount);
 
             /* Lift the WKT constant into the function builder */
             while (!helpers.top().constantBuilder.empty())
@@ -5295,17 +5295,17 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             auto lon       = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
 
             helpers.top().functionBuilder.emplace_back(
-                TemporalNADTCbufferCbufferLogicalFunction(lon, lat, radius, timestamp, geometry));
+                NadTcbufferCbufferLogicalFunction(lon, lat, radius, timestamp, geometry));
         }
         break;
-        /* END CODEGEN PARSER GLUE: TEMPORAL_NAD_TCBUFFER_CBUFFER */
+        /* END CODEGEN PARSER GLUE: NAD_TCBUFFER_CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: TEMPORAL_NAD_TCBUFFER_TCBUFFER */
-        case AntlrSQLLexer::TEMPORAL_NAD_TCBUFFER_TCBUFFER:
+        /* BEGIN CODEGEN PARSER GLUE: NAD_TCBUFFER_TCBUFFER */
+        case AntlrSQLLexer::NAD_TCBUFFER_TCBUFFER:
         {
             const auto argCount = context->expression().size();
             if (argCount != 8)
-                throw InvalidQuerySyntax("TEMPORAL_NAD_TCBUFFER_TCBUFFER requires exactly 8 arguments (lonA, latA, radiusA, tsA, lonB, latB, radiusB, tsB), but got {}", argCount);
+                throw InvalidQuerySyntax("NAD_TCBUFFER_TCBUFFER requires exactly 8 arguments (lonA, latA, radiusA, tsA, lonB, latB, radiusB, tsB), but got {}", argCount);
 
             auto tsB     = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
             auto radiusB = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
@@ -5317,10 +5317,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             auto lonA    = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
 
             helpers.top().functionBuilder.emplace_back(
-                TemporalNADTCbufferTCbufferLogicalFunction(lonA, latA, radiusA, tsA, lonB, latB, radiusB, tsB));
+                NadTcbufferTcbufferLogicalFunction(lonA, latA, radiusA, tsA, lonB, latB, radiusB, tsB));
         }
         break;
-        /* END CODEGEN PARSER GLUE: TEMPORAL_NAD_TCBUFFER_TCBUFFER */
+        /* END CODEGEN PARSER GLUE: NAD_TCBUFFER_TCBUFFER */
         /* BEGIN CODEGEN PARSER GLUE: ALWAYS_EQ_TFLOAT_FLOAT */
         case AntlrSQLLexer::ALWAYS_EQ_TFLOAT_FLOAT:
         {
@@ -31643,11 +31643,11 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             break;
         /* END CODEGEN AGGREGATION GLUE: TEMPORAL_NUM_TIMESTAMPS (case-switch) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: TEMPORAL_TFLOAT_START_VALUE (case-switch) */
-        case AntlrSQLLexer::TEMPORAL_TFLOAT_START_VALUE:
+        /* BEGIN CODEGEN AGGREGATION GLUE: TFLOAT_START_VALUE (case-switch) */
+        case AntlrSQLLexer::TFLOAT_START_VALUE:
             // Value at the first instant of the per-(window, group) tfloat sequence.
             if (helpers.top().functionBuilder.size() != 2) {
-                throw InvalidQuerySyntax("TEMPORAL_TFLOAT_START_VALUE requires exactly two arguments (value, timestamp), but got {}", helpers.top().functionBuilder.size());
+                throw InvalidQuerySyntax("TFLOAT_START_VALUE requires exactly two arguments (value, timestamp), but got {}", helpers.top().functionBuilder.size());
             }
             {
                 const auto timestampFunction = helpers.top().functionBuilder.back();
@@ -31657,22 +31657,22 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
 
                 if (!valueFunction.tryGet<FieldAccessLogicalFunction>() ||
                     !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
-                    throw InvalidQuerySyntax("TEMPORAL_TFLOAT_START_VALUE arguments must be field references");
+                    throw InvalidQuerySyntax("TFLOAT_START_VALUE arguments must be field references");
                 }
 
                 helpers.top().windowAggs.push_back(
-                    TemporalTFloatStartValueAggregationLogicalFunction::create(valueFunction.get<FieldAccessLogicalFunction>(),
+                    TfloatStartValueAggregationLogicalFunction::create(valueFunction.get<FieldAccessLogicalFunction>(),
                                                                     timestampFunction.get<FieldAccessLogicalFunction>()));
                 helpers.top().functionBuilder.push_back(valueFunction);
             }
             break;
-        /* END CODEGEN AGGREGATION GLUE: TEMPORAL_TFLOAT_START_VALUE (case-switch) */
+        /* END CODEGEN AGGREGATION GLUE: TFLOAT_START_VALUE (case-switch) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: TEMPORAL_TFLOAT_END_VALUE (case-switch) */
-        case AntlrSQLLexer::TEMPORAL_TFLOAT_END_VALUE:
+        /* BEGIN CODEGEN AGGREGATION GLUE: TFLOAT_END_VALUE (case-switch) */
+        case AntlrSQLLexer::TFLOAT_END_VALUE:
             // Value at the last instant of the per-(window, group) tfloat sequence.
             if (helpers.top().functionBuilder.size() != 2) {
-                throw InvalidQuerySyntax("TEMPORAL_TFLOAT_END_VALUE requires exactly two arguments (value, timestamp), but got {}", helpers.top().functionBuilder.size());
+                throw InvalidQuerySyntax("TFLOAT_END_VALUE requires exactly two arguments (value, timestamp), but got {}", helpers.top().functionBuilder.size());
             }
             {
                 const auto timestampFunction = helpers.top().functionBuilder.back();
@@ -31682,22 +31682,22 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
 
                 if (!valueFunction.tryGet<FieldAccessLogicalFunction>() ||
                     !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
-                    throw InvalidQuerySyntax("TEMPORAL_TFLOAT_END_VALUE arguments must be field references");
+                    throw InvalidQuerySyntax("TFLOAT_END_VALUE arguments must be field references");
                 }
 
                 helpers.top().windowAggs.push_back(
-                    TemporalTFloatEndValueAggregationLogicalFunction::create(valueFunction.get<FieldAccessLogicalFunction>(),
+                    TfloatEndValueAggregationLogicalFunction::create(valueFunction.get<FieldAccessLogicalFunction>(),
                                                                     timestampFunction.get<FieldAccessLogicalFunction>()));
                 helpers.top().functionBuilder.push_back(valueFunction);
             }
             break;
-        /* END CODEGEN AGGREGATION GLUE: TEMPORAL_TFLOAT_END_VALUE (case-switch) */
+        /* END CODEGEN AGGREGATION GLUE: TFLOAT_END_VALUE (case-switch) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: TEMPORAL_TFLOAT_MIN_VALUE (case-switch) */
-        case AntlrSQLLexer::TEMPORAL_TFLOAT_MIN_VALUE:
+        /* BEGIN CODEGEN AGGREGATION GLUE: TFLOAT_MIN_VALUE (case-switch) */
+        case AntlrSQLLexer::TFLOAT_MIN_VALUE:
             // Minimum value across instants of the per-(window, group) tfloat sequence.
             if (helpers.top().functionBuilder.size() != 2) {
-                throw InvalidQuerySyntax("TEMPORAL_TFLOAT_MIN_VALUE requires exactly two arguments (value, timestamp), but got {}", helpers.top().functionBuilder.size());
+                throw InvalidQuerySyntax("TFLOAT_MIN_VALUE requires exactly two arguments (value, timestamp), but got {}", helpers.top().functionBuilder.size());
             }
             {
                 const auto timestampFunction = helpers.top().functionBuilder.back();
@@ -31707,22 +31707,22 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
 
                 if (!valueFunction.tryGet<FieldAccessLogicalFunction>() ||
                     !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
-                    throw InvalidQuerySyntax("TEMPORAL_TFLOAT_MIN_VALUE arguments must be field references");
+                    throw InvalidQuerySyntax("TFLOAT_MIN_VALUE arguments must be field references");
                 }
 
                 helpers.top().windowAggs.push_back(
-                    TemporalTFloatMinValueAggregationLogicalFunction::create(valueFunction.get<FieldAccessLogicalFunction>(),
+                    TfloatMinValueAggregationLogicalFunction::create(valueFunction.get<FieldAccessLogicalFunction>(),
                                                                     timestampFunction.get<FieldAccessLogicalFunction>()));
                 helpers.top().functionBuilder.push_back(valueFunction);
             }
             break;
-        /* END CODEGEN AGGREGATION GLUE: TEMPORAL_TFLOAT_MIN_VALUE (case-switch) */
+        /* END CODEGEN AGGREGATION GLUE: TFLOAT_MIN_VALUE (case-switch) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: TEMPORAL_TFLOAT_MAX_VALUE (case-switch) */
-        case AntlrSQLLexer::TEMPORAL_TFLOAT_MAX_VALUE:
+        /* BEGIN CODEGEN AGGREGATION GLUE: TFLOAT_MAX_VALUE (case-switch) */
+        case AntlrSQLLexer::TFLOAT_MAX_VALUE:
             // Maximum value across instants of the per-(window, group) tfloat sequence.
             if (helpers.top().functionBuilder.size() != 2) {
-                throw InvalidQuerySyntax("TEMPORAL_TFLOAT_MAX_VALUE requires exactly two arguments (value, timestamp), but got {}", helpers.top().functionBuilder.size());
+                throw InvalidQuerySyntax("TFLOAT_MAX_VALUE requires exactly two arguments (value, timestamp), but got {}", helpers.top().functionBuilder.size());
             }
             {
                 const auto timestampFunction = helpers.top().functionBuilder.back();
@@ -31732,22 +31732,22 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
 
                 if (!valueFunction.tryGet<FieldAccessLogicalFunction>() ||
                     !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
-                    throw InvalidQuerySyntax("TEMPORAL_TFLOAT_MAX_VALUE arguments must be field references");
+                    throw InvalidQuerySyntax("TFLOAT_MAX_VALUE arguments must be field references");
                 }
 
                 helpers.top().windowAggs.push_back(
-                    TemporalTFloatMaxValueAggregationLogicalFunction::create(valueFunction.get<FieldAccessLogicalFunction>(),
+                    TfloatMaxValueAggregationLogicalFunction::create(valueFunction.get<FieldAccessLogicalFunction>(),
                                                                     timestampFunction.get<FieldAccessLogicalFunction>()));
                 helpers.top().functionBuilder.push_back(valueFunction);
             }
             break;
-        /* END CODEGEN AGGREGATION GLUE: TEMPORAL_TFLOAT_MAX_VALUE (case-switch) */
+        /* END CODEGEN AGGREGATION GLUE: TFLOAT_MAX_VALUE (case-switch) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: TEMPORAL_TNUMBER_INTEGRAL (case-switch) */
-        case AntlrSQLLexer::TEMPORAL_TNUMBER_INTEGRAL:
+        /* BEGIN CODEGEN AGGREGATION GLUE: TNUMBER_INTEGRAL (case-switch) */
+        case AntlrSQLLexer::TNUMBER_INTEGRAL:
             // Time-weighted integral (area under the value-vs-time curve) of the per-(window, group) tfloat sequence.
             if (helpers.top().functionBuilder.size() != 2) {
-                throw InvalidQuerySyntax("TEMPORAL_TNUMBER_INTEGRAL requires exactly two arguments (value, timestamp), but got {}", helpers.top().functionBuilder.size());
+                throw InvalidQuerySyntax("TNUMBER_INTEGRAL requires exactly two arguments (value, timestamp), but got {}", helpers.top().functionBuilder.size());
             }
             {
                 const auto timestampFunction = helpers.top().functionBuilder.back();
@@ -31757,22 +31757,22 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
 
                 if (!valueFunction.tryGet<FieldAccessLogicalFunction>() ||
                     !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
-                    throw InvalidQuerySyntax("TEMPORAL_TNUMBER_INTEGRAL arguments must be field references");
+                    throw InvalidQuerySyntax("TNUMBER_INTEGRAL arguments must be field references");
                 }
 
                 helpers.top().windowAggs.push_back(
-                    TemporalTNumberIntegralAggregationLogicalFunction::create(valueFunction.get<FieldAccessLogicalFunction>(),
+                    TnumberIntegralAggregationLogicalFunction::create(valueFunction.get<FieldAccessLogicalFunction>(),
                                                                     timestampFunction.get<FieldAccessLogicalFunction>()));
                 helpers.top().functionBuilder.push_back(valueFunction);
             }
             break;
-        /* END CODEGEN AGGREGATION GLUE: TEMPORAL_TNUMBER_INTEGRAL (case-switch) */
+        /* END CODEGEN AGGREGATION GLUE: TNUMBER_INTEGRAL (case-switch) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: TEMPORAL_TINT_START_VALUE (case-switch) */
-        case AntlrSQLLexer::TEMPORAL_TINT_START_VALUE:
+        /* BEGIN CODEGEN AGGREGATION GLUE: TINT_START_VALUE (case-switch) */
+        case AntlrSQLLexer::TINT_START_VALUE:
             // Value at the first instant of the per-(window, group) tint sequence.
             if (helpers.top().functionBuilder.size() != 2) {
-                throw InvalidQuerySyntax("TEMPORAL_TINT_START_VALUE requires exactly two arguments (value, timestamp), but got {}", helpers.top().functionBuilder.size());
+                throw InvalidQuerySyntax("TINT_START_VALUE requires exactly two arguments (value, timestamp), but got {}", helpers.top().functionBuilder.size());
             }
             {
                 const auto timestampFunction = helpers.top().functionBuilder.back();
@@ -31782,22 +31782,22 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
 
                 if (!valueFunction.tryGet<FieldAccessLogicalFunction>() ||
                     !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
-                    throw InvalidQuerySyntax("TEMPORAL_TINT_START_VALUE arguments must be field references");
+                    throw InvalidQuerySyntax("TINT_START_VALUE arguments must be field references");
                 }
 
                 helpers.top().windowAggs.push_back(
-                    TemporalTIntStartValueAggregationLogicalFunction::create(valueFunction.get<FieldAccessLogicalFunction>(),
+                    TintStartValueAggregationLogicalFunction::create(valueFunction.get<FieldAccessLogicalFunction>(),
                                                                     timestampFunction.get<FieldAccessLogicalFunction>()));
                 helpers.top().functionBuilder.push_back(valueFunction);
             }
             break;
-        /* END CODEGEN AGGREGATION GLUE: TEMPORAL_TINT_START_VALUE (case-switch) */
+        /* END CODEGEN AGGREGATION GLUE: TINT_START_VALUE (case-switch) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: TEMPORAL_TINT_END_VALUE (case-switch) */
-        case AntlrSQLLexer::TEMPORAL_TINT_END_VALUE:
+        /* BEGIN CODEGEN AGGREGATION GLUE: TINT_END_VALUE (case-switch) */
+        case AntlrSQLLexer::TINT_END_VALUE:
             // Value at the last instant of the per-(window, group) tint sequence.
             if (helpers.top().functionBuilder.size() != 2) {
-                throw InvalidQuerySyntax("TEMPORAL_TINT_END_VALUE requires exactly two arguments (value, timestamp), but got {}", helpers.top().functionBuilder.size());
+                throw InvalidQuerySyntax("TINT_END_VALUE requires exactly two arguments (value, timestamp), but got {}", helpers.top().functionBuilder.size());
             }
             {
                 const auto timestampFunction = helpers.top().functionBuilder.back();
@@ -31807,22 +31807,22 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
 
                 if (!valueFunction.tryGet<FieldAccessLogicalFunction>() ||
                     !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
-                    throw InvalidQuerySyntax("TEMPORAL_TINT_END_VALUE arguments must be field references");
+                    throw InvalidQuerySyntax("TINT_END_VALUE arguments must be field references");
                 }
 
                 helpers.top().windowAggs.push_back(
-                    TemporalTIntEndValueAggregationLogicalFunction::create(valueFunction.get<FieldAccessLogicalFunction>(),
+                    TintEndValueAggregationLogicalFunction::create(valueFunction.get<FieldAccessLogicalFunction>(),
                                                                     timestampFunction.get<FieldAccessLogicalFunction>()));
                 helpers.top().functionBuilder.push_back(valueFunction);
             }
             break;
-        /* END CODEGEN AGGREGATION GLUE: TEMPORAL_TINT_END_VALUE (case-switch) */
+        /* END CODEGEN AGGREGATION GLUE: TINT_END_VALUE (case-switch) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: TEMPORAL_TINT_MIN_VALUE (case-switch) */
-        case AntlrSQLLexer::TEMPORAL_TINT_MIN_VALUE:
+        /* BEGIN CODEGEN AGGREGATION GLUE: TINT_MIN_VALUE (case-switch) */
+        case AntlrSQLLexer::TINT_MIN_VALUE:
             // Minimum value across instants of the per-(window, group) tint sequence.
             if (helpers.top().functionBuilder.size() != 2) {
-                throw InvalidQuerySyntax("TEMPORAL_TINT_MIN_VALUE requires exactly two arguments (value, timestamp), but got {}", helpers.top().functionBuilder.size());
+                throw InvalidQuerySyntax("TINT_MIN_VALUE requires exactly two arguments (value, timestamp), but got {}", helpers.top().functionBuilder.size());
             }
             {
                 const auto timestampFunction = helpers.top().functionBuilder.back();
@@ -31832,22 +31832,22 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
 
                 if (!valueFunction.tryGet<FieldAccessLogicalFunction>() ||
                     !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
-                    throw InvalidQuerySyntax("TEMPORAL_TINT_MIN_VALUE arguments must be field references");
+                    throw InvalidQuerySyntax("TINT_MIN_VALUE arguments must be field references");
                 }
 
                 helpers.top().windowAggs.push_back(
-                    TemporalTIntMinValueAggregationLogicalFunction::create(valueFunction.get<FieldAccessLogicalFunction>(),
+                    TintMinValueAggregationLogicalFunction::create(valueFunction.get<FieldAccessLogicalFunction>(),
                                                                     timestampFunction.get<FieldAccessLogicalFunction>()));
                 helpers.top().functionBuilder.push_back(valueFunction);
             }
             break;
-        /* END CODEGEN AGGREGATION GLUE: TEMPORAL_TINT_MIN_VALUE (case-switch) */
+        /* END CODEGEN AGGREGATION GLUE: TINT_MIN_VALUE (case-switch) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: TEMPORAL_TINT_MAX_VALUE (case-switch) */
-        case AntlrSQLLexer::TEMPORAL_TINT_MAX_VALUE:
+        /* BEGIN CODEGEN AGGREGATION GLUE: TINT_MAX_VALUE (case-switch) */
+        case AntlrSQLLexer::TINT_MAX_VALUE:
             // Maximum value across instants of the per-(window, group) tint sequence.
             if (helpers.top().functionBuilder.size() != 2) {
-                throw InvalidQuerySyntax("TEMPORAL_TINT_MAX_VALUE requires exactly two arguments (value, timestamp), but got {}", helpers.top().functionBuilder.size());
+                throw InvalidQuerySyntax("TINT_MAX_VALUE requires exactly two arguments (value, timestamp), but got {}", helpers.top().functionBuilder.size());
             }
             {
                 const auto timestampFunction = helpers.top().functionBuilder.back();
@@ -31857,16 +31857,16 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
 
                 if (!valueFunction.tryGet<FieldAccessLogicalFunction>() ||
                     !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
-                    throw InvalidQuerySyntax("TEMPORAL_TINT_MAX_VALUE arguments must be field references");
+                    throw InvalidQuerySyntax("TINT_MAX_VALUE arguments must be field references");
                 }
 
                 helpers.top().windowAggs.push_back(
-                    TemporalTIntMaxValueAggregationLogicalFunction::create(valueFunction.get<FieldAccessLogicalFunction>(),
+                    TintMaxValueAggregationLogicalFunction::create(valueFunction.get<FieldAccessLogicalFunction>(),
                                                                     timestampFunction.get<FieldAccessLogicalFunction>()));
                 helpers.top().functionBuilder.push_back(valueFunction);
             }
             break;
-        /* END CODEGEN AGGREGATION GLUE: TEMPORAL_TINT_MAX_VALUE (case-switch) */
+        /* END CODEGEN AGGREGATION GLUE: TINT_MAX_VALUE (case-switch) */
         /* BEGIN CODEGEN AGGREGATION GLUE: TEMPORAL_TFLOAT_AVG_VALUE (case-switch) */
         case AntlrSQLLexer::TEMPORAL_TFLOAT_AVG_VALUE:
             // Arithmetic mean of all instant values in the per-(window, group) tfloat sequence.
@@ -31892,11 +31892,11 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             break;
         /* END CODEGEN AGGREGATION GLUE: TEMPORAL_TFLOAT_AVG_VALUE (case-switch) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: TEMPORAL_TNUMBER_TWAVG (case-switch) */
-        case AntlrSQLLexer::TEMPORAL_TNUMBER_TWAVG:
+        /* BEGIN CODEGEN AGGREGATION GLUE: TNUMBER_TWAVG (case-switch) */
+        case AntlrSQLLexer::TNUMBER_TWAVG:
             // Time-weighted average of values across the per-(window, group) tfloat sequence.
             if (helpers.top().functionBuilder.size() != 2) {
-                throw InvalidQuerySyntax("TEMPORAL_TNUMBER_TWAVG requires exactly two arguments (value, timestamp), but got {}", helpers.top().functionBuilder.size());
+                throw InvalidQuerySyntax("TNUMBER_TWAVG requires exactly two arguments (value, timestamp), but got {}", helpers.top().functionBuilder.size());
             }
             {
                 const auto timestampFunction = helpers.top().functionBuilder.back();
@@ -31906,16 +31906,16 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
 
                 if (!valueFunction.tryGet<FieldAccessLogicalFunction>() ||
                     !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
-                    throw InvalidQuerySyntax("TEMPORAL_TNUMBER_TWAVG arguments must be field references");
+                    throw InvalidQuerySyntax("TNUMBER_TWAVG arguments must be field references");
                 }
 
                 helpers.top().windowAggs.push_back(
-                    TemporalTNumberTwAvgAggregationLogicalFunction::create(valueFunction.get<FieldAccessLogicalFunction>(),
+                    TnumberTwavgAggregationLogicalFunction::create(valueFunction.get<FieldAccessLogicalFunction>(),
                                                                     timestampFunction.get<FieldAccessLogicalFunction>()));
                 helpers.top().functionBuilder.push_back(valueFunction);
             }
             break;
-        /* END CODEGEN AGGREGATION GLUE: TEMPORAL_TNUMBER_TWAVG (case-switch) */
+        /* END CODEGEN AGGREGATION GLUE: TNUMBER_TWAVG (case-switch) */
 
         /* BEGIN CODEGEN AGGREGATION GLUE: TEMPORAL_TINT_AVG_VALUE (case-switch) */
         case AntlrSQLLexer::TEMPORAL_TINT_AVG_VALUE:
@@ -31941,11 +31941,11 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             }
             break;
         /* END CODEGEN AGGREGATION GLUE: TEMPORAL_TINT_AVG_VALUE (case-switch) */
-        /* BEGIN CODEGEN AGGREGATION GLUE: TEMPORAL_START_TIMESTAMP (case-switch) */
-        case AntlrSQLLexer::TEMPORAL_START_TIMESTAMP:
+        /* BEGIN CODEGEN AGGREGATION GLUE: TEMPORAL_START_TIMESTAMPTZ (case-switch) */
+        case AntlrSQLLexer::TEMPORAL_START_TIMESTAMPTZ:
             // TimestampTz (MEOS μs-since-2000) of the first instant in the per-(window, group) tgeo trajectory.
             if (helpers.top().functionBuilder.size() != 3) {
-                throw InvalidQuerySyntax("TEMPORAL_START_TIMESTAMP requires exactly three arguments (longitude, latitude, timestamp), but got {}", helpers.top().functionBuilder.size());
+                throw InvalidQuerySyntax("TEMPORAL_START_TIMESTAMPTZ requires exactly three arguments (longitude, latitude, timestamp), but got {}", helpers.top().functionBuilder.size());
             }
             {
                 const auto timestampFunction = helpers.top().functionBuilder.back();
@@ -31958,23 +31958,23 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
                 if (!longitudeFunction.tryGet<FieldAccessLogicalFunction>() ||
                     !latitudeFunction.tryGet<FieldAccessLogicalFunction>() ||
                     !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
-                    throw InvalidQuerySyntax("TEMPORAL_START_TIMESTAMP arguments must be field references");
+                    throw InvalidQuerySyntax("TEMPORAL_START_TIMESTAMPTZ arguments must be field references");
                 }
 
                 helpers.top().windowAggs.push_back(
-                    TemporalStartTimestampAggregationLogicalFunction::create(longitudeFunction.get<FieldAccessLogicalFunction>(),
+                    TemporalStartTimestamptzAggregationLogicalFunction::create(longitudeFunction.get<FieldAccessLogicalFunction>(),
                                                                     latitudeFunction.get<FieldAccessLogicalFunction>(),
                                                                     timestampFunction.get<FieldAccessLogicalFunction>()));
                 helpers.top().functionBuilder.push_back(longitudeFunction);
             }
             break;
-        /* END CODEGEN AGGREGATION GLUE: TEMPORAL_START_TIMESTAMP (case-switch) */
+        /* END CODEGEN AGGREGATION GLUE: TEMPORAL_START_TIMESTAMPTZ (case-switch) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: TEMPORAL_END_TIMESTAMP (case-switch) */
-        case AntlrSQLLexer::TEMPORAL_END_TIMESTAMP:
+        /* BEGIN CODEGEN AGGREGATION GLUE: TEMPORAL_END_TIMESTAMPTZ (case-switch) */
+        case AntlrSQLLexer::TEMPORAL_END_TIMESTAMPTZ:
             // TimestampTz (MEOS μs-since-2000) of the last instant in the per-(window, group) tgeo trajectory.
             if (helpers.top().functionBuilder.size() != 3) {
-                throw InvalidQuerySyntax("TEMPORAL_END_TIMESTAMP requires exactly three arguments (longitude, latitude, timestamp), but got {}", helpers.top().functionBuilder.size());
+                throw InvalidQuerySyntax("TEMPORAL_END_TIMESTAMPTZ requires exactly three arguments (longitude, latitude, timestamp), but got {}", helpers.top().functionBuilder.size());
             }
             {
                 const auto timestampFunction = helpers.top().functionBuilder.back();
@@ -31987,17 +31987,17 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
                 if (!longitudeFunction.tryGet<FieldAccessLogicalFunction>() ||
                     !latitudeFunction.tryGet<FieldAccessLogicalFunction>() ||
                     !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
-                    throw InvalidQuerySyntax("TEMPORAL_END_TIMESTAMP arguments must be field references");
+                    throw InvalidQuerySyntax("TEMPORAL_END_TIMESTAMPTZ arguments must be field references");
                 }
 
                 helpers.top().windowAggs.push_back(
-                    TemporalEndTimestampAggregationLogicalFunction::create(longitudeFunction.get<FieldAccessLogicalFunction>(),
+                    TemporalEndTimestamptzAggregationLogicalFunction::create(longitudeFunction.get<FieldAccessLogicalFunction>(),
                                                                     latitudeFunction.get<FieldAccessLogicalFunction>(),
                                                                     timestampFunction.get<FieldAccessLogicalFunction>()));
                 helpers.top().functionBuilder.push_back(longitudeFunction);
             }
             break;
-        /* END CODEGEN AGGREGATION GLUE: TEMPORAL_END_TIMESTAMP (case-switch) */
+        /* END CODEGEN AGGREGATION GLUE: TEMPORAL_END_TIMESTAMPTZ (case-switch) */
 
         /* BEGIN CODEGEN AGGREGATION GLUE: TEMPORAL_LOWER_INC (case-switch) */
         case AntlrSQLLexer::TEMPORAL_LOWER_INC:
@@ -32057,11 +32057,11 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             break;
         /* END CODEGEN AGGREGATION GLUE: TEMPORAL_UPPER_INC (case-switch) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: TEMPORAL_TPOINT_IS_SIMPLE (case-switch) */
-        case AntlrSQLLexer::TEMPORAL_TPOINT_IS_SIMPLE:
+        /* BEGIN CODEGEN AGGREGATION GLUE: TPOINT_IS_SIMPLE (case-switch) */
+        case AntlrSQLLexer::TPOINT_IS_SIMPLE:
             // True if the per-(window, group) tgeo trajectory does not self-intersect.
             if (helpers.top().functionBuilder.size() != 3) {
-                throw InvalidQuerySyntax("TEMPORAL_TPOINT_IS_SIMPLE requires exactly three arguments (longitude, latitude, timestamp), but got {}", helpers.top().functionBuilder.size());
+                throw InvalidQuerySyntax("TPOINT_IS_SIMPLE requires exactly three arguments (longitude, latitude, timestamp), but got {}", helpers.top().functionBuilder.size());
             }
             {
                 const auto timestampFunction = helpers.top().functionBuilder.back();
@@ -32074,22 +32074,22 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
                 if (!longitudeFunction.tryGet<FieldAccessLogicalFunction>() ||
                     !latitudeFunction.tryGet<FieldAccessLogicalFunction>() ||
                     !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
-                    throw InvalidQuerySyntax("TEMPORAL_TPOINT_IS_SIMPLE arguments must be field references");
+                    throw InvalidQuerySyntax("TPOINT_IS_SIMPLE arguments must be field references");
                 }
 
                 helpers.top().windowAggs.push_back(
-                    TemporalTPointIsSimpleAggregationLogicalFunction::create(longitudeFunction.get<FieldAccessLogicalFunction>(),
+                    TpointIsSimpleAggregationLogicalFunction::create(longitudeFunction.get<FieldAccessLogicalFunction>(),
                                                                     latitudeFunction.get<FieldAccessLogicalFunction>(),
                                                                     timestampFunction.get<FieldAccessLogicalFunction>()));
                 helpers.top().functionBuilder.push_back(longitudeFunction);
             }
             break;
-        /* END CODEGEN AGGREGATION GLUE: TEMPORAL_TPOINT_IS_SIMPLE (case-switch) */
-        /* BEGIN CODEGEN AGGREGATION GLUE: TSPATIAL_EXTENT (case-switch) */
-        case AntlrSQLLexer::TSPATIAL_EXTENT:
+        /* END CODEGEN AGGREGATION GLUE: TPOINT_IS_SIMPLE (case-switch) */
+        /* BEGIN CODEGEN AGGREGATION GLUE: TSPATIAL_EXTENT_TRANSFN (case-switch) */
+        case AntlrSQLLexer::TSPATIAL_EXTENT_TRANSFN:
             // Windowed spatiotemporal extent (STBox) over a tgeo trajectory via tspatial_extent_transfn.
             if (helpers.top().functionBuilder.size() != 3) {
-                throw InvalidQuerySyntax("TSPATIAL_EXTENT requires exactly three arguments (longitude, latitude, timestamp), but got {}", helpers.top().functionBuilder.size());
+                throw InvalidQuerySyntax("TSPATIAL_EXTENT_TRANSFN requires exactly three arguments (longitude, latitude, timestamp), but got {}", helpers.top().functionBuilder.size());
             }
             {
                 const auto timestampFunction = helpers.top().functionBuilder.back();
@@ -32102,23 +32102,23 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
                 if (!longitudeFunction.tryGet<FieldAccessLogicalFunction>() ||
                     !latitudeFunction.tryGet<FieldAccessLogicalFunction>() ||
                     !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
-                    throw InvalidQuerySyntax("TSPATIAL_EXTENT arguments must be field references");
+                    throw InvalidQuerySyntax("TSPATIAL_EXTENT_TRANSFN arguments must be field references");
                 }
 
                 helpers.top().windowAggs.push_back(
-                    TspatialExtentAggregationLogicalFunction::create(longitudeFunction.get<FieldAccessLogicalFunction>(),
+                    TspatialExtentTransfnAggregationLogicalFunction::create(longitudeFunction.get<FieldAccessLogicalFunction>(),
                                                                     latitudeFunction.get<FieldAccessLogicalFunction>(),
                                                                     timestampFunction.get<FieldAccessLogicalFunction>()));
                 helpers.top().functionBuilder.push_back(longitudeFunction);
             }
             break;
-        /* END CODEGEN AGGREGATION GLUE: TSPATIAL_EXTENT (case-switch) */
+        /* END CODEGEN AGGREGATION GLUE: TSPATIAL_EXTENT_TRANSFN (case-switch) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: TNUMBER_EXTENT (case-switch) */
-        case AntlrSQLLexer::TNUMBER_EXTENT:
+        /* BEGIN CODEGEN AGGREGATION GLUE: TNUMBER_EXTENT_TRANSFN (case-switch) */
+        case AntlrSQLLexer::TNUMBER_EXTENT_TRANSFN:
             // Windowed numeric-temporal extent (TBox) over a tnumber sequence via tnumber_extent_transfn.
             if (helpers.top().functionBuilder.size() != 2) {
-                throw InvalidQuerySyntax("TNUMBER_EXTENT requires exactly two arguments (value, timestamp), but got {}", helpers.top().functionBuilder.size());
+                throw InvalidQuerySyntax("TNUMBER_EXTENT_TRANSFN requires exactly two arguments (value, timestamp), but got {}", helpers.top().functionBuilder.size());
             }
             {
                 const auto timestampFunction = helpers.top().functionBuilder.back();
@@ -32128,21 +32128,21 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
 
                 if (!valueFunction.tryGet<FieldAccessLogicalFunction>() ||
                     !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
-                    throw InvalidQuerySyntax("TNUMBER_EXTENT arguments must be field references");
+                    throw InvalidQuerySyntax("TNUMBER_EXTENT_TRANSFN arguments must be field references");
                 }
 
                 helpers.top().windowAggs.push_back(
-                    TnumberExtentAggregationLogicalFunction::create(valueFunction.get<FieldAccessLogicalFunction>(),
+                    TnumberExtentTransfnAggregationLogicalFunction::create(valueFunction.get<FieldAccessLogicalFunction>(),
                                                                     timestampFunction.get<FieldAccessLogicalFunction>()));
                 helpers.top().functionBuilder.push_back(valueFunction);
             }
             break;
-        /* END CODEGEN AGGREGATION GLUE: TNUMBER_EXTENT (case-switch) */
-        /* BEGIN CODEGEN AGGREGATION GLUE: FLOAT_EXTENT (case-switch) */
-        case AntlrSQLLexer::FLOAT_EXTENT:
+        /* END CODEGEN AGGREGATION GLUE: TNUMBER_EXTENT_TRANSFN (case-switch) */
+        /* BEGIN CODEGEN AGGREGATION GLUE: FLOAT_EXTENT_TRANSFN (case-switch) */
+        case AntlrSQLLexer::FLOAT_EXTENT_TRANSFN:
             // Windowed value extent (FLOATSPAN) over a tfloat stream via float_extent_transfn.
             if (helpers.top().functionBuilder.size() != 2) {
-                throw InvalidQuerySyntax("FLOAT_EXTENT requires exactly two arguments (value, timestamp), but got {}", helpers.top().functionBuilder.size());
+                throw InvalidQuerySyntax("FLOAT_EXTENT_TRANSFN requires exactly two arguments (value, timestamp), but got {}", helpers.top().functionBuilder.size());
             }
             {
                 const auto timestampFunction = helpers.top().functionBuilder.back();
@@ -32152,22 +32152,22 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
 
                 if (!valueFunction.tryGet<FieldAccessLogicalFunction>() ||
                     !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
-                    throw InvalidQuerySyntax("FLOAT_EXTENT arguments must be field references");
+                    throw InvalidQuerySyntax("FLOAT_EXTENT_TRANSFN arguments must be field references");
                 }
 
                 helpers.top().windowAggs.push_back(
-                    FloatExtentAggregationLogicalFunction::create(valueFunction.get<FieldAccessLogicalFunction>(),
+                    FloatExtentTransfnAggregationLogicalFunction::create(valueFunction.get<FieldAccessLogicalFunction>(),
                                                                     timestampFunction.get<FieldAccessLogicalFunction>()));
                 helpers.top().functionBuilder.push_back(valueFunction);
             }
             break;
-        /* END CODEGEN AGGREGATION GLUE: FLOAT_EXTENT (case-switch) */
+        /* END CODEGEN AGGREGATION GLUE: FLOAT_EXTENT_TRANSFN (case-switch) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: INT_EXTENT (case-switch) */
-        case AntlrSQLLexer::INT_EXTENT:
+        /* BEGIN CODEGEN AGGREGATION GLUE: INT_EXTENT_TRANSFN (case-switch) */
+        case AntlrSQLLexer::INT_EXTENT_TRANSFN:
             // Windowed value extent (INTSPAN) over a tint stream via int_extent_transfn.
             if (helpers.top().functionBuilder.size() != 2) {
-                throw InvalidQuerySyntax("INT_EXTENT requires exactly two arguments (value, timestamp), but got {}", helpers.top().functionBuilder.size());
+                throw InvalidQuerySyntax("INT_EXTENT_TRANSFN requires exactly two arguments (value, timestamp), but got {}", helpers.top().functionBuilder.size());
             }
             {
                 const auto timestampFunction = helpers.top().functionBuilder.back();
@@ -32177,22 +32177,22 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
 
                 if (!valueFunction.tryGet<FieldAccessLogicalFunction>() ||
                     !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
-                    throw InvalidQuerySyntax("INT_EXTENT arguments must be field references");
+                    throw InvalidQuerySyntax("INT_EXTENT_TRANSFN arguments must be field references");
                 }
 
                 helpers.top().windowAggs.push_back(
-                    IntExtentAggregationLogicalFunction::create(valueFunction.get<FieldAccessLogicalFunction>(),
+                    IntExtentTransfnAggregationLogicalFunction::create(valueFunction.get<FieldAccessLogicalFunction>(),
                                                                     timestampFunction.get<FieldAccessLogicalFunction>()));
                 helpers.top().functionBuilder.push_back(valueFunction);
             }
             break;
-        /* END CODEGEN AGGREGATION GLUE: INT_EXTENT (case-switch) */
+        /* END CODEGEN AGGREGATION GLUE: INT_EXTENT_TRANSFN (case-switch) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: BIGINT_EXTENT (case-switch) */
-        case AntlrSQLLexer::BIGINT_EXTENT:
+        /* BEGIN CODEGEN AGGREGATION GLUE: BIGINT_EXTENT_TRANSFN (case-switch) */
+        case AntlrSQLLexer::BIGINT_EXTENT_TRANSFN:
             // Windowed value extent (BIGINTSPAN) over a tbigint stream via bigint_extent_transfn.
             if (helpers.top().functionBuilder.size() != 2) {
-                throw InvalidQuerySyntax("BIGINT_EXTENT requires exactly two arguments (value, timestamp), but got {}", helpers.top().functionBuilder.size());
+                throw InvalidQuerySyntax("BIGINT_EXTENT_TRANSFN requires exactly two arguments (value, timestamp), but got {}", helpers.top().functionBuilder.size());
             }
             {
                 const auto timestampFunction = helpers.top().functionBuilder.back();
@@ -32202,22 +32202,22 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
 
                 if (!valueFunction.tryGet<FieldAccessLogicalFunction>() ||
                     !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
-                    throw InvalidQuerySyntax("BIGINT_EXTENT arguments must be field references");
+                    throw InvalidQuerySyntax("BIGINT_EXTENT_TRANSFN arguments must be field references");
                 }
 
                 helpers.top().windowAggs.push_back(
-                    BigintExtentAggregationLogicalFunction::create(valueFunction.get<FieldAccessLogicalFunction>(),
+                    BigintExtentTransfnAggregationLogicalFunction::create(valueFunction.get<FieldAccessLogicalFunction>(),
                                                                     timestampFunction.get<FieldAccessLogicalFunction>()));
                 helpers.top().functionBuilder.push_back(valueFunction);
             }
             break;
-        /* END CODEGEN AGGREGATION GLUE: BIGINT_EXTENT (case-switch) */
+        /* END CODEGEN AGGREGATION GLUE: BIGINT_EXTENT_TRANSFN (case-switch) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: TIMESTAMPTZ_EXTENT (case-switch) */
-        case AntlrSQLLexer::TIMESTAMPTZ_EXTENT:
+        /* BEGIN CODEGEN AGGREGATION GLUE: TIMESTAMPTZ_EXTENT_TRANSFN (case-switch) */
+        case AntlrSQLLexer::TIMESTAMPTZ_EXTENT_TRANSFN:
             // Windowed time extent (TSTZSPAN) over an event-time field via timestamptz_extent_transfn.
             if (helpers.top().functionBuilder.size() != 2) {
-                throw InvalidQuerySyntax("TIMESTAMPTZ_EXTENT requires exactly two arguments (value, timestamp), but got {}", helpers.top().functionBuilder.size());
+                throw InvalidQuerySyntax("TIMESTAMPTZ_EXTENT_TRANSFN requires exactly two arguments (value, timestamp), but got {}", helpers.top().functionBuilder.size());
             }
             {
                 const auto timestampFunction = helpers.top().functionBuilder.back();
@@ -32227,21 +32227,21 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
 
                 if (!valueFunction.tryGet<FieldAccessLogicalFunction>() ||
                     !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
-                    throw InvalidQuerySyntax("TIMESTAMPTZ_EXTENT arguments must be field references");
+                    throw InvalidQuerySyntax("TIMESTAMPTZ_EXTENT_TRANSFN arguments must be field references");
                 }
 
                 helpers.top().windowAggs.push_back(
-                    TimestamptzExtentAggregationLogicalFunction::create(valueFunction.get<FieldAccessLogicalFunction>(),
+                    TimestamptzExtentTransfnAggregationLogicalFunction::create(valueFunction.get<FieldAccessLogicalFunction>(),
                                                                     timestampFunction.get<FieldAccessLogicalFunction>()));
                 helpers.top().functionBuilder.push_back(valueFunction);
             }
             break;
-        /* END CODEGEN AGGREGATION GLUE: TIMESTAMPTZ_EXTENT (case-switch) */
-        /* BEGIN CODEGEN AGGREGATION GLUE: FLOAT_UNION (case-switch) */
-        case AntlrSQLLexer::FLOAT_UNION:
+        /* END CODEGEN AGGREGATION GLUE: TIMESTAMPTZ_EXTENT_TRANSFN (case-switch) */
+        /* BEGIN CODEGEN AGGREGATION GLUE: FLOAT_UNION_TRANSFN (case-switch) */
+        case AntlrSQLLexer::FLOAT_UNION_TRANSFN:
             // Windowed value union (FLOATSET) over a tfloat stream via float_union_transfn + set_union_finalfn.
             if (helpers.top().functionBuilder.size() != 2) {
-                throw InvalidQuerySyntax("FLOAT_UNION requires exactly two arguments (value, timestamp), but got {}", helpers.top().functionBuilder.size());
+                throw InvalidQuerySyntax("FLOAT_UNION_TRANSFN requires exactly two arguments (value, timestamp), but got {}", helpers.top().functionBuilder.size());
             }
             {
                 const auto timestampFunction = helpers.top().functionBuilder.back();
@@ -32251,22 +32251,22 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
 
                 if (!valueFunction.tryGet<FieldAccessLogicalFunction>() ||
                     !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
-                    throw InvalidQuerySyntax("FLOAT_UNION arguments must be field references");
+                    throw InvalidQuerySyntax("FLOAT_UNION_TRANSFN arguments must be field references");
                 }
 
                 helpers.top().windowAggs.push_back(
-                    FloatUnionAggregationLogicalFunction::create(valueFunction.get<FieldAccessLogicalFunction>(),
+                    FloatUnionTransfnAggregationLogicalFunction::create(valueFunction.get<FieldAccessLogicalFunction>(),
                                                                     timestampFunction.get<FieldAccessLogicalFunction>()));
                 helpers.top().functionBuilder.push_back(valueFunction);
             }
             break;
-        /* END CODEGEN AGGREGATION GLUE: FLOAT_UNION (case-switch) */
+        /* END CODEGEN AGGREGATION GLUE: FLOAT_UNION_TRANSFN (case-switch) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: INT_UNION (case-switch) */
-        case AntlrSQLLexer::INT_UNION:
+        /* BEGIN CODEGEN AGGREGATION GLUE: INT_UNION_TRANSFN (case-switch) */
+        case AntlrSQLLexer::INT_UNION_TRANSFN:
             // Windowed value union (INTSET) over a tint stream via int_union_transfn + set_union_finalfn.
             if (helpers.top().functionBuilder.size() != 2) {
-                throw InvalidQuerySyntax("INT_UNION requires exactly two arguments (value, timestamp), but got {}", helpers.top().functionBuilder.size());
+                throw InvalidQuerySyntax("INT_UNION_TRANSFN requires exactly two arguments (value, timestamp), but got {}", helpers.top().functionBuilder.size());
             }
             {
                 const auto timestampFunction = helpers.top().functionBuilder.back();
@@ -32276,22 +32276,22 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
 
                 if (!valueFunction.tryGet<FieldAccessLogicalFunction>() ||
                     !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
-                    throw InvalidQuerySyntax("INT_UNION arguments must be field references");
+                    throw InvalidQuerySyntax("INT_UNION_TRANSFN arguments must be field references");
                 }
 
                 helpers.top().windowAggs.push_back(
-                    IntUnionAggregationLogicalFunction::create(valueFunction.get<FieldAccessLogicalFunction>(),
+                    IntUnionTransfnAggregationLogicalFunction::create(valueFunction.get<FieldAccessLogicalFunction>(),
                                                                     timestampFunction.get<FieldAccessLogicalFunction>()));
                 helpers.top().functionBuilder.push_back(valueFunction);
             }
             break;
-        /* END CODEGEN AGGREGATION GLUE: INT_UNION (case-switch) */
+        /* END CODEGEN AGGREGATION GLUE: INT_UNION_TRANSFN (case-switch) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: BIGINT_UNION (case-switch) */
-        case AntlrSQLLexer::BIGINT_UNION:
+        /* BEGIN CODEGEN AGGREGATION GLUE: BIGINT_UNION_TRANSFN (case-switch) */
+        case AntlrSQLLexer::BIGINT_UNION_TRANSFN:
             // Windowed value union (BIGINTSET) over a tbigint stream via bigint_union_transfn + set_union_finalfn.
             if (helpers.top().functionBuilder.size() != 2) {
-                throw InvalidQuerySyntax("BIGINT_UNION requires exactly two arguments (value, timestamp), but got {}", helpers.top().functionBuilder.size());
+                throw InvalidQuerySyntax("BIGINT_UNION_TRANSFN requires exactly two arguments (value, timestamp), but got {}", helpers.top().functionBuilder.size());
             }
             {
                 const auto timestampFunction = helpers.top().functionBuilder.back();
@@ -32301,22 +32301,22 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
 
                 if (!valueFunction.tryGet<FieldAccessLogicalFunction>() ||
                     !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
-                    throw InvalidQuerySyntax("BIGINT_UNION arguments must be field references");
+                    throw InvalidQuerySyntax("BIGINT_UNION_TRANSFN arguments must be field references");
                 }
 
                 helpers.top().windowAggs.push_back(
-                    BigintUnionAggregationLogicalFunction::create(valueFunction.get<FieldAccessLogicalFunction>(),
+                    BigintUnionTransfnAggregationLogicalFunction::create(valueFunction.get<FieldAccessLogicalFunction>(),
                                                                     timestampFunction.get<FieldAccessLogicalFunction>()));
                 helpers.top().functionBuilder.push_back(valueFunction);
             }
             break;
-        /* END CODEGEN AGGREGATION GLUE: BIGINT_UNION (case-switch) */
+        /* END CODEGEN AGGREGATION GLUE: BIGINT_UNION_TRANSFN (case-switch) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: TIMESTAMPTZ_UNION (case-switch) */
-        case AntlrSQLLexer::TIMESTAMPTZ_UNION:
+        /* BEGIN CODEGEN AGGREGATION GLUE: TIMESTAMPTZ_UNION_TRANSFN (case-switch) */
+        case AntlrSQLLexer::TIMESTAMPTZ_UNION_TRANSFN:
             // Windowed time union (TSTZSET) over an event-time field via timestamptz_union_transfn + set_union_finalfn.
             if (helpers.top().functionBuilder.size() != 2) {
-                throw InvalidQuerySyntax("TIMESTAMPTZ_UNION requires exactly two arguments (value, timestamp), but got {}", helpers.top().functionBuilder.size());
+                throw InvalidQuerySyntax("TIMESTAMPTZ_UNION_TRANSFN requires exactly two arguments (value, timestamp), but got {}", helpers.top().functionBuilder.size());
             }
             {
                 const auto timestampFunction = helpers.top().functionBuilder.back();
@@ -32326,21 +32326,21 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
 
                 if (!valueFunction.tryGet<FieldAccessLogicalFunction>() ||
                     !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
-                    throw InvalidQuerySyntax("TIMESTAMPTZ_UNION arguments must be field references");
+                    throw InvalidQuerySyntax("TIMESTAMPTZ_UNION_TRANSFN arguments must be field references");
                 }
 
                 helpers.top().windowAggs.push_back(
-                    TimestamptzUnionAggregationLogicalFunction::create(valueFunction.get<FieldAccessLogicalFunction>(),
+                    TimestamptzUnionTransfnAggregationLogicalFunction::create(valueFunction.get<FieldAccessLogicalFunction>(),
                                                                     timestampFunction.get<FieldAccessLogicalFunction>()));
                 helpers.top().functionBuilder.push_back(valueFunction);
             }
             break;
-        /* END CODEGEN AGGREGATION GLUE: TIMESTAMPTZ_UNION (case-switch) */
-        /* BEGIN CODEGEN AGGREGATION GLUE: TRAJECTORY_WKB (case-switch) */
-        case AntlrSQLLexer::TRAJECTORY_WKB:
+        /* END CODEGEN AGGREGATION GLUE: TIMESTAMPTZ_UNION_TRANSFN (case-switch) */
+        /* BEGIN CODEGEN AGGREGATION GLUE: TPOINT_TRAJECTORY (case-switch) */
+        case AntlrSQLLexer::TPOINT_TRAJECTORY:
             // Windowed mini-trip trajectory materialized as hex-WKB — the value the MEOS function library composes over.
             if (helpers.top().functionBuilder.size() != 3) {
-                throw InvalidQuerySyntax("TRAJECTORY_WKB requires exactly three arguments (longitude, latitude, timestamp), but got {}", helpers.top().functionBuilder.size());
+                throw InvalidQuerySyntax("TPOINT_TRAJECTORY requires exactly three arguments (longitude, latitude, timestamp), but got {}", helpers.top().functionBuilder.size());
             }
             {
                 const auto timestampFunction = helpers.top().functionBuilder.back();
@@ -32353,17 +32353,17 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
                 if (!longitudeFunction.tryGet<FieldAccessLogicalFunction>() ||
                     !latitudeFunction.tryGet<FieldAccessLogicalFunction>() ||
                     !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
-                    throw InvalidQuerySyntax("TRAJECTORY_WKB arguments must be field references");
+                    throw InvalidQuerySyntax("TPOINT_TRAJECTORY arguments must be field references");
                 }
 
                 helpers.top().windowAggs.push_back(
-                    TrajectoryWkbAggregationLogicalFunction::create(longitudeFunction.get<FieldAccessLogicalFunction>(),
+                    TpointTrajectoryAggregationLogicalFunction::create(longitudeFunction.get<FieldAccessLogicalFunction>(),
                                                                     latitudeFunction.get<FieldAccessLogicalFunction>(),
                                                                     timestampFunction.get<FieldAccessLogicalFunction>()));
                 helpers.top().functionBuilder.push_back(longitudeFunction);
             }
             break;
-        /* END CODEGEN AGGREGATION GLUE: TRAJECTORY_WKB (case-switch) */
+        /* END CODEGEN AGGREGATION GLUE: TPOINT_TRAJECTORY (case-switch) */
         /* BEGIN CODEGEN AGGREGATION GLUE: TLENGTH_EXP (case-switch) */
         case AntlrSQLLexer::TLENGTH_EXP:
             // Windowed trajectory length over an expandable Temporal* grown by appendInstant — the MEOS-native streaming aggregation (no string build, no WKB).
@@ -32392,11 +32392,11 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             }
             break;
         /* END CODEGEN AGGREGATION GLUE: TLENGTH_EXP (case-switch) */
-        /* BEGIN CODEGEN AGGREGATION GLUE: TGEO_CENTROID_EXP (case-switch) */
-        case AntlrSQLLexer::TGEO_CENTROID_EXP:
+        /* BEGIN CODEGEN AGGREGATION GLUE: TGEO_CENTROID (case-switch) */
+        case AntlrSQLLexer::TGEO_CENTROID:
             // Windowed centroid trajectory via tgeo_centroid over the expandable mini-trip, emitted as hex-WKB.
             if (helpers.top().functionBuilder.size() != 3) {
-                throw InvalidQuerySyntax("TGEO_CENTROID_EXP requires exactly three arguments (longitude, latitude, timestamp), but got {}", helpers.top().functionBuilder.size());
+                throw InvalidQuerySyntax("TGEO_CENTROID requires exactly three arguments (longitude, latitude, timestamp), but got {}", helpers.top().functionBuilder.size());
             }
             {
                 const auto timestampFunction = helpers.top().functionBuilder.back();
@@ -32409,23 +32409,23 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
                 if (!longitudeFunction.tryGet<FieldAccessLogicalFunction>() ||
                     !latitudeFunction.tryGet<FieldAccessLogicalFunction>() ||
                     !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
-                    throw InvalidQuerySyntax("TGEO_CENTROID_EXP arguments must be field references");
+                    throw InvalidQuerySyntax("TGEO_CENTROID arguments must be field references");
                 }
 
                 helpers.top().windowAggs.push_back(
-                    TgeoCentroidExpAggregationLogicalFunction::create(longitudeFunction.get<FieldAccessLogicalFunction>(),
+                    TgeoCentroidAggregationLogicalFunction::create(longitudeFunction.get<FieldAccessLogicalFunction>(),
                                                                     latitudeFunction.get<FieldAccessLogicalFunction>(),
                                                                     timestampFunction.get<FieldAccessLogicalFunction>()));
                 helpers.top().functionBuilder.push_back(longitudeFunction);
             }
             break;
-        /* END CODEGEN AGGREGATION GLUE: TGEO_CENTROID_EXP (case-switch) */
+        /* END CODEGEN AGGREGATION GLUE: TGEO_CENTROID (case-switch) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: TPOINT_AZIMUTH_EXP (case-switch) */
-        case AntlrSQLLexer::TPOINT_AZIMUTH_EXP:
+        /* BEGIN CODEGEN AGGREGATION GLUE: TPOINT_AZIMUTH (case-switch) */
+        case AntlrSQLLexer::TPOINT_AZIMUTH:
             // Windowed azimuth (tfloat) via tpoint_azimuth over the expandable mini-trip, emitted as hex-WKB.
             if (helpers.top().functionBuilder.size() != 3) {
-                throw InvalidQuerySyntax("TPOINT_AZIMUTH_EXP requires exactly three arguments (longitude, latitude, timestamp), but got {}", helpers.top().functionBuilder.size());
+                throw InvalidQuerySyntax("TPOINT_AZIMUTH requires exactly three arguments (longitude, latitude, timestamp), but got {}", helpers.top().functionBuilder.size());
             }
             {
                 const auto timestampFunction = helpers.top().functionBuilder.back();
@@ -32438,23 +32438,23 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
                 if (!longitudeFunction.tryGet<FieldAccessLogicalFunction>() ||
                     !latitudeFunction.tryGet<FieldAccessLogicalFunction>() ||
                     !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
-                    throw InvalidQuerySyntax("TPOINT_AZIMUTH_EXP arguments must be field references");
+                    throw InvalidQuerySyntax("TPOINT_AZIMUTH arguments must be field references");
                 }
 
                 helpers.top().windowAggs.push_back(
-                    TpointAzimuthExpAggregationLogicalFunction::create(longitudeFunction.get<FieldAccessLogicalFunction>(),
+                    TpointAzimuthAggregationLogicalFunction::create(longitudeFunction.get<FieldAccessLogicalFunction>(),
                                                                     latitudeFunction.get<FieldAccessLogicalFunction>(),
                                                                     timestampFunction.get<FieldAccessLogicalFunction>()));
                 helpers.top().functionBuilder.push_back(longitudeFunction);
             }
             break;
-        /* END CODEGEN AGGREGATION GLUE: TPOINT_AZIMUTH_EXP (case-switch) */
+        /* END CODEGEN AGGREGATION GLUE: TPOINT_AZIMUTH (case-switch) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: TPOINT_ANGULAR_DIFFERENCE_EXP (case-switch) */
-        case AntlrSQLLexer::TPOINT_ANGULAR_DIFFERENCE_EXP:
+        /* BEGIN CODEGEN AGGREGATION GLUE: TPOINT_ANGULAR_DIFFERENCE (case-switch) */
+        case AntlrSQLLexer::TPOINT_ANGULAR_DIFFERENCE:
             // Windowed angular difference via tpoint_angular_difference over the expandable mini-trip, emitted as hex-WKB.
             if (helpers.top().functionBuilder.size() != 3) {
-                throw InvalidQuerySyntax("TPOINT_ANGULAR_DIFFERENCE_EXP requires exactly three arguments (longitude, latitude, timestamp), but got {}", helpers.top().functionBuilder.size());
+                throw InvalidQuerySyntax("TPOINT_ANGULAR_DIFFERENCE requires exactly three arguments (longitude, latitude, timestamp), but got {}", helpers.top().functionBuilder.size());
             }
             {
                 const auto timestampFunction = helpers.top().functionBuilder.back();
@@ -32467,23 +32467,23 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
                 if (!longitudeFunction.tryGet<FieldAccessLogicalFunction>() ||
                     !latitudeFunction.tryGet<FieldAccessLogicalFunction>() ||
                     !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
-                    throw InvalidQuerySyntax("TPOINT_ANGULAR_DIFFERENCE_EXP arguments must be field references");
+                    throw InvalidQuerySyntax("TPOINT_ANGULAR_DIFFERENCE arguments must be field references");
                 }
 
                 helpers.top().windowAggs.push_back(
-                    TpointAngularDifferenceExpAggregationLogicalFunction::create(longitudeFunction.get<FieldAccessLogicalFunction>(),
+                    TpointAngularDifferenceAggregationLogicalFunction::create(longitudeFunction.get<FieldAccessLogicalFunction>(),
                                                                     latitudeFunction.get<FieldAccessLogicalFunction>(),
                                                                     timestampFunction.get<FieldAccessLogicalFunction>()));
                 helpers.top().functionBuilder.push_back(longitudeFunction);
             }
             break;
-        /* END CODEGEN AGGREGATION GLUE: TPOINT_ANGULAR_DIFFERENCE_EXP (case-switch) */
+        /* END CODEGEN AGGREGATION GLUE: TPOINT_ANGULAR_DIFFERENCE (case-switch) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: TGEOMPOINT_TO_TGEOMETRY_EXP (case-switch) */
-        case AntlrSQLLexer::TGEOMPOINT_TO_TGEOMETRY_EXP:
+        /* BEGIN CODEGEN AGGREGATION GLUE: TGEOMPOINT_TO_TGEOMETRY (case-switch) */
+        case AntlrSQLLexer::TGEOMPOINT_TO_TGEOMETRY:
             // Windowed tgeompoint->tgeometry conversion over the expandable mini-trip, emitted as hex-WKB.
             if (helpers.top().functionBuilder.size() != 3) {
-                throw InvalidQuerySyntax("TGEOMPOINT_TO_TGEOMETRY_EXP requires exactly three arguments (longitude, latitude, timestamp), but got {}", helpers.top().functionBuilder.size());
+                throw InvalidQuerySyntax("TGEOMPOINT_TO_TGEOMETRY requires exactly three arguments (longitude, latitude, timestamp), but got {}", helpers.top().functionBuilder.size());
             }
             {
                 const auto timestampFunction = helpers.top().functionBuilder.back();
@@ -32496,23 +32496,23 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
                 if (!longitudeFunction.tryGet<FieldAccessLogicalFunction>() ||
                     !latitudeFunction.tryGet<FieldAccessLogicalFunction>() ||
                     !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
-                    throw InvalidQuerySyntax("TGEOMPOINT_TO_TGEOMETRY_EXP arguments must be field references");
+                    throw InvalidQuerySyntax("TGEOMPOINT_TO_TGEOMETRY arguments must be field references");
                 }
 
                 helpers.top().windowAggs.push_back(
-                    TgeompointToTgeometryExpAggregationLogicalFunction::create(longitudeFunction.get<FieldAccessLogicalFunction>(),
+                    TgeompointToTgeometryAggregationLogicalFunction::create(longitudeFunction.get<FieldAccessLogicalFunction>(),
                                                                     latitudeFunction.get<FieldAccessLogicalFunction>(),
                                                                     timestampFunction.get<FieldAccessLogicalFunction>()));
                 helpers.top().functionBuilder.push_back(longitudeFunction);
             }
             break;
-        /* END CODEGEN AGGREGATION GLUE: TGEOMPOINT_TO_TGEOMETRY_EXP (case-switch) */
+        /* END CODEGEN AGGREGATION GLUE: TGEOMPOINT_TO_TGEOMETRY (case-switch) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: TEMPORAL_COPY_EXP (case-switch) */
-        case AntlrSQLLexer::TEMPORAL_COPY_EXP:
+        /* BEGIN CODEGEN AGGREGATION GLUE: TEMPORAL_COPY (case-switch) */
+        case AntlrSQLLexer::TEMPORAL_COPY:
             // Windowed temporal_copy over the expandable mini-trip, emitted as hex-WKB.
             if (helpers.top().functionBuilder.size() != 3) {
-                throw InvalidQuerySyntax("TEMPORAL_COPY_EXP requires exactly three arguments (longitude, latitude, timestamp), but got {}", helpers.top().functionBuilder.size());
+                throw InvalidQuerySyntax("TEMPORAL_COPY requires exactly three arguments (longitude, latitude, timestamp), but got {}", helpers.top().functionBuilder.size());
             }
             {
                 const auto timestampFunction = helpers.top().functionBuilder.back();
@@ -32525,22 +32525,22 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
                 if (!longitudeFunction.tryGet<FieldAccessLogicalFunction>() ||
                     !latitudeFunction.tryGet<FieldAccessLogicalFunction>() ||
                     !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
-                    throw InvalidQuerySyntax("TEMPORAL_COPY_EXP arguments must be field references");
+                    throw InvalidQuerySyntax("TEMPORAL_COPY arguments must be field references");
                 }
 
                 helpers.top().windowAggs.push_back(
-                    TemporalCopyExpAggregationLogicalFunction::create(longitudeFunction.get<FieldAccessLogicalFunction>(),
+                    TemporalCopyAggregationLogicalFunction::create(longitudeFunction.get<FieldAccessLogicalFunction>(),
                                                                     latitudeFunction.get<FieldAccessLogicalFunction>(),
                                                                     timestampFunction.get<FieldAccessLogicalFunction>()));
                 helpers.top().functionBuilder.push_back(longitudeFunction);
             }
             break;
-        /* END CODEGEN AGGREGATION GLUE: TEMPORAL_COPY_EXP (case-switch) */
-        /* BEGIN CODEGEN AGGREGATION GLUE: TNUMBER_ABS_EXP (case-switch) */
-        case AntlrSQLLexer::TNUMBER_ABS_EXP:
+        /* END CODEGEN AGGREGATION GLUE: TEMPORAL_COPY (case-switch) */
+        /* BEGIN CODEGEN AGGREGATION GLUE: TNUMBER_ABS (case-switch) */
+        case AntlrSQLLexer::TNUMBER_ABS:
             // Windowed tnumber_abs over the expandable tfloat mini-series, emitted as hex-WKB.
             if (helpers.top().functionBuilder.size() != 2) {
-                throw InvalidQuerySyntax("TNUMBER_ABS_EXP requires exactly two arguments (value, timestamp), but got {}", helpers.top().functionBuilder.size());
+                throw InvalidQuerySyntax("TNUMBER_ABS requires exactly two arguments (value, timestamp), but got {}", helpers.top().functionBuilder.size());
             }
             {
                 const auto timestampFunction = helpers.top().functionBuilder.back();
@@ -32550,22 +32550,22 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
 
                 if (!valueFunction.tryGet<FieldAccessLogicalFunction>() ||
                     !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
-                    throw InvalidQuerySyntax("TNUMBER_ABS_EXP arguments must be field references");
+                    throw InvalidQuerySyntax("TNUMBER_ABS arguments must be field references");
                 }
 
                 helpers.top().windowAggs.push_back(
-                    TnumberAbsExpAggregationLogicalFunction::create(valueFunction.get<FieldAccessLogicalFunction>(),
+                    TnumberAbsAggregationLogicalFunction::create(valueFunction.get<FieldAccessLogicalFunction>(),
                                                                     timestampFunction.get<FieldAccessLogicalFunction>()));
                 helpers.top().functionBuilder.push_back(valueFunction);
             }
             break;
-        /* END CODEGEN AGGREGATION GLUE: TNUMBER_ABS_EXP (case-switch) */
+        /* END CODEGEN AGGREGATION GLUE: TNUMBER_ABS (case-switch) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: TNUMBER_DELTA_VALUE_EXP (case-switch) */
-        case AntlrSQLLexer::TNUMBER_DELTA_VALUE_EXP:
+        /* BEGIN CODEGEN AGGREGATION GLUE: TNUMBER_DELTA_VALUE (case-switch) */
+        case AntlrSQLLexer::TNUMBER_DELTA_VALUE:
             // Windowed tnumber_delta_value over the expandable tfloat mini-series, emitted as hex-WKB.
             if (helpers.top().functionBuilder.size() != 2) {
-                throw InvalidQuerySyntax("TNUMBER_DELTA_VALUE_EXP requires exactly two arguments (value, timestamp), but got {}", helpers.top().functionBuilder.size());
+                throw InvalidQuerySyntax("TNUMBER_DELTA_VALUE requires exactly two arguments (value, timestamp), but got {}", helpers.top().functionBuilder.size());
             }
             {
                 const auto timestampFunction = helpers.top().functionBuilder.back();
@@ -32575,22 +32575,22 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
 
                 if (!valueFunction.tryGet<FieldAccessLogicalFunction>() ||
                     !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
-                    throw InvalidQuerySyntax("TNUMBER_DELTA_VALUE_EXP arguments must be field references");
+                    throw InvalidQuerySyntax("TNUMBER_DELTA_VALUE arguments must be field references");
                 }
 
                 helpers.top().windowAggs.push_back(
-                    TnumberDeltaValueExpAggregationLogicalFunction::create(valueFunction.get<FieldAccessLogicalFunction>(),
+                    TnumberDeltaValueAggregationLogicalFunction::create(valueFunction.get<FieldAccessLogicalFunction>(),
                                                                     timestampFunction.get<FieldAccessLogicalFunction>()));
                 helpers.top().functionBuilder.push_back(valueFunction);
             }
             break;
-        /* END CODEGEN AGGREGATION GLUE: TNUMBER_DELTA_VALUE_EXP (case-switch) */
+        /* END CODEGEN AGGREGATION GLUE: TNUMBER_DELTA_VALUE (case-switch) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: TNUMBER_ANGULAR_DIFFERENCE_EXP (case-switch) */
-        case AntlrSQLLexer::TNUMBER_ANGULAR_DIFFERENCE_EXP:
+        /* BEGIN CODEGEN AGGREGATION GLUE: TNUMBER_ANGULAR_DIFFERENCE (case-switch) */
+        case AntlrSQLLexer::TNUMBER_ANGULAR_DIFFERENCE:
             // Windowed tnumber_angular_difference over the expandable tfloat mini-series, emitted as hex-WKB.
             if (helpers.top().functionBuilder.size() != 2) {
-                throw InvalidQuerySyntax("TNUMBER_ANGULAR_DIFFERENCE_EXP requires exactly two arguments (value, timestamp), but got {}", helpers.top().functionBuilder.size());
+                throw InvalidQuerySyntax("TNUMBER_ANGULAR_DIFFERENCE requires exactly two arguments (value, timestamp), but got {}", helpers.top().functionBuilder.size());
             }
             {
                 const auto timestampFunction = helpers.top().functionBuilder.back();
@@ -32600,22 +32600,22 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
 
                 if (!valueFunction.tryGet<FieldAccessLogicalFunction>() ||
                     !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
-                    throw InvalidQuerySyntax("TNUMBER_ANGULAR_DIFFERENCE_EXP arguments must be field references");
+                    throw InvalidQuerySyntax("TNUMBER_ANGULAR_DIFFERENCE arguments must be field references");
                 }
 
                 helpers.top().windowAggs.push_back(
-                    TnumberAngularDifferenceExpAggregationLogicalFunction::create(valueFunction.get<FieldAccessLogicalFunction>(),
+                    TnumberAngularDifferenceAggregationLogicalFunction::create(valueFunction.get<FieldAccessLogicalFunction>(),
                                                                     timestampFunction.get<FieldAccessLogicalFunction>()));
                 helpers.top().functionBuilder.push_back(valueFunction);
             }
             break;
-        /* END CODEGEN AGGREGATION GLUE: TNUMBER_ANGULAR_DIFFERENCE_EXP (case-switch) */
+        /* END CODEGEN AGGREGATION GLUE: TNUMBER_ANGULAR_DIFFERENCE (case-switch) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: TEMPORAL_DERIVATIVE_EXP (case-switch) */
-        case AntlrSQLLexer::TEMPORAL_DERIVATIVE_EXP:
+        /* BEGIN CODEGEN AGGREGATION GLUE: TEMPORAL_DERIVATIVE (case-switch) */
+        case AntlrSQLLexer::TEMPORAL_DERIVATIVE:
             // Windowed temporal_derivative over the expandable tfloat mini-series, emitted as hex-WKB.
             if (helpers.top().functionBuilder.size() != 2) {
-                throw InvalidQuerySyntax("TEMPORAL_DERIVATIVE_EXP requires exactly two arguments (value, timestamp), but got {}", helpers.top().functionBuilder.size());
+                throw InvalidQuerySyntax("TEMPORAL_DERIVATIVE requires exactly two arguments (value, timestamp), but got {}", helpers.top().functionBuilder.size());
             }
             {
                 const auto timestampFunction = helpers.top().functionBuilder.back();
@@ -32625,22 +32625,22 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
 
                 if (!valueFunction.tryGet<FieldAccessLogicalFunction>() ||
                     !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
-                    throw InvalidQuerySyntax("TEMPORAL_DERIVATIVE_EXP arguments must be field references");
+                    throw InvalidQuerySyntax("TEMPORAL_DERIVATIVE arguments must be field references");
                 }
 
                 helpers.top().windowAggs.push_back(
-                    TemporalDerivativeExpAggregationLogicalFunction::create(valueFunction.get<FieldAccessLogicalFunction>(),
+                    TemporalDerivativeAggregationLogicalFunction::create(valueFunction.get<FieldAccessLogicalFunction>(),
                                                                     timestampFunction.get<FieldAccessLogicalFunction>()));
                 helpers.top().functionBuilder.push_back(valueFunction);
             }
             break;
-        /* END CODEGEN AGGREGATION GLUE: TEMPORAL_DERIVATIVE_EXP (case-switch) */
+        /* END CODEGEN AGGREGATION GLUE: TEMPORAL_DERIVATIVE (case-switch) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: TEMPORAL_AT_MAX_EXP (case-switch) */
-        case AntlrSQLLexer::TEMPORAL_AT_MAX_EXP:
+        /* BEGIN CODEGEN AGGREGATION GLUE: TEMPORAL_AT_MAX (case-switch) */
+        case AntlrSQLLexer::TEMPORAL_AT_MAX:
             // Windowed temporal_at_max over the expandable tfloat mini-series, emitted as hex-WKB.
             if (helpers.top().functionBuilder.size() != 2) {
-                throw InvalidQuerySyntax("TEMPORAL_AT_MAX_EXP requires exactly two arguments (value, timestamp), but got {}", helpers.top().functionBuilder.size());
+                throw InvalidQuerySyntax("TEMPORAL_AT_MAX requires exactly two arguments (value, timestamp), but got {}", helpers.top().functionBuilder.size());
             }
             {
                 const auto timestampFunction = helpers.top().functionBuilder.back();
@@ -32650,22 +32650,22 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
 
                 if (!valueFunction.tryGet<FieldAccessLogicalFunction>() ||
                     !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
-                    throw InvalidQuerySyntax("TEMPORAL_AT_MAX_EXP arguments must be field references");
+                    throw InvalidQuerySyntax("TEMPORAL_AT_MAX arguments must be field references");
                 }
 
                 helpers.top().windowAggs.push_back(
-                    TemporalAtMaxExpAggregationLogicalFunction::create(valueFunction.get<FieldAccessLogicalFunction>(),
+                    TemporalAtMaxAggregationLogicalFunction::create(valueFunction.get<FieldAccessLogicalFunction>(),
                                                                     timestampFunction.get<FieldAccessLogicalFunction>()));
                 helpers.top().functionBuilder.push_back(valueFunction);
             }
             break;
-        /* END CODEGEN AGGREGATION GLUE: TEMPORAL_AT_MAX_EXP (case-switch) */
+        /* END CODEGEN AGGREGATION GLUE: TEMPORAL_AT_MAX (case-switch) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: TEMPORAL_AT_MIN_EXP (case-switch) */
-        case AntlrSQLLexer::TEMPORAL_AT_MIN_EXP:
+        /* BEGIN CODEGEN AGGREGATION GLUE: TEMPORAL_AT_MIN (case-switch) */
+        case AntlrSQLLexer::TEMPORAL_AT_MIN:
             // Windowed temporal_at_min over the expandable tfloat mini-series, emitted as hex-WKB.
             if (helpers.top().functionBuilder.size() != 2) {
-                throw InvalidQuerySyntax("TEMPORAL_AT_MIN_EXP requires exactly two arguments (value, timestamp), but got {}", helpers.top().functionBuilder.size());
+                throw InvalidQuerySyntax("TEMPORAL_AT_MIN requires exactly two arguments (value, timestamp), but got {}", helpers.top().functionBuilder.size());
             }
             {
                 const auto timestampFunction = helpers.top().functionBuilder.back();
@@ -32675,22 +32675,22 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
 
                 if (!valueFunction.tryGet<FieldAccessLogicalFunction>() ||
                     !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
-                    throw InvalidQuerySyntax("TEMPORAL_AT_MIN_EXP arguments must be field references");
+                    throw InvalidQuerySyntax("TEMPORAL_AT_MIN arguments must be field references");
                 }
 
                 helpers.top().windowAggs.push_back(
-                    TemporalAtMinExpAggregationLogicalFunction::create(valueFunction.get<FieldAccessLogicalFunction>(),
+                    TemporalAtMinAggregationLogicalFunction::create(valueFunction.get<FieldAccessLogicalFunction>(),
                                                                     timestampFunction.get<FieldAccessLogicalFunction>()));
                 helpers.top().functionBuilder.push_back(valueFunction);
             }
             break;
-        /* END CODEGEN AGGREGATION GLUE: TEMPORAL_AT_MIN_EXP (case-switch) */
+        /* END CODEGEN AGGREGATION GLUE: TEMPORAL_AT_MIN (case-switch) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: TEMPORAL_MINUS_MAX_EXP (case-switch) */
-        case AntlrSQLLexer::TEMPORAL_MINUS_MAX_EXP:
+        /* BEGIN CODEGEN AGGREGATION GLUE: TEMPORAL_MINUS_MAX (case-switch) */
+        case AntlrSQLLexer::TEMPORAL_MINUS_MAX:
             // Windowed temporal_minus_max over the expandable tfloat mini-series, emitted as hex-WKB.
             if (helpers.top().functionBuilder.size() != 2) {
-                throw InvalidQuerySyntax("TEMPORAL_MINUS_MAX_EXP requires exactly two arguments (value, timestamp), but got {}", helpers.top().functionBuilder.size());
+                throw InvalidQuerySyntax("TEMPORAL_MINUS_MAX requires exactly two arguments (value, timestamp), but got {}", helpers.top().functionBuilder.size());
             }
             {
                 const auto timestampFunction = helpers.top().functionBuilder.back();
@@ -32700,22 +32700,22 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
 
                 if (!valueFunction.tryGet<FieldAccessLogicalFunction>() ||
                     !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
-                    throw InvalidQuerySyntax("TEMPORAL_MINUS_MAX_EXP arguments must be field references");
+                    throw InvalidQuerySyntax("TEMPORAL_MINUS_MAX arguments must be field references");
                 }
 
                 helpers.top().windowAggs.push_back(
-                    TemporalMinusMaxExpAggregationLogicalFunction::create(valueFunction.get<FieldAccessLogicalFunction>(),
+                    TemporalMinusMaxAggregationLogicalFunction::create(valueFunction.get<FieldAccessLogicalFunction>(),
                                                                     timestampFunction.get<FieldAccessLogicalFunction>()));
                 helpers.top().functionBuilder.push_back(valueFunction);
             }
             break;
-        /* END CODEGEN AGGREGATION GLUE: TEMPORAL_MINUS_MAX_EXP (case-switch) */
+        /* END CODEGEN AGGREGATION GLUE: TEMPORAL_MINUS_MAX (case-switch) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: TEMPORAL_MINUS_MIN_EXP (case-switch) */
-        case AntlrSQLLexer::TEMPORAL_MINUS_MIN_EXP:
+        /* BEGIN CODEGEN AGGREGATION GLUE: TEMPORAL_MINUS_MIN (case-switch) */
+        case AntlrSQLLexer::TEMPORAL_MINUS_MIN:
             // Windowed temporal_minus_min over the expandable tfloat mini-series, emitted as hex-WKB.
             if (helpers.top().functionBuilder.size() != 2) {
-                throw InvalidQuerySyntax("TEMPORAL_MINUS_MIN_EXP requires exactly two arguments (value, timestamp), but got {}", helpers.top().functionBuilder.size());
+                throw InvalidQuerySyntax("TEMPORAL_MINUS_MIN requires exactly two arguments (value, timestamp), but got {}", helpers.top().functionBuilder.size());
             }
             {
                 const auto timestampFunction = helpers.top().functionBuilder.back();
@@ -32725,21 +32725,21 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
 
                 if (!valueFunction.tryGet<FieldAccessLogicalFunction>() ||
                     !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
-                    throw InvalidQuerySyntax("TEMPORAL_MINUS_MIN_EXP arguments must be field references");
+                    throw InvalidQuerySyntax("TEMPORAL_MINUS_MIN arguments must be field references");
                 }
 
                 helpers.top().windowAggs.push_back(
-                    TemporalMinusMinExpAggregationLogicalFunction::create(valueFunction.get<FieldAccessLogicalFunction>(),
+                    TemporalMinusMinAggregationLogicalFunction::create(valueFunction.get<FieldAccessLogicalFunction>(),
                                                                     timestampFunction.get<FieldAccessLogicalFunction>()));
                 helpers.top().functionBuilder.push_back(valueFunction);
             }
             break;
-        /* END CODEGEN AGGREGATION GLUE: TEMPORAL_MINUS_MIN_EXP (case-switch) */
-        /* BEGIN CODEGEN AGGREGATION GLUE: TNPOINT_CUMULATIVE_LENGTH_EXP (case-switch) */
-        case AntlrSQLLexer::TNPOINT_CUMULATIVE_LENGTH_EXP:
+        /* END CODEGEN AGGREGATION GLUE: TEMPORAL_MINUS_MIN (case-switch) */
+        /* BEGIN CODEGEN AGGREGATION GLUE: TNPOINT_CUMULATIVE_LENGTH (case-switch) */
+        case AntlrSQLLexer::TNPOINT_CUMULATIVE_LENGTH:
             // Windowed tnpoint_cumulative_length over the expandable tnpoint mini-series, emitted as hex-WKB.
             if (helpers.top().functionBuilder.size() != 3) {
-                throw InvalidQuerySyntax("TNPOINT_CUMULATIVE_LENGTH_EXP requires exactly three arguments (longitude, latitude, timestamp), but got {}", helpers.top().functionBuilder.size());
+                throw InvalidQuerySyntax("TNPOINT_CUMULATIVE_LENGTH requires exactly three arguments (longitude, latitude, timestamp), but got {}", helpers.top().functionBuilder.size());
             }
             {
                 const auto timestampFunction = helpers.top().functionBuilder.back();
@@ -32752,23 +32752,23 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
                 if (!longitudeFunction.tryGet<FieldAccessLogicalFunction>() ||
                     !latitudeFunction.tryGet<FieldAccessLogicalFunction>() ||
                     !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
-                    throw InvalidQuerySyntax("TNPOINT_CUMULATIVE_LENGTH_EXP arguments must be field references");
+                    throw InvalidQuerySyntax("TNPOINT_CUMULATIVE_LENGTH arguments must be field references");
                 }
 
                 helpers.top().windowAggs.push_back(
-                    TnpointCumulativeLengthExpAggregationLogicalFunction::create(longitudeFunction.get<FieldAccessLogicalFunction>(),
+                    TnpointCumulativeLengthAggregationLogicalFunction::create(longitudeFunction.get<FieldAccessLogicalFunction>(),
                                                                     latitudeFunction.get<FieldAccessLogicalFunction>(),
                                                                     timestampFunction.get<FieldAccessLogicalFunction>()));
                 helpers.top().functionBuilder.push_back(longitudeFunction);
             }
             break;
-        /* END CODEGEN AGGREGATION GLUE: TNPOINT_CUMULATIVE_LENGTH_EXP (case-switch) */
+        /* END CODEGEN AGGREGATION GLUE: TNPOINT_CUMULATIVE_LENGTH (case-switch) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: TNPOINT_SPEED_EXP (case-switch) */
-        case AntlrSQLLexer::TNPOINT_SPEED_EXP:
+        /* BEGIN CODEGEN AGGREGATION GLUE: TNPOINT_SPEED (case-switch) */
+        case AntlrSQLLexer::TNPOINT_SPEED:
             // Windowed tnpoint_speed over the expandable tnpoint mini-series, emitted as hex-WKB.
             if (helpers.top().functionBuilder.size() != 3) {
-                throw InvalidQuerySyntax("TNPOINT_SPEED_EXP requires exactly three arguments (longitude, latitude, timestamp), but got {}", helpers.top().functionBuilder.size());
+                throw InvalidQuerySyntax("TNPOINT_SPEED requires exactly three arguments (longitude, latitude, timestamp), but got {}", helpers.top().functionBuilder.size());
             }
             {
                 const auto timestampFunction = helpers.top().functionBuilder.back();
@@ -32781,23 +32781,23 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
                 if (!longitudeFunction.tryGet<FieldAccessLogicalFunction>() ||
                     !latitudeFunction.tryGet<FieldAccessLogicalFunction>() ||
                     !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
-                    throw InvalidQuerySyntax("TNPOINT_SPEED_EXP arguments must be field references");
+                    throw InvalidQuerySyntax("TNPOINT_SPEED arguments must be field references");
                 }
 
                 helpers.top().windowAggs.push_back(
-                    TnpointSpeedExpAggregationLogicalFunction::create(longitudeFunction.get<FieldAccessLogicalFunction>(),
+                    TnpointSpeedAggregationLogicalFunction::create(longitudeFunction.get<FieldAccessLogicalFunction>(),
                                                                     latitudeFunction.get<FieldAccessLogicalFunction>(),
                                                                     timestampFunction.get<FieldAccessLogicalFunction>()));
                 helpers.top().functionBuilder.push_back(longitudeFunction);
             }
             break;
-        /* END CODEGEN AGGREGATION GLUE: TNPOINT_SPEED_EXP (case-switch) */
+        /* END CODEGEN AGGREGATION GLUE: TNPOINT_SPEED (case-switch) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: TNPOINT_TO_TGEOMPOINT_EXP (case-switch) */
-        case AntlrSQLLexer::TNPOINT_TO_TGEOMPOINT_EXP:
+        /* BEGIN CODEGEN AGGREGATION GLUE: TNPOINT_TO_TGEOMPOINT (case-switch) */
+        case AntlrSQLLexer::TNPOINT_TO_TGEOMPOINT:
             // Windowed tnpoint_to_tgeompoint over the expandable tnpoint mini-series, emitted as hex-WKB.
             if (helpers.top().functionBuilder.size() != 3) {
-                throw InvalidQuerySyntax("TNPOINT_TO_TGEOMPOINT_EXP requires exactly three arguments (longitude, latitude, timestamp), but got {}", helpers.top().functionBuilder.size());
+                throw InvalidQuerySyntax("TNPOINT_TO_TGEOMPOINT requires exactly three arguments (longitude, latitude, timestamp), but got {}", helpers.top().functionBuilder.size());
             }
             {
                 const auto timestampFunction = helpers.top().functionBuilder.back();
@@ -32810,22 +32810,22 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
                 if (!longitudeFunction.tryGet<FieldAccessLogicalFunction>() ||
                     !latitudeFunction.tryGet<FieldAccessLogicalFunction>() ||
                     !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
-                    throw InvalidQuerySyntax("TNPOINT_TO_TGEOMPOINT_EXP arguments must be field references");
+                    throw InvalidQuerySyntax("TNPOINT_TO_TGEOMPOINT arguments must be field references");
                 }
 
                 helpers.top().windowAggs.push_back(
-                    TnpointToTgeompointExpAggregationLogicalFunction::create(longitudeFunction.get<FieldAccessLogicalFunction>(),
+                    TnpointToTgeompointAggregationLogicalFunction::create(longitudeFunction.get<FieldAccessLogicalFunction>(),
                                                                     latitudeFunction.get<FieldAccessLogicalFunction>(),
                                                                     timestampFunction.get<FieldAccessLogicalFunction>()));
                 helpers.top().functionBuilder.push_back(longitudeFunction);
             }
             break;
-        /* END CODEGEN AGGREGATION GLUE: TNPOINT_TO_TGEOMPOINT_EXP (case-switch) */
-        /* BEGIN CODEGEN AGGREGATION GLUE: TPOINT_CUMULATIVE_LENGTH_EXP (case-switch) */
-        case AntlrSQLLexer::TPOINT_CUMULATIVE_LENGTH_EXP:
+        /* END CODEGEN AGGREGATION GLUE: TNPOINT_TO_TGEOMPOINT (case-switch) */
+        /* BEGIN CODEGEN AGGREGATION GLUE: TPOINT_CUMULATIVE_LENGTH (case-switch) */
+        case AntlrSQLLexer::TPOINT_CUMULATIVE_LENGTH:
             // Windowed tgeompoint mini-trip grown by appendInstant; tpoint_cumulative_length emits the running planar length as a tfloat (hex-WKB).
             if (helpers.top().functionBuilder.size() != 3) {
-                throw InvalidQuerySyntax("TPOINT_CUMULATIVE_LENGTH_EXP requires exactly three arguments (longitude, latitude, timestamp), but got {}", helpers.top().functionBuilder.size());
+                throw InvalidQuerySyntax("TPOINT_CUMULATIVE_LENGTH requires exactly three arguments (longitude, latitude, timestamp), but got {}", helpers.top().functionBuilder.size());
             }
             {
                 const auto timestampFunction = helpers.top().functionBuilder.back();
@@ -32838,23 +32838,23 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
                 if (!longitudeFunction.tryGet<FieldAccessLogicalFunction>() ||
                     !latitudeFunction.tryGet<FieldAccessLogicalFunction>() ||
                     !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
-                    throw InvalidQuerySyntax("TPOINT_CUMULATIVE_LENGTH_EXP arguments must be field references");
+                    throw InvalidQuerySyntax("TPOINT_CUMULATIVE_LENGTH arguments must be field references");
                 }
 
                 helpers.top().windowAggs.push_back(
-                    TpointCumulativeLengthExpAggregationLogicalFunction::create(longitudeFunction.get<FieldAccessLogicalFunction>(),
+                    TpointCumulativeLengthAggregationLogicalFunction::create(longitudeFunction.get<FieldAccessLogicalFunction>(),
                                                                     latitudeFunction.get<FieldAccessLogicalFunction>(),
                                                                     timestampFunction.get<FieldAccessLogicalFunction>()));
                 helpers.top().functionBuilder.push_back(longitudeFunction);
             }
             break;
-        /* END CODEGEN AGGREGATION GLUE: TPOINT_CUMULATIVE_LENGTH_EXP (case-switch) */
+        /* END CODEGEN AGGREGATION GLUE: TPOINT_CUMULATIVE_LENGTH (case-switch) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: TPOINT_SPEED_EXP (case-switch) */
-        case AntlrSQLLexer::TPOINT_SPEED_EXP:
+        /* BEGIN CODEGEN AGGREGATION GLUE: TPOINT_SPEED (case-switch) */
+        case AntlrSQLLexer::TPOINT_SPEED:
             // Windowed tgeompoint mini-trip; tpoint_speed differentiates it into a speed tfloat (hex-WKB).
             if (helpers.top().functionBuilder.size() != 3) {
-                throw InvalidQuerySyntax("TPOINT_SPEED_EXP requires exactly three arguments (longitude, latitude, timestamp), but got {}", helpers.top().functionBuilder.size());
+                throw InvalidQuerySyntax("TPOINT_SPEED requires exactly three arguments (longitude, latitude, timestamp), but got {}", helpers.top().functionBuilder.size());
             }
             {
                 const auto timestampFunction = helpers.top().functionBuilder.back();
@@ -32867,23 +32867,23 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
                 if (!longitudeFunction.tryGet<FieldAccessLogicalFunction>() ||
                     !latitudeFunction.tryGet<FieldAccessLogicalFunction>() ||
                     !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
-                    throw InvalidQuerySyntax("TPOINT_SPEED_EXP arguments must be field references");
+                    throw InvalidQuerySyntax("TPOINT_SPEED arguments must be field references");
                 }
 
                 helpers.top().windowAggs.push_back(
-                    TpointSpeedExpAggregationLogicalFunction::create(longitudeFunction.get<FieldAccessLogicalFunction>(),
+                    TpointSpeedAggregationLogicalFunction::create(longitudeFunction.get<FieldAccessLogicalFunction>(),
                                                                     latitudeFunction.get<FieldAccessLogicalFunction>(),
                                                                     timestampFunction.get<FieldAccessLogicalFunction>()));
                 helpers.top().functionBuilder.push_back(longitudeFunction);
             }
             break;
-        /* END CODEGEN AGGREGATION GLUE: TPOINT_SPEED_EXP (case-switch) */
+        /* END CODEGEN AGGREGATION GLUE: TPOINT_SPEED (case-switch) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: TPOINT_GET_X_EXP (case-switch) */
-        case AntlrSQLLexer::TPOINT_GET_X_EXP:
+        /* BEGIN CODEGEN AGGREGATION GLUE: TPOINT_GET_X (case-switch) */
+        case AntlrSQLLexer::TPOINT_GET_X:
             // Windowed tgeompoint mini-trip; tpoint_get_x projects the X coordinate as a tfloat (hex-WKB).
             if (helpers.top().functionBuilder.size() != 3) {
-                throw InvalidQuerySyntax("TPOINT_GET_X_EXP requires exactly three arguments (longitude, latitude, timestamp), but got {}", helpers.top().functionBuilder.size());
+                throw InvalidQuerySyntax("TPOINT_GET_X requires exactly three arguments (longitude, latitude, timestamp), but got {}", helpers.top().functionBuilder.size());
             }
             {
                 const auto timestampFunction = helpers.top().functionBuilder.back();
@@ -32896,23 +32896,23 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
                 if (!longitudeFunction.tryGet<FieldAccessLogicalFunction>() ||
                     !latitudeFunction.tryGet<FieldAccessLogicalFunction>() ||
                     !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
-                    throw InvalidQuerySyntax("TPOINT_GET_X_EXP arguments must be field references");
+                    throw InvalidQuerySyntax("TPOINT_GET_X arguments must be field references");
                 }
 
                 helpers.top().windowAggs.push_back(
-                    TpointGetXExpAggregationLogicalFunction::create(longitudeFunction.get<FieldAccessLogicalFunction>(),
+                    TpointGetXAggregationLogicalFunction::create(longitudeFunction.get<FieldAccessLogicalFunction>(),
                                                                     latitudeFunction.get<FieldAccessLogicalFunction>(),
                                                                     timestampFunction.get<FieldAccessLogicalFunction>()));
                 helpers.top().functionBuilder.push_back(longitudeFunction);
             }
             break;
-        /* END CODEGEN AGGREGATION GLUE: TPOINT_GET_X_EXP (case-switch) */
+        /* END CODEGEN AGGREGATION GLUE: TPOINT_GET_X (case-switch) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: TPOINT_GET_Y_EXP (case-switch) */
-        case AntlrSQLLexer::TPOINT_GET_Y_EXP:
+        /* BEGIN CODEGEN AGGREGATION GLUE: TPOINT_GET_Y (case-switch) */
+        case AntlrSQLLexer::TPOINT_GET_Y:
             // Windowed tgeompoint mini-trip; tpoint_get_y projects the Y coordinate as a tfloat (hex-WKB).
             if (helpers.top().functionBuilder.size() != 3) {
-                throw InvalidQuerySyntax("TPOINT_GET_Y_EXP requires exactly three arguments (longitude, latitude, timestamp), but got {}", helpers.top().functionBuilder.size());
+                throw InvalidQuerySyntax("TPOINT_GET_Y requires exactly three arguments (longitude, latitude, timestamp), but got {}", helpers.top().functionBuilder.size());
             }
             {
                 const auto timestampFunction = helpers.top().functionBuilder.back();
@@ -32925,23 +32925,23 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
                 if (!longitudeFunction.tryGet<FieldAccessLogicalFunction>() ||
                     !latitudeFunction.tryGet<FieldAccessLogicalFunction>() ||
                     !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
-                    throw InvalidQuerySyntax("TPOINT_GET_Y_EXP arguments must be field references");
+                    throw InvalidQuerySyntax("TPOINT_GET_Y arguments must be field references");
                 }
 
                 helpers.top().windowAggs.push_back(
-                    TpointGetYExpAggregationLogicalFunction::create(longitudeFunction.get<FieldAccessLogicalFunction>(),
+                    TpointGetYAggregationLogicalFunction::create(longitudeFunction.get<FieldAccessLogicalFunction>(),
                                                                     latitudeFunction.get<FieldAccessLogicalFunction>(),
                                                                     timestampFunction.get<FieldAccessLogicalFunction>()));
                 helpers.top().functionBuilder.push_back(longitudeFunction);
             }
             break;
-        /* END CODEGEN AGGREGATION GLUE: TPOINT_GET_Y_EXP (case-switch) */
+        /* END CODEGEN AGGREGATION GLUE: TPOINT_GET_Y (case-switch) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: TNUMBER_TREND_EXP (case-switch) */
-        case AntlrSQLLexer::TNUMBER_TREND_EXP:
+        /* BEGIN CODEGEN AGGREGATION GLUE: TNUMBER_TREND (case-switch) */
+        case AntlrSQLLexer::TNUMBER_TREND:
             // Windowed tnumber mini-series; tnumber_trend emits the rising/falling trend as a tint (hex-WKB).
             if (helpers.top().functionBuilder.size() != 2) {
-                throw InvalidQuerySyntax("TNUMBER_TREND_EXP requires exactly two arguments (value, timestamp), but got {}", helpers.top().functionBuilder.size());
+                throw InvalidQuerySyntax("TNUMBER_TREND requires exactly two arguments (value, timestamp), but got {}", helpers.top().functionBuilder.size());
             }
             {
                 const auto timestampFunction = helpers.top().functionBuilder.back();
@@ -32951,21 +32951,21 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
 
                 if (!valueFunction.tryGet<FieldAccessLogicalFunction>() ||
                     !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
-                    throw InvalidQuerySyntax("TNUMBER_TREND_EXP arguments must be field references");
+                    throw InvalidQuerySyntax("TNUMBER_TREND arguments must be field references");
                 }
 
                 helpers.top().windowAggs.push_back(
-                    TnumberTrendExpAggregationLogicalFunction::create(valueFunction.get<FieldAccessLogicalFunction>(),
+                    TnumberTrendAggregationLogicalFunction::create(valueFunction.get<FieldAccessLogicalFunction>(),
                                                                     timestampFunction.get<FieldAccessLogicalFunction>()));
                 helpers.top().functionBuilder.push_back(valueFunction);
             }
             break;
-        /* END CODEGEN AGGREGATION GLUE: TNUMBER_TREND_EXP (case-switch) */
-        /* BEGIN CODEGEN AGGREGATION GLUE: TGEO_START_VALUE_EXP (case-switch) */
-        case AntlrSQLLexer::TGEO_START_VALUE_EXP:
+        /* END CODEGEN AGGREGATION GLUE: TNUMBER_TREND (case-switch) */
+        /* BEGIN CODEGEN AGGREGATION GLUE: TGEO_START_VALUE (case-switch) */
+        case AntlrSQLLexer::TGEO_START_VALUE:
             // Windowed tgeompoint mini-trip; tgeo_start_value emits the first point geometry as hex-EWKB.
             if (helpers.top().functionBuilder.size() != 3) {
-                throw InvalidQuerySyntax("TGEO_START_VALUE_EXP requires exactly three arguments (longitude, latitude, timestamp), but got {}", helpers.top().functionBuilder.size());
+                throw InvalidQuerySyntax("TGEO_START_VALUE requires exactly three arguments (longitude, latitude, timestamp), but got {}", helpers.top().functionBuilder.size());
             }
             {
                 const auto timestampFunction = helpers.top().functionBuilder.back();
@@ -32978,23 +32978,23 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
                 if (!longitudeFunction.tryGet<FieldAccessLogicalFunction>() ||
                     !latitudeFunction.tryGet<FieldAccessLogicalFunction>() ||
                     !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
-                    throw InvalidQuerySyntax("TGEO_START_VALUE_EXP arguments must be field references");
+                    throw InvalidQuerySyntax("TGEO_START_VALUE arguments must be field references");
                 }
 
                 helpers.top().windowAggs.push_back(
-                    TgeoStartValueExpAggregationLogicalFunction::create(longitudeFunction.get<FieldAccessLogicalFunction>(),
+                    TgeoStartValueAggregationLogicalFunction::create(longitudeFunction.get<FieldAccessLogicalFunction>(),
                                                                     latitudeFunction.get<FieldAccessLogicalFunction>(),
                                                                     timestampFunction.get<FieldAccessLogicalFunction>()));
                 helpers.top().functionBuilder.push_back(longitudeFunction);
             }
             break;
-        /* END CODEGEN AGGREGATION GLUE: TGEO_START_VALUE_EXP (case-switch) */
+        /* END CODEGEN AGGREGATION GLUE: TGEO_START_VALUE (case-switch) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: TGEO_END_VALUE_EXP (case-switch) */
-        case AntlrSQLLexer::TGEO_END_VALUE_EXP:
+        /* BEGIN CODEGEN AGGREGATION GLUE: TGEO_END_VALUE (case-switch) */
+        case AntlrSQLLexer::TGEO_END_VALUE:
             // Windowed tgeompoint mini-trip; tgeo_end_value emits the last point geometry as hex-EWKB.
             if (helpers.top().functionBuilder.size() != 3) {
-                throw InvalidQuerySyntax("TGEO_END_VALUE_EXP requires exactly three arguments (longitude, latitude, timestamp), but got {}", helpers.top().functionBuilder.size());
+                throw InvalidQuerySyntax("TGEO_END_VALUE requires exactly three arguments (longitude, latitude, timestamp), but got {}", helpers.top().functionBuilder.size());
             }
             {
                 const auto timestampFunction = helpers.top().functionBuilder.back();
@@ -33007,23 +33007,23 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
                 if (!longitudeFunction.tryGet<FieldAccessLogicalFunction>() ||
                     !latitudeFunction.tryGet<FieldAccessLogicalFunction>() ||
                     !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
-                    throw InvalidQuerySyntax("TGEO_END_VALUE_EXP arguments must be field references");
+                    throw InvalidQuerySyntax("TGEO_END_VALUE arguments must be field references");
                 }
 
                 helpers.top().windowAggs.push_back(
-                    TgeoEndValueExpAggregationLogicalFunction::create(longitudeFunction.get<FieldAccessLogicalFunction>(),
+                    TgeoEndValueAggregationLogicalFunction::create(longitudeFunction.get<FieldAccessLogicalFunction>(),
                                                                     latitudeFunction.get<FieldAccessLogicalFunction>(),
                                                                     timestampFunction.get<FieldAccessLogicalFunction>()));
                 helpers.top().functionBuilder.push_back(longitudeFunction);
             }
             break;
-        /* END CODEGEN AGGREGATION GLUE: TGEO_END_VALUE_EXP (case-switch) */
+        /* END CODEGEN AGGREGATION GLUE: TGEO_END_VALUE (case-switch) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: TGEO_CONVEX_HULL_EXP (case-switch) */
-        case AntlrSQLLexer::TGEO_CONVEX_HULL_EXP:
+        /* BEGIN CODEGEN AGGREGATION GLUE: TGEO_CONVEX_HULL (case-switch) */
+        case AntlrSQLLexer::TGEO_CONVEX_HULL:
             // Windowed tgeompoint mini-trip; tgeo_convex_hull emits the trajectory convex hull as hex-EWKB.
             if (helpers.top().functionBuilder.size() != 3) {
-                throw InvalidQuerySyntax("TGEO_CONVEX_HULL_EXP requires exactly three arguments (longitude, latitude, timestamp), but got {}", helpers.top().functionBuilder.size());
+                throw InvalidQuerySyntax("TGEO_CONVEX_HULL requires exactly three arguments (longitude, latitude, timestamp), but got {}", helpers.top().functionBuilder.size());
             }
             {
                 const auto timestampFunction = helpers.top().functionBuilder.back();
@@ -33036,23 +33036,23 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
                 if (!longitudeFunction.tryGet<FieldAccessLogicalFunction>() ||
                     !latitudeFunction.tryGet<FieldAccessLogicalFunction>() ||
                     !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
-                    throw InvalidQuerySyntax("TGEO_CONVEX_HULL_EXP arguments must be field references");
+                    throw InvalidQuerySyntax("TGEO_CONVEX_HULL arguments must be field references");
                 }
 
                 helpers.top().windowAggs.push_back(
-                    TgeoConvexHullExpAggregationLogicalFunction::create(longitudeFunction.get<FieldAccessLogicalFunction>(),
+                    TgeoConvexHullAggregationLogicalFunction::create(longitudeFunction.get<FieldAccessLogicalFunction>(),
                                                                     latitudeFunction.get<FieldAccessLogicalFunction>(),
                                                                     timestampFunction.get<FieldAccessLogicalFunction>()));
                 helpers.top().functionBuilder.push_back(longitudeFunction);
             }
             break;
-        /* END CODEGEN AGGREGATION GLUE: TGEO_CONVEX_HULL_EXP (case-switch) */
+        /* END CODEGEN AGGREGATION GLUE: TGEO_CONVEX_HULL (case-switch) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: TPOINT_TWCENTROID_EXP (case-switch) */
-        case AntlrSQLLexer::TPOINT_TWCENTROID_EXP:
+        /* BEGIN CODEGEN AGGREGATION GLUE: TPOINT_TWCENTROID (case-switch) */
+        case AntlrSQLLexer::TPOINT_TWCENTROID:
             // Windowed tgeompoint mini-trip; tpoint_twcentroid emits the time-weighted centroid point as hex-EWKB.
             if (helpers.top().functionBuilder.size() != 3) {
-                throw InvalidQuerySyntax("TPOINT_TWCENTROID_EXP requires exactly three arguments (longitude, latitude, timestamp), but got {}", helpers.top().functionBuilder.size());
+                throw InvalidQuerySyntax("TPOINT_TWCENTROID requires exactly three arguments (longitude, latitude, timestamp), but got {}", helpers.top().functionBuilder.size());
             }
             {
                 const auto timestampFunction = helpers.top().functionBuilder.back();
@@ -33065,17 +33065,17 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
                 if (!longitudeFunction.tryGet<FieldAccessLogicalFunction>() ||
                     !latitudeFunction.tryGet<FieldAccessLogicalFunction>() ||
                     !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
-                    throw InvalidQuerySyntax("TPOINT_TWCENTROID_EXP arguments must be field references");
+                    throw InvalidQuerySyntax("TPOINT_TWCENTROID arguments must be field references");
                 }
 
                 helpers.top().windowAggs.push_back(
-                    TpointTwcentroidExpAggregationLogicalFunction::create(longitudeFunction.get<FieldAccessLogicalFunction>(),
+                    TpointTwcentroidAggregationLogicalFunction::create(longitudeFunction.get<FieldAccessLogicalFunction>(),
                                                                     latitudeFunction.get<FieldAccessLogicalFunction>(),
                                                                     timestampFunction.get<FieldAccessLogicalFunction>()));
                 helpers.top().functionBuilder.push_back(longitudeFunction);
             }
             break;
-        /* END CODEGEN AGGREGATION GLUE: TPOINT_TWCENTROID_EXP (case-switch) */
+        /* END CODEGEN AGGREGATION GLUE: TPOINT_TWCENTROID (case-switch) */
 
 
 
@@ -33237,140 +33237,140 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             }
             /* END CODEGEN AGGREGATION GLUE: TEMPORAL_NUM_TIMESTAMPS (funcName chain) */
 
-            /* BEGIN CODEGEN AGGREGATION GLUE: TEMPORAL_TFLOAT_START_VALUE (funcName chain) */
-            else if (funcName == "TEMPORAL_TFLOAT_START_VALUE")
+            /* BEGIN CODEGEN AGGREGATION GLUE: TFLOAT_START_VALUE (funcName chain) */
+            else if (funcName == "TFLOAT_START_VALUE")
             {
                 if (helpers.top().functionBuilder.size() < 2)
                 {
-                    throw InvalidQuerySyntax("TEMPORAL_TFLOAT_START_VALUE requires two arguments at {}", context->getText());
+                    throw InvalidQuerySyntax("TFLOAT_START_VALUE requires two arguments at {}", context->getText());
                 }
                 const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
                 helpers.top().functionBuilder.pop_back();
                 const auto value = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
                 helpers.top().functionBuilder.pop_back();
-                helpers.top().windowAggs.push_back(TemporalTFloatStartValueAggregationLogicalFunction::create(value, ts));
+                helpers.top().windowAggs.push_back(TfloatStartValueAggregationLogicalFunction::create(value, ts));
             }
-            /* END CODEGEN AGGREGATION GLUE: TEMPORAL_TFLOAT_START_VALUE (funcName chain) */
+            /* END CODEGEN AGGREGATION GLUE: TFLOAT_START_VALUE (funcName chain) */
 
-            /* BEGIN CODEGEN AGGREGATION GLUE: TEMPORAL_TFLOAT_END_VALUE (funcName chain) */
-            else if (funcName == "TEMPORAL_TFLOAT_END_VALUE")
+            /* BEGIN CODEGEN AGGREGATION GLUE: TFLOAT_END_VALUE (funcName chain) */
+            else if (funcName == "TFLOAT_END_VALUE")
             {
                 if (helpers.top().functionBuilder.size() < 2)
                 {
-                    throw InvalidQuerySyntax("TEMPORAL_TFLOAT_END_VALUE requires two arguments at {}", context->getText());
+                    throw InvalidQuerySyntax("TFLOAT_END_VALUE requires two arguments at {}", context->getText());
                 }
                 const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
                 helpers.top().functionBuilder.pop_back();
                 const auto value = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
                 helpers.top().functionBuilder.pop_back();
-                helpers.top().windowAggs.push_back(TemporalTFloatEndValueAggregationLogicalFunction::create(value, ts));
+                helpers.top().windowAggs.push_back(TfloatEndValueAggregationLogicalFunction::create(value, ts));
             }
-            /* END CODEGEN AGGREGATION GLUE: TEMPORAL_TFLOAT_END_VALUE (funcName chain) */
+            /* END CODEGEN AGGREGATION GLUE: TFLOAT_END_VALUE (funcName chain) */
 
-            /* BEGIN CODEGEN AGGREGATION GLUE: TEMPORAL_TFLOAT_MIN_VALUE (funcName chain) */
-            else if (funcName == "TEMPORAL_TFLOAT_MIN_VALUE")
+            /* BEGIN CODEGEN AGGREGATION GLUE: TFLOAT_MIN_VALUE (funcName chain) */
+            else if (funcName == "TFLOAT_MIN_VALUE")
             {
                 if (helpers.top().functionBuilder.size() < 2)
                 {
-                    throw InvalidQuerySyntax("TEMPORAL_TFLOAT_MIN_VALUE requires two arguments at {}", context->getText());
+                    throw InvalidQuerySyntax("TFLOAT_MIN_VALUE requires two arguments at {}", context->getText());
                 }
                 const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
                 helpers.top().functionBuilder.pop_back();
                 const auto value = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
                 helpers.top().functionBuilder.pop_back();
-                helpers.top().windowAggs.push_back(TemporalTFloatMinValueAggregationLogicalFunction::create(value, ts));
+                helpers.top().windowAggs.push_back(TfloatMinValueAggregationLogicalFunction::create(value, ts));
             }
-            /* END CODEGEN AGGREGATION GLUE: TEMPORAL_TFLOAT_MIN_VALUE (funcName chain) */
+            /* END CODEGEN AGGREGATION GLUE: TFLOAT_MIN_VALUE (funcName chain) */
 
-            /* BEGIN CODEGEN AGGREGATION GLUE: TEMPORAL_TFLOAT_MAX_VALUE (funcName chain) */
-            else if (funcName == "TEMPORAL_TFLOAT_MAX_VALUE")
+            /* BEGIN CODEGEN AGGREGATION GLUE: TFLOAT_MAX_VALUE (funcName chain) */
+            else if (funcName == "TFLOAT_MAX_VALUE")
             {
                 if (helpers.top().functionBuilder.size() < 2)
                 {
-                    throw InvalidQuerySyntax("TEMPORAL_TFLOAT_MAX_VALUE requires two arguments at {}", context->getText());
+                    throw InvalidQuerySyntax("TFLOAT_MAX_VALUE requires two arguments at {}", context->getText());
                 }
                 const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
                 helpers.top().functionBuilder.pop_back();
                 const auto value = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
                 helpers.top().functionBuilder.pop_back();
-                helpers.top().windowAggs.push_back(TemporalTFloatMaxValueAggregationLogicalFunction::create(value, ts));
+                helpers.top().windowAggs.push_back(TfloatMaxValueAggregationLogicalFunction::create(value, ts));
             }
-            /* END CODEGEN AGGREGATION GLUE: TEMPORAL_TFLOAT_MAX_VALUE (funcName chain) */
+            /* END CODEGEN AGGREGATION GLUE: TFLOAT_MAX_VALUE (funcName chain) */
 
-            /* BEGIN CODEGEN AGGREGATION GLUE: TEMPORAL_TNUMBER_INTEGRAL (funcName chain) */
-            else if (funcName == "TEMPORAL_TNUMBER_INTEGRAL")
+            /* BEGIN CODEGEN AGGREGATION GLUE: TNUMBER_INTEGRAL (funcName chain) */
+            else if (funcName == "TNUMBER_INTEGRAL")
             {
                 if (helpers.top().functionBuilder.size() < 2)
                 {
-                    throw InvalidQuerySyntax("TEMPORAL_TNUMBER_INTEGRAL requires two arguments at {}", context->getText());
+                    throw InvalidQuerySyntax("TNUMBER_INTEGRAL requires two arguments at {}", context->getText());
                 }
                 const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
                 helpers.top().functionBuilder.pop_back();
                 const auto value = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
                 helpers.top().functionBuilder.pop_back();
-                helpers.top().windowAggs.push_back(TemporalTNumberIntegralAggregationLogicalFunction::create(value, ts));
+                helpers.top().windowAggs.push_back(TnumberIntegralAggregationLogicalFunction::create(value, ts));
             }
-            /* END CODEGEN AGGREGATION GLUE: TEMPORAL_TNUMBER_INTEGRAL (funcName chain) */
+            /* END CODEGEN AGGREGATION GLUE: TNUMBER_INTEGRAL (funcName chain) */
 
-            /* BEGIN CODEGEN AGGREGATION GLUE: TEMPORAL_TINT_START_VALUE (funcName chain) */
-            else if (funcName == "TEMPORAL_TINT_START_VALUE")
+            /* BEGIN CODEGEN AGGREGATION GLUE: TINT_START_VALUE (funcName chain) */
+            else if (funcName == "TINT_START_VALUE")
             {
                 if (helpers.top().functionBuilder.size() < 2)
                 {
-                    throw InvalidQuerySyntax("TEMPORAL_TINT_START_VALUE requires two arguments at {}", context->getText());
+                    throw InvalidQuerySyntax("TINT_START_VALUE requires two arguments at {}", context->getText());
                 }
                 const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
                 helpers.top().functionBuilder.pop_back();
                 const auto value = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
                 helpers.top().functionBuilder.pop_back();
-                helpers.top().windowAggs.push_back(TemporalTIntStartValueAggregationLogicalFunction::create(value, ts));
+                helpers.top().windowAggs.push_back(TintStartValueAggregationLogicalFunction::create(value, ts));
             }
-            /* END CODEGEN AGGREGATION GLUE: TEMPORAL_TINT_START_VALUE (funcName chain) */
+            /* END CODEGEN AGGREGATION GLUE: TINT_START_VALUE (funcName chain) */
 
-            /* BEGIN CODEGEN AGGREGATION GLUE: TEMPORAL_TINT_END_VALUE (funcName chain) */
-            else if (funcName == "TEMPORAL_TINT_END_VALUE")
+            /* BEGIN CODEGEN AGGREGATION GLUE: TINT_END_VALUE (funcName chain) */
+            else if (funcName == "TINT_END_VALUE")
             {
                 if (helpers.top().functionBuilder.size() < 2)
                 {
-                    throw InvalidQuerySyntax("TEMPORAL_TINT_END_VALUE requires two arguments at {}", context->getText());
+                    throw InvalidQuerySyntax("TINT_END_VALUE requires two arguments at {}", context->getText());
                 }
                 const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
                 helpers.top().functionBuilder.pop_back();
                 const auto value = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
                 helpers.top().functionBuilder.pop_back();
-                helpers.top().windowAggs.push_back(TemporalTIntEndValueAggregationLogicalFunction::create(value, ts));
+                helpers.top().windowAggs.push_back(TintEndValueAggregationLogicalFunction::create(value, ts));
             }
-            /* END CODEGEN AGGREGATION GLUE: TEMPORAL_TINT_END_VALUE (funcName chain) */
+            /* END CODEGEN AGGREGATION GLUE: TINT_END_VALUE (funcName chain) */
 
-            /* BEGIN CODEGEN AGGREGATION GLUE: TEMPORAL_TINT_MIN_VALUE (funcName chain) */
-            else if (funcName == "TEMPORAL_TINT_MIN_VALUE")
+            /* BEGIN CODEGEN AGGREGATION GLUE: TINT_MIN_VALUE (funcName chain) */
+            else if (funcName == "TINT_MIN_VALUE")
             {
                 if (helpers.top().functionBuilder.size() < 2)
                 {
-                    throw InvalidQuerySyntax("TEMPORAL_TINT_MIN_VALUE requires two arguments at {}", context->getText());
+                    throw InvalidQuerySyntax("TINT_MIN_VALUE requires two arguments at {}", context->getText());
                 }
                 const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
                 helpers.top().functionBuilder.pop_back();
                 const auto value = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
                 helpers.top().functionBuilder.pop_back();
-                helpers.top().windowAggs.push_back(TemporalTIntMinValueAggregationLogicalFunction::create(value, ts));
+                helpers.top().windowAggs.push_back(TintMinValueAggregationLogicalFunction::create(value, ts));
             }
-            /* END CODEGEN AGGREGATION GLUE: TEMPORAL_TINT_MIN_VALUE (funcName chain) */
+            /* END CODEGEN AGGREGATION GLUE: TINT_MIN_VALUE (funcName chain) */
 
-            /* BEGIN CODEGEN AGGREGATION GLUE: TEMPORAL_TINT_MAX_VALUE (funcName chain) */
-            else if (funcName == "TEMPORAL_TINT_MAX_VALUE")
+            /* BEGIN CODEGEN AGGREGATION GLUE: TINT_MAX_VALUE (funcName chain) */
+            else if (funcName == "TINT_MAX_VALUE")
             {
                 if (helpers.top().functionBuilder.size() < 2)
                 {
-                    throw InvalidQuerySyntax("TEMPORAL_TINT_MAX_VALUE requires two arguments at {}", context->getText());
+                    throw InvalidQuerySyntax("TINT_MAX_VALUE requires two arguments at {}", context->getText());
                 }
                 const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
                 helpers.top().functionBuilder.pop_back();
                 const auto value = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
                 helpers.top().functionBuilder.pop_back();
-                helpers.top().windowAggs.push_back(TemporalTIntMaxValueAggregationLogicalFunction::create(value, ts));
+                helpers.top().windowAggs.push_back(TintMaxValueAggregationLogicalFunction::create(value, ts));
             }
-            /* END CODEGEN AGGREGATION GLUE: TEMPORAL_TINT_MAX_VALUE (funcName chain) */
+            /* END CODEGEN AGGREGATION GLUE: TINT_MAX_VALUE (funcName chain) */
             /* BEGIN CODEGEN AGGREGATION GLUE: TEMPORAL_TFLOAT_AVG_VALUE (funcName chain) */
             else if (funcName == "TEMPORAL_TFLOAT_AVG_VALUE")
             {
@@ -33386,20 +33386,20 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             }
             /* END CODEGEN AGGREGATION GLUE: TEMPORAL_TFLOAT_AVG_VALUE (funcName chain) */
 
-            /* BEGIN CODEGEN AGGREGATION GLUE: TEMPORAL_TNUMBER_TWAVG (funcName chain) */
-            else if (funcName == "TEMPORAL_TNUMBER_TWAVG")
+            /* BEGIN CODEGEN AGGREGATION GLUE: TNUMBER_TWAVG (funcName chain) */
+            else if (funcName == "TNUMBER_TWAVG")
             {
                 if (helpers.top().functionBuilder.size() < 2)
                 {
-                    throw InvalidQuerySyntax("TEMPORAL_TNUMBER_TWAVG requires two arguments at {}", context->getText());
+                    throw InvalidQuerySyntax("TNUMBER_TWAVG requires two arguments at {}", context->getText());
                 }
                 const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
                 helpers.top().functionBuilder.pop_back();
                 const auto value = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
                 helpers.top().functionBuilder.pop_back();
-                helpers.top().windowAggs.push_back(TemporalTNumberTwAvgAggregationLogicalFunction::create(value, ts));
+                helpers.top().windowAggs.push_back(TnumberTwavgAggregationLogicalFunction::create(value, ts));
             }
-            /* END CODEGEN AGGREGATION GLUE: TEMPORAL_TNUMBER_TWAVG (funcName chain) */
+            /* END CODEGEN AGGREGATION GLUE: TNUMBER_TWAVG (funcName chain) */
 
             /* BEGIN CODEGEN AGGREGATION GLUE: TEMPORAL_TINT_AVG_VALUE (funcName chain) */
             else if (funcName == "TEMPORAL_TINT_AVG_VALUE")
@@ -33415,12 +33415,12 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
                 helpers.top().windowAggs.push_back(TemporalTIntAvgValueAggregationLogicalFunction::create(value, ts));
             }
             /* END CODEGEN AGGREGATION GLUE: TEMPORAL_TINT_AVG_VALUE (funcName chain) */
-            /* BEGIN CODEGEN AGGREGATION GLUE: TEMPORAL_START_TIMESTAMP (funcName chain) */
-            else if (funcName == "TEMPORAL_START_TIMESTAMP")
+            /* BEGIN CODEGEN AGGREGATION GLUE: TEMPORAL_START_TIMESTAMPTZ (funcName chain) */
+            else if (funcName == "TEMPORAL_START_TIMESTAMPTZ")
             {
                 if (helpers.top().functionBuilder.size() < 3)
                 {
-                    throw InvalidQuerySyntax("TEMPORAL_START_TIMESTAMP requires three arguments at {}", context->getText());
+                    throw InvalidQuerySyntax("TEMPORAL_START_TIMESTAMPTZ requires three arguments at {}", context->getText());
                 }
                 const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
                 helpers.top().functionBuilder.pop_back();
@@ -33428,16 +33428,16 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
                 helpers.top().functionBuilder.pop_back();
                 const auto lon = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
                 helpers.top().functionBuilder.pop_back();
-                helpers.top().windowAggs.push_back(TemporalStartTimestampAggregationLogicalFunction::create(lon, lat, ts));
+                helpers.top().windowAggs.push_back(TemporalStartTimestamptzAggregationLogicalFunction::create(lon, lat, ts));
             }
-            /* END CODEGEN AGGREGATION GLUE: TEMPORAL_START_TIMESTAMP (funcName chain) */
+            /* END CODEGEN AGGREGATION GLUE: TEMPORAL_START_TIMESTAMPTZ (funcName chain) */
 
-            /* BEGIN CODEGEN AGGREGATION GLUE: TEMPORAL_END_TIMESTAMP (funcName chain) */
-            else if (funcName == "TEMPORAL_END_TIMESTAMP")
+            /* BEGIN CODEGEN AGGREGATION GLUE: TEMPORAL_END_TIMESTAMPTZ (funcName chain) */
+            else if (funcName == "TEMPORAL_END_TIMESTAMPTZ")
             {
                 if (helpers.top().functionBuilder.size() < 3)
                 {
-                    throw InvalidQuerySyntax("TEMPORAL_END_TIMESTAMP requires three arguments at {}", context->getText());
+                    throw InvalidQuerySyntax("TEMPORAL_END_TIMESTAMPTZ requires three arguments at {}", context->getText());
                 }
                 const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
                 helpers.top().functionBuilder.pop_back();
@@ -33445,9 +33445,9 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
                 helpers.top().functionBuilder.pop_back();
                 const auto lon = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
                 helpers.top().functionBuilder.pop_back();
-                helpers.top().windowAggs.push_back(TemporalEndTimestampAggregationLogicalFunction::create(lon, lat, ts));
+                helpers.top().windowAggs.push_back(TemporalEndTimestamptzAggregationLogicalFunction::create(lon, lat, ts));
             }
-            /* END CODEGEN AGGREGATION GLUE: TEMPORAL_END_TIMESTAMP (funcName chain) */
+            /* END CODEGEN AGGREGATION GLUE: TEMPORAL_END_TIMESTAMPTZ (funcName chain) */
 
             /* BEGIN CODEGEN AGGREGATION GLUE: TEMPORAL_LOWER_INC (funcName chain) */
             else if (funcName == "TEMPORAL_LOWER_INC")
@@ -33483,12 +33483,12 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             }
             /* END CODEGEN AGGREGATION GLUE: TEMPORAL_UPPER_INC (funcName chain) */
 
-            /* BEGIN CODEGEN AGGREGATION GLUE: TEMPORAL_TPOINT_IS_SIMPLE (funcName chain) */
-            else if (funcName == "TEMPORAL_TPOINT_IS_SIMPLE")
+            /* BEGIN CODEGEN AGGREGATION GLUE: TPOINT_IS_SIMPLE (funcName chain) */
+            else if (funcName == "TPOINT_IS_SIMPLE")
             {
                 if (helpers.top().functionBuilder.size() < 3)
                 {
-                    throw InvalidQuerySyntax("TEMPORAL_TPOINT_IS_SIMPLE requires three arguments at {}", context->getText());
+                    throw InvalidQuerySyntax("TPOINT_IS_SIMPLE requires three arguments at {}", context->getText());
                 }
                 const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
                 helpers.top().functionBuilder.pop_back();
@@ -33496,15 +33496,15 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
                 helpers.top().functionBuilder.pop_back();
                 const auto lon = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
                 helpers.top().functionBuilder.pop_back();
-                helpers.top().windowAggs.push_back(TemporalTPointIsSimpleAggregationLogicalFunction::create(lon, lat, ts));
+                helpers.top().windowAggs.push_back(TpointIsSimpleAggregationLogicalFunction::create(lon, lat, ts));
             }
-            /* END CODEGEN AGGREGATION GLUE: TEMPORAL_TPOINT_IS_SIMPLE (funcName chain) */
-            /* BEGIN CODEGEN AGGREGATION GLUE: TSPATIAL_EXTENT (funcName chain) */
-            else if (funcName == "TSPATIAL_EXTENT")
+            /* END CODEGEN AGGREGATION GLUE: TPOINT_IS_SIMPLE (funcName chain) */
+            /* BEGIN CODEGEN AGGREGATION GLUE: TSPATIAL_EXTENT_TRANSFN (funcName chain) */
+            else if (funcName == "TSPATIAL_EXTENT_TRANSFN")
             {
                 if (helpers.top().functionBuilder.size() < 3)
                 {
-                    throw InvalidQuerySyntax("TSPATIAL_EXTENT requires three arguments at {}", context->getText());
+                    throw InvalidQuerySyntax("TSPATIAL_EXTENT_TRANSFN requires three arguments at {}", context->getText());
                 }
                 const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
                 helpers.top().functionBuilder.pop_back();
@@ -33512,148 +33512,148 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
                 helpers.top().functionBuilder.pop_back();
                 const auto lon = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
                 helpers.top().functionBuilder.pop_back();
-                helpers.top().windowAggs.push_back(TspatialExtentAggregationLogicalFunction::create(lon, lat, ts));
+                helpers.top().windowAggs.push_back(TspatialExtentTransfnAggregationLogicalFunction::create(lon, lat, ts));
             }
-            /* END CODEGEN AGGREGATION GLUE: TSPATIAL_EXTENT (funcName chain) */
+            /* END CODEGEN AGGREGATION GLUE: TSPATIAL_EXTENT_TRANSFN (funcName chain) */
 
-            /* BEGIN CODEGEN AGGREGATION GLUE: TNUMBER_EXTENT (funcName chain) */
-            else if (funcName == "TNUMBER_EXTENT")
+            /* BEGIN CODEGEN AGGREGATION GLUE: TNUMBER_EXTENT_TRANSFN (funcName chain) */
+            else if (funcName == "TNUMBER_EXTENT_TRANSFN")
             {
                 if (helpers.top().functionBuilder.size() < 2)
                 {
-                    throw InvalidQuerySyntax("TNUMBER_EXTENT requires two arguments at {}", context->getText());
+                    throw InvalidQuerySyntax("TNUMBER_EXTENT_TRANSFN requires two arguments at {}", context->getText());
                 }
                 const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
                 helpers.top().functionBuilder.pop_back();
                 const auto value = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
                 helpers.top().functionBuilder.pop_back();
-                helpers.top().windowAggs.push_back(TnumberExtentAggregationLogicalFunction::create(value, ts));
+                helpers.top().windowAggs.push_back(TnumberExtentTransfnAggregationLogicalFunction::create(value, ts));
             }
-            /* END CODEGEN AGGREGATION GLUE: TNUMBER_EXTENT (funcName chain) */
-            /* BEGIN CODEGEN AGGREGATION GLUE: FLOAT_EXTENT (funcName chain) */
-            else if (funcName == "FLOAT_EXTENT")
+            /* END CODEGEN AGGREGATION GLUE: TNUMBER_EXTENT_TRANSFN (funcName chain) */
+            /* BEGIN CODEGEN AGGREGATION GLUE: FLOAT_EXTENT_TRANSFN (funcName chain) */
+            else if (funcName == "FLOAT_EXTENT_TRANSFN")
             {
                 if (helpers.top().functionBuilder.size() < 2)
                 {
-                    throw InvalidQuerySyntax("FLOAT_EXTENT requires two arguments at {}", context->getText());
+                    throw InvalidQuerySyntax("FLOAT_EXTENT_TRANSFN requires two arguments at {}", context->getText());
                 }
                 const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
                 helpers.top().functionBuilder.pop_back();
                 const auto value = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
                 helpers.top().functionBuilder.pop_back();
-                helpers.top().windowAggs.push_back(FloatExtentAggregationLogicalFunction::create(value, ts));
+                helpers.top().windowAggs.push_back(FloatExtentTransfnAggregationLogicalFunction::create(value, ts));
             }
-            /* END CODEGEN AGGREGATION GLUE: FLOAT_EXTENT (funcName chain) */
+            /* END CODEGEN AGGREGATION GLUE: FLOAT_EXTENT_TRANSFN (funcName chain) */
 
-            /* BEGIN CODEGEN AGGREGATION GLUE: INT_EXTENT (funcName chain) */
-            else if (funcName == "INT_EXTENT")
+            /* BEGIN CODEGEN AGGREGATION GLUE: INT_EXTENT_TRANSFN (funcName chain) */
+            else if (funcName == "INT_EXTENT_TRANSFN")
             {
                 if (helpers.top().functionBuilder.size() < 2)
                 {
-                    throw InvalidQuerySyntax("INT_EXTENT requires two arguments at {}", context->getText());
+                    throw InvalidQuerySyntax("INT_EXTENT_TRANSFN requires two arguments at {}", context->getText());
                 }
                 const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
                 helpers.top().functionBuilder.pop_back();
                 const auto value = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
                 helpers.top().functionBuilder.pop_back();
-                helpers.top().windowAggs.push_back(IntExtentAggregationLogicalFunction::create(value, ts));
+                helpers.top().windowAggs.push_back(IntExtentTransfnAggregationLogicalFunction::create(value, ts));
             }
-            /* END CODEGEN AGGREGATION GLUE: INT_EXTENT (funcName chain) */
+            /* END CODEGEN AGGREGATION GLUE: INT_EXTENT_TRANSFN (funcName chain) */
 
-            /* BEGIN CODEGEN AGGREGATION GLUE: BIGINT_EXTENT (funcName chain) */
-            else if (funcName == "BIGINT_EXTENT")
+            /* BEGIN CODEGEN AGGREGATION GLUE: BIGINT_EXTENT_TRANSFN (funcName chain) */
+            else if (funcName == "BIGINT_EXTENT_TRANSFN")
             {
                 if (helpers.top().functionBuilder.size() < 2)
                 {
-                    throw InvalidQuerySyntax("BIGINT_EXTENT requires two arguments at {}", context->getText());
+                    throw InvalidQuerySyntax("BIGINT_EXTENT_TRANSFN requires two arguments at {}", context->getText());
                 }
                 const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
                 helpers.top().functionBuilder.pop_back();
                 const auto value = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
                 helpers.top().functionBuilder.pop_back();
-                helpers.top().windowAggs.push_back(BigintExtentAggregationLogicalFunction::create(value, ts));
+                helpers.top().windowAggs.push_back(BigintExtentTransfnAggregationLogicalFunction::create(value, ts));
             }
-            /* END CODEGEN AGGREGATION GLUE: BIGINT_EXTENT (funcName chain) */
+            /* END CODEGEN AGGREGATION GLUE: BIGINT_EXTENT_TRANSFN (funcName chain) */
 
-            /* BEGIN CODEGEN AGGREGATION GLUE: TIMESTAMPTZ_EXTENT (funcName chain) */
-            else if (funcName == "TIMESTAMPTZ_EXTENT")
+            /* BEGIN CODEGEN AGGREGATION GLUE: TIMESTAMPTZ_EXTENT_TRANSFN (funcName chain) */
+            else if (funcName == "TIMESTAMPTZ_EXTENT_TRANSFN")
             {
                 if (helpers.top().functionBuilder.size() < 2)
                 {
-                    throw InvalidQuerySyntax("TIMESTAMPTZ_EXTENT requires two arguments at {}", context->getText());
+                    throw InvalidQuerySyntax("TIMESTAMPTZ_EXTENT_TRANSFN requires two arguments at {}", context->getText());
                 }
                 const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
                 helpers.top().functionBuilder.pop_back();
                 const auto value = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
                 helpers.top().functionBuilder.pop_back();
-                helpers.top().windowAggs.push_back(TimestamptzExtentAggregationLogicalFunction::create(value, ts));
+                helpers.top().windowAggs.push_back(TimestamptzExtentTransfnAggregationLogicalFunction::create(value, ts));
             }
-            /* END CODEGEN AGGREGATION GLUE: TIMESTAMPTZ_EXTENT (funcName chain) */
-            /* BEGIN CODEGEN AGGREGATION GLUE: FLOAT_UNION (funcName chain) */
-            else if (funcName == "FLOAT_UNION")
+            /* END CODEGEN AGGREGATION GLUE: TIMESTAMPTZ_EXTENT_TRANSFN (funcName chain) */
+            /* BEGIN CODEGEN AGGREGATION GLUE: FLOAT_UNION_TRANSFN (funcName chain) */
+            else if (funcName == "FLOAT_UNION_TRANSFN")
             {
                 if (helpers.top().functionBuilder.size() < 2)
                 {
-                    throw InvalidQuerySyntax("FLOAT_UNION requires two arguments at {}", context->getText());
+                    throw InvalidQuerySyntax("FLOAT_UNION_TRANSFN requires two arguments at {}", context->getText());
                 }
                 const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
                 helpers.top().functionBuilder.pop_back();
                 const auto value = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
                 helpers.top().functionBuilder.pop_back();
-                helpers.top().windowAggs.push_back(FloatUnionAggregationLogicalFunction::create(value, ts));
+                helpers.top().windowAggs.push_back(FloatUnionTransfnAggregationLogicalFunction::create(value, ts));
             }
-            /* END CODEGEN AGGREGATION GLUE: FLOAT_UNION (funcName chain) */
+            /* END CODEGEN AGGREGATION GLUE: FLOAT_UNION_TRANSFN (funcName chain) */
 
-            /* BEGIN CODEGEN AGGREGATION GLUE: INT_UNION (funcName chain) */
-            else if (funcName == "INT_UNION")
+            /* BEGIN CODEGEN AGGREGATION GLUE: INT_UNION_TRANSFN (funcName chain) */
+            else if (funcName == "INT_UNION_TRANSFN")
             {
                 if (helpers.top().functionBuilder.size() < 2)
                 {
-                    throw InvalidQuerySyntax("INT_UNION requires two arguments at {}", context->getText());
+                    throw InvalidQuerySyntax("INT_UNION_TRANSFN requires two arguments at {}", context->getText());
                 }
                 const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
                 helpers.top().functionBuilder.pop_back();
                 const auto value = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
                 helpers.top().functionBuilder.pop_back();
-                helpers.top().windowAggs.push_back(IntUnionAggregationLogicalFunction::create(value, ts));
+                helpers.top().windowAggs.push_back(IntUnionTransfnAggregationLogicalFunction::create(value, ts));
             }
-            /* END CODEGEN AGGREGATION GLUE: INT_UNION (funcName chain) */
+            /* END CODEGEN AGGREGATION GLUE: INT_UNION_TRANSFN (funcName chain) */
 
-            /* BEGIN CODEGEN AGGREGATION GLUE: BIGINT_UNION (funcName chain) */
-            else if (funcName == "BIGINT_UNION")
+            /* BEGIN CODEGEN AGGREGATION GLUE: BIGINT_UNION_TRANSFN (funcName chain) */
+            else if (funcName == "BIGINT_UNION_TRANSFN")
             {
                 if (helpers.top().functionBuilder.size() < 2)
                 {
-                    throw InvalidQuerySyntax("BIGINT_UNION requires two arguments at {}", context->getText());
+                    throw InvalidQuerySyntax("BIGINT_UNION_TRANSFN requires two arguments at {}", context->getText());
                 }
                 const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
                 helpers.top().functionBuilder.pop_back();
                 const auto value = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
                 helpers.top().functionBuilder.pop_back();
-                helpers.top().windowAggs.push_back(BigintUnionAggregationLogicalFunction::create(value, ts));
+                helpers.top().windowAggs.push_back(BigintUnionTransfnAggregationLogicalFunction::create(value, ts));
             }
-            /* END CODEGEN AGGREGATION GLUE: BIGINT_UNION (funcName chain) */
+            /* END CODEGEN AGGREGATION GLUE: BIGINT_UNION_TRANSFN (funcName chain) */
 
-            /* BEGIN CODEGEN AGGREGATION GLUE: TIMESTAMPTZ_UNION (funcName chain) */
-            else if (funcName == "TIMESTAMPTZ_UNION")
+            /* BEGIN CODEGEN AGGREGATION GLUE: TIMESTAMPTZ_UNION_TRANSFN (funcName chain) */
+            else if (funcName == "TIMESTAMPTZ_UNION_TRANSFN")
             {
                 if (helpers.top().functionBuilder.size() < 2)
                 {
-                    throw InvalidQuerySyntax("TIMESTAMPTZ_UNION requires two arguments at {}", context->getText());
+                    throw InvalidQuerySyntax("TIMESTAMPTZ_UNION_TRANSFN requires two arguments at {}", context->getText());
                 }
                 const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
                 helpers.top().functionBuilder.pop_back();
                 const auto value = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
                 helpers.top().functionBuilder.pop_back();
-                helpers.top().windowAggs.push_back(TimestamptzUnionAggregationLogicalFunction::create(value, ts));
+                helpers.top().windowAggs.push_back(TimestamptzUnionTransfnAggregationLogicalFunction::create(value, ts));
             }
-            /* END CODEGEN AGGREGATION GLUE: TIMESTAMPTZ_UNION (funcName chain) */
-            /* BEGIN CODEGEN AGGREGATION GLUE: TRAJECTORY_WKB (funcName chain) */
-            else if (funcName == "TRAJECTORY_WKB")
+            /* END CODEGEN AGGREGATION GLUE: TIMESTAMPTZ_UNION_TRANSFN (funcName chain) */
+            /* BEGIN CODEGEN AGGREGATION GLUE: TPOINT_TRAJECTORY (funcName chain) */
+            else if (funcName == "TPOINT_TRAJECTORY")
             {
                 if (helpers.top().functionBuilder.size() < 3)
                 {
-                    throw InvalidQuerySyntax("TRAJECTORY_WKB requires three arguments at {}", context->getText());
+                    throw InvalidQuerySyntax("TPOINT_TRAJECTORY requires three arguments at {}", context->getText());
                 }
                 const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
                 helpers.top().functionBuilder.pop_back();
@@ -33661,9 +33661,9 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
                 helpers.top().functionBuilder.pop_back();
                 const auto lon = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
                 helpers.top().functionBuilder.pop_back();
-                helpers.top().windowAggs.push_back(TrajectoryWkbAggregationLogicalFunction::create(lon, lat, ts));
+                helpers.top().windowAggs.push_back(TpointTrajectoryAggregationLogicalFunction::create(lon, lat, ts));
             }
-            /* END CODEGEN AGGREGATION GLUE: TRAJECTORY_WKB (funcName chain) */
+            /* END CODEGEN AGGREGATION GLUE: TPOINT_TRAJECTORY (funcName chain) */
             /* BEGIN CODEGEN AGGREGATION GLUE: TLENGTH_EXP (funcName chain) */
             else if (funcName == "TLENGTH_EXP")
             {
@@ -33680,12 +33680,12 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
                 helpers.top().windowAggs.push_back(TLengthExpAggregationLogicalFunction::create(lon, lat, ts));
             }
             /* END CODEGEN AGGREGATION GLUE: TLENGTH_EXP (funcName chain) */
-            /* BEGIN CODEGEN AGGREGATION GLUE: TGEO_CENTROID_EXP (funcName chain) */
-            else if (funcName == "TGEO_CENTROID_EXP")
+            /* BEGIN CODEGEN AGGREGATION GLUE: TGEO_CENTROID (funcName chain) */
+            else if (funcName == "TGEO_CENTROID")
             {
                 if (helpers.top().functionBuilder.size() < 3)
                 {
-                    throw InvalidQuerySyntax("TGEO_CENTROID_EXP requires three arguments at {}", context->getText());
+                    throw InvalidQuerySyntax("TGEO_CENTROID requires three arguments at {}", context->getText());
                 }
                 const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
                 helpers.top().functionBuilder.pop_back();
@@ -33693,16 +33693,16 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
                 helpers.top().functionBuilder.pop_back();
                 const auto lon = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
                 helpers.top().functionBuilder.pop_back();
-                helpers.top().windowAggs.push_back(TgeoCentroidExpAggregationLogicalFunction::create(lon, lat, ts));
+                helpers.top().windowAggs.push_back(TgeoCentroidAggregationLogicalFunction::create(lon, lat, ts));
             }
-            /* END CODEGEN AGGREGATION GLUE: TGEO_CENTROID_EXP (funcName chain) */
+            /* END CODEGEN AGGREGATION GLUE: TGEO_CENTROID (funcName chain) */
 
-            /* BEGIN CODEGEN AGGREGATION GLUE: TPOINT_AZIMUTH_EXP (funcName chain) */
-            else if (funcName == "TPOINT_AZIMUTH_EXP")
+            /* BEGIN CODEGEN AGGREGATION GLUE: TPOINT_AZIMUTH (funcName chain) */
+            else if (funcName == "TPOINT_AZIMUTH")
             {
                 if (helpers.top().functionBuilder.size() < 3)
                 {
-                    throw InvalidQuerySyntax("TPOINT_AZIMUTH_EXP requires three arguments at {}", context->getText());
+                    throw InvalidQuerySyntax("TPOINT_AZIMUTH requires three arguments at {}", context->getText());
                 }
                 const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
                 helpers.top().functionBuilder.pop_back();
@@ -33710,16 +33710,16 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
                 helpers.top().functionBuilder.pop_back();
                 const auto lon = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
                 helpers.top().functionBuilder.pop_back();
-                helpers.top().windowAggs.push_back(TpointAzimuthExpAggregationLogicalFunction::create(lon, lat, ts));
+                helpers.top().windowAggs.push_back(TpointAzimuthAggregationLogicalFunction::create(lon, lat, ts));
             }
-            /* END CODEGEN AGGREGATION GLUE: TPOINT_AZIMUTH_EXP (funcName chain) */
+            /* END CODEGEN AGGREGATION GLUE: TPOINT_AZIMUTH (funcName chain) */
 
-            /* BEGIN CODEGEN AGGREGATION GLUE: TPOINT_ANGULAR_DIFFERENCE_EXP (funcName chain) */
-            else if (funcName == "TPOINT_ANGULAR_DIFFERENCE_EXP")
+            /* BEGIN CODEGEN AGGREGATION GLUE: TPOINT_ANGULAR_DIFFERENCE (funcName chain) */
+            else if (funcName == "TPOINT_ANGULAR_DIFFERENCE")
             {
                 if (helpers.top().functionBuilder.size() < 3)
                 {
-                    throw InvalidQuerySyntax("TPOINT_ANGULAR_DIFFERENCE_EXP requires three arguments at {}", context->getText());
+                    throw InvalidQuerySyntax("TPOINT_ANGULAR_DIFFERENCE requires three arguments at {}", context->getText());
                 }
                 const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
                 helpers.top().functionBuilder.pop_back();
@@ -33727,16 +33727,16 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
                 helpers.top().functionBuilder.pop_back();
                 const auto lon = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
                 helpers.top().functionBuilder.pop_back();
-                helpers.top().windowAggs.push_back(TpointAngularDifferenceExpAggregationLogicalFunction::create(lon, lat, ts));
+                helpers.top().windowAggs.push_back(TpointAngularDifferenceAggregationLogicalFunction::create(lon, lat, ts));
             }
-            /* END CODEGEN AGGREGATION GLUE: TPOINT_ANGULAR_DIFFERENCE_EXP (funcName chain) */
+            /* END CODEGEN AGGREGATION GLUE: TPOINT_ANGULAR_DIFFERENCE (funcName chain) */
 
-            /* BEGIN CODEGEN AGGREGATION GLUE: TGEOMPOINT_TO_TGEOMETRY_EXP (funcName chain) */
-            else if (funcName == "TGEOMPOINT_TO_TGEOMETRY_EXP")
+            /* BEGIN CODEGEN AGGREGATION GLUE: TGEOMPOINT_TO_TGEOMETRY (funcName chain) */
+            else if (funcName == "TGEOMPOINT_TO_TGEOMETRY")
             {
                 if (helpers.top().functionBuilder.size() < 3)
                 {
-                    throw InvalidQuerySyntax("TGEOMPOINT_TO_TGEOMETRY_EXP requires three arguments at {}", context->getText());
+                    throw InvalidQuerySyntax("TGEOMPOINT_TO_TGEOMETRY requires three arguments at {}", context->getText());
                 }
                 const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
                 helpers.top().functionBuilder.pop_back();
@@ -33744,16 +33744,16 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
                 helpers.top().functionBuilder.pop_back();
                 const auto lon = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
                 helpers.top().functionBuilder.pop_back();
-                helpers.top().windowAggs.push_back(TgeompointToTgeometryExpAggregationLogicalFunction::create(lon, lat, ts));
+                helpers.top().windowAggs.push_back(TgeompointToTgeometryAggregationLogicalFunction::create(lon, lat, ts));
             }
-            /* END CODEGEN AGGREGATION GLUE: TGEOMPOINT_TO_TGEOMETRY_EXP (funcName chain) */
+            /* END CODEGEN AGGREGATION GLUE: TGEOMPOINT_TO_TGEOMETRY (funcName chain) */
 
-            /* BEGIN CODEGEN AGGREGATION GLUE: TEMPORAL_COPY_EXP (funcName chain) */
-            else if (funcName == "TEMPORAL_COPY_EXP")
+            /* BEGIN CODEGEN AGGREGATION GLUE: TEMPORAL_COPY (funcName chain) */
+            else if (funcName == "TEMPORAL_COPY")
             {
                 if (helpers.top().functionBuilder.size() < 3)
                 {
-                    throw InvalidQuerySyntax("TEMPORAL_COPY_EXP requires three arguments at {}", context->getText());
+                    throw InvalidQuerySyntax("TEMPORAL_COPY requires three arguments at {}", context->getText());
                 }
                 const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
                 helpers.top().functionBuilder.pop_back();
@@ -33761,134 +33761,134 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
                 helpers.top().functionBuilder.pop_back();
                 const auto lon = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
                 helpers.top().functionBuilder.pop_back();
-                helpers.top().windowAggs.push_back(TemporalCopyExpAggregationLogicalFunction::create(lon, lat, ts));
+                helpers.top().windowAggs.push_back(TemporalCopyAggregationLogicalFunction::create(lon, lat, ts));
             }
-            /* END CODEGEN AGGREGATION GLUE: TEMPORAL_COPY_EXP (funcName chain) */
-            /* BEGIN CODEGEN AGGREGATION GLUE: TNUMBER_ABS_EXP (funcName chain) */
-            else if (funcName == "TNUMBER_ABS_EXP")
+            /* END CODEGEN AGGREGATION GLUE: TEMPORAL_COPY (funcName chain) */
+            /* BEGIN CODEGEN AGGREGATION GLUE: TNUMBER_ABS (funcName chain) */
+            else if (funcName == "TNUMBER_ABS")
             {
                 if (helpers.top().functionBuilder.size() < 2)
                 {
-                    throw InvalidQuerySyntax("TNUMBER_ABS_EXP requires two arguments at {}", context->getText());
+                    throw InvalidQuerySyntax("TNUMBER_ABS requires two arguments at {}", context->getText());
                 }
                 const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
                 helpers.top().functionBuilder.pop_back();
                 const auto value = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
                 helpers.top().functionBuilder.pop_back();
-                helpers.top().windowAggs.push_back(TnumberAbsExpAggregationLogicalFunction::create(value, ts));
+                helpers.top().windowAggs.push_back(TnumberAbsAggregationLogicalFunction::create(value, ts));
             }
-            /* END CODEGEN AGGREGATION GLUE: TNUMBER_ABS_EXP (funcName chain) */
+            /* END CODEGEN AGGREGATION GLUE: TNUMBER_ABS (funcName chain) */
 
-            /* BEGIN CODEGEN AGGREGATION GLUE: TNUMBER_DELTA_VALUE_EXP (funcName chain) */
-            else if (funcName == "TNUMBER_DELTA_VALUE_EXP")
+            /* BEGIN CODEGEN AGGREGATION GLUE: TNUMBER_DELTA_VALUE (funcName chain) */
+            else if (funcName == "TNUMBER_DELTA_VALUE")
             {
                 if (helpers.top().functionBuilder.size() < 2)
                 {
-                    throw InvalidQuerySyntax("TNUMBER_DELTA_VALUE_EXP requires two arguments at {}", context->getText());
+                    throw InvalidQuerySyntax("TNUMBER_DELTA_VALUE requires two arguments at {}", context->getText());
                 }
                 const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
                 helpers.top().functionBuilder.pop_back();
                 const auto value = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
                 helpers.top().functionBuilder.pop_back();
-                helpers.top().windowAggs.push_back(TnumberDeltaValueExpAggregationLogicalFunction::create(value, ts));
+                helpers.top().windowAggs.push_back(TnumberDeltaValueAggregationLogicalFunction::create(value, ts));
             }
-            /* END CODEGEN AGGREGATION GLUE: TNUMBER_DELTA_VALUE_EXP (funcName chain) */
+            /* END CODEGEN AGGREGATION GLUE: TNUMBER_DELTA_VALUE (funcName chain) */
 
-            /* BEGIN CODEGEN AGGREGATION GLUE: TNUMBER_ANGULAR_DIFFERENCE_EXP (funcName chain) */
-            else if (funcName == "TNUMBER_ANGULAR_DIFFERENCE_EXP")
+            /* BEGIN CODEGEN AGGREGATION GLUE: TNUMBER_ANGULAR_DIFFERENCE (funcName chain) */
+            else if (funcName == "TNUMBER_ANGULAR_DIFFERENCE")
             {
                 if (helpers.top().functionBuilder.size() < 2)
                 {
-                    throw InvalidQuerySyntax("TNUMBER_ANGULAR_DIFFERENCE_EXP requires two arguments at {}", context->getText());
+                    throw InvalidQuerySyntax("TNUMBER_ANGULAR_DIFFERENCE requires two arguments at {}", context->getText());
                 }
                 const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
                 helpers.top().functionBuilder.pop_back();
                 const auto value = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
                 helpers.top().functionBuilder.pop_back();
-                helpers.top().windowAggs.push_back(TnumberAngularDifferenceExpAggregationLogicalFunction::create(value, ts));
+                helpers.top().windowAggs.push_back(TnumberAngularDifferenceAggregationLogicalFunction::create(value, ts));
             }
-            /* END CODEGEN AGGREGATION GLUE: TNUMBER_ANGULAR_DIFFERENCE_EXP (funcName chain) */
+            /* END CODEGEN AGGREGATION GLUE: TNUMBER_ANGULAR_DIFFERENCE (funcName chain) */
 
-            /* BEGIN CODEGEN AGGREGATION GLUE: TEMPORAL_DERIVATIVE_EXP (funcName chain) */
-            else if (funcName == "TEMPORAL_DERIVATIVE_EXP")
+            /* BEGIN CODEGEN AGGREGATION GLUE: TEMPORAL_DERIVATIVE (funcName chain) */
+            else if (funcName == "TEMPORAL_DERIVATIVE")
             {
                 if (helpers.top().functionBuilder.size() < 2)
                 {
-                    throw InvalidQuerySyntax("TEMPORAL_DERIVATIVE_EXP requires two arguments at {}", context->getText());
+                    throw InvalidQuerySyntax("TEMPORAL_DERIVATIVE requires two arguments at {}", context->getText());
                 }
                 const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
                 helpers.top().functionBuilder.pop_back();
                 const auto value = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
                 helpers.top().functionBuilder.pop_back();
-                helpers.top().windowAggs.push_back(TemporalDerivativeExpAggregationLogicalFunction::create(value, ts));
+                helpers.top().windowAggs.push_back(TemporalDerivativeAggregationLogicalFunction::create(value, ts));
             }
-            /* END CODEGEN AGGREGATION GLUE: TEMPORAL_DERIVATIVE_EXP (funcName chain) */
+            /* END CODEGEN AGGREGATION GLUE: TEMPORAL_DERIVATIVE (funcName chain) */
 
-            /* BEGIN CODEGEN AGGREGATION GLUE: TEMPORAL_AT_MAX_EXP (funcName chain) */
-            else if (funcName == "TEMPORAL_AT_MAX_EXP")
+            /* BEGIN CODEGEN AGGREGATION GLUE: TEMPORAL_AT_MAX (funcName chain) */
+            else if (funcName == "TEMPORAL_AT_MAX")
             {
                 if (helpers.top().functionBuilder.size() < 2)
                 {
-                    throw InvalidQuerySyntax("TEMPORAL_AT_MAX_EXP requires two arguments at {}", context->getText());
+                    throw InvalidQuerySyntax("TEMPORAL_AT_MAX requires two arguments at {}", context->getText());
                 }
                 const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
                 helpers.top().functionBuilder.pop_back();
                 const auto value = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
                 helpers.top().functionBuilder.pop_back();
-                helpers.top().windowAggs.push_back(TemporalAtMaxExpAggregationLogicalFunction::create(value, ts));
+                helpers.top().windowAggs.push_back(TemporalAtMaxAggregationLogicalFunction::create(value, ts));
             }
-            /* END CODEGEN AGGREGATION GLUE: TEMPORAL_AT_MAX_EXP (funcName chain) */
+            /* END CODEGEN AGGREGATION GLUE: TEMPORAL_AT_MAX (funcName chain) */
 
-            /* BEGIN CODEGEN AGGREGATION GLUE: TEMPORAL_AT_MIN_EXP (funcName chain) */
-            else if (funcName == "TEMPORAL_AT_MIN_EXP")
+            /* BEGIN CODEGEN AGGREGATION GLUE: TEMPORAL_AT_MIN (funcName chain) */
+            else if (funcName == "TEMPORAL_AT_MIN")
             {
                 if (helpers.top().functionBuilder.size() < 2)
                 {
-                    throw InvalidQuerySyntax("TEMPORAL_AT_MIN_EXP requires two arguments at {}", context->getText());
+                    throw InvalidQuerySyntax("TEMPORAL_AT_MIN requires two arguments at {}", context->getText());
                 }
                 const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
                 helpers.top().functionBuilder.pop_back();
                 const auto value = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
                 helpers.top().functionBuilder.pop_back();
-                helpers.top().windowAggs.push_back(TemporalAtMinExpAggregationLogicalFunction::create(value, ts));
+                helpers.top().windowAggs.push_back(TemporalAtMinAggregationLogicalFunction::create(value, ts));
             }
-            /* END CODEGEN AGGREGATION GLUE: TEMPORAL_AT_MIN_EXP (funcName chain) */
+            /* END CODEGEN AGGREGATION GLUE: TEMPORAL_AT_MIN (funcName chain) */
 
-            /* BEGIN CODEGEN AGGREGATION GLUE: TEMPORAL_MINUS_MAX_EXP (funcName chain) */
-            else if (funcName == "TEMPORAL_MINUS_MAX_EXP")
+            /* BEGIN CODEGEN AGGREGATION GLUE: TEMPORAL_MINUS_MAX (funcName chain) */
+            else if (funcName == "TEMPORAL_MINUS_MAX")
             {
                 if (helpers.top().functionBuilder.size() < 2)
                 {
-                    throw InvalidQuerySyntax("TEMPORAL_MINUS_MAX_EXP requires two arguments at {}", context->getText());
+                    throw InvalidQuerySyntax("TEMPORAL_MINUS_MAX requires two arguments at {}", context->getText());
                 }
                 const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
                 helpers.top().functionBuilder.pop_back();
                 const auto value = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
                 helpers.top().functionBuilder.pop_back();
-                helpers.top().windowAggs.push_back(TemporalMinusMaxExpAggregationLogicalFunction::create(value, ts));
+                helpers.top().windowAggs.push_back(TemporalMinusMaxAggregationLogicalFunction::create(value, ts));
             }
-            /* END CODEGEN AGGREGATION GLUE: TEMPORAL_MINUS_MAX_EXP (funcName chain) */
+            /* END CODEGEN AGGREGATION GLUE: TEMPORAL_MINUS_MAX (funcName chain) */
 
-            /* BEGIN CODEGEN AGGREGATION GLUE: TEMPORAL_MINUS_MIN_EXP (funcName chain) */
-            else if (funcName == "TEMPORAL_MINUS_MIN_EXP")
+            /* BEGIN CODEGEN AGGREGATION GLUE: TEMPORAL_MINUS_MIN (funcName chain) */
+            else if (funcName == "TEMPORAL_MINUS_MIN")
             {
                 if (helpers.top().functionBuilder.size() < 2)
                 {
-                    throw InvalidQuerySyntax("TEMPORAL_MINUS_MIN_EXP requires two arguments at {}", context->getText());
+                    throw InvalidQuerySyntax("TEMPORAL_MINUS_MIN requires two arguments at {}", context->getText());
                 }
                 const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
                 helpers.top().functionBuilder.pop_back();
                 const auto value = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
                 helpers.top().functionBuilder.pop_back();
-                helpers.top().windowAggs.push_back(TemporalMinusMinExpAggregationLogicalFunction::create(value, ts));
+                helpers.top().windowAggs.push_back(TemporalMinusMinAggregationLogicalFunction::create(value, ts));
             }
-            /* END CODEGEN AGGREGATION GLUE: TEMPORAL_MINUS_MIN_EXP (funcName chain) */
-            /* BEGIN CODEGEN AGGREGATION GLUE: TNPOINT_CUMULATIVE_LENGTH_EXP (funcName chain) */
-            else if (funcName == "TNPOINT_CUMULATIVE_LENGTH_EXP")
+            /* END CODEGEN AGGREGATION GLUE: TEMPORAL_MINUS_MIN (funcName chain) */
+            /* BEGIN CODEGEN AGGREGATION GLUE: TNPOINT_CUMULATIVE_LENGTH (funcName chain) */
+            else if (funcName == "TNPOINT_CUMULATIVE_LENGTH")
             {
                 if (helpers.top().functionBuilder.size() < 3)
                 {
-                    throw InvalidQuerySyntax("TNPOINT_CUMULATIVE_LENGTH_EXP requires three arguments at {}", context->getText());
+                    throw InvalidQuerySyntax("TNPOINT_CUMULATIVE_LENGTH requires three arguments at {}", context->getText());
                 }
                 const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
                 helpers.top().functionBuilder.pop_back();
@@ -33896,16 +33896,16 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
                 helpers.top().functionBuilder.pop_back();
                 const auto lon = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
                 helpers.top().functionBuilder.pop_back();
-                helpers.top().windowAggs.push_back(TnpointCumulativeLengthExpAggregationLogicalFunction::create(lon, lat, ts));
+                helpers.top().windowAggs.push_back(TnpointCumulativeLengthAggregationLogicalFunction::create(lon, lat, ts));
             }
-            /* END CODEGEN AGGREGATION GLUE: TNPOINT_CUMULATIVE_LENGTH_EXP (funcName chain) */
+            /* END CODEGEN AGGREGATION GLUE: TNPOINT_CUMULATIVE_LENGTH (funcName chain) */
 
-            /* BEGIN CODEGEN AGGREGATION GLUE: TNPOINT_SPEED_EXP (funcName chain) */
-            else if (funcName == "TNPOINT_SPEED_EXP")
+            /* BEGIN CODEGEN AGGREGATION GLUE: TNPOINT_SPEED (funcName chain) */
+            else if (funcName == "TNPOINT_SPEED")
             {
                 if (helpers.top().functionBuilder.size() < 3)
                 {
-                    throw InvalidQuerySyntax("TNPOINT_SPEED_EXP requires three arguments at {}", context->getText());
+                    throw InvalidQuerySyntax("TNPOINT_SPEED requires three arguments at {}", context->getText());
                 }
                 const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
                 helpers.top().functionBuilder.pop_back();
@@ -33913,16 +33913,16 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
                 helpers.top().functionBuilder.pop_back();
                 const auto lon = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
                 helpers.top().functionBuilder.pop_back();
-                helpers.top().windowAggs.push_back(TnpointSpeedExpAggregationLogicalFunction::create(lon, lat, ts));
+                helpers.top().windowAggs.push_back(TnpointSpeedAggregationLogicalFunction::create(lon, lat, ts));
             }
-            /* END CODEGEN AGGREGATION GLUE: TNPOINT_SPEED_EXP (funcName chain) */
+            /* END CODEGEN AGGREGATION GLUE: TNPOINT_SPEED (funcName chain) */
 
-            /* BEGIN CODEGEN AGGREGATION GLUE: TNPOINT_TO_TGEOMPOINT_EXP (funcName chain) */
-            else if (funcName == "TNPOINT_TO_TGEOMPOINT_EXP")
+            /* BEGIN CODEGEN AGGREGATION GLUE: TNPOINT_TO_TGEOMPOINT (funcName chain) */
+            else if (funcName == "TNPOINT_TO_TGEOMPOINT")
             {
                 if (helpers.top().functionBuilder.size() < 3)
                 {
-                    throw InvalidQuerySyntax("TNPOINT_TO_TGEOMPOINT_EXP requires three arguments at {}", context->getText());
+                    throw InvalidQuerySyntax("TNPOINT_TO_TGEOMPOINT requires three arguments at {}", context->getText());
                 }
                 const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
                 helpers.top().functionBuilder.pop_back();
@@ -33930,15 +33930,15 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
                 helpers.top().functionBuilder.pop_back();
                 const auto lon = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
                 helpers.top().functionBuilder.pop_back();
-                helpers.top().windowAggs.push_back(TnpointToTgeompointExpAggregationLogicalFunction::create(lon, lat, ts));
+                helpers.top().windowAggs.push_back(TnpointToTgeompointAggregationLogicalFunction::create(lon, lat, ts));
             }
-            /* END CODEGEN AGGREGATION GLUE: TNPOINT_TO_TGEOMPOINT_EXP (funcName chain) */
-            /* BEGIN CODEGEN AGGREGATION GLUE: TPOINT_CUMULATIVE_LENGTH_EXP (funcName chain) */
-            else if (funcName == "TPOINT_CUMULATIVE_LENGTH_EXP")
+            /* END CODEGEN AGGREGATION GLUE: TNPOINT_TO_TGEOMPOINT (funcName chain) */
+            /* BEGIN CODEGEN AGGREGATION GLUE: TPOINT_CUMULATIVE_LENGTH (funcName chain) */
+            else if (funcName == "TPOINT_CUMULATIVE_LENGTH")
             {
                 if (helpers.top().functionBuilder.size() < 3)
                 {
-                    throw InvalidQuerySyntax("TPOINT_CUMULATIVE_LENGTH_EXP requires three arguments at {}", context->getText());
+                    throw InvalidQuerySyntax("TPOINT_CUMULATIVE_LENGTH requires three arguments at {}", context->getText());
                 }
                 const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
                 helpers.top().functionBuilder.pop_back();
@@ -33946,16 +33946,16 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
                 helpers.top().functionBuilder.pop_back();
                 const auto lon = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
                 helpers.top().functionBuilder.pop_back();
-                helpers.top().windowAggs.push_back(TpointCumulativeLengthExpAggregationLogicalFunction::create(lon, lat, ts));
+                helpers.top().windowAggs.push_back(TpointCumulativeLengthAggregationLogicalFunction::create(lon, lat, ts));
             }
-            /* END CODEGEN AGGREGATION GLUE: TPOINT_CUMULATIVE_LENGTH_EXP (funcName chain) */
+            /* END CODEGEN AGGREGATION GLUE: TPOINT_CUMULATIVE_LENGTH (funcName chain) */
 
-            /* BEGIN CODEGEN AGGREGATION GLUE: TPOINT_SPEED_EXP (funcName chain) */
-            else if (funcName == "TPOINT_SPEED_EXP")
+            /* BEGIN CODEGEN AGGREGATION GLUE: TPOINT_SPEED (funcName chain) */
+            else if (funcName == "TPOINT_SPEED")
             {
                 if (helpers.top().functionBuilder.size() < 3)
                 {
-                    throw InvalidQuerySyntax("TPOINT_SPEED_EXP requires three arguments at {}", context->getText());
+                    throw InvalidQuerySyntax("TPOINT_SPEED requires three arguments at {}", context->getText());
                 }
                 const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
                 helpers.top().functionBuilder.pop_back();
@@ -33963,16 +33963,16 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
                 helpers.top().functionBuilder.pop_back();
                 const auto lon = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
                 helpers.top().functionBuilder.pop_back();
-                helpers.top().windowAggs.push_back(TpointSpeedExpAggregationLogicalFunction::create(lon, lat, ts));
+                helpers.top().windowAggs.push_back(TpointSpeedAggregationLogicalFunction::create(lon, lat, ts));
             }
-            /* END CODEGEN AGGREGATION GLUE: TPOINT_SPEED_EXP (funcName chain) */
+            /* END CODEGEN AGGREGATION GLUE: TPOINT_SPEED (funcName chain) */
 
-            /* BEGIN CODEGEN AGGREGATION GLUE: TPOINT_GET_X_EXP (funcName chain) */
-            else if (funcName == "TPOINT_GET_X_EXP")
+            /* BEGIN CODEGEN AGGREGATION GLUE: TPOINT_GET_X (funcName chain) */
+            else if (funcName == "TPOINT_GET_X")
             {
                 if (helpers.top().functionBuilder.size() < 3)
                 {
-                    throw InvalidQuerySyntax("TPOINT_GET_X_EXP requires three arguments at {}", context->getText());
+                    throw InvalidQuerySyntax("TPOINT_GET_X requires three arguments at {}", context->getText());
                 }
                 const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
                 helpers.top().functionBuilder.pop_back();
@@ -33980,16 +33980,16 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
                 helpers.top().functionBuilder.pop_back();
                 const auto lon = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
                 helpers.top().functionBuilder.pop_back();
-                helpers.top().windowAggs.push_back(TpointGetXExpAggregationLogicalFunction::create(lon, lat, ts));
+                helpers.top().windowAggs.push_back(TpointGetXAggregationLogicalFunction::create(lon, lat, ts));
             }
-            /* END CODEGEN AGGREGATION GLUE: TPOINT_GET_X_EXP (funcName chain) */
+            /* END CODEGEN AGGREGATION GLUE: TPOINT_GET_X (funcName chain) */
 
-            /* BEGIN CODEGEN AGGREGATION GLUE: TPOINT_GET_Y_EXP (funcName chain) */
-            else if (funcName == "TPOINT_GET_Y_EXP")
+            /* BEGIN CODEGEN AGGREGATION GLUE: TPOINT_GET_Y (funcName chain) */
+            else if (funcName == "TPOINT_GET_Y")
             {
                 if (helpers.top().functionBuilder.size() < 3)
                 {
-                    throw InvalidQuerySyntax("TPOINT_GET_Y_EXP requires three arguments at {}", context->getText());
+                    throw InvalidQuerySyntax("TPOINT_GET_Y requires three arguments at {}", context->getText());
                 }
                 const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
                 helpers.top().functionBuilder.pop_back();
@@ -33997,30 +33997,30 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
                 helpers.top().functionBuilder.pop_back();
                 const auto lon = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
                 helpers.top().functionBuilder.pop_back();
-                helpers.top().windowAggs.push_back(TpointGetYExpAggregationLogicalFunction::create(lon, lat, ts));
+                helpers.top().windowAggs.push_back(TpointGetYAggregationLogicalFunction::create(lon, lat, ts));
             }
-            /* END CODEGEN AGGREGATION GLUE: TPOINT_GET_Y_EXP (funcName chain) */
+            /* END CODEGEN AGGREGATION GLUE: TPOINT_GET_Y (funcName chain) */
 
-            /* BEGIN CODEGEN AGGREGATION GLUE: TNUMBER_TREND_EXP (funcName chain) */
-            else if (funcName == "TNUMBER_TREND_EXP")
+            /* BEGIN CODEGEN AGGREGATION GLUE: TNUMBER_TREND (funcName chain) */
+            else if (funcName == "TNUMBER_TREND")
             {
                 if (helpers.top().functionBuilder.size() < 2)
                 {
-                    throw InvalidQuerySyntax("TNUMBER_TREND_EXP requires two arguments at {}", context->getText());
+                    throw InvalidQuerySyntax("TNUMBER_TREND requires two arguments at {}", context->getText());
                 }
                 const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
                 helpers.top().functionBuilder.pop_back();
                 const auto value = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
                 helpers.top().functionBuilder.pop_back();
-                helpers.top().windowAggs.push_back(TnumberTrendExpAggregationLogicalFunction::create(value, ts));
+                helpers.top().windowAggs.push_back(TnumberTrendAggregationLogicalFunction::create(value, ts));
             }
-            /* END CODEGEN AGGREGATION GLUE: TNUMBER_TREND_EXP (funcName chain) */
-            /* BEGIN CODEGEN AGGREGATION GLUE: TGEO_START_VALUE_EXP (funcName chain) */
-            else if (funcName == "TGEO_START_VALUE_EXP")
+            /* END CODEGEN AGGREGATION GLUE: TNUMBER_TREND (funcName chain) */
+            /* BEGIN CODEGEN AGGREGATION GLUE: TGEO_START_VALUE (funcName chain) */
+            else if (funcName == "TGEO_START_VALUE")
             {
                 if (helpers.top().functionBuilder.size() < 3)
                 {
-                    throw InvalidQuerySyntax("TGEO_START_VALUE_EXP requires three arguments at {}", context->getText());
+                    throw InvalidQuerySyntax("TGEO_START_VALUE requires three arguments at {}", context->getText());
                 }
                 const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
                 helpers.top().functionBuilder.pop_back();
@@ -34028,16 +34028,16 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
                 helpers.top().functionBuilder.pop_back();
                 const auto lon = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
                 helpers.top().functionBuilder.pop_back();
-                helpers.top().windowAggs.push_back(TgeoStartValueExpAggregationLogicalFunction::create(lon, lat, ts));
+                helpers.top().windowAggs.push_back(TgeoStartValueAggregationLogicalFunction::create(lon, lat, ts));
             }
-            /* END CODEGEN AGGREGATION GLUE: TGEO_START_VALUE_EXP (funcName chain) */
+            /* END CODEGEN AGGREGATION GLUE: TGEO_START_VALUE (funcName chain) */
 
-            /* BEGIN CODEGEN AGGREGATION GLUE: TGEO_END_VALUE_EXP (funcName chain) */
-            else if (funcName == "TGEO_END_VALUE_EXP")
+            /* BEGIN CODEGEN AGGREGATION GLUE: TGEO_END_VALUE (funcName chain) */
+            else if (funcName == "TGEO_END_VALUE")
             {
                 if (helpers.top().functionBuilder.size() < 3)
                 {
-                    throw InvalidQuerySyntax("TGEO_END_VALUE_EXP requires three arguments at {}", context->getText());
+                    throw InvalidQuerySyntax("TGEO_END_VALUE requires three arguments at {}", context->getText());
                 }
                 const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
                 helpers.top().functionBuilder.pop_back();
@@ -34045,16 +34045,16 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
                 helpers.top().functionBuilder.pop_back();
                 const auto lon = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
                 helpers.top().functionBuilder.pop_back();
-                helpers.top().windowAggs.push_back(TgeoEndValueExpAggregationLogicalFunction::create(lon, lat, ts));
+                helpers.top().windowAggs.push_back(TgeoEndValueAggregationLogicalFunction::create(lon, lat, ts));
             }
-            /* END CODEGEN AGGREGATION GLUE: TGEO_END_VALUE_EXP (funcName chain) */
+            /* END CODEGEN AGGREGATION GLUE: TGEO_END_VALUE (funcName chain) */
 
-            /* BEGIN CODEGEN AGGREGATION GLUE: TGEO_CONVEX_HULL_EXP (funcName chain) */
-            else if (funcName == "TGEO_CONVEX_HULL_EXP")
+            /* BEGIN CODEGEN AGGREGATION GLUE: TGEO_CONVEX_HULL (funcName chain) */
+            else if (funcName == "TGEO_CONVEX_HULL")
             {
                 if (helpers.top().functionBuilder.size() < 3)
                 {
-                    throw InvalidQuerySyntax("TGEO_CONVEX_HULL_EXP requires three arguments at {}", context->getText());
+                    throw InvalidQuerySyntax("TGEO_CONVEX_HULL requires three arguments at {}", context->getText());
                 }
                 const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
                 helpers.top().functionBuilder.pop_back();
@@ -34062,16 +34062,16 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
                 helpers.top().functionBuilder.pop_back();
                 const auto lon = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
                 helpers.top().functionBuilder.pop_back();
-                helpers.top().windowAggs.push_back(TgeoConvexHullExpAggregationLogicalFunction::create(lon, lat, ts));
+                helpers.top().windowAggs.push_back(TgeoConvexHullAggregationLogicalFunction::create(lon, lat, ts));
             }
-            /* END CODEGEN AGGREGATION GLUE: TGEO_CONVEX_HULL_EXP (funcName chain) */
+            /* END CODEGEN AGGREGATION GLUE: TGEO_CONVEX_HULL (funcName chain) */
 
-            /* BEGIN CODEGEN AGGREGATION GLUE: TPOINT_TWCENTROID_EXP (funcName chain) */
-            else if (funcName == "TPOINT_TWCENTROID_EXP")
+            /* BEGIN CODEGEN AGGREGATION GLUE: TPOINT_TWCENTROID (funcName chain) */
+            else if (funcName == "TPOINT_TWCENTROID")
             {
                 if (helpers.top().functionBuilder.size() < 3)
                 {
-                    throw InvalidQuerySyntax("TPOINT_TWCENTROID_EXP requires three arguments at {}", context->getText());
+                    throw InvalidQuerySyntax("TPOINT_TWCENTROID requires three arguments at {}", context->getText());
                 }
                 const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
                 helpers.top().functionBuilder.pop_back();
@@ -34079,9 +34079,9 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
                 helpers.top().functionBuilder.pop_back();
                 const auto lon = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
                 helpers.top().functionBuilder.pop_back();
-                helpers.top().windowAggs.push_back(TpointTwcentroidExpAggregationLogicalFunction::create(lon, lat, ts));
+                helpers.top().windowAggs.push_back(TpointTwcentroidAggregationLogicalFunction::create(lon, lat, ts));
             }
-            /* END CODEGEN AGGREGATION GLUE: TPOINT_TWCENTROID_EXP (funcName chain) */
+            /* END CODEGEN AGGREGATION GLUE: TPOINT_TWCENTROID (funcName chain) */
 
 
 

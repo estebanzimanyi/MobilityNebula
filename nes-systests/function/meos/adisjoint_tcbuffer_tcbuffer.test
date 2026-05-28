@@ -10,7 +10,7 @@ ATTACH INLINE
 
 CREATE SINK tct00_out(tct00.id UINT32, r INT32) TYPE File;
 SELECT id,
-       TEMPORAL_ADISJOINT_TCBUFFER_TCBUFFER(lonA, latA, radiusA, tsA, lonB, latB, radiusB, tsB) AS r
+       ADISJOINT_TCBUFFER_TCBUFFER(lonA, latA, radiusA, tsA, lonB, latB, radiusB, tsB) AS r
 FROM tct00
 INTO tct00_out;
 ----

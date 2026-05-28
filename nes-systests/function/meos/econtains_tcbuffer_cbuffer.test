@@ -10,7 +10,7 @@ ATTACH INLINE
 
 CREATE SINK tcbuf_cbuf_results(tcbuf_cbuf_tests.id UINT32, contains INT32) TYPE File;
 SELECT id,
-       TEMPORAL_ECONTAINS_TCBUFFER_CBUFFER(lon, lat, radius, timestamp, cbuffer_literal) AS contains
+       ECONTAINS_TCBUFFER_CBUFFER(lon, lat, radius, timestamp, cbuffer_literal) AS contains
 FROM tcbuf_cbuf_tests
 INTO tcbuf_cbuf_results;
 ----

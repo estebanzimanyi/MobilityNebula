@@ -9,7 +9,7 @@ ATTACH INLINE
 
 CREATE SINK nad_tcb_results(nad_tcb_tests.id UINT32, distance FLOAT64) TYPE File;
 SELECT id,
-       TEMPORAL_NAD_TCBUFFER_TCBUFFER(lonA, latA, radiusA, tsA, lonB, latB, radiusB, tsB) AS distance
+       NAD_TCBUFFER_TCBUFFER(lonA, latA, radiusA, tsA, lonB, latB, radiusB, tsB) AS distance
 FROM nad_tcb_tests
 INTO nad_tcb_results;
 ----

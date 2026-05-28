@@ -9,6 +9,6 @@ ATTACH INLINE
 1|1|0.9|1609459220
 
 CREATE SINK tnsp_out(tnsp.vehicle_id UINT64, tnsp.speed VARSIZED) TYPE File;
-SELECT vehicle_id, TNPOINT_SPEED_EXP(rid, frac, timestamp) AS speed FROM tnsp GROUP BY vehicle_id WINDOW TUMBLING(timestamp, size 1 hour) INTO tnsp_out;
+SELECT vehicle_id, TNPOINT_SPEED(rid, frac, timestamp) AS speed FROM tnsp GROUP BY vehicle_id WINDOW TUMBLING(timestamp, size 1 hour) INTO tnsp_out;
 ----
 1,0121000A020000000348117CDE15D4064000A0AD30CA5A020048117CDE15D4064000CDDE31CA5A0200

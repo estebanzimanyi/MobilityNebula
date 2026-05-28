@@ -10,7 +10,7 @@ ATTACH INLINE
 
 CREATE SINK tcc06_out(tcc06.id UINT32, r INT32) TYPE File;
 SELECT id,
-       TEMPORAL_EDISJOINT_TCBUFFER_CBUFFER(lon, lat, radius, timestamp, cbuffer_literal) AS r
+       EDISJOINT_TCBUFFER_CBUFFER(lon, lat, radius, timestamp, cbuffer_literal) AS r
 FROM tcc06
 INTO tcc06_out;
 ----

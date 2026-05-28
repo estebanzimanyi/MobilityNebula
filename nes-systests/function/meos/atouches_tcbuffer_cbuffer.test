@@ -10,7 +10,7 @@ ATTACH INLINE
 
 CREATE SINK tcc04_out(tcc04.id UINT32, r INT32) TYPE File;
 SELECT id,
-       TEMPORAL_ATOUCHES_TCBUFFER_CBUFFER(lon, lat, radius, timestamp, cbuffer_literal) AS r
+       ATOUCHES_TCBUFFER_CBUFFER(lon, lat, radius, timestamp, cbuffer_literal) AS r
 FROM tcc04
 INTO tcc04_out;
 ----

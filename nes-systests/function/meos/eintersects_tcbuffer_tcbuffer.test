@@ -10,7 +10,7 @@ ATTACH INLINE
 
 CREATE SINK tcbuf_tcbuf_results(tcbuf_tcbuf_tests.id UINT32, intersects INT32) TYPE File;
 SELECT id,
-       TEMPORAL_EINTERSECTS_TCBUFFER_TCBUFFER(lonA, latA, radiusA, tsA, lonB, latB, radiusB, tsB) AS intersects
+       EINTERSECTS_TCBUFFER_TCBUFFER(lonA, latA, radiusA, tsA, lonB, latB, radiusB, tsB) AS intersects
 FROM tcbuf_tcbuf_tests
 INTO tcbuf_tcbuf_results;
 ----

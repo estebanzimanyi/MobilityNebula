@@ -11,7 +11,7 @@ ATTACH INLINE
 
 CREATE SINK nad_tfloat_results(nad_tfloat_tests.id UINT32, distance FLOAT64) TYPE File;
 SELECT id,
-       TEMPORAL_NAD_FLOAT_SCALAR(value, timestamp, FLOAT64(40.0)) AS distance
+       NAD_TFLOAT_FLOAT(value, timestamp, FLOAT64(40.0)) AS distance
 FROM nad_tfloat_tests
 INTO nad_tfloat_results;
 ----

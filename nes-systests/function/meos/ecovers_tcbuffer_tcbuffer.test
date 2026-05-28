@@ -10,7 +10,7 @@ ATTACH INLINE
 
 CREATE SINK tct03_out(tct03.id UINT32, r INT32) TYPE File;
 SELECT id,
-       TEMPORAL_ECOVERS_TCBUFFER_TCBUFFER(lonA, latA, radiusA, tsA, lonB, latB, radiusB, tsB) AS r
+       ECOVERS_TCBUFFER_TCBUFFER(lonA, latA, radiusA, tsA, lonB, latB, radiusB, tsB) AS r
 FROM tct03
 INTO tct03_out;
 ----

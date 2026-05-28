@@ -10,7 +10,7 @@ ATTACH INLINE
 
 CREATE SINK tcc05_out(tcc05.id UINT32, r INT32) TYPE File;
 SELECT id,
-       TEMPORAL_ECOVERS_TCBUFFER_CBUFFER(lon, lat, radius, timestamp, cbuffer_literal) AS r
+       ECOVERS_TCBUFFER_CBUFFER(lon, lat, radius, timestamp, cbuffer_literal) AS r
 FROM tcc05
 INTO tcc05_out;
 ----
