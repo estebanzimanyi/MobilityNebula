@@ -4482,6 +4482,36 @@ def inject_parser_cpp(operators, cpp_path: Path) -> int:
     return n_added
 
 
+# --- Regular-naming gate -----------------------------------------------------
+# THE RULE: a Nebula SQL function token is exactly the genuine backing MEOS C
+# symbol, uppercased  (token == meos_call.upper()).  This keeps the binding
+# generatable straight from the MEOS-API catalog with no per-function naming
+# decision, so a new MEOS function/type is a mechanical rollout (the minDistance
+# and tbigint rollouts were the first hand-applications of this same idea).
+# See tools/streaming_parity/naming_regularization.md.
+NAMING_ALLOWLIST = {
+    # BerlinMOD-benchmark helpers with no 1:1 MEOS symbol (documented exceptions).
+    "PAIR_MEETING", "TEMPORAL_SEQUENCE",
+}
+
+
+def enforce_regular_naming(operators):
+    """Reject any operator whose SQL token is not its meos_call uppercased."""
+    errs = []
+    for op in operators:
+        mc = op.get("meos_call")
+        tok = op.get("sql_token")
+        if not mc or tok in NAMING_ALLOWLIST:
+            continue
+        want = mc.upper()
+        if tok != want:
+            errs.append(f"  sql_token={tok!r} is irregular; "
+                        f"meos_call={mc!r} requires sql_token={want!r}")
+    if errs:
+        sys.exit("ERROR: irregular SQL token(s) — a token MUST equal meos_call.upper() "
+                 "(see tools/streaming_parity/naming_regularization.md):\n" + "\n".join(errs))
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--input", required=True, help="Path to JSON descriptor file")
@@ -4500,6 +4530,7 @@ def main():
         sys.exit(f"ERROR: {output_root} does not look like a MobilityNebula root (no nes-logical-operators/)")
 
     operators = config["operators"]
+    enforce_regular_naming(operators)
     sys.stderr.write(f"Emitting {len(operators)} operator(s):\n\n")
     for op in operators:
         emit_operator(op, output_root)
