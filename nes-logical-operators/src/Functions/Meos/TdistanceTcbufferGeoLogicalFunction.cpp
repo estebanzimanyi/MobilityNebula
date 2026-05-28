@@ -1,3 +1,4 @@
+#define NES_PLUGIN_OPERATOR_TU
 /*
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -22,6 +23,9 @@
 #include <Serialization/DataTypeSerializationUtil.hpp>
 #include <fmt/format.h>
 #include <SerializableVariantDescriptor.pb.h>
+
+/* Decoupled from the regenerated plugin registrar (see LogicalFunctionRegistry.hpp): only the registry types are pulled in, and this operator declares its own Register function. */
+namespace NES::LogicalFunctionGeneratedRegistrar { LogicalFunctionRegistryReturnType RegisterTdistanceTcbufferGeoLogicalFunction(LogicalFunctionRegistryArguments); }
 
 namespace NES
 {

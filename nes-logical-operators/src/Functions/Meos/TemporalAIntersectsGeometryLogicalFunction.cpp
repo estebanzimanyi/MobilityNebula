@@ -1,3 +1,4 @@
+#define NES_PLUGIN_OPERATOR_TU
 #include <string>
 #include <string_view>
 #include <utility>
@@ -13,6 +14,9 @@
 #include <ErrorHandling.hpp>
 #include <LogicalFunctionRegistry.hpp>
 #include <SerializableVariantDescriptor.pb.h>
+
+/* Decoupled from the regenerated plugin registrar (see LogicalFunctionRegistry.hpp): only the registry types are pulled in, and this operator declares its own Register function. */
+namespace NES::LogicalFunctionGeneratedRegistrar { LogicalFunctionRegistryReturnType RegisterTemporalAIntersectsGeometryLogicalFunction(LogicalFunctionRegistryArguments); }
 
 namespace NES
 {

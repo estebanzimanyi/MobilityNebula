@@ -1,3 +1,4 @@
+#define NES_PLUGIN_OPERATOR_TU
 #include <Functions/Meos/TemporalEDWithinGeometryLogicalFunction.hpp>
 
 #include <DataTypes/DataType.hpp>
@@ -8,6 +9,9 @@
 #include <Serialization/DataTypeSerializationUtil.hpp>
 #include <fmt/format.h>
 #include <SerializableVariantDescriptor.pb.h>
+
+/* Decoupled from the regenerated plugin registrar (see LogicalFunctionRegistry.hpp): only the registry types are pulled in, and this operator declares its own Register function. */
+namespace NES::LogicalFunctionGeneratedRegistrar { LogicalFunctionRegistryReturnType RegisterTemporalEDWithinGeometryLogicalFunction(LogicalFunctionRegistryArguments); }
 
 namespace NES
 {

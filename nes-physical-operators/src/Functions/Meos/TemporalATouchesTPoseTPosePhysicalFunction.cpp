@@ -1,3 +1,4 @@
+#define NES_PLUGIN_OPERATOR_TU
 /*
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -33,6 +34,9 @@ extern "C" {
 #include <meos_geo.h>
 #include <meos_pose.h>
 }
+
+/* Decoupled from the regenerated plugin registrar (see PhysicalFunctionRegistry.hpp): only the registry types are pulled in, and this operator declares its own Register function. */
+namespace NES::PhysicalFunctionGeneratedRegistrar { PhysicalFunctionRegistryReturnType RegisterTemporalATouchesTPoseTPosePhysicalFunction(PhysicalFunctionRegistryArguments); }
 
 namespace NES {
 

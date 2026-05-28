@@ -29,6 +29,8 @@ import re
 import sys
 from pathlib import Path
 
+from decouple_operator_tus import decouple_file
+
 # ===========================================================================
 # Templates (mirror the hand-written TemporalEDWithinGeometry style 1:1).
 # ===========================================================================
@@ -892,6 +894,12 @@ def emit_operator(op, output_root: Path):
             f"  ! {nebula_name}: physical-cpp template for non-temporal-point ops is not yet implemented; "
             f"skipping .cpp — the .hpp + logical files are still emitted, but the .cpp must be hand-written.\n"
         )
+
+    # Decouple the operator TUs from the regenerated plugin registrar so adding an
+    # operator does not recompile all the others (see PhysicalFunctionRegistry.hpp).
+    decouple_file(logical_cpp_path, "LogicalFunction")
+    if physical_cpp_path.exists():
+        decouple_file(physical_cpp_path, "PhysicalFunction")
 
     sys.stderr.write(f"  ✓ {nebula_name}: emitted 4 files ({logical_hpp_path.relative_to(output_root)} + siblings)\n")
 

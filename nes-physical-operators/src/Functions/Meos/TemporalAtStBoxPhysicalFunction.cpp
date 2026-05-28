@@ -1,3 +1,4 @@
+#define NES_PLUGIN_OPERATOR_TU
 #include <Functions/Meos/TemporalAtStBoxPhysicalFunction.hpp>
 
 #include <Functions/PhysicalFunction.hpp>
@@ -15,6 +16,9 @@
 #include <string>
 #include <utility>
 #include <val.hpp>
+
+/* Decoupled from the regenerated plugin registrar (see PhysicalFunctionRegistry.hpp): only the registry types are pulled in, and this operator declares its own Register function. */
+namespace NES::PhysicalFunctionGeneratedRegistrar { PhysicalFunctionRegistryReturnType RegisterTemporalAtStBoxPhysicalFunction(PhysicalFunctionRegistryArguments); }
 
 namespace NES {
 
