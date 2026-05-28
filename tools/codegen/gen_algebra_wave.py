@@ -144,6 +144,23 @@ ALWAYS_INPUT_TYPE = {"tgeo": "tgeompoint"}
 # e.g. a tgeo restriction — serializes to geo WKT with '(' and is deferred.)
 TBOOL_PREFIX = {"teq", "tne", "tlt", "tle", "tgt", "tge",
                 "tcontains", "tcovers", "tdisjoint", "tintersects", "ttouches", "tdwithin"}
+
+# Temporal restriction (temporal_at_*/minus_* and tnumber_at_*/minus_*): a temporal
+# ⊗ a time/value box keeps or drops instants. Exercised with a single tint instant
+# (value 5/8 @ 2021-01-01/02 = epoch 1609459200/1609545600) -> result tint (tint_out).
+# at_ literal CONTAINS both instants (kept), minus_ literal contains NEITHER (kept
+# unchanged) -> both rows record the input instant. Keyed by the last name token.
+# token -> (parser, ctype, at-literal, minus-literal).
+RESTRICT_BASE = {
+    "tstzspan":    ("tstzspan_in", "Span", "[2020-01-01, 2022-01-01)", "[2025-01-01, 2026-01-01)"),
+    "tstzspanset": ("tstzspanset_in", "SpanSet", "{[2020-01-01, 2022-01-01)}", "{[2025-01-01, 2026-01-01)}"),
+    "tstzset":     ("tstzset_in", "Set", "{2021-01-01, 2021-01-02}", "{2025-01-01, 2025-01-02}"),
+    "span":        ("intspan_in", "Span", "[1, 10)", "[100, 200)"),
+    "spanset":     ("intspanset_in", "SpanSet", "{[1, 10)}", "{[100, 200)}"),
+    "values":      ("intset_in", "Set", "{5, 8}", "{100, 200}"),
+    "tbox":        ("tbox_in", "TBox", "TBOXINT XT([1, 10],[2020-01-01, 2022-01-01])",
+                    "TBOXINT XT([100, 200],[2025-01-01, 2026-01-01])"),
+}
 # base operand -> (extra-arg builder tag, column SQL, sample a, sample b). The tag
 # is "scalar" (bool source field), "text" (text* via text_in), or a *_in parser.
 ALWAYS_BASE = {
@@ -247,6 +264,24 @@ def classify(name, ret, plist):
                      rows=[(va, "1609459200", sa), (vb, "1609545600", sb)],
                      token=name.upper(), sink="VARSIZED")
         return entry, tmeta
+    # ---- temporal restriction (temporal_at_*/minus_*, tnumber_at_*/minus_*):
+    #      a tint instant ⊗ a time/value box -> the restricted tint (tint_out) ----
+    if ret.replace("*", "").strip() == "Temporal" and ("_at_" in name or "_minus_" in name):
+        toks = name.split("_")
+        bt = toks[-1]
+        tix = [i for i, (b, p) in enumerate(plist) if b == "Temporal"]
+        oix = [i for i, (b, p) in enumerate(plist) if b != "Temporal"]
+        if bt in RESTRICT_BASE and len(tix) == 1 and len(oix) == 1 and tix[0] == 0:
+            parser, ctype, at_lit, minus_lit = RESTRICT_BASE[bt]
+            lit = minus_lit if "minus" in toks else at_lit
+            entry = dict(nebula_name=camel(name), sql_token=name.upper(), meos_call=name,
+                         build_generic=True, input_type="tint", return_kind="tint_out",
+                         extra_args=[dict(kind="box", box_type=ctype, parser=parser, header="meos.h")],
+                         comment_one_liner=f"{name} ({ret.strip()}) — tint restricted by a {bt} box -> tint_out.")
+            tmeta = dict(cols=[("value", "INT32"), ("ts", "UINT64"), ("arg", "VARSIZED")],
+                         rows=[("5", "1609459200", lit), ("8", "1609545600", lit)],
+                         token=name.upper(), sink="VARSIZED")
+            return entry, tmeta
     # ---- multi-column temporal-instant ⊗ base value: reductions (always/ever,
     #      a*/e* spatial rels) -> int; temporal comparison / spatial relation ->
     #      tbool; tdistance -> tfloat. base = bool / text / npoint / pose / cbuffer
