@@ -1129,6 +1129,12 @@
 #include <Functions/Meos/TnumberMinusSpanLogicalFunction.hpp>
 #include <Functions/Meos/TnumberMinusSpansetLogicalFunction.hpp>
 #include <Functions/Meos/TnumberMinusTboxLogicalFunction.hpp>
+#include <Functions/Meos/TeqTemporalTemporalLogicalFunction.hpp>
+#include <Functions/Meos/TgeTemporalTemporalLogicalFunction.hpp>
+#include <Functions/Meos/TgtTemporalTemporalLogicalFunction.hpp>
+#include <Functions/Meos/TleTemporalTemporalLogicalFunction.hpp>
+#include <Functions/Meos/TltTemporalTemporalLogicalFunction.hpp>
+#include <Functions/Meos/TneTemporalTemporalLogicalFunction.hpp>
 #include <Plans/LogicalPlan.hpp>
 #include <Plans/LogicalPlanBuilder.hpp>
 #include <Util/Overloaded.hpp>
@@ -31086,6 +31092,192 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TNUMBER_MINUS_TBOX */
+        /* BEGIN CODEGEN PARSER GLUE: TEQ_TEMPORAL_TEMPORAL */
+        case AntlrSQLLexer::TEQ_TEMPORAL_TEMPORAL:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 4)
+                throw InvalidQuerySyntax("TEQ_TEMPORAL_TEMPORAL requires exactly 4 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a3 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(TeqTemporalTemporalLogicalFunction(a0, a1, a2, a3));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: TEQ_TEMPORAL_TEMPORAL */
+
+        /* BEGIN CODEGEN PARSER GLUE: TGE_TEMPORAL_TEMPORAL */
+        case AntlrSQLLexer::TGE_TEMPORAL_TEMPORAL:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 4)
+                throw InvalidQuerySyntax("TGE_TEMPORAL_TEMPORAL requires exactly 4 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a3 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(TgeTemporalTemporalLogicalFunction(a0, a1, a2, a3));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: TGE_TEMPORAL_TEMPORAL */
+
+        /* BEGIN CODEGEN PARSER GLUE: TGT_TEMPORAL_TEMPORAL */
+        case AntlrSQLLexer::TGT_TEMPORAL_TEMPORAL:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 4)
+                throw InvalidQuerySyntax("TGT_TEMPORAL_TEMPORAL requires exactly 4 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a3 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(TgtTemporalTemporalLogicalFunction(a0, a1, a2, a3));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: TGT_TEMPORAL_TEMPORAL */
+
+        /* BEGIN CODEGEN PARSER GLUE: TLE_TEMPORAL_TEMPORAL */
+        case AntlrSQLLexer::TLE_TEMPORAL_TEMPORAL:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 4)
+                throw InvalidQuerySyntax("TLE_TEMPORAL_TEMPORAL requires exactly 4 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a3 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(TleTemporalTemporalLogicalFunction(a0, a1, a2, a3));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: TLE_TEMPORAL_TEMPORAL */
+
+        /* BEGIN CODEGEN PARSER GLUE: TLT_TEMPORAL_TEMPORAL */
+        case AntlrSQLLexer::TLT_TEMPORAL_TEMPORAL:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 4)
+                throw InvalidQuerySyntax("TLT_TEMPORAL_TEMPORAL requires exactly 4 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a3 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(TltTemporalTemporalLogicalFunction(a0, a1, a2, a3));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: TLT_TEMPORAL_TEMPORAL */
+
+        /* BEGIN CODEGEN PARSER GLUE: TNE_TEMPORAL_TEMPORAL */
+        case AntlrSQLLexer::TNE_TEMPORAL_TEMPORAL:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 4)
+                throw InvalidQuerySyntax("TNE_TEMPORAL_TEMPORAL requires exactly 4 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a3 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(TneTemporalTemporalLogicalFunction(a0, a1, a2, a3));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: TNE_TEMPORAL_TEMPORAL */
+
 
 
 

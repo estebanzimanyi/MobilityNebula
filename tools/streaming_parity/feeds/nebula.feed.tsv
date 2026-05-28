@@ -862,6 +862,7 @@ teq_int_tint	proven
 teq_pose_tpose	proven
 teq_tbool_bool	proven
 teq_tcbuffer_cbuffer	proven
+teq_temporal_temporal	proven
 teq_text_ttext	proven
 teq_tfloat_float	proven
 teq_tgeo_geo	proven
@@ -887,6 +888,7 @@ tfloat_start_value	proven
 tfloat_to_tint	proven
 tge_float_tfloat	proven
 tge_int_tint	proven
+tge_temporal_temporal	proven
 tge_text_ttext	proven
 tge_tfloat_float	proven
 tge_tint_int	proven
@@ -901,6 +903,7 @@ tgeo_start_value	proven
 tgeompoint_to_tgeometry	wired
 tgt_float_tfloat	proven
 tgt_int_tint	proven
+tgt_temporal_temporal	proven
 tgt_text_ttext	proven
 tgt_tfloat_float	proven
 tgt_tint_int	proven
@@ -923,12 +926,14 @@ tintersects_tcbuffer_geo	proven
 tintersects_tgeo_geo	proven
 tle_float_tfloat	proven
 tle_int_tint	proven
+tle_temporal_temporal	proven
 tle_text_ttext	proven
 tle_tfloat_float	proven
 tle_tint_int	proven
 tle_ttext_text	proven
 tlt_float_tfloat	proven
 tlt_int_tint	proven
+tlt_temporal_temporal	proven
 tlt_text_ttext	proven
 tlt_tfloat_float	proven
 tlt_tint_int	proven
@@ -941,6 +946,7 @@ tne_int_tint	proven
 tne_pose_tpose	proven
 tne_tbool_bool	proven
 tne_tcbuffer_cbuffer	proven
+tne_temporal_temporal	proven
 tne_text_ttext	proven
 tne_tfloat_float	proven
 tne_tgeo_geo	proven

@@ -161,6 +161,22 @@ RESTRICT_BASE = {
     "tbox":        ("tbox_in", "TBox", "TBOXINT XT([1, 10],[2020-01-01, 2022-01-01])",
                     "TBOXINT XT([100, 200],[2025-01-01, 2026-01-01])"),
 }
+
+# Two-temporal ops (teq/tne/tlt/tle/tgt/tge_temporal_temporal etc.): build BOTH
+# operands from per-event instant columns (no hex) at the SAME timestamp so the
+# pointwise op is defined, and serialize the Temporal result by family. The
+# second instant uses *2-suffixed columns via the codegen "temporal2" extra-arg.
+TWO_TEMPORAL = {
+    "tint": dict(
+        input_type="tint",
+        make_cols=[("value", "INT32"), ("ts", "UINT64"), ("value2", "INT32"), ("ts2", "UINT64")],
+        rows=[("5", "1609459200", "7", "1609459200"), ("8", "1609545600", "2", "1609545600")],
+        t2_fields=[("value2", "int32_t"), ("ts2", "uint64_t")],
+        header="meos.h",
+        t2_build=('                std::string {var}W = fmt::format("{{}}@{{}}", value2, MEOS::Meos::convertEpochToTimestamp(ts2));\n'
+                  '                Temporal* {var} = tint_in({var}W.c_str());\n'
+                  '                if (!{var}) {{ free(temp); return {z}; }}\n')),
+}
 # base operand -> (extra-arg builder tag, column SQL, sample a, sample b). The tag
 # is "scalar" (bool source field), "text" (text* via text_in), or a *_in parser.
 ALWAYS_BASE = {
@@ -280,6 +296,29 @@ def classify(name, ret, plist):
                          comment_one_liner=f"{name} ({ret.strip()}) — tint restricted by a {bt} box -> tint_out.")
             tmeta = dict(cols=[("value", "INT32"), ("ts", "UINT64"), ("arg", "VARSIZED")],
                          rows=[("5", "1609459200", lit), ("8", "1609545600", lit)],
+                         token=name.upper(), sink="VARSIZED")
+            return entry, tmeta
+    # ---- two-temporal: both operands built from instant columns -> tbool / ttext ----
+    if (ret.replace("*", "").strip() == "Temporal" and len(plist) == 2
+            and all(b == "Temporal" for b, p in plist)):
+        toks = name.split("_")
+        sub = ("tgeompoint" if "tgeo" in toks else "tcbuffer" if "tcbuffer" in toks
+               else "ttext" if "ttext" in toks else "tint")
+        if sub in TWO_TEMPORAL:
+            pref = toks[0]
+            if pref in TBOOL_PREFIX:
+                rkind = "tbool_out"
+            elif pref == "textcat":
+                rkind = "ttext_out"
+            else:
+                return None, f"two-temporal {pref} not a clean tbool/ttext family"
+            spec = TWO_TEMPORAL[sub]
+            entry = dict(nebula_name=camel(name), sql_token=name.upper(), meos_call=name,
+                         build_generic=True, input_type=spec["input_type"], return_kind=rkind,
+                         extra_args=[dict(kind="temporal2", t2_fields=spec["t2_fields"],
+                                          t2_build=spec["t2_build"], header=spec["header"])],
+                         comment_one_liner=f"{name} ({ret.strip()}) — two {sub} instants -> {rkind}.")
+            tmeta = dict(cols=spec["make_cols"], rows=spec["rows"],
                          token=name.upper(), sink="VARSIZED")
             return entry, tmeta
     # ---- multi-column temporal-instant ⊗ base value: reductions (always/ever,

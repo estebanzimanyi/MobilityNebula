@@ -773,7 +773,12 @@ def generic_fields(op):
     the input type's fields followed by one per extra arg."""
     fields = list(GENERIC_INPUTS[op["input_type"]]["fields"])
     for i, ex in enumerate(op.get("extra_args", [])):
-        fields.append((f"arg{i}", ex["cpp"] if ex["kind"] == "scalar" else "VariableSizedData"))
+        if ex["kind"] == "temporal2":
+            # a second temporal operand expands to its own per-event columns,
+            # not a single arg field (must match assemble_generic_varsized_output).
+            fields.extend(ex["t2_fields"])
+        else:
+            fields.append((f"arg{i}", ex["cpp"] if ex["kind"] == "scalar" else "VariableSizedData"))
     return fields
 
 
@@ -3322,6 +3327,15 @@ def assemble_generic_varsized_output(op):
                 f'                MEOS::Meos::StaticGeometry arg{i}G(arg{i}S);\n'
                 f'                if (!arg{i}G.getGeometry()) {{ free(temp); return {zero}; }}\n')
             call_terms.append(f"arg{i}G.getGeometry()")
+        elif ex["kind"] == "temporal2":
+            # a SECOND temporal operand built from its own per-event columns (not
+            # hex): the extra-arg carries the field list and a build template.
+            for fn2, cpp2 in ex["t2_fields"]:
+                fields.append((fn2, cpp2))
+            headers.add(ex.get("header", "meos.h"))
+            parse_lines.append(ex["t2_build"].format(var=f"arg{i}t", z=zero))
+            call_terms.append(f"arg{i}t")
+            box_frees.append(f"free(arg{i}t);")
         else:
             raise SystemExit(f"varsized-output op {name}: unsupported extra-arg kind {ex['kind']}")
 
