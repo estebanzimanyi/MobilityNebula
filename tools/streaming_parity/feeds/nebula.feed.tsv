@@ -216,6 +216,7 @@ cbuffer_lt	proven
 cbuffer_ne	proven
 cbuffer_nsame	proven
 cbuffer_same	proven
+cbuffer_to_stbox	proven
 contained_bigint_set	proven
 contained_bigint_span	proven
 contained_bigint_spanset	proven
@@ -610,6 +611,7 @@ npoint_le	proven
 npoint_lt	proven
 npoint_ne	proven
 npoint_same	proven
+npoint_to_stbox	proven
 nsegment_cmp	proven
 nsegment_eq	proven
 nsegment_ge	proven
@@ -617,6 +619,7 @@ nsegment_gt	proven
 nsegment_le	proven
 nsegment_lt	proven
 nsegment_ne	proven
+nsegment_to_stbox	proven
 numspan_timestamptz_to_tbox	proven
 numspan_tstzspan_to_tbox	proven
 overabove_stbox_stbox	proven
@@ -766,6 +769,7 @@ pose_lt	proven
 pose_ne	proven
 pose_nsame	proven
 pose_same	proven
+pose_to_stbox	proven
 right_bigint_set	proven
 right_bigint_span	proven
 right_bigint_spanset	proven

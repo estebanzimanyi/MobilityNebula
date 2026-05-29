@@ -104,3 +104,4 @@ add_plugin(TtouchesTcbufferGeo PhysicalFunction nes-physical-operators TtouchesT
 add_plugin(TdisjointTcbufferTcbuffer PhysicalFunction nes-physical-operators TdisjointTcbufferTcbufferPhysicalFunction.cpp)
 add_plugin(TintersectsTcbufferTcbuffer PhysicalFunction nes-physical-operators TintersectsTcbufferTcbufferPhysicalFunction.cpp)
 add_plugin(TtouchesTcbufferTcbuffer PhysicalFunction nes-physical-operators TtouchesTcbufferTcbufferPhysicalFunction.cpp)
+add_plugin(CbufferToStbox PhysicalFunction nes-physical-operators CbufferToStboxPhysicalFunction.cpp)

@@ -52,3 +52,5 @@ add_plugin(TdistanceTnpointNpoint PhysicalFunction nes-physical-operators Tdista
 add_plugin(TdistanceTnpointPoint PhysicalFunction nes-physical-operators TdistanceTnpointPointPhysicalFunction.cpp)
 add_plugin(TeqTnpointNpoint PhysicalFunction nes-physical-operators TeqTnpointNpointPhysicalFunction.cpp)
 add_plugin(TneTnpointNpoint PhysicalFunction nes-physical-operators TneTnpointNpointPhysicalFunction.cpp)
+add_plugin(NpointToStbox PhysicalFunction nes-physical-operators NpointToStboxPhysicalFunction.cpp)
+add_plugin(NsegmentToStbox PhysicalFunction nes-physical-operators NsegmentToStboxPhysicalFunction.cpp)

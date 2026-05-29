@@ -1153,3 +1153,7 @@ add_plugin(IntTstzspanToTbox LogicalFunction nes-logical-operators IntTstzspanTo
 add_plugin(FloatTstzspanToTbox LogicalFunction nes-logical-operators FloatTstzspanToTboxLogicalFunction.cpp)
 add_plugin(NumspanTimestamptzToTbox LogicalFunction nes-logical-operators NumspanTimestamptzToTboxLogicalFunction.cpp)
 add_plugin(NumspanTstzspanToTbox LogicalFunction nes-logical-operators NumspanTstzspanToTboxLogicalFunction.cpp)
+add_plugin(CbufferToStbox LogicalFunction nes-logical-operators CbufferToStboxLogicalFunction.cpp)
+add_plugin(PoseToStbox LogicalFunction nes-logical-operators PoseToStboxLogicalFunction.cpp)
+add_plugin(NpointToStbox LogicalFunction nes-logical-operators NpointToStboxLogicalFunction.cpp)
+add_plugin(NsegmentToStbox LogicalFunction nes-logical-operators NsegmentToStboxLogicalFunction.cpp)

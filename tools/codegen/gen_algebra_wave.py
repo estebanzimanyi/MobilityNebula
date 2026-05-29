@@ -346,6 +346,8 @@ def classify(name, ret, plist):
             input_type = CONV_CONTAINER_IN[ob]
         elif op and ob in BOX_INPUT:                    # box -> span
             input_type = BOX_INPUT[ob]
+        elif op and ob in OBJECT_TYPES:                 # cbuffer/pose/npoint/nsegment
+            input_type = OBJECT_TYPES[ob][0]            # -> family-gated subdir
         else:
             return None, f"conv input {ob}{'*' if op else ''} unsupported"
         if rbase == "TBox":
