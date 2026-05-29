@@ -81,3 +81,5 @@ add_plugin(TposeMinusGeom PhysicalFunction nes-physical-operators TposeMinusGeom
 add_plugin(TposeMinusPose PhysicalFunction nes-physical-operators TposeMinusPosePhysicalFunction.cpp)
 add_plugin(TposeAtStbox PhysicalFunction nes-physical-operators TposeAtStboxPhysicalFunction.cpp)
 add_plugin(TposeMinusStbox PhysicalFunction nes-physical-operators TposeMinusStboxPhysicalFunction.cpp)
+add_plugin(DistancePoseGeo PhysicalFunction nes-physical-operators DistancePoseGeoPhysicalFunction.cpp)
+add_plugin(DistancePoseStbox PhysicalFunction nes-physical-operators DistancePoseStboxPhysicalFunction.cpp)

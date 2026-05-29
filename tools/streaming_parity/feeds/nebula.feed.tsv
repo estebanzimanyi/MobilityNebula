@@ -331,6 +331,8 @@ distance_bigintspan_bigintspan	proven
 distance_bigintspanset_bigintspan	proven
 distance_bigintspanset_bigintspanset	proven
 distance_cbuffer_cbuffer	proven
+distance_cbuffer_geo	proven
+distance_cbuffer_stbox	proven
 distance_dateset_dateset	proven
 distance_datespan_datespan	proven
 distance_datespanset_datespan	proven
@@ -343,7 +345,9 @@ distance_intset_intset	proven
 distance_intspan_intspan	proven
 distance_intspanset_intspan	proven
 distance_intspanset_intspanset	proven
+distance_pose_geo	proven
 distance_pose_pose	proven
+distance_pose_stbox	proven
 distance_set_bigint	proven
 distance_set_date	proven
 distance_set_float	proven
@@ -659,6 +663,8 @@ minus_timestamptz_set	proven
 minus_timestamptz_span	proven
 minus_timestamptz_spanset	proven
 mul_interval_double	proven
+nad_cbuffer_stbox	proven
+nad_stbox_geo	proven
 nad_stbox_stbox	proven
 nad_tboxfloat_tboxfloat	proven
 nad_tboxint_tboxint	proven

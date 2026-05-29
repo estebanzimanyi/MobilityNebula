@@ -945,6 +945,31 @@ def classify(name, ret, plist):
             tmeta = dict(cols=spec["make_cols"], rows=spec["rows"], token=name.upper(), sink=sink)
             return entry, tmeta
         return None, f"{toks[0]} second operand {secb} unsupported"
+    # ---- scalar distance / nad between an object/box/geo pair -> double:
+    #      distance_cbuffer/pose_geo/stbox, nad_cbuffer_stbox, nad_stbox_geo.
+    #      operand 1 = primary (object/box literal), operand 2 = geom/box extra. ----
+    if toks[0] in ("distance", "nad") and len(plist) == 2 and rbase == "double":
+        PRIM = {"Cbuffer": "cbuffer", "Pose": "pose", "Npoint": "npoint",
+                "STBox": "stbox_text"}
+        (b0, p0), (b1, p1) = plist
+        if b0 not in PRIM:
+            return None, f"{toks[0]} primary {b0} unsupported"
+        in_type = PRIM[b0]
+        if b1 == "GSERIALIZED":                         # planar object/box -> SRID 0 geo
+            extra, arg0, arg1 = dict(kind="geom"), "Point(1 1)", "Point(2 2)"
+        elif b1 == "STBox":
+            extra = dict(kind="box", box_type="STBox", parser="stbox_in", header="meos_geo.h")
+            arg0, arg1 = "STBOX X((0,0),(3,3))", "STBOX X((1,1),(4,4))"
+        else:
+            return None, f"{toks[0]} 2nd operand {b1} unsupported"
+        l0, l1 = LITERALS[in_type]
+        entry = dict(nebula_name=camel(name), sql_token=name.upper(), meos_call=name,
+                     build_generic=True, input_type=in_type, return_kind="double",
+                     extra_args=[extra],
+                     comment_one_liner=f"{name} (double) — {b0} ⊗ {b1} distance.")
+        tmeta = dict(cols=[("a", "VARSIZED"), ("arg", "VARSIZED")],
+                     rows=[(l0, arg0), (l1, arg1)], token=name.upper(), sink="FLOAT64")
+        return entry, tmeta
     # ---- two-temporal: both operands built from instant columns -> tbool / ttext ----
     if (ret.replace("*", "").strip() == "Temporal" and len(plist) == 2
             and all(b == "Temporal" for b, p in plist)):
