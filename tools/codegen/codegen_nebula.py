@@ -784,6 +784,22 @@ def generic_fields(op):
     return fields
 
 
+def meos_family(nebula_name):
+    """The toggleable MEOS type family of an operator, or None for base types.
+    Mirrors MobilityDB/MEOS's CBUFFER/NPOINT/POSE/RGEO compile options: a family
+    operator's physical TU is gated by the matching CMake option."""
+    s = nebula_name.lower()
+    if "trgeo" in s or "rgeometry" in s:
+        return "Rgeo"
+    if "pose" in s:
+        return "Pose"
+    if "npoint" in s or "nsegment" in s:
+        return "Npoint"
+    if "cbuffer" in s:
+        return "Cbuffer"
+    return None
+
+
 def emit_operator(op, output_root: Path):
     nebula_name = op["nebula_name"]
     if op.get("build_generic"):
@@ -829,10 +845,17 @@ def emit_operator(op, output_root: Path):
         "tnumber_in_fn":          op.get("tnumber_in_fn", "tfloat_in"),
     }
 
+    # MEOS type-family: physical operators of a toggleable family live in a
+    # per-family subdir (Cbuffer/Npoint/Pose/Rgeo) whose compilation is gated by
+    # the matching CMake option, so a family OFF drops them and links cleanly
+    # against a family-OFF libmeos. Logical operators never call libmeos, so they
+    # stay flat and always compiled (the parser glue references them).
+    fam = meos_family(nebula_name)
+    phys_sub = f"/{fam}" if fam else ""
     logical_hpp_path = output_root / "nes-logical-operators/include/Functions/Meos" / f"{nebula_name}LogicalFunction.hpp"
     logical_cpp_path = output_root / "nes-logical-operators/src/Functions/Meos" / f"{nebula_name}LogicalFunction.cpp"
-    physical_hpp_path = output_root / "nes-physical-operators/include/Functions/Meos" / f"{nebula_name}PhysicalFunction.hpp"
-    physical_cpp_path = output_root / "nes-physical-operators/src/Functions/Meos" / f"{nebula_name}PhysicalFunction.cpp"
+    physical_hpp_path = output_root / ("nes-physical-operators/include/Functions/Meos" + phys_sub) / f"{nebula_name}PhysicalFunction.hpp"
+    physical_cpp_path = output_root / ("nes-physical-operators/src/Functions/Meos" + phys_sub) / f"{nebula_name}PhysicalFunction.cpp"
 
     for p in (logical_hpp_path, logical_cpp_path, physical_hpp_path, physical_cpp_path):
         p.parent.mkdir(parents=True, exist_ok=True)
@@ -894,6 +917,13 @@ def emit_operator(op, output_root: Path):
             f"  ! {nebula_name}: physical-cpp template for non-temporal-point ops is not yet implemented; "
             f"skipping .cpp — the .hpp + logical files are still emitted, but the .cpp must be hand-written.\n"
         )
+
+    # Family physical .cpp moved into a subdir: repoint its self-include to match.
+    if fam and physical_cpp_path.exists():
+        txt = physical_cpp_path.read_text().replace(
+            f"<Functions/Meos/{nebula_name}PhysicalFunction.hpp>",
+            f"<Functions/Meos/{fam}/{nebula_name}PhysicalFunction.hpp>")
+        physical_cpp_path.write_text(txt)
 
     # Decouple the operator TUs from the regenerated plugin registrar so adding an
     # operator does not recompile all the others (see PhysicalFunctionRegistry.hpp).
@@ -4319,26 +4349,51 @@ def inject_cmake_entries(operators, output_root: Path) -> int:
     (logical + physical layers). Idempotent: skips ops already listed."""
     n_added = 0
     for layer in ("logical", "physical"):
-        cml = output_root / f"nes-{layer}-operators/src/Functions/Meos/CMakeLists.txt"
-        if not cml.exists():
-            sys.stderr.write(f"  ! cmake-entries: {cml} not found, skipping {layer} layer\n")
+        parent = output_root / f"nes-{layer}-operators/src/Functions/Meos/CMakeLists.txt"
+        if not parent.exists():
+            sys.stderr.write(f"  ! cmake-entries: {parent} not found, skipping {layer} layer\n")
             continue
-        body = cml.read_text()
         layer_suffix = "Logical" if layer == "logical" else "Physical"
-        new_lines = []
+        # Group entries by target CMakeLists. Physical family operators go to a
+        # per-family subdir CMakeLists gated by the matching option; logical
+        # operators (and base physical) go to the flat parent. Idempotent.
+        by_file = {}            # Path -> list[str]
+        gated_families = set()  # family subdirs to ensure add_subdirectory() in parent
         for op in operators:
+            # Family gating applies only to the physical layer (logical never
+            # calls libmeos and is always compiled).
+            fam = meos_family(op["nebula_name"]) if layer == "physical" else None
+            if fam:
+                cml = parent.parent / fam / "CMakeLists.txt"
+                gated_families.add(fam)
+            else:
+                cml = parent
             entry = (
                 f"add_plugin({op['nebula_name']} {layer_suffix}Function "
                 f"nes-{layer}-operators {op['nebula_name']}{layer_suffix}Function.cpp)"
             )
-            if entry in body or f"add_plugin({op['nebula_name']} {layer_suffix}Function" in body:
-                continue
-            new_lines.append(entry)
-        if new_lines:
-            with cml.open("a") as f:
-                f.write("\n".join(new_lines) + "\n")
-            sys.stderr.write(f"  ✓ cmake-entries ({layer}): appended {len(new_lines)} entry(ies)\n")
-            n_added += len(new_lines)
+            by_file.setdefault(cml, []).append(entry)
+        for cml, entries in by_file.items():
+            cml.parent.mkdir(parents=True, exist_ok=True)
+            body = cml.read_text() if cml.exists() else (
+                "# MEOS type-family operators, gated by the "
+                f"{cml.parent.name.upper()} compile option.\n\n")
+            new_lines = [e for e in entries
+                         if f"add_plugin({e.split(' ',1)[0][len('add_plugin('):]} " not in body
+                         and e not in body]
+            if new_lines:
+                with cml.open("a" if cml.exists() else "w") as f:
+                    f.write(("" if cml.exists() else body) + "\n".join(new_lines) + "\n")
+                n_added += len(new_lines)
+        # Ensure the parent gates each new family subdir.
+        pbody = parent.read_text()
+        add = ""
+        for fam in sorted(gated_families):
+            if f"add_subdirectory({fam})" not in pbody:
+                add += f"\nif({fam.upper()})\n    add_subdirectory({fam})\nendif()\n"
+        if add:
+            with parent.open("a") as f:
+                f.write(add)
     return n_added
 
 

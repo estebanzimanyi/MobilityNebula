@@ -106,9 +106,11 @@
 #include <Aggregation/Function/Meos/TemporalAtMinAggregationPhysicalFunction.hpp>
 #include <Aggregation/Function/Meos/TemporalMinusMaxAggregationPhysicalFunction.hpp>
 #include <Aggregation/Function/Meos/TemporalMinusMinAggregationPhysicalFunction.hpp>
-#include <Aggregation/Function/Meos/TnpointCumulativeLengthAggregationPhysicalFunction.hpp>
-#include <Aggregation/Function/Meos/TnpointSpeedAggregationPhysicalFunction.hpp>
-#include <Aggregation/Function/Meos/TnpointToTgeompointAggregationPhysicalFunction.hpp>
+#if NPOINT
+#include <Aggregation/Function/Meos/Npoint/TnpointCumulativeLengthAggregationPhysicalFunction.hpp>
+#include <Aggregation/Function/Meos/Npoint/TnpointSpeedAggregationPhysicalFunction.hpp>
+#include <Aggregation/Function/Meos/Npoint/TnpointToTgeompointAggregationPhysicalFunction.hpp>
+#endif
 #include <Aggregation/Function/Meos/TpointCumulativeLengthAggregationPhysicalFunction.hpp>
 #include <Aggregation/Function/Meos/TpointSpeedAggregationPhysicalFunction.hpp>
 #include <Aggregation/Function/Meos/TpointGetXAggregationPhysicalFunction.hpp>
@@ -1528,6 +1530,7 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             continue;
         }
         /* END CODEGEN AGGREGATION GLUE: TemporalMinusMin (optimizer lowering) */
+#if NPOINT
         /* BEGIN CODEGEN AGGREGATION GLUE: TnpointCumulativeLength (optimizer lowering) */
         if (name == std::string_view("TnpointCumulativeLength"))
         {
@@ -1614,6 +1617,7 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             continue;
         }
         /* END CODEGEN AGGREGATION GLUE: TnpointToTgeompoint (optimizer lowering) */
+#endif
         /* BEGIN CODEGEN AGGREGATION GLUE: TpointCumulativeLength (optimizer lowering) */
         if (name == std::string_view("TpointCumulativeLength"))
         {

@@ -85,38 +85,42 @@ def operator_calls(root, streamable, wrap=None):
         full = os.path.join(root, d)
         if not os.path.isdir(full):
             continue
-        for f in os.listdir(full):
-            if not f.endswith("PhysicalFunction.cpp"):
-                continue
-            name = f[:-len("PhysicalFunction.cpp")]
-            txt = open(os.path.join(full, f)).read()
-            # find the MEOS backing call: the call assigned to result/returned
-            calls = set()
-            helpers = set()
-            for m in CALL_RE.finditer(txt):
-                fn = m.group(1)
-                if fn not in streamable:
+        # Recurse: physical operators of a toggleable MEOS family (CBUFFER/NPOINT/
+        # POSE/RGEO) live in per-family subdirs (Cbuffer/, Npoint/, …); walk so they
+        # are counted just like the flat base-type operators.
+        for dirpath, _dirs, files in os.walk(full):
+            for f in files:
+                if not f.endswith("PhysicalFunction.cpp"):
                     continue
-                (helpers if fn in CONVERSION_HELPERS else calls).add(fn)
-            # Credit MEOS calls reached only through a MEOSWrapper method/function
-            # (e.g. `.aintersectsStatic(` -> aintersects_tgeo_geo). The mapped
-            # calls are already streamable by construction in wrapper_calls().
-            if wrap:
-                for m in ANY_CALL_RE.finditer(txt):
-                    for fn in wrap.get(m.group(1), ()):
-                        (helpers if fn in CONVERSION_HELPERS else calls).add(fn)
-            # A conversion helper is plumbing and is dropped, EXCEPT when the
-            # operator is named for it (a dedicated conversion operator, e.g.
-            # TnpointToTgeompointExp -> tnpoint_to_tgeompoint): there the helper
-            # IS the operator's headline op. (The expand substrate's accumulator
-            # calls temporal_append_tinstant/temporal_merge co-occur in every
-            # aggregate, so co-occurrence alone cannot distinguish the two.)
-            snake = re.sub(r"(?<!^)(?=[A-Z])", "_", name).lower()
-            for h in helpers:
-                if snake == h or snake.startswith(h + "_"):
-                    calls.add(h)
-            if calls:
-                name2calls[name] = calls
+                name = f[:-len("PhysicalFunction.cpp")]
+                txt = open(os.path.join(dirpath, f)).read()
+                # find the MEOS backing call: the call assigned to result/returned
+                calls = set()
+                helpers = set()
+                for m in CALL_RE.finditer(txt):
+                    fn = m.group(1)
+                    if fn not in streamable:
+                        continue
+                    (helpers if fn in CONVERSION_HELPERS else calls).add(fn)
+                # Credit MEOS calls reached only through a MEOSWrapper method/function
+                # (e.g. `.aintersectsStatic(` -> aintersects_tgeo_geo). The mapped
+                # calls are already streamable by construction in wrapper_calls().
+                if wrap:
+                    for m in ANY_CALL_RE.finditer(txt):
+                        for fn in wrap.get(m.group(1), ()):
+                            (helpers if fn in CONVERSION_HELPERS else calls).add(fn)
+                # A conversion helper is plumbing and is dropped, EXCEPT when the
+                # operator is named for it (a dedicated conversion operator, e.g.
+                # TnpointToTgeompointExp -> tnpoint_to_tgeompoint): there the helper
+                # IS the operator's headline op. (The expand substrate's accumulator
+                # calls temporal_append_tinstant/temporal_merge co-occur in every
+                # aggregate, so co-occurrence alone cannot distinguish the two.)
+                snake = re.sub(r"(?<!^)(?=[A-Z])", "_", name).lower()
+                for h in helpers:
+                    if snake == h or snake.startswith(h + "_"):
+                        calls.add(h)
+                if calls:
+                    name2calls[name] = calls
     return name2calls
 
 
