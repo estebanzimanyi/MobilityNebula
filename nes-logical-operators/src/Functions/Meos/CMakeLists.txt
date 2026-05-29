@@ -1166,3 +1166,5 @@ add_plugin(TtextMinValue LogicalFunction nes-logical-operators TtextMinValueLogi
 add_plugin(TtextMaxValue LogicalFunction nes-logical-operators TtextMaxValueLogicalFunction.cpp)
 add_plugin(TtextValueN LogicalFunction nes-logical-operators TtextValueNLogicalFunction.cpp)
 add_plugin(TextsetValueN LogicalFunction nes-logical-operators TextsetValueNLogicalFunction.cpp)
+add_plugin(TgeoValueN LogicalFunction nes-logical-operators TgeoValueNLogicalFunction.cpp)
+add_plugin(TposeValueN LogicalFunction nes-logical-operators TposeValueNLogicalFunction.cpp)

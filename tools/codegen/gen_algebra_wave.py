@@ -143,7 +143,9 @@ VALUE_N_TEMPORAL = {"tint": ("INT32", "5", "8"), "tfloat": ("FLOAT64", "5.5", "8
 VALUE_N_SET = {"intset", "bigintset", "floatset", "dateset", "tstzset", "textset"}
 # value_n out-params that are a heap pointer (T **result) -> the *_out serializer
 # key (VARSIZED return), as opposed to the scalar OUT_PARAM_RET out-params.
-VALUE_N_VARSIZED = {"text": "text_value_out"}
+VALUE_N_VARSIZED = {"text": "text_value_out", "GSERIALIZED": "geo_value_out",
+                    "Pose": "pose_value_out", "Cbuffer": "cbuffer_value_out",
+                    "Npoint": "npoint_value_out"}
 # per-op box literal override for accessors that need a specific box flavour:
 # tboxint_* need an INT box; stbox time accessors need an STBOX carrying T.
 _STBOX_XT = ("STBOX XT(((1,1),(5,5)),[2020-01-01, 2020-01-05])",
@@ -394,6 +396,14 @@ def classify(name, ret, plist):
             vsql, va, vb = VALUE_N_TEMPORAL[stem]
             cols = [("value", vsql), ("ts", "UINT64")]
             rows = [(va, "1609459200"), (vb, "1609545600")]
+        elif plist[0][0] == "Temporal" and stem in ALWAYS_TINPUT:
+            # multi-column temporal (tgeo lon/lat, tpose x/y/theta) built like the
+            # always/ever wave: each value column + an appended ts.
+            input_type = ALWAYS_INPUT_TYPE.get(stem, stem)
+            tcols = ALWAYS_TINPUT[stem]
+            cols = [(c, s) for c, s, _, _ in tcols] + [("ts", "UINT64")]
+            rows = [tuple([a for _, _, a, _ in tcols] + ["1609459200"]),
+                    tuple([b for _, _, _, b in tcols] + ["1609545600"])]
         elif plist[0][0] == "Set" and stem in VALUE_N_SET:
             input_type = stem
             l0, l1 = LITERALS[input_type]

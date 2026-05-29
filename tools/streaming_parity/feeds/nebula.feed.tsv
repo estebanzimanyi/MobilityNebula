@@ -1025,6 +1025,7 @@ tgeo_convex_hull	proven
 tgeo_end_value	proven
 tgeo_minus_geom	proven
 tgeo_start_value	proven
+tgeo_value_n	proven
 tgeompoint_to_tgeometry	wired
 tgt_float_tfloat	proven
 tgt_int_tint	proven
@@ -1116,6 +1117,7 @@ tpoint_is_simple	proven
 tpoint_length	proven
 tpoint_speed	proven
 tpoint_twcentroid	proven
+tpose_value_n	proven
 tspatial_extent_transfn	proven
 tstzset_end_value	proven
 tstzset_shift_scale	proven

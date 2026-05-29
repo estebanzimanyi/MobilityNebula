@@ -3276,6 +3276,11 @@ for _rk, _ct, _of, _md in [
     ("ttext_out", "Temporal", "ttext_out", False),
     # a bare MEOS text* result (ttext_start_value/min_value/…) -> its cstring.
     ("text_value_out", "text", "text_out", False),
+    # heap-object value_n out-params -> their canonical text via *_out.
+    ("geo_value_out", "GSERIALIZED", "geo_out", False),
+    ("pose_value_out", "Pose", "pose_out", True),
+    ("cbuffer_value_out", "Cbuffer", "cbuffer_out", True),
+    ("npoint_value_out", "Npoint", "npoint_out", True),
 ]:
     GENERIC_RETURNS.setdefault(_rk, ("VariableSizedData", "VARSIZED", "(char*) nullptr", None))
     VARSIZED_OUT_RETURNS.setdefault(_rk, (_ct, _of, _md))

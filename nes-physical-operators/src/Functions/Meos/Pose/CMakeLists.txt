@@ -49,3 +49,4 @@ add_plugin(TeqTposePose PhysicalFunction nes-physical-operators TeqTposePosePhys
 add_plugin(TnePoseTpose PhysicalFunction nes-physical-operators TnePoseTposePhysicalFunction.cpp)
 add_plugin(TneTposePose PhysicalFunction nes-physical-operators TneTposePosePhysicalFunction.cpp)
 add_plugin(PoseToStbox PhysicalFunction nes-physical-operators PoseToStboxPhysicalFunction.cpp)
+add_plugin(TposeValueN PhysicalFunction nes-physical-operators TposeValueNPhysicalFunction.cpp)
