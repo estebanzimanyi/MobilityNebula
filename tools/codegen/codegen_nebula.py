@@ -3296,6 +3296,13 @@ for _rk, _ct, _of, _md in [
     ("dateset_text", "Set", "dateset_out", False),
     ("tstzset_text", "Set", "tstzset_out", False),
     ("textset_text", "Set", "textset_out", False),
+    # object-set algebra results (union/intersection/minus of an object-set ⊗ a
+    # value) -> their canonical text. geoset has no geoset_out; a geo Set
+    # serializes via spatialset_as_text. All take a maxdd precision arg.
+    ("cbufferset_text", "Set", "cbufferset_out", True),
+    ("npointset_text", "Set", "npointset_out", True),
+    ("poseset_text", "Set", "poseset_out", True),
+    ("geoset_text", "Set", "spatialset_as_text", True),
     ("floatspanset_text", "SpanSet", "floatspanset_out", True),
     ("bigintspanset_text", "SpanSet", "bigintspanset_out", False),
     ("datespanset_text", "SpanSet", "datespanset_out", False),

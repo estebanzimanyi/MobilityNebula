@@ -91,6 +91,36 @@ LITERALS = {
 # assembler. interval_out serializes an Interval result.
 IVAL_EXTRA = dict(kind="box", box_type="Interval", parser="interval_in",
                   parser_extra=", -1", header="meos.h")
+# object/geo/text set ± value algebra & predicates. The value type (the non-`set`
+# name token) -> (object-set primary input_type, value extra-arg, *set_text return
+# serializer for algebra results). geo/text reuse the existing geom/text extra
+# kinds; cbuffer/npoint/pose parse+free as a `box`-kind extra (object parser).
+SETVAL = {
+    "geo":     ("geoset",     dict(kind="geom"),                                                              "geoset_text"),
+    "cbuffer": ("cbufferset", dict(kind="box", box_type="Cbuffer", parser="cbuffer_in", header="meos_cbuffer.h"), "cbufferset_text"),
+    "npoint":  ("npointset",  dict(kind="box", box_type="Npoint",  parser="npoint_in",  header="meos_npoint.h"),  "npointset_text"),
+    "pose":    ("poseset",    dict(kind="box", box_type="Pose",    parser="pose_in",    header="meos_pose.h"),    "poseset_text"),
+    "text":    ("textset",    dict(kind="text"),                                                               "textset_text"),
+}
+# A value that IS an element of the set's row1/row2 literal (aligned to LITERALS):
+# makes contains true and keeps intersection / set-first minus non-empty.
+SETVAL_LIT_IN = {
+    "geo":     ("Point(1 1)", "Point(3 3)"),
+    "cbuffer": ("Cbuffer(Point(1 1),0.5)", "Cbuffer(Point(3 3),1.0)"),
+    "npoint":  ("Npoint(1,0.5)", "Npoint(1,0.7)"),
+    "pose":    ("Pose(Point(1 1),0.5)", "Pose(Point(3 3),0.3)"),
+    "text":    ("AAA", "BBB"),
+}
+# A value NOT in the set: keeps a value-first minus ({value} \ set) non-empty.
+SETVAL_LIT_OUT = {
+    "geo":     ("Point(9 9)", "Point(8 8)"),
+    "cbuffer": ("Cbuffer(Point(9 9),0.5)", "Cbuffer(Point(8 8),0.5)"),
+    "npoint":  ("Npoint(9,0.5)", "Npoint(8,0.5)"),
+    "pose":    ("Pose(Point(9 9),0.5)", "Pose(Point(8 8),0.5)"),
+    "text":    ("ZZZ", "YYY"),
+}
+SETVAL_OPS = ("contains", "contained", "left", "right", "overleft", "overright",
+              "union", "intersection", "minus")
 BOX_PARSER = {"intspan": "intspan_in", "bigintspan": "bigintspan_in", "floatspan": "floatspan_in",
               "datespan": "datespan_in", "tstzspan": "tstzspan_in",
               "intset": "intset_in", "bigintset": "bigintset_in", "floatset": "floatset_in",
@@ -838,6 +868,40 @@ def classify(name, ret, plist):
             rowa = tuple([a for _, _, a, _ in tcols] + ["1609459200", ba])
             rowb = tuple([b for _, _, _, b in tcols] + ["1609545600", bb])
             tmeta = dict(cols=cols, rows=[rowa, rowb], token=name.upper(), sink=sink_of(ret_kind(ret, None)))
+            return entry, tmeta
+    # ---- object/geo/text set ± value: f(Set, value) | f(value, Set) where the
+    #      value is a geo/cbuffer/npoint/pose/text. Predicates (contains/contained/
+    #      left/right/overleft/overright) -> bool; union/intersection/minus -> a new
+    #      object-set (serialized via *set_out / spatialset_as_text). The value
+    #      reuses the geom/text extra kinds or an object `box`-kind parse+free. ----
+    toks = name.split("_")
+    if (len(plist) == 2 and len(toks) == 3 and toks[0] in SETVAL_OPS
+            and ("set" in (toks[1], toks[2]))):
+        set_first = toks[1] == "set"
+        vtok = toks[2] if set_first else toks[1]
+        if vtok in SETVAL and ((set_first and plist[0] == ("Set", True))
+                               or (not set_first and plist[1] == ("Set", True))):
+            set_in, vextra, set_ret = SETVAL[vtok]
+            if rbase == "bool":
+                rkind = "int"
+            elif rbase == "Set":
+                rkind = set_ret
+            else:
+                return None, f"set±value return {rbase} unmapped"
+            # value-first minus ({value} \ set) is empty when value ∈ set, so use an
+            # out-of-set value there; everything else wants value ∈ set (contains
+            # true, intersection / set-first minus non-empty).
+            vlits = SETVAL_LIT_OUT if (toks[0] == "minus" and not set_first) else SETVAL_LIT_IN
+            v0, v1 = vlits[vtok]
+            entry = dict(nebula_name=camel(name), sql_token=name.upper(), meos_call=name,
+                         build_generic=True, input_type=set_in, return_kind=rkind,
+                         extra_args=[dict(vextra)],
+                         comment_one_liner=f"{name} ({ret.strip()}) — object-set ± {vtok} value.")
+            if not set_first:        # Set is operand 2 -> swap so call = f(value, set)
+                entry["box_first"] = True
+            sl0, sl1 = LITERALS[set_in]
+            tmeta = dict(cols=[("a", "VARSIZED"), ("arg", "VARSIZED")],
+                         rows=[(sl0, v0), (sl1, v1)], token=name.upper(), sink=sink_of(rkind))
             return entry, tmeta
     # ---- same-type object-scalar comparison / relation (cbuffer/pose/npoint/
     # nsegment cmp/eq/.../same + cbuffer spatial rels): two literals -> bool/int ----

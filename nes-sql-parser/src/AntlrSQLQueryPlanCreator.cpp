@@ -1375,6 +1375,42 @@
 #include <Functions/Meos/TimestamptzShiftLogicalFunction.hpp>
 #include <Functions/Meos/AddIntervalIntervalLogicalFunction.hpp>
 #include <Functions/Meos/MulIntervalDoubleLogicalFunction.hpp>
+#include <Functions/Meos/ContainedCbufferSetLogicalFunction.hpp>
+#include <Functions/Meos/ContainedGeoSetLogicalFunction.hpp>
+#include <Functions/Meos/ContainedNpointSetLogicalFunction.hpp>
+#include <Functions/Meos/ContainedPoseSetLogicalFunction.hpp>
+#include <Functions/Meos/ContainedTextSetLogicalFunction.hpp>
+#include <Functions/Meos/ContainsSetCbufferLogicalFunction.hpp>
+#include <Functions/Meos/ContainsSetGeoLogicalFunction.hpp>
+#include <Functions/Meos/ContainsSetNpointLogicalFunction.hpp>
+#include <Functions/Meos/ContainsSetPoseLogicalFunction.hpp>
+#include <Functions/Meos/ContainsSetTextLogicalFunction.hpp>
+#include <Functions/Meos/IntersectionGeoSetLogicalFunction.hpp>
+#include <Functions/Meos/IntersectionSetCbufferLogicalFunction.hpp>
+#include <Functions/Meos/IntersectionSetGeoLogicalFunction.hpp>
+#include <Functions/Meos/IntersectionSetNpointLogicalFunction.hpp>
+#include <Functions/Meos/IntersectionSetPoseLogicalFunction.hpp>
+#include <Functions/Meos/LeftSetTextLogicalFunction.hpp>
+#include <Functions/Meos/LeftTextSetLogicalFunction.hpp>
+#include <Functions/Meos/MinusCbufferSetLogicalFunction.hpp>
+#include <Functions/Meos/MinusGeoSetLogicalFunction.hpp>
+#include <Functions/Meos/MinusNpointSetLogicalFunction.hpp>
+#include <Functions/Meos/MinusPoseSetLogicalFunction.hpp>
+#include <Functions/Meos/MinusSetCbufferLogicalFunction.hpp>
+#include <Functions/Meos/MinusSetGeoLogicalFunction.hpp>
+#include <Functions/Meos/MinusSetNpointLogicalFunction.hpp>
+#include <Functions/Meos/MinusSetPoseLogicalFunction.hpp>
+#include <Functions/Meos/OverleftSetTextLogicalFunction.hpp>
+#include <Functions/Meos/OverleftTextSetLogicalFunction.hpp>
+#include <Functions/Meos/OverrightSetTextLogicalFunction.hpp>
+#include <Functions/Meos/OverrightTextSetLogicalFunction.hpp>
+#include <Functions/Meos/RightSetTextLogicalFunction.hpp>
+#include <Functions/Meos/RightTextSetLogicalFunction.hpp>
+#include <Functions/Meos/UnionGeoSetLogicalFunction.hpp>
+#include <Functions/Meos/UnionSetCbufferLogicalFunction.hpp>
+#include <Functions/Meos/UnionSetGeoLogicalFunction.hpp>
+#include <Functions/Meos/UnionSetNpointLogicalFunction.hpp>
+#include <Functions/Meos/UnionSetPoseLogicalFunction.hpp>
 #include <Plans/LogicalPlan.hpp>
 #include <Plans/LogicalPlanBuilder.hpp>
 #include <Util/Overloaded.hpp>
@@ -37725,6 +37761,1050 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: MUL_INTERVAL_DOUBLE */
+        /* BEGIN CODEGEN PARSER GLUE: CONTAINED_CBUFFER_SET */
+        case AntlrSQLLexer::CONTAINED_CBUFFER_SET:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 2)
+                throw InvalidQuerySyntax("CONTAINED_CBUFFER_SET requires exactly 2 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(ContainedCbufferSetLogicalFunction(a0, a1));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: CONTAINED_CBUFFER_SET */
+
+        /* BEGIN CODEGEN PARSER GLUE: CONTAINED_GEO_SET */
+        case AntlrSQLLexer::CONTAINED_GEO_SET:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 2)
+                throw InvalidQuerySyntax("CONTAINED_GEO_SET requires exactly 2 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(ContainedGeoSetLogicalFunction(a0, a1));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: CONTAINED_GEO_SET */
+
+        /* BEGIN CODEGEN PARSER GLUE: CONTAINED_NPOINT_SET */
+        case AntlrSQLLexer::CONTAINED_NPOINT_SET:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 2)
+                throw InvalidQuerySyntax("CONTAINED_NPOINT_SET requires exactly 2 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(ContainedNpointSetLogicalFunction(a0, a1));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: CONTAINED_NPOINT_SET */
+
+        /* BEGIN CODEGEN PARSER GLUE: CONTAINED_POSE_SET */
+        case AntlrSQLLexer::CONTAINED_POSE_SET:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 2)
+                throw InvalidQuerySyntax("CONTAINED_POSE_SET requires exactly 2 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(ContainedPoseSetLogicalFunction(a0, a1));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: CONTAINED_POSE_SET */
+
+        /* BEGIN CODEGEN PARSER GLUE: CONTAINED_TEXT_SET */
+        case AntlrSQLLexer::CONTAINED_TEXT_SET:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 2)
+                throw InvalidQuerySyntax("CONTAINED_TEXT_SET requires exactly 2 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(ContainedTextSetLogicalFunction(a0, a1));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: CONTAINED_TEXT_SET */
+
+        /* BEGIN CODEGEN PARSER GLUE: CONTAINS_SET_CBUFFER */
+        case AntlrSQLLexer::CONTAINS_SET_CBUFFER:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 2)
+                throw InvalidQuerySyntax("CONTAINS_SET_CBUFFER requires exactly 2 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(ContainsSetCbufferLogicalFunction(a0, a1));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: CONTAINS_SET_CBUFFER */
+
+        /* BEGIN CODEGEN PARSER GLUE: CONTAINS_SET_GEO */
+        case AntlrSQLLexer::CONTAINS_SET_GEO:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 2)
+                throw InvalidQuerySyntax("CONTAINS_SET_GEO requires exactly 2 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(ContainsSetGeoLogicalFunction(a0, a1));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: CONTAINS_SET_GEO */
+
+        /* BEGIN CODEGEN PARSER GLUE: CONTAINS_SET_NPOINT */
+        case AntlrSQLLexer::CONTAINS_SET_NPOINT:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 2)
+                throw InvalidQuerySyntax("CONTAINS_SET_NPOINT requires exactly 2 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(ContainsSetNpointLogicalFunction(a0, a1));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: CONTAINS_SET_NPOINT */
+
+        /* BEGIN CODEGEN PARSER GLUE: CONTAINS_SET_POSE */
+        case AntlrSQLLexer::CONTAINS_SET_POSE:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 2)
+                throw InvalidQuerySyntax("CONTAINS_SET_POSE requires exactly 2 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(ContainsSetPoseLogicalFunction(a0, a1));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: CONTAINS_SET_POSE */
+
+        /* BEGIN CODEGEN PARSER GLUE: CONTAINS_SET_TEXT */
+        case AntlrSQLLexer::CONTAINS_SET_TEXT:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 2)
+                throw InvalidQuerySyntax("CONTAINS_SET_TEXT requires exactly 2 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(ContainsSetTextLogicalFunction(a0, a1));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: CONTAINS_SET_TEXT */
+
+        /* BEGIN CODEGEN PARSER GLUE: INTERSECTION_GEO_SET */
+        case AntlrSQLLexer::INTERSECTION_GEO_SET:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 2)
+                throw InvalidQuerySyntax("INTERSECTION_GEO_SET requires exactly 2 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(IntersectionGeoSetLogicalFunction(a0, a1));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: INTERSECTION_GEO_SET */
+
+        /* BEGIN CODEGEN PARSER GLUE: INTERSECTION_SET_CBUFFER */
+        case AntlrSQLLexer::INTERSECTION_SET_CBUFFER:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 2)
+                throw InvalidQuerySyntax("INTERSECTION_SET_CBUFFER requires exactly 2 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(IntersectionSetCbufferLogicalFunction(a0, a1));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: INTERSECTION_SET_CBUFFER */
+
+        /* BEGIN CODEGEN PARSER GLUE: INTERSECTION_SET_GEO */
+        case AntlrSQLLexer::INTERSECTION_SET_GEO:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 2)
+                throw InvalidQuerySyntax("INTERSECTION_SET_GEO requires exactly 2 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(IntersectionSetGeoLogicalFunction(a0, a1));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: INTERSECTION_SET_GEO */
+
+        /* BEGIN CODEGEN PARSER GLUE: INTERSECTION_SET_NPOINT */
+        case AntlrSQLLexer::INTERSECTION_SET_NPOINT:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 2)
+                throw InvalidQuerySyntax("INTERSECTION_SET_NPOINT requires exactly 2 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(IntersectionSetNpointLogicalFunction(a0, a1));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: INTERSECTION_SET_NPOINT */
+
+        /* BEGIN CODEGEN PARSER GLUE: INTERSECTION_SET_POSE */
+        case AntlrSQLLexer::INTERSECTION_SET_POSE:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 2)
+                throw InvalidQuerySyntax("INTERSECTION_SET_POSE requires exactly 2 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(IntersectionSetPoseLogicalFunction(a0, a1));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: INTERSECTION_SET_POSE */
+
+        /* BEGIN CODEGEN PARSER GLUE: LEFT_SET_TEXT */
+        case AntlrSQLLexer::LEFT_SET_TEXT:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 2)
+                throw InvalidQuerySyntax("LEFT_SET_TEXT requires exactly 2 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(LeftSetTextLogicalFunction(a0, a1));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: LEFT_SET_TEXT */
+
+        /* BEGIN CODEGEN PARSER GLUE: LEFT_TEXT_SET */
+        case AntlrSQLLexer::LEFT_TEXT_SET:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 2)
+                throw InvalidQuerySyntax("LEFT_TEXT_SET requires exactly 2 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(LeftTextSetLogicalFunction(a0, a1));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: LEFT_TEXT_SET */
+
+        /* BEGIN CODEGEN PARSER GLUE: MINUS_CBUFFER_SET */
+        case AntlrSQLLexer::MINUS_CBUFFER_SET:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 2)
+                throw InvalidQuerySyntax("MINUS_CBUFFER_SET requires exactly 2 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(MinusCbufferSetLogicalFunction(a0, a1));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: MINUS_CBUFFER_SET */
+
+        /* BEGIN CODEGEN PARSER GLUE: MINUS_GEO_SET */
+        case AntlrSQLLexer::MINUS_GEO_SET:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 2)
+                throw InvalidQuerySyntax("MINUS_GEO_SET requires exactly 2 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(MinusGeoSetLogicalFunction(a0, a1));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: MINUS_GEO_SET */
+
+        /* BEGIN CODEGEN PARSER GLUE: MINUS_NPOINT_SET */
+        case AntlrSQLLexer::MINUS_NPOINT_SET:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 2)
+                throw InvalidQuerySyntax("MINUS_NPOINT_SET requires exactly 2 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(MinusNpointSetLogicalFunction(a0, a1));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: MINUS_NPOINT_SET */
+
+        /* BEGIN CODEGEN PARSER GLUE: MINUS_POSE_SET */
+        case AntlrSQLLexer::MINUS_POSE_SET:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 2)
+                throw InvalidQuerySyntax("MINUS_POSE_SET requires exactly 2 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(MinusPoseSetLogicalFunction(a0, a1));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: MINUS_POSE_SET */
+
+        /* BEGIN CODEGEN PARSER GLUE: MINUS_SET_CBUFFER */
+        case AntlrSQLLexer::MINUS_SET_CBUFFER:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 2)
+                throw InvalidQuerySyntax("MINUS_SET_CBUFFER requires exactly 2 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(MinusSetCbufferLogicalFunction(a0, a1));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: MINUS_SET_CBUFFER */
+
+        /* BEGIN CODEGEN PARSER GLUE: MINUS_SET_GEO */
+        case AntlrSQLLexer::MINUS_SET_GEO:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 2)
+                throw InvalidQuerySyntax("MINUS_SET_GEO requires exactly 2 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(MinusSetGeoLogicalFunction(a0, a1));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: MINUS_SET_GEO */
+
+        /* BEGIN CODEGEN PARSER GLUE: MINUS_SET_NPOINT */
+        case AntlrSQLLexer::MINUS_SET_NPOINT:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 2)
+                throw InvalidQuerySyntax("MINUS_SET_NPOINT requires exactly 2 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(MinusSetNpointLogicalFunction(a0, a1));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: MINUS_SET_NPOINT */
+
+        /* BEGIN CODEGEN PARSER GLUE: MINUS_SET_POSE */
+        case AntlrSQLLexer::MINUS_SET_POSE:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 2)
+                throw InvalidQuerySyntax("MINUS_SET_POSE requires exactly 2 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(MinusSetPoseLogicalFunction(a0, a1));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: MINUS_SET_POSE */
+
+        /* BEGIN CODEGEN PARSER GLUE: OVERLEFT_SET_TEXT */
+        case AntlrSQLLexer::OVERLEFT_SET_TEXT:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 2)
+                throw InvalidQuerySyntax("OVERLEFT_SET_TEXT requires exactly 2 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(OverleftSetTextLogicalFunction(a0, a1));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: OVERLEFT_SET_TEXT */
+
+        /* BEGIN CODEGEN PARSER GLUE: OVERLEFT_TEXT_SET */
+        case AntlrSQLLexer::OVERLEFT_TEXT_SET:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 2)
+                throw InvalidQuerySyntax("OVERLEFT_TEXT_SET requires exactly 2 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(OverleftTextSetLogicalFunction(a0, a1));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: OVERLEFT_TEXT_SET */
+
+        /* BEGIN CODEGEN PARSER GLUE: OVERRIGHT_SET_TEXT */
+        case AntlrSQLLexer::OVERRIGHT_SET_TEXT:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 2)
+                throw InvalidQuerySyntax("OVERRIGHT_SET_TEXT requires exactly 2 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(OverrightSetTextLogicalFunction(a0, a1));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: OVERRIGHT_SET_TEXT */
+
+        /* BEGIN CODEGEN PARSER GLUE: OVERRIGHT_TEXT_SET */
+        case AntlrSQLLexer::OVERRIGHT_TEXT_SET:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 2)
+                throw InvalidQuerySyntax("OVERRIGHT_TEXT_SET requires exactly 2 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(OverrightTextSetLogicalFunction(a0, a1));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: OVERRIGHT_TEXT_SET */
+
+        /* BEGIN CODEGEN PARSER GLUE: RIGHT_SET_TEXT */
+        case AntlrSQLLexer::RIGHT_SET_TEXT:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 2)
+                throw InvalidQuerySyntax("RIGHT_SET_TEXT requires exactly 2 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(RightSetTextLogicalFunction(a0, a1));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: RIGHT_SET_TEXT */
+
+        /* BEGIN CODEGEN PARSER GLUE: RIGHT_TEXT_SET */
+        case AntlrSQLLexer::RIGHT_TEXT_SET:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 2)
+                throw InvalidQuerySyntax("RIGHT_TEXT_SET requires exactly 2 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(RightTextSetLogicalFunction(a0, a1));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: RIGHT_TEXT_SET */
+
+        /* BEGIN CODEGEN PARSER GLUE: UNION_GEO_SET */
+        case AntlrSQLLexer::UNION_GEO_SET:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 2)
+                throw InvalidQuerySyntax("UNION_GEO_SET requires exactly 2 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(UnionGeoSetLogicalFunction(a0, a1));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: UNION_GEO_SET */
+
+        /* BEGIN CODEGEN PARSER GLUE: UNION_SET_CBUFFER */
+        case AntlrSQLLexer::UNION_SET_CBUFFER:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 2)
+                throw InvalidQuerySyntax("UNION_SET_CBUFFER requires exactly 2 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(UnionSetCbufferLogicalFunction(a0, a1));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: UNION_SET_CBUFFER */
+
+        /* BEGIN CODEGEN PARSER GLUE: UNION_SET_GEO */
+        case AntlrSQLLexer::UNION_SET_GEO:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 2)
+                throw InvalidQuerySyntax("UNION_SET_GEO requires exactly 2 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(UnionSetGeoLogicalFunction(a0, a1));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: UNION_SET_GEO */
+
+        /* BEGIN CODEGEN PARSER GLUE: UNION_SET_NPOINT */
+        case AntlrSQLLexer::UNION_SET_NPOINT:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 2)
+                throw InvalidQuerySyntax("UNION_SET_NPOINT requires exactly 2 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(UnionSetNpointLogicalFunction(a0, a1));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: UNION_SET_NPOINT */
+
+        /* BEGIN CODEGEN PARSER GLUE: UNION_SET_POSE */
+        case AntlrSQLLexer::UNION_SET_POSE:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 2)
+                throw InvalidQuerySyntax("UNION_SET_POSE requires exactly 2 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(UnionSetPoseLogicalFunction(a0, a1));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: UNION_SET_POSE */
+
 
 
 
