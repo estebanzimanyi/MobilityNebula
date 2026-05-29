@@ -3154,6 +3154,23 @@ GENERIC_INPUTS = {
         '                while (!{var}S.empty() && ({var}S.back()==\'\\\'\' || {var}S.back()==\'"\')) {var}S.pop_back();\n'
         '                TBox* {var} = tbox_in({var}S.c_str());\n'
         '                if (!{var}) return {z};\n')),
+    # A tstzspan primary (the timestamp-span expand operand) parsed from a text
+    # literal via tstzspan_in — sibling of the intspan/datespan primaries.
+    "tstzspan": dict(fields=[("lit", "VariableSizedData")], header="meos.h", build=(
+        '                std::string {var}S(litPtr, litSize);\n'
+        '                while (!{var}S.empty() && ({var}S.front()==\'\\\'\' || {var}S.front()==\'"\')) {var}S.erase({var}S.begin());\n'
+        '                while (!{var}S.empty() && ({var}S.back()==\'\\\'\' || {var}S.back()==\'"\')) {var}S.pop_back();\n'
+        '                Span* {var} = tstzspan_in({var}S.c_str());\n'
+        '                if (!{var}) return {z};\n')),
+    # An Interval primary (interval arithmetic add/mul) parsed from an ISO text
+    # literal via interval_in (typmod -1, same as the Interval extra-arg); heap,
+    # so it is freed by the assembler.
+    "interval": dict(fields=[("lit", "VariableSizedData")], header="meos.h", build=(
+        '                std::string {var}S(litPtr, litSize);\n'
+        '                while (!{var}S.empty() && ({var}S.front()==\'\\\'\' || {var}S.front()==\'"\')) {var}S.erase({var}S.begin());\n'
+        '                while (!{var}S.empty() && ({var}S.back()==\'\\\'\' || {var}S.back()==\'"\')) {var}S.pop_back();\n'
+        '                Interval* {var} = interval_in({var}S.c_str(), -1);\n'
+        '                if (!{var}) return {z};\n')),
 }
 
 # return_kind -> (cpp_return_type, nautilus_return, zero_literal, extract_fn|None)

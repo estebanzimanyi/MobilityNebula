@@ -84,7 +84,13 @@ LITERALS = {
     # A bare geometry primary. SRID-prefixed + multi-point so srid/num_points are
     # meaningful; parsed via geom_in (codegen GENERIC_INPUTS "geom").
     "geom":       ("SRID=4326;Linestring(1 1, 2 2)", "SRID=4326;Linestring(3 3, 4 4, 5 5)"),
+    "interval":   ("1 day", "2 days 3 hours"),
 }
+# Interval* extra arg: parsed from an ISO text literal via interval_in with typmod
+# -1 (a `box`-kind extra, already wired in codegen_nebula) and freed by the
+# assembler. interval_out serializes an Interval result.
+IVAL_EXTRA = dict(kind="box", box_type="Interval", parser="interval_in",
+                  parser_extra=", -1", header="meos.h")
 BOX_PARSER = {"intspan": "intspan_in", "bigintspan": "bigintspan_in", "floatspan": "floatspan_in",
               "datespan": "datespan_in", "tstzspan": "tstzspan_in",
               "intset": "intset_in", "bigintset": "bigintset_in", "floatset": "floatset_in",
@@ -504,6 +510,50 @@ def classify(name, ret, plist):
         cols = prim_cols + [("arg", "VARSIZED")]
         rows = [tuple(prim_rows[0] + [sa]), tuple(prim_rows[1] + [sb])]
         tmeta = dict(cols=cols, rows=rows, token=name.upper(), sink="VARSIZED")
+        return entry, tmeta
+    # ---- Interval-consuming ops: expand-by-interval (tstzspan/tbox/stbox +
+    #      Interval -> same), timestamptz±interval (TimestampTz + Interval ->
+    #      TimestampTz µs), and interval arithmetic (Interval ⊗ Interval|double ->
+    #      Interval). Interval* is already wired (interval_in box-extra typmod -1
+    #      + interval_out); the primary uses the interval/tstzspan/timestamptz_base
+    #      inputs. ----
+    if len(plist) == 2 and (plist[0][0] == "Interval" or plist[1][0] == "Interval"):
+        (b0, p0), (b1, p1) = plist
+        if b0 == "Span" and p0 and rbase == "Span":          # tstzspan_expand
+            input_type, rkind = "tstzspan", "tstzspan_text"
+            prim_cols, prim_rows = [("a", "VARSIZED")], [[LITERALS["tstzspan"][0]], [LITERALS["tstzspan"][1]]]
+        elif b0 in BOX_INPUT and p0:                          # tbox/stbox_expand_time
+            input_type = BOX_INPUT[b0]
+            rkind = "tbox_text_out" if b0 == "TBox" else "stbox_text_out"
+            # expand_time touches the T dimension, so the box must carry one: the
+            # default X-only STBox literal yields an empty result. Use an XT box.
+            l0, l1 = LITERALS[input_type]
+            if b0 == "STBox":
+                l0 = "STBOX XT(((1,1),(5,5)),[2020-01-01, 2020-01-05])"
+                l1 = "STBOX XT(((3,3),(7,7)),[2020-01-03, 2020-01-07])"
+            prim_cols, prim_rows = [("a", "VARSIZED")], [[l0], [l1]]
+        elif b0 == "TimestampTz" and not p0:                  # timestamptz_shift/add/minus
+            input_type, rkind = "timestamptz_base", "int64"
+            vcol, va, vb = CONV_BASE_COL["timestamptz_base"]
+            prim_cols, prim_rows = [("value", vcol)], [[va], [vb]]
+        elif b0 == "Interval" and p0:                         # add_interval_interval / mul_interval_double
+            input_type, rkind = "interval", "interval_out"
+            prim_cols, prim_rows = [("a", "VARSIZED")], [[LITERALS["interval"][0]], [LITERALS["interval"][1]]]
+        else:
+            return None, f"interval op primary {b0}{'*' if p0 else ''} unsupported"
+        if b1 == "Interval" and p1:                           # 2nd operand = interval
+            extra, ecol, sa, sb = dict(IVAL_EXTRA), "VARSIZED", LITERALS["interval"][0], LITERALS["interval"][1]
+        elif b1 == "double" and not p1:                       # mul_interval_double
+            extra, ecol, sa, sb = dict(kind="scalar", cpp="double"), "FLOAT64", "2.0", "3.0"
+        else:
+            return None, f"interval op 2nd operand {b1}{'*' if p1 else ''} unsupported"
+        entry = dict(nebula_name=camel(name), sql_token=name.upper(), meos_call=name,
+                     build_generic=True, input_type=input_type, return_kind=rkind,
+                     extra_args=[extra],
+                     comment_one_liner=f"{name} ({ret.strip()}) — Interval-consuming op.")
+        cols = prim_cols + [("arg", ecol)]
+        rows = [tuple(prim_rows[0] + [sa]), tuple(prim_rows[1] + [sb])]
+        tmeta = dict(cols=cols, rows=rows, token=name.upper(), sink=sink_of(rkind))
         return entry, tmeta
     # ---- arity-1 ttext transform/accessor: a single ttext instant ->
     #      a ttext (lower/upper/initcap, via ttext_out) or its text* value

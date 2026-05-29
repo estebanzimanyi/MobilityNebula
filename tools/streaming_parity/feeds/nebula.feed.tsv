@@ -15,7 +15,9 @@ acovers_tcbuffer_cbuffer	proven
 acovers_tcbuffer_geo	proven
 add_float_tfloat	proven
 add_int_tint	proven
+add_interval_interval	proven
 add_tfloat_float	proven
+add_timestamptz_interval	proven
 add_tint_int	proven
 add_tnumber_tnumber	proven
 adisjoint_tcbuffer_cbuffer	proven
@@ -614,9 +616,11 @@ minus_spanset_span	proven
 minus_spanset_spanset	proven
 minus_spanset_timestamptz	proven
 minus_text_set	proven
+minus_timestamptz_interval	proven
 minus_timestamptz_set	proven
 minus_timestamptz_span	proven
 minus_timestamptz_spanset	proven
+mul_interval_double	proven
 nad_stbox_stbox	proven
 nad_tboxfloat_tboxfloat	proven
 nad_tboxint_tboxint	proven
@@ -912,6 +916,7 @@ stbox_area	proven
 stbox_cmp	proven
 stbox_copy	proven
 stbox_eq	proven
+stbox_expand_time	proven
 stbox_ge	proven
 stbox_gt	proven
 stbox_hash	proven
@@ -951,6 +956,7 @@ tbool_value_n	proven
 tbox_cmp	proven
 tbox_copy	proven
 tbox_eq	proven
+tbox_expand_time	proven
 tbox_ge	proven
 tbox_gt	proven
 tbox_hash	proven
@@ -1112,6 +1118,7 @@ tgt_tfloat_float	proven
 tgt_tint_int	proven
 tgt_ttext_text	proven
 timestamptz_extent_transfn	proven
+timestamptz_shift	proven
 timestamptz_to_set	proven
 timestamptz_to_span	proven
 timestamptz_to_spanset	proven
@@ -1205,6 +1212,7 @@ tstzset_start_value	proven
 tstzset_to_stbox	proven
 tstzset_value_n	proven
 tstzspan_duration	proven
+tstzspan_expand	proven
 tstzspan_lower	proven
 tstzspan_shift_scale	proven
 tstzspan_to_datespan	proven
