@@ -1129,8 +1129,15 @@ tstzspanset_num_timestamps	proven
 tstzspanset_shift_scale	proven
 tstzspanset_start_timestamptz	proven
 tstzspanset_upper	proven
+ttext_end_value	proven
 ttext_from_base_temp	proven
+ttext_initcap	proven
+ttext_lower	proven
+ttext_max_value	proven
+ttext_min_value	proven
 ttext_minus_value	proven
+ttext_start_value	proven
+ttext_upper	proven
 ttouches_cbuffer_tcbuffer	proven
 ttouches_geo_tcbuffer	proven
 ttouches_geo_tgeo	proven

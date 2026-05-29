@@ -3274,6 +3274,8 @@ for _rk, _ct, _of, _md in [
     ("tfloat_out", "Temporal", "tfloat_out", True),
     ("tbool_out", "Temporal", "tbool_out", False),
     ("ttext_out", "Temporal", "ttext_out", False),
+    # a bare MEOS text* result (ttext_start_value/min_value/…) -> its cstring.
+    ("text_value_out", "text", "text_out", False),
 ]:
     GENERIC_RETURNS.setdefault(_rk, ("VariableSizedData", "VARSIZED", "(char*) nullptr", None))
     VARSIZED_OUT_RETURNS.setdefault(_rk, (_ct, _of, _md))

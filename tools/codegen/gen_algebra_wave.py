@@ -435,6 +435,20 @@ def classify(name, ret, plist):
         rows = [tuple(prim_rows[0] + [sa]), tuple(prim_rows[1] + [sb])]
         tmeta = dict(cols=cols, rows=rows, token=name.upper(), sink="VARSIZED")
         return entry, tmeta
+    # ---- arity-1 ttext transform/accessor: a single ttext instant ->
+    #      a ttext (lower/upper/initcap, via ttext_out) or its text* value
+    #      (start/end/min/max_value, via text_out). VARSIZED, no '(' so records. ----
+    if (len(plist) == 1 and plist[0] == ("Temporal", True) and "ttext" in name
+            and rbase in ("Temporal", "text")):
+        rkind = "ttext_out" if rbase == "Temporal" else "text_value_out"
+        entry = dict(nebula_name=camel(name), sql_token=name.upper(), meos_call=name,
+                     build_generic=True, input_type="ttext", return_kind=rkind,
+                     extra_args=[],
+                     comment_one_liner=f"{name} ({ret.strip()}) — unary ttext -> {rbase}.")
+        tmeta = dict(cols=[("value", "VARSIZED"), ("ts", "UINT64")],
+                     rows=[("ABC", "1609459200"), ("DEF", "1609545600")],
+                     token=name.upper(), sink="VARSIZED")
+        return entry, tmeta
     # ---- unary accessor: one Span/Set/SpanSet/TBox/STBox operand -> scalar ----
     if len(plist) == 1:
         base, ptr = plist[0]
