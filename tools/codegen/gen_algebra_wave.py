@@ -117,6 +117,20 @@ CONV_SPAN_RET = {"intspan": "intspan_text", "floatspan": "floatspan_text",
 CONV_BOX_LIT = {"tbox_to_intspan": ("TBOXINT XT([1, 5],[2020-01-01, 2020-01-05])",
                                     "TBOXINT XT([3, 7],[2020-01-03, 2020-01-07])")}
 
+# Out-param accessors `bool f(const Box*, T *result)`: the out-param C type ->
+# (cpp decl, generic return_kind). The validity-flag return is discarded.
+OUT_PARAM_RET = {"double": ("double", "double"), "int": ("int", "int"),
+                 "TimestampTz": ("TimestampTz", "int64"), "bool": ("bool", "bool")}
+# per-op box literal override for accessors that need a specific box flavour:
+# tboxint_* need an INT box; stbox time accessors need an STBOX carrying T.
+_STBOX_XT = ("STBOX XT(((1,1),(5,5)),[2020-01-01, 2020-01-05])",
+             "STBOX XT(((3,3),(7,7)),[2020-01-03, 2020-01-07])")
+_TBOXINT  = ("TBOXINT XT([1, 5],[2020-01-01, 2020-01-05])",
+             "TBOXINT XT([3, 7],[2020-01-03, 2020-01-07])")
+ACCESSOR_BOX_LIT = {"tboxint_xmin": _TBOXINT, "tboxint_xmax": _TBOXINT,
+                    "stbox_tmin": _STBOX_XT, "stbox_tmax": _STBOX_XT,
+                    "stbox_tmin_inc": _STBOX_XT, "stbox_tmax_inc": _STBOX_XT}
+
 # Object scalar types compared/related to another value of the same type
 # (cbuffer/pose/npoint/nsegment cmp/eq/ne/lt/le/gt/ge/same and the cbuffer
 # spatial rels). Both operands parse from a quoted text literal; bool/int sink.
@@ -353,6 +367,21 @@ def classify(name, ret, plist):
         return entry, tmeta
     if len(plist) != 2:
         return None, f"arity {len(plist)} (not 2)"
+    # ---- box out-param accessor: bool f(const Box*, T *result) -> scalar in
+    #      *result (tbox_xmin/xmax/tmin/tmax + _inc, stbox_tmin/tmax + _inc) ----
+    if (plist[0][1] and plist[0][0] in BOX_INPUT
+            and plist[1][1] and plist[1][0] in OUT_PARAM_RET
+            and ret.strip() == "bool"):
+        oc, rkind = OUT_PARAM_RET[plist[1][0]]
+        input_type = BOX_INPUT[plist[0][0]]
+        lit0, lit1 = ACCESSOR_BOX_LIT.get(name, LITERALS[input_type])
+        entry = dict(nebula_name=camel(name), sql_token=name.upper(), meos_call=name,
+                     build_generic=True, input_type=input_type, return_kind=rkind,
+                     extra_args=[], out_param=dict(cpp=oc),
+                     comment_one_liner=f"{name} (out-param {plist[1][0]}) — {input_type} accessor.")
+        tmeta = dict(cols=[("a", "VARSIZED")], rows=[(lit0,), (lit1,)],
+                     token=name.upper(), sink=sink_of(rkind))
+        return entry, tmeta
     # ---- box accessor with a fixed bool flag: f(box, bool) -> scalar
     #      (stbox_area/stbox_perimeter take a spheroid flag; planar = false) ----
     if plist[0][1] and plist[0][0] in BOX_INPUT and plist[1] == ("bool", False):

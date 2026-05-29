@@ -1226,6 +1226,22 @@
 #include <Functions/Meos/SetToTboxLogicalFunction.hpp>
 #include <Functions/Meos/SpansetToTboxLogicalFunction.hpp>
 #include <Functions/Meos/TnumberToTboxLogicalFunction.hpp>
+#include <Functions/Meos/TboxXminLogicalFunction.hpp>
+#include <Functions/Meos/TboxXmaxLogicalFunction.hpp>
+#include <Functions/Meos/TboxTminLogicalFunction.hpp>
+#include <Functions/Meos/TboxTmaxLogicalFunction.hpp>
+#include <Functions/Meos/TboxXminIncLogicalFunction.hpp>
+#include <Functions/Meos/TboxXmaxIncLogicalFunction.hpp>
+#include <Functions/Meos/TboxTminIncLogicalFunction.hpp>
+#include <Functions/Meos/TboxTmaxIncLogicalFunction.hpp>
+#include <Functions/Meos/TboxfloatXminLogicalFunction.hpp>
+#include <Functions/Meos/TboxfloatXmaxLogicalFunction.hpp>
+#include <Functions/Meos/TboxintXminLogicalFunction.hpp>
+#include <Functions/Meos/TboxintXmaxLogicalFunction.hpp>
+#include <Functions/Meos/StboxTminLogicalFunction.hpp>
+#include <Functions/Meos/StboxTmaxLogicalFunction.hpp>
+#include <Functions/Meos/StboxTminIncLogicalFunction.hpp>
+#include <Functions/Meos/StboxTmaxIncLogicalFunction.hpp>
 #include <Plans/LogicalPlan.hpp>
 #include <Plans/LogicalPlanBuilder.hpp>
 #include <Util/Overloaded.hpp>
@@ -33374,6 +33390,454 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TNUMBER_TO_TBOX */
+        /* BEGIN CODEGEN PARSER GLUE: TBOX_XMIN */
+        case AntlrSQLLexer::TBOX_XMIN:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 1)
+                throw InvalidQuerySyntax("TBOX_XMIN requires exactly 1 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(TboxXminLogicalFunction(a0));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: TBOX_XMIN */
+
+        /* BEGIN CODEGEN PARSER GLUE: TBOX_XMAX */
+        case AntlrSQLLexer::TBOX_XMAX:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 1)
+                throw InvalidQuerySyntax("TBOX_XMAX requires exactly 1 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(TboxXmaxLogicalFunction(a0));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: TBOX_XMAX */
+
+        /* BEGIN CODEGEN PARSER GLUE: TBOX_TMIN */
+        case AntlrSQLLexer::TBOX_TMIN:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 1)
+                throw InvalidQuerySyntax("TBOX_TMIN requires exactly 1 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(TboxTminLogicalFunction(a0));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: TBOX_TMIN */
+
+        /* BEGIN CODEGEN PARSER GLUE: TBOX_TMAX */
+        case AntlrSQLLexer::TBOX_TMAX:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 1)
+                throw InvalidQuerySyntax("TBOX_TMAX requires exactly 1 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(TboxTmaxLogicalFunction(a0));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: TBOX_TMAX */
+
+        /* BEGIN CODEGEN PARSER GLUE: TBOX_XMIN_INC */
+        case AntlrSQLLexer::TBOX_XMIN_INC:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 1)
+                throw InvalidQuerySyntax("TBOX_XMIN_INC requires exactly 1 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(TboxXminIncLogicalFunction(a0));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: TBOX_XMIN_INC */
+
+        /* BEGIN CODEGEN PARSER GLUE: TBOX_XMAX_INC */
+        case AntlrSQLLexer::TBOX_XMAX_INC:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 1)
+                throw InvalidQuerySyntax("TBOX_XMAX_INC requires exactly 1 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(TboxXmaxIncLogicalFunction(a0));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: TBOX_XMAX_INC */
+
+        /* BEGIN CODEGEN PARSER GLUE: TBOX_TMIN_INC */
+        case AntlrSQLLexer::TBOX_TMIN_INC:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 1)
+                throw InvalidQuerySyntax("TBOX_TMIN_INC requires exactly 1 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(TboxTminIncLogicalFunction(a0));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: TBOX_TMIN_INC */
+
+        /* BEGIN CODEGEN PARSER GLUE: TBOX_TMAX_INC */
+        case AntlrSQLLexer::TBOX_TMAX_INC:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 1)
+                throw InvalidQuerySyntax("TBOX_TMAX_INC requires exactly 1 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(TboxTmaxIncLogicalFunction(a0));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: TBOX_TMAX_INC */
+
+        /* BEGIN CODEGEN PARSER GLUE: TBOXFLOAT_XMIN */
+        case AntlrSQLLexer::TBOXFLOAT_XMIN:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 1)
+                throw InvalidQuerySyntax("TBOXFLOAT_XMIN requires exactly 1 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(TboxfloatXminLogicalFunction(a0));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: TBOXFLOAT_XMIN */
+
+        /* BEGIN CODEGEN PARSER GLUE: TBOXFLOAT_XMAX */
+        case AntlrSQLLexer::TBOXFLOAT_XMAX:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 1)
+                throw InvalidQuerySyntax("TBOXFLOAT_XMAX requires exactly 1 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(TboxfloatXmaxLogicalFunction(a0));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: TBOXFLOAT_XMAX */
+
+        /* BEGIN CODEGEN PARSER GLUE: TBOXINT_XMIN */
+        case AntlrSQLLexer::TBOXINT_XMIN:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 1)
+                throw InvalidQuerySyntax("TBOXINT_XMIN requires exactly 1 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(TboxintXminLogicalFunction(a0));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: TBOXINT_XMIN */
+
+        /* BEGIN CODEGEN PARSER GLUE: TBOXINT_XMAX */
+        case AntlrSQLLexer::TBOXINT_XMAX:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 1)
+                throw InvalidQuerySyntax("TBOXINT_XMAX requires exactly 1 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(TboxintXmaxLogicalFunction(a0));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: TBOXINT_XMAX */
+
+        /* BEGIN CODEGEN PARSER GLUE: STBOX_TMIN */
+        case AntlrSQLLexer::STBOX_TMIN:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 1)
+                throw InvalidQuerySyntax("STBOX_TMIN requires exactly 1 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(StboxTminLogicalFunction(a0));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: STBOX_TMIN */
+
+        /* BEGIN CODEGEN PARSER GLUE: STBOX_TMAX */
+        case AntlrSQLLexer::STBOX_TMAX:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 1)
+                throw InvalidQuerySyntax("STBOX_TMAX requires exactly 1 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(StboxTmaxLogicalFunction(a0));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: STBOX_TMAX */
+
+        /* BEGIN CODEGEN PARSER GLUE: STBOX_TMIN_INC */
+        case AntlrSQLLexer::STBOX_TMIN_INC:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 1)
+                throw InvalidQuerySyntax("STBOX_TMIN_INC requires exactly 1 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(StboxTminIncLogicalFunction(a0));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: STBOX_TMIN_INC */
+
+        /* BEGIN CODEGEN PARSER GLUE: STBOX_TMAX_INC */
+        case AntlrSQLLexer::STBOX_TMAX_INC:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 1)
+                throw InvalidQuerySyntax("STBOX_TMAX_INC requires exactly 1 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(StboxTmaxIncLogicalFunction(a0));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: STBOX_TMAX_INC */
+
 
 
 

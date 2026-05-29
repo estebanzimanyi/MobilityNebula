@@ -3558,7 +3558,19 @@ def assemble_generic_physical(op):
     # A base-scalar primary input (frees: False) is a plain value, not a heap
     # pointer, so it must not be freed.
     free_primary = "                free(temp);\n" if inp.get("frees", True) else ""
-    if extract_fn is None:
+    op_out = op.get("out_param")
+    if op_out is not None:
+        # out-param accessor: bool f(operand…, T *result) writes the real value
+        # into *result and returns a validity flag. Declare the result, pass its
+        # address as the final arg, and return it (zero when the flag is false).
+        oc = op_out["cpp"]
+        call_marshal = (f"                {oc} res;\n"
+                        f"                bool ok = {op['meos_call']}({callargs}, &res);\n"
+                        f"{free_primary}"
+                        f"{bf}"
+                        f"                if (!ok) return {zero};\n"
+                        f"                return ({ret_cpp}) res;")
+    elif extract_fn is None:
         call_marshal = (f"                {ret_cpp} r = {op['meos_call']}({callargs});\n"
                         f"{free_primary}"
                         f"{bf}"
