@@ -82,3 +82,5 @@ add_plugin(TnpointTrajectory PhysicalFunction nes-physical-operators TnpointTraj
 add_plugin(TnpointTwcentroid PhysicalFunction nes-physical-operators TnpointTwcentroidPhysicalFunction.cpp)
 add_plugin(NpointToGeompoint PhysicalFunction nes-physical-operators NpointToGeompointPhysicalFunction.cpp)
 add_plugin(NsegmentToGeom PhysicalFunction nes-physical-operators NsegmentToGeomPhysicalFunction.cpp)
+add_plugin(TnpointAtNpoint PhysicalFunction nes-physical-operators TnpointAtNpointPhysicalFunction.cpp)
+add_plugin(TnpointMinusNpoint PhysicalFunction nes-physical-operators TnpointMinusNpointPhysicalFunction.cpp)

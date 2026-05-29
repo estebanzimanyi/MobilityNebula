@@ -127,3 +127,7 @@ add_plugin(ShortestlineTcbufferTcbuffer PhysicalFunction nes-physical-operators 
 add_plugin(CbufferCopy PhysicalFunction nes-physical-operators CbufferCopyPhysicalFunction.cpp)
 add_plugin(CbufferPoint PhysicalFunction nes-physical-operators CbufferPointPhysicalFunction.cpp)
 add_plugin(CbufferToGeom PhysicalFunction nes-physical-operators CbufferToGeomPhysicalFunction.cpp)
+add_plugin(TcbufferAtCbuffer PhysicalFunction nes-physical-operators TcbufferAtCbufferPhysicalFunction.cpp)
+add_plugin(TcbufferAtGeom PhysicalFunction nes-physical-operators TcbufferAtGeomPhysicalFunction.cpp)
+add_plugin(TcbufferMinusCbuffer PhysicalFunction nes-physical-operators TcbufferMinusCbufferPhysicalFunction.cpp)
+add_plugin(TcbufferMinusGeom PhysicalFunction nes-physical-operators TcbufferMinusGeomPhysicalFunction.cpp)

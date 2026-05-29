@@ -831,6 +831,60 @@ def classify(name, ret, plist):
                          rows=[("5", "1609459200", lit), ("8", "1609545600", lit)],
                          token=name.upper(), sink="VARSIZED")
             return entry, tmeta
+    # ---- spatial temporal restriction at/minus: a tgeo/tpoint/tcbuffer/tnpoint/
+    #      tpose instant ⊗ {geo value, same-family object, STBox(+border bool)} ->
+    #      the restricted temporal (tspatial_text). at-variants align the operand
+    #      to the instant (non-empty); minus-variants use a far operand. ----
+    rtoks = name.split("_")
+    if (rbase == "Temporal" and len(plist) >= 2 and plist[0] == ("Temporal", True)
+            and ("_at_" in name or "_minus_" in name)
+            and rtoks[0] in ("tpoint", "tgeo", "tcbuffer", "tnpoint", "tpose")):
+        is_minus = "minus" in rtoks
+        tsub = "tgeo" if rtoks[0] in ("tpoint", "tgeo") else rtoks[0]
+        in_type = ALWAYS_INPUT_TYPE.get(tsub, tsub)
+        tcols = ALWAYS_TINPUT[tsub]
+        secb, secp = plist[1]
+        srid = "SRID=4326;" if tsub == "tgeo" else ""
+        eca, extra_hdr = [], None
+        if secb == "GSERIALIZED":
+            if tsub == "tnpoint":
+                return None, "tnpoint geo restriction needs network-SRID literal"
+            extra = dict(kind="geom")
+            a0, a1 = ((f"{srid}Point(40 40)", f"{srid}Point(50 50)") if is_minus
+                      else (f"{srid}Point(1 1)", f"{srid}Point(2 2)"))
+        elif secb in ("Cbuffer", "Npoint", "Pose"):
+            lits = {"Cbuffer": ("Cbuffer(Point(1 1),1)", "Cbuffer(Point(2 2),0.5)",
+                                "Cbuffer(Point(40 40),1)", "Cbuffer(Point(50 50),1)"),
+                    "Npoint":  ("NPoint(1, 0.5)", "NPoint(1, 0.7)", "NPoint(9, 0.5)", "NPoint(9, 0.7)"),
+                    "Pose":    ("Pose(Point(1 1), 0.5)", "Pose(Point(2 2), 1.0)",
+                                "Pose(Point(40 40), 0.5)", "Pose(Point(50 50), 1.0)")}[secb]
+            parser = {"Cbuffer": "cbuffer_in", "Npoint": "npoint_in", "Pose": "pose_in"}[secb]
+            extra = dict(kind="box", box_type=secb, parser=parser, header=ALWAYS_BASE_HDR[secb])
+            extra_hdr = ALWAYS_BASE_HDR[secb]
+            a0, a1 = (lits[2], lits[3]) if is_minus else (lits[0], lits[1])
+        elif secb == "STBox" and len(plist) == 3 and plist[2] == ("bool", False):
+            if tsub == "tnpoint":
+                return None, "tnpoint stbox restriction needs network-SRID box"
+            extra = dict(kind="box", box_type="STBox", parser="stbox_in", header="meos_geo.h")
+            far = f"{srid}STBOX X((40,40),(60,60))"
+            near = f"{srid}STBOX X((0,0),(3,3))"
+            a0, a1 = (far, far) if is_minus else (near, near)
+            eca = ["true"]                              # border_inc
+        else:
+            return None, f"spatial restriction 2nd operand {secb} unsupported"
+        entry = dict(nebula_name=camel(name), sql_token=name.upper(), meos_call=name,
+                     build_generic=True, input_type=in_type, return_kind="tspatial_text",
+                     extra_args=[extra],
+                     comment_one_liner=f"{name} ({ret.strip()}) — {tsub} restriction by {secb}.")
+        if extra_hdr:
+            entry["extra_headers"] = [extra_hdr]
+        if eca:
+            entry["extra_call_args"] = eca
+        cols = [(c, s) for c, s, _, _ in tcols] + [("ts", "UINT64"), ("arg", "VARSIZED")]
+        rowa = tuple([a for _, _, a, _ in tcols] + ["1609459200", a0])
+        rowb = tuple([b for _, _, _, b in tcols] + ["1609545600", a1])
+        tmeta = dict(cols=cols, rows=[rowa, rowb], token=name.upper(), sink="VARSIZED")
+        return entry, tmeta
     # ---- nearest-approach / shortest-line: a spatial temporal (tgeo/tcbuffer/
     #      tnpoint/tpose) ⊗ {geo, object, second temporal} -> nad (double),
     #      nai (the nearest-approach instant via tspatial_as_text) or shortestline
