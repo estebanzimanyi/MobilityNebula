@@ -211,11 +211,13 @@ cbuffer_cmp	proven
 cbuffer_eq	proven
 cbuffer_ge	proven
 cbuffer_gt	proven
+cbuffer_hash	proven
 cbuffer_le	proven
 cbuffer_lt	proven
 cbuffer_ne	proven
 cbuffer_nsame	proven
 cbuffer_same	proven
+cbuffer_srid	proven
 cbuffer_to_stbox	proven
 contained_bigint_set	proven
 contained_bigint_span	proven
@@ -607,10 +609,12 @@ npoint_cmp	proven
 npoint_eq	proven
 npoint_ge	proven
 npoint_gt	proven
+npoint_hash	proven
 npoint_le	proven
 npoint_lt	proven
 npoint_ne	proven
 npoint_same	proven
+npoint_srid	proven
 npoint_to_stbox	proven
 nsegment_cmp	proven
 nsegment_eq	proven
@@ -619,6 +623,7 @@ nsegment_gt	proven
 nsegment_le	proven
 nsegment_lt	proven
 nsegment_ne	proven
+nsegment_srid	proven
 nsegment_to_stbox	proven
 numspan_timestamptz_to_tbox	proven
 numspan_tstzspan_to_tbox	proven
@@ -764,11 +769,13 @@ pose_cmp	proven
 pose_eq	proven
 pose_ge	proven
 pose_gt	proven
+pose_hash	proven
 pose_le	proven
 pose_lt	proven
 pose_ne	proven
 pose_nsame	proven
 pose_same	proven
+pose_srid	proven
 pose_to_stbox	proven
 right_bigint_set	proven
 right_bigint_span	proven
@@ -815,6 +822,7 @@ set_copy	proven
 set_eq	proven
 set_ge	proven
 set_gt	proven
+set_hash	proven
 set_le	proven
 set_lt	proven
 set_ne	proven
@@ -829,6 +837,7 @@ span_copy	proven
 span_eq	proven
 span_ge	proven
 span_gt	proven
+span_hash	proven
 span_le	proven
 span_lower_inc	proven
 span_lt	proven
@@ -841,6 +850,7 @@ spanset_end_span	proven
 spanset_eq	proven
 spanset_ge	proven
 spanset_gt	proven
+spanset_hash	proven
 spanset_le	proven
 spanset_lower_inc	proven
 spanset_lt	proven
@@ -856,6 +866,7 @@ stbox_copy	proven
 stbox_eq	proven
 stbox_ge	proven
 stbox_gt	proven
+stbox_hash	proven
 stbox_hast	proven
 stbox_hasx	proven
 stbox_hasz	proven
@@ -959,6 +970,7 @@ temporal_eq	proven
 temporal_frechet_distance	proven
 temporal_ge	proven
 temporal_gt	proven
+temporal_hash	proven
 temporal_hausdorff_distance	proven
 temporal_le	proven
 temporal_lower_inc	proven

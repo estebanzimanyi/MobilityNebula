@@ -978,3 +978,8 @@ add_plugin(TgeoValueN PhysicalFunction nes-physical-operators TgeoValueNPhysical
 add_plugin(TemporalToTstzspan PhysicalFunction nes-physical-operators TemporalToTstzspanPhysicalFunction.cpp)
 add_plugin(TemporalTime PhysicalFunction nes-physical-operators TemporalTimePhysicalFunction.cpp)
 add_plugin(TnumberValuespans PhysicalFunction nes-physical-operators TnumberValuespansPhysicalFunction.cpp)
+add_plugin(SpanHash PhysicalFunction nes-physical-operators SpanHashPhysicalFunction.cpp)
+add_plugin(SetHash PhysicalFunction nes-physical-operators SetHashPhysicalFunction.cpp)
+add_plugin(SpansetHash PhysicalFunction nes-physical-operators SpansetHashPhysicalFunction.cpp)
+add_plugin(StboxHash PhysicalFunction nes-physical-operators StboxHashPhysicalFunction.cpp)
+add_plugin(TemporalHash PhysicalFunction nes-physical-operators TemporalHashPhysicalFunction.cpp)

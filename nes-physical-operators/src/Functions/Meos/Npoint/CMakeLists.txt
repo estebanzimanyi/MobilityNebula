@@ -54,3 +54,6 @@ add_plugin(TeqTnpointNpoint PhysicalFunction nes-physical-operators TeqTnpointNp
 add_plugin(TneTnpointNpoint PhysicalFunction nes-physical-operators TneTnpointNpointPhysicalFunction.cpp)
 add_plugin(NpointToStbox PhysicalFunction nes-physical-operators NpointToStboxPhysicalFunction.cpp)
 add_plugin(NsegmentToStbox PhysicalFunction nes-physical-operators NsegmentToStboxPhysicalFunction.cpp)
+add_plugin(NpointHash PhysicalFunction nes-physical-operators NpointHashPhysicalFunction.cpp)
+add_plugin(NpointSrid PhysicalFunction nes-physical-operators NpointSridPhysicalFunction.cpp)
+add_plugin(NsegmentSrid PhysicalFunction nes-physical-operators NsegmentSridPhysicalFunction.cpp)

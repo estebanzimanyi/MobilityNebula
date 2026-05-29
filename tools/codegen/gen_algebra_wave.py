@@ -489,9 +489,11 @@ def classify(name, ret, plist):
                      rows=[("5.5", "1609459200"), ("8.5", "1609545600")],
                      token=name.upper(), sink="VARSIZED")
         return entry, tmeta
-    # ---- unary accessor: one Span/Set/SpanSet/TBox/STBox operand -> scalar ----
+    # ---- unary accessor: one Span/Set/SpanSet/TBox/STBox/object/Temporal
+    #      operand -> scalar (hash, srid, …) ----
     if len(plist) == 1:
         base, ptr = plist[0]
+        tfloat_instant = False
         if ptr and base in BOX_INPUT:
             input_type = BOX_INPUT[base]            # tbox_text / stbox_text primary
         elif ptr and base in ("Span", "Set", "SpanSet"):
@@ -499,8 +501,14 @@ def classify(name, ret, plist):
             input_type = GENERIC_CONTAINER.get(ckey, ckey)
             if input_type not in LITERALS:
                 return None, f"no literal for container {input_type}"
+        elif ptr and base in OBJECT_TYPES:          # cbuffer/pose/npoint/nsegment
+            input_type = OBJECT_TYPES[base][0]      # -> family-gated subdir
+            if input_type not in LITERALS:
+                return None, f"no literal for object {input_type}"
+        elif ptr and base == "Temporal":            # single tfloat instant
+            input_type, tfloat_instant = "tfloat", True
         else:
-            return None, f"unary param {base}{'*' if ptr else ''} not a span/set/spanset/box"
+            return None, f"unary param {base}{'*' if ptr else ''} not a span/set/spanset/box/object/temporal"
         rkind = SCALAR_RET.get(ret.strip())
         if rkind is None:
             return None, f"unary return {ret.strip()} unmapped"
@@ -508,9 +516,14 @@ def classify(name, ret, plist):
                      build_generic=True, input_type=input_type, return_kind=rkind,
                      extra_args=[],
                      comment_one_liner=f"{name} ({ret.strip()}) — unary {input_type} accessor.")
-        tmeta = dict(cols=[("a", "VARSIZED")],
-                     rows=[(LITERALS[input_type][0],), (LITERALS[input_type][1],)],
-                     token=name.upper(), sink=sink_of(rkind))
+        if tfloat_instant:
+            tmeta = dict(cols=[("value", "FLOAT64"), ("ts", "UINT64")],
+                         rows=[("5.5", "1609459200"), ("8.5", "1609545600")],
+                         token=name.upper(), sink=sink_of(rkind))
+        else:
+            tmeta = dict(cols=[("a", "VARSIZED")],
+                         rows=[(LITERALS[input_type][0],), (LITERALS[input_type][1],)],
+                         token=name.upper(), sink=sink_of(rkind))
         return entry, tmeta
     if len(plist) != 2:
         return None, f"arity {len(plist)} (not 2)"
