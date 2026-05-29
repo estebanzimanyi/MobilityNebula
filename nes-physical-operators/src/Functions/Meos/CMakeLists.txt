@@ -1089,3 +1089,7 @@ add_plugin(SameNumspanTnumber PhysicalFunction nes-physical-operators SameNumspa
 add_plugin(SameTemporalTstzspan PhysicalFunction nes-physical-operators SameTemporalTstzspanPhysicalFunction.cpp)
 add_plugin(SameTnumberNumspan PhysicalFunction nes-physical-operators SameTnumberNumspanPhysicalFunction.cpp)
 add_plugin(SameTstzspanTemporal PhysicalFunction nes-physical-operators SameTstzspanTemporalPhysicalFunction.cpp)
+add_plugin(NaiTgeoGeo PhysicalFunction nes-physical-operators NaiTgeoGeoPhysicalFunction.cpp)
+add_plugin(NaiTgeoTgeo PhysicalFunction nes-physical-operators NaiTgeoTgeoPhysicalFunction.cpp)
+add_plugin(ShortestlineTgeoGeo PhysicalFunction nes-physical-operators ShortestlineTgeoGeoPhysicalFunction.cpp)
+add_plugin(ShortestlineTgeoTgeo PhysicalFunction nes-physical-operators ShortestlineTgeoTgeoPhysicalFunction.cpp)

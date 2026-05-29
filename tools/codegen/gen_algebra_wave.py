@@ -355,6 +355,28 @@ TWO_TEMPORAL = {
                   '                std::string {var}W = fmt::format("\\"{{}}\\"@{{}}", {var}S, MEOS::Meos::convertEpochToTimestamp(ts2));\n'
                   '                Temporal* {var} = ttext_in({var}W.c_str());\n'
                   '                if (!{var}) {{ free(temp); return {z}; }}\n')),
+    "tnpoint": dict(
+        input_type="tnpoint",
+        make_cols=[("rid", "INT64"), ("frac", "FLOAT64"), ("ts", "UINT64"),
+                   ("rid2", "INT64"), ("frac2", "FLOAT64"), ("ts2", "UINT64")],
+        rows=[("1", "0.5", "1609459200", "1", "0.7", "1609459200"),
+              ("1", "0.3", "1609545600", "1", "0.6", "1609545600")],
+        t2_fields=[("rid2", "int64_t"), ("frac2", "double"), ("ts2", "uint64_t")],
+        header="meos_npoint.h",
+        t2_build=('                std::string {var}W = fmt::format("NPoint({{}},{{}})@{{}}", rid2, frac2, MEOS::Meos::convertEpochToTimestamp(ts2));\n'
+                  '                Temporal* {var} = tnpoint_in({var}W.c_str());\n'
+                  '                if (!{var}) {{ free(temp); return {z}; }}\n')),
+    "tpose": dict(
+        input_type="tpose",
+        make_cols=[("x", "FLOAT64"), ("y", "FLOAT64"), ("theta", "FLOAT64"), ("ts", "UINT64"),
+                   ("x2", "FLOAT64"), ("y2", "FLOAT64"), ("theta2", "FLOAT64"), ("ts2", "UINT64")],
+        rows=[("1.0", "1.0", "0.5", "1609459200", "2.0", "2.0", "1.0", "1609459200"),
+              ("3.0", "3.0", "0.3", "1609545600", "4.0", "4.0", "0.6", "1609545600")],
+        t2_fields=[("x2", "double"), ("y2", "double"), ("theta2", "double"), ("ts2", "uint64_t")],
+        header="meos_pose.h",
+        t2_build=('                std::string {var}W = fmt::format("Pose(Point({{}} {{}}),{{}})@{{}}", x2, y2, theta2, MEOS::Meos::convertEpochToTimestamp(ts2));\n'
+                  '                Temporal* {var} = tpose_in({var}W.c_str());\n'
+                  '                if (!{var}) {{ free(temp); return {z}; }}\n')),
 }
 # base operand -> (extra-arg builder tag, column SQL, sample a, sample b). The tag
 # is "scalar" (bool source field), "text" (text* via text_in), or a *_in parser.
@@ -794,6 +816,60 @@ def classify(name, ret, plist):
                          rows=[("5", "1609459200", lit), ("8", "1609545600", lit)],
                          token=name.upper(), sink="VARSIZED")
             return entry, tmeta
+    # ---- nearest-approach / shortest-line: a spatial temporal (tgeo/tcbuffer/
+    #      tnpoint/tpose) ⊗ {geo, object, second temporal} -> nad (double),
+    #      nai (the nearest-approach instant via tspatial_as_text) or shortestline
+    #      (the connecting line via geo_out). temp is always operand 1. ----
+    toks = name.split("_")
+    if (toks[0] in ("nai", "shortestline", "nad") and len(plist) == 2
+            and plist[0] == ("Temporal", True)):
+        tsub = next((t for t in ("tgeo", "tcbuffer", "tnpoint", "tpose") if t in toks), None)
+        if tsub is None:
+            return None, f"{toks[0]} temporal subtype unsupported"
+        if rbase == "double":
+            rkind, sink = "double", "FLOAT64"
+        elif toks[0] == "nai":
+            rkind, sink = "tspatial_text", "VARSIZED"
+        elif toks[0] == "shortestline":
+            rkind, sink = "geo_value_out", "VARSIZED"
+        else:
+            return None, f"{toks[0]} return {rbase} unmapped"
+        in_type = ALWAYS_INPUT_TYPE.get(tsub, tsub)
+        tcols = ALWAYS_TINPUT[tsub]
+        secb, secp = plist[1]
+        if secb in ALWAYS_BASE:                         # geo / object literal extra
+            parser, bsql, ba, bb = ALWAYS_BASE[secb]
+            if secb == "GSERIALIZED" and tsub != "tgeo":   # non-tgeo families carry no SRID
+                ba, bb = "Point(1 1)", "Point(2 2)"
+            if parser == "geom":
+                extra = dict(kind="geom")
+            elif parser == "text":
+                extra = dict(kind="text")
+            else:
+                extra = dict(kind="box", box_type=secb, parser=parser, header=ALWAYS_BASE_HDR[secb])
+            entry = dict(nebula_name=camel(name), sql_token=name.upper(), meos_call=name,
+                         build_generic=True, input_type=in_type, return_kind=rkind,
+                         extra_args=[extra],
+                         comment_one_liner=f"{name} ({ret.strip()}) — {tsub} nearest-approach ⊗ {secb}.")
+            if parser not in ("geom", "text"):
+                entry["extra_headers"] = [ALWAYS_BASE_HDR[secb]]
+            cols = [(c, s) for c, s, _, _ in tcols] + [("ts", "UINT64"), ("arg", bsql)]
+            rowa = tuple([a for _, _, a, _ in tcols] + ["1609459200", ba])
+            rowb = tuple([b for _, _, _, b in tcols] + ["1609545600", bb])
+            tmeta = dict(cols=cols, rows=[rowa, rowb], token=name.upper(), sink=sink)
+            return entry, tmeta
+        if (secb, secp) == ("Temporal", True):          # second temporal via temporal2
+            if in_type not in TWO_TEMPORAL:
+                return None, f"{toks[0]} two-temporal {in_type} unsupported"
+            spec = TWO_TEMPORAL[in_type]
+            entry = dict(nebula_name=camel(name), sql_token=name.upper(), meos_call=name,
+                         build_generic=True, input_type=spec["input_type"], return_kind=rkind,
+                         extra_args=[dict(kind="temporal2", t2_fields=spec["t2_fields"],
+                                          t2_build=spec["t2_build"], header=spec["header"])],
+                         comment_one_liner=f"{name} ({ret.strip()}) — two {in_type} instants nearest-approach.")
+            tmeta = dict(cols=spec["make_cols"], rows=spec["rows"], token=name.upper(), sink=sink)
+            return entry, tmeta
+        return None, f"{toks[0]} second operand {secb} unsupported"
     # ---- two-temporal: both operands built from instant columns -> tbool / ttext ----
     if (ret.replace("*", "").strip() == "Temporal" and len(plist) == 2
             and all(b == "Temporal" for b, p in plist)):

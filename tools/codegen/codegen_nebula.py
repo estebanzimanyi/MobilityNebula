@@ -3318,6 +3318,9 @@ for _rk, _ct, _of, _md in [
     ("tfloat_out", "Temporal", "tfloat_out", True),
     ("tbool_out", "Temporal", "tbool_out", False),
     ("ttext_out", "Temporal", "ttext_out", False),
+    # a spatial Temporal* result (the nai nearest-approach instant for
+    # tgeo/tcbuffer/tnpoint/tpose) -> its canonical text via tspatial_as_text.
+    ("tspatial_text", "Temporal", "tspatial_as_text", True),
     # a bare MEOS text* result (ttext_start_value/min_value/…) -> its cstring.
     ("text_value_out", "text", "text_out", False),
     # heap-object value_n out-params -> their canonical text via *_out.
@@ -3488,8 +3491,12 @@ def assemble_generic_varsized_output(op):
             f"                free(res);\n"
             f"                return outStr;")
     else:
+        # Cast the MEOS result to the declared result type: a call may return a
+        # concrete subtype (e.g. nai_* returns TInstant*) that is layout-compatible
+        # with the abstract type the serializer takes (Temporal*) but needs an
+        # explicit C cast in C++. A no-op when the types already match.
         call_marshal = (
-            f"                {res_ctype}* res = {op['meos_call']}({callargs});\n"
+            f"                {res_ctype}* res = ({res_ctype}*) {op['meos_call']}({callargs});\n"
             f"{free_primary}"
             f"{bf}"
             f"                if (!res) return (char*) nullptr;\n"
