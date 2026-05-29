@@ -3356,7 +3356,7 @@ def assemble_generic_varsized_output(op):
                 f'                std::string arg{i}S(arg{i}Ptr, arg{i}Size);\n'
                 f'                while (!arg{i}S.empty() && (arg{i}S.front()==\'\\\'\' || arg{i}S.front()==\'"\')) arg{i}S.erase(arg{i}S.begin());\n'
                 f'                while (!arg{i}S.empty() && (arg{i}S.back()==\'\\\'\' || arg{i}S.back()==\'"\')) arg{i}S.pop_back();\n'
-                f'                {ex["box_type"]}* arg{i}B = {ex["parser"]}(arg{i}S.c_str());\n'
+                f'                {ex["box_type"]}* arg{i}B = {ex["parser"]}(arg{i}S.c_str(){ex.get("parser_extra", "")});\n'
                 f'                if (!arg{i}B) {{ free(temp); return {zero}; }}\n')
             call_terms.append(f"arg{i}B")
             box_frees.append(f"free(arg{i}B);")
@@ -3500,7 +3500,7 @@ def assemble_generic_physical(op):
                 f'                std::string arg{i}S(arg{i}Ptr, arg{i}Size);\n'
                 f'                while (!arg{i}S.empty() && (arg{i}S.front()==\'\\\'\' || arg{i}S.front()==\'"\')) arg{i}S.erase(arg{i}S.begin());\n'
                 f'                while (!arg{i}S.empty() && (arg{i}S.back()==\'\\\'\' || arg{i}S.back()==\'"\')) arg{i}S.pop_back();\n'
-                f'                {ex["box_type"]}* arg{i}B = {ex["parser"]}(arg{i}S.c_str());\n'
+                f'                {ex["box_type"]}* arg{i}B = {ex["parser"]}(arg{i}S.c_str(){ex.get("parser_extra", "")});\n'
                 f'                if (!arg{i}B) {{ free(temp); return {zero}; }}\n')
             call_terms.append(f"arg{i}B")
             box_frees.append(f"free(arg{i}B);")
