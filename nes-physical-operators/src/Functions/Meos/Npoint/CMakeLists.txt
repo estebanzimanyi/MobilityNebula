@@ -57,3 +57,4 @@ add_plugin(NsegmentToStbox PhysicalFunction nes-physical-operators NsegmentToStb
 add_plugin(NpointHash PhysicalFunction nes-physical-operators NpointHashPhysicalFunction.cpp)
 add_plugin(NpointSrid PhysicalFunction nes-physical-operators NpointSridPhysicalFunction.cpp)
 add_plugin(NsegmentSrid PhysicalFunction nes-physical-operators NsegmentSridPhysicalFunction.cpp)
+add_plugin(NpointRound PhysicalFunction nes-physical-operators NpointRoundPhysicalFunction.cpp)

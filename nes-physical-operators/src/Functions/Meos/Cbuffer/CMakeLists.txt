@@ -107,3 +107,4 @@ add_plugin(TtouchesTcbufferTcbuffer PhysicalFunction nes-physical-operators Ttou
 add_plugin(CbufferToStbox PhysicalFunction nes-physical-operators CbufferToStboxPhysicalFunction.cpp)
 add_plugin(CbufferHash PhysicalFunction nes-physical-operators CbufferHashPhysicalFunction.cpp)
 add_plugin(CbufferSrid PhysicalFunction nes-physical-operators CbufferSridPhysicalFunction.cpp)
+add_plugin(CbufferRound PhysicalFunction nes-physical-operators CbufferRoundPhysicalFunction.cpp)

@@ -216,6 +216,7 @@ cbuffer_le	proven
 cbuffer_lt	proven
 cbuffer_ne	proven
 cbuffer_nsame	proven
+cbuffer_round	proven
 cbuffer_same	proven
 cbuffer_srid	proven
 cbuffer_to_stbox	proven
@@ -440,6 +441,7 @@ ever_ne_tpose_pose	proven
 ever_ne_tpose_tpose	proven
 ever_ne_ttext_text	proven
 float_extent_transfn	proven
+float_round	proven
 float_timestamptz_to_tbox	proven
 float_to_set	proven
 float_to_span	proven
@@ -452,10 +454,12 @@ floatset_shift_scale	proven
 floatset_start_value	proven
 floatset_value_n	proven
 floatspan_lower	proven
+floatspan_round	proven
 floatspan_shift_scale	proven
 floatspan_upper	proven
 floatspan_width	proven
 floatspanset_lower	proven
+floatspanset_round	proven
 floatspanset_shift_scale	proven
 floatspanset_upper	proven
 floatspanset_width	proven
@@ -613,6 +617,7 @@ npoint_hash	proven
 npoint_le	proven
 npoint_lt	proven
 npoint_ne	proven
+npoint_round	proven
 npoint_same	proven
 npoint_srid	proven
 npoint_to_stbox	proven
@@ -774,6 +779,7 @@ pose_le	proven
 pose_lt	proven
 pose_ne	proven
 pose_nsame	proven
+pose_round	proven
 pose_same	proven
 pose_srid	proven
 pose_to_stbox	proven
@@ -827,6 +833,7 @@ set_le	proven
 set_lt	proven
 set_ne	proven
 set_num_values	proven
+set_round	proven
 set_to_span	proven
 set_to_spanset	proven
 set_to_tbox	proven
@@ -875,6 +882,7 @@ stbox_le	proven
 stbox_lt	proven
 stbox_ne	proven
 stbox_perimeter	proven
+stbox_round	proven
 stbox_srid	proven
 stbox_tmax	proven
 stbox_tmax_inc	proven
@@ -900,6 +908,7 @@ tbox_hasx	proven
 tbox_le	proven
 tbox_lt	proven
 tbox_ne	proven
+tbox_round	proven
 tbox_tmax	proven
 tbox_tmax_inc	proven
 tbox_tmin	proven
@@ -986,6 +995,7 @@ temporal_ne	proven
 temporal_num_instants	proven
 temporal_num_sequences	wired
 temporal_num_timestamps	proven
+temporal_round	proven
 temporal_start_timestamptz	proven
 temporal_time	proven
 temporal_to_tstzspan	proven

@@ -52,3 +52,4 @@ add_plugin(PoseToStbox PhysicalFunction nes-physical-operators PoseToStboxPhysic
 add_plugin(TposeValueN PhysicalFunction nes-physical-operators TposeValueNPhysicalFunction.cpp)
 add_plugin(PoseHash PhysicalFunction nes-physical-operators PoseHashPhysicalFunction.cpp)
 add_plugin(PoseSrid PhysicalFunction nes-physical-operators PoseSridPhysicalFunction.cpp)
+add_plugin(PoseRound PhysicalFunction nes-physical-operators PoseRoundPhysicalFunction.cpp)

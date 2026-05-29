@@ -133,6 +133,21 @@ TEMPORAL_UNARY_VARSIZED = {
     "temporal_time":      "tstzspanset_text",     # the time spanset of a temporal
     "tnumber_valuespans": "floatspanset_text",    # the value spanset of a tnumber
 }
+# `_round` rounds an operand to `maxdd` decimals and returns the SAME type. The
+# operand base type -> (primary input_type, same-type *_out return_kind). float_
+# round (a plain double) is handled inline. Object returns reuse the Wave-J
+# object value_out serializers; geo/nsegment deferred (no primary/serializer).
+ROUND_RET = {
+    "Span":     ("floatspan",    "floatspan_text"),
+    "SpanSet":  ("floatspanset", "floatspanset_text"),
+    "Set":      ("floatset",     "floatset_text"),
+    "STBox":    ("stbox_text",   "stbox_text_out"),
+    "TBox":     ("tbox_text",    "tbox_text_out"),
+    "Temporal": ("tfloat",       "tfloat_out"),
+    "Cbuffer":  ("cbuffer",      "cbuffer_value_out"),
+    "Pose":     ("pose",         "pose_value_out"),
+    "Npoint":   ("npoint",       "npoint_value_out"),
+}
 #   per-op box literal override (tbox_to_intspan needs an INT box, not the
 #   default TBOXFLOAT) — keyed by op name.
 CONV_BOX_LIT = {"tbox_to_intspan": ("TBOXINT XT([1, 5],[2020-01-01, 2020-01-05])",
@@ -527,6 +542,36 @@ def classify(name, ret, plist):
         return entry, tmeta
     if len(plist) != 2:
         return None, f"arity {len(plist)} (not 2)"
+    # ---- `_round`: f(operand, int maxdd) -> SAME type. The operand base picks
+    #      the primary input and its same-type *_out return; maxdd is a fixed
+    #      trailing call arg. float_round (a plain double) returns a scalar. ----
+    if name.endswith("_round") and plist[1] == ("int", False):
+        base, ptr = plist[0]
+        if not ptr and base == "double":               # float_round(double, int)
+            entry = dict(nebula_name=camel(name), sql_token=name.upper(), meos_call=name,
+                         build_generic=True, input_type="float_base", return_kind="double",
+                         extra_args=[], extra_call_args=["2"],
+                         comment_one_liner=f"{name} (double) — round to 2 decimals.")
+            col_sql, va, vb = CONV_BASE_COL["float_base"]
+            tmeta = dict(cols=[("value", col_sql)], rows=[("5.567",), ("8.123",)],
+                         token=name.upper(), sink=sink_of("double"))
+            return entry, tmeta
+        if ptr and base in ROUND_RET:
+            input_type, rkind = ROUND_RET[base]
+            entry = dict(nebula_name=camel(name), sql_token=name.upper(), meos_call=name,
+                         build_generic=True, input_type=input_type, return_kind=rkind,
+                         extra_args=[], extra_call_args=["2"],
+                         comment_one_liner=f"{name} ({ret.strip()}) — round {input_type} to 2 decimals.")
+            if input_type == "tfloat":
+                tmeta = dict(cols=[("value", "FLOAT64"), ("ts", "UINT64")],
+                             rows=[("5.567", "1609459200"), ("8.123", "1609545600")],
+                             token=name.upper(), sink="VARSIZED")
+            else:
+                l0, l1 = LITERALS[input_type]
+                tmeta = dict(cols=[("a", "VARSIZED")], rows=[(l0,), (l1,)],
+                             token=name.upper(), sink="VARSIZED")
+            return entry, tmeta
+        return None, f"round operand {base}{'*' if ptr else ''} unsupported"
     # ---- box out-param accessor: bool f(const Box*, T *result) -> scalar in
     #      *result (tbox_xmin/xmax/tmin/tmax + _inc, stbox_tmin/tmax + _inc) ----
     if (plist[0][1] and plist[0][0] in BOX_INPUT
