@@ -3232,6 +3232,21 @@ for _k, _c, _p, _h in [
     _inp["header"] = _h
     GENERIC_INPUTS.setdefault(_k, _inp)
 
+# Base-scalar primary inputs: the operand is a single plain value (not a pointer),
+# read straight from a field — used by the base->container constructors
+# (int_to_span, float_to_set, timestamptz_to_spanset, …). `frees: False` tells the
+# assembler NOT to emit free(temp): the operand is a value, not a heap pointer.
+for _k, _field_cpp, _ctype in [
+    ("int_base", "int32_t", "int"),
+    ("bigint_base", "int64_t", "int64"),
+    ("float_base", "double", "double"),
+    ("date_base", "int32_t", "DateADT"),
+    ("timestamptz_base", "int64_t", "TimestampTz"),
+]:
+    GENERIC_INPUTS.setdefault(_k, dict(
+        fields=[("value", _field_cpp)], header="meos.h", frees=False,
+        build="                " + _ctype + " {var} = (" + _ctype + ") value;\n"))
+
 # return_kind -> (result C type, *_out serializer, takes_maxdd). float/STBox/TBox
 # serializers take a trailing maxdd arg; the others take only the pointer.
 for _rk, _ct, _of, _md in [
@@ -3401,9 +3416,12 @@ def assemble_generic_varsized_output(op):
     call_terms = call_terms + [str(a) for a in op.get("extra_call_args", [])]
     callargs = ", ".join(call_terms)
     bf = "".join(f"                {x}\n" for x in box_frees)
+    # A base-scalar primary input (frees: False) is a plain value, not a heap
+    # pointer, so it must not be freed.
+    free_primary = "                free(temp);\n" if inp.get("frees", True) else ""
     call_marshal = (
         f"                {res_ctype}* res = {op['meos_call']}({callargs});\n"
-        f"                free(temp);\n"
+        f"{free_primary}"
         f"{bf}"
         f"                if (!res) return (char*) nullptr;\n"
         f"                char* outStr = {out_fn}(res{', 15' if out_maxdd else ''});\n"
@@ -3537,16 +3555,19 @@ def assemble_generic_physical(op):
     call_terms = call_terms + [str(a) for a in op.get("extra_call_args", [])]
     callargs = ", ".join(call_terms)
     bf = "".join(f"                {x}\n" for x in box_frees)
+    # A base-scalar primary input (frees: False) is a plain value, not a heap
+    # pointer, so it must not be freed.
+    free_primary = "                free(temp);\n" if inp.get("frees", True) else ""
     if extract_fn is None:
         call_marshal = (f"                {ret_cpp} r = {op['meos_call']}({callargs});\n"
-                        f"                free(temp);\n"
+                        f"{free_primary}"
                         f"{bf}"
                         f"                return r;")
     else:
         # Temporal*-returning transform: result is a single-instant temporal; take
         # its value via the result type's *_start_value accessor, free both.
         call_marshal = (f"                Temporal* res = {op['meos_call']}({callargs});\n"
-                        f"                free(temp);\n"
+                        f"{free_primary}"
                         f"{bf}"
                         f"                if (!res) return {zero};\n"
                         f"                {ret_cpp} r = {extract_fn}(res);\n"

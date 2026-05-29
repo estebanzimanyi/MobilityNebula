@@ -191,6 +191,9 @@ below_stbox_tspatial	proven
 below_tspatial_stbox	proven
 below_tspatial_tspatial	proven
 bigint_extent_transfn	proven
+bigint_to_set	proven
+bigint_to_span	proven
+bigint_to_spanset	proven
 bigint_union_transfn	proven
 bigintset_end_value	proven
 bigintset_shift_scale	proven
@@ -272,6 +275,9 @@ contains_tnumber_tnumber	proven
 contains_tspatial_stbox	proven
 contains_tspatial_tspatial	proven
 covers_cbuffer_cbuffer	proven
+date_to_set	proven
+date_to_span	proven
+date_to_spanset	proven
 dateset_end_value	proven
 dateset_start_value	proven
 datespan_lower	proven
@@ -426,6 +432,9 @@ ever_ne_tpose_pose	proven
 ever_ne_tpose_tpose	proven
 ever_ne_ttext_text	proven
 float_extent_transfn	proven
+float_to_set	proven
+float_to_span	proven
+float_to_spanset	proven
 float_union_transfn	proven
 floatset_end_value	proven
 floatset_shift_scale	proven
@@ -445,6 +454,9 @@ front_tspatial_tspatial	wired
 geog_dwithin	wired
 geom_to_geog	wired
 int_extent_transfn	proven
+int_to_set	proven
+int_to_span	proven
+int_to_spanset	proven
 int_union_transfn	proven
 intersection_float_set	proven
 intersection_int_set	proven
@@ -936,6 +948,9 @@ tgt_tfloat_float	proven
 tgt_tint_int	proven
 tgt_ttext_text	proven
 timestamptz_extent_transfn	proven
+timestamptz_to_set	proven
+timestamptz_to_span	proven
+timestamptz_to_spanset	proven
 timestamptz_union_transfn	proven
 tint_end_value	proven
 tint_from_base_temp	proven
