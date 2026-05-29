@@ -3239,6 +3239,19 @@ for _k, _c, _p, _h in [
     _inp["header"] = _h
     GENERIC_INPUTS.setdefault(_k, _inp)
 
+# A bare geometry as a primary text-literal input: parse the WKT/EWKT via geom_in
+# (which, unlike the other parsers, takes a typmod arg -> -1 for "no typmod"). NOT
+# freed: GSERIALIZED follows the StaticGeometry convention (its dtor leaves the
+# parsed geometry unfreed, an MEOS allocator-mismatch guard), so frees=False
+# avoids a double-free / wrong-allocator call.
+GENERIC_INPUTS.setdefault("geom", dict(
+    fields=[("lit", "VariableSizedData")], header="meos_geo.h", frees=False, build=(
+        '                std::string {var}S(litPtr, litSize);\n'
+        '                while (!{var}S.empty() && ({var}S.front()==\'\\\'\' || {var}S.front()==\'"\')) {var}S.erase({var}S.begin());\n'
+        '                while (!{var}S.empty() && ({var}S.back()==\'\\\'\' || {var}S.back()==\'"\')) {var}S.pop_back();\n'
+        '                GSERIALIZED* {var} = geom_in({var}S.c_str(), -1);\n'
+        '                if (!{var}) return {z};\n')))
+
 # Base-scalar primary inputs: the operand is a single plain value (not a pointer),
 # read straight from a field — used by the base->container constructors
 # (int_to_span, float_to_set, timestamptz_to_spanset, …). `frees: False` tells the

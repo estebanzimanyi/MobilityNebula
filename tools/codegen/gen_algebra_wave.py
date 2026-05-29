@@ -81,6 +81,9 @@ LITERALS = {
                    '{"Pose(Point(3 3),0.3)", "Pose(Point(4 4),0.5)"}'),
     "geoset":     ('{"Point(1 1)", "Point(2 2)"}',
                    '{"Point(3 3)", "Point(4 4)"}'),
+    # A bare geometry primary. SRID-prefixed + multi-point so srid/num_points are
+    # meaningful; parsed via geom_in (codegen GENERIC_INPUTS "geom").
+    "geom":       ("SRID=4326;Linestring(1 1, 2 2)", "SRID=4326;Linestring(3 3, 4 4, 5 5)"),
 }
 BOX_PARSER = {"intspan": "intspan_in", "bigintspan": "bigintspan_in", "floatspan": "floatspan_in",
               "datespan": "datespan_in", "tstzspan": "tstzspan_in",
@@ -162,6 +165,7 @@ ROUND_RET = {
     "Cbuffer":  ("cbuffer",      "cbuffer_value_out"),
     "Pose":     ("pose",         "pose_value_out"),
     "Npoint":   ("npoint",       "npoint_value_out"),
+    "GSERIALIZED": ("geom",      "geo_value_out"),
 }
 #   per-op box literal override (tbox_to_intspan needs an INT box, not the
 #   default TBOXFLOAT) — keyed by op name.
@@ -568,6 +572,8 @@ def classify(name, ret, plist):
             input_type = OBJECT_TYPES[base][0]      # -> family-gated subdir
             if input_type not in LITERALS:
                 return None, f"no literal for object {input_type}"
+        elif ptr and base == "GSERIALIZED":         # bare geometry via geom_in
+            input_type = "geom"
         elif ptr and base == "Temporal":            # single tfloat instant
             input_type, tfloat_instant = "tfloat", True
         else:
