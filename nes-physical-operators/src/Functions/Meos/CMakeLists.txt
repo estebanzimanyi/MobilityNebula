@@ -972,3 +972,5 @@ add_plugin(TtextStartValue PhysicalFunction nes-physical-operators TtextStartVal
 add_plugin(TtextEndValue PhysicalFunction nes-physical-operators TtextEndValuePhysicalFunction.cpp)
 add_plugin(TtextMinValue PhysicalFunction nes-physical-operators TtextMinValuePhysicalFunction.cpp)
 add_plugin(TtextMaxValue PhysicalFunction nes-physical-operators TtextMaxValuePhysicalFunction.cpp)
+add_plugin(TtextValueN PhysicalFunction nes-physical-operators TtextValueNPhysicalFunction.cpp)
+add_plugin(TextsetValueN PhysicalFunction nes-physical-operators TextsetValueNPhysicalFunction.cpp)

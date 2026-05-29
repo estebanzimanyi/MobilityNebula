@@ -995,6 +995,7 @@ teq_ttext_text	proven
 textcat_text_ttext	proven
 textcat_ttext_text	proven
 textcat_ttext_ttext	proven
+textset_value_n	proven
 tfloat_ceil	proven
 tfloat_end_value	proven
 tfloat_exp	proven
@@ -1138,6 +1139,7 @@ ttext_min_value	proven
 ttext_minus_value	proven
 ttext_start_value	proven
 ttext_upper	proven
+ttext_value_n	proven
 ttouches_cbuffer_tcbuffer	proven
 ttouches_geo_tcbuffer	proven
 ttouches_geo_tgeo	proven

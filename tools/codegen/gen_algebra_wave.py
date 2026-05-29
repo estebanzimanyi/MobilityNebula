@@ -61,6 +61,7 @@ LITERALS = {
                 "{2020-01-03 00:00:00+00, 2020-01-08 00:00:00+00}"),
     "tstzspanset": ("{[2020-01-01 00:00:00+00, 2020-01-10 00:00:00+00)}",
                     "{[2020-01-05 00:00:00+00, 2020-01-20 00:00:00+00)}"),
+    "textset": ('{"AAA", "BBB", "CCC"}', '{"BBB", "DDD"}'),
     "cbuffer": ("Cbuffer(Point(1 1),1.0)", "Cbuffer(Point(2 2),0.5)"),
     "pose": ("Pose(Point(1 1), 0.5)", "Pose(Point(2 2), 1.0)"),
     "npoint": ("NPoint(1, 0.5)", "NPoint(1, 0.7)"),
@@ -138,8 +139,11 @@ OUT_PARAM_RET = {"double": ("double", "double"), "int": ("int", "int"),
 # value_n primary operand -> the GENERIC_INPUTS builder key + its test column.
 #   temporal subtypes build a single instant; set subtypes parse a text literal.
 VALUE_N_TEMPORAL = {"tint": ("INT32", "5", "8"), "tfloat": ("FLOAT64", "5.5", "8.5"),
-                    "tbool": ("BOOLEAN", "true", "false")}
-VALUE_N_SET = {"intset", "bigintset", "floatset", "dateset", "tstzset"}
+                    "tbool": ("BOOLEAN", "true", "false"), "ttext": ("VARSIZED", "ABC", "DEF")}
+VALUE_N_SET = {"intset", "bigintset", "floatset", "dateset", "tstzset", "textset"}
+# value_n out-params that are a heap pointer (T **result) -> the *_out serializer
+# key (VARSIZED return), as opposed to the scalar OUT_PARAM_RET out-params.
+VALUE_N_VARSIZED = {"text": "text_value_out"}
 # per-op box literal override for accessors that need a specific box flavour:
 # tboxint_* need an INT box; stbox time accessors need an STBOX carrying T.
 _STBOX_XT = ("STBOX XT(((1,1),(5,5)),[2020-01-01, 2020-01-05])",
@@ -299,7 +303,9 @@ def load_sigs():
         if params and params != "void":
             for p in params.split(","):
                 p = p.strip()
-                pm = re.match(r"(?:const\s+)?(\w+)\s*(\*?)\s*\w+", p)
+                # (\*{0,2}): capture single AND double pointers (a T **result
+                # out-param would otherwise mis-parse, the type swallowing a char).
+                pm = re.match(r"(?:const\s+)?(\w+)\s*(\*{0,2})\s*\w+", p)
                 if pm:
                     plist.append((pm.group(1), bool(pm.group(2))))
         sigs[name] = (ret, plist)
@@ -380,8 +386,8 @@ def classify(name, ret, plist):
     #      an out-param. Exercised with n=1 (the first value/element, always
     #      defined for a non-empty input) so the validity flag is true. ----
     if (name.endswith("_value_n") and len(plist) == 3
-            and plist[0][1] and plist[1] == ("int", False)
-            and plist[2][1] and plist[2][0] in OUT_PARAM_RET):
+            and plist[0][1] and plist[1] == ("int", False) and plist[2][1]
+            and (plist[2][0] in OUT_PARAM_RET or plist[2][0] in VALUE_N_VARSIZED)):
         stem = name[:-len("_value_n")]
         if plist[0][0] == "Temporal" and stem in VALUE_N_TEMPORAL:
             input_type = stem
@@ -394,7 +400,10 @@ def classify(name, ret, plist):
             cols, rows = [("a", "VARSIZED")], [(l0,), (l1,)]
         else:
             return None, f"value_n operand {plist[0][0]}/{stem} unsupported"
-        oc, rkind = OUT_PARAM_RET[plist[2][0]]
+        if plist[2][0] in VALUE_N_VARSIZED:                 # heap-pointer out-param
+            oc, rkind = plist[2][0], VALUE_N_VARSIZED[plist[2][0]]
+        else:                                               # scalar out-param
+            oc, rkind = OUT_PARAM_RET[plist[2][0]]
         entry = dict(nebula_name=camel(name), sql_token=name.upper(), meos_call=name,
                      build_generic=True, input_type=input_type, return_kind=rkind,
                      extra_args=[], extra_call_args=["1"], out_param=dict(cpp=oc),

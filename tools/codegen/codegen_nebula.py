@@ -3423,14 +3423,28 @@ def assemble_generic_varsized_output(op):
     # A base-scalar primary input (frees: False) is a plain value, not a heap
     # pointer, so it must not be freed.
     free_primary = "                free(temp);\n" if inp.get("frees", True) else ""
-    call_marshal = (
-        f"                {res_ctype}* res = {op['meos_call']}({callargs});\n"
-        f"{free_primary}"
-        f"{bf}"
-        f"                if (!res) return (char*) nullptr;\n"
-        f"                char* outStr = {out_fn}(res{', 15' if out_maxdd else ''});\n"
-        f"                free(res);\n"
-        f"                return outStr;")
+    if op.get("out_param") is not None:
+        # VARSIZED out-param accessor: bool f(operand…, T **result) writes a heap
+        # object pointer into *result and returns a validity flag. Serialise it
+        # via the *_out the same way a direct T*-return would.
+        call_marshal = (
+            f"                {res_ctype}* res = nullptr;\n"
+            f"                bool ok = {op['meos_call']}({callargs}, &res);\n"
+            f"{free_primary}"
+            f"{bf}"
+            f"                if (!ok || !res) return (char*) nullptr;\n"
+            f"                char* outStr = {out_fn}(res{', 15' if out_maxdd else ''});\n"
+            f"                free(res);\n"
+            f"                return outStr;")
+    else:
+        call_marshal = (
+            f"                {res_ctype}* res = {op['meos_call']}({callargs});\n"
+            f"{free_primary}"
+            f"{bf}"
+            f"                if (!res) return (char*) nullptr;\n"
+            f"                char* outStr = {out_fn}(res{', 15' if out_maxdd else ''});\n"
+            f"                free(res);\n"
+            f"                return outStr;")
 
     physical_args = ",\n                                                          ".join(
         f"PhysicalFunction {fn}Function" for fn, _ in fields)
