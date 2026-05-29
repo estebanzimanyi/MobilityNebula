@@ -3389,6 +3389,11 @@ def assemble_generic_varsized_output(op):
     headers = {"meos.h", inp["header"]}
     for h in op.get("extra_headers", []):
         headers.add(h)
+    # the result type's declaration header is not necessarily pulled in by the
+    # primary input (e.g. a geom/base primary returning a Cbuffer/Npoint/Pose).
+    headers.add({"Cbuffer": "meos_cbuffer.h", "Npoint": "meos_npoint.h",
+                 "Pose": "meos_pose.h", "GSERIALIZED": "meos_geo.h",
+                 "Temporal": "meos_geo.h"}.get(res_ctype, "meos.h"))
     call_terms = ["temp"]
     parse_lines = []
     box_frees = []

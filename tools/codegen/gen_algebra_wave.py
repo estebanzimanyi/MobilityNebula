@@ -1164,6 +1164,39 @@ def classify(name, ret, plist):
                      rows=[("5.5", "1609459200", slit[0]), ("8.5", "1609545600", slit[1])],
                      token=name.upper(), sink="INT32")
         return entry, tmeta
+    # ---- pure-geometry binary ops: a geom primary ⊗ {geom, int/double scalar} ->
+    #      bool/int predicate, double measure, or a geometry via geo_out. Excludes
+    #      geography (geog_, needs a geography input), array-input ops, and
+    #      out-param/temporal second operands. ----
+    if (toks[0] in ("geom", "geo") and len(plist) == 2 and plist[0] == ("GSERIALIZED", True)
+            and "array" not in name):
+        b1, p1 = plist[1]
+        if b1 == "GSERIALIZED" and p1:
+            extra, ecol, a0, a1 = dict(kind="geom"), "VARSIZED", "SRID=4326;Linestring(0 2, 2 0)", "SRID=4326;Linestring(1 0, 1 3)"
+        elif b1 in ("int", "int32") and not p1:
+            extra, ecol = dict(kind="scalar", cpp="int32_t"), "INT32"
+            iv = "1" if name.endswith("_n") else "3857" if "transform" in name else "4326"
+            a0, a1 = iv, iv
+        elif b1 == "double" and not p1:
+            extra, ecol, a0, a1 = dict(kind="scalar", cpp="double"), "FLOAT64", "0.0", "0.0"
+        else:
+            return None, f"geom 2nd operand {b1}{'*' if p1 else ''} unsupported"
+        if rbase in ("bool", "int"):
+            rkind, sink = "int", "INT32"
+        elif rbase == "double":
+            rkind, sink = "double", "FLOAT64"
+        elif rbase == "GSERIALIZED":
+            rkind, sink = "geo_value_out", "VARSIZED"
+        else:
+            return None, f"geom return {rbase} unmapped"
+        entry = dict(nebula_name=camel(name), sql_token=name.upper(), meos_call=name,
+                     build_generic=True, input_type="geom", return_kind=rkind,
+                     extra_args=[extra],
+                     comment_one_liner=f"{name} ({ret.strip()}) — geometry binary op.")
+        tmeta = dict(cols=[("a", "VARSIZED"), ("arg", ecol)],
+                     rows=[("SRID=4326;Linestring(0 0, 2 2)", a0), ("SRID=4326;Linestring(0 0, 3 3)", a1)],
+                     token=name.upper(), sink=sink)
+        return entry, tmeta
     # ---- same-type object-scalar comparison / relation (cbuffer/pose/npoint/
     # nsegment cmp/eq/.../same + cbuffer spatial rels): two literals -> bool/int ----
     (b0, p0), (b1, p1) = plist
