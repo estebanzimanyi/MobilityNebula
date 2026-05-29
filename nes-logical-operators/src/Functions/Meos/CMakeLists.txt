@@ -1023,3 +1023,6 @@ add_plugin(OverbeforeTemporalTstzspan LogicalFunction nes-logical-operators Over
 add_plugin(OverbeforeTstzspanTemporal LogicalFunction nes-logical-operators OverbeforeTstzspanTemporalLogicalFunction.cpp)
 add_plugin(AdjacentTnumberNumspan LogicalFunction nes-logical-operators AdjacentTnumberNumspanLogicalFunction.cpp)
 add_plugin(AdjacentNumspanTnumber LogicalFunction nes-logical-operators AdjacentNumspanTnumberLogicalFunction.cpp)
+add_plugin(IntspansetWidth LogicalFunction nes-logical-operators IntspansetWidthLogicalFunction.cpp)
+add_plugin(BigintspansetWidth LogicalFunction nes-logical-operators BigintspansetWidthLogicalFunction.cpp)
+add_plugin(FloatspansetWidth LogicalFunction nes-logical-operators FloatspansetWidthLogicalFunction.cpp)

@@ -199,6 +199,7 @@ bigintspan_upper	proven
 bigintspan_width	proven
 bigintspanset_lower	proven
 bigintspanset_upper	proven
+bigintspanset_width	proven
 cbuffer_cmp	proven
 cbuffer_eq	proven
 cbuffer_ge	proven
@@ -430,6 +431,7 @@ floatspan_upper	proven
 floatspan_width	proven
 floatspanset_lower	proven
 floatspanset_upper	proven
+floatspanset_width	proven
 front_stbox_stbox	proven
 front_stbox_tspatial	wired
 front_tspatial_stbox	wired
@@ -464,6 +466,7 @@ intspan_upper	proven
 intspan_width	proven
 intspanset_lower	proven
 intspanset_upper	proven
+intspanset_width	proven
 left_bigint_set	proven
 left_bigint_span	proven
 left_bigint_spanset	proven

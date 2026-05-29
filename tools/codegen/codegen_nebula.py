@@ -3396,6 +3396,9 @@ def assemble_generic_varsized_output(op):
                     ["meos.h"] + sorted(h for h in headers if h != "meos.h"))
     if op.get("box_first") and len(call_terms) == 2:
         call_terms = [call_terms[1], call_terms[0]]
+    # Fixed trailing C-literal args appended to the MEOS call (e.g. a `boundspan`
+    # bool that the MEOS signature requires but is not a per-event input).
+    call_terms = call_terms + [str(a) for a in op.get("extra_call_args", [])]
     callargs = ", ".join(call_terms)
     bf = "".join(f"                {x}\n" for x in box_frees)
     call_marshal = (
@@ -3529,6 +3532,9 @@ def assemble_generic_physical(op):
     # literal before the temporal; the default order is temporal-first.
     if op.get("box_first") and len(call_terms) == 2:
         call_terms = [call_terms[1], call_terms[0]]
+    # Fixed trailing C-literal args appended to the MEOS call (e.g. a `boundspan`
+    # bool that the MEOS signature requires but is not a per-event input).
+    call_terms = call_terms + [str(a) for a in op.get("extra_call_args", [])]
     callargs = ", ".join(call_terms)
     bf = "".join(f"                {x}\n" for x in box_frees)
     if extract_fn is None:
