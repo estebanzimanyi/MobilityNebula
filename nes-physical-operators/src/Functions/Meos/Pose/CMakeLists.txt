@@ -79,3 +79,5 @@ add_plugin(TposeAtGeom PhysicalFunction nes-physical-operators TposeAtGeomPhysic
 add_plugin(TposeAtPose PhysicalFunction nes-physical-operators TposeAtPosePhysicalFunction.cpp)
 add_plugin(TposeMinusGeom PhysicalFunction nes-physical-operators TposeMinusGeomPhysicalFunction.cpp)
 add_plugin(TposeMinusPose PhysicalFunction nes-physical-operators TposeMinusPosePhysicalFunction.cpp)
+add_plugin(TposeAtStbox PhysicalFunction nes-physical-operators TposeAtStboxPhysicalFunction.cpp)
+add_plugin(TposeMinusStbox PhysicalFunction nes-physical-operators TposeMinusStboxPhysicalFunction.cpp)

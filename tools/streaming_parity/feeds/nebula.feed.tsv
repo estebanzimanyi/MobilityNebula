@@ -1072,8 +1072,10 @@ tboxint_xmax	proven
 tboxint_xmin	proven
 tcbuffer_at_cbuffer	proven
 tcbuffer_at_geom	proven
+tcbuffer_at_stbox	proven
 tcbuffer_minus_cbuffer	proven
 tcbuffer_minus_geom	proven
+tcbuffer_minus_stbox	proven
 tcbuffer_to_tfloat	proven
 tcontains_cbuffer_tcbuffer	proven
 tcontains_geo_tcbuffer	proven
@@ -1204,6 +1206,7 @@ tgeo_centroid	proven
 tgeo_convex_hull	proven
 tgeo_end_value	proven
 tgeo_minus_geom	proven
+tgeo_minus_stbox	proven
 tgeo_minus_value	proven
 tgeo_start_value	proven
 tgeo_value_n	proven
@@ -1313,9 +1316,11 @@ tpoint_speed	proven
 tpoint_twcentroid	proven
 tpose_at_geom	proven
 tpose_at_pose	proven
+tpose_at_stbox	proven
 tpose_end_value	proven
 tpose_minus_geom	proven
 tpose_minus_pose	proven
+tpose_minus_stbox	proven
 tpose_start_value	proven
 tpose_trajectory	proven
 tpose_value_n	proven

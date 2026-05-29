@@ -1383,3 +1383,8 @@ add_plugin(TposeAtGeom LogicalFunction nes-logical-operators TposeAtGeomLogicalF
 add_plugin(TposeAtPose LogicalFunction nes-logical-operators TposeAtPoseLogicalFunction.cpp)
 add_plugin(TposeMinusGeom LogicalFunction nes-logical-operators TposeMinusGeomLogicalFunction.cpp)
 add_plugin(TposeMinusPose LogicalFunction nes-logical-operators TposeMinusPoseLogicalFunction.cpp)
+add_plugin(TcbufferAtStbox LogicalFunction nes-logical-operators TcbufferAtStboxLogicalFunction.cpp)
+add_plugin(TcbufferMinusStbox LogicalFunction nes-logical-operators TcbufferMinusStboxLogicalFunction.cpp)
+add_plugin(TgeoMinusStbox LogicalFunction nes-logical-operators TgeoMinusStboxLogicalFunction.cpp)
+add_plugin(TposeAtStbox LogicalFunction nes-logical-operators TposeAtStboxLogicalFunction.cpp)
+add_plugin(TposeMinusStbox LogicalFunction nes-logical-operators TposeMinusStboxLogicalFunction.cpp)

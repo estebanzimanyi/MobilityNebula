@@ -1105,3 +1105,4 @@ add_plugin(TpointAtGeom PhysicalFunction nes-physical-operators TpointAtGeomPhys
 add_plugin(TpointAtValue PhysicalFunction nes-physical-operators TpointAtValuePhysicalFunction.cpp)
 add_plugin(TpointMinusGeom PhysicalFunction nes-physical-operators TpointMinusGeomPhysicalFunction.cpp)
 add_plugin(TpointMinusValue PhysicalFunction nes-physical-operators TpointMinusValuePhysicalFunction.cpp)
+add_plugin(TgeoMinusStbox PhysicalFunction nes-physical-operators TgeoMinusStboxPhysicalFunction.cpp)

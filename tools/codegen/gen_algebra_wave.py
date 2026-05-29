@@ -719,7 +719,12 @@ def classify(name, ret, plist):
                          rows=[(LITERALS[input_type][0],), (LITERALS[input_type][1],)],
                          token=name.upper(), sink=sink_of(rkind))
         return entry, tmeta
-    if len(plist) != 2:
+    # arity-3 spatial restriction (temp, STBox, bool border_inc) is handled by the
+    # spatial-restriction branch below; let it through the arity-2 gate.
+    _restrict3 = (len(plist) == 3 and rbase == "Temporal" and plist[0] == ("Temporal", True)
+                  and plist[2] == ("bool", False) and ("_at_" in name or "_minus_" in name)
+                  and name.split("_")[0] in ("tpoint", "tgeo", "tcbuffer", "tnpoint", "tpose"))
+    if len(plist) != 2 and not _restrict3:
         return None, f"arity {len(plist)} (not 2)"
     # ---- `_round`: f(operand, int maxdd) -> SAME type. The operand base picks
     #      the primary input and its same-type *_out return; maxdd is a fixed
@@ -783,7 +788,8 @@ def classify(name, ret, plist):
     # ---- temporal-instant ⊗ scalar -> Temporal* (per-event, WKT-serialized) ----
     tidx = [i for i, (b, p) in enumerate(plist) if b == "Temporal"]
     bidx = [i for i, (b, p) in enumerate(plist) if b in ("int", "double", "text", "bool")]
-    if ret.replace("*", "").strip() == "Temporal" and len(tidx) == 1 and len(bidx) == 1:
+    if (ret.replace("*", "").strip() == "Temporal" and len(plist) == 2
+            and len(tidx) == 1 and len(bidx) == 1):
         toks = name.split("_")
         insub = next((t for t in ("tint", "tfloat", "ttext", "tbool") if t in toks), None)
         if insub is None:

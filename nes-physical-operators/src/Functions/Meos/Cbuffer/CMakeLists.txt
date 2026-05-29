@@ -131,3 +131,5 @@ add_plugin(TcbufferAtCbuffer PhysicalFunction nes-physical-operators TcbufferAtC
 add_plugin(TcbufferAtGeom PhysicalFunction nes-physical-operators TcbufferAtGeomPhysicalFunction.cpp)
 add_plugin(TcbufferMinusCbuffer PhysicalFunction nes-physical-operators TcbufferMinusCbufferPhysicalFunction.cpp)
 add_plugin(TcbufferMinusGeom PhysicalFunction nes-physical-operators TcbufferMinusGeomPhysicalFunction.cpp)
+add_plugin(TcbufferAtStbox PhysicalFunction nes-physical-operators TcbufferAtStboxPhysicalFunction.cpp)
+add_plugin(TcbufferMinusStbox PhysicalFunction nes-physical-operators TcbufferMinusStboxPhysicalFunction.cpp)
