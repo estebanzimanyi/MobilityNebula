@@ -75,9 +75,8 @@
 #include <Aggregation/Function/Meos/TintEndValueAggregationPhysicalFunction.hpp>
 #include <Aggregation/Function/Meos/TintMinValueAggregationPhysicalFunction.hpp>
 #include <Aggregation/Function/Meos/TintMaxValueAggregationPhysicalFunction.hpp>
-#include <Aggregation/Function/Meos/TemporalTFloatAvgValueAggregationPhysicalFunction.hpp>
+#include <Aggregation/Function/Meos/TnumberAvgValueAggregationPhysicalFunction.hpp>
 #include <Aggregation/Function/Meos/TnumberTwavgAggregationPhysicalFunction.hpp>
-#include <Aggregation/Function/Meos/TemporalTIntAvgValueAggregationPhysicalFunction.hpp>
 #include <Aggregation/Function/Meos/TemporalStartTimestamptzAggregationPhysicalFunction.hpp>
 #include <Aggregation/Function/Meos/TemporalEndTimestamptzAggregationPhysicalFunction.hpp>
 #include <Aggregation/Function/Meos/TemporalLowerIncAggregationPhysicalFunction.hpp>
@@ -94,7 +93,6 @@
 #include <Aggregation/Function/Meos/BigintUnionTransfnAggregationPhysicalFunction.hpp>
 #include <Aggregation/Function/Meos/TimestamptzUnionTransfnAggregationPhysicalFunction.hpp>
 #include <Aggregation/Function/Meos/TpointTrajectoryAggregationPhysicalFunction.hpp>
-#include <Aggregation/Function/Meos/TLengthExpAggregationPhysicalFunction.hpp>
 #include <Aggregation/Function/Meos/TgeoCentroidAggregationPhysicalFunction.hpp>
 #include <Aggregation/Function/Meos/TpointAzimuthAggregationPhysicalFunction.hpp>
 #include <Aggregation/Function/Meos/TpointAngularDifferenceAggregationPhysicalFunction.hpp>
@@ -162,7 +160,7 @@
 #include <Operators/Windows/Aggregations/Meos/TemporalLowerIncAggregationLogicalFunction.hpp>
 #include <Operators/Windows/Aggregations/Meos/TemporalUpperIncAggregationLogicalFunction.hpp>
 #include <Operators/Windows/Aggregations/Meos/TpointIsSimpleAggregationLogicalFunction.hpp>
-#include <Operators/Windows/Aggregations/Meos/TemporalTFloatAvgValueAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TnumberAvgValueAggregationLogicalFunction.hpp>
 #include <Operators/Windows/Aggregations/Meos/TnumberTwavgAggregationLogicalFunction.hpp>
 #include <Operators/Windows/Aggregations/Meos/TemporalTIntAvgValueAggregationLogicalFunction.hpp>
 #include <Operators/Windows/Aggregations/Meos/TemporalNumInstantsAggregationLogicalFunction.hpp>
@@ -695,11 +693,11 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             continue;
         }
         /* END CODEGEN AGGREGATION GLUE: TintMaxValue (optimizer lowering) */
-        /* BEGIN CODEGEN AGGREGATION GLUE: TemporalTFloatAvgValue (optimizer lowering) */
-        if (name == std::string_view("TemporalTFloatAvgValue"))
+        /* BEGIN CODEGEN AGGREGATION GLUE: TnumberAvgValue (optimizer lowering) */
+        if (name == std::string_view("TnumberAvgValue"))
         {
-            auto specificDescriptor = std::dynamic_pointer_cast<TemporalTFloatAvgValueAggregationLogicalFunction>(descriptor);
-            INVARIANT(specificDescriptor != nullptr, "Expected TemporalTFloatAvgValueAggregationLogicalFunction for TemporalTFloatAvgValue");
+            auto specificDescriptor = std::dynamic_pointer_cast<TnumberAvgValueAggregationLogicalFunction>(descriptor);
+            INVARIANT(specificDescriptor != nullptr, "Expected TnumberAvgValueAggregationLogicalFunction for TnumberAvgValue");
 
             auto valuePF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getValueField());
             auto tsPF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getTimestampField());
@@ -709,7 +707,7 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             stateSchema.addField("timestamp", specificDescriptor->getTimestampField().getDataType());
             auto tupleBufferRef = Interface::BufferRef::TupleBufferRef::create(configuration.pageSize.getValue(), stateSchema);
 
-            auto phys = std::make_shared<TemporalTFloatAvgValueAggregationPhysicalFunction>(
+            auto phys = std::make_shared<TnumberAvgValueAggregationPhysicalFunction>(
                 std::move(physicalInputType),
                 std::move(physicalFinalType),
                 valuePF,
@@ -719,7 +717,7 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: TemporalTFloatAvgValue (optimizer lowering) */
+        /* END CODEGEN AGGREGATION GLUE: TnumberAvgValue (optimizer lowering) */
 
         /* BEGIN CODEGEN AGGREGATION GLUE: TnumberTwavg (optimizer lowering) */
         if (name == std::string_view("TnumberTwavg"))
@@ -747,31 +745,6 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
         }
         /* END CODEGEN AGGREGATION GLUE: TnumberTwavg (optimizer lowering) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: TemporalTIntAvgValue (optimizer lowering) */
-        if (name == std::string_view("TemporalTIntAvgValue"))
-        {
-            auto specificDescriptor = std::dynamic_pointer_cast<TemporalTIntAvgValueAggregationLogicalFunction>(descriptor);
-            INVARIANT(specificDescriptor != nullptr, "Expected TemporalTIntAvgValueAggregationLogicalFunction for TemporalTIntAvgValue");
-
-            auto valuePF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getValueField());
-            auto tsPF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getTimestampField());
-
-            Schema stateSchema;
-            stateSchema.addField("value", specificDescriptor->getValueField().getDataType());
-            stateSchema.addField("timestamp", specificDescriptor->getTimestampField().getDataType());
-            auto tupleBufferRef = Interface::BufferRef::TupleBufferRef::create(configuration.pageSize.getValue(), stateSchema);
-
-            auto phys = std::make_shared<TemporalTIntAvgValueAggregationPhysicalFunction>(
-                std::move(physicalInputType),
-                std::move(physicalFinalType),
-                valuePF,
-                tsPF,
-                resultFieldIdentifier,
-                tupleBufferRef);
-            aggregationPhysicalFunctions.push_back(std::move(phys));
-            continue;
-        }
-        /* END CODEGEN AGGREGATION GLUE: TemporalTIntAvgValue (optimizer lowering) */
         /* BEGIN CODEGEN AGGREGATION GLUE: TemporalStartTimestamptz (optimizer lowering) */
         if (name == std::string_view("TemporalStartTimestamptz"))
         {
@@ -1204,34 +1177,6 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             continue;
         }
         /* END CODEGEN AGGREGATION GLUE: TpointTrajectory (optimizer lowering) */
-        /* BEGIN CODEGEN AGGREGATION GLUE: TLENGTH_EXP (optimizer lowering) */
-        if (name == std::string_view("TLengthExp"))
-        {
-            auto specificDescriptor = std::dynamic_pointer_cast<TLengthExpAggregationLogicalFunction>(descriptor);
-            INVARIANT(specificDescriptor != nullptr, "Expected TLengthExpAggregationLogicalFunction for TLENGTH_EXP");
-
-            auto lonPF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getLonField());
-            auto latPF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getLatField());
-            auto tsPF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getTimestampField());
-
-            Schema stateSchema;
-            stateSchema.addField("lon", specificDescriptor->getLonField().getDataType());
-            stateSchema.addField("lat", specificDescriptor->getLatField().getDataType());
-            stateSchema.addField("timestamp", specificDescriptor->getTimestampField().getDataType());
-            auto tupleBufferRef = Interface::BufferRef::TupleBufferRef::create(configuration.pageSize.getValue(), stateSchema);
-
-            auto phys = std::make_shared<TLengthExpAggregationPhysicalFunction>(
-                std::move(physicalInputType),
-                std::move(physicalFinalType),
-                lonPF,
-                latPF,
-                tsPF,
-                resultFieldIdentifier,
-                tupleBufferRef);
-            aggregationPhysicalFunctions.push_back(std::move(phys));
-            continue;
-        }
-        /* END CODEGEN AGGREGATION GLUE: TLENGTH_EXP (optimizer lowering) */
         /* BEGIN CODEGEN AGGREGATION GLUE: TgeoCentroid (optimizer lowering) */
         if (name == std::string_view("TgeoCentroid"))
         {

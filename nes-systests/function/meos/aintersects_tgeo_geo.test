@@ -10,7 +10,7 @@ ATTACH INLINE
 
 CREATE SINK er_results(aigg.id UINT32, r INT32) TYPE File;
 SELECT id,
-       TEMPORAL_AINTERSECTS_GEOMETRY(lon, lat, timestamp, geom_wkt) AS r
+       AINTERSECTS_TGEO_GEO(lon, lat, timestamp, geom_wkt) AS r
 FROM aigg
 INTO er_results;
 ----

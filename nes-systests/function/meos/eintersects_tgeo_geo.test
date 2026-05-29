@@ -10,7 +10,7 @@ ATTACH INLINE
 
 CREATE SINK eing_out(eing.id UINT32, r INT32) TYPE File;
 SELECT id,
-       TEMPORAL_EINTERSECTS_GEOMETRY(lon, lat, timestamp, geom_wkt) AS r
+       EINTERSECTS_TGEO_GEO(lon, lat, timestamp, geom_wkt) AS r
 FROM eing
 INTO eing_out;
 ----

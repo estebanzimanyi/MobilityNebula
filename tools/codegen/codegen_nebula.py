@@ -4491,7 +4491,9 @@ def inject_parser_cpp(operators, cpp_path: Path) -> int:
 # See tools/streaming_parity/naming_regularization.md.
 NAMING_ALLOWLIST = {
     # BerlinMOD-benchmark helpers with no 1:1 MEOS symbol (documented exceptions).
-    "PAIR_MEETING", "TEMPORAL_SEQUENCE",
+    # TEMPORAL_LENGTH is the windowed trajectory-length aggregation (the per-event
+    # tpoint_length is the regular TPOINT_LENGTH operator).
+    "PAIR_MEETING", "TEMPORAL_SEQUENCE", "TEMPORAL_LENGTH", "CROSS_DISTANCE",
 }
 
 

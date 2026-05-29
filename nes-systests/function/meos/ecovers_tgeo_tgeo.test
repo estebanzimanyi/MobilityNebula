@@ -7,7 +7,7 @@ ATTACH INLINE
 2|4.3658|50.6456|1609459200|4.3658|50.6456|1609459200
 
 CREATE SINK ecv_out(ecv.id UINT32, r INT32) TYPE File;
-SELECT id, TEMPORAL_ECOVERS_TGEOMETRY(lonA, latA, tsA, lonB, latB, tsB) AS r FROM ecv INTO ecv_out;
+SELECT id, ECOVERS_TGEO_TGEO(lonA, latA, tsA, lonB, latB, tsB) AS r FROM ecv INTO ecv_out;
 ----
 1,0
 2,1

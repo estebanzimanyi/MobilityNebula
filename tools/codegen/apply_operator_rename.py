@@ -64,9 +64,11 @@ def main():
     # RENAME rows only: their tokens are already migrated in the grammar. The
     # operator to rename is the one whose current stem matches the LEGACY token.
     pairs = {}   # old_stem -> new_stem
+    import os
+    outcomes = set(os.environ.get("OUTCOMES", "RENAME").split(","))
     for line in MAP.read_text().splitlines()[1:]:
         legacy, sym, regular, outcome = line.split("\t")
-        if outcome != "RENAME":
+        if outcome not in outcomes:
             continue
         old_stem = norm2stem.get(norm(legacy))
         if not old_stem:

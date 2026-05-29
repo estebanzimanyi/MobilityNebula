@@ -10,7 +10,7 @@ ATTACH INLINE
 
 CREATE SINK ecvg_out(ecvg.id UINT32, r INT32) TYPE File;
 SELECT id,
-       TEMPORAL_ECOVERS_GEOMETRY(lon, lat, timestamp, geom_wkt) AS r
+       ECOVERS_TGEO_GEO(lon, lat, timestamp, geom_wkt) AS r
 FROM ecvg
 INTO ecvg_out;
 ----

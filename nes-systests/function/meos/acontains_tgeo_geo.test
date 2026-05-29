@@ -10,7 +10,7 @@ ATTACH INLINE
 
 CREATE SINK actg_out(actg.id UINT32, r INT32) TYPE File;
 SELECT id,
-       TEMPORAL_ACONTAINS_GEOMETRY(lon, lat, timestamp, geom_wkt) AS r
+       ACONTAINS_TGEO_GEO(lon, lat, timestamp, geom_wkt) AS r
 FROM actg
 INTO actg_out;
 ----

@@ -10,7 +10,7 @@ ATTACH INLINE
 
 CREATE SINK edisjoint_results(edisjoint_tests.id UINT32, disjoint INT32) TYPE File;
 SELECT id,
-       TEMPORAL_EDISJOINT_GEOMETRY(lon, lat, timestamp, geom_wkt) AS disjoint
+       EDISJOINT_TGEO_GEO(lon, lat, timestamp, geom_wkt) AS disjoint
 FROM edisjoint_tests
 INTO edisjoint_results;
 ----

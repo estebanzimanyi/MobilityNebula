@@ -311,7 +311,7 @@ div_tfloat_float	proven
 div_tint_int	proven
 div_tnumber_tnumber	proven
 econtains_cbuffer_tcbuffer	proven
-econtains_geo_tgeo	wired
+econtains_geo_tgeo	proven
 econtains_tcbuffer_cbuffer	proven
 econtains_tcbuffer_geo	proven
 econtains_tgeo_geo	proven

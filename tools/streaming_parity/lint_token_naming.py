@@ -21,7 +21,9 @@ from pathlib import Path
 # SQL builtins / Nebula aggregates that are not MEOS symbols.
 BUILTINS = {"AVG", "MAX", "MIN", "SUM", "COUNT", "MEDIAN", "ARRAY_AGG", "VAR"}
 # BerlinMOD-benchmark helpers with no 1:1 MEOS symbol (documented exceptions).
-BENCHMARK = {"PAIR_MEETING", "TEMPORAL_SEQUENCE"}
+# TEMPORAL_LENGTH is the windowed trajectory-length aggregation (the per-event
+# tpoint_length is the regular TPOINT_LENGTH operator).
+BENCHMARK = {"PAIR_MEETING", "TEMPORAL_SEQUENCE", "TEMPORAL_LENGTH", "CROSS_DISTANCE"}
 ALLOWLIST = BUILTINS | BENCHMARK
 
 

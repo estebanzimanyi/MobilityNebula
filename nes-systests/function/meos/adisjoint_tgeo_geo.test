@@ -10,7 +10,7 @@ ATTACH INLINE
 
 CREATE SINK adjg_out(adjg.id UINT32, r INT32) TYPE File;
 SELECT id,
-       TEMPORAL_ADISJOINT_GEOMETRY(lon, lat, timestamp, geom_wkt) AS r
+       ADISJOINT_TGEO_GEO(lon, lat, timestamp, geom_wkt) AS r
 FROM adjg
 INTO adjg_out;
 ----

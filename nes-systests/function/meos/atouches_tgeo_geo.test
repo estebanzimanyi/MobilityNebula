@@ -10,7 +10,7 @@ ATTACH INLINE
 
 CREATE SINK atsg_out(atsg.id UINT32, r INT32) TYPE File;
 SELECT id,
-       TEMPORAL_ATOUCHES_GEOMETRY(lon, lat, timestamp, geom_wkt) AS r
+       ATOUCHES_TGEO_GEO(lon, lat, timestamp, geom_wkt) AS r
 FROM atsg
 INTO atsg_out;
 ----

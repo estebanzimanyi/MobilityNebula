@@ -21,10 +21,12 @@ MAP = ROOT / "tools/streaming_parity/naming_regularization_map.tsv"
 
 
 def rename_pairs():
+    import os
+    outcomes = set(os.environ.get("OUTCOMES", "RENAME").split(","))
     pairs = []
     for line in MAP.read_text().splitlines()[1:]:
         legacy, sym, regular, outcome = line.split("\t")
-        if outcome == "RENAME":
+        if outcome in outcomes:
             pairs.append((legacy, regular))
     return pairs
 
