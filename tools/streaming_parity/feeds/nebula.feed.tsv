@@ -198,6 +198,7 @@ bigint_union_transfn	proven
 bigintset_end_value	proven
 bigintset_shift_scale	proven
 bigintset_start_value	proven
+bigintset_value_n	proven
 bigintspan_lower	proven
 bigintspan_shift_scale	proven
 bigintspan_upper	proven
@@ -281,6 +282,7 @@ date_to_spanset	proven
 dateset_end_value	proven
 dateset_shift_scale	proven
 dateset_start_value	proven
+dateset_value_n	proven
 datespan_lower	proven
 datespan_shift_scale	proven
 datespan_upper	proven
@@ -443,6 +445,7 @@ float_union_transfn	proven
 floatset_end_value	proven
 floatset_shift_scale	proven
 floatset_start_value	proven
+floatset_value_n	proven
 floatspan_lower	proven
 floatspan_shift_scale	proven
 floatspan_upper	proven
@@ -496,6 +499,7 @@ intersects_cbuffer_cbuffer	proven
 intset_end_value	proven
 intset_shift_scale	proven
 intset_start_value	proven
+intset_value_n	proven
 intspan_lower	proven
 intspan_shift_scale	proven
 intspan_upper	proven
@@ -856,6 +860,7 @@ sub_tnumber_tnumber	proven
 tbool_end_value	proven
 tbool_start_value	proven
 tbool_to_tint	proven
+tbool_value_n	proven
 tbox_cmp	proven
 tbox_copy	proven
 tbox_eq	proven
@@ -987,6 +992,7 @@ tfloat_radians	proven
 tfloat_shift_value	proven
 tfloat_start_value	proven
 tfloat_to_tint	proven
+tfloat_value_n	proven
 tge_float_tfloat	proven
 tge_int_tint	proven
 tge_temporal_temporal	proven
@@ -1023,6 +1029,7 @@ tint_minus_value	proven
 tint_shift_value	proven
 tint_start_value	proven
 tint_to_tfloat	proven
+tint_value_n	proven
 tintersects_cbuffer_tcbuffer	proven
 tintersects_geo_tcbuffer	proven
 tintersects_geo_tgeo	proven
@@ -1094,6 +1101,7 @@ tspatial_extent_transfn	proven
 tstzset_end_value	proven
 tstzset_shift_scale	proven
 tstzset_start_value	proven
+tstzset_value_n	proven
 tstzspan_lower	proven
 tstzspan_shift_scale	proven
 tstzspan_upper	proven

@@ -120,7 +120,13 @@ CONV_BOX_LIT = {"tbox_to_intspan": ("TBOXINT XT([1, 5],[2020-01-01, 2020-01-05])
 # Out-param accessors `bool f(const Box*, T *result)`: the out-param C type ->
 # (cpp decl, generic return_kind). The validity-flag return is discarded.
 OUT_PARAM_RET = {"double": ("double", "double"), "int": ("int", "int"),
-                 "TimestampTz": ("TimestampTz", "int64"), "bool": ("bool", "bool")}
+                 "TimestampTz": ("TimestampTz", "int64"), "bool": ("bool", "bool"),
+                 "int64": ("int64", "int64"), "DateADT": ("DateADT", "int")}
+# value_n primary operand -> the GENERIC_INPUTS builder key + its test column.
+#   temporal subtypes build a single instant; set subtypes parse a text literal.
+VALUE_N_TEMPORAL = {"tint": ("INT32", "5", "8"), "tfloat": ("FLOAT64", "5.5", "8.5"),
+                    "tbool": ("BOOLEAN", "true", "false")}
+VALUE_N_SET = {"intset", "bigintset", "floatset", "dateset", "tstzset"}
 # per-op box literal override for accessors that need a specific box flavour:
 # tboxint_* need an INT box; stbox time accessors need an STBOX carrying T.
 _STBOX_XT = ("STBOX XT(((1,1),(5,5)),[2020-01-01, 2020-01-05])",
@@ -341,6 +347,31 @@ def classify(name, ret, plist):
             l0, l1 = CONV_BOX_LIT.get(name, LITERALS[input_type])
             tmeta = dict(cols=[("a", "VARSIZED")], rows=[(l0,), (l1,)],
                          token=name.upper(), sink="VARSIZED")
+        return entry, tmeta
+    # ---- value_n: bool f(Temporal|Set*, int n, T *result) -> the n-th value via
+    #      an out-param. Exercised with n=1 (the first value/element, always
+    #      defined for a non-empty input) so the validity flag is true. ----
+    if (name.endswith("_value_n") and len(plist) == 3
+            and plist[0][1] and plist[1] == ("int", False)
+            and plist[2][1] and plist[2][0] in OUT_PARAM_RET):
+        stem = name[:-len("_value_n")]
+        if plist[0][0] == "Temporal" and stem in VALUE_N_TEMPORAL:
+            input_type = stem
+            vsql, va, vb = VALUE_N_TEMPORAL[stem]
+            cols = [("value", vsql), ("ts", "UINT64")]
+            rows = [(va, "1609459200"), (vb, "1609545600")]
+        elif plist[0][0] == "Set" and stem in VALUE_N_SET:
+            input_type = stem
+            l0, l1 = LITERALS[input_type]
+            cols, rows = [("a", "VARSIZED")], [(l0,), (l1,)]
+        else:
+            return None, f"value_n operand {plist[0][0]}/{stem} unsupported"
+        oc, rkind = OUT_PARAM_RET[plist[2][0]]
+        entry = dict(nebula_name=camel(name), sql_token=name.upper(), meos_call=name,
+                     build_generic=True, input_type=input_type, return_kind=rkind,
+                     extra_args=[], extra_call_args=["1"], out_param=dict(cpp=oc),
+                     comment_one_liner=f"{name} (out-param {plist[2][0]}, n=1) — {input_type} value_n.")
+        tmeta = dict(cols=cols, rows=rows, token=name.upper(), sink=sink_of(rkind))
         return entry, tmeta
     # ---- unary accessor: one Span/Set/SpanSet/TBox/STBox operand -> scalar ----
     if len(plist) == 1:
