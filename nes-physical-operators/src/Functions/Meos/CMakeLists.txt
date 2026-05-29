@@ -1034,3 +1034,8 @@ add_plugin(GeomConvexHull PhysicalFunction nes-physical-operators GeomConvexHull
 add_plugin(GeomLength PhysicalFunction nes-physical-operators GeomLengthPhysicalFunction.cpp)
 add_plugin(GeomPerimeter PhysicalFunction nes-physical-operators GeomPerimeterPhysicalFunction.cpp)
 add_plugin(LineNumpoints PhysicalFunction nes-physical-operators LineNumpointsPhysicalFunction.cpp)
+add_plugin(TintAtValue PhysicalFunction nes-physical-operators TintAtValuePhysicalFunction.cpp)
+add_plugin(TfloatAtValue PhysicalFunction nes-physical-operators TfloatAtValuePhysicalFunction.cpp)
+add_plugin(TtextAtValue PhysicalFunction nes-physical-operators TtextAtValuePhysicalFunction.cpp)
+add_plugin(TboolAtValue PhysicalFunction nes-physical-operators TboolAtValuePhysicalFunction.cpp)
+add_plugin(TboolMinusValue PhysicalFunction nes-physical-operators TboolMinusValuePhysicalFunction.cpp)

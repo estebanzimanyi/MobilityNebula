@@ -219,13 +219,15 @@ OBJECT_TYPES = {"Cbuffer": ("cbuffer", "cbuffer_in", "meos_cbuffer.h"),
 # subtype -> (value SQL col, value cpp, value sample a, value sample b).
 TEMPORAL_INPUTS = {"tint": ("INT32", "int32_t", "5", "8"),
                    "tfloat": ("FLOAT64", "double", "5.5", "8.5"),
-                   "ttext": ("VARSIZED", "text", "ABC", "DEF")}
+                   "ttext": ("VARSIZED", "text", "ABC", "DEF"),
+                   "tbool": ("BOOLEAN", "bool", "true", "false")}
 # base C type -> (SQL col, cpp, sample a, sample b). 'text' is a text* literal
 # (held in a constant XYZ, distinct from the ttext values so minus_value keeps a
 # non-empty result and textcat is non-trivial).
 TSCALAR_COL = {"int": ("INT32", "int32_t", "3", "2"),
                "double": ("FLOAT64", "double", "3.5", "2.5"),
-               "text": ("VARSIZED", "text", "XYZ", "XYZ")}
+               "text": ("VARSIZED", "text", "XYZ", "XYZ"),
+               "bool": ("BOOLEAN", "bool", "false", "true")}
 TCMP = ("tlt", "tle", "tgt", "tge", "teq", "tne")
 
 # always_/ever_ reductions: a temporal ⊗ a base value -> bool. The temporal is
@@ -663,12 +665,12 @@ def classify(name, ret, plist):
             return entry, tmeta
     # ---- temporal-instant ⊗ scalar -> Temporal* (per-event, WKT-serialized) ----
     tidx = [i for i, (b, p) in enumerate(plist) if b == "Temporal"]
-    bidx = [i for i, (b, p) in enumerate(plist) if b in ("int", "double", "text")]
+    bidx = [i for i, (b, p) in enumerate(plist) if b in ("int", "double", "text", "bool")]
     if ret.replace("*", "").strip() == "Temporal" and len(tidx) == 1 and len(bidx) == 1:
         toks = name.split("_")
-        insub = next((t for t in ("tint", "tfloat", "ttext") if t in toks), None)
+        insub = next((t for t in ("tint", "tfloat", "ttext", "tbool") if t in toks), None)
         if insub is None:
-            return None, "no tint/tfloat/ttext subtype token"
+            return None, "no tint/tfloat/ttext/tbool subtype token"
         pref = toks[0]
         # result subtype: a temporal comparison yields a tbool; everything else
         # (arithmetic, minus, shift, tdistance, textcat) keeps the INPUT subtype —
@@ -677,6 +679,12 @@ def classify(name, ret, plist):
         vsql, vcpp, va, vb = TEMPORAL_INPUTS[insub]
         bbase = plist[bidx[0]][0]
         ssql, scpp, sa, sb = TSCALAR_COL[bbase]
+        # at_value restricts the temporal to where it EQUALS the arg; the generic
+        # distinct-scalar default (chosen so minus_value stays non-empty) makes
+        # at_value empty and thus unrecordable. Align the arg with the instant
+        # value so the restriction is the (non-empty) instant itself.
+        if name.endswith("_at_value"):
+            sa, sb = va, vb
         extra = dict(kind="text") if bbase == "text" else dict(kind="scalar", cpp=scpp)
         entry = dict(nebula_name=camel(name), sql_token=name.upper(), meos_call=name,
                      build_generic=True, input_type=insub, return_kind=serializer,

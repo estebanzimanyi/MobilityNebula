@@ -1251,3 +1251,8 @@ add_plugin(GeomConvexHull LogicalFunction nes-logical-operators GeomConvexHullLo
 add_plugin(GeomLength LogicalFunction nes-logical-operators GeomLengthLogicalFunction.cpp)
 add_plugin(GeomPerimeter LogicalFunction nes-logical-operators GeomPerimeterLogicalFunction.cpp)
 add_plugin(LineNumpoints LogicalFunction nes-logical-operators LineNumpointsLogicalFunction.cpp)
+add_plugin(TintAtValue LogicalFunction nes-logical-operators TintAtValueLogicalFunction.cpp)
+add_plugin(TfloatAtValue LogicalFunction nes-logical-operators TfloatAtValueLogicalFunction.cpp)
+add_plugin(TtextAtValue LogicalFunction nes-logical-operators TtextAtValueLogicalFunction.cpp)
+add_plugin(TboolAtValue LogicalFunction nes-logical-operators TboolAtValueLogicalFunction.cpp)
+add_plugin(TboolMinusValue LogicalFunction nes-logical-operators TboolMinusValueLogicalFunction.cpp)

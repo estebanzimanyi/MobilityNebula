@@ -942,7 +942,9 @@ sub_int_tint	proven
 sub_tfloat_float	proven
 sub_tint_int	proven
 sub_tnumber_tnumber	proven
+tbool_at_value	proven
 tbool_end_value	proven
+tbool_minus_value	proven
 tbool_start_value	proven
 tbool_to_tint	proven
 tbool_value_n	proven
@@ -1070,6 +1072,7 @@ textcat_text_ttext	proven
 textcat_ttext_text	proven
 textcat_ttext_ttext	proven
 textset_value_n	proven
+tfloat_at_value	proven
 tfloat_ceil	proven
 tfloat_end_value	proven
 tfloat_exp	proven
@@ -1115,6 +1118,7 @@ timestamptz_to_spanset	proven
 timestamptz_to_stbox	proven
 timestamptz_to_tbox	proven
 timestamptz_union_transfn	proven
+tint_at_value	proven
 tint_end_value	proven
 tint_from_base_temp	proven
 tint_max_value	proven
@@ -1215,6 +1219,7 @@ tstzspanset_start_timestamptz	proven
 tstzspanset_to_datespanset	proven
 tstzspanset_to_stbox	proven
 tstzspanset_upper	proven
+ttext_at_value	proven
 ttext_end_value	proven
 ttext_from_base_temp	proven
 ttext_initcap	proven
