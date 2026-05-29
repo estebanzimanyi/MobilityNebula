@@ -903,6 +903,30 @@ def classify(name, ret, plist):
             tmeta = dict(cols=[("a", "VARSIZED"), ("arg", "VARSIZED")],
                          rows=[(sl0, v0), (sl1, v1)], token=name.upper(), sink=sink_of(rkind))
             return entry, tmeta
+    # ---- tnumber/temporal ⊗ numspan/tstzspan bbox predicate -> bool. One operand
+    #      is a Temporal (tnumber/temporal, built as a tfloat instant — its value
+    #      bbox vs a numspan, or its time bbox vs a tstzspan), the other a span
+    #      literal parsed as a box-kind extra. box_first when the span comes first. ----
+    if (len(plist) == 2 and rbase == "bool" and len(toks) == 3
+            and toks[0] in ("contains", "contained", "left", "right", "overleft",
+                            "overright", "overlaps", "same", "adjacent")
+            and ({"numspan", "tstzspan"} & set(toks[1:]))
+            and ({"tnumber", "temporal"} & set(toks[1:]))):
+        span_tok = "numspan" if "numspan" in toks[1:] else "tstzspan"
+        if span_tok == "numspan":
+            span_parser, slit = "floatspan_in", LITERALS["floatspan"]
+        else:
+            span_parser, slit = "tstzspan_in", LITERALS["tstzspan"]
+        entry = dict(nebula_name=camel(name), sql_token=name.upper(), meos_call=name,
+                     build_generic=True, input_type="tfloat", return_kind="int",
+                     extra_args=[dict(kind="box", box_type="Span", parser=span_parser, header="meos.h")],
+                     comment_one_liner=f"{name} (bool) — temporal ⊗ {span_tok} bbox predicate.")
+        if toks[1] == span_tok:        # span is operand 1 -> swap so call = f(span, temp)
+            entry["box_first"] = True
+        tmeta = dict(cols=[("value", "FLOAT64"), ("ts", "UINT64"), ("arg", "VARSIZED")],
+                     rows=[("5.5", "1609459200", slit[0]), ("8.5", "1609545600", slit[1])],
+                     token=name.upper(), sink="INT32")
+        return entry, tmeta
     # ---- same-type object-scalar comparison / relation (cbuffer/pose/npoint/
     # nsegment cmp/eq/.../same + cbuffer spatial rels): two literals -> bool/int ----
     (b0, p0), (b1, p1) = plist
