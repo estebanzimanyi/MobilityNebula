@@ -975,3 +975,6 @@ add_plugin(TtextMaxValue PhysicalFunction nes-physical-operators TtextMaxValuePh
 add_plugin(TtextValueN PhysicalFunction nes-physical-operators TtextValueNPhysicalFunction.cpp)
 add_plugin(TextsetValueN PhysicalFunction nes-physical-operators TextsetValueNPhysicalFunction.cpp)
 add_plugin(TgeoValueN PhysicalFunction nes-physical-operators TgeoValueNPhysicalFunction.cpp)
+add_plugin(TemporalToTstzspan PhysicalFunction nes-physical-operators TemporalToTstzspanPhysicalFunction.cpp)
+add_plugin(TemporalTime PhysicalFunction nes-physical-operators TemporalTimePhysicalFunction.cpp)
+add_plugin(TnumberValuespans PhysicalFunction nes-physical-operators TnumberValuespansPhysicalFunction.cpp)

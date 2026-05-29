@@ -126,6 +126,13 @@ UNARY_VARSIZED = {
     "set_copy":           ("Set",     "floatset",     "floatset_text"),
     "spanset_copy":       ("SpanSet", "floatspanset", "floatspanset_text"),
 }
+# Name-gated unary VARSIZED accessors over a single temporal instant returning a
+# span/spanset whose name has NO '_to_' (so the conv branch misses them). A
+# tfloat instant is built (value, ts); the result serialises via its *_out.
+TEMPORAL_UNARY_VARSIZED = {
+    "temporal_time":      "tstzspanset_text",     # the time spanset of a temporal
+    "tnumber_valuespans": "floatspanset_text",    # the value spanset of a tnumber
+}
 #   per-op box literal override (tbox_to_intspan needs an INT box, not the
 #   default TBOXFLOAT) — keyed by op name.
 CONV_BOX_LIT = {"tbox_to_intspan": ("TBOXINT XT([1, 5],[2020-01-01, 2020-01-05])",
@@ -466,6 +473,20 @@ def classify(name, ret, plist):
                      comment_one_liner=f"{name} ({ret.strip()}) — unary ttext -> {rbase}.")
         tmeta = dict(cols=[("value", "VARSIZED"), ("ts", "UINT64")],
                      rows=[("ABC", "1609459200"), ("DEF", "1609545600")],
+                     token=name.upper(), sink="VARSIZED")
+        return entry, tmeta
+    # ---- name-gated unary temporal -> span/spanset (temporal_time,
+    #      tnumber_valuespans): a tfloat instant in, a VARSIZED span/spanset out.
+    #      No '_to_' so the conv branch above misses them. ----
+    if (len(plist) == 1 and plist[0] == ("Temporal", True)
+            and name in TEMPORAL_UNARY_VARSIZED):
+        rkind = TEMPORAL_UNARY_VARSIZED[name]
+        entry = dict(nebula_name=camel(name), sql_token=name.upper(), meos_call=name,
+                     build_generic=True, input_type="tfloat", return_kind=rkind,
+                     extra_args=[],
+                     comment_one_liner=f"{name} ({ret.strip()}) — unary temporal -> {rbase}.")
+        tmeta = dict(cols=[("value", "FLOAT64"), ("ts", "UINT64")],
+                     rows=[("5.5", "1609459200"), ("8.5", "1609545600")],
                      token=name.upper(), sink="VARSIZED")
         return entry, tmeta
     # ---- unary accessor: one Span/Set/SpanSet/TBox/STBox operand -> scalar ----

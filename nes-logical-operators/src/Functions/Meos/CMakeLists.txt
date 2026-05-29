@@ -1168,3 +1168,6 @@ add_plugin(TtextValueN LogicalFunction nes-logical-operators TtextValueNLogicalF
 add_plugin(TextsetValueN LogicalFunction nes-logical-operators TextsetValueNLogicalFunction.cpp)
 add_plugin(TgeoValueN LogicalFunction nes-logical-operators TgeoValueNLogicalFunction.cpp)
 add_plugin(TposeValueN LogicalFunction nes-logical-operators TposeValueNLogicalFunction.cpp)
+add_plugin(TemporalToTstzspan LogicalFunction nes-logical-operators TemporalToTstzspanLogicalFunction.cpp)
+add_plugin(TemporalTime LogicalFunction nes-logical-operators TemporalTimeLogicalFunction.cpp)
+add_plugin(TnumberValuespans LogicalFunction nes-logical-operators TnumberValuespansLogicalFunction.cpp)

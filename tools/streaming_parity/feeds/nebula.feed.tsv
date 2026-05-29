@@ -975,6 +975,8 @@ temporal_num_instants	proven
 temporal_num_sequences	wired
 temporal_num_timestamps	proven
 temporal_start_timestamptz	proven
+temporal_time	proven
+temporal_to_tstzspan	proven
 temporal_upper_inc	proven
 teq_bool_tbool	proven
 teq_cbuffer_tcbuffer	proven
@@ -1107,6 +1109,7 @@ tnumber_to_span	proven
 tnumber_to_tbox	proven
 tnumber_trend	proven
 tnumber_twavg	proven
+tnumber_valuespans	proven
 touches_cbuffer_cbuffer	proven
 tpoint_angular_difference	proven
 tpoint_azimuth	proven
