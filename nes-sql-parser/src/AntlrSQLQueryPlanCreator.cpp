@@ -1459,6 +1459,25 @@
 #include <Functions/Meos/ShortestlineTposeGeoLogicalFunction.hpp>
 #include <Functions/Meos/ShortestlineTposePoseLogicalFunction.hpp>
 #include <Functions/Meos/ShortestlineTposeTposeLogicalFunction.hpp>
+#include <Functions/Meos/TnpointRouteLogicalFunction.hpp>
+#include <Functions/Meos/TnpointTrajectoryLogicalFunction.hpp>
+#include <Functions/Meos/TnpointTwcentroidLogicalFunction.hpp>
+#include <Functions/Meos/TposeStartValueLogicalFunction.hpp>
+#include <Functions/Meos/TposeEndValueLogicalFunction.hpp>
+#include <Functions/Meos/TposeTrajectoryLogicalFunction.hpp>
+#include <Functions/Meos/CbufferCopyLogicalFunction.hpp>
+#include <Functions/Meos/CbufferPointLogicalFunction.hpp>
+#include <Functions/Meos/CbufferToGeomLogicalFunction.hpp>
+#include <Functions/Meos/PoseCopyLogicalFunction.hpp>
+#include <Functions/Meos/PoseToPointLogicalFunction.hpp>
+#include <Functions/Meos/NpointToGeompointLogicalFunction.hpp>
+#include <Functions/Meos/NsegmentToGeomLogicalFunction.hpp>
+#include <Functions/Meos/StboxToGeoLogicalFunction.hpp>
+#include <Functions/Meos/TextsetStartValueLogicalFunction.hpp>
+#include <Functions/Meos/TextsetEndValueLogicalFunction.hpp>
+#include <Functions/Meos/TboolFromBaseTempLogicalFunction.hpp>
+#include <Functions/Meos/TfloatDegreesLogicalFunction.hpp>
+#include <Functions/Meos/TboxMakeLogicalFunction.hpp>
 #include <Plans/LogicalPlan.hpp>
 #include <Plans/LogicalPlanBuilder.hpp>
 #include <Util/Overloaded.hpp>
@@ -40347,6 +40366,558 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: SHORTESTLINE_TPOSE_TPOSE */
+        /* BEGIN CODEGEN PARSER GLUE: TNPOINT_ROUTE */
+        case AntlrSQLLexer::TNPOINT_ROUTE:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("TNPOINT_ROUTE requires exactly 3 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(TnpointRouteLogicalFunction(a0, a1, a2));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: TNPOINT_ROUTE */
+
+        /* BEGIN CODEGEN PARSER GLUE: TNPOINT_TRAJECTORY */
+        case AntlrSQLLexer::TNPOINT_TRAJECTORY:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("TNPOINT_TRAJECTORY requires exactly 3 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(TnpointTrajectoryLogicalFunction(a0, a1, a2));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: TNPOINT_TRAJECTORY */
+
+        /* BEGIN CODEGEN PARSER GLUE: TNPOINT_TWCENTROID */
+        case AntlrSQLLexer::TNPOINT_TWCENTROID:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("TNPOINT_TWCENTROID requires exactly 3 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(TnpointTwcentroidLogicalFunction(a0, a1, a2));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: TNPOINT_TWCENTROID */
+
+        /* BEGIN CODEGEN PARSER GLUE: TPOSE_START_VALUE */
+        case AntlrSQLLexer::TPOSE_START_VALUE:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 4)
+                throw InvalidQuerySyntax("TPOSE_START_VALUE requires exactly 4 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a3 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(TposeStartValueLogicalFunction(a0, a1, a2, a3));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: TPOSE_START_VALUE */
+
+        /* BEGIN CODEGEN PARSER GLUE: TPOSE_END_VALUE */
+        case AntlrSQLLexer::TPOSE_END_VALUE:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 4)
+                throw InvalidQuerySyntax("TPOSE_END_VALUE requires exactly 4 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a3 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(TposeEndValueLogicalFunction(a0, a1, a2, a3));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: TPOSE_END_VALUE */
+
+        /* BEGIN CODEGEN PARSER GLUE: TPOSE_TRAJECTORY */
+        case AntlrSQLLexer::TPOSE_TRAJECTORY:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 4)
+                throw InvalidQuerySyntax("TPOSE_TRAJECTORY requires exactly 4 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a3 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(TposeTrajectoryLogicalFunction(a0, a1, a2, a3));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: TPOSE_TRAJECTORY */
+
+        /* BEGIN CODEGEN PARSER GLUE: CBUFFER_COPY */
+        case AntlrSQLLexer::CBUFFER_COPY:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 1)
+                throw InvalidQuerySyntax("CBUFFER_COPY requires exactly 1 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(CbufferCopyLogicalFunction(a0));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: CBUFFER_COPY */
+
+        /* BEGIN CODEGEN PARSER GLUE: CBUFFER_POINT */
+        case AntlrSQLLexer::CBUFFER_POINT:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 1)
+                throw InvalidQuerySyntax("CBUFFER_POINT requires exactly 1 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(CbufferPointLogicalFunction(a0));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: CBUFFER_POINT */
+
+        /* BEGIN CODEGEN PARSER GLUE: CBUFFER_TO_GEOM */
+        case AntlrSQLLexer::CBUFFER_TO_GEOM:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 1)
+                throw InvalidQuerySyntax("CBUFFER_TO_GEOM requires exactly 1 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(CbufferToGeomLogicalFunction(a0));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: CBUFFER_TO_GEOM */
+
+        /* BEGIN CODEGEN PARSER GLUE: POSE_COPY */
+        case AntlrSQLLexer::POSE_COPY:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 1)
+                throw InvalidQuerySyntax("POSE_COPY requires exactly 1 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(PoseCopyLogicalFunction(a0));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: POSE_COPY */
+
+        /* BEGIN CODEGEN PARSER GLUE: POSE_TO_POINT */
+        case AntlrSQLLexer::POSE_TO_POINT:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 1)
+                throw InvalidQuerySyntax("POSE_TO_POINT requires exactly 1 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(PoseToPointLogicalFunction(a0));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: POSE_TO_POINT */
+
+        /* BEGIN CODEGEN PARSER GLUE: NPOINT_TO_GEOMPOINT */
+        case AntlrSQLLexer::NPOINT_TO_GEOMPOINT:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 1)
+                throw InvalidQuerySyntax("NPOINT_TO_GEOMPOINT requires exactly 1 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(NpointToGeompointLogicalFunction(a0));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: NPOINT_TO_GEOMPOINT */
+
+        /* BEGIN CODEGEN PARSER GLUE: NSEGMENT_TO_GEOM */
+        case AntlrSQLLexer::NSEGMENT_TO_GEOM:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 1)
+                throw InvalidQuerySyntax("NSEGMENT_TO_GEOM requires exactly 1 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(NsegmentToGeomLogicalFunction(a0));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: NSEGMENT_TO_GEOM */
+
+        /* BEGIN CODEGEN PARSER GLUE: STBOX_TO_GEO */
+        case AntlrSQLLexer::STBOX_TO_GEO:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 1)
+                throw InvalidQuerySyntax("STBOX_TO_GEO requires exactly 1 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(StboxToGeoLogicalFunction(a0));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: STBOX_TO_GEO */
+
+        /* BEGIN CODEGEN PARSER GLUE: TEXTSET_START_VALUE */
+        case AntlrSQLLexer::TEXTSET_START_VALUE:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 1)
+                throw InvalidQuerySyntax("TEXTSET_START_VALUE requires exactly 1 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(TextsetStartValueLogicalFunction(a0));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: TEXTSET_START_VALUE */
+
+        /* BEGIN CODEGEN PARSER GLUE: TEXTSET_END_VALUE */
+        case AntlrSQLLexer::TEXTSET_END_VALUE:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 1)
+                throw InvalidQuerySyntax("TEXTSET_END_VALUE requires exactly 1 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(TextsetEndValueLogicalFunction(a0));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: TEXTSET_END_VALUE */
+
+        /* BEGIN CODEGEN PARSER GLUE: TBOOL_FROM_BASE_TEMP */
+        case AntlrSQLLexer::TBOOL_FROM_BASE_TEMP:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("TBOOL_FROM_BASE_TEMP requires exactly 3 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(TboolFromBaseTempLogicalFunction(a0, a1, a2));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: TBOOL_FROM_BASE_TEMP */
+
+        /* BEGIN CODEGEN PARSER GLUE: TFLOAT_DEGREES */
+        case AntlrSQLLexer::TFLOAT_DEGREES:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("TFLOAT_DEGREES requires exactly 3 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(TfloatDegreesLogicalFunction(a0, a1, a2));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: TFLOAT_DEGREES */
+
+        /* BEGIN CODEGEN PARSER GLUE: TBOX_MAKE */
+        case AntlrSQLLexer::TBOX_MAKE:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 2)
+                throw InvalidQuerySyntax("TBOX_MAKE requires exactly 2 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(TboxMakeLogicalFunction(a0, a1));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: TBOX_MAKE */
+
 
 
 

@@ -665,6 +665,7 @@ def classify(name, ret, plist):
     if len(plist) == 1:
         base, ptr = plist[0]
         tfloat_instant = False
+        tinstant_sub = None
         if ptr and base in BOX_INPUT:
             input_type = BOX_INPUT[base]            # tbox_text / stbox_text primary
         elif ptr and base in ("Span", "Set", "SpanSet"):
@@ -678,8 +679,16 @@ def classify(name, ret, plist):
                 return None, f"no literal for object {input_type}"
         elif ptr and base == "GSERIALIZED":         # bare geometry via geom_in
             input_type = "geom"
-        elif ptr and base == "Temporal":            # single tfloat instant
-            input_type, tfloat_instant = "tfloat", True
+        elif ptr and base == "Temporal":            # single temporal instant
+            # a named spatial subtype (tnpoint_route, tpose_start_value,
+            # tgeo_*, tcbuffer_*) builds its OWN instant; everything else
+            # (temporal_*, tfloat_*, tint_*) is a tfloat instant.
+            tinstant_sub = next((t for t in ("tnpoint", "tpose", "tgeo", "tcbuffer")
+                                 if t in name.split("_")), None)
+            if tinstant_sub:
+                input_type = ALWAYS_INPUT_TYPE.get(tinstant_sub, tinstant_sub)
+            else:
+                input_type, tfloat_instant = "tfloat", True
         else:
             return None, f"unary param {base}{'*' if ptr else ''} not a span/set/spanset/box/object/temporal"
         # A heap-object return (Cbuffer*/Npoint*/Pose*/GSERIALIZED*, e.g. the
@@ -699,6 +708,12 @@ def classify(name, ret, plist):
             tmeta = dict(cols=[("value", "FLOAT64"), ("ts", "UINT64")],
                          rows=[("5.5", "1609459200"), ("8.5", "1609545600")],
                          token=name.upper(), sink=sink_of(rkind))
+        elif tinstant_sub:                              # multi-column spatial instant
+            tcols = ALWAYS_TINPUT[tinstant_sub]
+            cols = [(c, s) for c, s, _, _ in tcols] + [("ts", "UINT64")]
+            rowa = tuple([a for _, _, a, _ in tcols] + ["1609459200"])
+            rowb = tuple([b for _, _, _, b in tcols] + ["1609545600"])
+            tmeta = dict(cols=cols, rows=[rowa, rowb], token=name.upper(), sink=sink_of(rkind))
         else:
             tmeta = dict(cols=[("a", "VARSIZED")],
                          rows=[(LITERALS[input_type][0],), (LITERALS[input_type][1],)],

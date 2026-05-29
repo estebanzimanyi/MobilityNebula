@@ -70,3 +70,8 @@ add_plugin(NaiTposeTpose PhysicalFunction nes-physical-operators NaiTposeTposePh
 add_plugin(ShortestlineTposeGeo PhysicalFunction nes-physical-operators ShortestlineTposeGeoPhysicalFunction.cpp)
 add_plugin(ShortestlineTposePose PhysicalFunction nes-physical-operators ShortestlineTposePosePhysicalFunction.cpp)
 add_plugin(ShortestlineTposeTpose PhysicalFunction nes-physical-operators ShortestlineTposeTposePhysicalFunction.cpp)
+add_plugin(TposeStartValue PhysicalFunction nes-physical-operators TposeStartValuePhysicalFunction.cpp)
+add_plugin(TposeEndValue PhysicalFunction nes-physical-operators TposeEndValuePhysicalFunction.cpp)
+add_plugin(TposeTrajectory PhysicalFunction nes-physical-operators TposeTrajectoryPhysicalFunction.cpp)
+add_plugin(PoseCopy PhysicalFunction nes-physical-operators PoseCopyPhysicalFunction.cpp)
+add_plugin(PoseToPoint PhysicalFunction nes-physical-operators PoseToPointPhysicalFunction.cpp)

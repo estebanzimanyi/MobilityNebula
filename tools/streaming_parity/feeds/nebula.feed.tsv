@@ -210,6 +210,7 @@ bigintspanset_shift_scale	proven
 bigintspanset_upper	proven
 bigintspanset_width	proven
 cbuffer_cmp	proven
+cbuffer_copy	proven
 cbuffer_eq	proven
 cbuffer_ge	proven
 cbuffer_gt	proven
@@ -218,10 +219,12 @@ cbuffer_le	proven
 cbuffer_lt	proven
 cbuffer_ne	proven
 cbuffer_nsame	proven
+cbuffer_point	proven
 cbuffer_radius	proven
 cbuffer_round	proven
 cbuffer_same	proven
 cbuffer_srid	proven
+cbuffer_to_geom	proven
 cbuffer_to_stbox	proven
 cbufferset_end_value	proven
 cbufferset_start_value	proven
@@ -704,6 +707,7 @@ npoint_round	proven
 npoint_route	proven
 npoint_same	proven
 npoint_srid	proven
+npoint_to_geompoint	proven
 npoint_to_stbox	proven
 npointset_end_value	proven
 npointset_start_value	proven
@@ -717,6 +721,7 @@ nsegment_lt	proven
 nsegment_ne	proven
 nsegment_route	proven
 nsegment_srid	proven
+nsegment_to_geom	proven
 nsegment_to_stbox	proven
 numspan_timestamptz_to_tbox	proven
 numspan_tstzspan_to_tbox	proven
@@ -871,6 +876,7 @@ overright_tnumber_tnumber	proven
 overright_tspatial_stbox	proven
 overright_tspatial_tspatial	proven
 pose_cmp	proven
+pose_copy	proven
 pose_eq	proven
 pose_ge	proven
 pose_gt	proven
@@ -883,6 +889,7 @@ pose_rotation	proven
 pose_round	proven
 pose_same	proven
 pose_srid	proven
+pose_to_point	proven
 pose_to_stbox	proven
 poseset_end_value	proven
 poseset_start_value	proven
@@ -1013,6 +1020,7 @@ stbox_tmax	proven
 stbox_tmax_inc	proven
 stbox_tmin	proven
 stbox_tmin_inc	proven
+stbox_to_geo	proven
 stbox_to_tstzspan	proven
 stbox_volume	proven
 stbox_xmax	proven
@@ -1028,6 +1036,7 @@ sub_tint_int	proven
 sub_tnumber_tnumber	proven
 tbool_at_value	proven
 tbool_end_value	proven
+tbool_from_base_temp	proven
 tbool_minus_value	proven
 tbool_start_value	proven
 tbool_to_tint	proven
@@ -1043,6 +1052,7 @@ tbox_hast	proven
 tbox_hasx	proven
 tbox_le	proven
 tbox_lt	proven
+tbox_make	wired
 tbox_ne	proven
 tbox_round	proven
 tbox_tmax	proven
@@ -1156,9 +1166,12 @@ teq_ttext_text	proven
 textcat_text_ttext	proven
 textcat_ttext_text	proven
 textcat_ttext_ttext	proven
+textset_end_value	proven
+textset_start_value	proven
 textset_value_n	proven
 tfloat_at_value	proven
 tfloat_ceil	proven
+tfloat_degrees	proven
 tfloat_end_value	proven
 tfloat_exp	proven
 tfloat_floor	proven
@@ -1254,8 +1267,11 @@ tne_tpose_pose	proven
 tne_ttext_text	proven
 tnpoint_cumulative_length	proven
 tnpoint_length	proven
+tnpoint_route	proven
 tnpoint_speed	proven
 tnpoint_to_tgeompoint	proven
+tnpoint_trajectory	proven
+tnpoint_twcentroid	proven
 tnumber_abs	proven
 tnumber_angular_difference	proven
 tnumber_at_span	proven
@@ -1283,6 +1299,9 @@ tpoint_is_simple	proven
 tpoint_length	proven
 tpoint_speed	proven
 tpoint_twcentroid	proven
+tpose_end_value	proven
+tpose_start_value	proven
+tpose_trajectory	proven
 tpose_value_n	proven
 tspatial_extent_transfn	proven
 tstzset_end_value	proven
