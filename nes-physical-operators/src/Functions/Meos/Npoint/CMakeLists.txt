@@ -61,3 +61,6 @@ add_plugin(NpointRound PhysicalFunction nes-physical-operators NpointRoundPhysic
 add_plugin(NpointPosition PhysicalFunction nes-physical-operators NpointPositionPhysicalFunction.cpp)
 add_plugin(NpointRoute PhysicalFunction nes-physical-operators NpointRoutePhysicalFunction.cpp)
 add_plugin(NsegmentRoute PhysicalFunction nes-physical-operators NsegmentRoutePhysicalFunction.cpp)
+add_plugin(NpointsetStartValue PhysicalFunction nes-physical-operators NpointsetStartValuePhysicalFunction.cpp)
+add_plugin(NpointsetEndValue PhysicalFunction nes-physical-operators NpointsetEndValuePhysicalFunction.cpp)
+add_plugin(NpointsetValueN PhysicalFunction nes-physical-operators NpointsetValueNPhysicalFunction.cpp)

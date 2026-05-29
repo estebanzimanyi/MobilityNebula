@@ -221,6 +221,9 @@ cbuffer_round	proven
 cbuffer_same	proven
 cbuffer_srid	proven
 cbuffer_to_stbox	proven
+cbufferset_end_value	proven
+cbufferset_start_value	proven
+cbufferset_value_n	proven
 contained_bigint_set	proven
 contained_bigint_span	proven
 contained_bigint_spanset	proven
@@ -476,6 +479,9 @@ front_tspatial_stbox	wired
 front_tspatial_tspatial	wired
 geog_dwithin	wired
 geom_to_geog	wired
+geoset_end_value	proven
+geoset_start_value	proven
+geoset_value_n	proven
 int_extent_transfn	proven
 int_timestamptz_to_tbox	proven
 int_to_set	proven
@@ -632,6 +638,9 @@ npoint_route	proven
 npoint_same	proven
 npoint_srid	proven
 npoint_to_stbox	proven
+npointset_end_value	proven
+npointset_start_value	proven
+npointset_value_n	proven
 nsegment_cmp	proven
 nsegment_eq	proven
 nsegment_ge	proven
@@ -796,6 +805,9 @@ pose_round	proven
 pose_same	proven
 pose_srid	proven
 pose_to_stbox	proven
+poseset_end_value	proven
+poseset_start_value	proven
+poseset_value_n	proven
 right_bigint_set	proven
 right_bigint_span	proven
 right_bigint_spanset	proven

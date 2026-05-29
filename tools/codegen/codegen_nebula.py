@@ -3227,6 +3227,13 @@ for _k, _c, _p, _h in [
     ("pose", "Pose", "pose_in", "meos_pose.h"),
     ("npoint", "Npoint", "npoint_in", "meos_npoint.h"),
     ("nsegment", "Nsegment", "nsegment_in", "meos_npoint.h"),
+    # Object-element sets: a brace-list of double-quoted element WKTs parsed via
+    # the type's *set_in into a Set*. geoset has no geoset_in symbol; its values
+    # are geometries, so geomset_in parses the generic geo-set value accessors.
+    ("cbufferset", "Set", "cbufferset_in", "meos_cbuffer.h"),
+    ("poseset", "Set", "poseset_in", "meos_pose.h"),
+    ("npointset", "Set", "npointset_in", "meos_npoint.h"),
+    ("geoset", "Set", "geomset_in", "meos_geo.h"),
 ]:
     _inp = _text_literal_input(_c, _p)
     _inp["header"] = _h

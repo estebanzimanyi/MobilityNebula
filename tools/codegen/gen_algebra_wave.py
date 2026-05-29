@@ -69,6 +69,18 @@ LITERALS = {
     "stbox_text": ("STBOX X((1,1),(5,5))", "STBOX X((3,3),(7,7))"),
     "tbox_text": ("TBOXFLOAT XT([1, 5],[2020-01-01, 2020-01-05])",
                   "TBOXFLOAT XT([3, 7],[2020-01-03, 2020-01-07])"),
+    # Object-set text literals: a brace-list of DOUBLE-QUOTED element WKTs (the
+    # canonical *set_out form; *set_in re-parses it). The outer single-quote of
+    # the .test VARSIZED field is stripped by the generic text-literal input, the
+    # interior double-quotes are preserved and delimit the set elements.
+    "cbufferset": ('{"Cbuffer(Point(1 1),0.5)", "Cbuffer(Point(2 2),0.5)"}',
+                   '{"Cbuffer(Point(3 3),1.0)", "Cbuffer(Point(4 4),0.5)"}'),
+    "npointset":  ('{"Npoint(1,0.5)", "Npoint(2,0.5)"}',
+                   '{"Npoint(1,0.7)", "Npoint(3,0.5)"}'),
+    "poseset":    ('{"Pose(Point(1 1),0.5)", "Pose(Point(2 2),1.0)"}',
+                   '{"Pose(Point(3 3),0.3)", "Pose(Point(4 4),0.5)"}'),
+    "geoset":     ('{"Point(1 1)", "Point(2 2)"}',
+                   '{"Point(3 3)", "Point(4 4)"}'),
 }
 BOX_PARSER = {"intspan": "intspan_in", "bigintspan": "bigintspan_in", "floatspan": "floatspan_in",
               "datespan": "datespan_in", "tstzspan": "tstzspan_in",
@@ -166,6 +178,10 @@ OUT_PARAM_RET = {"double": ("double", "double"), "int": ("int", "int"),
 VALUE_N_TEMPORAL = {"tint": ("INT32", "5", "8"), "tfloat": ("FLOAT64", "5.5", "8.5"),
                     "tbool": ("BOOLEAN", "true", "false"), "ttext": ("VARSIZED", "ABC", "DEF")}
 VALUE_N_SET = {"intset", "bigintset", "floatset", "dateset", "tstzset", "textset"}
+# Object-element sets: a Set* of heap objects whose start/end_value and value_n
+# return the element via the *_value_out serializers (a brace-list literal input).
+# geoset parses via geomset_in (no geoset_in symbol); see codegen_nebula registry.
+OBJECT_SETS = {"cbufferset", "npointset", "poseset", "geoset"}
 # value_n out-params that are a heap pointer (T **result) -> the *_out serializer
 # key (VARSIZED return), as opposed to the scalar OUT_PARAM_RET out-params.
 VALUE_N_VARSIZED = {"text": "text_value_out", "GSERIALIZED": "geo_value_out",
@@ -433,7 +449,7 @@ def classify(name, ret, plist):
             cols = [(c, s) for c, s, _, _ in tcols] + [("ts", "UINT64")]
             rows = [tuple([a for _, _, a, _ in tcols] + ["1609459200"]),
                     tuple([b for _, _, _, b in tcols] + ["1609545600"])]
-        elif plist[0][0] == "Set" and stem in VALUE_N_SET:
+        elif plist[0][0] == "Set" and (stem in VALUE_N_SET or stem in OBJECT_SETS):
             input_type = stem
             l0, l1 = LITERALS[input_type]
             cols, rows = [("a", "VARSIZED")], [(l0,), (l1,)]
@@ -556,9 +572,15 @@ def classify(name, ret, plist):
             input_type, tfloat_instant = "tfloat", True
         else:
             return None, f"unary param {base}{'*' if ptr else ''} not a span/set/spanset/box/object/temporal"
-        rkind = SCALAR_RET.get(ret.strip())
-        if rkind is None:
-            return None, f"unary return {ret.strip()} unmapped"
+        # A heap-object return (Cbuffer*/Npoint*/Pose*/GSERIALIZED*, e.g. the
+        # object-set start_value/end_value) serialises through its *_value_out the
+        # same way the value_n out-param family does; otherwise map a scalar sink.
+        if rbase in VALUE_N_VARSIZED:
+            rkind = VALUE_N_VARSIZED[rbase]
+        else:
+            rkind = SCALAR_RET.get(ret.strip())
+            if rkind is None:
+                return None, f"unary return {ret.strip()} unmapped"
         entry = dict(nebula_name=camel(name), sql_token=name.upper(), meos_call=name,
                      build_generic=True, input_type=input_type, return_kind=rkind,
                      extra_args=[],

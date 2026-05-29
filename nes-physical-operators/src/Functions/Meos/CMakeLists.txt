@@ -1016,3 +1016,6 @@ add_plugin(TstzspanToDatespan PhysicalFunction nes-physical-operators TstzspanTo
 add_plugin(TstzspanToStbox PhysicalFunction nes-physical-operators TstzspanToStboxPhysicalFunction.cpp)
 add_plugin(TstzspansetToDatespanset PhysicalFunction nes-physical-operators TstzspansetToDatespansetPhysicalFunction.cpp)
 add_plugin(TstzspansetToStbox PhysicalFunction nes-physical-operators TstzspansetToStboxPhysicalFunction.cpp)
+add_plugin(GeosetStartValue PhysicalFunction nes-physical-operators GeosetStartValuePhysicalFunction.cpp)
+add_plugin(GeosetEndValue PhysicalFunction nes-physical-operators GeosetEndValuePhysicalFunction.cpp)
+add_plugin(GeosetValueN PhysicalFunction nes-physical-operators GeosetValueNPhysicalFunction.cpp)

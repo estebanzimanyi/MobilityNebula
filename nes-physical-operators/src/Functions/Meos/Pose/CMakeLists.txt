@@ -54,3 +54,6 @@ add_plugin(PoseHash PhysicalFunction nes-physical-operators PoseHashPhysicalFunc
 add_plugin(PoseSrid PhysicalFunction nes-physical-operators PoseSridPhysicalFunction.cpp)
 add_plugin(PoseRound PhysicalFunction nes-physical-operators PoseRoundPhysicalFunction.cpp)
 add_plugin(PoseRotation PhysicalFunction nes-physical-operators PoseRotationPhysicalFunction.cpp)
+add_plugin(PosesetStartValue PhysicalFunction nes-physical-operators PosesetStartValuePhysicalFunction.cpp)
+add_plugin(PosesetEndValue PhysicalFunction nes-physical-operators PosesetEndValuePhysicalFunction.cpp)
+add_plugin(PosesetValueN PhysicalFunction nes-physical-operators PosesetValueNPhysicalFunction.cpp)
