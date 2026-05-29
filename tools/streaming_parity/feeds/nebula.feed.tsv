@@ -23,6 +23,7 @@ adisjoint_tcbuffer_geo	proven
 adisjoint_tcbuffer_tcbuffer	proven
 adisjoint_tgeo_geo	proven
 adisjoint_tgeo_tgeo	proven
+adjacent_numspan_tnumber	proven
 adjacent_span_bigint	proven
 adjacent_span_date	proven
 adjacent_span_float	proven
@@ -42,10 +43,13 @@ adjacent_stbox_tspatial	proven
 adjacent_tbox_tbox	proven
 adjacent_tbox_tnumber	proven
 adjacent_temporal_temporal	proven
+adjacent_temporal_tstzspan	proven
+adjacent_tnumber_numspan	proven
 adjacent_tnumber_tbox	proven
 adjacent_tnumber_tnumber	proven
 adjacent_tspatial_stbox	proven
 adjacent_tspatial_tspatial	proven
+adjacent_tstzspan_temporal	proven
 adwithin_tcbuffer_cbuffer	proven
 adwithin_tcbuffer_geo	proven
 adwithin_tcbuffer_tcbuffer	proven
@@ -65,6 +69,7 @@ after_stbox_tspatial	proven
 after_tbox_tbox	proven
 after_tbox_tnumber	proven
 after_temporal_temporal	proven
+after_temporal_tstzspan	proven
 after_timestamptz_set	proven
 after_timestamptz_span	proven
 after_timestamptz_spanset	proven
@@ -72,6 +77,7 @@ after_tnumber_tbox	proven
 after_tnumber_tnumber	proven
 after_tspatial_stbox	proven
 after_tspatial_tspatial	proven
+after_tstzspan_temporal	proven
 aintersects_tcbuffer_cbuffer	proven
 aintersects_tcbuffer_geo	proven
 aintersects_tcbuffer_tcbuffer	proven
@@ -171,6 +177,7 @@ before_stbox_tspatial	proven
 before_tbox_tbox	proven
 before_tbox_tnumber	proven
 before_temporal_temporal	proven
+before_temporal_tstzspan	proven
 before_timestamptz_set	proven
 before_timestamptz_span	proven
 before_timestamptz_spanset	proven
@@ -178,6 +185,7 @@ before_tnumber_tbox	proven
 before_tnumber_tnumber	proven
 before_tspatial_stbox	proven
 before_tspatial_tspatial	proven
+before_tstzspan_temporal	proven
 below_stbox_stbox	proven
 below_stbox_tspatial	proven
 below_tspatial_stbox	proven
@@ -565,6 +573,7 @@ overafter_stbox_tspatial	proven
 overafter_tbox_tbox	proven
 overafter_tbox_tnumber	proven
 overafter_temporal_temporal	proven
+overafter_temporal_tstzspan	proven
 overafter_timestamptz_set	proven
 overafter_timestamptz_span	proven
 overafter_timestamptz_spanset	proven
@@ -572,6 +581,7 @@ overafter_tnumber_tbox	proven
 overafter_tnumber_tnumber	proven
 overafter_tspatial_stbox	proven
 overafter_tspatial_tspatial	proven
+overafter_tstzspan_temporal	proven
 overback_stbox_stbox	proven
 overback_stbox_tspatial	wired
 overback_tspatial_stbox	wired
@@ -590,6 +600,7 @@ overbefore_stbox_tspatial	proven
 overbefore_tbox_tbox	proven
 overbefore_tbox_tnumber	proven
 overbefore_temporal_temporal	proven
+overbefore_temporal_tstzspan	proven
 overbefore_timestamptz_set	proven
 overbefore_timestamptz_span	proven
 overbefore_timestamptz_spanset	proven
@@ -597,6 +608,7 @@ overbefore_tnumber_tbox	proven
 overbefore_tnumber_tnumber	proven
 overbefore_tspatial_stbox	proven
 overbefore_tspatial_tspatial	proven
+overbefore_tstzspan_temporal	proven
 overbelow_stbox_stbox	proven
 overbelow_stbox_tspatial	proven
 overbelow_tspatial_stbox	proven
