@@ -1112,3 +1112,7 @@ add_plugin(BigintspanMake PhysicalFunction nes-physical-operators BigintspanMake
 add_plugin(FloatspanMake PhysicalFunction nes-physical-operators FloatspanMakePhysicalFunction.cpp)
 add_plugin(DatespanMake PhysicalFunction nes-physical-operators DatespanMakePhysicalFunction.cpp)
 add_plugin(TstzspanMake PhysicalFunction nes-physical-operators TstzspanMakePhysicalFunction.cpp)
+add_plugin(TfloatinstMake PhysicalFunction nes-physical-operators TfloatinstMakePhysicalFunction.cpp)
+add_plugin(TintinstMake PhysicalFunction nes-physical-operators TintinstMakePhysicalFunction.cpp)
+add_plugin(TpointinstMake PhysicalFunction nes-physical-operators TpointinstMakePhysicalFunction.cpp)
+add_plugin(TgeoinstMake PhysicalFunction nes-physical-operators TgeoinstMakePhysicalFunction.cpp)

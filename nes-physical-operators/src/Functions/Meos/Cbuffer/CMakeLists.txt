@@ -136,3 +136,4 @@ add_plugin(TcbufferMinusStbox PhysicalFunction nes-physical-operators TcbufferMi
 add_plugin(DistanceCbufferGeo PhysicalFunction nes-physical-operators DistanceCbufferGeoPhysicalFunction.cpp)
 add_plugin(DistanceCbufferStbox PhysicalFunction nes-physical-operators DistanceCbufferStboxPhysicalFunction.cpp)
 add_plugin(NadCbufferStbox PhysicalFunction nes-physical-operators NadCbufferStboxPhysicalFunction.cpp)
+add_plugin(CbufferMake PhysicalFunction nes-physical-operators CbufferMakePhysicalFunction.cpp)

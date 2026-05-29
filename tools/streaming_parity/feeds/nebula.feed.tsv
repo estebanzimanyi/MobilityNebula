@@ -218,6 +218,7 @@ cbuffer_gt	proven
 cbuffer_hash	proven
 cbuffer_le	proven
 cbuffer_lt	proven
+cbuffer_make	proven
 cbuffer_ne	proven
 cbuffer_nsame	proven
 cbuffer_point	proven
@@ -711,6 +712,7 @@ npoint_gt	proven
 npoint_hash	proven
 npoint_le	proven
 npoint_lt	proven
+npoint_make	proven
 npoint_ne	proven
 npoint_position	proven
 npoint_round	proven
@@ -893,6 +895,8 @@ pose_gt	proven
 pose_hash	proven
 pose_le	proven
 pose_lt	proven
+pose_make_2d	proven
+pose_make_point2d	proven
 pose_ne	proven
 pose_nsame	proven
 pose_rotation	proven
@@ -1202,6 +1206,7 @@ tfloat_shift_value	proven
 tfloat_start_value	proven
 tfloat_to_tint	proven
 tfloat_value_n	proven
+tfloatinst_make	proven
 tge_float_tfloat	proven
 tge_int_tint	proven
 tge_temporal_temporal	proven
@@ -1220,6 +1225,7 @@ tgeo_minus_stbox	proven
 tgeo_minus_value	proven
 tgeo_start_value	proven
 tgeo_value_n	proven
+tgeoinst_make	proven
 tgeompoint_to_tgeometry	wired
 tgt_float_tfloat	proven
 tgt_int_tint	proven
@@ -1254,6 +1260,7 @@ tintersects_tcbuffer_geo	proven
 tintersects_tcbuffer_tcbuffer	proven
 tintersects_tgeo_geo	proven
 tintersects_tgeo_tgeo	proven
+tintinst_make	proven
 tle_float_tfloat	proven
 tle_int_tint	proven
 tle_temporal_temporal	proven
@@ -1293,6 +1300,7 @@ tnpoint_speed	proven
 tnpoint_to_tgeompoint	proven
 tnpoint_trajectory	proven
 tnpoint_twcentroid	proven
+tnpointinst_make	proven
 tnumber_abs	proven
 tnumber_angular_difference	proven
 tnumber_at_span	proven
@@ -1324,6 +1332,7 @@ tpoint_minus_geom	proven
 tpoint_minus_value	proven
 tpoint_speed	proven
 tpoint_twcentroid	proven
+tpointinst_make	proven
 tpose_at_geom	proven
 tpose_at_pose	proven
 tpose_at_stbox	proven

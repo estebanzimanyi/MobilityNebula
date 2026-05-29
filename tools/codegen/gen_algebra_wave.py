@@ -131,6 +131,22 @@ SPAN_MAKE = {
     "datespan_make":   ("date_base", "INT32", "int32_t", "datespan_text", "100", "200", "150", "300"),
     "tstzspan_make":   ("timestamptz_base", "INT64", "int64_t", "tstzspan_text", "1000000", "5000000", "2000000", "8000000"),
 }
+# instant + object constructors: name -> dict(prim input, primary literal pair
+# `plit` (geom/object VARSIZED) OR base-scalar `psql`/`pa`/`pb`, scalar `extras`
+# [(cpp, sql, a, b)], return serializer). ts = µs-since-2000 (2020-01-01 ≈ 6.3e14).
+_TS = ("int64_t", "INT64", "631152000000000", "631238400000000")
+MAKE_SPEC = {
+    "tfloatinst_make":  dict(prim="float_base", psql="FLOAT64", pa="5.5", pb="8.5", extras=[_TS], ret="tfloat_out"),
+    "tintinst_make":    dict(prim="int_base", psql="INT32", pa="5", pb="8", extras=[_TS], ret="tint_out"),
+    "tpointinst_make":  dict(prim="geom", plit=("SRID=4326;Point(1 1)", "SRID=4326;Point(2 2)"), extras=[_TS], ret="tspatial_text"),
+    "tgeoinst_make":    dict(prim="geom", plit=("SRID=4326;Point(1 1)", "SRID=4326;Point(2 2)"), extras=[_TS], ret="tspatial_text"),
+    "tnpointinst_make": dict(prim="npoint", plit=("NPoint(1, 0.5)", "NPoint(1, 0.7)"), extras=[_TS], ret="tspatial_text"),
+    "npoint_make":      dict(prim="bigint_base", psql="INT64", pa="1", pb="2", extras=[("double", "FLOAT64", "0.5", "0.7")], ret="npoint_value_out"),
+    "cbuffer_make":     dict(prim="geom", plit=("Point(1 1)", "Point(2 2)"), extras=[("double", "FLOAT64", "1.0", "0.5")], ret="cbuffer_value_out"),
+    "pose_make_2d":     dict(prim="float_base", psql="FLOAT64", pa="1.0", pb="2.0",
+                             extras=[("double", "FLOAT64", "1.0", "2.0"), ("double", "FLOAT64", "0.5", "1.0"), ("int32_t", "INT32", "0", "0")], ret="pose_value_out"),
+    "pose_make_point2d":dict(prim="geom", plit=("Point(1 1)", "Point(2 2)"), extras=[("double", "FLOAT64", "0.5", "1.0")], ret="pose_value_out"),
+}
 BOX_PARSER = {"intspan": "intspan_in", "bigintspan": "bigintspan_in", "floatspan": "floatspan_in",
               "datespan": "datespan_in", "tstzspan": "tstzspan_in",
               "intset": "intset_in", "bigintset": "bigintset_in", "floatset": "floatset_in",
@@ -457,6 +473,28 @@ def classify(name, ret, plist):
         tmeta = dict(cols=[("value", vsql), ("arg0", vsql), ("arg1", "BOOLEAN"), ("arg2", "BOOLEAN")],
                      rows=[(lo0, hi0, "true", "false"), (lo1, hi1, "true", "false")],
                      token=name.upper(), sink="VARSIZED")
+        return entry, tmeta
+    # ---- instant / object constructors (value[+more] -> TInstant / Npoint /
+    #      Cbuffer / Pose): a base-scalar or geom/object primary + scalar extras. ----
+    if name in MAKE_SPEC:
+        s = MAKE_SPEC[name]
+        entry = dict(nebula_name=camel(name), sql_token=name.upper(), meos_call=name,
+                     build_generic=True, input_type=s["prim"], return_kind=s["ret"],
+                     extra_args=[dict(kind="scalar", cpp=c) for c, _, _, _ in s["extras"]],
+                     comment_one_liner=f"{name} ({ret.strip()}) — constructor.")
+        # the result type's header is not pulled in by a base/geom primary
+        _rhdr = {"npoint_value_out": "meos_npoint.h", "cbuffer_value_out": "meos_cbuffer.h",
+                 "pose_value_out": "meos_pose.h", "tspatial_text": "meos_geo.h"}.get(s["ret"])
+        if _rhdr:
+            entry["extra_headers"] = [_rhdr]
+        if "plit" in s:                                 # geom/object VARSIZED literal primary
+            pcol, pa, pb = ("a", "VARSIZED"), s["plit"][0], s["plit"][1]
+        else:                                           # base-scalar primary
+            pcol, pa, pb = ("value", s["psql"]), s["pa"], s["pb"]
+        ecols = [(f"arg{i}", esql) for i, (_, esql, _, _) in enumerate(s["extras"])]
+        rowa = tuple([pa] + [a for _, _, a, _ in s["extras"]])
+        rowb = tuple([pb] + [b for _, _, _, b in s["extras"]])
+        tmeta = dict(cols=[pcol] + ecols, rows=[rowa, rowb], token=name.upper(), sink="VARSIZED")
         return entry, tmeta
     # ---- name-gated unary VARSIZED accessor: T *f(const C *) -> span/set/spanset ----
     if name in UNARY_VARSIZED:

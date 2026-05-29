@@ -84,3 +84,5 @@ add_plugin(NpointToGeompoint PhysicalFunction nes-physical-operators NpointToGeo
 add_plugin(NsegmentToGeom PhysicalFunction nes-physical-operators NsegmentToGeomPhysicalFunction.cpp)
 add_plugin(TnpointAtNpoint PhysicalFunction nes-physical-operators TnpointAtNpointPhysicalFunction.cpp)
 add_plugin(TnpointMinusNpoint PhysicalFunction nes-physical-operators TnpointMinusNpointPhysicalFunction.cpp)
+add_plugin(TnpointinstMake PhysicalFunction nes-physical-operators TnpointinstMakePhysicalFunction.cpp)
+add_plugin(NpointMake PhysicalFunction nes-physical-operators NpointMakePhysicalFunction.cpp)
