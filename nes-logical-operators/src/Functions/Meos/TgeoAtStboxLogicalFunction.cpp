@@ -1,5 +1,5 @@
 #define NES_PLUGIN_OPERATOR_TU
-#include <Functions/Meos/TemporalAtStBoxLogicalFunction.hpp>
+#include <Functions/Meos/TgeoAtStboxLogicalFunction.hpp>
 
 #include <DataTypes/DataType.hpp>
 #include <DataTypes/DataTypeProvider.hpp>
@@ -11,12 +11,12 @@
 #include <SerializableVariantDescriptor.pb.h>
 
 /* Decoupled from the regenerated plugin registrar (see LogicalFunctionRegistry.hpp): only the registry types are pulled in, and this operator declares its own Register function. */
-namespace NES::LogicalFunctionGeneratedRegistrar { LogicalFunctionRegistryReturnType RegisterTemporalAtStBoxLogicalFunction(LogicalFunctionRegistryArguments); }
+namespace NES::LogicalFunctionGeneratedRegistrar { LogicalFunctionRegistryReturnType RegisterTgeoAtStboxLogicalFunction(LogicalFunctionRegistryArguments); }
 
 namespace NES
 {
 
-TemporalAtStBoxLogicalFunction::TemporalAtStBoxLogicalFunction(LogicalFunction lon,
+TgeoAtStboxLogicalFunction::TgeoAtStboxLogicalFunction(LogicalFunction lon,
                                                                LogicalFunction lat,
                                                                LogicalFunction timestamp,
                                                                LogicalFunction stbox)
@@ -30,7 +30,7 @@ TemporalAtStBoxLogicalFunction::TemporalAtStBoxLogicalFunction(LogicalFunction l
     parameters.push_back(std::move(stbox));
 }
 
-TemporalAtStBoxLogicalFunction::TemporalAtStBoxLogicalFunction(LogicalFunction lon,
+TgeoAtStboxLogicalFunction::TgeoAtStboxLogicalFunction(LogicalFunction lon,
                                                                LogicalFunction lat,
                                                                LogicalFunction timestamp,
                                                                LogicalFunction stbox,
@@ -46,27 +46,27 @@ TemporalAtStBoxLogicalFunction::TemporalAtStBoxLogicalFunction(LogicalFunction l
     parameters.push_back(std::move(borderInclusive));
 }
 
-DataType TemporalAtStBoxLogicalFunction::getDataType() const
+DataType TgeoAtStboxLogicalFunction::getDataType() const
 {
     return dataType;
 }
 
-LogicalFunction TemporalAtStBoxLogicalFunction::withDataType(const DataType& newDataType) const
+LogicalFunction TgeoAtStboxLogicalFunction::withDataType(const DataType& newDataType) const
 {
     auto copy = *this;
     copy.dataType = newDataType;
     return copy;
 }
 
-std::vector<LogicalFunction> TemporalAtStBoxLogicalFunction::getChildren() const
+std::vector<LogicalFunction> TgeoAtStboxLogicalFunction::getChildren() const
 {
     return parameters;
 }
 
-LogicalFunction TemporalAtStBoxLogicalFunction::withChildren(const std::vector<LogicalFunction>& children) const
+LogicalFunction TgeoAtStboxLogicalFunction::withChildren(const std::vector<LogicalFunction>& children) const
 {
     PRECONDITION(children.size() == 4 || children.size() == 5,
-                 "TemporalAtStBoxLogicalFunction requires 4 or 5 children, but got {}",
+                 "TgeoAtStboxLogicalFunction requires 4 or 5 children, but got {}",
                  children.size());
     auto copy = *this;
     copy.parameters = children;
@@ -74,21 +74,21 @@ LogicalFunction TemporalAtStBoxLogicalFunction::withChildren(const std::vector<L
     return copy;
 }
 
-std::string_view TemporalAtStBoxLogicalFunction::getType() const
+std::string_view TgeoAtStboxLogicalFunction::getType() const
 {
     return NAME;
 }
 
-bool TemporalAtStBoxLogicalFunction::operator==(const LogicalFunctionConcept& rhs) const
+bool TgeoAtStboxLogicalFunction::operator==(const LogicalFunctionConcept& rhs) const
 {
-    if (const auto* other = dynamic_cast<const TemporalAtStBoxLogicalFunction*>(&rhs))
+    if (const auto* other = dynamic_cast<const TgeoAtStboxLogicalFunction*>(&rhs))
     {
         return parameters == other->parameters && hasBorderParam == other->hasBorderParam;
     }
     return false;
 }
 
-std::string TemporalAtStBoxLogicalFunction::explain(ExplainVerbosity verbosity) const
+std::string TgeoAtStboxLogicalFunction::explain(ExplainVerbosity verbosity) const
 {
     std::string args;
     for (size_t index = 0; index < parameters.size(); ++index)
@@ -102,7 +102,7 @@ std::string TemporalAtStBoxLogicalFunction::explain(ExplainVerbosity verbosity) 
     return fmt::format("{}({})", NAME, args);
 }
 
-LogicalFunction TemporalAtStBoxLogicalFunction::withInferredDataType(const Schema& schema) const
+LogicalFunction TgeoAtStboxLogicalFunction::withInferredDataType(const Schema& schema) const
 {
     std::vector<LogicalFunction> newChildren;
     newChildren.reserve(parameters.size());
@@ -125,7 +125,7 @@ LogicalFunction TemporalAtStBoxLogicalFunction::withInferredDataType(const Schem
     return withChildren(newChildren);
 }
 
-SerializableFunction TemporalAtStBoxLogicalFunction::serialize() const
+SerializableFunction TgeoAtStboxLogicalFunction::serialize() const
 {
     SerializableFunction serialized;
     serialized.set_function_type(NAME);
@@ -138,25 +138,25 @@ SerializableFunction TemporalAtStBoxLogicalFunction::serialize() const
 }
 
 LogicalFunctionRegistryReturnType
-LogicalFunctionGeneratedRegistrar::RegisterTemporalAtStBoxLogicalFunction(LogicalFunctionRegistryArguments arguments)
+LogicalFunctionGeneratedRegistrar::RegisterTgeoAtStboxLogicalFunction(LogicalFunctionRegistryArguments arguments)
 {
     if (arguments.children.size() == 4)
     {
-        return TemporalAtStBoxLogicalFunction(arguments.children[0],
+        return TgeoAtStboxLogicalFunction(arguments.children[0],
                                               arguments.children[1],
                                               arguments.children[2],
                                               arguments.children[3]);
     }
     if (arguments.children.size() == 5)
     {
-        return TemporalAtStBoxLogicalFunction(arguments.children[0],
+        return TgeoAtStboxLogicalFunction(arguments.children[0],
                                               arguments.children[1],
                                               arguments.children[2],
                                               arguments.children[3],
                                               arguments.children[4]);
     }
     PRECONDITION(false,
-                 "TemporalAtStBoxLogicalFunction requires 4 or 5 children, but got {}",
+                 "TgeoAtStboxLogicalFunction requires 4 or 5 children, but got {}",
                  arguments.children.size());
 }
 

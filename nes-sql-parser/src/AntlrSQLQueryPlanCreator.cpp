@@ -127,8 +127,8 @@
 #include <Operators/Windows/Aggregations/Meos/TpointTwcentroidAggregationLogicalFunction.hpp>
 #include <Functions/Meos/TemporalIntersectsGeometryLogicalFunction.hpp>
 #include <Functions/Meos/AintersectsTgeoGeoLogicalFunction.hpp>
-#include <Functions/Meos/TemporalEDWithinGeometryLogicalFunction.hpp>
-#include <Functions/Meos/TemporalAtStBoxLogicalFunction.hpp>
+#include <Functions/Meos/EdwithinTgeoGeoLogicalFunction.hpp>
+#include <Functions/Meos/TgeoAtStboxLogicalFunction.hpp>
 #include <Functions/Meos/AdisjointTgeoGeoLogicalFunction.hpp>
 #include <Functions/Meos/EintersectsTgeoGeoLogicalFunction.hpp>
 #include <Functions/Meos/EcontainsTgeoTgeoLogicalFunction.hpp>
@@ -2324,7 +2324,7 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             auto lonFunction = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
 
             helpers.top().functionBuilder.emplace_back(
-                TemporalEDWithinGeometryLogicalFunction(lonFunction, latFunction, timestampFunction, geometryFunction, distanceFunction));
+                EdwithinTgeoGeoLogicalFunction(lonFunction, latFunction, timestampFunction, geometryFunction, distanceFunction));
         }
         break;
         case AntlrSQLLexer::TGEO_AT_STBOX:
@@ -2382,7 +2382,7 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             auto lonFunction = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
 
             helpers.top().functionBuilder.emplace_back(
-                TemporalAtStBoxLogicalFunction(lonFunction, latFunction, timestampFunction, stboxFunction, borderFlag));
+                TgeoAtStboxLogicalFunction(lonFunction, latFunction, timestampFunction, stboxFunction, borderFlag));
         }
         break;
 

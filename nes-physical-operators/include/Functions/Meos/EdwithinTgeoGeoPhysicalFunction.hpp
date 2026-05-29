@@ -6,9 +6,9 @@
 
 namespace NES {
 
-class TemporalEDWithinGeometryPhysicalFunction : public PhysicalFunctionConcept {
+class EdwithinTgeoGeoPhysicalFunction : public PhysicalFunctionConcept {
 public:
-    TemporalEDWithinGeometryPhysicalFunction(PhysicalFunction lonFunction,
+    EdwithinTgeoGeoPhysicalFunction(PhysicalFunction lonFunction,
                                              PhysicalFunction latFunction,
                                              PhysicalFunction timestampFunction,
                                              PhysicalFunction geometryFunction,

@@ -56,17 +56,17 @@ VarVal TintToTfloatPhysicalFunction::execute(const Record& record, ArenaRef& are
         parameterValues.emplace_back(function.execute(record, arena));
     }
 
-    auto value = parameterValues[0].cast<nautilus::val<double>>();
+    auto value = parameterValues[0].cast<nautilus::val<int64_t>>();
     auto ts = parameterValues[1].cast<nautilus::val<uint64_t>>();
 
     const auto result = nautilus::invoke(
-        +[](double value,
+        +[](int64_t value,
             uint64_t ts) -> double {
             try
             {
                 MEOS::Meos::ensureMeosInitialized();
                 std::string tempWkt = fmt::format("{}@{}", value, MEOS::Meos::convertEpochToTimestamp(ts));
-                Temporal* temp = tfloat_in(tempWkt.c_str());
+                Temporal* temp = tint_in(tempWkt.c_str());
                 if (!temp) return 0.0;
 
                 Temporal* res = tint_to_tfloat(temp);

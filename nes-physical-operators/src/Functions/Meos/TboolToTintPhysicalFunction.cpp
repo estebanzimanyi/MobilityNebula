@@ -56,17 +56,17 @@ VarVal TboolToTintPhysicalFunction::execute(const Record& record, ArenaRef& aren
         parameterValues.emplace_back(function.execute(record, arena));
     }
 
-    auto value = parameterValues[0].cast<nautilus::val<int32_t>>();
+    auto value = parameterValues[0].cast<nautilus::val<bool>>();
     auto ts = parameterValues[1].cast<nautilus::val<uint64_t>>();
 
     const auto result = nautilus::invoke(
-        +[](int32_t value,
+        +[](bool value,
             uint64_t ts) -> int {
             try
             {
                 MEOS::Meos::ensureMeosInitialized();
-                std::string tempWkt = fmt::format("{}@{}", value, MEOS::Meos::convertEpochToTimestamp(ts));
-                Temporal* temp = tint_in(tempWkt.c_str());
+                std::string tempWkt = fmt::format("{}@{}", value ? "t" : "f", MEOS::Meos::convertEpochToTimestamp(ts));
+                Temporal* temp = tbool_in(tempWkt.c_str());
                 if (!temp) return 0;
 
                 Temporal* res = tbool_to_tint(temp);

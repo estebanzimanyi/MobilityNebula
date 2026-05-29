@@ -1,5 +1,5 @@
 #define NES_PLUGIN_OPERATOR_TU
-#include <Functions/Meos/TemporalAtStBoxPhysicalFunction.hpp>
+#include <Functions/Meos/TgeoAtStboxPhysicalFunction.hpp>
 
 #include <Functions/PhysicalFunction.hpp>
 #include <MEOSWrapper.hpp>
@@ -18,11 +18,11 @@
 #include <val.hpp>
 
 /* Decoupled from the regenerated plugin registrar (see PhysicalFunctionRegistry.hpp): only the registry types are pulled in, and this operator declares its own Register function. */
-namespace NES::PhysicalFunctionGeneratedRegistrar { PhysicalFunctionRegistryReturnType RegisterTemporalAtStBoxPhysicalFunction(PhysicalFunctionRegistryArguments); }
+namespace NES::PhysicalFunctionGeneratedRegistrar { PhysicalFunctionRegistryReturnType RegisterTgeoAtStboxPhysicalFunction(PhysicalFunctionRegistryArguments); }
 
 namespace NES {
 
-TemporalAtStBoxPhysicalFunction::TemporalAtStBoxPhysicalFunction(PhysicalFunction lonFunction,
+TgeoAtStboxPhysicalFunction::TgeoAtStboxPhysicalFunction(PhysicalFunction lonFunction,
                                                                  PhysicalFunction latFunction,
                                                                  PhysicalFunction timestampFunction,
                                                                  PhysicalFunction stboxFunction)
@@ -35,7 +35,7 @@ TemporalAtStBoxPhysicalFunction::TemporalAtStBoxPhysicalFunction(PhysicalFunctio
     parameterFunctions.push_back(std::move(stboxFunction));
 }
 
-TemporalAtStBoxPhysicalFunction::TemporalAtStBoxPhysicalFunction(PhysicalFunction lonFunction,
+TgeoAtStboxPhysicalFunction::TgeoAtStboxPhysicalFunction(PhysicalFunction lonFunction,
                                                                  PhysicalFunction latFunction,
                                                                  PhysicalFunction timestampFunction,
                                                                  PhysicalFunction stboxFunction,
@@ -50,7 +50,7 @@ TemporalAtStBoxPhysicalFunction::TemporalAtStBoxPhysicalFunction(PhysicalFunctio
     parameterFunctions.push_back(std::move(borderInclusiveFunction));
 }
 
-VarVal TemporalAtStBoxPhysicalFunction::execute(const Record& record, ArenaRef& arena) const
+VarVal TgeoAtStboxPhysicalFunction::execute(const Record& record, ArenaRef& arena) const
 {
     std::vector<VarVal> parameterValues;
     parameterValues.reserve(parameterFunctions.size());
@@ -107,25 +107,25 @@ VarVal TemporalAtStBoxPhysicalFunction::execute(const Record& record, ArenaRef& 
 }
 
 PhysicalFunctionRegistryReturnType
-PhysicalFunctionGeneratedRegistrar::RegisterTemporalAtStBoxPhysicalFunction(PhysicalFunctionRegistryArguments arguments)
+PhysicalFunctionGeneratedRegistrar::RegisterTgeoAtStboxPhysicalFunction(PhysicalFunctionRegistryArguments arguments)
 {
     if (arguments.childFunctions.size() == 4)
     {
-        return TemporalAtStBoxPhysicalFunction(arguments.childFunctions[0],
+        return TgeoAtStboxPhysicalFunction(arguments.childFunctions[0],
                                                 arguments.childFunctions[1],
                                                 arguments.childFunctions[2],
                                                 arguments.childFunctions[3]);
     }
     if (arguments.childFunctions.size() == 5)
     {
-        return TemporalAtStBoxPhysicalFunction(arguments.childFunctions[0],
+        return TgeoAtStboxPhysicalFunction(arguments.childFunctions[0],
                                                 arguments.childFunctions[1],
                                                 arguments.childFunctions[2],
                                                 arguments.childFunctions[3],
                                                 arguments.childFunctions[4]);
     }
     PRECONDITION(false,
-                 "TemporalAtStBoxPhysicalFunction requires 4 or 5 child functions, but got {}",
+                 "TgeoAtStboxPhysicalFunction requires 4 or 5 child functions, but got {}",
                  arguments.childFunctions.size());
 }
 

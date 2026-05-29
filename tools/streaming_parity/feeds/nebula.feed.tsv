@@ -330,7 +330,7 @@ edisjoint_tgeo_tgeo	proven
 edwithin_tcbuffer_cbuffer	proven
 edwithin_tcbuffer_geo	proven
 edwithin_tcbuffer_tcbuffer	proven
-edwithin_tgeo_geo	wired
+edwithin_tgeo_geo	proven
 edwithin_tgeo_tgeo	proven
 eintersects_tcbuffer_cbuffer	proven
 eintersects_tcbuffer_geo	proven
@@ -525,7 +525,7 @@ nad_tgeo_stbox	proven
 nad_tgeo_tgeo	proven
 nad_tint_int	proven
 nad_tint_tbox	proven
-nad_tint_tint	wired
+nad_tint_tint	proven
 nad_tnpoint_geo	wired
 nad_tnpoint_stbox	wired
 nad_tnpoint_tnpoint	proven
@@ -775,7 +775,7 @@ sub_tint_int	proven
 sub_tnumber_tnumber	proven
 tbool_end_value	proven
 tbool_start_value	proven
-tbool_to_tint	wired
+tbool_to_tint	proven
 tbox_cmp	proven
 tbox_copy	proven
 tbox_eq	proven
@@ -834,7 +834,7 @@ temporal_cmp	proven
 temporal_copy	proven
 temporal_derivative	proven
 temporal_dyntimewarp_distance	proven
-temporal_end_timestamptz	wired
+temporal_end_timestamptz	proven
 temporal_eq	proven
 temporal_frechet_distance	proven
 temporal_ge	proven
@@ -854,7 +854,7 @@ temporal_ne	proven
 temporal_num_instants	proven
 temporal_num_sequences	wired
 temporal_num_timestamps	proven
-temporal_start_timestamptz	wired
+temporal_start_timestamptz	proven
 temporal_upper_inc	proven
 teq_bool_tbool	proven
 teq_cbuffer_tcbuffer	proven
@@ -897,11 +897,11 @@ tge_tfloat_float	proven
 tge_tint_int	proven
 tge_ttext_text	proven
 tgeo_at_geom	proven
-tgeo_at_stbox	wired
+tgeo_at_stbox	proven
 tgeo_centroid	proven
 tgeo_convex_hull	proven
 tgeo_end_value	proven
-tgeo_minus_geom	wired
+tgeo_minus_geom	proven
 tgeo_start_value	proven
 tgeompoint_to_tgeometry	wired
 tgt_float_tfloat	proven
@@ -920,7 +920,7 @@ tint_min_value	proven
 tint_minus_value	proven
 tint_shift_value	proven
 tint_start_value	proven
-tint_to_tfloat	wired
+tint_to_tfloat	proven
 tintersects_cbuffer_tcbuffer	proven
 tintersects_geo_tcbuffer	proven
 tintersects_geo_tgeo	proven

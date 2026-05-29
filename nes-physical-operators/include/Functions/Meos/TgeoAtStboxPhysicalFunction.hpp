@@ -6,14 +6,14 @@
 
 namespace NES {
 
-class TemporalAtStBoxPhysicalFunction : public PhysicalFunctionConcept {
+class TgeoAtStboxPhysicalFunction : public PhysicalFunctionConcept {
 public:
-    TemporalAtStBoxPhysicalFunction(PhysicalFunction lonFunction,
+    TgeoAtStboxPhysicalFunction(PhysicalFunction lonFunction,
                                     PhysicalFunction latFunction,
                                     PhysicalFunction timestampFunction,
                                     PhysicalFunction stboxFunction);
 
-    TemporalAtStBoxPhysicalFunction(PhysicalFunction lonFunction,
+    TgeoAtStboxPhysicalFunction(PhysicalFunction lonFunction,
                                     PhysicalFunction latFunction,
                                     PhysicalFunction timestampFunction,
                                     PhysicalFunction stboxFunction,

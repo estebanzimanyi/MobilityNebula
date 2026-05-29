@@ -1,5 +1,5 @@
 #define NES_PLUGIN_OPERATOR_TU
-#include <Functions/Meos/TemporalEDWithinGeometryPhysicalFunction.hpp>
+#include <Functions/Meos/EdwithinTgeoGeoPhysicalFunction.hpp>
 
 #include <Functions/PhysicalFunction.hpp>
 #include <MEOSWrapper.hpp>
@@ -17,11 +17,11 @@
 #include <val.hpp>
 
 /* Decoupled from the regenerated plugin registrar (see PhysicalFunctionRegistry.hpp): only the registry types are pulled in, and this operator declares its own Register function. */
-namespace NES::PhysicalFunctionGeneratedRegistrar { PhysicalFunctionRegistryReturnType RegisterTemporalEDWithinGeometryPhysicalFunction(PhysicalFunctionRegistryArguments); }
+namespace NES::PhysicalFunctionGeneratedRegistrar { PhysicalFunctionRegistryReturnType RegisterEdwithinTgeoGeoPhysicalFunction(PhysicalFunctionRegistryArguments); }
 
 namespace NES {
 
-TemporalEDWithinGeometryPhysicalFunction::TemporalEDWithinGeometryPhysicalFunction(PhysicalFunction lonFunction,
+EdwithinTgeoGeoPhysicalFunction::EdwithinTgeoGeoPhysicalFunction(PhysicalFunction lonFunction,
                                                                                    PhysicalFunction latFunction,
                                                                                    PhysicalFunction timestampFunction,
                                                                                    PhysicalFunction geometryFunction,
@@ -35,7 +35,7 @@ TemporalEDWithinGeometryPhysicalFunction::TemporalEDWithinGeometryPhysicalFuncti
     parameterFunctions.push_back(std::move(distanceFunction));
 }
 
-VarVal TemporalEDWithinGeometryPhysicalFunction::execute(const Record& record, ArenaRef& arena) const
+VarVal EdwithinTgeoGeoPhysicalFunction::execute(const Record& record, ArenaRef& arena) const
 {
     std::vector<VarVal> parameterValues;
     parameterValues.reserve(parameterFunctions.size());
@@ -94,12 +94,12 @@ VarVal TemporalEDWithinGeometryPhysicalFunction::execute(const Record& record, A
 }
 
 PhysicalFunctionRegistryReturnType
-PhysicalFunctionGeneratedRegistrar::RegisterTemporalEDWithinGeometryPhysicalFunction(PhysicalFunctionRegistryArguments arguments)
+PhysicalFunctionGeneratedRegistrar::RegisterEdwithinTgeoGeoPhysicalFunction(PhysicalFunctionRegistryArguments arguments)
 {
     PRECONDITION(arguments.childFunctions.size() == 5,
-                 "TemporalEDWithinGeometryPhysicalFunction requires 5 child functions, but got {}",
+                 "EdwithinTgeoGeoPhysicalFunction requires 5 child functions, but got {}",
                  arguments.childFunctions.size());
-    return TemporalEDWithinGeometryPhysicalFunction(arguments.childFunctions[0],
+    return EdwithinTgeoGeoPhysicalFunction(arguments.childFunctions[0],
                                                     arguments.childFunctions[1],
                                                     arguments.childFunctions[2],
                                                     arguments.childFunctions[3],

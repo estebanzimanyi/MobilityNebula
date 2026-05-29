@@ -7,20 +7,15 @@
 
 namespace NES {
 
-class TemporalAtStBoxLogicalFunction : public LogicalFunctionConcept {
+class EdwithinTgeoGeoLogicalFunction : public LogicalFunctionConcept {
 public:
-    static constexpr std::string_view NAME = "TemporalAtStBox";
+    static constexpr std::string_view NAME = "EdwithinTgeoGeo";
 
-    TemporalAtStBoxLogicalFunction(LogicalFunction lon,
-                                   LogicalFunction lat,
-                                   LogicalFunction timestamp,
-                                   LogicalFunction stbox);
-
-    TemporalAtStBoxLogicalFunction(LogicalFunction lon,
-                                   LogicalFunction lat,
-                                   LogicalFunction timestamp,
-                                   LogicalFunction stbox,
-                                   LogicalFunction borderInclusive);
+    EdwithinTgeoGeoLogicalFunction(LogicalFunction lon,
+                                            LogicalFunction lat,
+                                            LogicalFunction timestamp,
+                                            LogicalFunction geometry,
+                                            LogicalFunction distance);
 
     DataType getDataType() const override;
     LogicalFunction withDataType(const DataType& dataType) const override;
@@ -35,7 +30,6 @@ public:
 private:
     DataType dataType;
     std::vector<LogicalFunction> parameters;
-    bool hasBorderParam;
 };
 
 } // namespace NES
