@@ -504,6 +504,31 @@ def classify(name, ret, plist):
                      rows=[("5.5", "1609459200"), ("8.5", "1609545600")],
                      token=name.upper(), sink="VARSIZED")
         return entry, tmeta
+    # ---- `_duration`: a span/spanset (text literal) or temporal (tfloat
+    #      instant) -> an Interval (ISO text via interval_out). The spanset/
+    #      temporal variants take a trailing `boundspan` bool (passed true). ----
+    if name.endswith("_duration") and rbase == "Interval":
+        stem = name[:-len("_duration")]
+        eca = ["true"] if (len(plist) == 2 and plist[-1] == ("bool", False)) else []
+        if stem == "temporal":
+            entry = dict(nebula_name=camel(name), sql_token=name.upper(), meos_call=name,
+                         build_generic=True, input_type="tfloat", return_kind="interval_out",
+                         extra_args=[], extra_call_args=eca,
+                         comment_one_liner=f"{name} (Interval *) — temporal duration.")
+            tmeta = dict(cols=[("value", "FLOAT64"), ("ts", "UINT64")],
+                         rows=[("5.5", "1609459200"), ("8.5", "1609545600")],
+                         token=name.upper(), sink="VARSIZED")
+            return entry, tmeta
+        if stem in LITERALS:
+            entry = dict(nebula_name=camel(name), sql_token=name.upper(), meos_call=name,
+                         build_generic=True, input_type=stem, return_kind="interval_out",
+                         extra_args=[], extra_call_args=eca,
+                         comment_one_liner=f"{name} (Interval *) — {stem} duration.")
+            l0, l1 = LITERALS[stem]
+            tmeta = dict(cols=[("a", "VARSIZED")], rows=[(l0,), (l1,)],
+                         token=name.upper(), sink="VARSIZED")
+            return entry, tmeta
+        return None, f"duration operand {stem} unsupported"
     # ---- unary accessor: one Span/Set/SpanSet/TBox/STBox/object/Temporal
     #      operand -> scalar (hash, srid, …) ----
     if len(plist) == 1:

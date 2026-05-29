@@ -1193,3 +1193,8 @@ add_plugin(SetRound LogicalFunction nes-logical-operators SetRoundLogicalFunctio
 add_plugin(StboxRound LogicalFunction nes-logical-operators StboxRoundLogicalFunction.cpp)
 add_plugin(TboxRound LogicalFunction nes-logical-operators TboxRoundLogicalFunction.cpp)
 add_plugin(TemporalRound LogicalFunction nes-logical-operators TemporalRoundLogicalFunction.cpp)
+add_plugin(DatespanDuration LogicalFunction nes-logical-operators DatespanDurationLogicalFunction.cpp)
+add_plugin(TstzspanDuration LogicalFunction nes-logical-operators TstzspanDurationLogicalFunction.cpp)
+add_plugin(DatespansetDuration LogicalFunction nes-logical-operators DatespansetDurationLogicalFunction.cpp)
+add_plugin(TstzspansetDuration LogicalFunction nes-logical-operators TstzspansetDurationLogicalFunction.cpp)
+add_plugin(TemporalDuration LogicalFunction nes-logical-operators TemporalDurationLogicalFunction.cpp)

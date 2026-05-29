@@ -990,3 +990,8 @@ add_plugin(SetRound PhysicalFunction nes-physical-operators SetRoundPhysicalFunc
 add_plugin(StboxRound PhysicalFunction nes-physical-operators StboxRoundPhysicalFunction.cpp)
 add_plugin(TboxRound PhysicalFunction nes-physical-operators TboxRoundPhysicalFunction.cpp)
 add_plugin(TemporalRound PhysicalFunction nes-physical-operators TemporalRoundPhysicalFunction.cpp)
+add_plugin(DatespanDuration PhysicalFunction nes-physical-operators DatespanDurationPhysicalFunction.cpp)
+add_plugin(TstzspanDuration PhysicalFunction nes-physical-operators TstzspanDurationPhysicalFunction.cpp)
+add_plugin(DatespansetDuration PhysicalFunction nes-physical-operators DatespansetDurationPhysicalFunction.cpp)
+add_plugin(TstzspansetDuration PhysicalFunction nes-physical-operators TstzspansetDurationPhysicalFunction.cpp)
+add_plugin(TemporalDuration PhysicalFunction nes-physical-operators TemporalDurationPhysicalFunction.cpp)

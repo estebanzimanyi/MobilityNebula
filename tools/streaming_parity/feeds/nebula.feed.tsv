@@ -287,9 +287,11 @@ dateset_end_value	proven
 dateset_shift_scale	proven
 dateset_start_value	proven
 dateset_value_n	proven
+datespan_duration	proven
 datespan_lower	proven
 datespan_shift_scale	proven
 datespan_upper	proven
+datespanset_duration	proven
 datespanset_end_date	proven
 datespanset_num_dates	proven
 datespanset_shift_scale	proven
@@ -973,6 +975,7 @@ temporal_at_values	proven
 temporal_cmp	proven
 temporal_copy	proven
 temporal_derivative	proven
+temporal_duration	proven
 temporal_dyntimewarp_distance	proven
 temporal_end_timestamptz	proven
 temporal_eq	proven
@@ -1148,9 +1151,11 @@ tstzset_end_value	proven
 tstzset_shift_scale	proven
 tstzset_start_value	proven
 tstzset_value_n	proven
+tstzspan_duration	proven
 tstzspan_lower	proven
 tstzspan_shift_scale	proven
 tstzspan_upper	proven
+tstzspanset_duration	proven
 tstzspanset_end_timestamptz	proven
 tstzspanset_lower	proven
 tstzspanset_num_timestamps	proven

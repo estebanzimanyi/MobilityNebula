@@ -3281,6 +3281,8 @@ for _rk, _ct, _of, _md in [
     ("pose_value_out", "Pose", "pose_out", True),
     ("cbuffer_value_out", "Cbuffer", "cbuffer_out", True),
     ("npoint_value_out", "Npoint", "npoint_out", True),
+    # an Interval result (the *_duration accessors) -> its ISO text.
+    ("interval_out", "Interval", "interval_out", False),
 ]:
     GENERIC_RETURNS.setdefault(_rk, ("VariableSizedData", "VARSIZED", "(char*) nullptr", None))
     VARSIZED_OUT_RETURNS.setdefault(_rk, (_ct, _of, _md))
