@@ -438,6 +438,7 @@ float_extent_transfn	proven
 float_to_set	proven
 float_to_span	proven
 float_to_spanset	proven
+float_to_tbox	proven
 float_union_transfn	proven
 floatset_end_value	proven
 floatset_shift_scale	proven
@@ -460,6 +461,7 @@ int_extent_transfn	proven
 int_to_set	proven
 int_to_span	proven
 int_to_spanset	proven
+int_to_tbox	proven
 int_union_transfn	proven
 intersection_bigint_set	proven
 intersection_date_set	proven
@@ -802,6 +804,7 @@ set_le	proven
 set_lt	proven
 set_ne	proven
 set_num_values	proven
+set_to_tbox	proven
 set_union_finalfn	proven
 set_union_transfn	proven
 span_cmp	proven
@@ -813,6 +816,7 @@ span_le	proven
 span_lower_inc	proven
 span_lt	proven
 span_ne	proven
+span_to_tbox	proven
 span_upper_inc	proven
 spanset_cmp	proven
 spanset_eq	proven
@@ -823,6 +827,7 @@ spanset_lower_inc	proven
 spanset_lt	proven
 spanset_ne	proven
 spanset_num_spans	proven
+spanset_to_tbox	proven
 spanset_upper_inc	proven
 stbox_area	proven
 stbox_cmp	proven
@@ -858,6 +863,9 @@ tbox_hasx	proven
 tbox_le	proven
 tbox_lt	proven
 tbox_ne	proven
+tbox_to_floatspan	proven
+tbox_to_intspan	proven
+tbox_to_tstzspan	proven
 tcbuffer_to_tfloat	proven
 tcontains_cbuffer_tcbuffer	proven
 tcontains_geo_tcbuffer	proven
@@ -989,6 +997,7 @@ timestamptz_extent_transfn	proven
 timestamptz_to_set	proven
 timestamptz_to_span	proven
 timestamptz_to_spanset	proven
+timestamptz_to_tbox	proven
 timestamptz_union_transfn	proven
 tint_end_value	proven
 tint_from_base_temp	proven
@@ -1052,6 +1061,7 @@ tnumber_integral	proven
 tnumber_minus_span	proven
 tnumber_minus_spanset	proven
 tnumber_minus_tbox	proven
+tnumber_to_tbox	proven
 tnumber_trend	proven
 tnumber_twavg	proven
 touches_cbuffer_cbuffer	proven

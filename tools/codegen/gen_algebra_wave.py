@@ -99,6 +99,24 @@ SCALAR_RET = {"int": "int", "int64": "int64", "double": "double", "bool": "bool"
 # input (the box-box cmp wave already proved tbox_in/stbox_in as a primary).
 BOX_INPUT = {"TBox": "tbox_text", "STBox": "stbox_text"}
 
+# Arity-1 X_to_box/span conversion constructors (int_to_tbox, span_to_tbox,
+# tnumber_to_tbox, tbox_to_intspan, …). The single operand picks the primary
+# input builder; the result is a VARSIZED box/span serialized via *_out.
+#   base scalar value -> the *_base value-reader input (frees:False)
+CONV_BASE_IN  = {"int": "int_base", "double": "float_base", "TimestampTz": "timestamptz_base"}
+CONV_BASE_COL = {"int_base": ("INT32", "5", "8"),
+                 "float_base": ("FLOAT64", "5.5", "8.5"),
+                 "timestamptz_base": ("INT64", "1609459200", "1609545600")}
+#   numeric Span/Set/SpanSet operand -> a float-subtype text-literal primary
+CONV_CONTAINER_IN = {"Span": "floatspan", "Set": "floatset", "SpanSet": "floatspanset"}
+#   Span result subtype (from the to_<X>span suffix) -> its *_out serializer key
+CONV_SPAN_RET = {"intspan": "intspan_text", "floatspan": "floatspan_text",
+                 "tstzspan": "tstzspan_text"}
+#   per-op box literal override (tbox_to_intspan needs an INT box, not the
+#   default TBOXFLOAT) — keyed by op name.
+CONV_BOX_LIT = {"tbox_to_intspan": ("TBOXINT XT([1, 5],[2020-01-01, 2020-01-05])",
+                                    "TBOXINT XT([3, 7],[2020-01-03, 2020-01-07])")}
+
 # Object scalar types compared/related to another value of the same type
 # (cbuffer/pose/npoint/nsegment cmp/eq/ne/lt/le/gt/ge/same and the cbuffer
 # spatial rels). Both operands parse from a quoted text literal; bool/int sink.
@@ -270,6 +288,46 @@ def subtype_of(name):
 
 def classify(name, ret, plist):
     """Return (spec_entry, test_meta) or (None, reason)."""
+    rbase = ret.replace("*", "").strip()
+    # ---- arity-1 X_to_box/span conversion constructor ----
+    if len(plist) == 1 and "_to_" in name and rbase in ("TBox", "STBox", "Span"):
+        ob, op = plist[0]
+        if not op and ob in CONV_BASE_IN:               # base scalar value
+            input_type = CONV_BASE_IN[ob]
+        elif op and ob == "Temporal":                   # tnumber instant
+            input_type = "tfloat"
+        elif op and ob in CONV_CONTAINER_IN:            # numeric span/set/spanset
+            input_type = CONV_CONTAINER_IN[ob]
+        elif op and ob in BOX_INPUT:                    # box -> span
+            input_type = BOX_INPUT[ob]
+        else:
+            return None, f"conv input {ob}{'*' if op else ''} unsupported"
+        if rbase == "TBox":
+            rkind = "tbox_text_out"
+        elif rbase == "STBox":
+            rkind = "stbox_text_out"
+        else:                                           # Span: subtype from suffix
+            sfx = name.rsplit("_to_", 1)[1]
+            rkind = CONV_SPAN_RET.get(sfx)
+            if rkind is None:
+                return None, f"conv span suffix {sfx} unmapped"
+        entry = dict(nebula_name=camel(name), sql_token=name.upper(), meos_call=name,
+                     build_generic=True, input_type=input_type, return_kind=rkind,
+                     extra_args=[],
+                     comment_one_liner=f"{name} ({ret.strip()}) — {ob} -> {rbase} conversion.")
+        if input_type in CONV_BASE_COL:                 # base scalar: one value column
+            col_sql, va, vb = CONV_BASE_COL[input_type]
+            tmeta = dict(cols=[("value", col_sql)], rows=[(va,), (vb,)],
+                         token=name.upper(), sink="VARSIZED")
+        elif input_type == "tfloat":                    # single tfloat instant (value, ts)
+            tmeta = dict(cols=[("value", "FLOAT64"), ("ts", "UINT64")],
+                         rows=[("5.5", "1609459200"), ("8.5", "1609545600")],
+                         token=name.upper(), sink="VARSIZED")
+        else:                                           # container/box text literal
+            l0, l1 = CONV_BOX_LIT.get(name, LITERALS[input_type])
+            tmeta = dict(cols=[("a", "VARSIZED")], rows=[(l0,), (l1,)],
+                         token=name.upper(), sink="VARSIZED")
+        return entry, tmeta
     # ---- unary accessor: one Span/Set/SpanSet/TBox/STBox operand -> scalar ----
     if len(plist) == 1:
         base, ptr = plist[0]
