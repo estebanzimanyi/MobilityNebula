@@ -112,7 +112,10 @@ CONV_BASE_COL = {"int_base": ("INT32", "5", "8"),
 CONV_CONTAINER_IN = {"Span": "floatspan", "Set": "floatset", "SpanSet": "floatspanset"}
 #   Span result subtype (from the to_<X>span suffix) -> its *_out serializer key
 CONV_SPAN_RET = {"intspan": "intspan_text", "floatspan": "floatspan_text",
-                 "tstzspan": "tstzspan_text"}
+                 "tstzspan": "tstzspan_text", "datespan": "datespan_text"}
+#   SpanSet result subtype (from the to_<X>spanset suffix) -> its *_out key
+CONV_SPANSET_RET = {"intspanset": "intspanset_text", "floatspanset": "floatspanset_text",
+                    "tstzspanset": "tstzspanset_text", "datespanset": "datespanset_text"}
 
 # Name-gated unary VARSIZED accessors `T *f(const C *)` returning a span/set/
 # spanset. Name-gated (NOT signature-derived) because the header collapses a
@@ -373,22 +376,26 @@ def classify(name, ret, plist):
         elif op and ob == "Temporal":                   # tnumber instant
             input_type = "tfloat"
         elif op and ob in CONV_CONTAINER_IN:            # numeric span/set/spanset
-            input_type = CONV_CONTAINER_IN[ob]
+            # prefer the operand's OWN subtype (the name prefix, e.g.
+            # intspan_to_floatspan -> intspan in); fall back to the float subtype
+            # only for type-generic conversions whose prefix is not a literal.
+            pfx = name.rsplit("_to_", 1)[0]
+            input_type = pfx if pfx in LITERALS else CONV_CONTAINER_IN[ob]
         elif op and ob in BOX_INPUT:                    # box -> span
             input_type = BOX_INPUT[ob]
         elif op and ob in OBJECT_TYPES:                 # cbuffer/pose/npoint/nsegment
             input_type = OBJECT_TYPES[ob][0]            # -> family-gated subdir
         else:
             return None, f"conv input {ob}{'*' if op else ''} unsupported"
+        sfx = name.rsplit("_to_", 1)[1]
         if rbase == "TBox":
             rkind = "tbox_text_out"
         elif rbase == "STBox":
             rkind = "stbox_text_out"
-        elif rbase == "SpanSet":                        # generic -> float subtype
-            rkind = "floatspanset_text"
+        elif rbase == "SpanSet":                        # subtype from suffix, else float
+            rkind = CONV_SPANSET_RET.get(sfx, "floatspanset_text")
         else:                                           # Span: subtype from suffix,
-            sfx = name.rsplit("_to_", 1)[1]             # else generic -> float
-            rkind = CONV_SPAN_RET.get(sfx, "floatspan_text")
+            rkind = CONV_SPAN_RET.get(sfx, "floatspan_text")  # else generic -> float
         entry = dict(nebula_name=camel(name), sql_token=name.upper(), meos_call=name,
                      build_generic=True, input_type=input_type, return_kind=rkind,
                      extra_args=[],

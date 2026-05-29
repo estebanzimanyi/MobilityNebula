@@ -108,3 +108,4 @@ add_plugin(CbufferToStbox PhysicalFunction nes-physical-operators CbufferToStbox
 add_plugin(CbufferHash PhysicalFunction nes-physical-operators CbufferHashPhysicalFunction.cpp)
 add_plugin(CbufferSrid PhysicalFunction nes-physical-operators CbufferSridPhysicalFunction.cpp)
 add_plugin(CbufferRound PhysicalFunction nes-physical-operators CbufferRoundPhysicalFunction.cpp)
+add_plugin(CbufferRadius PhysicalFunction nes-physical-operators CbufferRadiusPhysicalFunction.cpp)
