@@ -202,6 +202,7 @@ bigintset_shift_scale	proven
 bigintset_start_value	proven
 bigintset_value_n	proven
 bigintspan_lower	proven
+bigintspan_make	proven
 bigintspan_shift_scale	proven
 bigintspan_upper	proven
 bigintspan_width	proven
@@ -316,6 +317,7 @@ dateset_start_value	proven
 dateset_value_n	proven
 datespan_duration	proven
 datespan_lower	proven
+datespan_make	proven
 datespan_shift_scale	proven
 datespan_to_tstzspan	proven
 datespan_upper	proven
@@ -489,6 +491,7 @@ floatset_shift_scale	proven
 floatset_start_value	proven
 floatset_value_n	proven
 floatspan_lower	proven
+floatspan_make	proven
 floatspan_round	proven
 floatspan_shift_scale	proven
 floatspan_to_intspan	proven
@@ -571,6 +574,7 @@ intset_shift_scale	proven
 intset_start_value	proven
 intset_value_n	proven
 intspan_lower	proven
+intspan_make	proven
 intspan_shift_scale	proven
 intspan_to_floatspan	proven
 intspan_upper	proven
@@ -1339,6 +1343,7 @@ tstzset_value_n	proven
 tstzspan_duration	proven
 tstzspan_expand	proven
 tstzspan_lower	proven
+tstzspan_make	proven
 tstzspan_shift_scale	proven
 tstzspan_to_datespan	proven
 tstzspan_to_stbox	proven

@@ -1107,3 +1107,8 @@ add_plugin(TpointMinusGeom PhysicalFunction nes-physical-operators TpointMinusGe
 add_plugin(TpointMinusValue PhysicalFunction nes-physical-operators TpointMinusValuePhysicalFunction.cpp)
 add_plugin(TgeoMinusStbox PhysicalFunction nes-physical-operators TgeoMinusStboxPhysicalFunction.cpp)
 add_plugin(NadStboxGeo PhysicalFunction nes-physical-operators NadStboxGeoPhysicalFunction.cpp)
+add_plugin(IntspanMake PhysicalFunction nes-physical-operators IntspanMakePhysicalFunction.cpp)
+add_plugin(BigintspanMake PhysicalFunction nes-physical-operators BigintspanMakePhysicalFunction.cpp)
+add_plugin(FloatspanMake PhysicalFunction nes-physical-operators FloatspanMakePhysicalFunction.cpp)
+add_plugin(DatespanMake PhysicalFunction nes-physical-operators DatespanMakePhysicalFunction.cpp)
+add_plugin(TstzspanMake PhysicalFunction nes-physical-operators TstzspanMakePhysicalFunction.cpp)

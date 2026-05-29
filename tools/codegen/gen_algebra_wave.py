@@ -121,6 +121,16 @@ SETVAL_LIT_OUT = {
 }
 SETVAL_OPS = ("contains", "contained", "left", "right", "overleft", "overright",
               "union", "intersection", "minus")
+# span constructors: name -> (base-scalar primary, value SQL, value cpp, *span_text
+# return, lower/upper sample for row1, lower/upper for row2). lower_inc/upper_inc
+# are passed true/false. date = days-since-2000, tstz = µs-since-2000.
+SPAN_MAKE = {
+    "intspan_make":    ("int_base", "INT32", "int32_t", "intspan_text", "1", "5", "2", "8"),
+    "bigintspan_make": ("bigint_base", "INT64", "int64_t", "bigintspan_text", "1", "5", "2", "8"),
+    "floatspan_make":  ("float_base", "FLOAT64", "double", "floatspan_text", "1.5", "5.5", "2.5", "8.5"),
+    "datespan_make":   ("date_base", "INT32", "int32_t", "datespan_text", "100", "200", "150", "300"),
+    "tstzspan_make":   ("timestamptz_base", "INT64", "int64_t", "tstzspan_text", "1000000", "5000000", "2000000", "8000000"),
+}
 BOX_PARSER = {"intspan": "intspan_in", "bigintspan": "bigintspan_in", "floatspan": "floatspan_in",
               "datespan": "datespan_in", "tstzspan": "tstzspan_in",
               "intset": "intset_in", "bigintset": "bigintset_in", "floatset": "floatset_in",
@@ -435,6 +445,19 @@ def subtype_of(name):
 def classify(name, ret, plist):
     """Return (spec_entry, test_meta) or (None, reason)."""
     rbase = ret.replace("*", "").strip()
+    # ---- span_make(lower, upper, lower_inc, upper_inc) -> Span: a base-scalar
+    #      primary (lower) + a same-type scalar (upper) + two bool flags. ----
+    if name in SPAN_MAKE:
+        prim, vsql, vcpp, ret_k, lo0, hi0, lo1, hi1 = SPAN_MAKE[name]
+        entry = dict(nebula_name=camel(name), sql_token=name.upper(), meos_call=name,
+                     build_generic=True, input_type=prim, return_kind=ret_k,
+                     extra_args=[dict(kind="scalar", cpp=vcpp), dict(kind="scalar", cpp="bool"),
+                                 dict(kind="scalar", cpp="bool")],
+                     comment_one_liner=f"{name} ({ret.strip()}) — span constructor.")
+        tmeta = dict(cols=[("value", vsql), ("arg0", vsql), ("arg1", "BOOLEAN"), ("arg2", "BOOLEAN")],
+                     rows=[(lo0, hi0, "true", "false"), (lo1, hi1, "true", "false")],
+                     token=name.upper(), sink="VARSIZED")
+        return entry, tmeta
     # ---- name-gated unary VARSIZED accessor: T *f(const C *) -> span/set/spanset ----
     if name in UNARY_VARSIZED:
         _oc, input_type, rkind = UNARY_VARSIZED[name]

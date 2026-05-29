@@ -1394,3 +1394,8 @@ add_plugin(DistancePoseGeo LogicalFunction nes-logical-operators DistancePoseGeo
 add_plugin(DistancePoseStbox LogicalFunction nes-logical-operators DistancePoseStboxLogicalFunction.cpp)
 add_plugin(NadCbufferStbox LogicalFunction nes-logical-operators NadCbufferStboxLogicalFunction.cpp)
 add_plugin(NadStboxGeo LogicalFunction nes-logical-operators NadStboxGeoLogicalFunction.cpp)
+add_plugin(IntspanMake LogicalFunction nes-logical-operators IntspanMakeLogicalFunction.cpp)
+add_plugin(BigintspanMake LogicalFunction nes-logical-operators BigintspanMakeLogicalFunction.cpp)
+add_plugin(FloatspanMake LogicalFunction nes-logical-operators FloatspanMakeLogicalFunction.cpp)
+add_plugin(DatespanMake LogicalFunction nes-logical-operators DatespanMakeLogicalFunction.cpp)
+add_plugin(TstzspanMake LogicalFunction nes-logical-operators TstzspanMakeLogicalFunction.cpp)
