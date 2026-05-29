@@ -399,6 +399,40 @@ def classify(name, ret, plist):
                      comment_one_liner=f"{name} (out-param {plist[2][0]}, n=1) — {input_type} value_n.")
         tmeta = dict(cols=cols, rows=rows, token=name.upper(), sink=sink_of(rkind))
         return entry, tmeta
+    # ---- arity-2 (base | numspan) + (timestamptz | tstzspan) -> TBox constructor
+    #      (int/float/numspan _timestamptz/_tstzspan _to_tbox). Must precede the
+    #      generic container+scalar branch, whose subtype-from-name guess is wrong
+    #      here (the time token names operand 2, not the numeric primary). ----
+    if name.endswith("_to_tbox") and len(plist) == 2 and rbase == "TBox":
+        (b0, p0), (b1, p1) = plist
+        if not p0 and b0 in CONV_BASE_IN:               # base-scalar primary
+            input_type = CONV_BASE_IN[b0]
+            vcol, va, vb = CONV_BASE_COL[input_type]
+            prim_cols, prim_rows = [("value", vcol)], [[va], [vb]]
+        elif p0 and b0 == "Span":                       # numspan primary (float lit)
+            input_type = "floatspan"
+            l0, l1 = LITERALS["floatspan"]
+            prim_cols, prim_rows = [("a", "VARSIZED")], [[l0], [l1]]
+        else:
+            return None, f"to_tbox primary {b0}{'*' if p0 else ''} unsupported"
+        if not p1 and b1 == "TimestampTz":              # timestamptz scalar value
+            parser, pextra, sa, sb = SCALARS_TEXT["TimestampTz"]
+            extra = dict(kind="scalar_text", ctype="TimestampTz", parser=parser,
+                         parser_extra=pextra, header="meos.h")
+        elif p1 and b1 == "Span":                       # tstzspan literal
+            extra = dict(kind="box", box_type="Span", parser="tstzspan_in", header="meos.h")
+            sa = "[2021-01-01, 2021-01-03)"
+            sb = "[2021-01-05, 2021-01-07)"
+        else:
+            return None, f"to_tbox time arg {b1}{'*' if p1 else ''} unsupported"
+        entry = dict(nebula_name=camel(name), sql_token=name.upper(), meos_call=name,
+                     build_generic=True, input_type=input_type, return_kind="tbox_text_out",
+                     extra_args=[extra],
+                     comment_one_liner=f"{name} ({ret.strip()}) — {b0} + {b1} -> TBox constructor.")
+        cols = prim_cols + [("arg", "VARSIZED")]
+        rows = [tuple(prim_rows[0] + [sa]), tuple(prim_rows[1] + [sb])]
+        tmeta = dict(cols=cols, rows=rows, token=name.upper(), sink="VARSIZED")
+        return entry, tmeta
     # ---- unary accessor: one Span/Set/SpanSet/TBox/STBox operand -> scalar ----
     if len(plist) == 1:
         base, ptr = plist[0]

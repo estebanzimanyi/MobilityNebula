@@ -437,10 +437,12 @@ ever_ne_tpose_pose	proven
 ever_ne_tpose_tpose	proven
 ever_ne_ttext_text	proven
 float_extent_transfn	proven
+float_timestamptz_to_tbox	proven
 float_to_set	proven
 float_to_span	proven
 float_to_spanset	proven
 float_to_tbox	proven
+float_tstzspan_to_tbox	proven
 float_union_transfn	proven
 floatset_end_value	proven
 floatset_shift_scale	proven
@@ -461,10 +463,12 @@ front_tspatial_tspatial	wired
 geog_dwithin	wired
 geom_to_geog	wired
 int_extent_transfn	proven
+int_timestamptz_to_tbox	proven
 int_to_set	proven
 int_to_span	proven
 int_to_spanset	proven
 int_to_tbox	proven
+int_tstzspan_to_tbox	proven
 int_union_transfn	proven
 intersection_bigint_set	proven
 intersection_date_set	proven
@@ -613,6 +617,8 @@ nsegment_gt	proven
 nsegment_le	proven
 nsegment_lt	proven
 nsegment_ne	proven
+numspan_timestamptz_to_tbox	proven
+numspan_tstzspan_to_tbox	proven
 overabove_stbox_stbox	proven
 overabove_stbox_tspatial	proven
 overabove_tspatial_stbox	proven

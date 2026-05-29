@@ -3336,6 +3336,8 @@ def assemble_generic_varsized_output(op):
     call_terms = ["temp"]
     parse_lines = []
     box_frees = []
+    # see assemble_generic_physical: only free a heap-pointer primary on failure.
+    ff = "free(temp); " if inp.get("frees", True) else ""
     for i, ex in enumerate(extras):
         if ex["kind"] == "scalar":
             fields.append((f"arg{i}", ex["cpp"]))
@@ -3357,7 +3359,7 @@ def assemble_generic_varsized_output(op):
                 f'                while (!arg{i}S.empty() && (arg{i}S.front()==\'\\\'\' || arg{i}S.front()==\'"\')) arg{i}S.erase(arg{i}S.begin());\n'
                 f'                while (!arg{i}S.empty() && (arg{i}S.back()==\'\\\'\' || arg{i}S.back()==\'"\')) arg{i}S.pop_back();\n'
                 f'                {ex["box_type"]}* arg{i}B = {ex["parser"]}(arg{i}S.c_str(){ex.get("parser_extra", "")});\n'
-                f'                if (!arg{i}B) {{ free(temp); return {zero}; }}\n')
+                f'                if (!arg{i}B) {{ {ff}return {zero}; }}\n')
             call_terms.append(f"arg{i}B")
             box_frees.append(f"free(arg{i}B);")
         elif ex["kind"] == "text":
@@ -3367,7 +3369,7 @@ def assemble_generic_varsized_output(op):
                 f'                while (!arg{i}S.empty() && (arg{i}S.front()==\'\\\'\' || arg{i}S.front()==\'"\')) arg{i}S.erase(arg{i}S.begin());\n'
                 f'                while (!arg{i}S.empty() && (arg{i}S.back()==\'\\\'\' || arg{i}S.back()==\'"\')) arg{i}S.pop_back();\n'
                 f'                text* arg{i}T = text_in(arg{i}S.c_str());\n'
-                f'                if (!arg{i}T) {{ free(temp); return {zero}; }}\n')
+                f'                if (!arg{i}T) {{ {ff}return {zero}; }}\n')
             call_terms.append(f"arg{i}T")
             box_frees.append(f"free(arg{i}T);")
         elif ex["kind"] == "geom":
@@ -3378,7 +3380,7 @@ def assemble_generic_varsized_output(op):
                 f'                while (!arg{i}S.empty() && (arg{i}S.front()==\'\\\'\' || arg{i}S.front()==\'"\')) arg{i}S.erase(arg{i}S.begin());\n'
                 f'                while (!arg{i}S.empty() && (arg{i}S.back()==\'\\\'\' || arg{i}S.back()==\'"\')) arg{i}S.pop_back();\n'
                 f'                MEOS::Meos::StaticGeometry arg{i}G(arg{i}S);\n'
-                f'                if (!arg{i}G.getGeometry()) {{ free(temp); return {zero}; }}\n')
+                f'                if (!arg{i}G.getGeometry()) {{ {ff}return {zero}; }}\n')
             call_terms.append(f"arg{i}G.getGeometry()")
         elif ex["kind"] == "temporal2":
             # a SECOND temporal operand built from its own per-event columns (not
@@ -3464,6 +3466,10 @@ def assemble_generic_physical(op):
     call_terms = ["temp"]
     parse_lines = []
     box_frees = []      # raw box/span literals to free after the MEOS call
+    # An extra-arg parse failure must free the primary ONLY when it is a heap
+    # pointer; a base-scalar primary (frees: False) is a plain value, so emit no
+    # free(temp) in the failure paths (free(int) would not compile).
+    ff = "free(temp); " if inp.get("frees", True) else ""
     for i, ex in enumerate(extras):
         if ex["kind"] == "scalar":
             fields.append((f"arg{i}", ex["cpp"]))
@@ -3488,7 +3494,7 @@ def assemble_generic_physical(op):
                 f'                while (!arg{i}S.empty() && (arg{i}S.front()==\'\\\'\' || arg{i}S.front()==\'"\')) arg{i}S.erase(arg{i}S.begin());\n'
                 f'                while (!arg{i}S.empty() && (arg{i}S.back()==\'\\\'\' || arg{i}S.back()==\'"\')) arg{i}S.pop_back();\n'
                 f'                MEOS::Meos::StaticGeometry arg{i}G(arg{i}S);\n'
-                f'                if (!arg{i}G.getGeometry()) {{ free(temp); return {zero}; }}\n')
+                f'                if (!arg{i}G.getGeometry()) {{ {ff}return {zero}; }}\n')
             call_terms.append(f"arg{i}G.getGeometry()")
         elif ex["kind"] == "box":
             # query-literal STBox/TBox/Span parsed from a text constant; freed
@@ -3501,7 +3507,7 @@ def assemble_generic_physical(op):
                 f'                while (!arg{i}S.empty() && (arg{i}S.front()==\'\\\'\' || arg{i}S.front()==\'"\')) arg{i}S.erase(arg{i}S.begin());\n'
                 f'                while (!arg{i}S.empty() && (arg{i}S.back()==\'\\\'\' || arg{i}S.back()==\'"\')) arg{i}S.pop_back();\n'
                 f'                {ex["box_type"]}* arg{i}B = {ex["parser"]}(arg{i}S.c_str(){ex.get("parser_extra", "")});\n'
-                f'                if (!arg{i}B) {{ free(temp); return {zero}; }}\n')
+                f'                if (!arg{i}B) {{ {ff}return {zero}; }}\n')
             call_terms.append(f"arg{i}B")
             box_frees.append(f"free(arg{i}B);")
         elif ex["kind"] == "text":
@@ -3511,7 +3517,7 @@ def assemble_generic_physical(op):
                 f'                while (!arg{i}S.empty() && (arg{i}S.front()==\'\\\'\' || arg{i}S.front()==\'"\')) arg{i}S.erase(arg{i}S.begin());\n'
                 f'                while (!arg{i}S.empty() && (arg{i}S.back()==\'\\\'\' || arg{i}S.back()==\'"\')) arg{i}S.pop_back();\n'
                 f'                text* arg{i}T = text_in(arg{i}S.c_str());\n'
-                f'                if (!arg{i}T) {{ free(temp); return {zero}; }}\n')
+                f'                if (!arg{i}T) {{ {ff}return {zero}; }}\n')
             call_terms.append(f"arg{i}T")
             box_frees.append(f"free(arg{i}T);")
         elif ex["kind"] == "wkb_temporal":
@@ -3523,7 +3529,7 @@ def assemble_generic_physical(op):
             parse_lines.append(
                 f'                std::string arg{i}Hex(arg{i}Ptr, arg{i}Size);\n'
                 f'                Temporal* arg{i}T = temporal_from_hexwkb(arg{i}Hex.c_str());\n'
-                f'                if (!arg{i}T) {{ free(temp); return {zero}; }}\n')
+                f'                if (!arg{i}T) {{ {ff}return {zero}; }}\n')
             call_terms.append(f"arg{i}T")
             box_frees.append(f"free(arg{i}T);")
 
