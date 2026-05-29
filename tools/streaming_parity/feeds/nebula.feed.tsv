@@ -801,6 +801,7 @@ same_tnumber_tnumber	proven
 same_tspatial_stbox	proven
 same_tspatial_tspatial	proven
 set_cmp	proven
+set_copy	proven
 set_eq	proven
 set_ge	proven
 set_gt	proven
@@ -808,6 +809,8 @@ set_le	proven
 set_lt	proven
 set_ne	proven
 set_num_values	proven
+set_to_span	proven
+set_to_spanset	proven
 set_to_tbox	proven
 set_union_finalfn	proven
 set_union_transfn	proven
@@ -823,6 +826,8 @@ span_ne	proven
 span_to_tbox	proven
 span_upper_inc	proven
 spanset_cmp	proven
+spanset_copy	proven
+spanset_end_span	proven
 spanset_eq	proven
 spanset_ge	proven
 spanset_gt	proven
@@ -831,6 +836,8 @@ spanset_lower_inc	proven
 spanset_lt	proven
 spanset_ne	proven
 spanset_num_spans	proven
+spanset_span	proven
+spanset_start_span	proven
 spanset_to_tbox	proven
 spanset_upper_inc	proven
 stbox_area	proven
@@ -1084,6 +1091,7 @@ tnumber_integral	proven
 tnumber_minus_span	proven
 tnumber_minus_spanset	proven
 tnumber_minus_tbox	proven
+tnumber_to_span	proven
 tnumber_to_tbox	proven
 tnumber_trend	proven
 tnumber_twavg	proven

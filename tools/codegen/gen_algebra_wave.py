@@ -112,6 +112,19 @@ CONV_CONTAINER_IN = {"Span": "floatspan", "Set": "floatset", "SpanSet": "floatsp
 #   Span result subtype (from the to_<X>span suffix) -> its *_out serializer key
 CONV_SPAN_RET = {"intspan": "intspan_text", "floatspan": "floatspan_text",
                  "tstzspan": "tstzspan_text"}
+
+# Name-gated unary VARSIZED accessors `T *f(const C *)` returning a span/set/
+# spanset. Name-gated (NOT signature-derived) because the header collapses a
+# `Span **` array return (spanset_spans, set_spans — array out, deferred) to the
+# same parsed ('Span *', [SpanSet]) shape as a single-span accessor, so only the
+# name distinguishes them. value -> (operand C type, primary input, *_out key).
+UNARY_VARSIZED = {
+    "spanset_span":       ("SpanSet", "floatspanset", "floatspan_text"),
+    "spanset_start_span": ("SpanSet", "floatspanset", "floatspan_text"),
+    "spanset_end_span":   ("SpanSet", "floatspanset", "floatspan_text"),
+    "set_copy":           ("Set",     "floatset",     "floatset_text"),
+    "spanset_copy":       ("SpanSet", "floatspanset", "floatspanset_text"),
+}
 #   per-op box literal override (tbox_to_intspan needs an INT box, not the
 #   default TBOXFLOAT) — keyed by op name.
 CONV_BOX_LIT = {"tbox_to_intspan": ("TBOXINT XT([1, 5],[2020-01-01, 2020-01-05])",
@@ -309,8 +322,21 @@ def subtype_of(name):
 def classify(name, ret, plist):
     """Return (spec_entry, test_meta) or (None, reason)."""
     rbase = ret.replace("*", "").strip()
-    # ---- arity-1 X_to_box/span conversion constructor ----
-    if len(plist) == 1 and "_to_" in name and rbase in ("TBox", "STBox", "Span"):
+    # ---- name-gated unary VARSIZED accessor: T *f(const C *) -> span/set/spanset ----
+    if name in UNARY_VARSIZED:
+        _oc, input_type, rkind = UNARY_VARSIZED[name]
+        entry = dict(nebula_name=camel(name), sql_token=name.upper(), meos_call=name,
+                     build_generic=True, input_type=input_type, return_kind=rkind,
+                     extra_args=[],
+                     comment_one_liner=f"{name} ({ret.strip()}) — unary {input_type} -> {rbase}.")
+        l0, l1 = LITERALS[input_type]
+        tmeta = dict(cols=[("a", "VARSIZED")], rows=[(l0,), (l1,)],
+                     token=name.upper(), sink="VARSIZED")
+        return entry, tmeta
+    # ---- arity-1 X_to_box/span/spanset conversion constructor. Requires '_to_'
+    #      in the name: that safely excludes the array-returning '_spans' siblings
+    #      (Span ** collapses to the same parsed shape as a single Span). ----
+    if len(plist) == 1 and "_to_" in name and rbase in ("TBox", "STBox", "Span", "SpanSet"):
         ob, op = plist[0]
         if not op and ob in CONV_BASE_IN:               # base scalar value
             input_type = CONV_BASE_IN[ob]
@@ -326,11 +352,11 @@ def classify(name, ret, plist):
             rkind = "tbox_text_out"
         elif rbase == "STBox":
             rkind = "stbox_text_out"
-        else:                                           # Span: subtype from suffix
-            sfx = name.rsplit("_to_", 1)[1]
-            rkind = CONV_SPAN_RET.get(sfx)
-            if rkind is None:
-                return None, f"conv span suffix {sfx} unmapped"
+        elif rbase == "SpanSet":                        # generic -> float subtype
+            rkind = "floatspanset_text"
+        else:                                           # Span: subtype from suffix,
+            sfx = name.rsplit("_to_", 1)[1]             # else generic -> float
+            rkind = CONV_SPAN_RET.get(sfx, "floatspan_text")
         entry = dict(nebula_name=camel(name), sql_token=name.upper(), meos_call=name,
                      build_generic=True, input_type=input_type, return_kind=rkind,
                      extra_args=[],
