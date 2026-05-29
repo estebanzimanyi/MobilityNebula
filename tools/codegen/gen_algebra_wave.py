@@ -93,7 +93,11 @@ CONTAINER_C = {"Span": "span", "Set": "set", "SpanSet": "spanset", "STBox": "stb
 # int-subtype literal. The C return type maps straight to a scalar sink.
 GENERIC_CONTAINER = {"span": "intspan", "set": "intset", "spanset": "intspanset"}
 SCALAR_RET = {"int": "int", "int64": "int64", "double": "double", "bool": "bool",
-              "DateADT": "int", "TimestampTz": "int64"}
+              "DateADT": "int", "TimestampTz": "int64",
+              "int32": "int", "int32_t": "int", "uint32": "int"}
+# TBox/STBox single-operand accessors map straight onto the box-text primary
+# input (the box-box cmp wave already proved tbox_in/stbox_in as a primary).
+BOX_INPUT = {"TBox": "tbox_text", "STBox": "stbox_text"}
 
 # Object scalar types compared/related to another value of the same type
 # (cbuffer/pose/npoint/nsegment cmp/eq/ne/lt/le/gt/ge/same and the cbuffer
@@ -266,15 +270,18 @@ def subtype_of(name):
 
 def classify(name, ret, plist):
     """Return (spec_entry, test_meta) or (None, reason)."""
-    # ---- unary accessor: one Span/Set/SpanSet operand -> scalar ----
+    # ---- unary accessor: one Span/Set/SpanSet/TBox/STBox operand -> scalar ----
     if len(plist) == 1:
         base, ptr = plist[0]
-        if not ptr or base not in ("Span", "Set", "SpanSet"):
-            return None, f"unary param {base}{'*' if ptr else ''} not a span/set/spanset"
-        ckey = name.split("_", 1)[0]
-        input_type = GENERIC_CONTAINER.get(ckey, ckey)
-        if input_type not in LITERALS:
-            return None, f"no literal for container {input_type}"
+        if ptr and base in BOX_INPUT:
+            input_type = BOX_INPUT[base]            # tbox_text / stbox_text primary
+        elif ptr and base in ("Span", "Set", "SpanSet"):
+            ckey = name.split("_", 1)[0]
+            input_type = GENERIC_CONTAINER.get(ckey, ckey)
+            if input_type not in LITERALS:
+                return None, f"no literal for container {input_type}"
+        else:
+            return None, f"unary param {base}{'*' if ptr else ''} not a span/set/spanset/box"
         rkind = SCALAR_RET.get(ret.strip())
         if rkind is None:
             return None, f"unary return {ret.strip()} unmapped"
@@ -288,6 +295,20 @@ def classify(name, ret, plist):
         return entry, tmeta
     if len(plist) != 2:
         return None, f"arity {len(plist)} (not 2)"
+    # ---- box accessor with a fixed bool flag: f(box, bool) -> scalar
+    #      (stbox_area/stbox_perimeter take a spheroid flag; planar = false) ----
+    if plist[0][1] and plist[0][0] in BOX_INPUT and plist[1] == ("bool", False):
+        input_type = BOX_INPUT[plist[0][0]]
+        rkind = SCALAR_RET.get(ret.strip())
+        if rkind is not None:
+            entry = dict(nebula_name=camel(name), sql_token=name.upper(), meos_call=name,
+                         build_generic=True, input_type=input_type, return_kind=rkind,
+                         extra_args=[], extra_call_args=["false"],
+                         comment_one_liner=f"{name} ({ret.strip()}) — {input_type} accessor (planar flag).")
+            tmeta = dict(cols=[("a", "VARSIZED")],
+                         rows=[(LITERALS[input_type][0],), (LITERALS[input_type][1],)],
+                         token=name.upper(), sink=sink_of(rkind))
+            return entry, tmeta
     # ---- temporal-instant ⊗ scalar -> Temporal* (per-event, WKT-serialized) ----
     tidx = [i for i, (b, p) in enumerate(plist) if b == "Temporal"]
     bidx = [i for i, (b, p) in enumerate(plist) if b in ("int", "double", "text")]
