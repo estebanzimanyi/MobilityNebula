@@ -56,6 +56,26 @@ import re
 import sys
 from pathlib import Path
 
+
+def meos_family(nebula_name):
+    """The toggleable MEOS type family of an aggregation, or None for base types.
+    Mirrors codegen_nebula.py: a family aggregation's PHYSICAL op is gated by the
+    matching CMake option (CBUFFER/NPOINT/POSE/RGEO) and lives in a per-family
+    subdir; the logical op and parser glue stay flat (they never call libmeos).
+    The optimizer-lowering glue, which references the physical class directly, is
+    wrapped in #if <FAMILY> so a family-OFF build links cleanly."""
+    s = nebula_name.lower()
+    if "trgeo" in s or "rgeometry" in s:
+        return "Rgeo"
+    if "pose" in s:
+        return "Pose"
+    if "npoint" in s or "nsegment" in s:
+        return "Npoint"
+    if "cbuffer" in s:
+        return "Cbuffer"
+    return None
+
+
 # ===========================================================================
 # Logical-layer .hpp template (mirrors TemporalLengthAggregationLogicalFunction.hpp).
 # ===========================================================================
@@ -2383,11 +2403,15 @@ def emit_operator(op, output_root: Path):
             f'{op["return_cpp_type"]} value = '
             f'{op["meos_scalar_fn"]}(static_cast<Temporal*>(temp));')
 
+    # Physical family aggregations live in a per-family subdir gated by the CMake
+    # option; logical ops stay flat (never call libmeos).
+    fam = meos_family(nebula_name)
+    phys_sub = f"/{fam}" if fam else ""
     paths = {
         "logical_hpp":  output_root / "nes-logical-operators/include/Operators/Windows/Aggregations/Meos" / f"{nebula_name}AggregationLogicalFunction.hpp",
         "logical_cpp":  output_root / "nes-logical-operators/src/Operators/Windows/Aggregations/Meos" / f"{nebula_name}AggregationLogicalFunction.cpp",
-        "physical_hpp": output_root / "nes-physical-operators/include/Aggregation/Function/Meos" / f"{nebula_name}AggregationPhysicalFunction.hpp",
-        "physical_cpp": output_root / "nes-physical-operators/src/Aggregation/Function/Meos" / f"{nebula_name}AggregationPhysicalFunction.cpp",
+        "physical_hpp": output_root / ("nes-physical-operators/include/Aggregation/Function/Meos" + phys_sub) / f"{nebula_name}AggregationPhysicalFunction.hpp",
+        "physical_cpp": output_root / ("nes-physical-operators/src/Aggregation/Function/Meos" + phys_sub) / f"{nebula_name}AggregationPhysicalFunction.cpp",
     }
     for p in paths.values():
         p.parent.mkdir(parents=True, exist_ok=True)
@@ -2395,7 +2419,12 @@ def emit_operator(op, output_root: Path):
     paths["logical_hpp"].write_text(logical_hpp_tmpl.format(**fmt))
     paths["logical_cpp"].write_text(logical_cpp_tmpl.format(**fmt))
     paths["physical_hpp"].write_text(physical_hpp_tmpl.format(**fmt))
-    paths["physical_cpp"].write_text(physical_cpp_tmpl.format(**fmt))
+    physical_cpp_text = physical_cpp_tmpl.format(**fmt)
+    if fam:  # repoint the moved physical .cpp's self-include to its family subdir
+        physical_cpp_text = physical_cpp_text.replace(
+            f"<Aggregation/Function/Meos/{nebula_name}AggregationPhysicalFunction.hpp>",
+            f"<Aggregation/Function/Meos/{fam}/{nebula_name}AggregationPhysicalFunction.hpp>")
+    paths["physical_cpp"].write_text(physical_cpp_text)
     sys.stderr.write(f"  ✓ {nebula_name}: emitted 4 files\n")
 
 
@@ -2412,36 +2441,51 @@ def inject_cmake_entries(operators, output_root: Path) -> int:
         ("logical",  output_root / "nes-logical-operators/src/Operators/Windows/Aggregations/Meos/CMakeLists.txt",  "Logical"),
         ("physical", output_root / "nes-physical-operators/src/Aggregation/Function/Meos/CMakeLists.txt",          "Physical"),
     ]
-    for label, cml, suffix in layers:
-        if not cml.exists():
-            sys.stderr.write(f"  ! cmake-entries: {cml} not found, skipping {label}\n")
+    for label, parent, suffix in layers:
+        if not parent.exists():
+            sys.stderr.write(f"  ! cmake-entries: {parent} not found, skipping {label}\n")
             continue
-        body = cml.read_text()
-        new_lines = []
+        # Physical family aggregations route to a per-family subdir CMakeLists gated
+        # by the family option; logical (and base physical) go to the flat parent.
+        by_file = {}            # Path -> list[str]
+        gated_families = set()
         for op in operators:
             # Target name must NOT include "Aggregation" suffix — the registry codegen
             # appends "Aggregation<RegistryKind>" itself, so a "...Aggregation" target
-            # would yield a double-Aggregation symbol. Mariana's convention is the
-            # target name = the SQL-side aggregation name (e.g. "TemporalLength"),
-            # NOT the C++ class basename. We follow that.
+            # would yield a double-Aggregation symbol. The target name = the SQL-side
+            # aggregation name (e.g. "TemporalLength"), NOT the C++ class basename.
             target_name = op["nebula_name"]
-            suffix_kind = "AggregationLogicalFunction" if label == "logical" else "AggregationPhysicalFunction"
             registry_kind = "AggregationLogicalFunction" if label == "logical" else "AggregationPhysicalFunction"
-            cpp_basename = f"{op['nebula_name']}{suffix_kind}.cpp"
+            cpp_basename = f"{op['nebula_name']}{registry_kind}.cpp"
             entry = (
                 f"add_plugin({target_name} {registry_kind} "
                 f"nes-{label}-operators {cpp_basename})"
             )
-            # Match by basename to be tolerant of formatting drift
-            marker = f"add_plugin({target_name} {registry_kind}"
-            if marker in body:
-                continue
-            new_lines.append(entry)
-        if new_lines:
-            with cml.open("a") as f:
-                f.write("\n".join(new_lines) + "\n")
-            sys.stderr.write(f"  ✓ cmake-entries ({label}): appended {len(new_lines)} entry(ies)\n")
-            n_added += len(new_lines)
+            fam = meos_family(op["nebula_name"]) if label == "physical" else None
+            if fam:
+                cml = parent.parent / fam / "CMakeLists.txt"
+                gated_families.add(fam)
+            else:
+                cml = parent
+            by_file.setdefault(cml, []).append((entry, target_name, registry_kind))
+        for cml, entries in by_file.items():
+            cml.parent.mkdir(parents=True, exist_ok=True)
+            body = cml.read_text() if cml.exists() else (
+                f"# MEOS type-family aggregations, gated by the {cml.parent.name.upper()} compile option.\n\n")
+            new_lines = [e for (e, tn, rk) in entries if f"add_plugin({tn} {rk}" not in body]
+            if new_lines:
+                with cml.open("a" if cml.exists() else "w") as f:
+                    f.write(("" if cml.exists() else body) + "\n".join(new_lines) + "\n")
+                n_added += len(new_lines)
+        # Ensure the parent gates each new family subdir.
+        pbody = parent.read_text()
+        add = ""
+        for fam in sorted(gated_families):
+            if f"add_subdirectory({fam})" not in pbody:
+                add += f"\nif({fam.upper()})\n    add_subdirectory({fam})\nendif()\n"
+        if add:
+            with parent.open("a") as f:
+                f.write(add)
     return n_added
 
 
@@ -2625,12 +2669,18 @@ def inject_optimizer(operators, opt_path: Path) -> int:
     body = opt_path.read_text()
     n_added = 0
 
-    # 1) #include for the physical class header
+    # 1) #include for the physical class header. A family aggregation's physical
+    # header lives in a per-family subdir and its class is compiled only when the
+    # family is enabled, so guard the include with #if <FAMILY>.
     new_includes = []
     for op in operators:
-        inc = f"#include <Aggregation/Function/Meos/{op['nebula_name']}AggregationPhysicalFunction.hpp>"
+        fam = meos_family(op["nebula_name"])
+        sub = f"{fam}/" if fam else ""
+        inc = f"#include <Aggregation/Function/Meos/{sub}{op['nebula_name']}AggregationPhysicalFunction.hpp>"
         if inc in body:
             continue
+        if fam:
+            inc = f"#if {fam.upper()}\n{inc}\n#endif"
         new_includes.append(inc)
     # Also need the logical class header
     new_logical_includes = []
@@ -2667,7 +2717,14 @@ def inject_optimizer(operators, opt_path: Path) -> int:
                 f"  ! optimizer: pre-existing lowering block for {op['class_name_token']}; skipping\n"
             )
             continue
-        new_blocks.append(tmpl.format(class_name_token=op["class_name_token"], nebula_name=op["nebula_name"]))
+        block = tmpl.format(class_name_token=op["class_name_token"], nebula_name=op["nebula_name"])
+        # The lowering block constructs the physical class directly, so a family
+        # aggregation's block must be guarded with #if <FAMILY> (the physical class
+        # is absent when the family is disabled).
+        fam = meos_family(op["nebula_name"])
+        if fam:
+            block = f"#if {fam.upper()}\n{block}\n#endif"
+        new_blocks.append(block)
     if new_blocks:
         last_end_re = re.compile(r"/\* END CODEGEN AGGREGATION GLUE: [^*]+\(optimizer lowering\)\s*\*/")
         ends = list(last_end_re.finditer(body))
