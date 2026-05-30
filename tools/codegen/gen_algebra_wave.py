@@ -186,6 +186,18 @@ ARRAY_VALUES = {
     "temporal_spans":  dict(inp="tfloat", spec=dict(elem="Span", kind="span_val", out="floatspan_out", maxdd=True), icols=[("value", "FLOAT64")], ra=["5.5"], rb=["8.5"]),
     # temporal instants: a TInstant** array (tfloat -> tfloat_out via Temporal* cast).
     "temporal_instants": dict(inp="tfloat", spec=dict(elem="TInstant *", kind="ptr", out="tfloat_out", maxdd=True, cast="Temporal *"), icols=[("value", "FLOAT64")], ra=["5.5"], rb=["8.5"]),
+    # split arrays: primary + an int split-count + an int* count -> a Span/STBox/
+    # TBox struct array (span_val element). intspan_out has no maxdd; box outs do.
+    "set_split_n_spans":         dict(inp="intset", spec=dict(elem="Span", kind="span_val", out="intspan_out"), lit=("{1, 3, 5, 7, 9}", "{2, 4, 6, 8}"), extras=[("int32_t", "INT32", "2", "2")]),
+    "set_split_each_n_spans":    dict(inp="intset", spec=dict(elem="Span", kind="span_val", out="intspan_out"), lit=("{1, 3, 5, 7, 9}", "{2, 4, 6, 8}"), extras=[("int32_t", "INT32", "2", "2")]),
+    "spanset_split_n_spans":     dict(inp="intspanset", spec=dict(elem="Span", kind="span_val", out="intspan_out"), lit=("{[1, 5), [10, 15), [20, 25)}", "{[3, 7), [12, 18)}"), extras=[("int32_t", "INT32", "2", "2")]),
+    "spanset_split_each_n_spans":dict(inp="intspanset", spec=dict(elem="Span", kind="span_val", out="intspan_out"), lit=("{[1, 5), [10, 15), [20, 25)}", "{[3, 7), [12, 18)}"), extras=[("int32_t", "INT32", "2", "2")]),
+    "tgeo_split_n_stboxes":      dict(inp="tgeompoint", spec=dict(elem="STBox", kind="span_val", out="stbox_out", maxdd=True, header="meos_geo.h"), icols=[("lon", "FLOAT64"), ("lat", "FLOAT64")], ra=["1.0", "1.0"], rb=["2.0", "2.0"], extras=[("int32_t", "INT32", "2", "2")]),
+    "tgeo_split_each_n_stboxes": dict(inp="tgeompoint", spec=dict(elem="STBox", kind="span_val", out="stbox_out", maxdd=True, header="meos_geo.h"), icols=[("lon", "FLOAT64"), ("lat", "FLOAT64")], ra=["1.0", "1.0"], rb=["2.0", "2.0"], extras=[("int32_t", "INT32", "2", "2")]),
+    "tnumber_split_n_tboxes":    dict(inp="tfloat", spec=dict(elem="TBox", kind="span_val", out="tbox_out", maxdd=True, header="meos_geo.h"), icols=[("value", "FLOAT64")], ra=["5.5"], rb=["8.5"], extras=[("int32_t", "INT32", "2", "2")]),
+    "tnumber_split_each_n_tboxes":dict(inp="tfloat", spec=dict(elem="TBox", kind="span_val", out="tbox_out", maxdd=True, header="meos_geo.h"), icols=[("value", "FLOAT64")], ra=["5.5"], rb=["8.5"], extras=[("int32_t", "INT32", "2", "2")]),
+    "geo_split_n_stboxes":       dict(inp="geom", spec=dict(elem="STBox", kind="span_val", out="stbox_out", maxdd=True, header="meos_geo.h"), lit=("SRID=4326;Linestring(0 0, 2 2, 4 4)", "SRID=4326;Linestring(1 1, 3 3)"), extras=[("int32_t", "INT32", "2", "2")]),
+    "geo_split_each_n_stboxes":  dict(inp="geom", spec=dict(elem="STBox", kind="span_val", out="stbox_out", maxdd=True, header="meos_geo.h"), lit=("SRID=4326;Linestring(0 0, 2 2, 4 4)", "SRID=4326;Linestring(1 1, 3 3)"), extras=[("int32_t", "INT32", "2", "2")]),
 }
 SPAN_MAKE = {
     "intspan_make":    ("int_base", "INT32", "int32_t", "intspan_text", "1", "5", "2", "8"),
@@ -528,15 +540,19 @@ def classify(name, ret, plist):
     #      distinct values, serialized by the array-output assembler. ----
     if name in ARRAY_VALUES:
         e = ARRAY_VALUES[name]
+        xa = e.get("extras", [])                        # leading scalar args (e.g. split count)
         entry = dict(nebula_name=camel(name), sql_token=name.upper(), meos_call=name,
                      build_generic=True, input_type=e["inp"], return_kind="array_out",
-                     array_out=e["spec"], extra_args=[],
+                     array_out=e["spec"], extra_args=[dict(kind="scalar", cpp=c) for c, _, _, _ in xa],
                      comment_one_liner=f"{name} ({ret.strip()}) — array of values.")
-        if "lit" in e:                                  # Set text-literal primary (no ts)
-            cols, rows = [("a", "VARSIZED")], [(e["lit"][0],), (e["lit"][1],)]
+        if "lit" in e:                                  # Set/geom text-literal primary (no ts)
+            base_cols, ra_row, rb_row = [("a", "VARSIZED")], [e["lit"][0]], [e["lit"][1]]
         else:                                           # temporal instant primary + ts
-            cols = e["icols"] + [("ts", "UINT64")]
-            rows = [tuple(e["ra"] + ["1609459200"]), tuple(e["rb"] + ["1609545600"])]
+            base_cols = e["icols"] + [("ts", "UINT64")]
+            ra_row, rb_row = e["ra"] + ["1609459200"], e["rb"] + ["1609545600"]
+        xcols = [(f"x{i}", sql) for i, (_, sql, _, _) in enumerate(xa)]
+        cols = base_cols + xcols
+        rows = [tuple(ra_row + [a for _, _, a, _ in xa]), tuple(rb_row + [b for _, _, _, b in xa])]
         tmeta = dict(cols=cols, rows=rows, token=name.upper(), sink="VARSIZED")
         return entry, tmeta
     # ---- arity-3 scalar/box op: primary + two scalar/interval extras -> scalar

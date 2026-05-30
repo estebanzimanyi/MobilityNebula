@@ -526,6 +526,8 @@ geo_points	proven
 geo_reverse	proven
 geo_round	proven
 geo_same	proven
+geo_split_each_n_stboxes	proven
+geo_split_n_stboxes	proven
 geo_srid	proven
 geog_dwithin	wired
 geom_boundary	proven
@@ -997,6 +999,8 @@ set_lt	proven
 set_ne	proven
 set_num_values	proven
 set_round	proven
+set_split_each_n_spans	proven
+set_split_n_spans	proven
 set_to_span	proven
 set_to_spanset	proven
 set_to_tbox	proven
@@ -1039,6 +1043,8 @@ spanset_lt	proven
 spanset_ne	proven
 spanset_num_spans	proven
 spanset_span	proven
+spanset_split_each_n_spans	proven
+spanset_split_n_spans	proven
 spanset_start_span	proven
 spanset_to_tbox	proven
 spanset_upper_inc	proven
@@ -1272,6 +1278,8 @@ tgeo_end_value	proven
 tgeo_minus_geom	proven
 tgeo_minus_stbox	proven
 tgeo_minus_value	proven
+tgeo_split_each_n_stboxes	proven
+tgeo_split_n_stboxes	proven
 tgeo_start_value	proven
 tgeo_value_n	proven
 tgeo_values	proven
@@ -1366,6 +1374,8 @@ tnumber_integral	proven
 tnumber_minus_span	proven
 tnumber_minus_spanset	proven
 tnumber_minus_tbox	proven
+tnumber_split_each_n_tboxes	proven
+tnumber_split_n_tboxes	proven
 tnumber_to_span	proven
 tnumber_to_tbox	proven
 tnumber_trend	proven
