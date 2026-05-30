@@ -609,6 +609,14 @@ SET_UNARY = {
     # element-wise set transforms + set/spanset conversions -> a new Set, via *set_out.
     "floatset_ceil": ("floatset", "floatset_text"), "floatset_floor": ("floatset", "floatset_text"),
     "floatset_radians": ("floatset", "floatset_text"),
+    # element-wise span / spanset transforms -> a new Span / SpanSet (ceil/floor/
+    # radians take no extra arg; degrees variants carry a bool and are handled
+    # by the bool-flag branch).
+    "floatspan_ceil": ("floatspan", "floatspan_text"), "floatspan_floor": ("floatspan", "floatspan_text"),
+    "floatspan_radians": ("floatspan", "floatspan_text"),
+    "floatspanset_ceil": ("floatspanset", "floatspanset_text"),
+    "floatspanset_floor": ("floatspanset", "floatspanset_text"),
+    "floatspanset_radians": ("floatspanset", "floatspanset_text"),
     "textset_lower": ("textset", "textset_text"), "textset_upper": ("textset", "textset_text"),
     "textset_initcap": ("textset", "textset_text"),
     "intset_to_floatset": ("intset", "floatset_text"), "floatset_to_intset": ("floatset", "intset_text"),
