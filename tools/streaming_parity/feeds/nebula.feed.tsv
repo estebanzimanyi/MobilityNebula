@@ -1167,6 +1167,7 @@ tdwithin_tcbuffer_geo	proven
 tdwithin_tcbuffer_tcbuffer	proven
 tdwithin_tgeo_geo	proven
 tdwithin_tgeo_tgeo	proven
+temporal_after_timestamptz	proven
 temporal_append_tinstant	proven
 temporal_at_max	proven
 temporal_at_min	proven
@@ -1174,8 +1175,13 @@ temporal_at_tstzset	proven
 temporal_at_tstzspan	proven
 temporal_at_tstzspanset	proven
 temporal_at_values	proven
+temporal_before_timestamptz	proven
 temporal_cmp	proven
 temporal_copy	proven
+temporal_delete_timestamptz	proven
+temporal_delete_tstzset	proven
+temporal_delete_tstzspan	proven
+temporal_delete_tstzspanset	proven
 temporal_derivative	proven
 temporal_duration	proven
 temporal_dyntimewarp_distance	proven

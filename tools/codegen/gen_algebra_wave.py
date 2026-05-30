@@ -893,7 +893,11 @@ def classify(name, ret, plist):
                   and _tok0 in ("tpoint", "tgeo", "tcbuffer", "tnpoint", "tpose"))
     _tdwithin3 = (len(plist) == 3 and _tok0 == "tdwithin" and plist[0] == ("Temporal", True)
                   and plist[2] == ("double", False))
-    if len(plist) != 2 and not (_restrict3 or _tdwithin3):
+    _temp3 = (len(plist) == 3 and rbase == "Temporal" and plist[0] == ("Temporal", True)
+              and plist[2] == ("bool", False)
+              and (name.startswith("temporal_delete_")
+                   or name in ("temporal_after_timestamptz", "temporal_before_timestamptz")))
+    if len(plist) != 2 and not (_restrict3 or _tdwithin3 or _temp3):
         return None, f"arity {len(plist)} (not 2)"
     # ---- `_round`: f(operand, int maxdd) -> SAME type. The operand base picks
     #      the primary input and its same-type *_out return; maxdd is a fixed
@@ -1059,6 +1063,38 @@ def classify(name, ret, plist):
         rowa = tuple([a for _, _, a, _ in tcols] + ["1609459200", a0])
         rowb = tuple([b for _, _, _, b in tcols] + ["1609545600", a1])
         tmeta = dict(cols=cols, rows=[rowa, rowb], token=name.upper(), sink="VARSIZED")
+        return entry, tmeta
+    # ---- temporal delete / after / before: a tfloat instant + a time operand
+    #      (timestamptz / tstzset / tstzspan / tstzspanset) + a bool (connect or
+    #      strict, passed false) -> the restricted tfloat. The time operand misses
+    #      the instant (a 2019 region) so the result stays non-empty. ----
+    if (rbase == "Temporal" and len(plist) == 3 and plist[0] == ("Temporal", True)
+            and plist[2] == ("bool", False)
+            and (name.startswith("temporal_delete_")
+                 or name in ("temporal_after_timestamptz", "temporal_before_timestamptz"))):
+        b1, p1 = plist[1]
+        if b1 == "TimestampTz" and not p1:
+            # after: keep t < instant; before: keep t > instant; delete: t != instant.
+            tv = "2025-01-01 00:00:00+00" if name == "temporal_before_timestamptz" else "2019-01-01 00:00:00+00"
+            extra = dict(kind="scalar_text", ctype="TimestampTz", parser="timestamptz_in",
+                         parser_extra=", -1", header="meos.h")
+            ecol, a0 = "VARSIZED", tv
+        elif p1 and b1 in ("Set", "Span", "SpanSet"):
+            tmap = {"Set": ("tstzset_in", "{2019-01-01 00:00:00+00, 2019-01-05 00:00:00+00}"),
+                    "Span": ("tstzspan_in", "[2019-01-01 00:00:00+00, 2019-01-10 00:00:00+00)"),
+                    "SpanSet": ("tstzspanset_in", "{[2019-01-01 00:00:00+00, 2019-01-10 00:00:00+00)}")}
+            parser, lit = tmap[b1]
+            extra = dict(kind="box", box_type=b1, parser=parser, header="meos.h")
+            ecol, a0 = "VARSIZED", lit
+        else:
+            return None, f"temporal3 2nd operand {b1} unsupported"
+        entry = dict(nebula_name=camel(name), sql_token=name.upper(), meos_call=name,
+                     build_generic=True, input_type="tfloat", return_kind="tfloat_out",
+                     extra_args=[extra], extra_call_args=["false"],
+                     comment_one_liner=f"{name} ({ret.strip()}) — tfloat restricted by a time operand.")
+        tmeta = dict(cols=[("value", "FLOAT64"), ("ts", "UINT64"), ("arg", ecol)],
+                     rows=[("5.5", "1609459200", a0), ("8.5", "1609545600", a0)],
+                     token=name.upper(), sink="VARSIZED")
         return entry, tmeta
     # ---- tdwithin: a spatial temporal ⊗ {geo, object, second temporal} + a
     #      distance double -> a tbool (within-distance over time) via tbool_out. ----
