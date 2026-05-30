@@ -88,3 +88,4 @@ add_plugin(PoseMakePoint2d PhysicalFunction nes-physical-operators PoseMakePoint
 add_plugin(TposeValues PhysicalFunction nes-physical-operators TposeValuesPhysicalFunction.cpp)
 add_plugin(PosesetValues PhysicalFunction nes-physical-operators PosesetValuesPhysicalFunction.cpp)
 add_plugin(PoseToSet PhysicalFunction nes-physical-operators PoseToSetPhysicalFunction.cpp)
+add_plugin(PoseTstzspanToStbox PhysicalFunction nes-physical-operators PoseTstzspanToStboxPhysicalFunction.cpp)

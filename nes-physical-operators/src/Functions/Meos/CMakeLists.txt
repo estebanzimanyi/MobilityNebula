@@ -1234,3 +1234,6 @@ add_plugin(IntspanExpand PhysicalFunction nes-physical-operators IntspanExpandPh
 add_plugin(BigintspanExpand PhysicalFunction nes-physical-operators BigintspanExpandPhysicalFunction.cpp)
 add_plugin(FloatspanExpand PhysicalFunction nes-physical-operators FloatspanExpandPhysicalFunction.cpp)
 add_plugin(GeoToSet PhysicalFunction nes-physical-operators GeoToSetPhysicalFunction.cpp)
+add_plugin(GeoToStbox PhysicalFunction nes-physical-operators GeoToStboxPhysicalFunction.cpp)
+add_plugin(SpatialsetToStbox PhysicalFunction nes-physical-operators SpatialsetToStboxPhysicalFunction.cpp)
+add_plugin(GeoTstzspanToStbox PhysicalFunction nes-physical-operators GeoTstzspanToStboxPhysicalFunction.cpp)

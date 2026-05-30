@@ -240,6 +240,7 @@ cbuffer_srid	proven
 cbuffer_to_geom	proven
 cbuffer_to_set	proven
 cbuffer_to_stbox	proven
+cbuffer_tstzspan_to_stbox	proven
 cbufferset_end_value	proven
 cbufferset_start_value	proven
 cbufferset_value_n	proven
@@ -571,7 +572,9 @@ geo_split_each_n_stboxes	proven
 geo_split_n_stboxes	proven
 geo_srid	proven
 geo_to_set	proven
+geo_to_stbox	proven
 geo_tpose_to_trgeometry	proven
+geo_tstzspan_to_stbox	proven
 geog_dwithin	proven
 geog_to_geom	proven
 geom_boundary	proven
@@ -804,6 +807,7 @@ npoint_srid	proven
 npoint_to_geompoint	proven
 npoint_to_set	proven
 npoint_to_stbox	proven
+npoint_tstzspan_to_stbox	proven
 npointset_end_value	proven
 npointset_start_value	proven
 npointset_value_n	proven
@@ -990,6 +994,7 @@ pose_srid	proven
 pose_to_point	proven
 pose_to_set	proven
 pose_to_stbox	proven
+pose_tstzspan_to_stbox	proven
 poseset_end_value	proven
 poseset_start_value	proven
 poseset_value_n	proven
@@ -1104,6 +1109,7 @@ spanset_split_n_spans	proven
 spanset_start_span	proven
 spanset_to_tbox	proven
 spanset_upper_inc	proven
+spatialset_to_stbox	proven
 stbox_area	proven
 stbox_cmp	proven
 stbox_copy	proven

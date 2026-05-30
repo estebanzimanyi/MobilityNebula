@@ -635,6 +635,19 @@ DEGREES_UNARY = {
 # scalar float math: double f(double [, bool normalize | double arg2]) -> double.
 # Primary is a plain double field (float_base); extras are constant flags / a
 # second double. ln/log10 need a strictly positive operand.
+TO_STBOX = {
+    # geo / set / object -> STBox. A `tstzspan` second slot adds a time extent
+    # via the box-kind tstzspan extra-arg (parser tstzspan_in); None = single-arg.
+    "geo_to_stbox": ("geom", None, "SRID=4326;Point(1 1)", "SRID=4326;Point(2 2)"),
+    "spatialset_to_stbox": ("geoset", None,
+                            '{"SRID=4326;Point(1 1)", "SRID=4326;Point(2 2)"}',
+                            '{"SRID=4326;Point(3 3)", "SRID=4326;Point(4 4)"}'),
+    "geo_tstzspan_to_stbox": ("geom", "tstzspan", "SRID=4326;Point(1 1)", "SRID=4326;Point(2 2)"),
+    "npoint_tstzspan_to_stbox": ("npoint", "tstzspan", "NPoint(1, 0.5)", "NPoint(1, 0.7)"),
+    "pose_tstzspan_to_stbox": ("pose", "tstzspan", "Pose(Point(1 1), 0.5)", "Pose(Point(2 2), 1.0)"),
+    "cbuffer_tstzspan_to_stbox": ("cbuffer", "tstzspan", "Cbuffer(Point(1 1),1.0)", "Cbuffer(Point(2 2),0.5)"),
+}
+
 OBJECT_TO_SET = {
     # object f(Object) -> a singleton Set, serialized via the family *set_out.
     "cbuffer_to_set": ("cbuffer", "cbufferset_text", "Cbuffer(Point(1 1),1.0)", "Cbuffer(Point(2 2),0.5)"),
@@ -683,6 +696,21 @@ def classify(name, ret, plist):
         l0, l1 = LITERALS[in_type]
         tmeta = dict(cols=[("a", "VARSIZED"), ("norm", "BOOLEAN")],
                      rows=[(l0, "false"), (l1, "false")], token=name.upper(), sink="VARSIZED")
+        return entry, tmeta
+    # ---- *_to_stbox: geo/set/object (+ optional tstzspan time) -> STBox. ----
+    if name in TO_STBOX:
+        in_type, extra, l0, l1 = TO_STBOX[name]
+        extra_args, cols, rows = [], [("a", "VARSIZED")], [(l0,), (l1,)]
+        if extra == "tstzspan":
+            extra_args = [dict(kind="box", box_type="Span", parser="tstzspan_in", header="meos.h")]
+            cols = [("a", "VARSIZED"), ("arg", "VARSIZED")]
+            tspan = "[2020-01-01 00:00:00+00, 2020-01-05 00:00:00+00)"
+            rows = [(l0, tspan), (l1, tspan)]
+        entry = dict(nebula_name=camel(name), sql_token=name.upper(), meos_call=name,
+                     build_generic=True, input_type=in_type, return_kind="stbox_text_out",
+                     extra_args=extra_args,
+                     comment_one_liner=f"{name} ({ret.strip()}) — spatiotemporal bounding box.")
+        tmeta = dict(cols=cols, rows=rows, token=name.upper(), sink="VARSIZED")
         return entry, tmeta
     # ---- object_to_set(Object) -> Set: an object primary -> a singleton set. ----
     if name in OBJECT_TO_SET:
