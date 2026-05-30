@@ -1067,7 +1067,7 @@ def classify(name, ret, plist):
                   and plist[2] == ("double", False))
     _temp3 = (len(plist) == 3 and rbase == "Temporal" and plist[0] == ("Temporal", True)
               and plist[2] == ("bool", False)
-              and (name.startswith("temporal_delete_")
+              and (name.startswith("temporal_delete_") or name.startswith("trgeometry_restrict_")
                    or name in ("temporal_after_timestamptz", "temporal_before_timestamptz")))
     if len(plist) != 2 and not (_restrict3 or _tdwithin3 or _temp3):
         return None, f"arity {len(plist)} (not 2)"
@@ -1242,31 +1242,44 @@ def classify(name, ret, plist):
     #      the instant (a 2019 region) so the result stays non-empty. ----
     if (rbase == "Temporal" and len(plist) == 3 and plist[0] == ("Temporal", True)
             and plist[2] == ("bool", False)
-            and (name.startswith("temporal_delete_")
+            and (name.startswith("temporal_delete_") or name.startswith("trgeometry_restrict_")
                  or name in ("temporal_after_timestamptz", "temporal_before_timestamptz"))):
+        # trgeometry_restrict_* is an AT-restriction (atfunc=true): the time operand
+        # must COVER the instant (2021) to keep it. delete/after/before use a missing
+        # 2019 region + a false flag. trgeometry -> tspatial_text; else tfloat.
+        is_trgeo = name.startswith("trgeometry_restrict_")
+        match_ts, far_ts = "2021-01-01 00:00:00+00", "2019-01-01 00:00:00+00"
         b1, p1 = plist[1]
         if b1 == "TimestampTz" and not p1:
-            # after: keep t < instant; before: keep t > instant; delete: t != instant.
-            tv = "2025-01-01 00:00:00+00" if name == "temporal_before_timestamptz" else "2019-01-01 00:00:00+00"
+            tv = match_ts if is_trgeo else ("2025-01-01 00:00:00+00" if name == "temporal_before_timestamptz" else far_ts)
             extra = dict(kind="scalar_text", ctype="TimestampTz", parser="timestamptz_in",
                          parser_extra=", -1", header="meos.h")
             ecol, a0 = "VARSIZED", tv
         elif p1 and b1 in ("Set", "Span", "SpanSet"):
-            tmap = {"Set": ("tstzset_in", "{2019-01-01 00:00:00+00, 2019-01-05 00:00:00+00}"),
-                    "Span": ("tstzspan_in", "[2019-01-01 00:00:00+00, 2019-01-10 00:00:00+00)"),
-                    "SpanSet": ("tstzspanset_in", "{[2019-01-01 00:00:00+00, 2019-01-10 00:00:00+00)}")}
+            yr = "2021" if is_trgeo else "2019"
+            tmap = {"Set": ("tstzset_in", f"{{{yr}-01-01 00:00:00+00, {yr}-01-05 00:00:00+00}}"),
+                    "Span": ("tstzspan_in", f"[{yr}-01-01 00:00:00+00, {yr}-12-31 00:00:00+00)"),
+                    "SpanSet": ("tstzspanset_in", f"{{[{yr}-01-01 00:00:00+00, {yr}-12-31 00:00:00+00)}}")}
             parser, lit = tmap[b1]
             extra = dict(kind="box", box_type=b1, parser=parser, header="meos.h")
             ecol, a0 = "VARSIZED", lit
         else:
             return None, f"temporal3 2nd operand {b1} unsupported"
+        in_type, rkind = ("trgeometry", "tspatial_text") if is_trgeo else ("tfloat", "tfloat_out")
         entry = dict(nebula_name=camel(name), sql_token=name.upper(), meos_call=name,
-                     build_generic=True, input_type="tfloat", return_kind="tfloat_out",
-                     extra_args=[extra], extra_call_args=["false"],
-                     comment_one_liner=f"{name} ({ret.strip()}) — tfloat restricted by a time operand.")
-        tmeta = dict(cols=[("value", "FLOAT64"), ("ts", "UINT64"), ("arg", ecol)],
-                     rows=[("5.5", "1609459200", a0), ("8.5", "1609545600", a0)],
-                     token=name.upper(), sink="VARSIZED")
+                     build_generic=True, input_type=in_type, return_kind=rkind,
+                     extra_args=[extra], extra_call_args=["true" if is_trgeo else "false"],
+                     comment_one_liner=f"{name} ({ret.strip()}) — temporal restricted by a time operand.")
+        if is_trgeo:
+            tcols = ALWAYS_TINPUT["trgeometry"]
+            cols = [(c, s) for c, s, _, _ in tcols] + [("ts", "UINT64"), ("arg", ecol)]
+            rowa = tuple([a for _, _, a, _ in tcols] + ["1609459200", a0])
+            rowb = tuple([b for _, _, _, b in tcols] + ["1609545600", a0])
+            tmeta = dict(cols=cols, rows=[rowa, rowb], token=name.upper(), sink="VARSIZED")
+        else:
+            tmeta = dict(cols=[("value", "FLOAT64"), ("ts", "UINT64"), ("arg", ecol)],
+                         rows=[("5.5", "1609459200", a0), ("8.5", "1609545600", a0)],
+                         token=name.upper(), sink="VARSIZED")
         return entry, tmeta
     # ---- Z-dimension bbox predicates (back/front/overback/overfront) over
     #      tspatial/stbox: need 3D inputs (a Z coordinate) — the existing 2D
