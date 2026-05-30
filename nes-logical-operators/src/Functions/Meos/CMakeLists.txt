@@ -1559,3 +1559,8 @@ add_plugin(FloatspansetRadians LogicalFunction nes-logical-operators Floatspanse
 add_plugin(FloatsetDegrees LogicalFunction nes-logical-operators FloatsetDegreesLogicalFunction.cpp)
 add_plugin(FloatspanDegrees LogicalFunction nes-logical-operators FloatspanDegreesLogicalFunction.cpp)
 add_plugin(FloatspansetDegrees LogicalFunction nes-logical-operators FloatspansetDegreesLogicalFunction.cpp)
+add_plugin(FloatExp LogicalFunction nes-logical-operators FloatExpLogicalFunction.cpp)
+add_plugin(FloatLn LogicalFunction nes-logical-operators FloatLnLogicalFunction.cpp)
+add_plugin(FloatLog10 LogicalFunction nes-logical-operators FloatLog10LogicalFunction.cpp)
+add_plugin(FloatDegrees LogicalFunction nes-logical-operators FloatDegreesLogicalFunction.cpp)
+add_plugin(FloatAngularDifference LogicalFunction nes-logical-operators FloatAngularDifferenceLogicalFunction.cpp)

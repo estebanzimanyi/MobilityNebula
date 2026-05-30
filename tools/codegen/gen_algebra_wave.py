@@ -632,6 +632,17 @@ DEGREES_UNARY = {
     "floatspanset_degrees": ("floatspanset", "floatspanset_text"),
 }
 
+# scalar float math: double f(double [, bool normalize | double arg2]) -> double.
+# Primary is a plain double field (float_base); extras are constant flags / a
+# second double. ln/log10 need a strictly positive operand.
+SCALAR_MATH = {
+    "float_exp":   dict(extras=[], rows=[("2.0",), ("0.5",)]),
+    "float_ln":    dict(extras=[], rows=[("2.0",), ("10.0",)]),
+    "float_log10": dict(extras=[], rows=[("10.0",), ("100.0",)]),
+    "float_degrees": dict(extras=[("bool", "BOOLEAN")], rows=[("1.5", "false"), ("0.5", "false")]),
+    "float_angular_difference": dict(extras=[("double", "FLOAT64")], rows=[("30.0", "45.0"), ("350.0", "10.0")]),
+}
+
 
 def classify(name, ret, plist):
     """Return (spec_entry, test_meta) or (None, reason)."""
@@ -656,6 +667,16 @@ def classify(name, ret, plist):
         l0, l1 = LITERALS[in_type]
         tmeta = dict(cols=[("a", "VARSIZED"), ("norm", "BOOLEAN")],
                      rows=[(l0, "false"), (l1, "false")], token=name.upper(), sink="VARSIZED")
+        return entry, tmeta
+    # ---- scalar float math: double f(double [, extra]) -> double. ----
+    if name in SCALAR_MATH:
+        s = SCALAR_MATH[name]
+        entry = dict(nebula_name=camel(name), sql_token=name.upper(), meos_call=name,
+                     build_generic=True, input_type="float_base", return_kind="double",
+                     extra_args=[dict(kind="scalar", cpp=c) for c, _ in s["extras"]],
+                     comment_one_liner=f"{name} (double) — scalar float math.")
+        cols = [("value", "FLOAT64")] + [(f"arg{i}", sql) for i, (c, sql) in enumerate(s["extras"])]
+        tmeta = dict(cols=cols, rows=s["rows"], token=name.upper(), sink="FLOAT64")
         return entry, tmeta
     # ---- value arrays: T *f(Temporal, int *count) -> a brace-list of the
     #      distinct values, serialized by the array-output assembler. ----

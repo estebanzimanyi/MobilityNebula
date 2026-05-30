@@ -501,8 +501,13 @@ ever_ne_tpose_tpose	proven
 ever_ne_trgeometry_geo	proven
 ever_ne_trgeometry_trgeometry	proven
 ever_ne_ttext_text	proven
+float_angular_difference	proven
+float_degrees	proven
+float_exp	proven
 float_extent_transfn	proven
 float_get_bin	proven
+float_ln	proven
+float_log10	proven
 float_round	proven
 float_timestamptz_to_tbox	proven
 float_to_set	proven
