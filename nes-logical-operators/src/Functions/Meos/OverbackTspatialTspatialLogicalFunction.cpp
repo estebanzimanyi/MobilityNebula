@@ -30,21 +30,25 @@ namespace NES::LogicalFunctionGeneratedRegistrar { LogicalFunctionRegistryReturn
 namespace NES
 {
 
-OverbackTspatialTspatialLogicalFunction::OverbackTspatialTspatialLogicalFunction(LogicalFunction lonA,
-                                          LogicalFunction latA,
-                                          LogicalFunction tsA,
-                                          LogicalFunction lonB,
-                                          LogicalFunction latB,
-                                          LogicalFunction tsB)
-    : dataType(DataTypeProvider::provideDataType(DataType::Type::BOOLEAN))
+OverbackTspatialTspatialLogicalFunction::OverbackTspatialTspatialLogicalFunction(LogicalFunction lon,
+                                          LogicalFunction lat,
+                                          LogicalFunction z,
+                                          LogicalFunction ts,
+                                          LogicalFunction lon2,
+                                          LogicalFunction lat2,
+                                          LogicalFunction z2,
+                                          LogicalFunction ts2)
+    : dataType(DataTypeProvider::provideDataType(DataType::Type::INT32))
 {
-    parameters.reserve(6);
-    parameters.push_back(std::move(lonA));
-    parameters.push_back(std::move(latA));
-    parameters.push_back(std::move(tsA));
-    parameters.push_back(std::move(lonB));
-    parameters.push_back(std::move(latB));
-    parameters.push_back(std::move(tsB));
+    parameters.reserve(8);
+    parameters.push_back(std::move(lon));
+    parameters.push_back(std::move(lat));
+    parameters.push_back(std::move(z));
+    parameters.push_back(std::move(ts));
+    parameters.push_back(std::move(lon2));
+    parameters.push_back(std::move(lat2));
+    parameters.push_back(std::move(z2));
+    parameters.push_back(std::move(ts2));
 }
 
 DataType OverbackTspatialTspatialLogicalFunction::getDataType() const
@@ -66,7 +70,7 @@ std::vector<LogicalFunction> OverbackTspatialTspatialLogicalFunction::getChildre
 
 LogicalFunction OverbackTspatialTspatialLogicalFunction::withChildren(const std::vector<LogicalFunction>& children) const
 {
-    PRECONDITION(children.size() == 6, "OverbackTspatialTspatialLogicalFunction requires 6 children, but got {}", children.size());
+    PRECONDITION(children.size() == 8, "OverbackTspatialTspatialLogicalFunction requires 8 children, but got {}", children.size());
     auto copy = *this;
     copy.parameters = children;
     return copy;
@@ -126,8 +130,8 @@ SerializableFunction OverbackTspatialTspatialLogicalFunction::serialize() const
 LogicalFunctionRegistryReturnType LogicalFunctionGeneratedRegistrar::RegisterOverbackTspatialTspatialLogicalFunction(
     LogicalFunctionRegistryArguments arguments)
 {
-    PRECONDITION(arguments.children.size() == 6,
-                 "OverbackTspatialTspatialLogicalFunction requires 6 children but got {}",
+    PRECONDITION(arguments.children.size() == 8,
+                 "OverbackTspatialTspatialLogicalFunction requires 8 children but got {}",
                  arguments.children.size());
     auto arg0 = std::move(arguments.children[0]);
     auto arg1 = std::move(arguments.children[1]);
@@ -135,7 +139,9 @@ LogicalFunctionRegistryReturnType LogicalFunctionGeneratedRegistrar::RegisterOve
     auto arg3 = std::move(arguments.children[3]);
     auto arg4 = std::move(arguments.children[4]);
     auto arg5 = std::move(arguments.children[5]);
-    return OverbackTspatialTspatialLogicalFunction(std::move(arg0), std::move(arg1), std::move(arg2), std::move(arg3), std::move(arg4), std::move(arg5));
+    auto arg6 = std::move(arguments.children[6]);
+    auto arg7 = std::move(arguments.children[7]);
+    return OverbackTspatialTspatialLogicalFunction(std::move(arg0), std::move(arg1), std::move(arg2), std::move(arg3), std::move(arg4), std::move(arg5), std::move(arg6), std::move(arg7));
 }
 
 } // namespace NES

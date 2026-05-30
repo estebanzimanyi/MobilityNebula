@@ -41,12 +41,14 @@ namespace NES {
 
 FrontTspatialStboxPhysicalFunction::FrontTspatialStboxPhysicalFunction(PhysicalFunction lonFunction,
                                                           PhysicalFunction latFunction,
+                                                          PhysicalFunction zFunction,
                                                           PhysicalFunction tsFunction,
                                                           PhysicalFunction arg0Function)
 {
-    parameterFunctions.reserve(4);
+    parameterFunctions.reserve(5);
     parameterFunctions.push_back(std::move(lonFunction));
     parameterFunctions.push_back(std::move(latFunction));
+    parameterFunctions.push_back(std::move(zFunction));
     parameterFunctions.push_back(std::move(tsFunction));
     parameterFunctions.push_back(std::move(arg0Function));
 }
@@ -62,38 +64,40 @@ VarVal FrontTspatialStboxPhysicalFunction::execute(const Record& record, ArenaRe
 
     auto lon = parameterValues[0].cast<nautilus::val<double>>();
     auto lat = parameterValues[1].cast<nautilus::val<double>>();
-    auto ts = parameterValues[2].cast<nautilus::val<uint64_t>>();
-    auto arg0 = parameterValues[3].cast<VariableSizedData>();
+    auto z = parameterValues[2].cast<nautilus::val<double>>();
+    auto ts = parameterValues[3].cast<nautilus::val<uint64_t>>();
+    auto arg0 = parameterValues[4].cast<VariableSizedData>();
 
     const auto result = nautilus::invoke(
         +[](double lon,
             double lat,
+            double z,
             uint64_t ts,
-            const char* arg0Ptr, uint32_t arg0Size) -> bool {
+            const char* arg0Ptr, uint32_t arg0Size) -> int {
             try
             {
                 MEOS::Meos::ensureMeosInitialized();
-                if (!(lon >= -180.0 && lon <= 180.0 && lat >= -90.0 && lat <= 90.0)) return false;
-                std::string tempWkt = fmt::format("SRID=4326;Point({} {})@{}", lon, lat, MEOS::Meos::convertEpochToTimestamp(ts));
+                if (!(lon >= -180.0 && lon <= 180.0 && lat >= -90.0 && lat <= 90.0)) return 0;
+                std::string tempWkt = fmt::format("SRID=4326;Point({} {} {})@{}", lon, lat, z, MEOS::Meos::convertEpochToTimestamp(ts));
                 Temporal* temp = tgeompoint_in(tempWkt.c_str());
-                if (!temp) return false;
+                if (!temp) return 0;
                 std::string arg0S(arg0Ptr, arg0Size);
                 while (!arg0S.empty() && (arg0S.front()=='\'' || arg0S.front()=='"')) arg0S.erase(arg0S.begin());
                 while (!arg0S.empty() && (arg0S.back()=='\'' || arg0S.back()=='"')) arg0S.pop_back();
                 STBox* arg0B = stbox_in(arg0S.c_str());
-                if (!arg0B) { free(temp); return false; }
+                if (!arg0B) { free(temp); return 0; }
 
-                bool r = front_tspatial_stbox(temp, arg0B);
+                int r = front_tspatial_stbox(temp, arg0B);
                 free(temp);
                 free(arg0B);
                 return r;
             }
             catch (const std::exception&)
             {
-                return false;
+                return 0;
             }
         },
-        lon, lat, ts, arg0.getContent(), arg0.getContentSize());
+        lon, lat, z, ts, arg0.getContent(), arg0.getContentSize());
 
     return VarVal(result);
 }
@@ -101,14 +105,15 @@ VarVal FrontTspatialStboxPhysicalFunction::execute(const Record& record, ArenaRe
 PhysicalFunctionRegistryReturnType PhysicalFunctionGeneratedRegistrar::RegisterFrontTspatialStboxPhysicalFunction(
     PhysicalFunctionRegistryArguments arguments)
 {
-    PRECONDITION(arguments.childFunctions.size() == 4,
-                 "FrontTspatialStboxPhysicalFunction requires 4 children but got {}",
+    PRECONDITION(arguments.childFunctions.size() == 5,
+                 "FrontTspatialStboxPhysicalFunction requires 5 children but got {}",
                  arguments.childFunctions.size());
     auto arg0 = std::move(arguments.childFunctions[0]);
     auto arg1 = std::move(arguments.childFunctions[1]);
     auto arg2 = std::move(arguments.childFunctions[2]);
     auto arg3 = std::move(arguments.childFunctions[3]);
-    return FrontTspatialStboxPhysicalFunction(std::move(arg0), std::move(arg1), std::move(arg2), std::move(arg3));
+    auto arg4 = std::move(arguments.childFunctions[4]);
+    return FrontTspatialStboxPhysicalFunction(std::move(arg0), std::move(arg1), std::move(arg2), std::move(arg3), std::move(arg4));
 }
 
 } // namespace NES

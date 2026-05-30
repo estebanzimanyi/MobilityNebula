@@ -514,6 +514,18 @@ TWO_TEMPORAL = {
                   '                Temporal* {var} = tpose_in({var}W.c_str());\n'
                   '                if (!{var}) {{ free(temp); return {z}; }}\n')),
 }
+# 3D two-temporal (for the Z-dimension predicates): both operands carry a z.
+TWO_TEMPORAL["tgeompoint3d"] = dict(
+    input_type="tgeompoint3d",
+    make_cols=[("lon", "FLOAT64"), ("lat", "FLOAT64"), ("z", "FLOAT64"), ("ts", "UINT64"),
+               ("lon2", "FLOAT64"), ("lat2", "FLOAT64"), ("z2", "FLOAT64"), ("ts2", "UINT64")],
+    rows=[("1.0", "1.0", "1.0", "1609459200", "2.0", "2.0", "5.0", "1609459200"),
+          ("3.0", "3.0", "2.0", "1609545600", "4.0", "4.0", "6.0", "1609545600")],
+    t2_fields=[("lon2", "double"), ("lat2", "double"), ("z2", "double"), ("ts2", "uint64_t")],
+    header="meos_geo.h",
+    t2_build=('                std::string {var}W = fmt::format("SRID=4326;Point({{}} {{}} {{}})@{{}}", lon2, lat2, z2, MEOS::Meos::convertEpochToTimestamp(ts2));\n'
+              '                Temporal* {var} = tgeompoint_in({var}W.c_str());\n'
+              '                if (!{var}) {{ free(temp); return {z}; }}\n'))
 # base operand -> (extra-arg builder tag, column SQL, sample a, sample b). The tag
 # is "scalar" (bool source field), "text" (text* via text_in), or a *_in parser.
 ALWAYS_BASE = {
@@ -1199,9 +1211,40 @@ def classify(name, ret, plist):
                      rows=[("5.5", "1609459200", a0), ("8.5", "1609545600", a0)],
                      token=name.upper(), sink="VARSIZED")
         return entry, tmeta
+    # ---- Z-dimension bbox predicates (back/front/overback/overfront) over
+    #      tspatial/stbox: need 3D inputs (a Z coordinate) — the existing 2D
+    #      operators error "stbox must have Z dimension". Build 3D tgeompoint
+    #      instants + a 3D STBOX Z literal. ----
+    toks = name.split("_")
+    if (toks[0] in ("back", "front", "overback", "overfront") and rbase == "bool"
+            and len(plist) == 2 and ("tspatial" in toks or "stbox" in toks)):
+        ZBOX = ("SRID=4326;STBOX Z((0 0 0),(5 5 5))", "SRID=4326;STBOX Z((1 1 1),(6 6 6))")
+        (b0, p0), (b1, p1) = plist
+        if b0 == "Temporal" and b1 == "Temporal":           # tspatial_tspatial
+            spec = TWO_TEMPORAL["tgeompoint3d"]
+            entry = dict(nebula_name=camel(name), sql_token=name.upper(), meos_call=name,
+                         build_generic=True, input_type=spec["input_type"], return_kind="int",
+                         extra_args=[dict(kind="temporal2", t2_fields=spec["t2_fields"],
+                                          t2_build=spec["t2_build"], header=spec["header"])],
+                         comment_one_liner=f"{name} (bool) — 3D Z-dim two-temporal predicate.")
+            tmeta = dict(cols=spec["make_cols"], rows=spec["rows"], token=name.upper(), sink="INT32")
+            return entry, tmeta
+        tix = [i for i, (b, p) in enumerate(plist) if b == "Temporal"]
+        six = [i for i, (b, p) in enumerate(plist) if b == "STBox"]
+        if len(tix) == 1 and len(six) == 1:                 # tspatial_stbox / stbox_tspatial
+            entry = dict(nebula_name=camel(name), sql_token=name.upper(), meos_call=name,
+                         build_generic=True, input_type="tgeompoint3d", return_kind="int",
+                         extra_args=[dict(kind="box", box_type="STBox", parser="stbox_in", header="meos_geo.h")],
+                         comment_one_liner=f"{name} (bool) — 3D Z-dim temporal/stbox predicate.")
+            if six[0] == 0:                                 # stbox first -> call f(stbox, temp)
+                entry["box_first"] = True
+            tmeta = dict(cols=[("lon", "FLOAT64"), ("lat", "FLOAT64"), ("z", "FLOAT64"), ("ts", "UINT64"), ("arg", "VARSIZED")],
+                         rows=[("1.0", "1.0", "2.0", "1609459200", ZBOX[0]), ("2.0", "2.0", "3.0", "1609545600", ZBOX[1])],
+                         token=name.upper(), sink="INT32")
+            return entry, tmeta
+        return None, f"zdim shape {b0}/{b1} unsupported"
     # ---- tdwithin: a spatial temporal ⊗ {geo, object, second temporal} + a
     #      distance double -> a tbool (within-distance over time) via tbool_out. ----
-    toks = name.split("_")
     if (toks[0] == "tdwithin" and len(plist) == 3 and plist[0] == ("Temporal", True)
             and plist[2] == ("double", False)):
         tsub = next((t for t in ("tgeo", "tcbuffer", "tnpoint", "tpose") if t in toks), None)

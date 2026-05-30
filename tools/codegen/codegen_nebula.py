@@ -3048,6 +3048,13 @@ GENERIC_INPUTS = {
         '                std::string {var}Wkt = fmt::format("SRID=4326;Point({{}} {{}})@{{}}", lon, lat, MEOS::Meos::convertEpochToTimestamp(ts));\n'
         '                Temporal* {var} = tgeompoint_in({var}Wkt.c_str());\n'
         '                if (!{var}) return {z};\n')),
+    # 3D tgeompoint instant (lon, lat, z, ts) — for the Z-dimension bbox
+    # predicates (back/front/over*) which require the input to carry a Z.
+    "tgeompoint3d": dict(fields=[("lon", "double"), ("lat", "double"), ("z", "double"), ("ts", "uint64_t")], header="meos_geo.h", build=(
+        '                if (!(lon >= -180.0 && lon <= 180.0 && lat >= -90.0 && lat <= 90.0)) return {z};\n'
+        '                std::string {var}Wkt = fmt::format("SRID=4326;Point({{}} {{}} {{}})@{{}}", lon, lat, z, MEOS::Meos::convertEpochToTimestamp(ts));\n'
+        '                Temporal* {var} = tgeompoint_in({var}Wkt.c_str());\n'
+        '                if (!{var}) return {z};\n')),
     "tgeometry": dict(fields=[("geomWkt", "VariableSizedData"), ("ts", "uint64_t")], header="meos_geo.h", build=(
         '                std::string {var}G(geomWktPtr, geomWktSize);\n'
         '                std::string {var}Wkt = {var}G + "@" + MEOS::Meos::convertEpochToTimestamp(ts);\n'
@@ -3703,6 +3710,14 @@ def assemble_generic_physical(op):
                 f'                if (!arg{i}T) {{ {ff}return {zero}; }}\n')
             call_terms.append(f"arg{i}T")
             box_frees.append(f"free(arg{i}T);")
+        elif ex["kind"] == "temporal2":
+            # a SECOND temporal operand built from its own per-event columns.
+            for fn2, cpp2 in ex["t2_fields"]:
+                fields.append((fn2, cpp2))
+            headers.add(ex.get("header", "meos.h"))
+            parse_lines.append(ex["t2_build"].format(var=f"arg{i}t", z=zero))
+            call_terms.append(f"arg{i}t")
+            box_frees.append(f"free(arg{i}t);")
 
     # Build the parameterValues casts, lambda params, and invoke args from fields.
     casts, lparams, invoke = [], [], []

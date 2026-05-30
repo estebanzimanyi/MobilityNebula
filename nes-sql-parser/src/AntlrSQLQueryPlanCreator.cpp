@@ -6924,25 +6924,6 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         break;
         /* END CODEGEN PARSER GLUE: ALWAYS_NE_TBOOL_BOOL */
 
-        /* BEGIN CODEGEN PARSER GLUE: BACK_TSPATIAL_TSPATIAL */
-        case AntlrSQLLexer::BACK_TSPATIAL_TSPATIAL:
-        {
-            const auto argCount = context->expression().size();
-            if (argCount != 6)
-                throw InvalidQuerySyntax("BACK_TSPATIAL_TSPATIAL requires exactly 6 arguments (lonA, latA, tsA, lonB, latB, tsB), but got {}", argCount);
-
-            auto tsB  = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
-            auto latB = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
-            auto lonB = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
-            auto tsA  = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
-            auto latA = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
-            auto lonA = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
-
-            helpers.top().functionBuilder.emplace_back(
-                BackTspatialTspatialLogicalFunction(lonA, latA, tsA, lonB, latB, tsB));
-        }
-        break;
-        /* END CODEGEN PARSER GLUE: BACK_TSPATIAL_TSPATIAL */
 
         /* BEGIN CODEGEN PARSER GLUE: BEFORE_TEMPORAL_TEMPORAL */
         case AntlrSQLLexer::BEFORE_TEMPORAL_TEMPORAL:
@@ -7144,25 +7125,6 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         break;
         /* END CODEGEN PARSER GLUE: EVER_NE_TBOOL_BOOL */
 
-        /* BEGIN CODEGEN PARSER GLUE: FRONT_TSPATIAL_TSPATIAL */
-        case AntlrSQLLexer::FRONT_TSPATIAL_TSPATIAL:
-        {
-            const auto argCount = context->expression().size();
-            if (argCount != 6)
-                throw InvalidQuerySyntax("FRONT_TSPATIAL_TSPATIAL requires exactly 6 arguments (lonA, latA, tsA, lonB, latB, tsB), but got {}", argCount);
-
-            auto tsB  = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
-            auto latB = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
-            auto lonB = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
-            auto tsA  = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
-            auto latA = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
-            auto lonA = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
-
-            helpers.top().functionBuilder.emplace_back(
-                FrontTspatialTspatialLogicalFunction(lonA, latA, tsA, lonB, latB, tsB));
-        }
-        break;
-        /* END CODEGEN PARSER GLUE: FRONT_TSPATIAL_TSPATIAL */
 
         /* BEGIN CODEGEN PARSER GLUE: LEFT_TSPATIAL_TSPATIAL */
         case AntlrSQLLexer::LEFT_TSPATIAL_TSPATIAL:
@@ -7307,25 +7269,6 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         break;
         /* END CODEGEN PARSER GLUE: OVERAFTER_TSPATIAL_TSPATIAL */
 
-        /* BEGIN CODEGEN PARSER GLUE: OVERBACK_TSPATIAL_TSPATIAL */
-        case AntlrSQLLexer::OVERBACK_TSPATIAL_TSPATIAL:
-        {
-            const auto argCount = context->expression().size();
-            if (argCount != 6)
-                throw InvalidQuerySyntax("OVERBACK_TSPATIAL_TSPATIAL requires exactly 6 arguments (lonA, latA, tsA, lonB, latB, tsB), but got {}", argCount);
-
-            auto tsB  = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
-            auto latB = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
-            auto lonB = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
-            auto tsA  = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
-            auto latA = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
-            auto lonA = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
-
-            helpers.top().functionBuilder.emplace_back(
-                OverbackTspatialTspatialLogicalFunction(lonA, latA, tsA, lonB, latB, tsB));
-        }
-        break;
-        /* END CODEGEN PARSER GLUE: OVERBACK_TSPATIAL_TSPATIAL */
 
         /* BEGIN CODEGEN PARSER GLUE: OVERBEFORE_TEMPORAL_TEMPORAL */
         case AntlrSQLLexer::OVERBEFORE_TEMPORAL_TEMPORAL:
@@ -7387,25 +7330,6 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         break;
         /* END CODEGEN PARSER GLUE: OVERBELOW_TSPATIAL_TSPATIAL */
 
-        /* BEGIN CODEGEN PARSER GLUE: OVERFRONT_TSPATIAL_TSPATIAL */
-        case AntlrSQLLexer::OVERFRONT_TSPATIAL_TSPATIAL:
-        {
-            const auto argCount = context->expression().size();
-            if (argCount != 6)
-                throw InvalidQuerySyntax("OVERFRONT_TSPATIAL_TSPATIAL requires exactly 6 arguments (lonA, latA, tsA, lonB, latB, tsB), but got {}", argCount);
-
-            auto tsB  = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
-            auto latB = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
-            auto lonB = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
-            auto tsA  = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
-            auto latA = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
-            auto lonA = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
-
-            helpers.top().functionBuilder.emplace_back(
-                OverfrontTspatialTspatialLogicalFunction(lonA, latA, tsA, lonB, latB, tsB));
-        }
-        break;
-        /* END CODEGEN PARSER GLUE: OVERFRONT_TSPATIAL_TSPATIAL */
 
         /* BEGIN CODEGEN PARSER GLUE: OVERLAPS_TEMPORAL_TEMPORAL */
         case AntlrSQLLexer::OVERLAPS_TEMPORAL_TEMPORAL:
@@ -8946,67 +8870,7 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         break;
         /* END CODEGEN PARSER GLUE: AFTER_TSPATIAL_STBOX */
 
-        /* BEGIN CODEGEN PARSER GLUE: BACK_STBOX_TSPATIAL */
-        case AntlrSQLLexer::BACK_STBOX_TSPATIAL:
-        {
-            const auto argCount = context->expression().size();
-            if (argCount != 4)
-                throw InvalidQuerySyntax("BACK_STBOX_TSPATIAL requires exactly 4 arguments, but got {}", argCount);
 
-            while (!helpers.top().constantBuilder.empty())
-            {
-                auto constantValue = std::move(helpers.top().constantBuilder.back());
-                helpers.top().constantBuilder.pop_back();
-                DataType dataType;
-                char* endPtr = nullptr;
-                std::strtod(constantValue.c_str(), &endPtr);
-                if (endPtr != nullptr && *endPtr == '\0')
-                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
-                else
-                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
-                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
-            }
-
-            auto a3 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
-            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
-            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
-            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
-
-            helpers.top().functionBuilder.emplace_back(BackStboxTspatialLogicalFunction(a0, a1, a2, a3));
-        }
-        break;
-        /* END CODEGEN PARSER GLUE: BACK_STBOX_TSPATIAL */
-
-        /* BEGIN CODEGEN PARSER GLUE: BACK_TSPATIAL_STBOX */
-        case AntlrSQLLexer::BACK_TSPATIAL_STBOX:
-        {
-            const auto argCount = context->expression().size();
-            if (argCount != 4)
-                throw InvalidQuerySyntax("BACK_TSPATIAL_STBOX requires exactly 4 arguments, but got {}", argCount);
-
-            while (!helpers.top().constantBuilder.empty())
-            {
-                auto constantValue = std::move(helpers.top().constantBuilder.back());
-                helpers.top().constantBuilder.pop_back();
-                DataType dataType;
-                char* endPtr = nullptr;
-                std::strtod(constantValue.c_str(), &endPtr);
-                if (endPtr != nullptr && *endPtr == '\0')
-                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
-                else
-                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
-                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
-            }
-
-            auto a3 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
-            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
-            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
-            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
-
-            helpers.top().functionBuilder.emplace_back(BackTspatialStboxLogicalFunction(a0, a1, a2, a3));
-        }
-        break;
-        /* END CODEGEN PARSER GLUE: BACK_TSPATIAL_STBOX */
 
         /* BEGIN CODEGEN PARSER GLUE: BEFORE_STBOX_TSPATIAL */
         case AntlrSQLLexer::BEFORE_STBOX_TSPATIAL:
@@ -9346,67 +9210,7 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         break;
         /* END CODEGEN PARSER GLUE: CONTAINS_TSPATIAL_STBOX */
 
-        /* BEGIN CODEGEN PARSER GLUE: FRONT_STBOX_TSPATIAL */
-        case AntlrSQLLexer::FRONT_STBOX_TSPATIAL:
-        {
-            const auto argCount = context->expression().size();
-            if (argCount != 4)
-                throw InvalidQuerySyntax("FRONT_STBOX_TSPATIAL requires exactly 4 arguments, but got {}", argCount);
 
-            while (!helpers.top().constantBuilder.empty())
-            {
-                auto constantValue = std::move(helpers.top().constantBuilder.back());
-                helpers.top().constantBuilder.pop_back();
-                DataType dataType;
-                char* endPtr = nullptr;
-                std::strtod(constantValue.c_str(), &endPtr);
-                if (endPtr != nullptr && *endPtr == '\0')
-                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
-                else
-                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
-                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
-            }
-
-            auto a3 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
-            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
-            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
-            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
-
-            helpers.top().functionBuilder.emplace_back(FrontStboxTspatialLogicalFunction(a0, a1, a2, a3));
-        }
-        break;
-        /* END CODEGEN PARSER GLUE: FRONT_STBOX_TSPATIAL */
-
-        /* BEGIN CODEGEN PARSER GLUE: FRONT_TSPATIAL_STBOX */
-        case AntlrSQLLexer::FRONT_TSPATIAL_STBOX:
-        {
-            const auto argCount = context->expression().size();
-            if (argCount != 4)
-                throw InvalidQuerySyntax("FRONT_TSPATIAL_STBOX requires exactly 4 arguments, but got {}", argCount);
-
-            while (!helpers.top().constantBuilder.empty())
-            {
-                auto constantValue = std::move(helpers.top().constantBuilder.back());
-                helpers.top().constantBuilder.pop_back();
-                DataType dataType;
-                char* endPtr = nullptr;
-                std::strtod(constantValue.c_str(), &endPtr);
-                if (endPtr != nullptr && *endPtr == '\0')
-                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
-                else
-                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
-                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
-            }
-
-            auto a3 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
-            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
-            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
-            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
-
-            helpers.top().functionBuilder.emplace_back(FrontTspatialStboxLogicalFunction(a0, a1, a2, a3));
-        }
-        break;
-        /* END CODEGEN PARSER GLUE: FRONT_TSPATIAL_STBOX */
 
         /* BEGIN CODEGEN PARSER GLUE: LEFT_STBOX_TSPATIAL */
         case AntlrSQLLexer::LEFT_STBOX_TSPATIAL:
@@ -9654,67 +9458,7 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         break;
         /* END CODEGEN PARSER GLUE: OVERAFTER_TSPATIAL_STBOX */
 
-        /* BEGIN CODEGEN PARSER GLUE: OVERBACK_STBOX_TSPATIAL */
-        case AntlrSQLLexer::OVERBACK_STBOX_TSPATIAL:
-        {
-            const auto argCount = context->expression().size();
-            if (argCount != 4)
-                throw InvalidQuerySyntax("OVERBACK_STBOX_TSPATIAL requires exactly 4 arguments, but got {}", argCount);
 
-            while (!helpers.top().constantBuilder.empty())
-            {
-                auto constantValue = std::move(helpers.top().constantBuilder.back());
-                helpers.top().constantBuilder.pop_back();
-                DataType dataType;
-                char* endPtr = nullptr;
-                std::strtod(constantValue.c_str(), &endPtr);
-                if (endPtr != nullptr && *endPtr == '\0')
-                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
-                else
-                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
-                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
-            }
-
-            auto a3 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
-            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
-            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
-            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
-
-            helpers.top().functionBuilder.emplace_back(OverbackStboxTspatialLogicalFunction(a0, a1, a2, a3));
-        }
-        break;
-        /* END CODEGEN PARSER GLUE: OVERBACK_STBOX_TSPATIAL */
-
-        /* BEGIN CODEGEN PARSER GLUE: OVERBACK_TSPATIAL_STBOX */
-        case AntlrSQLLexer::OVERBACK_TSPATIAL_STBOX:
-        {
-            const auto argCount = context->expression().size();
-            if (argCount != 4)
-                throw InvalidQuerySyntax("OVERBACK_TSPATIAL_STBOX requires exactly 4 arguments, but got {}", argCount);
-
-            while (!helpers.top().constantBuilder.empty())
-            {
-                auto constantValue = std::move(helpers.top().constantBuilder.back());
-                helpers.top().constantBuilder.pop_back();
-                DataType dataType;
-                char* endPtr = nullptr;
-                std::strtod(constantValue.c_str(), &endPtr);
-                if (endPtr != nullptr && *endPtr == '\0')
-                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
-                else
-                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
-                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
-            }
-
-            auto a3 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
-            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
-            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
-            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
-
-            helpers.top().functionBuilder.emplace_back(OverbackTspatialStboxLogicalFunction(a0, a1, a2, a3));
-        }
-        break;
-        /* END CODEGEN PARSER GLUE: OVERBACK_TSPATIAL_STBOX */
 
         /* BEGIN CODEGEN PARSER GLUE: OVERBEFORE_STBOX_TSPATIAL */
         case AntlrSQLLexer::OVERBEFORE_STBOX_TSPATIAL:
@@ -9870,67 +9614,7 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         break;
         /* END CODEGEN PARSER GLUE: OVERBELOW_TSPATIAL_STBOX */
 
-        /* BEGIN CODEGEN PARSER GLUE: OVERFRONT_STBOX_TSPATIAL */
-        case AntlrSQLLexer::OVERFRONT_STBOX_TSPATIAL:
-        {
-            const auto argCount = context->expression().size();
-            if (argCount != 4)
-                throw InvalidQuerySyntax("OVERFRONT_STBOX_TSPATIAL requires exactly 4 arguments, but got {}", argCount);
 
-            while (!helpers.top().constantBuilder.empty())
-            {
-                auto constantValue = std::move(helpers.top().constantBuilder.back());
-                helpers.top().constantBuilder.pop_back();
-                DataType dataType;
-                char* endPtr = nullptr;
-                std::strtod(constantValue.c_str(), &endPtr);
-                if (endPtr != nullptr && *endPtr == '\0')
-                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
-                else
-                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
-                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
-            }
-
-            auto a3 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
-            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
-            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
-            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
-
-            helpers.top().functionBuilder.emplace_back(OverfrontStboxTspatialLogicalFunction(a0, a1, a2, a3));
-        }
-        break;
-        /* END CODEGEN PARSER GLUE: OVERFRONT_STBOX_TSPATIAL */
-
-        /* BEGIN CODEGEN PARSER GLUE: OVERFRONT_TSPATIAL_STBOX */
-        case AntlrSQLLexer::OVERFRONT_TSPATIAL_STBOX:
-        {
-            const auto argCount = context->expression().size();
-            if (argCount != 4)
-                throw InvalidQuerySyntax("OVERFRONT_TSPATIAL_STBOX requires exactly 4 arguments, but got {}", argCount);
-
-            while (!helpers.top().constantBuilder.empty())
-            {
-                auto constantValue = std::move(helpers.top().constantBuilder.back());
-                helpers.top().constantBuilder.pop_back();
-                DataType dataType;
-                char* endPtr = nullptr;
-                std::strtod(constantValue.c_str(), &endPtr);
-                if (endPtr != nullptr && *endPtr == '\0')
-                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
-                else
-                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
-                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
-            }
-
-            auto a3 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
-            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
-            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
-            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
-
-            helpers.top().functionBuilder.emplace_back(OverfrontTspatialStboxLogicalFunction(a0, a1, a2, a3));
-        }
-        break;
-        /* END CODEGEN PARSER GLUE: OVERFRONT_TSPATIAL_STBOX */
 
         /* BEGIN CODEGEN PARSER GLUE: OVERLAPS_STBOX_TSPATIAL */
         case AntlrSQLLexer::OVERLAPS_STBOX_TSPATIAL:
@@ -44967,6 +44651,402 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: GEOG_DWITHIN */
+        /* BEGIN CODEGEN PARSER GLUE: BACK_TSPATIAL_TSPATIAL */
+        case AntlrSQLLexer::BACK_TSPATIAL_TSPATIAL:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 8)
+                throw InvalidQuerySyntax("BACK_TSPATIAL_TSPATIAL requires exactly 8 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a7 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a6 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a5 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a4 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a3 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(BackTspatialTspatialLogicalFunction(a0, a1, a2, a3, a4, a5, a6, a7));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: BACK_TSPATIAL_TSPATIAL */
+
+        /* BEGIN CODEGEN PARSER GLUE: FRONT_TSPATIAL_TSPATIAL */
+        case AntlrSQLLexer::FRONT_TSPATIAL_TSPATIAL:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 8)
+                throw InvalidQuerySyntax("FRONT_TSPATIAL_TSPATIAL requires exactly 8 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a7 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a6 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a5 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a4 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a3 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(FrontTspatialTspatialLogicalFunction(a0, a1, a2, a3, a4, a5, a6, a7));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: FRONT_TSPATIAL_TSPATIAL */
+
+        /* BEGIN CODEGEN PARSER GLUE: OVERBACK_TSPATIAL_TSPATIAL */
+        case AntlrSQLLexer::OVERBACK_TSPATIAL_TSPATIAL:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 8)
+                throw InvalidQuerySyntax("OVERBACK_TSPATIAL_TSPATIAL requires exactly 8 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a7 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a6 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a5 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a4 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a3 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(OverbackTspatialTspatialLogicalFunction(a0, a1, a2, a3, a4, a5, a6, a7));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: OVERBACK_TSPATIAL_TSPATIAL */
+
+        /* BEGIN CODEGEN PARSER GLUE: OVERFRONT_TSPATIAL_TSPATIAL */
+        case AntlrSQLLexer::OVERFRONT_TSPATIAL_TSPATIAL:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 8)
+                throw InvalidQuerySyntax("OVERFRONT_TSPATIAL_TSPATIAL requires exactly 8 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a7 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a6 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a5 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a4 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a3 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(OverfrontTspatialTspatialLogicalFunction(a0, a1, a2, a3, a4, a5, a6, a7));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: OVERFRONT_TSPATIAL_TSPATIAL */
+
+        /* BEGIN CODEGEN PARSER GLUE: BACK_TSPATIAL_STBOX */
+        case AntlrSQLLexer::BACK_TSPATIAL_STBOX:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 5)
+                throw InvalidQuerySyntax("BACK_TSPATIAL_STBOX requires exactly 5 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a4 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a3 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(BackTspatialStboxLogicalFunction(a0, a1, a2, a3, a4));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: BACK_TSPATIAL_STBOX */
+
+        /* BEGIN CODEGEN PARSER GLUE: FRONT_TSPATIAL_STBOX */
+        case AntlrSQLLexer::FRONT_TSPATIAL_STBOX:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 5)
+                throw InvalidQuerySyntax("FRONT_TSPATIAL_STBOX requires exactly 5 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a4 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a3 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(FrontTspatialStboxLogicalFunction(a0, a1, a2, a3, a4));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: FRONT_TSPATIAL_STBOX */
+
+        /* BEGIN CODEGEN PARSER GLUE: OVERBACK_TSPATIAL_STBOX */
+        case AntlrSQLLexer::OVERBACK_TSPATIAL_STBOX:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 5)
+                throw InvalidQuerySyntax("OVERBACK_TSPATIAL_STBOX requires exactly 5 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a4 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a3 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(OverbackTspatialStboxLogicalFunction(a0, a1, a2, a3, a4));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: OVERBACK_TSPATIAL_STBOX */
+
+        /* BEGIN CODEGEN PARSER GLUE: OVERFRONT_TSPATIAL_STBOX */
+        case AntlrSQLLexer::OVERFRONT_TSPATIAL_STBOX:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 5)
+                throw InvalidQuerySyntax("OVERFRONT_TSPATIAL_STBOX requires exactly 5 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a4 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a3 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(OverfrontTspatialStboxLogicalFunction(a0, a1, a2, a3, a4));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: OVERFRONT_TSPATIAL_STBOX */
+
+        /* BEGIN CODEGEN PARSER GLUE: BACK_STBOX_TSPATIAL */
+        case AntlrSQLLexer::BACK_STBOX_TSPATIAL:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 5)
+                throw InvalidQuerySyntax("BACK_STBOX_TSPATIAL requires exactly 5 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a4 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a3 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(BackStboxTspatialLogicalFunction(a0, a1, a2, a3, a4));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: BACK_STBOX_TSPATIAL */
+
+        /* BEGIN CODEGEN PARSER GLUE: FRONT_STBOX_TSPATIAL */
+        case AntlrSQLLexer::FRONT_STBOX_TSPATIAL:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 5)
+                throw InvalidQuerySyntax("FRONT_STBOX_TSPATIAL requires exactly 5 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a4 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a3 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(FrontStboxTspatialLogicalFunction(a0, a1, a2, a3, a4));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: FRONT_STBOX_TSPATIAL */
+
+        /* BEGIN CODEGEN PARSER GLUE: OVERBACK_STBOX_TSPATIAL */
+        case AntlrSQLLexer::OVERBACK_STBOX_TSPATIAL:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 5)
+                throw InvalidQuerySyntax("OVERBACK_STBOX_TSPATIAL requires exactly 5 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a4 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a3 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(OverbackStboxTspatialLogicalFunction(a0, a1, a2, a3, a4));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: OVERBACK_STBOX_TSPATIAL */
+
+        /* BEGIN CODEGEN PARSER GLUE: OVERFRONT_STBOX_TSPATIAL */
+        case AntlrSQLLexer::OVERFRONT_STBOX_TSPATIAL:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 5)
+                throw InvalidQuerySyntax("OVERFRONT_STBOX_TSPATIAL requires exactly 5 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a4 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a3 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(OverfrontStboxTspatialLogicalFunction(a0, a1, a2, a3, a4));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: OVERFRONT_STBOX_TSPATIAL */
+
 
 
 

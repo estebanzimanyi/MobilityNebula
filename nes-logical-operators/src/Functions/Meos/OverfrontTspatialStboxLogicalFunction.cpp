@@ -32,13 +32,15 @@ namespace NES
 
 OverfrontTspatialStboxLogicalFunction::OverfrontTspatialStboxLogicalFunction(LogicalFunction lon,
                                           LogicalFunction lat,
+                                          LogicalFunction z,
                                           LogicalFunction ts,
                                           LogicalFunction arg0)
-    : dataType(DataTypeProvider::provideDataType(DataType::Type::BOOLEAN))
+    : dataType(DataTypeProvider::provideDataType(DataType::Type::INT32))
 {
-    parameters.reserve(4);
+    parameters.reserve(5);
     parameters.push_back(std::move(lon));
     parameters.push_back(std::move(lat));
+    parameters.push_back(std::move(z));
     parameters.push_back(std::move(ts));
     parameters.push_back(std::move(arg0));
 }
@@ -62,7 +64,7 @@ std::vector<LogicalFunction> OverfrontTspatialStboxLogicalFunction::getChildren(
 
 LogicalFunction OverfrontTspatialStboxLogicalFunction::withChildren(const std::vector<LogicalFunction>& children) const
 {
-    PRECONDITION(children.size() == 4, "OverfrontTspatialStboxLogicalFunction requires 4 children, but got {}", children.size());
+    PRECONDITION(children.size() == 5, "OverfrontTspatialStboxLogicalFunction requires 5 children, but got {}", children.size());
     auto copy = *this;
     copy.parameters = children;
     return copy;
@@ -122,14 +124,15 @@ SerializableFunction OverfrontTspatialStboxLogicalFunction::serialize() const
 LogicalFunctionRegistryReturnType LogicalFunctionGeneratedRegistrar::RegisterOverfrontTspatialStboxLogicalFunction(
     LogicalFunctionRegistryArguments arguments)
 {
-    PRECONDITION(arguments.children.size() == 4,
-                 "OverfrontTspatialStboxLogicalFunction requires 4 children but got {}",
+    PRECONDITION(arguments.children.size() == 5,
+                 "OverfrontTspatialStboxLogicalFunction requires 5 children but got {}",
                  arguments.children.size());
     auto arg0 = std::move(arguments.children[0]);
     auto arg1 = std::move(arguments.children[1]);
     auto arg2 = std::move(arguments.children[2]);
     auto arg3 = std::move(arguments.children[3]);
-    return OverfrontTspatialStboxLogicalFunction(std::move(arg0), std::move(arg1), std::move(arg2), std::move(arg3));
+    auto arg4 = std::move(arguments.children[4]);
+    return OverfrontTspatialStboxLogicalFunction(std::move(arg0), std::move(arg1), std::move(arg2), std::move(arg3), std::move(arg4));
 }
 
 } // namespace NES

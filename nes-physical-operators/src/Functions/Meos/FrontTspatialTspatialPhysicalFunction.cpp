@@ -18,6 +18,7 @@
 #include <Functions/PhysicalFunction.hpp>
 #include <MEOSWrapper.hpp>
 #include <Nautilus/DataTypes/VarVal.hpp>
+#include <Nautilus/DataTypes/VariableSizedData.hpp>
 #include <Nautilus/Interface/Record.hpp>
 #include <PhysicalFunctionRegistry.hpp>
 #include <ErrorHandling.hpp>
@@ -38,20 +39,24 @@ namespace NES::PhysicalFunctionGeneratedRegistrar { PhysicalFunctionRegistryRetu
 
 namespace NES {
 
-FrontTspatialTspatialPhysicalFunction::FrontTspatialTspatialPhysicalFunction(PhysicalFunction lonAFunction,
-                                                          PhysicalFunction latAFunction,
-                                                          PhysicalFunction tsAFunction,
-                                                          PhysicalFunction lonBFunction,
-                                                          PhysicalFunction latBFunction,
-                                                          PhysicalFunction tsBFunction)
+FrontTspatialTspatialPhysicalFunction::FrontTspatialTspatialPhysicalFunction(PhysicalFunction lonFunction,
+                                                          PhysicalFunction latFunction,
+                                                          PhysicalFunction zFunction,
+                                                          PhysicalFunction tsFunction,
+                                                          PhysicalFunction lon2Function,
+                                                          PhysicalFunction lat2Function,
+                                                          PhysicalFunction z2Function,
+                                                          PhysicalFunction ts2Function)
 {
-    parameterFunctions.reserve(6);
-    parameterFunctions.push_back(std::move(lonAFunction));
-    parameterFunctions.push_back(std::move(latAFunction));
-    parameterFunctions.push_back(std::move(tsAFunction));
-    parameterFunctions.push_back(std::move(lonBFunction));
-    parameterFunctions.push_back(std::move(latBFunction));
-    parameterFunctions.push_back(std::move(tsBFunction));
+    parameterFunctions.reserve(8);
+    parameterFunctions.push_back(std::move(lonFunction));
+    parameterFunctions.push_back(std::move(latFunction));
+    parameterFunctions.push_back(std::move(zFunction));
+    parameterFunctions.push_back(std::move(tsFunction));
+    parameterFunctions.push_back(std::move(lon2Function));
+    parameterFunctions.push_back(std::move(lat2Function));
+    parameterFunctions.push_back(std::move(z2Function));
+    parameterFunctions.push_back(std::move(ts2Function));
 }
 
 VarVal FrontTspatialTspatialPhysicalFunction::execute(const Record& record, ArenaRef& arena) const
@@ -63,42 +68,46 @@ VarVal FrontTspatialTspatialPhysicalFunction::execute(const Record& record, Aren
         parameterValues.emplace_back(function.execute(record, arena));
     }
 
-    auto lonA = parameterValues[0].cast<nautilus::val<double>>();
-    auto latA = parameterValues[1].cast<nautilus::val<double>>();
-    auto tsA  = parameterValues[2].cast<nautilus::val<uint64_t>>();
-    auto lonB = parameterValues[3].cast<nautilus::val<double>>();
-    auto latB = parameterValues[4].cast<nautilus::val<double>>();
-    auto tsB  = parameterValues[5].cast<nautilus::val<uint64_t>>();
+    auto lon = parameterValues[0].cast<nautilus::val<double>>();
+    auto lat = parameterValues[1].cast<nautilus::val<double>>();
+    auto z = parameterValues[2].cast<nautilus::val<double>>();
+    auto ts = parameterValues[3].cast<nautilus::val<uint64_t>>();
+    auto lon2 = parameterValues[4].cast<nautilus::val<double>>();
+    auto lat2 = parameterValues[5].cast<nautilus::val<double>>();
+    auto z2 = parameterValues[6].cast<nautilus::val<double>>();
+    auto ts2 = parameterValues[7].cast<nautilus::val<uint64_t>>();
 
     const auto result = nautilus::invoke(
-        +[](double lonAValue, double latAValue, uint64_t tsAValue,
-            double lonBValue, double latBValue, uint64_t tsBValue) -> bool {
+        +[](double lon,
+            double lat,
+            double z,
+            uint64_t ts,
+            double lon2,
+            double lat2,
+            double z2,
+            uint64_t ts2) -> int {
             try
             {
                 MEOS::Meos::ensureMeosInitialized();
-                if (!(lonAValue >= -180.0 && lonAValue <= 180.0 && latAValue >= -90.0 && latAValue <= 90.0)) return 0;
-                if (!(lonBValue >= -180.0 && lonBValue <= 180.0 && latBValue >= -90.0 && latBValue <= 90.0)) return 0;
+                if (!(lon >= -180.0 && lon <= 180.0 && lat >= -90.0 && lat <= 90.0)) return 0;
+                std::string tempWkt = fmt::format("SRID=4326;Point({} {} {})@{}", lon, lat, z, MEOS::Meos::convertEpochToTimestamp(ts));
+                Temporal* temp = tgeompoint_in(tempWkt.c_str());
+                if (!temp) return 0;
+                std::string arg0tW = fmt::format("SRID=4326;Point({} {} {})@{}", lon2, lat2, z2, MEOS::Meos::convertEpochToTimestamp(ts2));
+                Temporal* arg0t = tgeompoint_in(arg0tW.c_str());
+                if (!arg0t) { free(temp); return 0; }
 
-                const std::string tsAString = MEOS::Meos::convertEpochToTimestamp(tsAValue);
-                const std::string tsBString = MEOS::Meos::convertEpochToTimestamp(tsBValue);
-                std::string temporalGeometryAWkt = fmt::format("SRID=4326;Point({} {})@{}", lonAValue, latAValue, tsAString);
-                std::string temporalGeometryBWkt = fmt::format("SRID=4326;Point({} {})@{}", lonBValue, latBValue, tsBString);
-
-                MEOS::Meos::TemporalGeometry temporalGeometryA(temporalGeometryAWkt);
-                if (!temporalGeometryA.getGeometry()) return 0;
-                MEOS::Meos::TemporalGeometry temporalGeometryB(temporalGeometryBWkt);
-                if (!temporalGeometryB.getGeometry()) return 0;
-
-                // MEOS *_tgeo_tgeo spatial-relation: int fn(const Temporal*, const Temporal*).
-                return front_tspatial_tspatial(temporalGeometryA.getGeometry(),
-                                   temporalGeometryB.getGeometry());
+                int r = front_tspatial_tspatial(temp, arg0t);
+                free(temp);
+                free(arg0t);
+                return r;
             }
             catch (const std::exception&)
             {
                 return 0;
             }
         },
-        lonA, latA, tsA, lonB, latB, tsB);
+        lon, lat, z, ts, lon2, lat2, z2, ts2);
 
     return VarVal(result);
 }
@@ -106,8 +115,8 @@ VarVal FrontTspatialTspatialPhysicalFunction::execute(const Record& record, Aren
 PhysicalFunctionRegistryReturnType PhysicalFunctionGeneratedRegistrar::RegisterFrontTspatialTspatialPhysicalFunction(
     PhysicalFunctionRegistryArguments arguments)
 {
-    PRECONDITION(arguments.childFunctions.size() == 6,
-                 "FrontTspatialTspatialPhysicalFunction requires 6 children but got {}",
+    PRECONDITION(arguments.childFunctions.size() == 8,
+                 "FrontTspatialTspatialPhysicalFunction requires 8 children but got {}",
                  arguments.childFunctions.size());
     auto arg0 = std::move(arguments.childFunctions[0]);
     auto arg1 = std::move(arguments.childFunctions[1]);
@@ -115,7 +124,9 @@ PhysicalFunctionRegistryReturnType PhysicalFunctionGeneratedRegistrar::RegisterF
     auto arg3 = std::move(arguments.childFunctions[3]);
     auto arg4 = std::move(arguments.childFunctions[4]);
     auto arg5 = std::move(arguments.childFunctions[5]);
-    return FrontTspatialTspatialPhysicalFunction(std::move(arg0), std::move(arg1), std::move(arg2), std::move(arg3), std::move(arg4), std::move(arg5));
+    auto arg6 = std::move(arguments.childFunctions[6]);
+    auto arg7 = std::move(arguments.childFunctions[7]);
+    return FrontTspatialTspatialPhysicalFunction(std::move(arg0), std::move(arg1), std::move(arg2), std::move(arg3), std::move(arg4), std::move(arg5), std::move(arg6), std::move(arg7));
 }
 
 } // namespace NES
