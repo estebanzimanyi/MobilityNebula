@@ -138,3 +138,4 @@ add_plugin(DistanceCbufferStbox PhysicalFunction nes-physical-operators Distance
 add_plugin(NadCbufferStbox PhysicalFunction nes-physical-operators NadCbufferStboxPhysicalFunction.cpp)
 add_plugin(CbufferMake PhysicalFunction nes-physical-operators CbufferMakePhysicalFunction.cpp)
 add_plugin(GeomToCbuffer PhysicalFunction nes-physical-operators GeomToCbufferPhysicalFunction.cpp)
+add_plugin(CbuffersetValues PhysicalFunction nes-physical-operators CbuffersetValuesPhysicalFunction.cpp)

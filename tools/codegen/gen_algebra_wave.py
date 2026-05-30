@@ -127,16 +127,29 @@ SETVAL_OPS = ("contains", "contained", "left", "right", "overleft", "overright",
 # value-array accessors: name -> (instant builder input_type, array_out spec,
 # instant value columns, row1 values, row2 values). The array-output assembler
 # loops the returned array + count and serializes a brace-list.
+def _setspec(elem, kind, **kw):
+    return dict(elem=elem, kind=kind, count_call="set_num_values", **kw)
 ARRAY_VALUES = {
-    "tfloat_values": ("tfloat", dict(elem="double", kind="num"), [("value", "FLOAT64")], ["5.5"], ["8.5"]),
-    "tint_values":   ("tint", dict(elem="int32_t", kind="num"), [("value", "INT32")], ["5"], ["8"]),
-    "tbool_values":  ("tbool", dict(elem="bool", kind="bool"), [("value", "BOOLEAN")], ["true"], ["false"]),
-    "tgeo_values":   ("tgeompoint", dict(elem="GSERIALIZED *", kind="ptr", out="geo_out", header="meos_geo.h"),
-                      [("lon", "FLOAT64"), ("lat", "FLOAT64")], ["1.0", "1.0"], ["2.0", "2.0"]),
-    "tpose_values":  ("tpose", dict(elem="Pose *", kind="ptr", out="pose_out", maxdd=True, header="meos_pose.h"),
-                      [("x", "FLOAT64"), ("y", "FLOAT64"), ("theta", "FLOAT64")], ["1.0", "1.0", "0.5"], ["2.0", "2.0", "1.0"]),
-    "ttext_values":  ("ttext", dict(elem="text *", kind="ptr", out="text_out", header="meos.h"),
-                      [("value", "VARSIZED")], ["ABC"], ["DEF"]),
+    # temporal value arrays: an instant builder primary + an int* count param.
+    "tfloat_values": dict(inp="tfloat", spec=dict(elem="double", kind="num"), icols=[("value", "FLOAT64")], ra=["5.5"], rb=["8.5"]),
+    "tint_values":   dict(inp="tint", spec=dict(elem="int32_t", kind="num"), icols=[("value", "INT32")], ra=["5"], rb=["8"]),
+    "tbool_values":  dict(inp="tbool", spec=dict(elem="bool", kind="bool"), icols=[("value", "BOOLEAN")], ra=["true"], rb=["false"]),
+    "tgeo_values":   dict(inp="tgeompoint", spec=dict(elem="GSERIALIZED *", kind="ptr", out="geo_out", header="meos_geo.h"),
+                          icols=[("lon", "FLOAT64"), ("lat", "FLOAT64")], ra=["1.0", "1.0"], rb=["2.0", "2.0"]),
+    "tpose_values":  dict(inp="tpose", spec=dict(elem="Pose *", kind="ptr", out="pose_out", maxdd=True, header="meos_pose.h"),
+                          icols=[("x", "FLOAT64"), ("y", "FLOAT64"), ("theta", "FLOAT64")], ra=["1.0", "1.0", "0.5"], rb=["2.0", "2.0", "1.0"]),
+    "ttext_values":  dict(inp="ttext", spec=dict(elem="text *", kind="ptr", out="text_out", header="meos.h"),
+                          icols=[("value", "VARSIZED")], ra=["ABC"], rb=["DEF"]),
+    # set value arrays: a Set text-literal primary; count via set_num_values.
+    "intset_values":     dict(inp="intset", spec=_setspec("int", "num"), lit=("{1, 3, 5}", "{2, 4}")),
+    "dateset_values":    dict(inp="dateset", spec=_setspec("DateADT", "num"), lit=("{2020-01-01, 2020-01-05}", "{2020-01-03, 2020-01-08}")),
+    "geoset_values":     dict(inp="geoset", spec=_setspec("GSERIALIZED *", "ptr", out="geo_out", header="meos_geo.h"), lit=('{"Point(1 1)", "Point(2 2)"}', '{"Point(3 3)", "Point(4 4)"}')),
+    "cbufferset_values": dict(inp="cbufferset", spec=_setspec("Cbuffer *", "ptr", out="cbuffer_out", maxdd=True, header="meos_cbuffer.h"), lit=('{"Cbuffer(Point(1 1),0.5)", "Cbuffer(Point(2 2),0.5)"}', '{"Cbuffer(Point(3 3),1.0)", "Cbuffer(Point(4 4),0.5)"}')),
+    "npointset_values":  dict(inp="npointset", spec=_setspec("Npoint *", "ptr", out="npoint_out", maxdd=True, header="meos_npoint.h"), lit=('{"Npoint(1,0.5)", "Npoint(2,0.5)"}', '{"Npoint(1,0.7)", "Npoint(3,0.5)"}')),
+    "poseset_values":    dict(inp="poseset", spec=_setspec("Pose *", "ptr", out="pose_out", maxdd=True, header="meos_pose.h"), lit=('{"Pose(Point(1 1),0.5)", "Pose(Point(2 2),1.0)"}', '{"Pose(Point(3 3),0.3)", "Pose(Point(4 4),0.5)"}')),
+    "textset_values":    dict(inp="textset", spec=_setspec("text *", "ptr", out="text_out", header="meos.h"), lit=('{"AAA", "BBB", "CCC"}', '{"BBB", "DDD"}')),
+    # temporal timestamps: TimestampTz* + count (µs-since-2000 ints, inline).
+    "temporal_timestamps": dict(inp="tfloat", spec=dict(elem="int64_t", kind="num"), icols=[("value", "FLOAT64")], ra=["5.5"], rb=["8.5"]),
 }
 SPAN_MAKE = {
     "intspan_make":    ("int_base", "INT32", "int32_t", "intspan_text", "1", "5", "2", "8"),
@@ -478,14 +491,17 @@ def classify(name, ret, plist):
     # ---- value arrays: T *f(Temporal, int *count) -> a brace-list of the
     #      distinct values, serialized by the array-output assembler. ----
     if name in ARRAY_VALUES:
-        in_type, aspec, icols, ra, rb = ARRAY_VALUES[name]
+        e = ARRAY_VALUES[name]
         entry = dict(nebula_name=camel(name), sql_token=name.upper(), meos_call=name,
-                     build_generic=True, input_type=in_type, return_kind="array_out",
-                     array_out=aspec, extra_args=[],
+                     build_generic=True, input_type=e["inp"], return_kind="array_out",
+                     array_out=e["spec"], extra_args=[],
                      comment_one_liner=f"{name} ({ret.strip()}) — array of values.")
-        cols = icols + [("ts", "UINT64")]
-        tmeta = dict(cols=cols, rows=[tuple(ra + ["1609459200"]), tuple(rb + ["1609545600"])],
-                     token=name.upper(), sink="VARSIZED")
+        if "lit" in e:                                  # Set text-literal primary (no ts)
+            cols, rows = [("a", "VARSIZED")], [(e["lit"][0],), (e["lit"][1],)]
+        else:                                           # temporal instant primary + ts
+            cols = e["icols"] + [("ts", "UINT64")]
+            rows = [tuple(e["ra"] + ["1609459200"]), tuple(e["rb"] + ["1609545600"])]
+        tmeta = dict(cols=cols, rows=rows, token=name.upper(), sink="VARSIZED")
         return entry, tmeta
     # ---- span_make(lower, upper, lower_inc, upper_inc) -> Span: a base-scalar
     #      primary (lower) + a same-type scalar (upper) + two bool flags. ----

@@ -231,6 +231,7 @@ cbuffer_to_stbox	proven
 cbufferset_end_value	proven
 cbufferset_start_value	proven
 cbufferset_value_n	proven
+cbufferset_values	proven
 contained_bigint_set	proven
 contained_bigint_span	proven
 contained_bigint_spanset	proven
@@ -316,6 +317,7 @@ dateset_end_value	proven
 dateset_shift_scale	proven
 dateset_start_value	proven
 dateset_value_n	proven
+dateset_values	proven
 datespan_duration	proven
 datespan_lower	proven
 datespan_make	proven
@@ -545,6 +547,7 @@ geom_unary_union	proven
 geoset_end_value	proven
 geoset_start_value	proven
 geoset_value_n	proven
+geoset_values	proven
 int_extent_transfn	proven
 int_timestamptz_to_tbox	proven
 int_to_set	proven
@@ -592,6 +595,7 @@ intset_end_value	proven
 intset_shift_scale	proven
 intset_start_value	proven
 intset_value_n	proven
+intset_values	proven
 intspan_lower	proven
 intspan_make	proven
 intspan_shift_scale	proven
@@ -742,6 +746,7 @@ npoint_to_stbox	proven
 npointset_end_value	proven
 npointset_start_value	proven
 npointset_value_n	proven
+npointset_values	proven
 nsegment_cmp	proven
 nsegment_eq	proven
 nsegment_ge	proven
@@ -926,6 +931,7 @@ pose_to_stbox	proven
 poseset_end_value	proven
 poseset_start_value	proven
 poseset_value_n	proven
+poseset_values	proven
 right_bigint_set	proven
 right_bigint_span	proven
 right_bigint_spanset	proven
@@ -1184,6 +1190,7 @@ temporal_num_timestamps	proven
 temporal_round	proven
 temporal_start_timestamptz	proven
 temporal_time	proven
+temporal_timestamps	proven
 temporal_to_tstzspan	proven
 temporal_upper_inc	proven
 teq_bool_tbool	proven
@@ -1208,6 +1215,7 @@ textcat_ttext_ttext	proven
 textset_end_value	proven
 textset_start_value	proven
 textset_value_n	proven
+textset_values	proven
 tfloat_at_value	proven
 tfloat_ceil	proven
 tfloat_degrees	proven

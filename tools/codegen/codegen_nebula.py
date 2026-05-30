@@ -3504,9 +3504,17 @@ def assemble_generic_varsized_output(op):
             md = ", 15" if array_out.get("maxdd") else ""
             app = (f'char* _e = {array_out["out"]}(arr[_i]{md}); '
                    f'if (_e) {{ _s += _e; free(_e); }} free(arr[_i]);')
+        # most array ops write the length to an int* count out-param; a few
+        # (the *set_values family) return a bare array whose length comes from a
+        # separate count_call (set_num_values) on the operand.
+        if array_out.get("count_call"):
+            cnt_decl = (f"                int _cnt = {array_out['count_call']}(temp);\n"
+                        f"                {elem}* arr = ({elem}*) {op['meos_call']}({callargs});\n")
+        else:
+            cnt_decl = (f"                int _cnt = 0;\n"
+                        f"                {elem}* arr = ({elem}*) {op['meos_call']}({callargs}, &_cnt);\n")
         call_marshal = (
-            f"                int _cnt = 0;\n"
-            f"                {elem}* arr = ({elem}*) {op['meos_call']}({callargs}, &_cnt);\n"
+            f"{cnt_decl}"
             f"{free_primary}"
             f"{bf}"
             f"                if (!arr || _cnt <= 0) return (char*) nullptr;\n"
