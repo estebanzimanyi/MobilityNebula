@@ -126,6 +126,7 @@
 #include <Operators/Windows/Aggregations/Meos/TgeoConvexHullAggregationLogicalFunction.hpp>
 #include <Operators/Windows/Aggregations/Meos/TpointTwcentroidAggregationLogicalFunction.hpp>
 #include <Operators/Windows/Aggregations/Meos/DateExtentTransfnAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/DateUnionTransfnAggregationLogicalFunction.hpp>
 #include <Functions/Meos/TemporalIntersectsGeometryLogicalFunction.hpp>
 #include <Functions/Meos/AintersectsTgeoGeoLogicalFunction.hpp>
 #include <Functions/Meos/EdwithinTgeoGeoLogicalFunction.hpp>
@@ -48127,6 +48128,31 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             }
             break;
         /* END CODEGEN AGGREGATION GLUE: DATE_EXTENT_TRANSFN (case-switch) */
+        /* BEGIN CODEGEN AGGREGATION GLUE: DATE_UNION_TRANSFN (case-switch) */
+        case AntlrSQLLexer::DATE_UNION_TRANSFN:
+            // Windowed DATE_UNION_TRANSFN — DateADT values unioned into a DATESET via date_union_transfn.
+            if (helpers.top().functionBuilder.size() != 2) {
+                throw InvalidQuerySyntax("DATE_UNION_TRANSFN requires exactly two arguments (value, timestamp), but got {}", helpers.top().functionBuilder.size());
+            }
+            {
+                const auto timestampFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto valueFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+
+                if (!valueFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
+                    throw InvalidQuerySyntax("DATE_UNION_TRANSFN arguments must be field references");
+                }
+
+                helpers.top().windowAggs.push_back(
+                    DateUnionTransfnAggregationLogicalFunction::create(valueFunction.get<FieldAccessLogicalFunction>(),
+                                                                    timestampFunction.get<FieldAccessLogicalFunction>()));
+                helpers.top().functionBuilder.push_back(valueFunction);
+            }
+            break;
+        /* END CODEGEN AGGREGATION GLUE: DATE_UNION_TRANSFN (case-switch) */
+
 
 
 
@@ -49118,6 +49144,21 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
                 helpers.top().windowAggs.push_back(DateExtentTransfnAggregationLogicalFunction::create(value, ts));
             }
             /* END CODEGEN AGGREGATION GLUE: DATE_EXTENT_TRANSFN (funcName chain) */
+            /* BEGIN CODEGEN AGGREGATION GLUE: DATE_UNION_TRANSFN (funcName chain) */
+            else if (funcName == "DATE_UNION_TRANSFN")
+            {
+                if (helpers.top().functionBuilder.size() < 2)
+                {
+                    throw InvalidQuerySyntax("DATE_UNION_TRANSFN requires two arguments at {}", context->getText());
+                }
+                const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto value = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                helpers.top().windowAggs.push_back(DateUnionTransfnAggregationLogicalFunction::create(value, ts));
+            }
+            /* END CODEGEN AGGREGATION GLUE: DATE_UNION_TRANSFN (funcName chain) */
+
 
 
 

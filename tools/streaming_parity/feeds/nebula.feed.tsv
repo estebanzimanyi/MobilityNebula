@@ -323,6 +323,7 @@ date_get_bin	proven
 date_to_set	proven
 date_to_span	proven
 date_to_spanset	proven
+date_union_transfn	proven
 dateset_end_value	proven
 dateset_shift_scale	proven
 dateset_start_value	proven
