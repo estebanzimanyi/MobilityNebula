@@ -1440,3 +1440,8 @@ add_plugin(NpointsetValues LogicalFunction nes-logical-operators NpointsetValues
 add_plugin(PosesetValues LogicalFunction nes-logical-operators PosesetValuesLogicalFunction.cpp)
 add_plugin(TextsetValues LogicalFunction nes-logical-operators TextsetValuesLogicalFunction.cpp)
 add_plugin(TemporalTimestamps LogicalFunction nes-logical-operators TemporalTimestampsLogicalFunction.cpp)
+add_plugin(FloatsetValues LogicalFunction nes-logical-operators FloatsetValuesLogicalFunction.cpp)
+add_plugin(BigintsetValues LogicalFunction nes-logical-operators BigintsetValuesLogicalFunction.cpp)
+add_plugin(TstzsetValues LogicalFunction nes-logical-operators TstzsetValuesLogicalFunction.cpp)
+add_plugin(TemporalSpans LogicalFunction nes-logical-operators TemporalSpansLogicalFunction.cpp)
+add_plugin(TemporalInstants LogicalFunction nes-logical-operators TemporalInstantsLogicalFunction.cpp)

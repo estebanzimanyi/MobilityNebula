@@ -1143,3 +1143,8 @@ add_plugin(DatesetValues PhysicalFunction nes-physical-operators DatesetValuesPh
 add_plugin(GeosetValues PhysicalFunction nes-physical-operators GeosetValuesPhysicalFunction.cpp)
 add_plugin(TextsetValues PhysicalFunction nes-physical-operators TextsetValuesPhysicalFunction.cpp)
 add_plugin(TemporalTimestamps PhysicalFunction nes-physical-operators TemporalTimestampsPhysicalFunction.cpp)
+add_plugin(FloatsetValues PhysicalFunction nes-physical-operators FloatsetValuesPhysicalFunction.cpp)
+add_plugin(BigintsetValues PhysicalFunction nes-physical-operators BigintsetValuesPhysicalFunction.cpp)
+add_plugin(TstzsetValues PhysicalFunction nes-physical-operators TstzsetValuesPhysicalFunction.cpp)
+add_plugin(TemporalSpans PhysicalFunction nes-physical-operators TemporalSpansPhysicalFunction.cpp)
+add_plugin(TemporalInstants PhysicalFunction nes-physical-operators TemporalInstantsPhysicalFunction.cpp)

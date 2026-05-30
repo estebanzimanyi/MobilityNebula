@@ -3156,6 +3156,24 @@ GENERIC_INPUTS = {
         '                if (!{var}) return {z};\n')),
     # A tstzspan primary (the timestamp-span expand operand) parsed from a text
     # literal via tstzspan_in — sibling of the intspan/datespan primaries.
+    "floatset": dict(fields=[("lit", "VariableSizedData")], header="meos.h", build=(
+        '                std::string {var}S(litPtr, litSize);\n'
+        '                while (!{var}S.empty() && ({var}S.front()==\'\\\'\' || {var}S.front()==\'"\')) {var}S.erase({var}S.begin());\n'
+        '                while (!{var}S.empty() && ({var}S.back()==\'\\\'\' || {var}S.back()==\'"\')) {var}S.pop_back();\n'
+        '                Set* {var} = floatset_in({var}S.c_str());\n'
+        '                if (!{var}) return {z};\n')),
+    "bigintset": dict(fields=[("lit", "VariableSizedData")], header="meos.h", build=(
+        '                std::string {var}S(litPtr, litSize);\n'
+        '                while (!{var}S.empty() && ({var}S.front()==\'\\\'\' || {var}S.front()==\'"\')) {var}S.erase({var}S.begin());\n'
+        '                while (!{var}S.empty() && ({var}S.back()==\'\\\'\' || {var}S.back()==\'"\')) {var}S.pop_back();\n'
+        '                Set* {var} = bigintset_in({var}S.c_str());\n'
+        '                if (!{var}) return {z};\n')),
+    "tstzset": dict(fields=[("lit", "VariableSizedData")], header="meos.h", build=(
+        '                std::string {var}S(litPtr, litSize);\n'
+        '                while (!{var}S.empty() && ({var}S.front()==\'\\\'\' || {var}S.front()==\'"\')) {var}S.erase({var}S.begin());\n'
+        '                while (!{var}S.empty() && ({var}S.back()==\'\\\'\' || {var}S.back()==\'"\')) {var}S.pop_back();\n'
+        '                Set* {var} = tstzset_in({var}S.c_str());\n'
+        '                if (!{var}) return {z};\n')),
     "tstzspan": dict(fields=[("lit", "VariableSizedData")], header="meos.h", build=(
         '                std::string {var}S(litPtr, litSize);\n'
         '                while (!{var}S.empty() && ({var}S.front()==\'\\\'\' || {var}S.front()==\'"\')) {var}S.erase({var}S.begin());\n'
@@ -3496,13 +3514,16 @@ def assemble_generic_varsized_output(op):
         # array, and return the joined string (freed after the arena copy).
         elem = array_out["elem"]
         kind = array_out["kind"]
+        md = ", 15" if array_out.get("maxdd") else ""
         if kind == "num":
             app = "_s += std::to_string(arr[_i]);"
         elif kind == "bool":
             app = '_s += (arr[_i] ? "t" : "f");'
-        else:  # ptr: heap element serialized via *_out and freed
-            md = ", 15" if array_out.get("maxdd") else ""
-            app = (f'char* _e = {array_out["out"]}(arr[_i]{md}); '
+        elif kind == "span_val":  # array of structs: serialize the element ADDRESS, no per-elem free
+            app = f'char* _e = {array_out["out"]}(&arr[_i]{md}); if (_e) {{ _s += _e; free(_e); }}'
+        else:  # ptr: heap element serialized via *_out (optionally cast) and freed
+            cast = f'({array_out["cast"]}) ' if array_out.get("cast") else ""
+            app = (f'char* _e = {array_out["out"]}({cast}arr[_i]{md}); '
                    f'if (_e) {{ _s += _e; free(_e); }} free(arr[_i]);')
         # most array ops write the length to an int* count out-param; a few
         # (the *set_values family) return a bare array whose length comes from a

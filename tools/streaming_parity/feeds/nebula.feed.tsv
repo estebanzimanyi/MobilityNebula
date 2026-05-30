@@ -201,6 +201,7 @@ bigintset_end_value	proven
 bigintset_shift_scale	proven
 bigintset_start_value	proven
 bigintset_value_n	proven
+bigintset_values	proven
 bigintspan_lower	proven
 bigintspan_make	proven
 bigintspan_shift_scale	proven
@@ -493,6 +494,7 @@ floatset_end_value	proven
 floatset_shift_scale	proven
 floatset_start_value	proven
 floatset_value_n	proven
+floatset_values	proven
 floatspan_lower	proven
 floatspan_make	proven
 floatspan_round	proven
@@ -1173,6 +1175,7 @@ temporal_ge	proven
 temporal_gt	proven
 temporal_hash	proven
 temporal_hausdorff_distance	proven
+temporal_instants	proven
 temporal_le	proven
 temporal_lower_inc	proven
 temporal_lt	proven
@@ -1188,6 +1191,7 @@ temporal_num_instants	proven
 temporal_num_sequences	wired
 temporal_num_timestamps	proven
 temporal_round	proven
+temporal_spans	wired
 temporal_start_timestamptz	proven
 temporal_time	proven
 temporal_timestamps	proven
@@ -1380,6 +1384,7 @@ tstzset_shift_scale	proven
 tstzset_start_value	proven
 tstzset_to_stbox	proven
 tstzset_value_n	proven
+tstzset_values	proven
 tstzspan_duration	proven
 tstzspan_expand	proven
 tstzspan_lower	proven

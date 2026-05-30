@@ -148,8 +148,15 @@ ARRAY_VALUES = {
     "npointset_values":  dict(inp="npointset", spec=_setspec("Npoint *", "ptr", out="npoint_out", maxdd=True, header="meos_npoint.h"), lit=('{"Npoint(1,0.5)", "Npoint(2,0.5)"}', '{"Npoint(1,0.7)", "Npoint(3,0.5)"}')),
     "poseset_values":    dict(inp="poseset", spec=_setspec("Pose *", "ptr", out="pose_out", maxdd=True, header="meos_pose.h"), lit=('{"Pose(Point(1 1),0.5)", "Pose(Point(2 2),1.0)"}', '{"Pose(Point(3 3),0.3)", "Pose(Point(4 4),0.5)"}')),
     "textset_values":    dict(inp="textset", spec=_setspec("text *", "ptr", out="text_out", header="meos.h"), lit=('{"AAA", "BBB", "CCC"}', '{"BBB", "DDD"}')),
+    "floatset_values":   dict(inp="floatset", spec=_setspec("double", "num"), lit=("{1.5, 3.5, 5.5}", "{2.5, 4.5}")),
+    "bigintset_values":  dict(inp="bigintset", spec=_setspec("int64_t", "num"), lit=("{1, 3, 5}", "{2, 4}")),
+    "tstzset_values":    dict(inp="tstzset", spec=_setspec("int64_t", "num"), lit=("{2020-01-01, 2020-01-05}", "{2020-01-03, 2020-01-08}")),
     # temporal timestamps: TimestampTz* + count (µs-since-2000 ints, inline).
     "temporal_timestamps": dict(inp="tfloat", spec=dict(elem="int64_t", kind="num"), icols=[("value", "FLOAT64")], ra=["5.5"], rb=["8.5"]),
+    # temporal spans: a Span* array of structs (tfloat -> floatspan); count param.
+    "temporal_spans":  dict(inp="tfloat", spec=dict(elem="Span", kind="span_val", out="floatspan_out", maxdd=True), icols=[("value", "FLOAT64")], ra=["5.5"], rb=["8.5"]),
+    # temporal instants: a TInstant** array (tfloat -> tfloat_out via Temporal* cast).
+    "temporal_instants": dict(inp="tfloat", spec=dict(elem="TInstant *", kind="ptr", out="tfloat_out", maxdd=True, cast="Temporal *"), icols=[("value", "FLOAT64")], ra=["5.5"], rb=["8.5"]),
 }
 SPAN_MAKE = {
     "intspan_make":    ("int_base", "INT32", "int32_t", "intspan_text", "1", "5", "2", "8"),
