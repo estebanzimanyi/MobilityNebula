@@ -527,6 +527,23 @@ TWO_TEMPORAL["tgeompoint3d"] = dict(
     t2_build=('                std::string {var}W = fmt::format("SRID=4326;Point({{}} {{}} {{}})@{{}}", lon2, lat2, z2, MEOS::Meos::convertEpochToTimestamp(ts2));\n'
               '                Temporal* {var} = tgeompoint_in({var}W.c_str());\n'
               '                if (!{var}) {{ free(temp); return {z}; }}\n'))
+# two-trgeometry: both operands built via geo_tpose_to_trgeometry(polygon, pose).
+TWO_TEMPORAL["trgeometry"] = dict(
+    input_type="trgeometry",
+    make_cols=[("x", "FLOAT64"), ("y", "FLOAT64"), ("theta", "FLOAT64"), ("ts", "UINT64"),
+               ("x2", "FLOAT64"), ("y2", "FLOAT64"), ("theta2", "FLOAT64"), ("ts2", "UINT64")],
+    rows=[("0.0", "0.0", "0.0", "1609459200", "1.0", "1.0", "0.5", "1609459200"),
+          ("1.0", "1.0", "0.5", "1609545600", "2.0", "2.0", "1.0", "1609545600")],
+    t2_fields=[("x2", "double"), ("y2", "double"), ("theta2", "double"), ("ts2", "uint64_t")],
+    header="meos_rgeo.h",
+    t2_build=('                GSERIALIZED* {var}g = geom_in("Polygon((0 0,1 0,1 1,0 1,0 0))", -1);\n'
+              '                if (!{var}g) {{ free(temp); return {z}; }}\n'
+              '                std::string {var}pw = fmt::format("Pose(Point({{}} {{}}),{{}})@{{}}", x2, y2, theta2, MEOS::Meos::convertEpochToTimestamp(ts2));\n'
+              '                Temporal* {var}tp = tpose_in({var}pw.c_str());\n'
+              '                if (!{var}tp) {{ free({var}g); free(temp); return {z}; }}\n'
+              '                Temporal* {var} = geo_tpose_to_trgeometry({var}g, {var}tp);\n'
+              '                free({var}g); free({var}tp);\n'
+              '                if (!{var}) {{ free(temp); return {z}; }}\n'))
 # base operand -> (extra-arg builder tag, column SQL, sample a, sample b). The tag
 # is "scalar" (bool source field), "text" (text* via text_in), or a *_in parser.
 ALWAYS_BASE = {
@@ -581,6 +598,13 @@ def subtype_of(name):
     return None
 
 
+TEMPORAL_TO_TEMPORAL = {
+    "tgeompoint_to_tgeometry": ("tgeompoint", "tspatial_text"),
+    "trgeometry_to_tpose": ("trgeometry", "tspatial_text"),
+    "trgeometry_to_tpoint": ("trgeometry", "tspatial_text"),
+    "trgeometry_to_tinstant": ("trgeometry", "tspatial_text"),
+    "trgeometry_rotation": ("trgeometry", "tfloat_out"),
+}
 SET_UNARY = {
     # element-wise set transforms + set/spanset conversions -> a new Set, via *set_out.
     "floatset_ceil": ("floatset", "floatset_text"), "floatset_floor": ("floatset", "floatset_text"),
@@ -725,15 +749,24 @@ def classify(name, ret, plist):
         tmeta = dict(cols=[("a", "VARSIZED")], rows=[(l0,), (l1,)],
                      token=name.upper(), sink="VARSIZED")
         return entry, tmeta
-    # ---- temporal -> temporal conversion (tgeompoint_to_tgeometry): a spatial
-    #      temporal instant -> the converted temporal via tspatial_as_text. ----
-    if len(plist) == 1 and rbase == "Temporal" and name == "tgeompoint_to_tgeometry":
+    # ---- spatial temporal -> temporal (tgeompoint_to_tgeometry, trgeometry_to_
+    #      tpose/tpoint/tinstant, trgeometry_rotation): a spatial temporal instant
+    #      -> a temporal, serialized via tspatial_as_text (or tfloat_out for the
+    #      scalar rotation track). ----
+    if len(plist) == 1 and rbase in ("Temporal", "TInstant") and name in TEMPORAL_TO_TEMPORAL:
+        in_type, rkind = TEMPORAL_TO_TEMPORAL[name]
+        if in_type == "tgeompoint":
+            cols = [("lon", "FLOAT64"), ("lat", "FLOAT64"), ("ts", "UINT64")]
+            rows = [("1.0", "1.0", "1609459200"), ("2.0", "2.0", "1609545600")]
+        else:                                            # trgeometry (x, y, theta, ts)
+            tcols = ALWAYS_TINPUT[in_type]
+            cols = [(c, s) for c, s, _, _ in tcols] + [("ts", "UINT64")]
+            rows = [tuple([a for _, _, a, _ in tcols] + ["1609459200"]),
+                    tuple([b for _, _, _, b in tcols] + ["1609545600"])]
         entry = dict(nebula_name=camel(name), sql_token=name.upper(), meos_call=name,
-                     build_generic=True, input_type="tgeompoint", return_kind="tspatial_text",
+                     build_generic=True, input_type=in_type, return_kind=rkind,
                      extra_args=[], comment_one_liner=f"{name} ({ret.strip()}) — temporal conversion.")
-        tmeta = dict(cols=[("lon", "FLOAT64"), ("lat", "FLOAT64"), ("ts", "UINT64")],
-                     rows=[("1.0", "1.0", "1609459200"), ("2.0", "2.0", "1609545600")],
-                     token=name.upper(), sink="VARSIZED")
+        tmeta = dict(cols=cols, rows=rows, token=name.upper(), sink="VARSIZED")
         return entry, tmeta
     # ---- geog_dwithin(g1, g2, tolerance, use_spheroid) -> bool: two geographies
     #      + a distance + a spheroid flag (passed false). ----
@@ -1318,7 +1351,7 @@ def classify(name, ret, plist):
     toks = name.split("_")
     if (toks[0] in ("nai", "shortestline", "nad") and len(plist) == 2
             and plist[0] == ("Temporal", True)):
-        tsub = next((t for t in ("tgeo", "tcbuffer", "tnpoint", "tpose") if t in toks), None)
+        tsub = next((t for t in ("tgeo", "tcbuffer", "tnpoint", "tpose", "trgeometry") if t in toks), None)
         if tsub is None:
             return None, f"{toks[0]} temporal subtype unsupported"
         if rbase == "double":
@@ -1394,7 +1427,7 @@ def classify(name, ret, plist):
     if (ret.replace("*", "").strip() == "Temporal" and len(plist) == 2
             and all(b == "Temporal" for b, p in plist)):
         toks = name.split("_")
-        sub = ("tgeompoint" if "tgeo" in toks else "tcbuffer" if "tcbuffer" in toks
+        sub = ("trgeometry" if "trgeometry" in toks else "tgeompoint" if "tgeo" in toks else "tcbuffer" if "tcbuffer" in toks
                else "ttext" if "ttext" in toks else "tint")
         if sub in TWO_TEMPORAL:
             pref = toks[0]

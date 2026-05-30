@@ -1638,6 +1638,13 @@
 #include <Functions/Meos/TrgeometryEndValueLogicalFunction.hpp>
 #include <Functions/Meos/TrgeometryGeomLogicalFunction.hpp>
 #include <Functions/Meos/TrgeometryStartValueLogicalFunction.hpp>
+#include <Functions/Meos/NadTrgeometryTrgeometryLogicalFunction.hpp>
+#include <Functions/Meos/NaiTrgeometryTrgeometryLogicalFunction.hpp>
+#include <Functions/Meos/ShortestlineTrgeometryTrgeometryLogicalFunction.hpp>
+#include <Functions/Meos/TrgeometryRotationLogicalFunction.hpp>
+#include <Functions/Meos/TrgeometryToTinstantLogicalFunction.hpp>
+#include <Functions/Meos/TrgeometryToTpointLogicalFunction.hpp>
+#include <Functions/Meos/TrgeometryToTposeLogicalFunction.hpp>
 #include <Plans/LogicalPlan.hpp>
 #include <Plans/LogicalPlanBuilder.hpp>
 #include <Util/Overloaded.hpp>
@@ -45918,6 +45925,235 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TRGEOMETRY_START_VALUE */
+        /* BEGIN CODEGEN PARSER GLUE: NAD_TRGEOMETRY_TRGEOMETRY */
+        case AntlrSQLLexer::NAD_TRGEOMETRY_TRGEOMETRY:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 8)
+                throw InvalidQuerySyntax("NAD_TRGEOMETRY_TRGEOMETRY requires exactly 8 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a7 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a6 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a5 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a4 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a3 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(NadTrgeometryTrgeometryLogicalFunction(a0, a1, a2, a3, a4, a5, a6, a7));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: NAD_TRGEOMETRY_TRGEOMETRY */
+
+        /* BEGIN CODEGEN PARSER GLUE: NAI_TRGEOMETRY_TRGEOMETRY */
+        case AntlrSQLLexer::NAI_TRGEOMETRY_TRGEOMETRY:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 8)
+                throw InvalidQuerySyntax("NAI_TRGEOMETRY_TRGEOMETRY requires exactly 8 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a7 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a6 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a5 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a4 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a3 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(NaiTrgeometryTrgeometryLogicalFunction(a0, a1, a2, a3, a4, a5, a6, a7));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: NAI_TRGEOMETRY_TRGEOMETRY */
+
+        /* BEGIN CODEGEN PARSER GLUE: SHORTESTLINE_TRGEOMETRY_TRGEOMETRY */
+        case AntlrSQLLexer::SHORTESTLINE_TRGEOMETRY_TRGEOMETRY:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 8)
+                throw InvalidQuerySyntax("SHORTESTLINE_TRGEOMETRY_TRGEOMETRY requires exactly 8 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a7 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a6 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a5 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a4 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a3 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(ShortestlineTrgeometryTrgeometryLogicalFunction(a0, a1, a2, a3, a4, a5, a6, a7));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: SHORTESTLINE_TRGEOMETRY_TRGEOMETRY */
+
+        /* BEGIN CODEGEN PARSER GLUE: TRGEOMETRY_ROTATION */
+        case AntlrSQLLexer::TRGEOMETRY_ROTATION:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 4)
+                throw InvalidQuerySyntax("TRGEOMETRY_ROTATION requires exactly 4 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a3 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(TrgeometryRotationLogicalFunction(a0, a1, a2, a3));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: TRGEOMETRY_ROTATION */
+
+        /* BEGIN CODEGEN PARSER GLUE: TRGEOMETRY_TO_TINSTANT */
+        case AntlrSQLLexer::TRGEOMETRY_TO_TINSTANT:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 4)
+                throw InvalidQuerySyntax("TRGEOMETRY_TO_TINSTANT requires exactly 4 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a3 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(TrgeometryToTinstantLogicalFunction(a0, a1, a2, a3));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: TRGEOMETRY_TO_TINSTANT */
+
+        /* BEGIN CODEGEN PARSER GLUE: TRGEOMETRY_TO_TPOINT */
+        case AntlrSQLLexer::TRGEOMETRY_TO_TPOINT:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 4)
+                throw InvalidQuerySyntax("TRGEOMETRY_TO_TPOINT requires exactly 4 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a3 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(TrgeometryToTpointLogicalFunction(a0, a1, a2, a3));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: TRGEOMETRY_TO_TPOINT */
+
+        /* BEGIN CODEGEN PARSER GLUE: TRGEOMETRY_TO_TPOSE */
+        case AntlrSQLLexer::TRGEOMETRY_TO_TPOSE:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 4)
+                throw InvalidQuerySyntax("TRGEOMETRY_TO_TPOSE requires exactly 4 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a3 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(TrgeometryToTposeLogicalFunction(a0, a1, a2, a3));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: TRGEOMETRY_TO_TPOSE */
+
 
 
 
