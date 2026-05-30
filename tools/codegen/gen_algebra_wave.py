@@ -635,6 +635,14 @@ DEGREES_UNARY = {
 # scalar float math: double f(double [, bool normalize | double arg2]) -> double.
 # Primary is a plain double field (float_base); extras are constant flags / a
 # second double. ln/log10 need a strictly positive operand.
+OBJECT_TO_SET = {
+    # object f(Object) -> a singleton Set, serialized via the family *set_out.
+    "cbuffer_to_set": ("cbuffer", "cbufferset_text", "Cbuffer(Point(1 1),1.0)", "Cbuffer(Point(2 2),0.5)"),
+    "npoint_to_set": ("npoint", "npointset_text", "NPoint(1, 0.5)", "NPoint(1, 0.7)"),
+    "pose_to_set": ("pose", "poseset_text", "Pose(Point(1 1), 0.5)", "Pose(Point(2 2), 1.0)"),
+    "geo_to_set": ("geom", "geoset_text", "SRID=4326;Point(1 1)", "SRID=4326;Point(2 2)"),
+}
+
 SPAN_EXPAND = {
     # *span_expand(Span, value) -> Span: a span primary + a same-domain scalar
     # delta that widens both bounds.
@@ -675,6 +683,14 @@ def classify(name, ret, plist):
         l0, l1 = LITERALS[in_type]
         tmeta = dict(cols=[("a", "VARSIZED"), ("norm", "BOOLEAN")],
                      rows=[(l0, "false"), (l1, "false")], token=name.upper(), sink="VARSIZED")
+        return entry, tmeta
+    # ---- object_to_set(Object) -> Set: an object primary -> a singleton set. ----
+    if name in OBJECT_TO_SET:
+        in_type, rkind, l0, l1 = OBJECT_TO_SET[name]
+        entry = dict(nebula_name=camel(name), sql_token=name.upper(), meos_call=name,
+                     build_generic=True, input_type=in_type, return_kind=rkind,
+                     extra_args=[], comment_one_liner=f"{name} ({ret.strip()}) — object -> singleton set.")
+        tmeta = dict(cols=[("a", "VARSIZED")], rows=[(l0,), (l1,)], token=name.upper(), sink="VARSIZED")
         return entry, tmeta
     # ---- *span_expand(Span, value) -> Span: span primary + a scalar delta. ----
     if name in SPAN_EXPAND:

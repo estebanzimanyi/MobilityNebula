@@ -87,3 +87,4 @@ add_plugin(TnpointMinusNpoint PhysicalFunction nes-physical-operators TnpointMin
 add_plugin(TnpointinstMake PhysicalFunction nes-physical-operators TnpointinstMakePhysicalFunction.cpp)
 add_plugin(NpointMake PhysicalFunction nes-physical-operators NpointMakePhysicalFunction.cpp)
 add_plugin(NpointsetValues PhysicalFunction nes-physical-operators NpointsetValuesPhysicalFunction.cpp)
+add_plugin(NpointToSet PhysicalFunction nes-physical-operators NpointToSetPhysicalFunction.cpp)

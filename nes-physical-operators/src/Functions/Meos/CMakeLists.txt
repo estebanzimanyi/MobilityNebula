@@ -1233,3 +1233,4 @@ add_plugin(FloatAngularDifference PhysicalFunction nes-physical-operators FloatA
 add_plugin(IntspanExpand PhysicalFunction nes-physical-operators IntspanExpandPhysicalFunction.cpp)
 add_plugin(BigintspanExpand PhysicalFunction nes-physical-operators BigintspanExpandPhysicalFunction.cpp)
 add_plugin(FloatspanExpand PhysicalFunction nes-physical-operators FloatspanExpandPhysicalFunction.cpp)
+add_plugin(GeoToSet PhysicalFunction nes-physical-operators GeoToSetPhysicalFunction.cpp)

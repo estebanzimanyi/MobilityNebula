@@ -238,6 +238,7 @@ cbuffer_round	proven
 cbuffer_same	proven
 cbuffer_srid	proven
 cbuffer_to_geom	proven
+cbuffer_to_set	proven
 cbuffer_to_stbox	proven
 cbufferset_end_value	proven
 cbufferset_start_value	proven
@@ -569,6 +570,7 @@ geo_same	proven
 geo_split_each_n_stboxes	proven
 geo_split_n_stboxes	proven
 geo_srid	proven
+geo_to_set	proven
 geo_tpose_to_trgeometry	proven
 geog_dwithin	proven
 geog_to_geom	proven
@@ -800,6 +802,7 @@ npoint_route	proven
 npoint_same	proven
 npoint_srid	proven
 npoint_to_geompoint	proven
+npoint_to_set	proven
 npoint_to_stbox	proven
 npointset_end_value	proven
 npointset_start_value	proven
@@ -985,6 +988,7 @@ pose_round	proven
 pose_same	proven
 pose_srid	proven
 pose_to_point	proven
+pose_to_set	proven
 pose_to_stbox	proven
 poseset_end_value	proven
 poseset_start_value	proven

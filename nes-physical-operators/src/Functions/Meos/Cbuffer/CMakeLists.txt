@@ -142,3 +142,4 @@ add_plugin(CbuffersetValues PhysicalFunction nes-physical-operators CbuffersetVa
 add_plugin(TdwithinTcbufferCbuffer PhysicalFunction nes-physical-operators TdwithinTcbufferCbufferPhysicalFunction.cpp)
 add_plugin(TdwithinTcbufferGeo PhysicalFunction nes-physical-operators TdwithinTcbufferGeoPhysicalFunction.cpp)
 add_plugin(TdwithinTcbufferTcbuffer PhysicalFunction nes-physical-operators TdwithinTcbufferTcbufferPhysicalFunction.cpp)
+add_plugin(CbufferToSet PhysicalFunction nes-physical-operators CbufferToSetPhysicalFunction.cpp)

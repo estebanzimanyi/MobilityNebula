@@ -87,3 +87,4 @@ add_plugin(PoseMake2d PhysicalFunction nes-physical-operators PoseMake2dPhysical
 add_plugin(PoseMakePoint2d PhysicalFunction nes-physical-operators PoseMakePoint2dPhysicalFunction.cpp)
 add_plugin(TposeValues PhysicalFunction nes-physical-operators TposeValuesPhysicalFunction.cpp)
 add_plugin(PosesetValues PhysicalFunction nes-physical-operators PosesetValuesPhysicalFunction.cpp)
+add_plugin(PoseToSet PhysicalFunction nes-physical-operators PoseToSetPhysicalFunction.cpp)
