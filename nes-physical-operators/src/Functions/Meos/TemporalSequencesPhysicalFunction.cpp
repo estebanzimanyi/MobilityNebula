@@ -13,7 +13,7 @@
     limitations under the License.
 */
 
-#include <Functions/Meos/TboxMakePhysicalFunction.hpp>
+#include <Functions/Meos/TemporalSequencesPhysicalFunction.hpp>
 
 #include <Functions/PhysicalFunction.hpp>
 #include <MEOSWrapper.hpp>
@@ -32,22 +32,23 @@
 
 extern "C" {
 #include <meos.h>
+#include <meos_geo.h>
 }
 
 /* Decoupled from the regenerated plugin registrar (see PhysicalFunctionRegistry.hpp): only the registry types are pulled in, and this operator declares its own Register function. */
-namespace NES::PhysicalFunctionGeneratedRegistrar { PhysicalFunctionRegistryReturnType RegisterTboxMakePhysicalFunction(PhysicalFunctionRegistryArguments); }
+namespace NES::PhysicalFunctionGeneratedRegistrar { PhysicalFunctionRegistryReturnType RegisterTemporalSequencesPhysicalFunction(PhysicalFunctionRegistryArguments); }
 
 namespace NES {
 
-TboxMakePhysicalFunction::TboxMakePhysicalFunction(PhysicalFunction litFunction,
-                                                          PhysicalFunction arg0Function)
+TemporalSequencesPhysicalFunction::TemporalSequencesPhysicalFunction(PhysicalFunction valueFunction,
+                                                          PhysicalFunction tsFunction)
 {
     parameterFunctions.reserve(2);
-    parameterFunctions.push_back(std::move(litFunction));
-    parameterFunctions.push_back(std::move(arg0Function));
+    parameterFunctions.push_back(std::move(valueFunction));
+    parameterFunctions.push_back(std::move(tsFunction));
 }
 
-VarVal TboxMakePhysicalFunction::execute(const Record& record, ArenaRef& arena) const
+VarVal TemporalSequencesPhysicalFunction::execute(const Record& record, ArenaRef& arena) const
 {
     std::vector<VarVal> parameterValues;
     parameterValues.reserve(parameterFunctions.size());
@@ -56,45 +57,40 @@ VarVal TboxMakePhysicalFunction::execute(const Record& record, ArenaRef& arena) 
         parameterValues.emplace_back(function.execute(record, arena));
     }
 
-    auto lit = parameterValues[0].cast<VariableSizedData>();
-    auto arg0 = parameterValues[1].cast<VariableSizedData>();
+    auto value = parameterValues[0].cast<nautilus::val<double>>();
+    auto ts = parameterValues[1].cast<nautilus::val<uint64_t>>();
 
     // Parse the operands, call the MEOS set-algebra function, and serialize the
     // resulting span/set/spanset to its canonical text — all inside one invoke.
     // The heap string is copied into the arena below; operands and the MEOS
     // result are freed here. A null result yields a zero-length VARSIZED.
     auto outStr = nautilus::invoke(
-        +[](const char* litPtr, uint32_t litSize,
-            const char* arg0Ptr, uint32_t arg0Size) -> char*
+        +[](double value,
+            uint64_t ts) -> char*
         {
             try
             {
                 MEOS::Meos::ensureMeosInitialized();
-                std::string tempS(litPtr, litSize);
-                while (!tempS.empty() && (tempS.front()=='\'' || tempS.front()=='"')) tempS.erase(tempS.begin());
-                while (!tempS.empty() && (tempS.back()=='\'' || tempS.back()=='"')) tempS.pop_back();
-                Span* temp = floatspan_in(tempS.c_str());
+                std::string tempWkt = fmt::format("{}@{}", value, MEOS::Meos::convertEpochToTimestamp(ts));
+                Temporal* temp = tfloat_in(tempWkt.c_str());
                 if (!temp) return (char*) nullptr;
-                std::string arg0S(arg0Ptr, arg0Size);
-                while (!arg0S.empty() && (arg0S.front()=='\'' || arg0S.front()=='"')) arg0S.erase(arg0S.begin());
-                while (!arg0S.empty() && (arg0S.back()=='\'' || arg0S.back()=='"')) arg0S.pop_back();
-                Span* arg0B = tstzspan_in(arg0S.c_str());
-                if (!arg0B) { free(temp); return (char*) nullptr; }
 
-                TBox* res = (TBox*) tbox_make(temp, arg0B);
+                int _cnt = 0;
+                TSequence ** arr = (TSequence **) temporal_sequences(temp, &_cnt);
                 free(temp);
-                free(arg0B);
-                if (!res) return (char*) nullptr;
-                char* outStr = tbox_out(res, 15);
-                free(res);
-                return outStr;
+                if (!arr || _cnt <= 0) return (char*) nullptr;
+                std::string _s = "{";
+                for (int _i = 0; _i < _cnt; _i++) { if (_i) _s += ", "; char* _e = tfloat_out((Temporal *) arr[_i], 15); if (_e) { _s += _e; free(_e); } free(arr[_i]); }
+                _s += "}";
+                free(arr);
+                return strdup(_s.c_str());
             }
             catch (const std::exception&)
             {
                 return (char*) nullptr;
             }
         },
-        lit.getContent(), lit.getContentSize(), arg0.getContent(), arg0.getContentSize());
+        value, ts);
 
     const auto outLen = nautilus::invoke(
         +[](const char* s) -> uint32_t { return s ? (uint32_t) strlen(s) : (uint32_t) 0; },
@@ -116,15 +112,15 @@ VarVal TboxMakePhysicalFunction::execute(const Record& record, ArenaRef& arena) 
     return variableSized;
 }
 
-PhysicalFunctionRegistryReturnType PhysicalFunctionGeneratedRegistrar::RegisterTboxMakePhysicalFunction(
+PhysicalFunctionRegistryReturnType PhysicalFunctionGeneratedRegistrar::RegisterTemporalSequencesPhysicalFunction(
     PhysicalFunctionRegistryArguments arguments)
 {
     PRECONDITION(arguments.childFunctions.size() == 2,
-                 "TboxMakePhysicalFunction requires 2 children but got {}",
+                 "TemporalSequencesPhysicalFunction requires 2 children but got {}",
                  arguments.childFunctions.size());
     auto arg0 = std::move(arguments.childFunctions[0]);
     auto arg1 = std::move(arguments.childFunctions[1]);
-    return TboxMakePhysicalFunction(std::move(arg0), std::move(arg1));
+    return TemporalSequencesPhysicalFunction(std::move(arg0), std::move(arg1));
 }
 
 } // namespace NES

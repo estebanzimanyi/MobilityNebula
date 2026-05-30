@@ -1495,3 +1495,4 @@ add_plugin(StboxSpaceTiles LogicalFunction nes-logical-operators StboxSpaceTiles
 add_plugin(StboxTimeTiles LogicalFunction nes-logical-operators StboxTimeTilesLogicalFunction.cpp)
 add_plugin(StboxSpaceTimeTiles LogicalFunction nes-logical-operators StboxSpaceTimeTilesLogicalFunction.cpp)
 add_plugin(TgeoSpaceBoxes LogicalFunction nes-logical-operators TgeoSpaceBoxesLogicalFunction.cpp)
+add_plugin(TemporalSequences LogicalFunction nes-logical-operators TemporalSequencesLogicalFunction.cpp)

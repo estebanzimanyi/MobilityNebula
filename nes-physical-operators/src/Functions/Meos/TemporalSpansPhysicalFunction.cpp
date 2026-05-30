@@ -80,7 +80,7 @@ VarVal TemporalSpansPhysicalFunction::execute(const Record& record, ArenaRef& ar
                 free(temp);
                 if (!arr || _cnt <= 0) return (char*) nullptr;
                 std::string _s = "{";
-                for (int _i = 0; _i < _cnt; _i++) { if (_i) _s += ", "; char* _e = floatspan_out(&arr[_i], 15); if (_e) { _s += _e; free(_e); } }
+                for (int _i = 0; _i < _cnt; _i++) { if (_i) _s += ", "; char* _e = tstzspan_out(&arr[_i]); if (_e) { _s += _e; free(_e); } }
                 _s += "}";
                 free(arr);
                 return strdup(_s.c_str());

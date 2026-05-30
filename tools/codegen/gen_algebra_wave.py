@@ -186,6 +186,9 @@ ARRAY_VALUES = {
     "temporal_spans":  dict(inp="tfloat", spec=dict(elem="Span", kind="span_val", out="floatspan_out", maxdd=True), icols=[("value", "FLOAT64")], ra=["5.5"], rb=["8.5"]),
     # temporal instants: a TInstant** array (tfloat -> tfloat_out via Temporal* cast).
     "temporal_instants": dict(inp="tfloat", spec=dict(elem="TInstant *", kind="ptr", out="tfloat_out", maxdd=True, cast="Temporal *"), icols=[("value", "FLOAT64")], ra=["5.5"], rb=["8.5"]),
+    # temporal_spans returns the TIME spans (tstzspan), not value spans.
+    "temporal_spans":  dict(inp="tfloat", spec=dict(elem="Span", kind="span_val", out="tstzspan_out"), icols=[("value", "FLOAT64")], ra=["5.5"], rb=["8.5"]),
+    "temporal_sequences": dict(inp="tfloat", spec=dict(elem="TSequence *", kind="ptr", out="tfloat_out", maxdd=True, cast="Temporal *"), icols=[("value", "FLOAT64")], ra=["5.5"], rb=["8.5"]),
     # split arrays: primary + an int split-count + an int* count -> a Span/STBox/
     # TBox struct array (span_val element). intspan_out has no maxdd; box outs do.
     "set_split_n_spans":         dict(inp="intset", spec=dict(elem="Span", kind="span_val", out="intspan_out"), lit=("{1, 3, 5, 7, 9}", "{2, 4, 6, 8}"), extras=[("int32_t", "INT32", "2", "2")]),
@@ -629,6 +632,18 @@ def classify(name, ret, plist):
             pcol, pa, pb = ("value", s["psql"]), s["pa"], s["pb"]
         tmeta = dict(cols=[pcol] + ecols, rows=[tuple([pa] + erowa), tuple([pb] + erowb)],
                      token=name.upper(), sink=sink_of(s["ret"]))
+        return entry, tmeta
+    # ---- tbox_make(const Span *value, const Span *time) -> TBox: a floatspan
+    #      value primary + a tstzspan time span. ----
+    if name == "tbox_make" and len(plist) == 2 and rbase == "TBox":
+        entry = dict(nebula_name=camel(name), sql_token=name.upper(), meos_call=name,
+                     build_generic=True, input_type="floatspan", return_kind="tbox_text_out",
+                     extra_args=[dict(kind="box", box_type="Span", parser="tstzspan_in", header="meos.h")],
+                     comment_one_liner=f"{name} ({ret.strip()}) — TBox from a value span + time span.")
+        tmeta = dict(cols=[("a", "VARSIZED"), ("arg", "VARSIZED")],
+                     rows=[("[1.5, 5.5)", "[2020-01-01 00:00:00+00, 2020-01-05 00:00:00+00)"),
+                           ("[3.5, 9.5)", "[2020-01-03 00:00:00+00, 2020-01-07 00:00:00+00)")],
+                     token=name.upper(), sink="VARSIZED")
         return entry, tmeta
     # ---- span_make(lower, upper, lower_inc, upper_inc) -> Span: a base-scalar
     #      primary (lower) + a same-type scalar (upper) + two bool flags. ----

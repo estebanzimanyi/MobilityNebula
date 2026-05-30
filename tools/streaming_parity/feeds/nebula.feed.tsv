@@ -1114,7 +1114,7 @@ tbox_hast	proven
 tbox_hasx	proven
 tbox_le	proven
 tbox_lt	proven
-tbox_make	wired
+tbox_make	proven
 tbox_ne	proven
 tbox_round	proven
 tbox_shift_scale_time	proven
@@ -1224,7 +1224,8 @@ temporal_num_instants	proven
 temporal_num_sequences	wired
 temporal_num_timestamps	proven
 temporal_round	proven
-temporal_spans	wired
+temporal_sequences	wired
+temporal_spans	proven
 temporal_start_timestamptz	proven
 temporal_time	proven
 temporal_time_bins	proven
