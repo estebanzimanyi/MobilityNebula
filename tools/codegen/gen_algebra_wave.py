@@ -635,6 +635,14 @@ DEGREES_UNARY = {
 # scalar float math: double f(double [, bool normalize | double arg2]) -> double.
 # Primary is a plain double field (float_base); extras are constant flags / a
 # second double. ln/log10 need a strictly positive operand.
+SPAN_EXPAND = {
+    # *span_expand(Span, value) -> Span: a span primary + a same-domain scalar
+    # delta that widens both bounds.
+    "intspan_expand": ("intspan", "int", "INT32", "intspan_text", "5"),
+    "bigintspan_expand": ("bigintspan", "int64", "INT64", "bigintspan_text", "5"),
+    "floatspan_expand": ("floatspan", "double", "FLOAT64", "floatspan_text", "2.5"),
+}
+
 SCALAR_MATH = {
     "float_exp":   dict(extras=[], rows=[("2.0",), ("0.5",)]),
     "float_ln":    dict(extras=[], rows=[("2.0",), ("10.0",)]),
@@ -667,6 +675,17 @@ def classify(name, ret, plist):
         l0, l1 = LITERALS[in_type]
         tmeta = dict(cols=[("a", "VARSIZED"), ("norm", "BOOLEAN")],
                      rows=[(l0, "false"), (l1, "false")], token=name.upper(), sink="VARSIZED")
+        return entry, tmeta
+    # ---- *span_expand(Span, value) -> Span: span primary + a scalar delta. ----
+    if name in SPAN_EXPAND:
+        in_type, vcpp, vsql, rkind, vlit = SPAN_EXPAND[name]
+        entry = dict(nebula_name=camel(name), sql_token=name.upper(), meos_call=name,
+                     build_generic=True, input_type=in_type, return_kind=rkind,
+                     extra_args=[dict(kind="scalar", cpp=vcpp)],
+                     comment_one_liner=f"{name} ({ret.strip()}) — span widened by a scalar delta.")
+        l0, l1 = LITERALS[in_type]
+        tmeta = dict(cols=[("a", "VARSIZED"), ("v", vsql)],
+                     rows=[(l0, vlit), (l1, vlit)], token=name.upper(), sink="VARSIZED")
         return entry, tmeta
     # ---- scalar float math: double f(double [, extra]) -> double. ----
     if name in SCALAR_MATH:
