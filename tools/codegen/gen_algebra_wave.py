@@ -580,9 +580,30 @@ def subtype_of(name):
     return None
 
 
+SET_UNARY = {
+    # element-wise set transforms + set/spanset conversions -> a new Set, via *set_out.
+    "floatset_ceil": ("floatset", "floatset_text"), "floatset_floor": ("floatset", "floatset_text"),
+    "floatset_radians": ("floatset", "floatset_text"),
+    "textset_lower": ("textset", "textset_text"), "textset_upper": ("textset", "textset_text"),
+    "textset_initcap": ("textset", "textset_text"),
+    "intset_to_floatset": ("intset", "floatset_text"), "floatset_to_intset": ("floatset", "intset_text"),
+    "dateset_to_tstzset": ("dateset", "tstzset_text"), "tstzset_to_dateset": ("tstzset", "dateset_text"),
+    "tstzspanset_timestamps": ("tstzspanset", "tstzset_text"),
+}
+
+
 def classify(name, ret, plist):
     """Return (spec_entry, test_meta) or (None, reason)."""
     rbase = ret.replace("*", "").strip()
+    # ---- unary Set/SpanSet -> Set transforms & conversions (serialize via *set_out) ----
+    if name in SET_UNARY:
+        in_type, rkind = SET_UNARY[name]
+        entry = dict(nebula_name=camel(name), sql_token=name.upper(), meos_call=name,
+                     build_generic=True, input_type=in_type, return_kind=rkind,
+                     extra_args=[], comment_one_liner=f"{name} ({ret.strip()}) — set transform/conversion.")
+        l0, l1 = LITERALS[in_type]
+        tmeta = dict(cols=[("a", "VARSIZED")], rows=[(l0,), (l1,)], token=name.upper(), sink="VARSIZED")
+        return entry, tmeta
     # ---- value arrays: T *f(Temporal, int *count) -> a brace-list of the
     #      distinct values, serialized by the array-output assembler. ----
     if name in ARRAY_VALUES:

@@ -321,6 +321,7 @@ date_to_spanset	proven
 dateset_end_value	proven
 dateset_shift_scale	proven
 dateset_start_value	proven
+dateset_to_tstzset	proven
 dateset_value_n	proven
 dateset_values	proven
 datespan_bins	proven
@@ -496,9 +497,13 @@ float_to_spanset	proven
 float_to_tbox	proven
 float_tstzspan_to_tbox	proven
 float_union_transfn	proven
+floatset_ceil	proven
 floatset_end_value	proven
+floatset_floor	proven
+floatset_radians	proven
 floatset_shift_scale	proven
 floatset_start_value	proven
+floatset_to_intset	proven
 floatset_value_n	proven
 floatset_values	proven
 floatspan_bins	proven
@@ -535,6 +540,7 @@ geo_split_each_n_stboxes	proven
 geo_split_n_stboxes	proven
 geo_srid	proven
 geog_dwithin	proven
+geog_to_geom	proven
 geom_boundary	proven
 geom_centroid	proven
 geom_contains	proven
@@ -607,6 +613,7 @@ intersects_cbuffer_cbuffer	proven
 intset_end_value	proven
 intset_shift_scale	proven
 intset_start_value	proven
+intset_to_floatset	proven
 intset_value_n	proven
 intset_values	proven
 intspan_bins	proven
@@ -1252,7 +1259,10 @@ textcat_text_ttext	proven
 textcat_ttext_text	proven
 textcat_ttext_ttext	proven
 textset_end_value	proven
+textset_initcap	proven
+textset_lower	proven
 textset_start_value	proven
+textset_upper	proven
 textset_value_n	proven
 textset_values	proven
 tfloat_at_value	proven
@@ -1430,6 +1440,7 @@ tspatial_extent_transfn	proven
 tstzset_end_value	proven
 tstzset_shift_scale	proven
 tstzset_start_value	proven
+tstzset_to_dateset	proven
 tstzset_to_stbox	proven
 tstzset_tprecision	proven
 tstzset_value_n	proven
@@ -1449,6 +1460,7 @@ tstzspanset_lower	proven
 tstzspanset_num_timestamps	proven
 tstzspanset_shift_scale	proven
 tstzspanset_start_timestamptz	proven
+tstzspanset_timestamps	proven
 tstzspanset_to_datespanset	proven
 tstzspanset_to_stbox	proven
 tstzspanset_tprecision	proven
