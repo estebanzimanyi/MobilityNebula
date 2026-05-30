@@ -1440,6 +1440,27 @@ def classify(name, ret, plist):
         tmeta = dict(cols=[("a", "VARSIZED"), ("arg", "VARSIZED")],
                      rows=[(l0, arg0), (l1, arg1)], token=name.upper(), sink="FLOAT64")
         return entry, tmeta
+    # ---- two-temporal reduction: always/ever eq/ne over two temporals -> int.
+    #      Both operands built from per-event instant columns (temporal2 extra-arg),
+    #      same shape as the temporal-returning two-temporal branch below but the
+    #      MEOS fn folds the pointwise comparison to a single bool (int 0/1). ----
+    if (ret.replace("*", "").strip() == "int" and len(plist) == 2
+            and all(b == "Temporal" for b, p in plist)):
+        toks = name.split("_")
+        if toks[0] in ("always", "ever") and len(toks) > 1 and toks[1] in ("eq", "ne"):
+            sub = ("trgeometry" if "trgeometry" in toks else "tgeompoint" if "tgeo" in toks
+                   else "tcbuffer" if "tcbuffer" in toks else "tnpoint" if "tnpoint" in toks
+                   else "tpose" if "tpose" in toks else None)
+            if sub in TWO_TEMPORAL:
+                spec = TWO_TEMPORAL[sub]
+                entry = dict(nebula_name=camel(name), sql_token=name.upper(), meos_call=name,
+                             build_generic=True, input_type=spec["input_type"], return_kind="int",
+                             extra_args=[dict(kind="temporal2", t2_fields=spec["t2_fields"],
+                                              t2_build=spec["t2_build"], header=spec["header"])],
+                             comment_one_liner=f"{name} (bool) — two {sub} instants -> int reduction.")
+                tmeta = dict(cols=spec["make_cols"], rows=spec["rows"],
+                             token=name.upper(), sink="INT32")
+                return entry, tmeta
     # ---- two-temporal: both operands built from instant columns -> tbool / ttext ----
     if (ret.replace("*", "").strip() == "Temporal" and len(plist) == 2
             and all(b == "Temporal" for b, p in plist)):
