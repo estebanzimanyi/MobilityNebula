@@ -1348,6 +1348,9 @@ tfloat_value_bins	proven
 tfloat_value_boxes	proven
 tfloat_value_n	proven
 tfloat_values	proven
+tfloat_wmax_transfn	proven
+tfloat_wmin_transfn	proven
+tfloat_wsum_transfn	proven
 tfloatinst_make	proven
 tge_float_tfloat	proven
 tge_int_tint	proven
@@ -1407,6 +1410,9 @@ tint_value_bins	proven
 tint_value_boxes	proven
 tint_value_n	proven
 tint_values	proven
+tint_wmax_transfn	proven
+tint_wmin_transfn	proven
+tint_wsum_transfn	proven
 tintersects_cbuffer_tcbuffer	proven
 tintersects_geo_tcbuffer	proven
 tintersects_geo_tgeo	proven
@@ -1479,6 +1485,7 @@ tnumber_to_tbox	proven
 tnumber_trend	proven
 tnumber_twavg	proven
 tnumber_valuespans	proven
+tnumber_wavg_transfn	proven
 touches_cbuffer_cbuffer	proven
 tpoint_angular_difference	proven
 tpoint_at_geom	proven

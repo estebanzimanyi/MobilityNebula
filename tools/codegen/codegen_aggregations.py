@@ -1962,8 +1962,8 @@ _TAGG_LOWER_FOLD = """\
                 sprintf(itemStr, "{value_printf_fmt}@%s", {value_expr}, tsS.c_str());
                 Temporal* inst = {tnumber_in_fn}(itemStr);
                 if (!inst) {{ return state; }}
-                SkipList* ns = {tagg_transfn}(static_cast<SkipList*>(state), inst);
-                free(inst);
+                {tagg_pre_call}SkipList* ns = {tagg_transfn}(static_cast<SkipList*>(state), inst{tagg_extra_arg});
+                {tagg_post_call}free(inst);
                 return reinterpret_cast<void*>(ns);
             }},
             skipState,
@@ -2502,6 +2502,12 @@ def emit_operator(op, output_root: Path):
         # value expression fed to sprintf (default the raw numeric field; tbool
         # maps it to the "t"/"f" literal MEOS expects).
         "value_expr":          op.get("value_expr", "valueVal"),
+        # windowed-aggregate (w{min,max,sum}/wavg) extras: build a constant
+        # Interval radius before the fold, pass it as the transfn's 3rd arg, free
+        # it after. Empty for the plain t-aggregates.
+        "tagg_pre_call":       op.get("tagg_pre_call", ""),
+        "tagg_extra_arg":      op.get("tagg_extra_arg", ""),
+        "tagg_post_call":      op.get("tagg_post_call", ""),
     }
 
     # value_compute (point/tgeo finalize): either fold the windowed sequence

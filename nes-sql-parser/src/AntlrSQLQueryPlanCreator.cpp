@@ -137,6 +137,13 @@
 #include <Operators/Windows/Aggregations/Meos/TboolTandTransfnAggregationLogicalFunction.hpp>
 #include <Operators/Windows/Aggregations/Meos/TboolTorTransfnAggregationLogicalFunction.hpp>
 #include <Operators/Windows/Aggregations/Meos/TemporalTcountTransfnAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TintWminTransfnAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TintWmaxTransfnAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TintWsumTransfnAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TfloatWminTransfnAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TfloatWmaxTransfnAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TfloatWsumTransfnAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TnumberWavgTransfnAggregationLogicalFunction.hpp>
 #include <Functions/Meos/TemporalIntersectsGeometryLogicalFunction.hpp>
 #include <Functions/Meos/AintersectsTgeoGeoLogicalFunction.hpp>
 #include <Functions/Meos/EdwithinTgeoGeoLogicalFunction.hpp>
@@ -49469,6 +49476,181 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             }
             break;
         /* END CODEGEN AGGREGATION GLUE: TEMPORAL_TCOUNT_TRANSFN (case-switch) */
+        /* BEGIN CODEGEN AGGREGATION GLUE: TINT_WMIN_TRANSFN (case-switch) */
+        case AntlrSQLLexer::TINT_WMIN_TRANSFN:
+            // Windowed TINT_WMIN_TRANSFN -> aggregate Temporal (hex-WKB) via tint_wmin_transfn/temporal_tagg_finalfn with a 1-hour radius.
+            if (helpers.top().functionBuilder.size() != 2) {
+                throw InvalidQuerySyntax("TINT_WMIN_TRANSFN requires exactly two arguments (value, timestamp), but got {}", helpers.top().functionBuilder.size());
+            }
+            {
+                const auto timestampFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto valueFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+
+                if (!valueFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
+                    throw InvalidQuerySyntax("TINT_WMIN_TRANSFN arguments must be field references");
+                }
+
+                helpers.top().windowAggs.push_back(
+                    TintWminTransfnAggregationLogicalFunction::create(valueFunction.get<FieldAccessLogicalFunction>(),
+                                                                    timestampFunction.get<FieldAccessLogicalFunction>()));
+                helpers.top().functionBuilder.push_back(valueFunction);
+            }
+            break;
+        /* END CODEGEN AGGREGATION GLUE: TINT_WMIN_TRANSFN (case-switch) */
+
+        /* BEGIN CODEGEN AGGREGATION GLUE: TINT_WMAX_TRANSFN (case-switch) */
+        case AntlrSQLLexer::TINT_WMAX_TRANSFN:
+            // Windowed TINT_WMAX_TRANSFN -> aggregate Temporal (hex-WKB) via tint_wmax_transfn/temporal_tagg_finalfn with a 1-hour radius.
+            if (helpers.top().functionBuilder.size() != 2) {
+                throw InvalidQuerySyntax("TINT_WMAX_TRANSFN requires exactly two arguments (value, timestamp), but got {}", helpers.top().functionBuilder.size());
+            }
+            {
+                const auto timestampFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto valueFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+
+                if (!valueFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
+                    throw InvalidQuerySyntax("TINT_WMAX_TRANSFN arguments must be field references");
+                }
+
+                helpers.top().windowAggs.push_back(
+                    TintWmaxTransfnAggregationLogicalFunction::create(valueFunction.get<FieldAccessLogicalFunction>(),
+                                                                    timestampFunction.get<FieldAccessLogicalFunction>()));
+                helpers.top().functionBuilder.push_back(valueFunction);
+            }
+            break;
+        /* END CODEGEN AGGREGATION GLUE: TINT_WMAX_TRANSFN (case-switch) */
+
+        /* BEGIN CODEGEN AGGREGATION GLUE: TINT_WSUM_TRANSFN (case-switch) */
+        case AntlrSQLLexer::TINT_WSUM_TRANSFN:
+            // Windowed TINT_WSUM_TRANSFN -> aggregate Temporal (hex-WKB) via tint_wsum_transfn/temporal_tagg_finalfn with a 1-hour radius.
+            if (helpers.top().functionBuilder.size() != 2) {
+                throw InvalidQuerySyntax("TINT_WSUM_TRANSFN requires exactly two arguments (value, timestamp), but got {}", helpers.top().functionBuilder.size());
+            }
+            {
+                const auto timestampFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto valueFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+
+                if (!valueFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
+                    throw InvalidQuerySyntax("TINT_WSUM_TRANSFN arguments must be field references");
+                }
+
+                helpers.top().windowAggs.push_back(
+                    TintWsumTransfnAggregationLogicalFunction::create(valueFunction.get<FieldAccessLogicalFunction>(),
+                                                                    timestampFunction.get<FieldAccessLogicalFunction>()));
+                helpers.top().functionBuilder.push_back(valueFunction);
+            }
+            break;
+        /* END CODEGEN AGGREGATION GLUE: TINT_WSUM_TRANSFN (case-switch) */
+
+        /* BEGIN CODEGEN AGGREGATION GLUE: TFLOAT_WMIN_TRANSFN (case-switch) */
+        case AntlrSQLLexer::TFLOAT_WMIN_TRANSFN:
+            // Windowed TFLOAT_WMIN_TRANSFN -> aggregate Temporal (hex-WKB) via tfloat_wmin_transfn/temporal_tagg_finalfn with a 1-hour radius.
+            if (helpers.top().functionBuilder.size() != 2) {
+                throw InvalidQuerySyntax("TFLOAT_WMIN_TRANSFN requires exactly two arguments (value, timestamp), but got {}", helpers.top().functionBuilder.size());
+            }
+            {
+                const auto timestampFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto valueFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+
+                if (!valueFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
+                    throw InvalidQuerySyntax("TFLOAT_WMIN_TRANSFN arguments must be field references");
+                }
+
+                helpers.top().windowAggs.push_back(
+                    TfloatWminTransfnAggregationLogicalFunction::create(valueFunction.get<FieldAccessLogicalFunction>(),
+                                                                    timestampFunction.get<FieldAccessLogicalFunction>()));
+                helpers.top().functionBuilder.push_back(valueFunction);
+            }
+            break;
+        /* END CODEGEN AGGREGATION GLUE: TFLOAT_WMIN_TRANSFN (case-switch) */
+
+        /* BEGIN CODEGEN AGGREGATION GLUE: TFLOAT_WMAX_TRANSFN (case-switch) */
+        case AntlrSQLLexer::TFLOAT_WMAX_TRANSFN:
+            // Windowed TFLOAT_WMAX_TRANSFN -> aggregate Temporal (hex-WKB) via tfloat_wmax_transfn/temporal_tagg_finalfn with a 1-hour radius.
+            if (helpers.top().functionBuilder.size() != 2) {
+                throw InvalidQuerySyntax("TFLOAT_WMAX_TRANSFN requires exactly two arguments (value, timestamp), but got {}", helpers.top().functionBuilder.size());
+            }
+            {
+                const auto timestampFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto valueFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+
+                if (!valueFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
+                    throw InvalidQuerySyntax("TFLOAT_WMAX_TRANSFN arguments must be field references");
+                }
+
+                helpers.top().windowAggs.push_back(
+                    TfloatWmaxTransfnAggregationLogicalFunction::create(valueFunction.get<FieldAccessLogicalFunction>(),
+                                                                    timestampFunction.get<FieldAccessLogicalFunction>()));
+                helpers.top().functionBuilder.push_back(valueFunction);
+            }
+            break;
+        /* END CODEGEN AGGREGATION GLUE: TFLOAT_WMAX_TRANSFN (case-switch) */
+
+        /* BEGIN CODEGEN AGGREGATION GLUE: TFLOAT_WSUM_TRANSFN (case-switch) */
+        case AntlrSQLLexer::TFLOAT_WSUM_TRANSFN:
+            // Windowed TFLOAT_WSUM_TRANSFN -> aggregate Temporal (hex-WKB) via tfloat_wsum_transfn/temporal_tagg_finalfn with a 1-hour radius.
+            if (helpers.top().functionBuilder.size() != 2) {
+                throw InvalidQuerySyntax("TFLOAT_WSUM_TRANSFN requires exactly two arguments (value, timestamp), but got {}", helpers.top().functionBuilder.size());
+            }
+            {
+                const auto timestampFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto valueFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+
+                if (!valueFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
+                    throw InvalidQuerySyntax("TFLOAT_WSUM_TRANSFN arguments must be field references");
+                }
+
+                helpers.top().windowAggs.push_back(
+                    TfloatWsumTransfnAggregationLogicalFunction::create(valueFunction.get<FieldAccessLogicalFunction>(),
+                                                                    timestampFunction.get<FieldAccessLogicalFunction>()));
+                helpers.top().functionBuilder.push_back(valueFunction);
+            }
+            break;
+        /* END CODEGEN AGGREGATION GLUE: TFLOAT_WSUM_TRANSFN (case-switch) */
+
+        /* BEGIN CODEGEN AGGREGATION GLUE: TNUMBER_WAVG_TRANSFN (case-switch) */
+        case AntlrSQLLexer::TNUMBER_WAVG_TRANSFN:
+            // Windowed TNUMBER_WAVG_TRANSFN -> aggregate Temporal (hex-WKB) via tnumber_wavg_transfn/tnumber_tavg_finalfn with a 1-hour radius.
+            if (helpers.top().functionBuilder.size() != 2) {
+                throw InvalidQuerySyntax("TNUMBER_WAVG_TRANSFN requires exactly two arguments (value, timestamp), but got {}", helpers.top().functionBuilder.size());
+            }
+            {
+                const auto timestampFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto valueFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+
+                if (!valueFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
+                    throw InvalidQuerySyntax("TNUMBER_WAVG_TRANSFN arguments must be field references");
+                }
+
+                helpers.top().windowAggs.push_back(
+                    TnumberWavgTransfnAggregationLogicalFunction::create(valueFunction.get<FieldAccessLogicalFunction>(),
+                                                                    timestampFunction.get<FieldAccessLogicalFunction>()));
+                helpers.top().functionBuilder.push_back(valueFunction);
+            }
+            break;
+        /* END CODEGEN AGGREGATION GLUE: TNUMBER_WAVG_TRANSFN (case-switch) */
+
 
 
 
@@ -50625,6 +50807,111 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
                 helpers.top().windowAggs.push_back(TemporalTcountTransfnAggregationLogicalFunction::create(value, ts));
             }
             /* END CODEGEN AGGREGATION GLUE: TEMPORAL_TCOUNT_TRANSFN (funcName chain) */
+            /* BEGIN CODEGEN AGGREGATION GLUE: TINT_WMIN_TRANSFN (funcName chain) */
+            else if (funcName == "TINT_WMIN_TRANSFN")
+            {
+                if (helpers.top().functionBuilder.size() < 2)
+                {
+                    throw InvalidQuerySyntax("TINT_WMIN_TRANSFN requires two arguments at {}", context->getText());
+                }
+                const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto value = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                helpers.top().windowAggs.push_back(TintWminTransfnAggregationLogicalFunction::create(value, ts));
+            }
+            /* END CODEGEN AGGREGATION GLUE: TINT_WMIN_TRANSFN (funcName chain) */
+
+            /* BEGIN CODEGEN AGGREGATION GLUE: TINT_WMAX_TRANSFN (funcName chain) */
+            else if (funcName == "TINT_WMAX_TRANSFN")
+            {
+                if (helpers.top().functionBuilder.size() < 2)
+                {
+                    throw InvalidQuerySyntax("TINT_WMAX_TRANSFN requires two arguments at {}", context->getText());
+                }
+                const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto value = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                helpers.top().windowAggs.push_back(TintWmaxTransfnAggregationLogicalFunction::create(value, ts));
+            }
+            /* END CODEGEN AGGREGATION GLUE: TINT_WMAX_TRANSFN (funcName chain) */
+
+            /* BEGIN CODEGEN AGGREGATION GLUE: TINT_WSUM_TRANSFN (funcName chain) */
+            else if (funcName == "TINT_WSUM_TRANSFN")
+            {
+                if (helpers.top().functionBuilder.size() < 2)
+                {
+                    throw InvalidQuerySyntax("TINT_WSUM_TRANSFN requires two arguments at {}", context->getText());
+                }
+                const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto value = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                helpers.top().windowAggs.push_back(TintWsumTransfnAggregationLogicalFunction::create(value, ts));
+            }
+            /* END CODEGEN AGGREGATION GLUE: TINT_WSUM_TRANSFN (funcName chain) */
+
+            /* BEGIN CODEGEN AGGREGATION GLUE: TFLOAT_WMIN_TRANSFN (funcName chain) */
+            else if (funcName == "TFLOAT_WMIN_TRANSFN")
+            {
+                if (helpers.top().functionBuilder.size() < 2)
+                {
+                    throw InvalidQuerySyntax("TFLOAT_WMIN_TRANSFN requires two arguments at {}", context->getText());
+                }
+                const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto value = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                helpers.top().windowAggs.push_back(TfloatWminTransfnAggregationLogicalFunction::create(value, ts));
+            }
+            /* END CODEGEN AGGREGATION GLUE: TFLOAT_WMIN_TRANSFN (funcName chain) */
+
+            /* BEGIN CODEGEN AGGREGATION GLUE: TFLOAT_WMAX_TRANSFN (funcName chain) */
+            else if (funcName == "TFLOAT_WMAX_TRANSFN")
+            {
+                if (helpers.top().functionBuilder.size() < 2)
+                {
+                    throw InvalidQuerySyntax("TFLOAT_WMAX_TRANSFN requires two arguments at {}", context->getText());
+                }
+                const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto value = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                helpers.top().windowAggs.push_back(TfloatWmaxTransfnAggregationLogicalFunction::create(value, ts));
+            }
+            /* END CODEGEN AGGREGATION GLUE: TFLOAT_WMAX_TRANSFN (funcName chain) */
+
+            /* BEGIN CODEGEN AGGREGATION GLUE: TFLOAT_WSUM_TRANSFN (funcName chain) */
+            else if (funcName == "TFLOAT_WSUM_TRANSFN")
+            {
+                if (helpers.top().functionBuilder.size() < 2)
+                {
+                    throw InvalidQuerySyntax("TFLOAT_WSUM_TRANSFN requires two arguments at {}", context->getText());
+                }
+                const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto value = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                helpers.top().windowAggs.push_back(TfloatWsumTransfnAggregationLogicalFunction::create(value, ts));
+            }
+            /* END CODEGEN AGGREGATION GLUE: TFLOAT_WSUM_TRANSFN (funcName chain) */
+
+            /* BEGIN CODEGEN AGGREGATION GLUE: TNUMBER_WAVG_TRANSFN (funcName chain) */
+            else if (funcName == "TNUMBER_WAVG_TRANSFN")
+            {
+                if (helpers.top().functionBuilder.size() < 2)
+                {
+                    throw InvalidQuerySyntax("TNUMBER_WAVG_TRANSFN requires two arguments at {}", context->getText());
+                }
+                const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto value = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                helpers.top().windowAggs.push_back(TnumberWavgTransfnAggregationLogicalFunction::create(value, ts));
+            }
+            /* END CODEGEN AGGREGATION GLUE: TNUMBER_WAVG_TRANSFN (funcName chain) */
+
 
 
 
