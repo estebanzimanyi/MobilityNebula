@@ -1148,3 +1148,5 @@ add_plugin(BigintsetValues PhysicalFunction nes-physical-operators BigintsetValu
 add_plugin(TstzsetValues PhysicalFunction nes-physical-operators TstzsetValuesPhysicalFunction.cpp)
 add_plugin(TemporalSpans PhysicalFunction nes-physical-operators TemporalSpansPhysicalFunction.cpp)
 add_plugin(TemporalInstants PhysicalFunction nes-physical-operators TemporalInstantsPhysicalFunction.cpp)
+add_plugin(TdwithinTgeoGeo PhysicalFunction nes-physical-operators TdwithinTgeoGeoPhysicalFunction.cpp)
+add_plugin(TdwithinTgeoTgeo PhysicalFunction nes-physical-operators TdwithinTgeoTgeoPhysicalFunction.cpp)

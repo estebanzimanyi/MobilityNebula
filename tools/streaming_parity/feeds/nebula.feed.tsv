@@ -1156,6 +1156,11 @@ tdistance_tnumber_tnumber	proven
 tdistance_tpose_point	proven
 tdistance_tpose_pose	proven
 tdistance_tpose_tpose	proven
+tdwithin_tcbuffer_cbuffer	proven
+tdwithin_tcbuffer_geo	proven
+tdwithin_tcbuffer_tcbuffer	proven
+tdwithin_tgeo_geo	proven
+tdwithin_tgeo_tgeo	proven
 temporal_append_tinstant	proven
 temporal_at_max	proven
 temporal_at_min	proven

@@ -1445,3 +1445,8 @@ add_plugin(BigintsetValues LogicalFunction nes-logical-operators BigintsetValues
 add_plugin(TstzsetValues LogicalFunction nes-logical-operators TstzsetValuesLogicalFunction.cpp)
 add_plugin(TemporalSpans LogicalFunction nes-logical-operators TemporalSpansLogicalFunction.cpp)
 add_plugin(TemporalInstants LogicalFunction nes-logical-operators TemporalInstantsLogicalFunction.cpp)
+add_plugin(TdwithinTcbufferCbuffer LogicalFunction nes-logical-operators TdwithinTcbufferCbufferLogicalFunction.cpp)
+add_plugin(TdwithinTcbufferGeo LogicalFunction nes-logical-operators TdwithinTcbufferGeoLogicalFunction.cpp)
+add_plugin(TdwithinTcbufferTcbuffer LogicalFunction nes-logical-operators TdwithinTcbufferTcbufferLogicalFunction.cpp)
+add_plugin(TdwithinTgeoGeo LogicalFunction nes-logical-operators TdwithinTgeoGeoLogicalFunction.cpp)
+add_plugin(TdwithinTgeoTgeo LogicalFunction nes-logical-operators TdwithinTgeoTgeoLogicalFunction.cpp)

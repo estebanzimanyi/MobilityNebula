@@ -829,12 +829,16 @@ def classify(name, ret, plist):
                          rows=[(LITERALS[input_type][0],), (LITERALS[input_type][1],)],
                          token=name.upper(), sink=sink_of(rkind))
         return entry, tmeta
-    # arity-3 spatial restriction (temp, STBox, bool border_inc) is handled by the
-    # spatial-restriction branch below; let it through the arity-2 gate.
+    # some arity-3 ops are handled by dedicated branches below; let them through
+    # the arity-2 gate: spatial restriction (temp, STBox, bool border_inc) and
+    # tdwithin (temp, operand, double dist).
+    _tok0 = name.split("_")[0]
     _restrict3 = (len(plist) == 3 and rbase == "Temporal" and plist[0] == ("Temporal", True)
                   and plist[2] == ("bool", False) and ("_at_" in name or "_minus_" in name)
-                  and name.split("_")[0] in ("tpoint", "tgeo", "tcbuffer", "tnpoint", "tpose"))
-    if len(plist) != 2 and not _restrict3:
+                  and _tok0 in ("tpoint", "tgeo", "tcbuffer", "tnpoint", "tpose"))
+    _tdwithin3 = (len(plist) == 3 and _tok0 == "tdwithin" and plist[0] == ("Temporal", True)
+                  and plist[2] == ("double", False))
+    if len(plist) != 2 and not (_restrict3 or _tdwithin3):
         return None, f"arity {len(plist)} (not 2)"
     # ---- `_round`: f(operand, int maxdd) -> SAME type. The operand base picks
     #      the primary input and its same-type *_out return; maxdd is a fixed
@@ -1001,6 +1005,53 @@ def classify(name, ret, plist):
         rowb = tuple([b for _, _, _, b in tcols] + ["1609545600", a1])
         tmeta = dict(cols=cols, rows=[rowa, rowb], token=name.upper(), sink="VARSIZED")
         return entry, tmeta
+    # ---- tdwithin: a spatial temporal ⊗ {geo, object, second temporal} + a
+    #      distance double -> a tbool (within-distance over time) via tbool_out. ----
+    toks = name.split("_")
+    if (toks[0] == "tdwithin" and len(plist) == 3 and plist[0] == ("Temporal", True)
+            and plist[2] == ("double", False)):
+        tsub = next((t for t in ("tgeo", "tcbuffer", "tnpoint", "tpose") if t in toks), None)
+        if tsub is None:
+            return None, "tdwithin temporal subtype unsupported"
+        in_type = ALWAYS_INPUT_TYPE.get(tsub, tsub)
+        tcols = ALWAYS_TINPUT[tsub]
+        secb, secp = plist[1]
+        dist = dict(kind="scalar", cpp="double")
+        if secb in ALWAYS_BASE:
+            parser, bsql, ba, bb = ALWAYS_BASE[secb]
+            if secb == "GSERIALIZED" and tsub != "tgeo":
+                ba, bb = "Point(1 1)", "Point(2 2)"
+            if parser == "geom":
+                e = dict(kind="geom")
+            elif parser == "text":
+                e = dict(kind="text")
+            else:
+                e = dict(kind="box", box_type=secb, parser=parser, header=ALWAYS_BASE_HDR[secb])
+            entry = dict(nebula_name=camel(name), sql_token=name.upper(), meos_call=name,
+                         build_generic=True, input_type=in_type, return_kind="tbool_out",
+                         extra_args=[e, dist],
+                         comment_one_liner=f"{name} ({ret.strip()}) — {tsub} tdwithin {secb}.")
+            if parser not in ("geom", "text"):
+                entry["extra_headers"] = [ALWAYS_BASE_HDR[secb]]
+            cols = [(c, s) for c, s, _, _ in tcols] + [("ts", "UINT64"), ("arg", bsql), ("dist", "FLOAT64")]
+            rowa = tuple([a for _, _, a, _ in tcols] + ["1609459200", ba, "10.0"])
+            rowb = tuple([b for _, _, _, b in tcols] + ["1609545600", bb, "10.0"])
+            tmeta = dict(cols=cols, rows=[rowa, rowb], token=name.upper(), sink="VARSIZED")
+            return entry, tmeta
+        if (secb, secp) == ("Temporal", True):
+            if in_type not in TWO_TEMPORAL:
+                return None, f"tdwithin two-temporal {in_type} unsupported"
+            spec = TWO_TEMPORAL[in_type]
+            entry = dict(nebula_name=camel(name), sql_token=name.upper(), meos_call=name,
+                         build_generic=True, input_type=spec["input_type"], return_kind="tbool_out",
+                         extra_args=[dict(kind="temporal2", t2_fields=spec["t2_fields"],
+                                          t2_build=spec["t2_build"], header=spec["header"]), dist],
+                         comment_one_liner=f"{name} ({ret.strip()}) — two {in_type} instants tdwithin.")
+            cols = spec["make_cols"] + [("dist", "FLOAT64")]
+            rows = [tuple(list(spec["rows"][0]) + ["10.0"]), tuple(list(spec["rows"][1]) + ["10.0"])]
+            tmeta = dict(cols=cols, rows=rows, token=name.upper(), sink="VARSIZED")
+            return entry, tmeta
+        return None, f"tdwithin 2nd operand {secb} unsupported"
     # ---- nearest-approach / shortest-line: a spatial temporal (tgeo/tcbuffer/
     #      tnpoint/tpose) ⊗ {geo, object, second temporal} -> nad (double),
     #      nai (the nearest-approach instant via tspatial_as_text) or shortestline
