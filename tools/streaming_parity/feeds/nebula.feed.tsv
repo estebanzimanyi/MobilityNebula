@@ -1073,6 +1073,7 @@ tbool_minus_value	proven
 tbool_start_value	proven
 tbool_to_tint	proven
 tbool_value_n	proven
+tbool_values	proven
 tbox_cmp	proven
 tbox_copy	proven
 tbox_eq	proven
@@ -1224,6 +1225,7 @@ tfloat_shift_value	proven
 tfloat_start_value	proven
 tfloat_to_tint	proven
 tfloat_value_n	proven
+tfloat_values	proven
 tfloatinst_make	proven
 tge_float_tfloat	proven
 tge_int_tint	proven
@@ -1243,6 +1245,7 @@ tgeo_minus_stbox	proven
 tgeo_minus_value	proven
 tgeo_start_value	proven
 tgeo_value_n	proven
+tgeo_values	proven
 tgeoinst_make	proven
 tgeompoint_to_tgeometry	wired
 tgt_float_tfloat	proven
@@ -1270,6 +1273,7 @@ tint_shift_value	proven
 tint_start_value	proven
 tint_to_tfloat	proven
 tint_value_n	proven
+tint_values	proven
 tintersects_cbuffer_tcbuffer	proven
 tintersects_geo_tcbuffer	proven
 tintersects_geo_tgeo	proven
@@ -1361,6 +1365,7 @@ tpose_minus_stbox	proven
 tpose_start_value	proven
 tpose_trajectory	proven
 tpose_value_n	proven
+tpose_values	proven
 tspatial_extent_transfn	proven
 tstzset_end_value	proven
 tstzset_shift_scale	proven
@@ -1395,6 +1400,7 @@ ttext_minus_value	proven
 ttext_start_value	proven
 ttext_upper	proven
 ttext_value_n	proven
+ttext_values	proven
 ttouches_cbuffer_tcbuffer	proven
 ttouches_geo_tcbuffer	proven
 ttouches_geo_tgeo	proven

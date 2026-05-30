@@ -1133,3 +1133,8 @@ add_plugin(GeomShortestline2d PhysicalFunction nes-physical-operators GeomShorte
 add_plugin(GeomShortestline3d PhysicalFunction nes-physical-operators GeomShortestline3dPhysicalFunction.cpp)
 add_plugin(GeomTouches PhysicalFunction nes-physical-operators GeomTouchesPhysicalFunction.cpp)
 add_plugin(GeomUnaryUnion PhysicalFunction nes-physical-operators GeomUnaryUnionPhysicalFunction.cpp)
+add_plugin(TfloatValues PhysicalFunction nes-physical-operators TfloatValuesPhysicalFunction.cpp)
+add_plugin(TintValues PhysicalFunction nes-physical-operators TintValuesPhysicalFunction.cpp)
+add_plugin(TboolValues PhysicalFunction nes-physical-operators TboolValuesPhysicalFunction.cpp)
+add_plugin(TgeoValues PhysicalFunction nes-physical-operators TgeoValuesPhysicalFunction.cpp)
+add_plugin(TtextValues PhysicalFunction nes-physical-operators TtextValuesPhysicalFunction.cpp)

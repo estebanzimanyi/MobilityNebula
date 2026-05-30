@@ -85,3 +85,4 @@ add_plugin(DistancePoseGeo PhysicalFunction nes-physical-operators DistancePoseG
 add_plugin(DistancePoseStbox PhysicalFunction nes-physical-operators DistancePoseStboxPhysicalFunction.cpp)
 add_plugin(PoseMake2d PhysicalFunction nes-physical-operators PoseMake2dPhysicalFunction.cpp)
 add_plugin(PoseMakePoint2d PhysicalFunction nes-physical-operators PoseMakePoint2dPhysicalFunction.cpp)
+add_plugin(TposeValues PhysicalFunction nes-physical-operators TposeValuesPhysicalFunction.cpp)

@@ -3183,6 +3183,7 @@ GENERIC_RETURNS = {
     "int64":   ("int64_t", "INT64", "0", None),
     "double":  ("double", "FLOAT64", "0.0", None),
     "bool":    ("bool", "BOOLEAN", "false", None),
+    "array_out":      ("VariableSizedData", "VARSIZED", "(char*) nullptr", None),
     "extract_int":    ("int", "INT32", "0", "tint_start_value"),
     "extract_double": ("double", "FLOAT64", "0.0", "tfloat_start_value"),
     "extract_bool":   ("bool", "BOOLEAN", "false", "tbool_start_value"),
@@ -3379,9 +3380,13 @@ def assemble_generic_varsized_output(op):
     intersection/minus) yields a zero-length VARSIZED."""
     name = op["nebula_name"]
     inp = GENERIC_INPUTS[op["input_type"]]
-    _ret = VARSIZED_OUT_RETURNS[op["return_kind"]]
-    res_ctype, out_fn = _ret[0], _ret[1]
-    out_maxdd = len(_ret) > 2 and _ret[2]   # float/STBox/TBox *_out take a maxdd arg
+    array_out = op.get("array_out")
+    if array_out:
+        res_ctype, out_fn, out_maxdd = None, None, False
+    else:
+        _ret = VARSIZED_OUT_RETURNS[op["return_kind"]]
+        res_ctype, out_fn = _ret[0], _ret[1]
+        out_maxdd = len(_ret) > 2 and _ret[2]   # float/STBox/TBox *_out take a maxdd arg
     zero = "(char*) nullptr"
     extras = op.get("extra_args", [])
 
@@ -3394,6 +3399,8 @@ def assemble_generic_varsized_output(op):
     headers.add({"Cbuffer": "meos_cbuffer.h", "Npoint": "meos_npoint.h",
                  "Pose": "meos_pose.h", "GSERIALIZED": "meos_geo.h",
                  "Temporal": "meos_geo.h"}.get(res_ctype, "meos.h"))
+    if array_out:
+        headers.add(array_out.get("header", "meos_geo.h"))
     call_terms = ["temp"]
     parse_lines = []
     box_frees = []
@@ -3482,7 +3489,33 @@ def assemble_generic_varsized_output(op):
     # A base-scalar primary input (frees: False) is a plain value, not a heap
     # pointer, so it must not be freed.
     free_primary = "                free(temp);\n" if inp.get("frees", True) else ""
-    if op.get("out_param") is not None:
+    if array_out:
+        # T *f(operand…, int *count) / T **f(…) -> a heap array of `count`
+        # elements. Loop, serialize each (a scalar formatted inline, or a heap
+        # element via its *_out then freed), join into a brace-list, free the
+        # array, and return the joined string (freed after the arena copy).
+        elem = array_out["elem"]
+        kind = array_out["kind"]
+        if kind == "num":
+            app = "_s += std::to_string(arr[_i]);"
+        elif kind == "bool":
+            app = '_s += (arr[_i] ? "t" : "f");'
+        else:  # ptr: heap element serialized via *_out and freed
+            md = ", 15" if array_out.get("maxdd") else ""
+            app = (f'char* _e = {array_out["out"]}(arr[_i]{md}); '
+                   f'if (_e) {{ _s += _e; free(_e); }} free(arr[_i]);')
+        call_marshal = (
+            f"                int _cnt = 0;\n"
+            f"                {elem}* arr = ({elem}*) {op['meos_call']}({callargs}, &_cnt);\n"
+            f"{free_primary}"
+            f"{bf}"
+            f"                if (!arr || _cnt <= 0) return (char*) nullptr;\n"
+            f'                std::string _s = "{{";\n'
+            f'                for (int _i = 0; _i < _cnt; _i++) {{ if (_i) _s += ", "; {app} }}\n'
+            f'                _s += "}}";\n'
+            f"                free(arr);\n"
+            f"                return strdup(_s.c_str());")
+    elif op.get("out_param") is not None:
         # VARSIZED out-param accessor: bool f(operand…, T **result) writes a heap
         # object pointer into *result and returns a validity flag. Serialise it
         # via the *_out the same way a direct T*-return would.
@@ -3529,7 +3562,7 @@ def assemble_generic_physical(op):
     name = op["nebula_name"]
     if op["return_kind"] == "wkb":
         return assemble_wkb_output(op)
-    if op["return_kind"] in VARSIZED_OUT_RETURNS:
+    if op["return_kind"] in VARSIZED_OUT_RETURNS or op.get("array_out"):
         return assemble_generic_varsized_output(op)
     inp = GENERIC_INPUTS[op["input_type"]]
     ret_cpp, _, zero, extract_fn = GENERIC_RETURNS[op["return_kind"]]

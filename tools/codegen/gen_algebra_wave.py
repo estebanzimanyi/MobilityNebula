@@ -124,6 +124,20 @@ SETVAL_OPS = ("contains", "contained", "left", "right", "overleft", "overright",
 # span constructors: name -> (base-scalar primary, value SQL, value cpp, *span_text
 # return, lower/upper sample for row1, lower/upper for row2). lower_inc/upper_inc
 # are passed true/false. date = days-since-2000, tstz = µs-since-2000.
+# value-array accessors: name -> (instant builder input_type, array_out spec,
+# instant value columns, row1 values, row2 values). The array-output assembler
+# loops the returned array + count and serializes a brace-list.
+ARRAY_VALUES = {
+    "tfloat_values": ("tfloat", dict(elem="double", kind="num"), [("value", "FLOAT64")], ["5.5"], ["8.5"]),
+    "tint_values":   ("tint", dict(elem="int32_t", kind="num"), [("value", "INT32")], ["5"], ["8"]),
+    "tbool_values":  ("tbool", dict(elem="bool", kind="bool"), [("value", "BOOLEAN")], ["true"], ["false"]),
+    "tgeo_values":   ("tgeompoint", dict(elem="GSERIALIZED *", kind="ptr", out="geo_out", header="meos_geo.h"),
+                      [("lon", "FLOAT64"), ("lat", "FLOAT64")], ["1.0", "1.0"], ["2.0", "2.0"]),
+    "tpose_values":  ("tpose", dict(elem="Pose *", kind="ptr", out="pose_out", maxdd=True, header="meos_pose.h"),
+                      [("x", "FLOAT64"), ("y", "FLOAT64"), ("theta", "FLOAT64")], ["1.0", "1.0", "0.5"], ["2.0", "2.0", "1.0"]),
+    "ttext_values":  ("ttext", dict(elem="text *", kind="ptr", out="text_out", header="meos.h"),
+                      [("value", "VARSIZED")], ["ABC"], ["DEF"]),
+}
 SPAN_MAKE = {
     "intspan_make":    ("int_base", "INT32", "int32_t", "intspan_text", "1", "5", "2", "8"),
     "bigintspan_make": ("bigint_base", "INT64", "int64_t", "bigintspan_text", "1", "5", "2", "8"),
@@ -427,7 +441,7 @@ def load_sigs():
         # start with '/*...*/' rather than 'extern' (e.g. bigintset_end_value, the
         # first accessor after its section header). Each chunk still holds at most
         # one declaration since they are split on ';'.
-        m = re.search(r"extern\s+(.+?)\s+(\*?)(\w+)\s*\((.*)\)", d)
+        m = re.search(r"extern\s+(.+?)\s+(\*{0,2})(\w+)\s*\((.*)\)", d)
         if not m:
             continue
         ret = (m.group(1) + " " + m.group(2)).strip()
@@ -461,6 +475,18 @@ def subtype_of(name):
 def classify(name, ret, plist):
     """Return (spec_entry, test_meta) or (None, reason)."""
     rbase = ret.replace("*", "").strip()
+    # ---- value arrays: T *f(Temporal, int *count) -> a brace-list of the
+    #      distinct values, serialized by the array-output assembler. ----
+    if name in ARRAY_VALUES:
+        in_type, aspec, icols, ra, rb = ARRAY_VALUES[name]
+        entry = dict(nebula_name=camel(name), sql_token=name.upper(), meos_call=name,
+                     build_generic=True, input_type=in_type, return_kind="array_out",
+                     array_out=aspec, extra_args=[],
+                     comment_one_liner=f"{name} ({ret.strip()}) — array of values.")
+        cols = icols + [("ts", "UINT64")]
+        tmeta = dict(cols=cols, rows=[tuple(ra + ["1609459200"]), tuple(rb + ["1609545600"])],
+                     token=name.upper(), sink="VARSIZED")
+        return entry, tmeta
     # ---- span_make(lower, upper, lower_inc, upper_inc) -> Span: a base-scalar
     #      primary (lower) + a same-type scalar (upper) + two bool flags. ----
     if name in SPAN_MAKE:
