@@ -3156,6 +3156,12 @@ GENERIC_INPUTS = {
         '                if (!{var}) return {z};\n')),
     # A tstzspan primary (the timestamp-span expand operand) parsed from a text
     # literal via tstzspan_in — sibling of the intspan/datespan primaries.
+    "tstzspanset": dict(fields=[("lit", "VariableSizedData")], header="meos.h", build=(
+        '                std::string {var}S(litPtr, litSize);\n'
+        '                while (!{var}S.empty() && ({var}S.front()==\'\\\'\' || {var}S.front()==\'"\')) {var}S.erase({var}S.begin());\n'
+        '                while (!{var}S.empty() && ({var}S.back()==\'\\\'\' || {var}S.back()==\'"\')) {var}S.pop_back();\n'
+        '                SpanSet* {var} = tstzspanset_in({var}S.c_str());\n'
+        '                if (!{var}) return {z};\n')),
     "floatset": dict(fields=[("lit", "VariableSizedData")], header="meos.h", build=(
         '                std::string {var}S(litPtr, litSize);\n'
         '                while (!{var}S.empty() && ({var}S.front()==\'\\\'\' || {var}S.front()==\'"\')) {var}S.erase({var}S.begin());\n'

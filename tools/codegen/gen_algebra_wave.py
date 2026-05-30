@@ -133,6 +133,9 @@ def _a3sc(cpp, sql, a, b):
     return dict(k="scalar", cpp=cpp, sql=sql, a=a, b=b)
 def _a3iv():
     return dict(k="iv", sql="VARSIZED", a="1 day", b="2 days")
+def _a3st(ctype, parser, pextra, a, b):     # a date/tstz value parsed from text
+    return dict(k="st", ctype=ctype, parser=parser, pextra=pextra, sql="VARSIZED", a=a, b=b)
+_TSTZ0 = _a3st("TimestampTz", "timestamptz_in", ", -1", "2020-01-01 00:00:00+00", "2020-01-01 00:00:00+00")
 ARITY3 = {
     "int_get_bin":    dict(prim="int_base", psql="INT32", pa="7", pb="12",
                            extras=[_a3sc("int32_t", "INT32", "5", "5"), _a3sc("int32_t", "INT32", "0", "0")], ret="int"),
@@ -144,6 +147,14 @@ ARITY3 = {
                                    extras=[_a3iv(), _a3iv()], ret="stbox_text_out"),
     "tbox_shift_scale_time":  dict(prim="tbox_text", plit=("TBOXFLOAT XT([1, 5],[2020-01-01, 2020-01-05])", "TBOXFLOAT XT([3, 7],[2020-01-03, 2020-01-07])"),
                                    extras=[_a3iv(), _a3iv()], ret="tbox_text_out"),
+    # time bins / precision: base/container + Interval duration + a tstz/date origin.
+    "timestamptz_get_bin":   dict(prim="timestamptz_base", psql="INT64", pa="631152000000000", pb="631238400000000", extras=[_a3iv(), _TSTZ0], ret="int64"),
+    "date_get_bin":          dict(prim="date_base", psql="INT32", pa="100", pb="200",
+                                  extras=[_a3iv(), _a3st("DateADT", "date_in", "", "2020-01-01", "2020-01-01")], ret="int"),
+    "timestamptz_tprecision":dict(prim="timestamptz_base", psql="INT64", pa="631152000000000", pb="631238400000000", extras=[_a3iv(), _TSTZ0], ret="int64"),
+    "tstzspan_tprecision":   dict(prim="tstzspan", plit=("[2020-01-01 00:00:00+00, 2020-01-10 00:00:00+00)", "[2020-01-05 00:00:00+00, 2020-01-20 00:00:00+00)"), extras=[_a3iv(), _TSTZ0], ret="tstzspan_text"),
+    "tstzset_tprecision":    dict(prim="tstzset", plit=("{2020-01-01 00:00:00+00, 2020-01-05 00:00:00+00}", "{2020-01-03 00:00:00+00, 2020-01-08 00:00:00+00}"), extras=[_a3iv(), _TSTZ0], ret="tstzset_text"),
+    "tstzspanset_tprecision":dict(prim="tstzspanset", plit=("{[2020-01-01 00:00:00+00, 2020-01-10 00:00:00+00)}", "{[2020-01-05 00:00:00+00, 2020-01-20 00:00:00+00)}"), extras=[_a3iv(), _TSTZ0], ret="tstzspanset_text"),
 }
 def _setspec(elem, kind, **kw):
     return dict(elem=elem, kind=kind, count_call="set_num_values", **kw)
@@ -536,6 +547,9 @@ def classify(name, ret, plist):
         for ex in s["extras"]:
             if ex["k"] == "iv":
                 extra_args.append(dict(IVAL_EXTRA))
+            elif ex["k"] == "st":               # date/tstz value parsed from text
+                extra_args.append(dict(kind="scalar_text", ctype=ex["ctype"], parser=ex["parser"],
+                                       parser_extra=ex["pextra"], header="meos.h"))
             else:
                 extra_args.append(dict(kind="scalar", cpp=ex["cpp"]))
             ecols.append(("arg%d" % len(ecols), ex["sql"]))
