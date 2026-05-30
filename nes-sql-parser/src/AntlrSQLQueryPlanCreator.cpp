@@ -1690,6 +1690,10 @@
 #include <Functions/Meos/NpointTstzspanToStboxLogicalFunction.hpp>
 #include <Functions/Meos/PoseTstzspanToStboxLogicalFunction.hpp>
 #include <Functions/Meos/CbufferTstzspanToStboxLogicalFunction.hpp>
+#include <Functions/Meos/GeoTimestamptzToStboxLogicalFunction.hpp>
+#include <Functions/Meos/NpointTimestamptzToStboxLogicalFunction.hpp>
+#include <Functions/Meos/PoseTimestamptzToStboxLogicalFunction.hpp>
+#include <Functions/Meos/CbufferTimestamptzToStboxLogicalFunction.hpp>
 #include <Plans/LogicalPlan.hpp>
 #include <Plans/LogicalPlanBuilder.hpp>
 #include <Util/Overloaded.hpp>
@@ -47474,6 +47478,122 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: CBUFFER_TSTZSPAN_TO_STBOX */
+        /* BEGIN CODEGEN PARSER GLUE: GEO_TIMESTAMPTZ_TO_STBOX */
+        case AntlrSQLLexer::GEO_TIMESTAMPTZ_TO_STBOX:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 2)
+                throw InvalidQuerySyntax("GEO_TIMESTAMPTZ_TO_STBOX requires exactly 2 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(GeoTimestamptzToStboxLogicalFunction(a0, a1));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: GEO_TIMESTAMPTZ_TO_STBOX */
+
+        /* BEGIN CODEGEN PARSER GLUE: NPOINT_TIMESTAMPTZ_TO_STBOX */
+        case AntlrSQLLexer::NPOINT_TIMESTAMPTZ_TO_STBOX:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 2)
+                throw InvalidQuerySyntax("NPOINT_TIMESTAMPTZ_TO_STBOX requires exactly 2 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(NpointTimestamptzToStboxLogicalFunction(a0, a1));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: NPOINT_TIMESTAMPTZ_TO_STBOX */
+
+        /* BEGIN CODEGEN PARSER GLUE: POSE_TIMESTAMPTZ_TO_STBOX */
+        case AntlrSQLLexer::POSE_TIMESTAMPTZ_TO_STBOX:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 2)
+                throw InvalidQuerySyntax("POSE_TIMESTAMPTZ_TO_STBOX requires exactly 2 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(PoseTimestamptzToStboxLogicalFunction(a0, a1));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: POSE_TIMESTAMPTZ_TO_STBOX */
+
+        /* BEGIN CODEGEN PARSER GLUE: CBUFFER_TIMESTAMPTZ_TO_STBOX */
+        case AntlrSQLLexer::CBUFFER_TIMESTAMPTZ_TO_STBOX:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 2)
+                throw InvalidQuerySyntax("CBUFFER_TIMESTAMPTZ_TO_STBOX requires exactly 2 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(CbufferTimestamptzToStboxLogicalFunction(a0, a1));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: CBUFFER_TIMESTAMPTZ_TO_STBOX */
+
 
 
 

@@ -237,6 +237,7 @@ cbuffer_radius	proven
 cbuffer_round	proven
 cbuffer_same	proven
 cbuffer_srid	proven
+cbuffer_timestamptz_to_stbox	proven
 cbuffer_to_geom	proven
 cbuffer_to_set	proven
 cbuffer_to_stbox	proven
@@ -571,6 +572,7 @@ geo_same	proven
 geo_split_each_n_stboxes	proven
 geo_split_n_stboxes	proven
 geo_srid	proven
+geo_timestamptz_to_stbox	proven
 geo_to_set	proven
 geo_to_stbox	proven
 geo_tpose_to_trgeometry	proven
@@ -804,6 +806,7 @@ npoint_round	proven
 npoint_route	proven
 npoint_same	proven
 npoint_srid	proven
+npoint_timestamptz_to_stbox	proven
 npoint_to_geompoint	proven
 npoint_to_set	proven
 npoint_to_stbox	proven
@@ -991,6 +994,7 @@ pose_rotation	proven
 pose_round	proven
 pose_same	proven
 pose_srid	proven
+pose_timestamptz_to_stbox	proven
 pose_to_point	proven
 pose_to_set	proven
 pose_to_stbox	proven

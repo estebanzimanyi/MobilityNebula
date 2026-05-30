@@ -1237,3 +1237,4 @@ add_plugin(GeoToSet PhysicalFunction nes-physical-operators GeoToSetPhysicalFunc
 add_plugin(GeoToStbox PhysicalFunction nes-physical-operators GeoToStboxPhysicalFunction.cpp)
 add_plugin(SpatialsetToStbox PhysicalFunction nes-physical-operators SpatialsetToStboxPhysicalFunction.cpp)
 add_plugin(GeoTstzspanToStbox PhysicalFunction nes-physical-operators GeoTstzspanToStboxPhysicalFunction.cpp)
+add_plugin(GeoTimestamptzToStbox PhysicalFunction nes-physical-operators GeoTimestamptzToStboxPhysicalFunction.cpp)

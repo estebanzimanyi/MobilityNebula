@@ -646,6 +646,10 @@ TO_STBOX = {
     "npoint_tstzspan_to_stbox": ("npoint", "tstzspan", "NPoint(1, 0.5)", "NPoint(1, 0.7)"),
     "pose_tstzspan_to_stbox": ("pose", "tstzspan", "Pose(Point(1 1), 0.5)", "Pose(Point(2 2), 1.0)"),
     "cbuffer_tstzspan_to_stbox": ("cbuffer", "tstzspan", "Cbuffer(Point(1 1),1.0)", "Cbuffer(Point(2 2),0.5)"),
+    "geo_timestamptz_to_stbox": ("geom", "timestamptz", "SRID=4326;Point(1 1)", "SRID=4326;Point(2 2)"),
+    "npoint_timestamptz_to_stbox": ("npoint", "timestamptz", "NPoint(1, 0.5)", "NPoint(1, 0.7)"),
+    "pose_timestamptz_to_stbox": ("pose", "timestamptz", "Pose(Point(1 1), 0.5)", "Pose(Point(2 2), 1.0)"),
+    "cbuffer_timestamptz_to_stbox": ("cbuffer", "timestamptz", "Cbuffer(Point(1 1),1.0)", "Cbuffer(Point(2 2),0.5)"),
 }
 
 OBJECT_TO_SET = {
@@ -706,6 +710,12 @@ def classify(name, ret, plist):
             cols = [("a", "VARSIZED"), ("arg", "VARSIZED")]
             tspan = "[2020-01-01 00:00:00+00, 2020-01-05 00:00:00+00)"
             rows = [(l0, tspan), (l1, tspan)]
+        elif extra == "timestamptz":
+            extra_args = [dict(kind="scalar_text", ctype="TimestampTz", parser="timestamptz_in",
+                               parser_extra=", -1", header="meos.h")]
+            cols = [("a", "VARSIZED"), ("arg", "VARSIZED")]
+            tstz = "2020-01-01 00:00:00+00"
+            rows = [(l0, tstz), (l1, tstz)]
         entry = dict(nebula_name=camel(name), sql_token=name.upper(), meos_call=name,
                      build_generic=True, input_type=in_type, return_kind="stbox_text_out",
                      extra_args=extra_args,
