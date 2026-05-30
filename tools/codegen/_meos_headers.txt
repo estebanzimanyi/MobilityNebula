@@ -4213,3 +4213,4 @@ extern int adwithin_trgeometry_trgeometry(const Temporal *temp1, const Temporal 
 /*****************************************************************************/
 
 #endif /* __MEOS_RGEO_H__ */
+extern int32_t tspatial_srid(const Temporal *temp);

@@ -1020,6 +1020,8 @@ def classify(name, ret, plist):
             # (temporal_*, tfloat_*, tint_*) is a tfloat instant.
             tinstant_sub = next((t for t in ("tnpoint", "tpose", "tgeo", "tcbuffer", "trgeometry")
                                  if t in name.split("_")), None)
+            if tinstant_sub is None and "tspatial" in name.split("_"):
+                tinstant_sub = "tgeo"        # a generic spatial-temporal accessor (tspatial_srid)
             if tinstant_sub:
                 input_type = ALWAYS_INPUT_TYPE.get(tinstant_sub, tinstant_sub)
             else:

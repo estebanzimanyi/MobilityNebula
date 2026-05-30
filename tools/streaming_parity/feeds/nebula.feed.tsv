@@ -1472,6 +1472,7 @@ trgeometry_to_tinstant	proven
 trgeometry_to_tpoint	proven
 trgeometry_to_tpose	proven
 tspatial_extent_transfn	proven
+tspatial_srid	proven
 tstzset_end_value	proven
 tstzset_shift_scale	proven
 tstzset_start_value	proven

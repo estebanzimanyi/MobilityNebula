@@ -1215,3 +1215,4 @@ add_plugin(GeogToGeom PhysicalFunction nes-physical-operators GeogToGeomPhysical
 if(RGEO)
     add_subdirectory(Rgeo)
 endif()
+add_plugin(TspatialSrid PhysicalFunction nes-physical-operators TspatialSridPhysicalFunction.cpp)

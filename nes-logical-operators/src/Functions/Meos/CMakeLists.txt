@@ -1545,3 +1545,4 @@ add_plugin(TrgeometryRestrictTimestamptz LogicalFunction nes-logical-operators T
 add_plugin(TrgeometryRestrictTstzset LogicalFunction nes-logical-operators TrgeometryRestrictTstzsetLogicalFunction.cpp)
 add_plugin(TrgeometryRestrictTstzspan LogicalFunction nes-logical-operators TrgeometryRestrictTstzspanLogicalFunction.cpp)
 add_plugin(TrgeometryRestrictTstzspanset LogicalFunction nes-logical-operators TrgeometryRestrictTstzspansetLogicalFunction.cpp)
+add_plugin(TspatialSrid LogicalFunction nes-logical-operators TspatialSridLogicalFunction.cpp)
