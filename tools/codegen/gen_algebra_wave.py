@@ -691,6 +691,29 @@ def classify(name, ret, plist):
         tmeta = dict(cols=[("a", "VARSIZED")], rows=[(l0,), (l1,)],
                      token=name.upper(), sink="VARSIZED")
         return entry, tmeta
+    # ---- temporal -> temporal conversion (tgeompoint_to_tgeometry): a spatial
+    #      temporal instant -> the converted temporal via tspatial_as_text. ----
+    if len(plist) == 1 and rbase == "Temporal" and name == "tgeompoint_to_tgeometry":
+        entry = dict(nebula_name=camel(name), sql_token=name.upper(), meos_call=name,
+                     build_generic=True, input_type="tgeompoint", return_kind="tspatial_text",
+                     extra_args=[], comment_one_liner=f"{name} ({ret.strip()}) — temporal conversion.")
+        tmeta = dict(cols=[("lon", "FLOAT64"), ("lat", "FLOAT64"), ("ts", "UINT64")],
+                     rows=[("1.0", "1.0", "1609459200"), ("2.0", "2.0", "1609545600")],
+                     token=name.upper(), sink="VARSIZED")
+        return entry, tmeta
+    # ---- geog_dwithin(g1, g2, tolerance, use_spheroid) -> bool: two geographies
+    #      + a distance + a spheroid flag (passed false). ----
+    if name == "geog_dwithin" and len(plist) == 4 and rbase == "bool":
+        entry = dict(nebula_name=camel(name), sql_token=name.upper(), meos_call=name,
+                     build_generic=True, input_type="geom", return_kind="int",
+                     extra_args=[dict(kind="geom"), dict(kind="scalar", cpp="double")],
+                     extra_call_args=["false"],
+                     comment_one_liner=f"{name} (bool) — geography dwithin.")
+        tmeta = dict(cols=[("a", "VARSIZED"), ("arg", "VARSIZED"), ("dist", "FLOAT64")],
+                     rows=[("SRID=4326;Point(0 0)", "SRID=4326;Point(0 0)", "1000.0"),
+                           ("SRID=4326;Point(0 0)", "SRID=4326;Point(1 1)", "1000.0")],
+                     token=name.upper(), sink="INT32")
+        return entry, tmeta
     # ---- arity-1 X_to_box/span/spanset conversion constructor. Requires '_to_'
     #      in the name: that safely excludes the array-returning '_spans' siblings
     #      (Span ** collapses to the same parsed shape as a single Span). ----

@@ -534,7 +534,7 @@ geo_same	proven
 geo_split_each_n_stboxes	proven
 geo_split_n_stboxes	proven
 geo_srid	proven
-geog_dwithin	wired
+geog_dwithin	proven
 geom_boundary	proven
 geom_centroid	proven
 geom_contains	proven
@@ -553,7 +553,7 @@ geom_perimeter	proven
 geom_shortestline2d	proven
 geom_shortestline3d	proven
 geom_to_cbuffer	proven
-geom_to_geog	wired
+geom_to_geog	proven
 geom_touches	proven
 geom_unary_union	proven
 geoset_end_value	proven
