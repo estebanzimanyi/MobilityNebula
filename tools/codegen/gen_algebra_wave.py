@@ -1031,6 +1031,8 @@ def classify(name, ret, plist):
         # same way the value_n out-param family does; otherwise map a scalar sink.
         if rbase in VALUE_N_VARSIZED:
             rkind = VALUE_N_VARSIZED[rbase]
+        elif rbase in ("TInstant", "TSequence", "Temporal") and tinstant_sub:
+            rkind = "tspatial_text"            # a spatial temporal instant/sequence accessor
         else:
             rkind = SCALAR_RET.get(ret.strip())
             if rkind is None:

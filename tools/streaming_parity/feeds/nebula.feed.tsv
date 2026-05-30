@@ -747,6 +747,7 @@ nad_tpose_geo	proven
 nad_tpose_pose	proven
 nad_tpose_stbox	proven
 nad_tpose_tpose	proven
+nad_trgeometry_geo	wired
 nad_trgeometry_trgeometry	wired
 nai_tcbuffer_cbuffer	proven
 nai_tcbuffer_geo	proven
@@ -759,6 +760,7 @@ nai_tnpoint_tnpoint	proven
 nai_tpose_geo	proven
 nai_tpose_pose	proven
 nai_tpose_tpose	proven
+nai_trgeometry_geo	proven
 nai_trgeometry_trgeometry	wired
 npoint_cmp	proven
 npoint_eq	proven
@@ -1042,6 +1044,7 @@ shortestline_tnpoint_tnpoint	proven
 shortestline_tpose_geo	proven
 shortestline_tpose_pose	proven
 shortestline_tpose_tpose	proven
+shortestline_trgeometry_geo	wired
 shortestline_trgeometry_trgeometry	wired
 span_cmp	proven
 span_copy	proven
@@ -1453,9 +1456,13 @@ tpose_start_value	proven
 tpose_trajectory	proven
 tpose_value_n	proven
 tpose_values	proven
+trgeometry_end_instant	proven
+trgeometry_end_sequence	wired
 trgeometry_end_value	proven
 trgeometry_geom	proven
 trgeometry_rotation	proven
+trgeometry_start_instant	proven
+trgeometry_start_sequence	wired
 trgeometry_start_value	proven
 trgeometry_to_tinstant	proven
 trgeometry_to_tpoint	proven
