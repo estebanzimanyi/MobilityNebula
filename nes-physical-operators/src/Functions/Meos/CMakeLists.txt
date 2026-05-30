@@ -1211,3 +1211,7 @@ add_plugin(DatesetToTstzset PhysicalFunction nes-physical-operators DatesetToTst
 add_plugin(TstzsetToDateset PhysicalFunction nes-physical-operators TstzsetToDatesetPhysicalFunction.cpp)
 add_plugin(TstzspansetTimestamps PhysicalFunction nes-physical-operators TstzspansetTimestampsPhysicalFunction.cpp)
 add_plugin(GeogToGeom PhysicalFunction nes-physical-operators GeogToGeomPhysicalFunction.cpp)
+
+if(RGEO)
+    add_subdirectory(Rgeo)
+endif()

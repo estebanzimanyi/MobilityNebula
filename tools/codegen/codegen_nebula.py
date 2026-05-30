@@ -3055,6 +3055,18 @@ GENERIC_INPUTS = {
         '                std::string {var}Wkt = fmt::format("SRID=4326;Point({{}} {{}} {{}})@{{}}", lon, lat, z, MEOS::Meos::convertEpochToTimestamp(ts));\n'
         '                Temporal* {var} = tgeompoint_in({var}Wkt.c_str());\n'
         '                if (!{var}) return {z};\n')),
+    # trgeometry (temporal rigid geometry) instant: a fixed base polygon rotated/
+    # translated by a per-event pose (x, y, theta) at a timestamp, built via
+    # geo_tpose_to_trgeometry(geom, tpose-instant). The v6 libmeos exports these.
+    "trgeometry": dict(fields=[("x", "double"), ("y", "double"), ("theta", "double"), ("ts", "uint64_t")], header="meos_rgeo.h", build=(
+        '                GSERIALIZED* {var}g = geom_in("Polygon((0 0,1 0,1 1,0 1,0 0))", -1);\n'
+        '                if (!{var}g) return {z};\n'
+        '                std::string {var}pw = fmt::format("Pose(Point({{}} {{}}),{{}})@{{}}", x, y, theta, MEOS::Meos::convertEpochToTimestamp(ts));\n'
+        '                Temporal* {var}tp = tpose_in({var}pw.c_str());\n'
+        '                if (!{var}tp) {{ free({var}g); return {z}; }}\n'
+        '                Temporal* {var} = geo_tpose_to_trgeometry({var}g, {var}tp);\n'
+        '                free({var}g); free({var}tp);\n'
+        '                if (!{var}) return {z};\n')),
     "tgeometry": dict(fields=[("geomWkt", "VariableSizedData"), ("ts", "uint64_t")], header="meos_geo.h", build=(
         '                std::string {var}G(geomWktPtr, geomWktSize);\n'
         '                std::string {var}Wkt = {var}G + "@" + MEOS::Meos::convertEpochToTimestamp(ts);\n'

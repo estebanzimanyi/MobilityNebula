@@ -416,6 +416,7 @@ ALWAYS_TINPUT = {
                  ("radius", "FLOAT64", "1.0", "0.5")],
     "ttext":    [("value", "VARSIZED", "ABC", "DEF")],
     "tgeo":     [("lon", "FLOAT64", "1.0", "2.0"), ("lat", "FLOAT64", "1.0", "2.0")],
+    "trgeometry": [("x", "FLOAT64", "0.0", "1.0"), ("y", "FLOAT64", "0.0", "1.0"), ("theta", "FLOAT64", "0.0", "0.5")],
 }
 # temporal subtype token -> codegen GENERIC_INPUTS builder key (when they differ).
 ALWAYS_INPUT_TYPE = {"tgeo": "tgeompoint"}
@@ -984,7 +985,7 @@ def classify(name, ret, plist):
             # a named spatial subtype (tnpoint_route, tpose_start_value,
             # tgeo_*, tcbuffer_*) builds its OWN instant; everything else
             # (temporal_*, tfloat_*, tint_*) is a tfloat instant.
-            tinstant_sub = next((t for t in ("tnpoint", "tpose", "tgeo", "tcbuffer")
+            tinstant_sub = next((t for t in ("tnpoint", "tpose", "tgeo", "tcbuffer", "trgeometry")
                                  if t in name.split("_")), None)
             if tinstant_sub:
                 input_type = ALWAYS_INPUT_TYPE.get(tinstant_sub, tinstant_sub)

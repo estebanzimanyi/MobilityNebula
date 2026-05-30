@@ -89,6 +89,7 @@ always_eq_bool_tbool	proven
 always_eq_cbuffer_tcbuffer	proven
 always_eq_float_tfloat	proven
 always_eq_geo_tgeo	proven
+always_eq_geo_trgeometry	proven
 always_eq_int_tint	proven
 always_eq_npoint_tnpoint	proven
 always_eq_pose_tpose	proven
@@ -105,6 +106,7 @@ always_eq_tnpoint_npoint	proven
 always_eq_tnpoint_tnpoint	proven
 always_eq_tpose_pose	proven
 always_eq_tpose_tpose	proven
+always_eq_trgeometry_geo	proven
 always_eq_ttext_text	proven
 always_ge_float_tfloat	proven
 always_ge_int_tint	proven
@@ -138,6 +140,7 @@ always_ne_bool_tbool	proven
 always_ne_cbuffer_tcbuffer	proven
 always_ne_float_tfloat	proven
 always_ne_geo_tgeo	proven
+always_ne_geo_trgeometry	proven
 always_ne_int_tint	proven
 always_ne_npoint_tnpoint	proven
 always_ne_pose_tpose	proven
@@ -154,6 +157,7 @@ always_ne_tnpoint_npoint	proven
 always_ne_tnpoint_tnpoint	proven
 always_ne_tpose_pose	proven
 always_ne_tpose_tpose	proven
+always_ne_trgeometry_geo	proven
 always_ne_ttext_text	proven
 atouches_tcbuffer_cbuffer	proven
 atouches_tcbuffer_geo	proven
@@ -421,6 +425,7 @@ ever_eq_bool_tbool	proven
 ever_eq_cbuffer_tcbuffer	proven
 ever_eq_float_tfloat	proven
 ever_eq_geo_tgeo	proven
+ever_eq_geo_trgeometry	proven
 ever_eq_int_tint	proven
 ever_eq_npoint_tnpoint	proven
 ever_eq_pose_tpose	proven
@@ -437,6 +442,7 @@ ever_eq_tnpoint_npoint	proven
 ever_eq_tnpoint_tnpoint	proven
 ever_eq_tpose_pose	proven
 ever_eq_tpose_tpose	proven
+ever_eq_trgeometry_geo	proven
 ever_eq_ttext_text	proven
 ever_ge_float_tfloat	proven
 ever_ge_int_tint	proven
@@ -470,6 +476,7 @@ ever_ne_bool_tbool	proven
 ever_ne_cbuffer_tcbuffer	proven
 ever_ne_float_tfloat	proven
 ever_ne_geo_tgeo	proven
+ever_ne_geo_trgeometry	proven
 ever_ne_int_tint	proven
 ever_ne_npoint_tnpoint	proven
 ever_ne_pose_tpose	proven
@@ -486,6 +493,7 @@ ever_ne_tnpoint_npoint	proven
 ever_ne_tnpoint_tnpoint	proven
 ever_ne_tpose_pose	proven
 ever_ne_tpose_tpose	proven
+ever_ne_trgeometry_geo	proven
 ever_ne_ttext_text	proven
 float_extent_transfn	proven
 float_get_bin	proven
@@ -539,6 +547,7 @@ geo_same	proven
 geo_split_each_n_stboxes	proven
 geo_split_n_stboxes	proven
 geo_srid	proven
+geo_tpose_to_trgeometry	proven
 geog_dwithin	proven
 geog_to_geom	proven
 geom_boundary	proven
@@ -1185,6 +1194,7 @@ tdistance_tnumber_tnumber	proven
 tdistance_tpose_point	proven
 tdistance_tpose_pose	proven
 tdistance_tpose_tpose	proven
+tdistance_trgeometry_geo	wired
 tdwithin_tcbuffer_cbuffer	proven
 tdwithin_tcbuffer_geo	proven
 tdwithin_tcbuffer_tcbuffer	proven
@@ -1243,6 +1253,7 @@ teq_bool_tbool	proven
 teq_cbuffer_tcbuffer	proven
 teq_float_tfloat	proven
 teq_geo_tgeo	proven
+teq_geo_trgeometry	proven
 teq_int_tint	proven
 teq_pose_tpose	proven
 teq_tbool_bool	proven
@@ -1254,6 +1265,7 @@ teq_tgeo_geo	proven
 teq_tint_int	proven
 teq_tnpoint_npoint	proven
 teq_tpose_pose	proven
+teq_trgeometry_geo	proven
 teq_ttext_text	proven
 textcat_text_ttext	proven
 textcat_ttext_text	proven
@@ -1369,6 +1381,7 @@ tne_bool_tbool	proven
 tne_cbuffer_tcbuffer	proven
 tne_float_tfloat	proven
 tne_geo_tgeo	proven
+tne_geo_trgeometry	proven
 tne_int_tint	proven
 tne_pose_tpose	proven
 tne_tbool_bool	proven
@@ -1380,6 +1393,7 @@ tne_tgeo_geo	proven
 tne_tint_int	proven
 tne_tnpoint_npoint	proven
 tne_tpose_pose	proven
+tne_trgeometry_geo	proven
 tne_ttext_text	proven
 tnpoint_at_npoint	proven
 tnpoint_cumulative_length	proven
@@ -1436,6 +1450,9 @@ tpose_start_value	proven
 tpose_trajectory	proven
 tpose_value_n	proven
 tpose_values	proven
+trgeometry_end_value	proven
+trgeometry_geom	proven
+trgeometry_start_value	proven
 tspatial_extent_transfn	proven
 tstzset_end_value	proven
 tstzset_shift_scale	proven

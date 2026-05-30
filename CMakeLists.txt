@@ -37,7 +37,7 @@ option(NES_DEBUG_TUPLE_BUFFER_LEAKS "Heavyweight instrumentation for Tuplebuffer
 option(CBUFFER "Include circular-buffer (tcbuffer) MEOS operators" ON)
 option(NPOINT "Include network-point (tnpoint) MEOS operators" ON)
 option(POSE "Include geopose (tpose) MEOS operators" ON)
-CMAKE_DEPENDENT_OPTION(RGEO "Include rigid-geometry (trgeometry) MEOS operators" OFF "POSE" OFF)
+CMAKE_DEPENDENT_OPTION(RGEO "Include rigid-geometry (trgeometry) MEOS operators" ON "POSE" OFF)
 
 
 if (CMAKE_BUILD_TYPE STREQUAL "Benchmark")
