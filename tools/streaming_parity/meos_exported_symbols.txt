@@ -2457,8 +2457,10 @@ tbool_in
 tbool_minus_value
 tbool_out
 tbool_start_value
+tbool_tand_combinefn
 tbool_tand_transfn
 tbool_to_tint
+tbool_tor_combinefn
 tbool_tor_transfn
 tbool_value_at_timestamptz
 tbool_value_n
@@ -2827,6 +2829,7 @@ temporal_tagg_combinefn
 temporal_tagg_finalfn
 temporal_tagg_transfn
 temporal_tagg_transform_transfn
+temporal_tcount_combinefn
 temporal_tcount_transfn
 temporal_time
 temporal_time_bins
@@ -2931,10 +2934,13 @@ tfloat_shift_scale_value
 tfloat_shift_value
 tfloat_start_value
 tfloat_time_boxes
+tfloat_tmax_combinefn
 tfloat_tmax_transfn
+tfloat_tmin_combinefn
 tfloat_tmin_transfn
 tfloat_to_tbigint
 tfloat_to_tint
+tfloat_tsum_combinefn
 tfloat_tsum_transfn
 tfloat_value_at_timestamptz
 tfloat_value_bins
@@ -3203,10 +3209,13 @@ tint_shift_scale_value
 tint_shift_value
 tint_start_value
 tint_time_boxes
+tint_tmax_combinefn
 tint_tmax_transfn
+tint_tmin_combinefn
 tint_tmin_transfn
 tint_to_tbigint
 tint_to_tfloat
+tint_tsum_combinefn
 tint_tsum_transfn
 tint_value_at_timestamptz
 tint_value_bins
@@ -3372,6 +3381,7 @@ tnumber_shift_scale_value
 tnumber_spantype
 tnumber_split_each_n_tboxes
 tnumber_split_n_tboxes
+tnumber_tavg_combinefn
 tnumber_tavg_finalfn
 tnumber_tavg_transfn
 tnumber_tboxes
@@ -3931,7 +3941,9 @@ ttext_min_value
 ttext_minus_value
 ttext_out
 ttext_start_value
+ttext_tmax_combinefn
 ttext_tmax_transfn
+ttext_tmin_combinefn
 ttext_tmin_transfn
 ttext_upper
 ttext_value_at_timestamptz

@@ -1287,6 +1287,7 @@ temporal_round	proven
 temporal_sequences	wired
 temporal_spans	proven
 temporal_start_timestamptz	proven
+temporal_tagg_finalfn	proven
 temporal_time	proven
 temporal_time_bins	proven
 temporal_timestamps	proven
@@ -1336,7 +1337,10 @@ tfloat_radians	proven
 tfloat_shift_value	proven
 tfloat_start_value	proven
 tfloat_time_boxes	proven
+tfloat_tmax_transfn	proven
+tfloat_tmin_transfn	proven
 tfloat_to_tint	proven
+tfloat_tsum_transfn	proven
 tfloat_value_bins	proven
 tfloat_value_boxes	proven
 tfloat_value_n	proven
@@ -1392,7 +1396,10 @@ tint_minus_value	proven
 tint_shift_value	proven
 tint_start_value	proven
 tint_time_boxes	proven
+tint_tmax_transfn	proven
+tint_tmin_transfn	proven
 tint_to_tfloat	proven
+tint_tsum_transfn	proven
 tint_value_bins	proven
 tint_value_boxes	proven
 tint_value_n	proven
@@ -1462,6 +1469,8 @@ tnumber_minus_spanset	proven
 tnumber_minus_tbox	proven
 tnumber_split_each_n_tboxes	proven
 tnumber_split_n_tboxes	proven
+tnumber_tavg_finalfn	proven
+tnumber_tavg_transfn	proven
 tnumber_to_span	proven
 tnumber_to_tbox	proven
 tnumber_trend	proven

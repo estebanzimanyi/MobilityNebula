@@ -1882,6 +1882,119 @@ PHYSICAL_CPP_SETFOLD = _swap_once(
     "scalarfold serialize -> setfold (finalfn)")
 
 # ===========================================================================
+# Temporal-aggregate template (windowed tMin/tMax/tSum/tAnd/tOr/tAvg -> Temporal,
+# serialized as hex-WKB). Reuses the scalar-fold PagedVector scaffold (lift =
+# buffer raw (value, ts); combine = concat raw events), but lower() folds EACH
+# event through the per-op MEOS `*_tagg`/`*_tavg` transition fn into a SkipList
+# (so same-timestamp events are merged by the transfn's aggregation function),
+# then materializes the aggregate Temporal via the finalfn and emits its
+# hex-WKB. Because the SkipList is built fresh in lower() from the complete raw
+# event multiset, combine stays correct without a per-op SkipList combinefn.
+# Derived from PHYSICAL_CPP_SCALARFOLD by swapping only the lower() fold/serialize
+# block (lift / combine / reset / cleanup stay byte-identical).
+# ===========================================================================
+_SCALARFOLD_LOWER_FOLD = """\
+    // Fold the windowed scalar field through the MEOS extent transition fn.
+    // The Span state threads across events as an opaque pointer; a NULL initial
+    // state makes the first call allocate, later calls expand in place.
+    auto spanState = nautilus::invoke(
+        +[](const Nautilus::Interface::PagedVector*) -> void* {{ return nullptr; }},
+        pagedVectorPtr);
+
+    const auto endIt = pagedVectorRef.end(allFieldNames);
+    for (auto candidateIt = pagedVectorRef.begin(allFieldNames); candidateIt != endIt; ++candidateIt)
+    {{
+        const auto itemRecord = *candidateIt;
+        const auto valueRaw = itemRecord.read(std::string(ValueFieldName));
+        auto value = valueRaw.cast<nautilus::val<{fold_field_cpp_type}>>();
+
+        spanState = nautilus::invoke(
+            +[](void* state, {fold_field_cpp_type} val) -> void*
+            {{
+                MEOS::Meos::ensureMeosInitialized();
+            std::lock_guard<std::mutex> lock({mutex_name});
+                {fold_invoke_body}
+            }},
+            spanState,
+            value);
+    }}
+
+    auto boxStr = nautilus::invoke(
+        +[](void* state) -> char*
+        {{
+            if (!state) {{
+                return (char*)nullptr;
+            }}
+            MEOS::Meos::ensureMeosInitialized();
+            std::lock_guard<std::mutex> lock({mutex_name});
+            Span* sp = static_cast<Span*>(state);
+            char* out = {box_out_call};
+            free(state);
+            return out;
+        }},
+        spanState);"""
+
+_TAGG_LOWER_FOLD = """\
+    // Fold each windowed event through the per-op MEOS tagg transition fn into a
+    // SkipList state (NULL initial -> transfn allocates). Same-timestamp events
+    // are merged by the transition fn's aggregation function (sum/min/max/...).
+    auto skipState = nautilus::invoke(
+        +[](const Nautilus::Interface::PagedVector*) -> void* {{ return nullptr; }},
+        pagedVectorPtr);
+
+    const auto endIt = pagedVectorRef.end(allFieldNames);
+    for (auto candidateIt = pagedVectorRef.begin(allFieldNames); candidateIt != endIt; ++candidateIt)
+    {{
+        const auto itemRecord = *candidateIt;
+        const auto valueRaw = itemRecord.read(std::string(ValueFieldName));
+        const auto timestampRaw = itemRecord.read(std::string(TimestampFieldName));
+        auto value = valueRaw.cast<nautilus::val<{lift_value_cpp_type}>>();
+        auto timestamp = timestampRaw.cast<nautilus::val<int64_t>>();
+
+        skipState = nautilus::invoke(
+            +[](void* state, {lift_value_cpp_type} valueVal, int64_t tsVal) -> void*
+            {{
+                MEOS::Meos::ensureMeosInitialized();
+                std::lock_guard<std::mutex> lock({mutex_name});
+                long long adjustedTime = (tsVal > 1000000000000LL) ? (tsVal / 1000) : tsVal;
+                std::string tsS = MEOS::Meos::convertSecondsToTimestamp(adjustedTime);
+                char itemStr[80];
+                sprintf(itemStr, "{value_printf_fmt}@%s", valueVal, tsS.c_str());
+                Temporal* inst = {tnumber_in_fn}(itemStr);
+                if (!inst) {{ return state; }}
+                SkipList* ns = {tagg_transfn}(static_cast<SkipList*>(state), inst);
+                free(inst);
+                return reinterpret_cast<void*>(ns);
+            }},
+            skipState,
+            value,
+            timestamp);
+    }}
+
+    auto boxStr = nautilus::invoke(
+        +[](void* state) -> char*
+        {{
+            if (!state) {{
+                return (char*)nullptr;
+            }}
+            MEOS::Meos::ensureMeosInitialized();
+            std::lock_guard<std::mutex> lock({mutex_name});
+            Temporal* res = {tagg_finalfn}(static_cast<SkipList*>(state));
+            if (!res) {{
+                return (char*)nullptr;
+            }}
+            size_t hexSize = 0;
+            char* hexOut = temporal_as_hexwkb(res, 0, &hexSize);
+            free(res);
+            return hexOut;
+        }},
+        skipState);"""
+
+PHYSICAL_CPP_TAGG_WKB = _swap_once(
+    PHYSICAL_CPP_SCALARFOLD, _SCALARFOLD_LOWER_FOLD, _TAGG_LOWER_FOLD,
+    "scalarfold lower -> tagg skiplist lower (finalfn + hex-WKB)")
+
+# ===========================================================================
 # Parser-glue templates: TWO dispatch sites in AntlrSQLQueryPlanCreator.cpp.
 # Site 1 is the dedicated-token case-switch (~line 965 in mariana's tree).
 # Site 2 is the IDENTIFIER fallback `else if (funcName == "TOKEN")` chain
@@ -2328,6 +2441,8 @@ def physical_template_for(op):
             return PHYSICAL_HPP_TNUMBER, PHYSICAL_CPP_SCALARFOLD
         if op.get("fold") == "set":
             return PHYSICAL_HPP_TNUMBER, PHYSICAL_CPP_SETFOLD
+        if op.get("fold") == "tagg":
+            return PHYSICAL_HPP_TNUMBER, PHYSICAL_CPP_TAGG_WKB
         return PHYSICAL_HPP_TNUMBER, (PHYSICAL_CPP_TNUMBER_BOX if box else PHYSICAL_CPP_TNUMBER)
     raise ValueError(f"unknown input_shape: {op['input_shape']}")
 
@@ -2381,6 +2496,9 @@ def emit_operator(op, output_root: Path):
         "fold_invoke_body":    op.get("fold_invoke_body", ""),
         "box_out_call":        op.get("box_out_call", ""),
         "finalfn":             op.get("finalfn", ""),
+        # temporal-aggregate (fold=tagg) extras — per-op transfn + finalfn.
+        "tagg_transfn":        op.get("tagg_transfn", ""),
+        "tagg_finalfn":        op.get("tagg_finalfn", ""),
     }
 
     # value_compute (point/tgeo finalize): either fold the windowed sequence
