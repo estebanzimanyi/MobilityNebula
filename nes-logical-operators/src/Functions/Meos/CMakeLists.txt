@@ -1450,3 +1450,8 @@ add_plugin(TdwithinTcbufferGeo LogicalFunction nes-logical-operators TdwithinTcb
 add_plugin(TdwithinTcbufferTcbuffer LogicalFunction nes-logical-operators TdwithinTcbufferTcbufferLogicalFunction.cpp)
 add_plugin(TdwithinTgeoGeo LogicalFunction nes-logical-operators TdwithinTgeoGeoLogicalFunction.cpp)
 add_plugin(TdwithinTgeoTgeo LogicalFunction nes-logical-operators TdwithinTgeoTgeoLogicalFunction.cpp)
+add_plugin(IntGetBin LogicalFunction nes-logical-operators IntGetBinLogicalFunction.cpp)
+add_plugin(BigintGetBin LogicalFunction nes-logical-operators BigintGetBinLogicalFunction.cpp)
+add_plugin(FloatGetBin LogicalFunction nes-logical-operators FloatGetBinLogicalFunction.cpp)
+add_plugin(StboxShiftScaleTime LogicalFunction nes-logical-operators StboxShiftScaleTimeLogicalFunction.cpp)
+add_plugin(TboxShiftScaleTime LogicalFunction nes-logical-operators TboxShiftScaleTimeLogicalFunction.cpp)

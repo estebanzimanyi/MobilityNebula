@@ -1150,3 +1150,8 @@ add_plugin(TemporalSpans PhysicalFunction nes-physical-operators TemporalSpansPh
 add_plugin(TemporalInstants PhysicalFunction nes-physical-operators TemporalInstantsPhysicalFunction.cpp)
 add_plugin(TdwithinTgeoGeo PhysicalFunction nes-physical-operators TdwithinTgeoGeoPhysicalFunction.cpp)
 add_plugin(TdwithinTgeoTgeo PhysicalFunction nes-physical-operators TdwithinTgeoTgeoPhysicalFunction.cpp)
+add_plugin(IntGetBin PhysicalFunction nes-physical-operators IntGetBinPhysicalFunction.cpp)
+add_plugin(BigintGetBin PhysicalFunction nes-physical-operators BigintGetBinPhysicalFunction.cpp)
+add_plugin(FloatGetBin PhysicalFunction nes-physical-operators FloatGetBinPhysicalFunction.cpp)
+add_plugin(StboxShiftScaleTime PhysicalFunction nes-physical-operators StboxShiftScaleTimePhysicalFunction.cpp)
+add_plugin(TboxShiftScaleTime PhysicalFunction nes-physical-operators TboxShiftScaleTimePhysicalFunction.cpp)

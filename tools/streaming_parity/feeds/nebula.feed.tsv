@@ -193,6 +193,7 @@ below_stbox_tspatial	proven
 below_tspatial_stbox	proven
 below_tspatial_tspatial	proven
 bigint_extent_transfn	proven
+bigint_get_bin	proven
 bigint_to_set	proven
 bigint_to_span	proven
 bigint_to_spanset	proven
@@ -482,6 +483,7 @@ ever_ne_tpose_pose	proven
 ever_ne_tpose_tpose	proven
 ever_ne_ttext_text	proven
 float_extent_transfn	proven
+float_get_bin	proven
 float_round	proven
 float_timestamptz_to_tbox	proven
 float_to_set	proven
@@ -551,6 +553,7 @@ geoset_start_value	proven
 geoset_value_n	proven
 geoset_values	proven
 int_extent_transfn	proven
+int_get_bin	proven
 int_timestamptz_to_tbox	proven
 int_to_set	proven
 int_to_span	proven
@@ -1055,6 +1058,7 @@ stbox_lt	proven
 stbox_ne	proven
 stbox_perimeter	proven
 stbox_round	proven
+stbox_shift_scale_time	proven
 stbox_srid	proven
 stbox_tmax	proven
 stbox_tmax_inc	proven
@@ -1096,6 +1100,7 @@ tbox_lt	proven
 tbox_make	wired
 tbox_ne	proven
 tbox_round	proven
+tbox_shift_scale_time	proven
 tbox_tmax	proven
 tbox_tmax_inc	proven
 tbox_tmin	proven

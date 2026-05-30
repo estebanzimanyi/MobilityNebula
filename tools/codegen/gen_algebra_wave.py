@@ -127,6 +127,24 @@ SETVAL_OPS = ("contains", "contained", "left", "right", "overleft", "overright",
 # value-array accessors: name -> (instant builder input_type, array_out spec,
 # instant value columns, row1 values, row2 values). The array-output assembler
 # loops the returned array + count and serializes a brace-list.
+# arity-3 scalar/box ops: a primary + two extras -> a scalar or a box. Each extra
+# is a same-type scalar or an Interval (interval_in box). `iv` marks an interval.
+def _a3sc(cpp, sql, a, b):
+    return dict(k="scalar", cpp=cpp, sql=sql, a=a, b=b)
+def _a3iv():
+    return dict(k="iv", sql="VARSIZED", a="1 day", b="2 days")
+ARITY3 = {
+    "int_get_bin":    dict(prim="int_base", psql="INT32", pa="7", pb="12",
+                           extras=[_a3sc("int32_t", "INT32", "5", "5"), _a3sc("int32_t", "INT32", "0", "0")], ret="int"),
+    "bigint_get_bin": dict(prim="bigint_base", psql="INT64", pa="7", pb="12",
+                           extras=[_a3sc("int64_t", "INT64", "5", "5"), _a3sc("int64_t", "INT64", "0", "0")], ret="int64"),
+    "float_get_bin":  dict(prim="float_base", psql="FLOAT64", pa="7.5", pb="12.5",
+                           extras=[_a3sc("double", "FLOAT64", "5.0", "5.0"), _a3sc("double", "FLOAT64", "0.0", "0.0")], ret="double"),
+    "stbox_shift_scale_time": dict(prim="stbox_text", plit=("STBOX XT(((1,1),(5,5)),[2020-01-01, 2020-01-05])", "STBOX XT(((3,3),(7,7)),[2020-01-03, 2020-01-07])"),
+                                   extras=[_a3iv(), _a3iv()], ret="stbox_text_out"),
+    "tbox_shift_scale_time":  dict(prim="tbox_text", plit=("TBOXFLOAT XT([1, 5],[2020-01-01, 2020-01-05])", "TBOXFLOAT XT([3, 7],[2020-01-03, 2020-01-07])"),
+                                   extras=[_a3iv(), _a3iv()], ret="tbox_text_out"),
+}
 def _setspec(elem, kind, **kw):
     return dict(elem=elem, kind=kind, count_call="set_num_values", **kw)
 ARRAY_VALUES = {
@@ -509,6 +527,29 @@ def classify(name, ret, plist):
             cols = e["icols"] + [("ts", "UINT64")]
             rows = [tuple(e["ra"] + ["1609459200"]), tuple(e["rb"] + ["1609545600"])]
         tmeta = dict(cols=cols, rows=rows, token=name.upper(), sink="VARSIZED")
+        return entry, tmeta
+    # ---- arity-3 scalar/box op: primary + two scalar/interval extras -> scalar
+    #      or box (numeric get_bin, stbox/tbox shift_scale_time). ----
+    if name in ARITY3:
+        s = ARITY3[name]
+        extra_args, ecols, erowa, erowb = [], [], [], []
+        for ex in s["extras"]:
+            if ex["k"] == "iv":
+                extra_args.append(dict(IVAL_EXTRA))
+            else:
+                extra_args.append(dict(kind="scalar", cpp=ex["cpp"]))
+            ecols.append(("arg%d" % len(ecols), ex["sql"]))
+            erowa.append(ex["a"]); erowb.append(ex["b"])
+        entry = dict(nebula_name=camel(name), sql_token=name.upper(), meos_call=name,
+                     build_generic=True, input_type=s["prim"], return_kind=s["ret"],
+                     extra_args=extra_args,
+                     comment_one_liner=f"{name} ({ret.strip()}) — arity-3 {s['ret']} op.")
+        if "plit" in s:
+            pcol, pa, pb = ("a", "VARSIZED"), s["plit"][0], s["plit"][1]
+        else:
+            pcol, pa, pb = ("value", s["psql"]), s["pa"], s["pb"]
+        tmeta = dict(cols=[pcol] + ecols, rows=[tuple([pa] + erowa), tuple([pb] + erowb)],
+                     token=name.upper(), sink=sink_of(s["ret"]))
         return entry, tmeta
     # ---- span_make(lower, upper, lower_inc, upper_inc) -> Span: a base-scalar
     #      primary (lower) + a same-type scalar (upper) + two bool flags. ----
