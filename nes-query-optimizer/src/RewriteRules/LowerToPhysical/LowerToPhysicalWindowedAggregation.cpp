@@ -120,6 +120,8 @@
 #include <Aggregation/Function/Meos/TgeoEndValueAggregationPhysicalFunction.hpp>
 #include <Aggregation/Function/Meos/TgeoConvexHullAggregationPhysicalFunction.hpp>
 #include <Aggregation/Function/Meos/TpointTwcentroidAggregationPhysicalFunction.hpp>
+#include <Aggregation/Function/Meos/DateExtentTransfnAggregationPhysicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/DateExtentTransfnAggregationLogicalFunction.hpp>
 #include <Operators/Windows/Aggregations/Meos/TgeoStartValueAggregationLogicalFunction.hpp>
 #include <Operators/Windows/Aggregations/Meos/TgeoEndValueAggregationLogicalFunction.hpp>
 #include <Operators/Windows/Aggregations/Meos/TgeoConvexHullAggregationLogicalFunction.hpp>
@@ -1874,6 +1876,32 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             continue;
         }
         /* END CODEGEN AGGREGATION GLUE: TpointTwcentroid (optimizer lowering) */
+        /* BEGIN CODEGEN AGGREGATION GLUE: DateExtentTransfn (optimizer lowering) */
+        if (name == std::string_view("DateExtentTransfn"))
+        {
+            auto specificDescriptor = std::dynamic_pointer_cast<DateExtentTransfnAggregationLogicalFunction>(descriptor);
+            INVARIANT(specificDescriptor != nullptr, "Expected DateExtentTransfnAggregationLogicalFunction for DateExtentTransfn");
+
+            auto valuePF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getValueField());
+            auto tsPF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getTimestampField());
+
+            Schema stateSchema;
+            stateSchema.addField("value", specificDescriptor->getValueField().getDataType());
+            stateSchema.addField("timestamp", specificDescriptor->getTimestampField().getDataType());
+            auto tupleBufferRef = Interface::BufferRef::TupleBufferRef::create(configuration.pageSize.getValue(), stateSchema);
+
+            auto phys = std::make_shared<DateExtentTransfnAggregationPhysicalFunction>(
+                std::move(physicalInputType),
+                std::move(physicalFinalType),
+                valuePF,
+                tsPF,
+                resultFieldIdentifier,
+                tupleBufferRef);
+            aggregationPhysicalFunctions.push_back(std::move(phys));
+            continue;
+        }
+        /* END CODEGEN AGGREGATION GLUE: DateExtentTransfn (optimizer lowering) */
+
 
 
 

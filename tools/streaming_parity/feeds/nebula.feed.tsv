@@ -318,6 +318,7 @@ contains_tspatial_stbox	proven
 contains_tspatial_tspatial	proven
 contains_tstzspan_temporal	proven
 covers_cbuffer_cbuffer	proven
+date_extent_transfn	proven
 date_get_bin	proven
 date_to_set	proven
 date_to_span	proven

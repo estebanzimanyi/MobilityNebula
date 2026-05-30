@@ -71,3 +71,4 @@ add_plugin(TpointTwcentroid AggregationPhysicalFunction nes-physical-operators T
 if(NPOINT)
     add_subdirectory(Npoint)
 endif()
+add_plugin(DateExtentTransfn AggregationPhysicalFunction nes-physical-operators DateExtentTransfnAggregationPhysicalFunction.cpp)
