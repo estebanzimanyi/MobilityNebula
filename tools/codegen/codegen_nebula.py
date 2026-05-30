@@ -3168,6 +3168,18 @@ GENERIC_INPUTS = {
         '                while (!{var}S.empty() && ({var}S.back()==\'\\\'\' || {var}S.back()==\'"\')) {var}S.pop_back();\n'
         '                Span* {var} = floatspan_in({var}S.c_str());\n'
         '                if (!{var}) return {z};\n')),
+    "bigintspan": dict(fields=[("lit", "VariableSizedData")], header="meos.h", build=(
+        '                std::string {var}S(litPtr, litSize);\n'
+        '                while (!{var}S.empty() && ({var}S.front()==\'\\\'\' || {var}S.front()==\'"\')) {var}S.erase({var}S.begin());\n'
+        '                while (!{var}S.empty() && ({var}S.back()==\'\\\'\' || {var}S.back()==\'"\')) {var}S.pop_back();\n'
+        '                Span* {var} = bigintspan_in({var}S.c_str());\n'
+        '                if (!{var}) return {z};\n')),
+    "bigintspanset": dict(fields=[("lit", "VariableSizedData")], header="meos.h", build=(
+        '                std::string {var}S(litPtr, litSize);\n'
+        '                while (!{var}S.empty() && ({var}S.front()==\'\\\'\' || {var}S.front()==\'"\')) {var}S.erase({var}S.begin());\n'
+        '                while (!{var}S.empty() && ({var}S.back()==\'\\\'\' || {var}S.back()==\'"\')) {var}S.pop_back();\n'
+        '                SpanSet* {var} = bigintspanset_in({var}S.c_str());\n'
+        '                if (!{var}) return {z};\n')),
     "floatspanset": dict(fields=[("lit", "VariableSizedData")], header="meos.h", build=(
         '                std::string {var}S(litPtr, litSize);\n'
         '                while (!{var}S.empty() && ({var}S.front()==\'\\\'\' || {var}S.front()==\'"\')) {var}S.erase({var}S.begin());\n'

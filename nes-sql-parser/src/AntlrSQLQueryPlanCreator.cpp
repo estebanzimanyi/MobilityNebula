@@ -1600,6 +1600,12 @@
 #include <Functions/Meos/TintTimeBoxesLogicalFunction.hpp>
 #include <Functions/Meos/TemporalTimeBinsLogicalFunction.hpp>
 #include <Functions/Meos/DatespanBinsLogicalFunction.hpp>
+#include <Functions/Meos/BigintspanBinsLogicalFunction.hpp>
+#include <Functions/Meos/BigintspansetBinsLogicalFunction.hpp>
+#include <Functions/Meos/StboxSpaceTilesLogicalFunction.hpp>
+#include <Functions/Meos/StboxTimeTilesLogicalFunction.hpp>
+#include <Functions/Meos/StboxSpaceTimeTilesLogicalFunction.hpp>
+#include <Functions/Meos/TgeoSpaceBoxesLogicalFunction.hpp>
 #include <Plans/LogicalPlan.hpp>
 #include <Plans/LogicalPlanBuilder.hpp>
 #include <Util/Overloaded.hpp>
@@ -44683,6 +44689,196 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: DATESPAN_BINS */
+        /* BEGIN CODEGEN PARSER GLUE: BIGINTSPAN_BINS */
+        case AntlrSQLLexer::BIGINTSPAN_BINS:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("BIGINTSPAN_BINS requires exactly 3 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(BigintspanBinsLogicalFunction(a0, a1, a2));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: BIGINTSPAN_BINS */
+
+        /* BEGIN CODEGEN PARSER GLUE: BIGINTSPANSET_BINS */
+        case AntlrSQLLexer::BIGINTSPANSET_BINS:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("BIGINTSPANSET_BINS requires exactly 3 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(BigintspansetBinsLogicalFunction(a0, a1, a2));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: BIGINTSPANSET_BINS */
+
+        /* BEGIN CODEGEN PARSER GLUE: STBOX_SPACE_TILES */
+        case AntlrSQLLexer::STBOX_SPACE_TILES:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 5)
+                throw InvalidQuerySyntax("STBOX_SPACE_TILES requires exactly 5 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a4 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a3 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(StboxSpaceTilesLogicalFunction(a0, a1, a2, a3, a4));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: STBOX_SPACE_TILES */
+
+        /* BEGIN CODEGEN PARSER GLUE: STBOX_TIME_TILES */
+        case AntlrSQLLexer::STBOX_TIME_TILES:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("STBOX_TIME_TILES requires exactly 3 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(StboxTimeTilesLogicalFunction(a0, a1, a2));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: STBOX_TIME_TILES */
+
+        /* BEGIN CODEGEN PARSER GLUE: STBOX_SPACE_TIME_TILES */
+        case AntlrSQLLexer::STBOX_SPACE_TIME_TILES:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 7)
+                throw InvalidQuerySyntax("STBOX_SPACE_TIME_TILES requires exactly 7 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a6 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a5 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a4 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a3 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(StboxSpaceTimeTilesLogicalFunction(a0, a1, a2, a3, a4, a5, a6));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: STBOX_SPACE_TIME_TILES */
+
+        /* BEGIN CODEGEN PARSER GLUE: TGEO_SPACE_BOXES */
+        case AntlrSQLLexer::TGEO_SPACE_BOXES:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 7)
+                throw InvalidQuerySyntax("TGEO_SPACE_BOXES requires exactly 7 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a6 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a5 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a4 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a3 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(TgeoSpaceBoxesLogicalFunction(a0, a1, a2, a3, a4, a5, a6));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: TGEO_SPACE_BOXES */
+
 
 
 

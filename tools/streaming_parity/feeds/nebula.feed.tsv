@@ -203,11 +203,13 @@ bigintset_shift_scale	proven
 bigintset_start_value	proven
 bigintset_value_n	proven
 bigintset_values	proven
+bigintspan_bins	proven
 bigintspan_lower	proven
 bigintspan_make	proven
 bigintspan_shift_scale	proven
 bigintspan_upper	proven
 bigintspan_width	proven
+bigintspanset_bins	proven
 bigintspanset_lower	proven
 bigintspanset_shift_scale	proven
 bigintspanset_upper	proven
@@ -1071,7 +1073,10 @@ stbox_ne	proven
 stbox_perimeter	proven
 stbox_round	proven
 stbox_shift_scale_time	proven
+stbox_space_tiles	proven
+stbox_space_time_tiles	proven
 stbox_srid	proven
+stbox_time_tiles	proven
 stbox_tmax	proven
 stbox_tmax_inc	proven
 stbox_tmin	proven
@@ -1287,6 +1292,7 @@ tgeo_end_value	proven
 tgeo_minus_geom	proven
 tgeo_minus_stbox	proven
 tgeo_minus_value	proven
+tgeo_space_boxes	proven
 tgeo_split_each_n_stboxes	proven
 tgeo_split_n_stboxes	proven
 tgeo_start_value	proven

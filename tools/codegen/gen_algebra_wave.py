@@ -213,6 +213,23 @@ ARRAY_VALUES = {
     # time bins (Interval duration + tstz/date origin).
     "temporal_time_bins":dict(inp="tfloat", spec=dict(elem="Span", kind="span_val", out="tstzspan_out"), icols=[("value", "FLOAT64")], ra=["5.5"], rb=["8.5"], extras=[_a3iv(), _TSTZ0]),
     "datespan_bins":    dict(inp="datespan", spec=dict(elem="Span", kind="span_val", out="datespan_out"), lit=("[2020-01-01, 2020-03-01)", "[2020-02-01, 2020-04-01)"), extras=[_a3iv(), _a3st("DateADT", "date_in", "", "2020-01-01", "2020-01-01")]),
+    "bigintspan_bins":    dict(inp="bigintspan", spec=dict(elem="Span", kind="span_val", out="bigintspan_out"), lit=("[1, 20)", "[3, 25)"), extras=[("int64_t", "INT64", "5", "5"), ("int64_t", "INT64", "0", "0")]),
+    "bigintspanset_bins": dict(inp="bigintspanset", spec=dict(elem="Span", kind="span_val", out="bigintspan_out"), lit=("{[1, 20)}", "{[3, 25)}"), extras=[("int64_t", "INT64", "5", "5"), ("int64_t", "INT64", "0", "0")]),
+    # STBox tiles & tgeo space boxes: a box/temporal -> an STBox struct array given
+    # sizes (+ a geometry origin + Interval/origin + trailing bool flags as eca).
+    "stbox_space_tiles": dict(inp="stbox_text", spec=dict(elem="STBox", kind="span_val", out="stbox_out", maxdd=True, header="meos_geo.h"),
+                              lit=("STBOX X((0,0),(10,10))", "STBOX X((0,0),(8,8))"),
+                              extras=[("double", "FLOAT64", "5.0", "4.0"), ("double", "FLOAT64", "5.0", "4.0"), ("double", "FLOAT64", "0.0", "0.0"), dict(k="geom", sql="VARSIZED", a="Point(0 0)", b="Point(0 0)")], eca=["true"]),
+    "stbox_time_tiles":  dict(inp="stbox_text", spec=dict(elem="STBox", kind="span_val", out="stbox_out", maxdd=True, header="meos_geo.h"),
+                              lit=("STBOX XT(((0,0),(10,10)),[2020-01-01, 2020-03-01])", "STBOX XT(((0,0),(8,8)),[2020-01-01, 2020-02-01])"),
+                              extras=[_a3iv(), _TSTZ0], eca=["true"]),
+    "stbox_space_time_tiles": dict(inp="stbox_text", spec=dict(elem="STBox", kind="span_val", out="stbox_out", maxdd=True, header="meos_geo.h"),
+                              lit=("STBOX XT(((0,0),(10,10)),[2020-01-01, 2020-03-01])", "STBOX XT(((0,0),(8,8)),[2020-01-01, 2020-02-01])"),
+                              extras=[("double", "FLOAT64", "5.0", "4.0"), ("double", "FLOAT64", "5.0", "4.0"), ("double", "FLOAT64", "0.0", "0.0"), _a3iv(), dict(k="geom", sql="VARSIZED", a="Point(0 0)", b="Point(0 0)"), _TSTZ0], eca=["true"]),
+    # zsize must be strictly positive (MEOS rejects 0 even for 2D input).
+    "tgeo_space_boxes":  dict(inp="tgeompoint", spec=dict(elem="STBox", kind="span_val", out="stbox_out", maxdd=True, header="meos_geo.h"),
+                              icols=[("lon", "FLOAT64"), ("lat", "FLOAT64")], ra=["1.0", "1.0"], rb=["2.0", "2.0"],
+                              extras=[("double", "FLOAT64", "5.0", "5.0"), ("double", "FLOAT64", "5.0", "5.0"), ("double", "FLOAT64", "5.0", "5.0"), dict(k="geom", sql="VARSIZED", a="SRID=4326;Point(0 0)", b="SRID=4326;Point(0 0)")], eca=["false", "true"]),
 }
 SPAN_MAKE = {
     "intspan_make":    ("int_base", "INT32", "int32_t", "intspan_text", "1", "5", "2", "8"),
@@ -562,6 +579,8 @@ def classify(name, ret, plist):
             if isinstance(x, dict):
                 if x["k"] == "iv":
                     extra_args.append(dict(IVAL_EXTRA))
+                elif x["k"] == "geom":                  # a geometry origin literal
+                    extra_args.append(dict(kind="geom"))
                 else:                                   # scalar_text date/tstz
                     extra_args.append(dict(kind="scalar_text", ctype=x["ctype"], parser=x["parser"],
                                            parser_extra=x["pextra"], header="meos.h"))
@@ -574,6 +593,8 @@ def classify(name, ret, plist):
                      build_generic=True, input_type=e["inp"], return_kind="array_out",
                      array_out=e["spec"], extra_args=extra_args,
                      comment_one_liner=f"{name} ({ret.strip()}) — array of values.")
+        if "eca" in e:                                  # fixed trailing C-literal args (bool flags)
+            entry["extra_call_args"] = e["eca"]
         if "lit" in e:                                  # Set/geom text-literal primary (no ts)
             base_cols, ra_row, rb_row = [("a", "VARSIZED")], [e["lit"][0]], [e["lit"][1]]
         else:                                           # temporal instant primary + ts
