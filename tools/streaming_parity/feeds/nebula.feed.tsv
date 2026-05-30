@@ -498,6 +498,7 @@ floatset_shift_scale	proven
 floatset_start_value	proven
 floatset_value_n	proven
 floatset_values	proven
+floatspan_bins	proven
 floatspan_lower	proven
 floatspan_make	proven
 floatspan_round	proven
@@ -505,6 +506,7 @@ floatspan_shift_scale	proven
 floatspan_to_intspan	proven
 floatspan_upper	proven
 floatspan_width	proven
+floatspanset_bins	proven
 floatspanset_lower	proven
 floatspanset_round	proven
 floatspanset_shift_scale	proven
@@ -604,12 +606,14 @@ intset_shift_scale	proven
 intset_start_value	proven
 intset_value_n	proven
 intset_values	proven
+intspan_bins	proven
 intspan_lower	proven
 intspan_make	proven
 intspan_shift_scale	proven
 intspan_to_floatspan	proven
 intspan_upper	proven
 intspan_width	proven
+intspanset_bins	proven
 intspanset_lower	proven
 intspanset_shift_scale	proven
 intspanset_to_floatspanset	proven
@@ -1259,6 +1263,7 @@ tfloat_radians	proven
 tfloat_shift_value	proven
 tfloat_start_value	proven
 tfloat_to_tint	proven
+tfloat_value_bins	proven
 tfloat_value_n	proven
 tfloat_values	proven
 tfloatinst_make	proven
@@ -1311,6 +1316,7 @@ tint_minus_value	proven
 tint_shift_value	proven
 tint_start_value	proven
 tint_to_tfloat	proven
+tint_value_bins	proven
 tint_value_n	proven
 tint_values	proven
 tintersects_cbuffer_tcbuffer	proven

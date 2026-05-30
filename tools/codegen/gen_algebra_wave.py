@@ -198,6 +198,13 @@ ARRAY_VALUES = {
     "tnumber_split_each_n_tboxes":dict(inp="tfloat", spec=dict(elem="TBox", kind="span_val", out="tbox_out", maxdd=True, header="meos_geo.h"), icols=[("value", "FLOAT64")], ra=["5.5"], rb=["8.5"], extras=[("int32_t", "INT32", "2", "2")]),
     "geo_split_n_stboxes":       dict(inp="geom", spec=dict(elem="STBox", kind="span_val", out="stbox_out", maxdd=True, header="meos_geo.h"), lit=("SRID=4326;Linestring(0 0, 2 2, 4 4)", "SRID=4326;Linestring(1 1, 3 3)"), extras=[("int32_t", "INT32", "2", "2")]),
     "geo_split_each_n_stboxes":  dict(inp="geom", spec=dict(elem="STBox", kind="span_val", out="stbox_out", maxdd=True, header="meos_geo.h"), lit=("SRID=4326;Linestring(0 0, 2 2, 4 4)", "SRID=4326;Linestring(1 1, 3 3)"), extras=[("int32_t", "INT32", "2", "2")]),
+    # numeric bins: primary + size + origin + int* count -> a Span struct array.
+    "intspan_bins":     dict(inp="intspan", spec=dict(elem="Span", kind="span_val", out="intspan_out"), lit=("[1, 20)", "[3, 25)"), extras=[("int32_t", "INT32", "5", "5"), ("int32_t", "INT32", "0", "0")]),
+    "floatspan_bins":   dict(inp="floatspan", spec=dict(elem="Span", kind="span_val", out="floatspan_out", maxdd=True), lit=("[1.5, 20.5)", "[3.5, 25.5)"), extras=[("double", "FLOAT64", "5.0", "5.0"), ("double", "FLOAT64", "0.0", "0.0")]),
+    "intspanset_bins":  dict(inp="intspanset", spec=dict(elem="Span", kind="span_val", out="intspan_out"), lit=("{[1, 20)}", "{[3, 25)}"), extras=[("int32_t", "INT32", "5", "5"), ("int32_t", "INT32", "0", "0")]),
+    "floatspanset_bins":dict(inp="floatspanset", spec=dict(elem="Span", kind="span_val", out="floatspan_out", maxdd=True), lit=("{[1.5, 20.5)}", "{[3.5, 25.5)}"), extras=[("double", "FLOAT64", "5.0", "5.0"), ("double", "FLOAT64", "0.0", "0.0")]),
+    "tfloat_value_bins":dict(inp="tfloat", spec=dict(elem="Span", kind="span_val", out="floatspan_out", maxdd=True), icols=[("value", "FLOAT64")], ra=["5.5"], rb=["8.5"], extras=[("double", "FLOAT64", "5.0", "5.0"), ("double", "FLOAT64", "0.0", "0.0")]),
+    "tint_value_bins":  dict(inp="tint", spec=dict(elem="Span", kind="span_val", out="intspan_out"), icols=[("value", "INT32")], ra=["5"], rb=["8"], extras=[("int32_t", "INT32", "5", "5"), ("int32_t", "INT32", "0", "0")]),
 }
 SPAN_MAKE = {
     "intspan_make":    ("int_base", "INT32", "int32_t", "intspan_text", "1", "5", "2", "8"),
