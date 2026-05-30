@@ -1159,7 +1159,9 @@ tbool_end_value	proven
 tbool_from_base_temp	proven
 tbool_minus_value	proven
 tbool_start_value	proven
+tbool_tand_transfn	proven
 tbool_to_tint	proven
+tbool_tor_transfn	proven
 tbool_value_n	proven
 tbool_values	proven
 tbox_cmp	proven
@@ -1288,6 +1290,7 @@ temporal_sequences	wired
 temporal_spans	proven
 temporal_start_timestamptz	proven
 temporal_tagg_finalfn	proven
+temporal_tcount_transfn	proven
 temporal_time	proven
 temporal_time_bins	proven
 temporal_timestamps	proven
