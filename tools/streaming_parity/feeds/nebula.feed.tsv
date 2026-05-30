@@ -321,6 +321,7 @@ dateset_shift_scale	proven
 dateset_start_value	proven
 dateset_value_n	proven
 dateset_values	proven
+datespan_bins	proven
 datespan_duration	proven
 datespan_lower	proven
 datespan_make	proven
@@ -1221,6 +1222,7 @@ temporal_round	proven
 temporal_spans	wired
 temporal_start_timestamptz	proven
 temporal_time	proven
+temporal_time_bins	proven
 temporal_timestamps	proven
 temporal_to_tstzspan	proven
 temporal_upper_inc	proven
@@ -1262,8 +1264,10 @@ tfloat_minus_value	proven
 tfloat_radians	proven
 tfloat_shift_value	proven
 tfloat_start_value	proven
+tfloat_time_boxes	proven
 tfloat_to_tint	proven
 tfloat_value_bins	proven
+tfloat_value_boxes	proven
 tfloat_value_n	proven
 tfloat_values	proven
 tfloatinst_make	proven
@@ -1315,8 +1319,10 @@ tint_min_value	proven
 tint_minus_value	proven
 tint_shift_value	proven
 tint_start_value	proven
+tint_time_boxes	proven
 tint_to_tfloat	proven
 tint_value_bins	proven
+tint_value_boxes	proven
 tint_value_n	proven
 tint_values	proven
 tintersects_cbuffer_tcbuffer	proven

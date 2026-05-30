@@ -205,6 +205,14 @@ ARRAY_VALUES = {
     "floatspanset_bins":dict(inp="floatspanset", spec=dict(elem="Span", kind="span_val", out="floatspan_out", maxdd=True), lit=("{[1.5, 20.5)}", "{[3.5, 25.5)}"), extras=[("double", "FLOAT64", "5.0", "5.0"), ("double", "FLOAT64", "0.0", "0.0")]),
     "tfloat_value_bins":dict(inp="tfloat", spec=dict(elem="Span", kind="span_val", out="floatspan_out", maxdd=True), icols=[("value", "FLOAT64")], ra=["5.5"], rb=["8.5"], extras=[("double", "FLOAT64", "5.0", "5.0"), ("double", "FLOAT64", "0.0", "0.0")]),
     "tint_value_bins":  dict(inp="tint", spec=dict(elem="Span", kind="span_val", out="intspan_out"), icols=[("value", "INT32")], ra=["5"], rb=["8"], extras=[("int32_t", "INT32", "5", "5"), ("int32_t", "INT32", "0", "0")]),
+    # value/time boxes: a temporal -> a TBox struct array (size + origin).
+    "tfloat_value_boxes":dict(inp="tfloat", spec=dict(elem="TBox", kind="span_val", out="tbox_out", maxdd=True, header="meos_geo.h"), icols=[("value", "FLOAT64")], ra=["5.5"], rb=["8.5"], extras=[("double", "FLOAT64", "5.0", "5.0"), ("double", "FLOAT64", "0.0", "0.0")]),
+    "tint_value_boxes": dict(inp="tint", spec=dict(elem="TBox", kind="span_val", out="tbox_out", maxdd=True, header="meos_geo.h"), icols=[("value", "INT32")], ra=["5"], rb=["8"], extras=[("int32_t", "INT32", "5", "5"), ("int32_t", "INT32", "0", "0")]),
+    "tfloat_time_boxes":dict(inp="tfloat", spec=dict(elem="TBox", kind="span_val", out="tbox_out", maxdd=True, header="meos_geo.h"), icols=[("value", "FLOAT64")], ra=["5.5"], rb=["8.5"], extras=[_a3iv(), _TSTZ0]),
+    "tint_time_boxes":  dict(inp="tint", spec=dict(elem="TBox", kind="span_val", out="tbox_out", maxdd=True, header="meos_geo.h"), icols=[("value", "INT32")], ra=["5"], rb=["8"], extras=[_a3iv(), _TSTZ0]),
+    # time bins (Interval duration + tstz/date origin).
+    "temporal_time_bins":dict(inp="tfloat", spec=dict(elem="Span", kind="span_val", out="tstzspan_out"), icols=[("value", "FLOAT64")], ra=["5.5"], rb=["8.5"], extras=[_a3iv(), _TSTZ0]),
+    "datespan_bins":    dict(inp="datespan", spec=dict(elem="Span", kind="span_val", out="datespan_out"), lit=("[2020-01-01, 2020-03-01)", "[2020-02-01, 2020-04-01)"), extras=[_a3iv(), _a3st("DateADT", "date_in", "", "2020-01-01", "2020-01-01")]),
 }
 SPAN_MAKE = {
     "intspan_make":    ("int_base", "INT32", "int32_t", "intspan_text", "1", "5", "2", "8"),
@@ -547,19 +555,32 @@ def classify(name, ret, plist):
     #      distinct values, serialized by the array-output assembler. ----
     if name in ARRAY_VALUES:
         e = ARRAY_VALUES[name]
-        xa = e.get("extras", [])                        # leading scalar args (e.g. split count)
+        # leading args before the int* count. Each is a (cpp,sql,a,b) scalar tuple
+        # or a dict {k: "iv"|"st", ...} for an Interval / date-tstz-text arg.
+        extra_args, xcols, xa_row, xb_row = [], [], [], []
+        for i, x in enumerate(e.get("extras", [])):
+            if isinstance(x, dict):
+                if x["k"] == "iv":
+                    extra_args.append(dict(IVAL_EXTRA))
+                else:                                   # scalar_text date/tstz
+                    extra_args.append(dict(kind="scalar_text", ctype=x["ctype"], parser=x["parser"],
+                                           parser_extra=x["pextra"], header="meos.h"))
+                sql, a, b = x["sql"], x["a"], x["b"]
+            else:
+                cpp, sql, a, b = x
+                extra_args.append(dict(kind="scalar", cpp=cpp))
+            xcols.append((f"x{i}", sql)); xa_row.append(a); xb_row.append(b)
         entry = dict(nebula_name=camel(name), sql_token=name.upper(), meos_call=name,
                      build_generic=True, input_type=e["inp"], return_kind="array_out",
-                     array_out=e["spec"], extra_args=[dict(kind="scalar", cpp=c) for c, _, _, _ in xa],
+                     array_out=e["spec"], extra_args=extra_args,
                      comment_one_liner=f"{name} ({ret.strip()}) — array of values.")
         if "lit" in e:                                  # Set/geom text-literal primary (no ts)
             base_cols, ra_row, rb_row = [("a", "VARSIZED")], [e["lit"][0]], [e["lit"][1]]
         else:                                           # temporal instant primary + ts
             base_cols = e["icols"] + [("ts", "UINT64")]
             ra_row, rb_row = e["ra"] + ["1609459200"], e["rb"] + ["1609545600"]
-        xcols = [(f"x{i}", sql) for i, (_, sql, _, _) in enumerate(xa)]
         cols = base_cols + xcols
-        rows = [tuple(ra_row + [a for _, _, a, _ in xa]), tuple(rb_row + [b for _, _, _, b in xa])]
+        rows = [tuple(ra_row + xa_row), tuple(rb_row + xb_row)]
         tmeta = dict(cols=cols, rows=rows, token=name.upper(), sink="VARSIZED")
         return entry, tmeta
     # ---- arity-3 scalar/box op: primary + two scalar/interval extras -> scalar
