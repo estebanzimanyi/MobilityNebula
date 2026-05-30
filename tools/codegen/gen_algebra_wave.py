@@ -624,6 +624,14 @@ SET_UNARY = {
     "tstzspanset_timestamps": ("tstzspanset", "tstzset_text"),
 }
 
+# degrees(container, bool normalize) -> same container. Split from SET_UNARY
+# because these carry a `normalize` bool flag (passed constant false).
+DEGREES_UNARY = {
+    "floatset_degrees": ("floatset", "floatset_text"),
+    "floatspan_degrees": ("floatspan", "floatspan_text"),
+    "floatspanset_degrees": ("floatspanset", "floatspanset_text"),
+}
+
 
 def classify(name, ret, plist):
     """Return (spec_entry, test_meta) or (None, reason)."""
@@ -636,6 +644,18 @@ def classify(name, ret, plist):
                      extra_args=[], comment_one_liner=f"{name} ({ret.strip()}) — set transform/conversion.")
         l0, l1 = LITERALS[in_type]
         tmeta = dict(cols=[("a", "VARSIZED")], rows=[(l0,), (l1,)], token=name.upper(), sink="VARSIZED")
+        return entry, tmeta
+    # ---- degrees(set/span/spanset, bool normalize) -> same container: a VARSIZED
+    #      primary + a constant `normalize=false` bool flag (radians -> degrees). ----
+    if name in DEGREES_UNARY:
+        in_type, rkind = DEGREES_UNARY[name]
+        entry = dict(nebula_name=camel(name), sql_token=name.upper(), meos_call=name,
+                     build_generic=True, input_type=in_type, return_kind=rkind,
+                     extra_args=[dict(kind="scalar", cpp="bool")],
+                     comment_one_liner=f"{name} ({ret.strip()}) — radians->degrees container transform.")
+        l0, l1 = LITERALS[in_type]
+        tmeta = dict(cols=[("a", "VARSIZED"), ("norm", "BOOLEAN")],
+                     rows=[(l0, "false"), (l1, "false")], token=name.upper(), sink="VARSIZED")
         return entry, tmeta
     # ---- value arrays: T *f(Temporal, int *count) -> a brace-list of the
     #      distinct values, serialized by the array-output assembler. ----

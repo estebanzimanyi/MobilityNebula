@@ -1222,3 +1222,6 @@ add_plugin(FloatspanRadians PhysicalFunction nes-physical-operators FloatspanRad
 add_plugin(FloatspansetCeil PhysicalFunction nes-physical-operators FloatspansetCeilPhysicalFunction.cpp)
 add_plugin(FloatspansetFloor PhysicalFunction nes-physical-operators FloatspansetFloorPhysicalFunction.cpp)
 add_plugin(FloatspansetRadians PhysicalFunction nes-physical-operators FloatspansetRadiansPhysicalFunction.cpp)
+add_plugin(FloatsetDegrees PhysicalFunction nes-physical-operators FloatsetDegreesPhysicalFunction.cpp)
+add_plugin(FloatspanDegrees PhysicalFunction nes-physical-operators FloatspanDegreesPhysicalFunction.cpp)
+add_plugin(FloatspansetDegrees PhysicalFunction nes-physical-operators FloatspansetDegreesPhysicalFunction.cpp)

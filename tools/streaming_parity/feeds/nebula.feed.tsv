@@ -512,6 +512,7 @@ float_to_tbox	proven
 float_tstzspan_to_tbox	proven
 float_union_transfn	proven
 floatset_ceil	proven
+floatset_degrees	proven
 floatset_end_value	proven
 floatset_floor	proven
 floatset_radians	proven
@@ -522,6 +523,7 @@ floatset_value_n	proven
 floatset_values	proven
 floatspan_bins	proven
 floatspan_ceil	proven
+floatspan_degrees	proven
 floatspan_floor	proven
 floatspan_lower	proven
 floatspan_make	proven
@@ -533,6 +535,7 @@ floatspan_upper	proven
 floatspan_width	proven
 floatspanset_bins	proven
 floatspanset_ceil	proven
+floatspanset_degrees	proven
 floatspanset_floor	proven
 floatspanset_lower	proven
 floatspanset_radians	proven
