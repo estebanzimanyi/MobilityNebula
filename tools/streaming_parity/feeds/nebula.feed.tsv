@@ -1568,6 +1568,8 @@ ttext_max_value	proven
 ttext_min_value	proven
 ttext_minus_value	proven
 ttext_start_value	proven
+ttext_tmax_transfn	proven
+ttext_tmin_transfn	proven
 ttext_upper	proven
 ttext_value_n	proven
 ttext_values	proven

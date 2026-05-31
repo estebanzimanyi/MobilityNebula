@@ -145,6 +145,8 @@
 #include <Operators/Windows/Aggregations/Meos/TfloatWsumTransfnAggregationLogicalFunction.hpp>
 #include <Operators/Windows/Aggregations/Meos/TnumberWavgTransfnAggregationLogicalFunction.hpp>
 #include <Operators/Windows/Aggregations/Meos/TpointTcentroidTransfnAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TtextTminTransfnAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TtextTmaxTransfnAggregationLogicalFunction.hpp>
 #include <Functions/Meos/TemporalIntersectsGeometryLogicalFunction.hpp>
 #include <Functions/Meos/AintersectsTgeoGeoLogicalFunction.hpp>
 #include <Functions/Meos/EdwithinTgeoGeoLogicalFunction.hpp>
@@ -49679,6 +49681,56 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             }
             break;
         /* END CODEGEN AGGREGATION GLUE: TPOINT_TCENTROID_TRANSFN (case-switch) */
+        /* BEGIN CODEGEN AGGREGATION GLUE: TTEXT_TMIN_TRANSFN (case-switch) */
+        case AntlrSQLLexer::TTEXT_TMIN_TRANSFN:
+            // Windowed TTEXT_TMIN_TRANSFN -> aggregate ttext (hex-WKB) via ttext_tmin_transfn/temporal_tagg_finalfn.
+            if (helpers.top().functionBuilder.size() != 2) {
+                throw InvalidQuerySyntax("TTEXT_TMIN_TRANSFN requires exactly two arguments (value, timestamp), but got {}", helpers.top().functionBuilder.size());
+            }
+            {
+                const auto timestampFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto valueFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+
+                if (!valueFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
+                    throw InvalidQuerySyntax("TTEXT_TMIN_TRANSFN arguments must be field references");
+                }
+
+                helpers.top().windowAggs.push_back(
+                    TtextTminTransfnAggregationLogicalFunction::create(valueFunction.get<FieldAccessLogicalFunction>(),
+                                                                    timestampFunction.get<FieldAccessLogicalFunction>()));
+                helpers.top().functionBuilder.push_back(valueFunction);
+            }
+            break;
+        /* END CODEGEN AGGREGATION GLUE: TTEXT_TMIN_TRANSFN (case-switch) */
+
+        /* BEGIN CODEGEN AGGREGATION GLUE: TTEXT_TMAX_TRANSFN (case-switch) */
+        case AntlrSQLLexer::TTEXT_TMAX_TRANSFN:
+            // Windowed TTEXT_TMAX_TRANSFN -> aggregate ttext (hex-WKB) via ttext_tmax_transfn/temporal_tagg_finalfn.
+            if (helpers.top().functionBuilder.size() != 2) {
+                throw InvalidQuerySyntax("TTEXT_TMAX_TRANSFN requires exactly two arguments (value, timestamp), but got {}", helpers.top().functionBuilder.size());
+            }
+            {
+                const auto timestampFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto valueFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+
+                if (!valueFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
+                    throw InvalidQuerySyntax("TTEXT_TMAX_TRANSFN arguments must be field references");
+                }
+
+                helpers.top().windowAggs.push_back(
+                    TtextTmaxTransfnAggregationLogicalFunction::create(valueFunction.get<FieldAccessLogicalFunction>(),
+                                                                    timestampFunction.get<FieldAccessLogicalFunction>()));
+                helpers.top().functionBuilder.push_back(valueFunction);
+            }
+            break;
+        /* END CODEGEN AGGREGATION GLUE: TTEXT_TMAX_TRANSFN (case-switch) */
+
 
 
 
@@ -50957,6 +51009,36 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
                 helpers.top().windowAggs.push_back(TpointTcentroidTransfnAggregationLogicalFunction::create(lon, lat, ts));
             }
             /* END CODEGEN AGGREGATION GLUE: TPOINT_TCENTROID_TRANSFN (funcName chain) */
+            /* BEGIN CODEGEN AGGREGATION GLUE: TTEXT_TMIN_TRANSFN (funcName chain) */
+            else if (funcName == "TTEXT_TMIN_TRANSFN")
+            {
+                if (helpers.top().functionBuilder.size() < 2)
+                {
+                    throw InvalidQuerySyntax("TTEXT_TMIN_TRANSFN requires two arguments at {}", context->getText());
+                }
+                const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto value = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                helpers.top().windowAggs.push_back(TtextTminTransfnAggregationLogicalFunction::create(value, ts));
+            }
+            /* END CODEGEN AGGREGATION GLUE: TTEXT_TMIN_TRANSFN (funcName chain) */
+
+            /* BEGIN CODEGEN AGGREGATION GLUE: TTEXT_TMAX_TRANSFN (funcName chain) */
+            else if (funcName == "TTEXT_TMAX_TRANSFN")
+            {
+                if (helpers.top().functionBuilder.size() < 2)
+                {
+                    throw InvalidQuerySyntax("TTEXT_TMAX_TRANSFN requires two arguments at {}", context->getText());
+                }
+                const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto value = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                helpers.top().windowAggs.push_back(TtextTmaxTransfnAggregationLogicalFunction::create(value, ts));
+            }
+            /* END CODEGEN AGGREGATION GLUE: TTEXT_TMAX_TRANSFN (funcName chain) */
+
 
 
 

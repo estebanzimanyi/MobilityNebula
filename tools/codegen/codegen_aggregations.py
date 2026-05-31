@@ -393,9 +393,9 @@ void {nebula_name}AggregationLogicalFunction::inferStamp(const Schema& schema)
 
     onField = valueField;
 
-    if (!valueField.getDataType().isNumeric() || !timestampField.getDataType().isNumeric())
+    if ({value_type_guard}!timestampField.getDataType().isNumeric())
     {{
-        throw CannotInferSchema("{nebula_name}AggregationLogicalFunction: value and timestamp fields must be numeric.");
+        throw CannotInferSchema("{nebula_name}AggregationLogicalFunction: {value_type_msg}.");
     }}
 
     const auto onFieldName = onField.getFieldName();
@@ -603,6 +603,7 @@ PHYSICAL_CPP_TGEO = """\
 #include <Nautilus/Interface/PagedVector/PagedVector.hpp>
 #include <Nautilus/Interface/PagedVector/PagedVectorRef.hpp>
 #include <Nautilus/Interface/Record.hpp>
+#include <Nautilus/DataTypes/VariableSizedData.hpp>
 #include <nautilus/function.hpp>
 
 #include <AggregationPhysicalFunctionRegistry.hpp>
@@ -867,6 +868,7 @@ PHYSICAL_CPP_TNUMBER = """\
 #include <Nautilus/Interface/PagedVector/PagedVector.hpp>
 #include <Nautilus/Interface/PagedVector/PagedVectorRef.hpp>
 #include <Nautilus/Interface/Record.hpp>
+#include <Nautilus/DataTypes/VariableSizedData.hpp>
 #include <nautilus/function.hpp>
 
 #include <AggregationPhysicalFunctionRegistry.hpp>
@@ -1638,6 +1640,7 @@ PHYSICAL_CPP_SCALARFOLD = """\
 #include <Nautilus/Interface/PagedVector/PagedVector.hpp>
 #include <Nautilus/Interface/PagedVector/PagedVectorRef.hpp>
 #include <Nautilus/Interface/Record.hpp>
+#include <Nautilus/DataTypes/VariableSizedData.hpp>
 #include <nautilus/function.hpp>
 
 #include <AggregationPhysicalFunctionRegistry.hpp>
@@ -1993,6 +1996,67 @@ _TAGG_LOWER_FOLD = """\
 PHYSICAL_CPP_TAGG_WKB = _swap_once(
     PHYSICAL_CPP_SCALARFOLD, _SCALARFOLD_LOWER_FOLD, _TAGG_LOWER_FOLD,
     "scalarfold lower -> tagg skiplist lower (finalfn + hex-WKB)")
+
+# ttext temporal-aggregate (windowed ttext_tmin/tmax -> Temporal text, hex-WKB).
+# The value field is VARSIZED (text), not numeric, so read it as bytes and build
+# a "text"@ts instant (std::string concat, not sprintf). Same SkipList fold +
+# finalfn + hex-WKB tail as TAGG_WKB.
+_TAGG_NUMERIC_READFOLD = '''\
+        const auto valueRaw = itemRecord.read(std::string(ValueFieldName));
+        const auto timestampRaw = itemRecord.read(std::string(TimestampFieldName));
+        auto value = valueRaw.cast<nautilus::val<{lift_value_cpp_type}>>();
+        auto timestamp = timestampRaw.cast<nautilus::val<int64_t>>();
+
+        skipState = nautilus::invoke(
+            +[](void* state, {lift_value_cpp_type} valueVal, int64_t tsVal) -> void*
+            {{
+                MEOS::Meos::ensureMeosInitialized();
+                std::lock_guard<std::mutex> lock({mutex_name});
+                long long adjustedTime = (tsVal > 1000000000000LL) ? (tsVal / 1000) : tsVal;
+                std::string tsS = MEOS::Meos::convertSecondsToTimestamp(adjustedTime);
+                char itemStr[80];
+                sprintf(itemStr, "{value_printf_fmt}@%s", {value_expr}, tsS.c_str());
+                Temporal* inst = {tnumber_in_fn}(itemStr);
+                if (!inst) {{ return state; }}
+                {tagg_pre_call}SkipList* ns = {tagg_transfn}(static_cast<SkipList*>(state), inst{tagg_extra_arg});
+                {tagg_post_call}free(inst);
+                return reinterpret_cast<void*>(ns);
+            }},
+            skipState,
+            value,
+            timestamp);'''
+
+_TAGG_TEXT_READFOLD = '''\
+        const auto valueRaw = itemRecord.read(std::string(ValueFieldName));
+        const auto timestampRaw = itemRecord.read(std::string(TimestampFieldName));
+        auto valVar = valueRaw.cast<VariableSizedData>();
+        auto timestamp = timestampRaw.cast<nautilus::val<int64_t>>();
+
+        skipState = nautilus::invoke(
+            +[](void* state, const char* valPtr, uint32_t valSize, int64_t tsVal) -> void*
+            {{
+                MEOS::Meos::ensureMeosInitialized();
+                std::lock_guard<std::mutex> lock({mutex_name});
+                long long adjustedTime = (tsVal > 1000000000000LL) ? (tsVal / 1000) : tsVal;
+                std::string tsS = MEOS::Meos::convertSecondsToTimestamp(adjustedTime);
+                std::string txt(valPtr, valSize);
+                while (!txt.empty() && (txt.front()=='\\'' || txt.front()=='"')) txt.erase(txt.begin());
+                while (!txt.empty() && (txt.back()=='\\'' || txt.back()=='"')) txt.pop_back();
+                std::string wkt = std::string("\\"") + txt + "\\"@" + tsS;
+                Temporal* inst = {tnumber_in_fn}(wkt.c_str());
+                if (!inst) {{ return state; }}
+                SkipList* ns = {tagg_transfn}(static_cast<SkipList*>(state), inst);
+                free(inst);
+                return reinterpret_cast<void*>(ns);
+            }},
+            skipState,
+            valVar.getContent(),
+            valVar.getContentSize(),
+            timestamp);'''
+
+PHYSICAL_CPP_TTEXT_TAGG_WKB = _swap_once(
+    PHYSICAL_CPP_TAGG_WKB, _TAGG_NUMERIC_READFOLD, _TAGG_TEXT_READFOLD,
+    "tagg numeric read/fold -> ttext varsized read/fold")
 
 # ===========================================================================
 # tgeo temporal-aggregate (windowed tpoint_tcentroid -> Temporal point, hex-WKB).
@@ -2644,6 +2708,8 @@ def physical_template_for(op):
         if op.get("fold") == "set":
             return PHYSICAL_HPP_TNUMBER, PHYSICAL_CPP_SETFOLD
         if op.get("fold") == "tagg":
+            if op.get("tagg_value_kind") == "text":
+                return PHYSICAL_HPP_TNUMBER, PHYSICAL_CPP_TTEXT_TAGG_WKB
             return PHYSICAL_HPP_TNUMBER, PHYSICAL_CPP_TAGG_WKB
         return PHYSICAL_HPP_TNUMBER, (PHYSICAL_CPP_TNUMBER_BOX if box else PHYSICAL_CPP_TNUMBER)
     raise ValueError(f"unknown input_shape: {op['input_shape']}")
@@ -2710,6 +2776,10 @@ def emit_operator(op, output_root: Path):
         "tagg_pre_call":       op.get("tagg_pre_call", ""),
         "tagg_extra_arg":      op.get("tagg_extra_arg", ""),
         "tagg_post_call":      op.get("tagg_post_call", ""),
+        # logical-op value-field type guard: numeric by default; VARSIZED-value
+        # aggregates (ttext / container extent+union) relax it to timestamp-only.
+        "value_type_guard":    op.get("value_type_guard", "!valueField.getDataType().isNumeric() || "),
+        "value_type_msg":      op.get("value_type_msg", "value and timestamp fields must be numeric"),
     }
 
     # value_compute (point/tgeo finalize): either fold the windowed sequence

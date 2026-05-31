@@ -140,6 +140,10 @@
 #include <Aggregation/Function/Meos/TfloatWsumTransfnAggregationPhysicalFunction.hpp>
 #include <Aggregation/Function/Meos/TnumberWavgTransfnAggregationPhysicalFunction.hpp>
 #include <Aggregation/Function/Meos/TpointTcentroidTransfnAggregationPhysicalFunction.hpp>
+#include <Aggregation/Function/Meos/TtextTminTransfnAggregationPhysicalFunction.hpp>
+#include <Aggregation/Function/Meos/TtextTmaxTransfnAggregationPhysicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TtextTminTransfnAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TtextTmaxTransfnAggregationLogicalFunction.hpp>
 #include <Operators/Windows/Aggregations/Meos/TpointTcentroidTransfnAggregationLogicalFunction.hpp>
 #include <Operators/Windows/Aggregations/Meos/TintWminTransfnAggregationLogicalFunction.hpp>
 #include <Operators/Windows/Aggregations/Meos/TintWmaxTransfnAggregationLogicalFunction.hpp>
@@ -2431,6 +2435,58 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             continue;
         }
         /* END CODEGEN AGGREGATION GLUE: TpointTcentroidTransfn (optimizer lowering) */
+        /* BEGIN CODEGEN AGGREGATION GLUE: TtextTminTransfn (optimizer lowering) */
+        if (name == std::string_view("TtextTminTransfn"))
+        {
+            auto specificDescriptor = std::dynamic_pointer_cast<TtextTminTransfnAggregationLogicalFunction>(descriptor);
+            INVARIANT(specificDescriptor != nullptr, "Expected TtextTminTransfnAggregationLogicalFunction for TtextTminTransfn");
+
+            auto valuePF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getValueField());
+            auto tsPF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getTimestampField());
+
+            Schema stateSchema;
+            stateSchema.addField("value", specificDescriptor->getValueField().getDataType());
+            stateSchema.addField("timestamp", specificDescriptor->getTimestampField().getDataType());
+            auto tupleBufferRef = Interface::BufferRef::TupleBufferRef::create(configuration.pageSize.getValue(), stateSchema);
+
+            auto phys = std::make_shared<TtextTminTransfnAggregationPhysicalFunction>(
+                std::move(physicalInputType),
+                std::move(physicalFinalType),
+                valuePF,
+                tsPF,
+                resultFieldIdentifier,
+                tupleBufferRef);
+            aggregationPhysicalFunctions.push_back(std::move(phys));
+            continue;
+        }
+        /* END CODEGEN AGGREGATION GLUE: TtextTminTransfn (optimizer lowering) */
+
+        /* BEGIN CODEGEN AGGREGATION GLUE: TtextTmaxTransfn (optimizer lowering) */
+        if (name == std::string_view("TtextTmaxTransfn"))
+        {
+            auto specificDescriptor = std::dynamic_pointer_cast<TtextTmaxTransfnAggregationLogicalFunction>(descriptor);
+            INVARIANT(specificDescriptor != nullptr, "Expected TtextTmaxTransfnAggregationLogicalFunction for TtextTmaxTransfn");
+
+            auto valuePF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getValueField());
+            auto tsPF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getTimestampField());
+
+            Schema stateSchema;
+            stateSchema.addField("value", specificDescriptor->getValueField().getDataType());
+            stateSchema.addField("timestamp", specificDescriptor->getTimestampField().getDataType());
+            auto tupleBufferRef = Interface::BufferRef::TupleBufferRef::create(configuration.pageSize.getValue(), stateSchema);
+
+            auto phys = std::make_shared<TtextTmaxTransfnAggregationPhysicalFunction>(
+                std::move(physicalInputType),
+                std::move(physicalFinalType),
+                valuePF,
+                tsPF,
+                resultFieldIdentifier,
+                tupleBufferRef);
+            aggregationPhysicalFunctions.push_back(std::move(phys));
+            continue;
+        }
+        /* END CODEGEN AGGREGATION GLUE: TtextTmaxTransfn (optimizer lowering) */
+
 
 
 
