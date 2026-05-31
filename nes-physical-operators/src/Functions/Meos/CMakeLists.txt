@@ -1254,3 +1254,5 @@ add_plugin(TemporalSimplifyMaxDist PhysicalFunction nes-physical-operators Tempo
 add_plugin(TemporalTimestamptzN PhysicalFunction nes-physical-operators TemporalTimestamptzNPhysicalFunction.cpp)
 add_plugin(DatespansetDateN PhysicalFunction nes-physical-operators DatespansetDateNPhysicalFunction.cpp)
 add_plugin(TstzspansetTimestamptzN PhysicalFunction nes-physical-operators TstzspansetTimestamptzNPhysicalFunction.cpp)
+add_plugin(TemporalInsert PhysicalFunction nes-physical-operators TemporalInsertPhysicalFunction.cpp)
+add_plugin(TemporalUpdate PhysicalFunction nes-physical-operators TemporalUpdatePhysicalFunction.cpp)

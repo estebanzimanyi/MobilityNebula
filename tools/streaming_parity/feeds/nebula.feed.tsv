@@ -1286,6 +1286,7 @@ temporal_ge	proven
 temporal_gt	proven
 temporal_hash	proven
 temporal_hausdorff_distance	proven
+temporal_insert	proven
 temporal_instants	proven
 temporal_le	proven
 temporal_lower_inc	proven
@@ -1317,6 +1318,7 @@ temporal_timestamps	proven
 temporal_timestamptz_n	proven
 temporal_to_tstzspan	proven
 temporal_tprecision	proven
+temporal_update	proven
 temporal_upper_inc	proven
 teq_bool_tbool	proven
 teq_cbuffer_tcbuffer	proven

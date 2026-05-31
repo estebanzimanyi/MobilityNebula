@@ -4800,14 +4800,25 @@ def inject_parser_cpp(operators, cpp_path: Path) -> int:
         cases_block.append(case_str)
         n_added += 1
     if cases_block:
-        # Find the insertion point: prefer just after the LAST existing
-        # `/* END CODEGEN GLUE: ... */` marker (so successive codegen
-        # runs cluster their cases), else fall back to inserting before the
-        # `default:` that immediately follows the TGEO_AT_STBOX case block.
-        last_end_re = re.compile(r"/\* END CODEGEN GLUE: [^*]+\*/")
+        # Find the insertion point: prefer just after the LAST existing function-op
+        # `/* END CODEGEN GLUE: TOKEN */` marker (so successive codegen runs cluster
+        # their cases in the function-op case-switch), else fall back to inserting
+        # before the `default:` that follows the TGEO_AT_STBOX case block.
+        # NOTE the marker is unified across generators, so EXCLUDE the variant
+        # markers ` (case-switch)` / ` (funcName chain)` (aggregation glue, a
+        # different dispatch site) by forbidding '(' — else a function-op case would
+        # land after an aggregation block (illegal switch jump).
+        last_end_re = re.compile(r"/\* END CODEGEN GLUE: [^*(]+\*/")
         ends = list(last_end_re.finditer(body))
         if ends:
             insert_at = ends[-1].end()
+            # If that marker sits inside a family `#if <FAMILY> … #endif` guard,
+            # skip past the closing #endif so the new case lands at switch scope
+            # (not nested in the guard — which would unbalance the #if/#endif). The
+            # guard pass re-wraps each emitted block in its own #if as needed.
+            m_endif = re.match(r"\s*\n#endif /\* (?:CBUFFER|NPOINT|POSE|RGEO) \*/", body[insert_at:])
+            if m_endif:
+                insert_at += m_endif.end()
             body = body[:insert_at] + "\n" + "\n".join(cases_block) + body[insert_at:]
             sys.stderr.write(f"  ✓ parser-cpp dispatch: added {len(cases_block)} case(s) after last codegen marker\n")
         else:

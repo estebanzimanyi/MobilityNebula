@@ -1613,3 +1613,5 @@ add_plugin(TrgeometryDeleteTstzspan LogicalFunction nes-logical-operators Trgeom
 add_plugin(TrgeometryDeleteTstzspanset LogicalFunction nes-logical-operators TrgeometryDeleteTstzspansetLogicalFunction.cpp)
 add_plugin(TrgeometryAfterTimestamptz LogicalFunction nes-logical-operators TrgeometryAfterTimestamptzLogicalFunction.cpp)
 add_plugin(TrgeometryBeforeTimestamptz LogicalFunction nes-logical-operators TrgeometryBeforeTimestamptzLogicalFunction.cpp)
+add_plugin(TemporalInsert LogicalFunction nes-logical-operators TemporalInsertLogicalFunction.cpp)
+add_plugin(TemporalUpdate LogicalFunction nes-logical-operators TemporalUpdateLogicalFunction.cpp)

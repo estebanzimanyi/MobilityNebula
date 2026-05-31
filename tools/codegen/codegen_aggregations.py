@@ -3066,7 +3066,7 @@ def inject_parser_cpp(operators, cpp_path: Path) -> int:
         #   2. last `END CODEGEN GLUE: ...` (codegen_nebula.py W4.5+)
         #   3. TGEO_AT_STBOX → default: (pre-W4.5 layout)
         last_end_agg = list(re.finditer(r"/\* END CODEGEN GLUE: [^*]+\(case-switch\)\s*\*/", body))
-        last_end_nebula = list(re.finditer(r"/\* END CODEGEN GLUE: [^*]+\*/", body))
+        last_end_nebula = list(re.finditer(r"/\* END CODEGEN GLUE: [^*(]+\*/", body))
         if last_end_agg:
             insert_at = last_end_agg[-1].end()
             body = body[:insert_at] + "\n" + "\n".join(new_case_blocks) + body[insert_at:]

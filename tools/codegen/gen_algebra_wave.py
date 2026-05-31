@@ -1261,7 +1261,11 @@ def classify(name, ret, plist):
                    or name.startswith("trgeometry_delete_")
                    or name in ("temporal_after_timestamptz", "temporal_before_timestamptz",
                                "trgeometry_after_timestamptz", "trgeometry_before_timestamptz")))
-    if len(plist) != 2 and not (_restrict3 or _tdwithin3 or _temp3):
+    # temporal_insert/update: f(Temporal temp1, Temporal temp2, bool connect).
+    _tmod3 = (len(plist) == 3 and rbase == "Temporal" and plist[0] == ("Temporal", True)
+              and plist[1] == ("Temporal", True) and plist[2] == ("bool", False)
+              and name in ("temporal_insert", "temporal_update"))
+    if len(plist) != 2 and not (_restrict3 or _tdwithin3 or _temp3 or _tmod3):
         return None, f"arity {len(plist)} (not 2)"
     # ---- `_round`: f(operand, int maxdd) -> SAME type. The operand base picks
     #      the primary input and its same-type *_out return; maxdd is a fixed
@@ -1665,6 +1669,22 @@ def classify(name, ret, plist):
                 tmeta = dict(cols=spec["make_cols"], rows=spec["rows"],
                              token=name.upper(), sink="INT32")
                 return entry, tmeta
+    # ---- temporal_insert / temporal_update: f(Temporal, Temporal, bool connect)
+    #      -> Temporal. Build two tint instants at DISTINCT timestamps (so insert
+    #      adds the 2nd instant rather than colliding) + a constant connect=false. ----
+    if name in ("temporal_insert", "temporal_update"):
+        spec = TWO_TEMPORAL["tint"]
+        entry = dict(nebula_name=camel(name), sql_token=name.upper(), meos_call=name,
+                     build_generic=True, input_type="tint", return_kind="tint_out",
+                     extra_args=[dict(kind="temporal2", t2_fields=spec["t2_fields"],
+                                      t2_build=spec["t2_build"], header=spec["header"]),
+                                 dict(kind="scalar", cpp="bool")],
+                     comment_one_liner=f"{name} ({ret.strip()}) — merge a 2nd tint into the 1st.")
+        tmeta = dict(cols=spec["make_cols"] + [("flag", "BOOLEAN")],
+                     rows=[("5", "1609459200", "7", "1609462800", "false"),
+                           ("8", "1609545600", "2", "1609549200", "false")],
+                     token=name.upper(), sink="VARSIZED")
+        return entry, tmeta
     # ---- two-temporal: both operands built from instant columns -> tbool / ttext ----
     if (ret.replace("*", "").strip() == "Temporal" and len(plist) == 2
             and all(b == "Temporal" for b, p in plist)):
