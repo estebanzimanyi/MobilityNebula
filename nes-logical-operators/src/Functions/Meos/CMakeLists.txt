@@ -1598,3 +1598,7 @@ add_plugin(TrgeometryPoints LogicalFunction nes-logical-operators TrgeometryPoin
 add_plugin(TnpointRoutes LogicalFunction nes-logical-operators TnpointRoutesLogicalFunction.cpp)
 add_plugin(TposeRotation LogicalFunction nes-logical-operators TposeRotationLogicalFunction.cpp)
 add_plugin(TrgeometryRound LogicalFunction nes-logical-operators TrgeometryRoundLogicalFunction.cpp)
+add_plugin(TfloatShiftScaleValue LogicalFunction nes-logical-operators TfloatShiftScaleValueLogicalFunction.cpp)
+add_plugin(TintShiftScaleValue LogicalFunction nes-logical-operators TintShiftScaleValueLogicalFunction.cpp)
+add_plugin(TemporalShiftScaleTime LogicalFunction nes-logical-operators TemporalShiftScaleTimeLogicalFunction.cpp)
+add_plugin(TemporalTprecision LogicalFunction nes-logical-operators TemporalTprecisionLogicalFunction.cpp)

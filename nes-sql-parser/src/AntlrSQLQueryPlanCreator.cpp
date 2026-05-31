@@ -1748,6 +1748,10 @@
 #include <Functions/Meos/TnpointRoutesLogicalFunction.hpp>
 #include <Functions/Meos/TposeRotationLogicalFunction.hpp>
 #include <Functions/Meos/TrgeometryRoundLogicalFunction.hpp>
+#include <Functions/Meos/TfloatShiftScaleValueLogicalFunction.hpp>
+#include <Functions/Meos/TintShiftScaleValueLogicalFunction.hpp>
+#include <Functions/Meos/TemporalShiftScaleTimeLogicalFunction.hpp>
+#include <Functions/Meos/TemporalTprecisionLogicalFunction.hpp>
 #include <Plans/LogicalPlan.hpp>
 #include <Plans/LogicalPlanBuilder.hpp>
 #include <Util/Overloaded.hpp>
@@ -48147,6 +48151,130 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TRGEOMETRY_ROUND */
+        /* BEGIN CODEGEN PARSER GLUE: TFLOAT_SHIFT_SCALE_VALUE */
+        case AntlrSQLLexer::TFLOAT_SHIFT_SCALE_VALUE:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 4)
+                throw InvalidQuerySyntax("TFLOAT_SHIFT_SCALE_VALUE requires exactly 4 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a3 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(TfloatShiftScaleValueLogicalFunction(a0, a1, a2, a3));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: TFLOAT_SHIFT_SCALE_VALUE */
+
+        /* BEGIN CODEGEN PARSER GLUE: TINT_SHIFT_SCALE_VALUE */
+        case AntlrSQLLexer::TINT_SHIFT_SCALE_VALUE:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 4)
+                throw InvalidQuerySyntax("TINT_SHIFT_SCALE_VALUE requires exactly 4 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a3 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(TintShiftScaleValueLogicalFunction(a0, a1, a2, a3));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: TINT_SHIFT_SCALE_VALUE */
+
+        /* BEGIN CODEGEN PARSER GLUE: TEMPORAL_SHIFT_SCALE_TIME */
+        case AntlrSQLLexer::TEMPORAL_SHIFT_SCALE_TIME:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 4)
+                throw InvalidQuerySyntax("TEMPORAL_SHIFT_SCALE_TIME requires exactly 4 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a3 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(TemporalShiftScaleTimeLogicalFunction(a0, a1, a2, a3));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: TEMPORAL_SHIFT_SCALE_TIME */
+
+        /* BEGIN CODEGEN PARSER GLUE: TEMPORAL_TPRECISION */
+        case AntlrSQLLexer::TEMPORAL_TPRECISION:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 4)
+                throw InvalidQuerySyntax("TEMPORAL_TPRECISION requires exactly 4 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a3 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(TemporalTprecisionLogicalFunction(a0, a1, a2, a3));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: TEMPORAL_TPRECISION */
+
 
 
 

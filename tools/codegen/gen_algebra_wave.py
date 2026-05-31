@@ -155,6 +155,19 @@ ARITY3 = {
     "tstzspan_tprecision":   dict(prim="tstzspan", plit=("[2020-01-01 00:00:00+00, 2020-01-10 00:00:00+00)", "[2020-01-05 00:00:00+00, 2020-01-20 00:00:00+00)"), extras=[_a3iv(), _TSTZ0], ret="tstzspan_text"),
     "tstzset_tprecision":    dict(prim="tstzset", plit=("{2020-01-01 00:00:00+00, 2020-01-05 00:00:00+00}", "{2020-01-03 00:00:00+00, 2020-01-08 00:00:00+00}"), extras=[_a3iv(), _TSTZ0], ret="tstzset_text"),
     "tstzspanset_tprecision":dict(prim="tstzspanset", plit=("{[2020-01-01 00:00:00+00, 2020-01-10 00:00:00+00)}", "{[2020-01-05 00:00:00+00, 2020-01-20 00:00:00+00)}"), extras=[_a3iv(), _TSTZ0], ret="tstzspanset_text"),
+    # temporal-primary arity-3 ops: a (value, ts) tfloat/tint instant + 2 extras.
+    "tfloat_shift_scale_value": dict(prim="tfloat", pcols=[("value", "FLOAT64"), ("ts", "UINT64")],
+                                     pvalsa=("5.5", "1609459200"), pvalsb=("8.5", "1609545600"),
+                                     extras=[_a3sc("double", "FLOAT64", "2.0", "2.0"), _a3sc("double", "FLOAT64", "3.0", "3.0")], ret="tfloat_out"),
+    "tint_shift_scale_value":   dict(prim="tint", pcols=[("value", "INT32"), ("ts", "UINT64")],
+                                     pvalsa=("5", "1609459200"), pvalsb=("8", "1609545600"),
+                                     extras=[_a3sc("int32_t", "INT32", "2", "2"), _a3sc("int32_t", "INT32", "3", "3")], ret="tint_out"),
+    "temporal_shift_scale_time":dict(prim="tfloat", pcols=[("value", "FLOAT64"), ("ts", "UINT64")],
+                                     pvalsa=("5.5", "1609459200"), pvalsb=("8.5", "1609545600"),
+                                     extras=[_a3iv(), _a3iv()], ret="tfloat_out"),
+    "temporal_tprecision":      dict(prim="tfloat", pcols=[("value", "FLOAT64"), ("ts", "UINT64")],
+                                     pvalsa=("5.5", "1609459200"), pvalsb=("8.5", "1609545600"),
+                                     extras=[_a3iv(), _TSTZ0], ret="tfloat_out"),
 }
 def _setspec(elem, kind, **kw):
     return dict(elem=elem, kind=kind, count_call="set_num_values", **kw)
@@ -836,6 +849,11 @@ def classify(name, ret, plist):
                      build_generic=True, input_type=s["prim"], return_kind=s["ret"],
                      extra_args=extra_args,
                      comment_one_liner=f"{name} ({ret.strip()}) — arity-3 {s['ret']} op.")
+        if "pcols" in s:        # temporal primary (value, ts) — multi-column
+            tmeta = dict(cols=s["pcols"] + ecols,
+                         rows=[tuple(s["pvalsa"]) + tuple(erowa), tuple(s["pvalsb"]) + tuple(erowb)],
+                         token=name.upper(), sink=sink_of(s["ret"]))
+            return entry, tmeta
         if "plit" in s:
             pcol, pa, pb = ("a", "VARSIZED"), s["plit"][0], s["plit"][1]
         else:

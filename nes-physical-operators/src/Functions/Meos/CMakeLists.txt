@@ -1245,3 +1245,7 @@ add_plugin(TextUpper PhysicalFunction nes-physical-operators TextUpperPhysicalFu
 add_plugin(TextInitcap PhysicalFunction nes-physical-operators TextInitcapPhysicalFunction.cpp)
 add_plugin(TextCopy PhysicalFunction nes-physical-operators TextCopyPhysicalFunction.cpp)
 add_plugin(DatespansetDates PhysicalFunction nes-physical-operators DatespansetDatesPhysicalFunction.cpp)
+add_plugin(TfloatShiftScaleValue PhysicalFunction nes-physical-operators TfloatShiftScaleValuePhysicalFunction.cpp)
+add_plugin(TintShiftScaleValue PhysicalFunction nes-physical-operators TintShiftScaleValuePhysicalFunction.cpp)
+add_plugin(TemporalShiftScaleTime PhysicalFunction nes-physical-operators TemporalShiftScaleTimePhysicalFunction.cpp)
+add_plugin(TemporalTprecision PhysicalFunction nes-physical-operators TemporalTprecisionPhysicalFunction.cpp)
