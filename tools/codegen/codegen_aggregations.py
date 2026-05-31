@@ -33,7 +33,7 @@ And idempotently injects into 5 in-tree shared files:
         - add_plugin(...) per layer
 
 All injections are bracketed with
-``/* BEGIN CODEGEN AGGREGATION GLUE: TOKEN */ ... /* END ... */`` markers
+``/* BEGIN CODEGEN GLUE: TOKEN */ ... /* END ... */`` markers
 so re-runs are no-ops and pre-existing hand-written cases (mariana's) are
 detected by raw token match and skipped.
 
@@ -2325,7 +2325,7 @@ PHYSICAL_CPP_TGEO_TAGG_WKB = _swap_once(
 
 # Site 1 — case-switch dispatch. Two shapes (tgeo 3-arg, tnumber 2-arg).
 CASE_SWITCH_TGEO = """\
-        /* BEGIN CODEGEN AGGREGATION GLUE: {sql_token} (case-switch) */
+        /* BEGIN CODEGEN GLUE: {sql_token} (case-switch) */
         case AntlrSQLLexer::{sql_token}:
             // {comment_one_liner}
             if (helpers.top().functionBuilder.size() != 3) {{
@@ -2352,11 +2352,11 @@ CASE_SWITCH_TGEO = """\
                 helpers.top().functionBuilder.push_back(longitudeFunction);
             }}
             break;
-        /* END CODEGEN AGGREGATION GLUE: {sql_token} (case-switch) */
+        /* END CODEGEN GLUE: {sql_token} (case-switch) */
 """
 
 CASE_SWITCH_TNUMBER = """\
-        /* BEGIN CODEGEN AGGREGATION GLUE: {sql_token} (case-switch) */
+        /* BEGIN CODEGEN GLUE: {sql_token} (case-switch) */
         case AntlrSQLLexer::{sql_token}:
             // {comment_one_liner}
             if (helpers.top().functionBuilder.size() != 2) {{
@@ -2379,12 +2379,12 @@ CASE_SWITCH_TNUMBER = """\
                 helpers.top().functionBuilder.push_back(valueFunction);
             }}
             break;
-        /* END CODEGEN AGGREGATION GLUE: {sql_token} (case-switch) */
+        /* END CODEGEN GLUE: {sql_token} (case-switch) */
 """
 
 # Site 2 — funcName == "TOKEN" string chain.
 FUNCNAME_CHAIN_TGEO = """\
-            /* BEGIN CODEGEN AGGREGATION GLUE: {sql_token} (funcName chain) */
+            /* BEGIN CODEGEN GLUE: {sql_token} (funcName chain) */
             else if (funcName == "{sql_token}")
             {{
                 if (helpers.top().functionBuilder.size() < 3)
@@ -2399,11 +2399,11 @@ FUNCNAME_CHAIN_TGEO = """\
                 helpers.top().functionBuilder.pop_back();
                 helpers.top().windowAggs.push_back({nebula_name}AggregationLogicalFunction::create(lon, lat, ts));
             }}
-            /* END CODEGEN AGGREGATION GLUE: {sql_token} (funcName chain) */
+            /* END CODEGEN GLUE: {sql_token} (funcName chain) */
 """
 
 FUNCNAME_CHAIN_TNUMBER = """\
-            /* BEGIN CODEGEN AGGREGATION GLUE: {sql_token} (funcName chain) */
+            /* BEGIN CODEGEN GLUE: {sql_token} (funcName chain) */
             else if (funcName == "{sql_token}")
             {{
                 if (helpers.top().functionBuilder.size() < 2)
@@ -2416,12 +2416,12 @@ FUNCNAME_CHAIN_TNUMBER = """\
                 helpers.top().functionBuilder.pop_back();
                 helpers.top().windowAggs.push_back({nebula_name}AggregationLogicalFunction::create(value, ts));
             }}
-            /* END CODEGEN AGGREGATION GLUE: {sql_token} (funcName chain) */
+            /* END CODEGEN GLUE: {sql_token} (funcName chain) */
 """
 
 # Site 3 — optimizer logical→physical lowering rule.
 OPTIMIZER_LOWERING_TGEO = """\
-        /* BEGIN CODEGEN AGGREGATION GLUE: {class_name_token} (optimizer lowering) */
+        /* BEGIN CODEGEN GLUE: {class_name_token} (optimizer lowering) */
         if (name == std::string_view("{class_name_token}"))
         {{
             auto specificDescriptor = std::dynamic_pointer_cast<{nebula_name}AggregationLogicalFunction>(descriptor);
@@ -2448,11 +2448,11 @@ OPTIMIZER_LOWERING_TGEO = """\
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }}
-        /* END CODEGEN AGGREGATION GLUE: {class_name_token} (optimizer lowering) */
+        /* END CODEGEN GLUE: {class_name_token} (optimizer lowering) */
 """
 
 OPTIMIZER_LOWERING_TNUMBER = """\
-        /* BEGIN CODEGEN AGGREGATION GLUE: {class_name_token} (optimizer lowering) */
+        /* BEGIN CODEGEN GLUE: {class_name_token} (optimizer lowering) */
         if (name == std::string_view("{class_name_token}"))
         {{
             auto specificDescriptor = std::dynamic_pointer_cast<{nebula_name}AggregationLogicalFunction>(descriptor);
@@ -2476,7 +2476,7 @@ OPTIMIZER_LOWERING_TNUMBER = """\
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }}
-        /* END CODEGEN AGGREGATION GLUE: {class_name_token} (optimizer lowering) */
+        /* END CODEGEN GLUE: {class_name_token} (optimizer lowering) */
 """
 
 # ===========================================================================
@@ -3043,12 +3043,12 @@ def inject_parser_cpp(operators, cpp_path: Path) -> int:
             else:
                 sys.stderr.write(f"  ! parser-cpp: no Meos include anchor found\n")
 
-    # 2) Case-switch dispatch — insert after the last `END CODEGEN AGGREGATION GLUE: ... (case-switch)`
+    # 2) Case-switch dispatch — insert after the last `END CODEGEN GLUE: ... (case-switch)`
     #    marker, else before the `default:` of the switch that contains TGEO_AT_STBOX.
     new_case_blocks = []
     for op in operators:
         tmpl = case_switch_template_for(op)
-        marker = f"/* BEGIN CODEGEN AGGREGATION GLUE: {op['sql_token']} (case-switch) */"
+        marker = f"/* BEGIN CODEGEN GLUE: {op['sql_token']} (case-switch) */"
         if marker in body:
             continue
         # Skip if pre-existing hand-written case
@@ -3062,11 +3062,11 @@ def inject_parser_cpp(operators, cpp_path: Path) -> int:
         ))
     if new_case_blocks:
         # Anchor preference order:
-        #   1. last `END CODEGEN AGGREGATION GLUE: ... (case-switch)` (own marker)
-        #   2. last `END CODEGEN PARSER GLUE: ...` (codegen_nebula.py W4.5+)
+        #   1. last `END CODEGEN GLUE: ... (case-switch)` (own marker)
+        #   2. last `END CODEGEN GLUE: ...` (codegen_nebula.py W4.5+)
         #   3. TGEO_AT_STBOX → default: (pre-W4.5 layout)
-        last_end_agg = list(re.finditer(r"/\* END CODEGEN AGGREGATION GLUE: [^*]+\(case-switch\)\s*\*/", body))
-        last_end_nebula = list(re.finditer(r"/\* END CODEGEN PARSER GLUE: [^*]+\*/", body))
+        last_end_agg = list(re.finditer(r"/\* END CODEGEN GLUE: [^*]+\(case-switch\)\s*\*/", body))
+        last_end_nebula = list(re.finditer(r"/\* END CODEGEN GLUE: [^*]+\*/", body))
         if last_end_agg:
             insert_at = last_end_agg[-1].end()
             body = body[:insert_at] + "\n" + "\n".join(new_case_blocks) + body[insert_at:]
@@ -3086,12 +3086,12 @@ def inject_parser_cpp(operators, cpp_path: Path) -> int:
                 sys.stderr.write(f"  ✓ parser-cpp case-switch: added {len(new_case_blocks)} (before default:)\n")
         n_added += len(new_case_blocks)
 
-    # 3) funcName-chain dispatch — insert after the last `END CODEGEN AGGREGATION GLUE: ... (funcName chain)`,
+    # 3) funcName-chain dispatch — insert after the last `END CODEGEN GLUE: ... (funcName chain)`,
     #    else after mariana's CrossDistance else-if block.
     new_chain_blocks = []
     for op in operators:
         tmpl = funcname_chain_template_for(op)
-        marker = f"/* BEGIN CODEGEN AGGREGATION GLUE: {op['sql_token']} (funcName chain) */"
+        marker = f"/* BEGIN CODEGEN GLUE: {op['sql_token']} (funcName chain) */"
         if marker in body:
             continue
         if re.search(rf'funcName == "{re.escape(op["sql_token"])}"', body):
@@ -3101,7 +3101,7 @@ def inject_parser_cpp(operators, cpp_path: Path) -> int:
             continue
         new_chain_blocks.append(tmpl.format(sql_token=op["sql_token"], nebula_name=op["nebula_name"]))
     if new_chain_blocks:
-        last_end_re = re.compile(r"/\* END CODEGEN AGGREGATION GLUE: [^*]+\(funcName chain\)\s*\*/")
+        last_end_re = re.compile(r"/\* END CODEGEN GLUE: [^*]+\(funcName chain\)\s*\*/")
         ends = list(last_end_re.finditer(body))
         if ends:
             insert_at = ends[-1].end()
@@ -3119,6 +3119,12 @@ def inject_parser_cpp(operators, cpp_path: Path) -> int:
                 body = body[: m.end()] + "\n".join(new_chain_blocks) + body[m.end():]
                 sys.stderr.write(f"  ✓ parser-cpp funcName chain: added {len(new_chain_blocks)} (after CROSS_DISTANCE)\n")
         n_added += len(new_chain_blocks)
+
+    # Family-gate the dispatch glue + logical #includes via the SAME shared guard
+    # the function-op generator uses (one mechanism, one `CODEGEN GLUE` marker), so
+    # a -D<FAMILY>=0 build drops aggregate tokens too. Idempotent.
+    import codegen_nebula
+    body = codegen_nebula.guard_parser_glue_by_family(body)
 
     cpp_path.write_text(body)
     return n_added
@@ -3171,7 +3177,7 @@ def inject_optimizer(operators, opt_path: Path) -> int:
     new_blocks = []
     for op in operators:
         tmpl = optimizer_lowering_template_for(op)
-        marker = f"/* BEGIN CODEGEN AGGREGATION GLUE: {op['class_name_token']} (optimizer lowering) */"
+        marker = f"/* BEGIN CODEGEN GLUE: {op['class_name_token']} (optimizer lowering) */"
         if marker in body:
             continue
         # Skip if a pre-existing hand-written block exists for this class_name_token
@@ -3189,7 +3195,7 @@ def inject_optimizer(operators, opt_path: Path) -> int:
             block = f"#if {fam.upper()}\n{block}\n#endif"
         new_blocks.append(block)
     if new_blocks:
-        last_end_re = re.compile(r"/\* END CODEGEN AGGREGATION GLUE: [^*]+\(optimizer lowering\)\s*\*/")
+        last_end_re = re.compile(r"/\* END CODEGEN GLUE: [^*]+\(optimizer lowering\)\s*\*/")
         ends = list(last_end_re.finditer(body))
         if ends:
             insert_at = ends[-1].end()

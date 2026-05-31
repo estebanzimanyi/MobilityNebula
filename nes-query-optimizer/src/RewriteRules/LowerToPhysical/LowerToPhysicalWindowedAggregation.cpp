@@ -461,7 +461,7 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* BEGIN CODEGEN AGGREGATION GLUE: TemporalNumInstants (optimizer lowering) */
+        /* BEGIN CODEGEN GLUE: TemporalNumInstants (optimizer lowering) */
         if (name == std::string_view("TemporalNumInstants"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<TemporalNumInstantsAggregationLogicalFunction>(descriptor);
@@ -488,9 +488,9 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: TemporalNumInstants (optimizer lowering) */
+        /* END CODEGEN GLUE: TemporalNumInstants (optimizer lowering) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: TemporalNumSequences (optimizer lowering) */
+        /* BEGIN CODEGEN GLUE: TemporalNumSequences (optimizer lowering) */
         if (name == std::string_view("TemporalNumSequences"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<TemporalNumSequencesAggregationLogicalFunction>(descriptor);
@@ -517,9 +517,9 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: TemporalNumSequences (optimizer lowering) */
+        /* END CODEGEN GLUE: TemporalNumSequences (optimizer lowering) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: TemporalNumTimestamps (optimizer lowering) */
+        /* BEGIN CODEGEN GLUE: TemporalNumTimestamps (optimizer lowering) */
         if (name == std::string_view("TemporalNumTimestamps"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<TemporalNumTimestampsAggregationLogicalFunction>(descriptor);
@@ -546,9 +546,9 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: TemporalNumTimestamps (optimizer lowering) */
+        /* END CODEGEN GLUE: TemporalNumTimestamps (optimizer lowering) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: TfloatStartValue (optimizer lowering) */
+        /* BEGIN CODEGEN GLUE: TfloatStartValue (optimizer lowering) */
         if (name == std::string_view("TfloatStartValue"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<TfloatStartValueAggregationLogicalFunction>(descriptor);
@@ -572,9 +572,9 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: TfloatStartValue (optimizer lowering) */
+        /* END CODEGEN GLUE: TfloatStartValue (optimizer lowering) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: TfloatEndValue (optimizer lowering) */
+        /* BEGIN CODEGEN GLUE: TfloatEndValue (optimizer lowering) */
         if (name == std::string_view("TfloatEndValue"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<TfloatEndValueAggregationLogicalFunction>(descriptor);
@@ -598,9 +598,9 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: TfloatEndValue (optimizer lowering) */
+        /* END CODEGEN GLUE: TfloatEndValue (optimizer lowering) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: TfloatMinValue (optimizer lowering) */
+        /* BEGIN CODEGEN GLUE: TfloatMinValue (optimizer lowering) */
         if (name == std::string_view("TfloatMinValue"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<TfloatMinValueAggregationLogicalFunction>(descriptor);
@@ -624,9 +624,9 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: TfloatMinValue (optimizer lowering) */
+        /* END CODEGEN GLUE: TfloatMinValue (optimizer lowering) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: TfloatMaxValue (optimizer lowering) */
+        /* BEGIN CODEGEN GLUE: TfloatMaxValue (optimizer lowering) */
         if (name == std::string_view("TfloatMaxValue"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<TfloatMaxValueAggregationLogicalFunction>(descriptor);
@@ -650,9 +650,9 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: TfloatMaxValue (optimizer lowering) */
+        /* END CODEGEN GLUE: TfloatMaxValue (optimizer lowering) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: TnumberIntegral (optimizer lowering) */
+        /* BEGIN CODEGEN GLUE: TnumberIntegral (optimizer lowering) */
         if (name == std::string_view("TnumberIntegral"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<TnumberIntegralAggregationLogicalFunction>(descriptor);
@@ -676,9 +676,9 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: TnumberIntegral (optimizer lowering) */
+        /* END CODEGEN GLUE: TnumberIntegral (optimizer lowering) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: TintStartValue (optimizer lowering) */
+        /* BEGIN CODEGEN GLUE: TintStartValue (optimizer lowering) */
         if (name == std::string_view("TintStartValue"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<TintStartValueAggregationLogicalFunction>(descriptor);
@@ -702,9 +702,9 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: TintStartValue (optimizer lowering) */
+        /* END CODEGEN GLUE: TintStartValue (optimizer lowering) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: TintEndValue (optimizer lowering) */
+        /* BEGIN CODEGEN GLUE: TintEndValue (optimizer lowering) */
         if (name == std::string_view("TintEndValue"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<TintEndValueAggregationLogicalFunction>(descriptor);
@@ -728,9 +728,9 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: TintEndValue (optimizer lowering) */
+        /* END CODEGEN GLUE: TintEndValue (optimizer lowering) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: TintMinValue (optimizer lowering) */
+        /* BEGIN CODEGEN GLUE: TintMinValue (optimizer lowering) */
         if (name == std::string_view("TintMinValue"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<TintMinValueAggregationLogicalFunction>(descriptor);
@@ -754,9 +754,9 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: TintMinValue (optimizer lowering) */
+        /* END CODEGEN GLUE: TintMinValue (optimizer lowering) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: TintMaxValue (optimizer lowering) */
+        /* BEGIN CODEGEN GLUE: TintMaxValue (optimizer lowering) */
         if (name == std::string_view("TintMaxValue"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<TintMaxValueAggregationLogicalFunction>(descriptor);
@@ -780,8 +780,8 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: TintMaxValue (optimizer lowering) */
-        /* BEGIN CODEGEN AGGREGATION GLUE: TnumberAvgValue (optimizer lowering) */
+        /* END CODEGEN GLUE: TintMaxValue (optimizer lowering) */
+        /* BEGIN CODEGEN GLUE: TnumberAvgValue (optimizer lowering) */
         if (name == std::string_view("TnumberAvgValue"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<TnumberAvgValueAggregationLogicalFunction>(descriptor);
@@ -805,9 +805,9 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: TnumberAvgValue (optimizer lowering) */
+        /* END CODEGEN GLUE: TnumberAvgValue (optimizer lowering) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: TnumberTwavg (optimizer lowering) */
+        /* BEGIN CODEGEN GLUE: TnumberTwavg (optimizer lowering) */
         if (name == std::string_view("TnumberTwavg"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<TnumberTwavgAggregationLogicalFunction>(descriptor);
@@ -831,9 +831,9 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: TnumberTwavg (optimizer lowering) */
+        /* END CODEGEN GLUE: TnumberTwavg (optimizer lowering) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: TemporalStartTimestamptz (optimizer lowering) */
+        /* BEGIN CODEGEN GLUE: TemporalStartTimestamptz (optimizer lowering) */
         if (name == std::string_view("TemporalStartTimestamptz"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<TemporalStartTimestamptzAggregationLogicalFunction>(descriptor);
@@ -860,9 +860,9 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: TemporalStartTimestamptz (optimizer lowering) */
+        /* END CODEGEN GLUE: TemporalStartTimestamptz (optimizer lowering) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: TemporalEndTimestamptz (optimizer lowering) */
+        /* BEGIN CODEGEN GLUE: TemporalEndTimestamptz (optimizer lowering) */
         if (name == std::string_view("TemporalEndTimestamptz"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<TemporalEndTimestamptzAggregationLogicalFunction>(descriptor);
@@ -889,9 +889,9 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: TemporalEndTimestamptz (optimizer lowering) */
+        /* END CODEGEN GLUE: TemporalEndTimestamptz (optimizer lowering) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: TemporalLowerInc (optimizer lowering) */
+        /* BEGIN CODEGEN GLUE: TemporalLowerInc (optimizer lowering) */
         if (name == std::string_view("TemporalLowerInc"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<TemporalLowerIncAggregationLogicalFunction>(descriptor);
@@ -918,9 +918,9 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: TemporalLowerInc (optimizer lowering) */
+        /* END CODEGEN GLUE: TemporalLowerInc (optimizer lowering) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: TemporalUpperInc (optimizer lowering) */
+        /* BEGIN CODEGEN GLUE: TemporalUpperInc (optimizer lowering) */
         if (name == std::string_view("TemporalUpperInc"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<TemporalUpperIncAggregationLogicalFunction>(descriptor);
@@ -947,9 +947,9 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: TemporalUpperInc (optimizer lowering) */
+        /* END CODEGEN GLUE: TemporalUpperInc (optimizer lowering) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: TpointIsSimple (optimizer lowering) */
+        /* BEGIN CODEGEN GLUE: TpointIsSimple (optimizer lowering) */
         if (name == std::string_view("TpointIsSimple"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<TpointIsSimpleAggregationLogicalFunction>(descriptor);
@@ -976,8 +976,8 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: TpointIsSimple (optimizer lowering) */
-        /* BEGIN CODEGEN AGGREGATION GLUE: TspatialExtentTransfn (optimizer lowering) */
+        /* END CODEGEN GLUE: TpointIsSimple (optimizer lowering) */
+        /* BEGIN CODEGEN GLUE: TspatialExtentTransfn (optimizer lowering) */
         if (name == std::string_view("TspatialExtentTransfn"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<TspatialExtentTransfnAggregationLogicalFunction>(descriptor);
@@ -1004,9 +1004,9 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: TspatialExtentTransfn (optimizer lowering) */
+        /* END CODEGEN GLUE: TspatialExtentTransfn (optimizer lowering) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: TnumberExtentTransfn (optimizer lowering) */
+        /* BEGIN CODEGEN GLUE: TnumberExtentTransfn (optimizer lowering) */
         if (name == std::string_view("TnumberExtentTransfn"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<TnumberExtentTransfnAggregationLogicalFunction>(descriptor);
@@ -1030,8 +1030,8 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: TnumberExtentTransfn (optimizer lowering) */
-        /* BEGIN CODEGEN AGGREGATION GLUE: FloatExtentTransfn (optimizer lowering) */
+        /* END CODEGEN GLUE: TnumberExtentTransfn (optimizer lowering) */
+        /* BEGIN CODEGEN GLUE: FloatExtentTransfn (optimizer lowering) */
         if (name == std::string_view("FloatExtentTransfn"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<FloatExtentTransfnAggregationLogicalFunction>(descriptor);
@@ -1055,9 +1055,9 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: FloatExtentTransfn (optimizer lowering) */
+        /* END CODEGEN GLUE: FloatExtentTransfn (optimizer lowering) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: IntExtentTransfn (optimizer lowering) */
+        /* BEGIN CODEGEN GLUE: IntExtentTransfn (optimizer lowering) */
         if (name == std::string_view("IntExtentTransfn"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<IntExtentTransfnAggregationLogicalFunction>(descriptor);
@@ -1081,9 +1081,9 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: IntExtentTransfn (optimizer lowering) */
+        /* END CODEGEN GLUE: IntExtentTransfn (optimizer lowering) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: BigintExtentTransfn (optimizer lowering) */
+        /* BEGIN CODEGEN GLUE: BigintExtentTransfn (optimizer lowering) */
         if (name == std::string_view("BigintExtentTransfn"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<BigintExtentTransfnAggregationLogicalFunction>(descriptor);
@@ -1107,9 +1107,9 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: BigintExtentTransfn (optimizer lowering) */
+        /* END CODEGEN GLUE: BigintExtentTransfn (optimizer lowering) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: TimestamptzExtentTransfn (optimizer lowering) */
+        /* BEGIN CODEGEN GLUE: TimestamptzExtentTransfn (optimizer lowering) */
         if (name == std::string_view("TimestamptzExtentTransfn"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<TimestamptzExtentTransfnAggregationLogicalFunction>(descriptor);
@@ -1133,8 +1133,8 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: TimestamptzExtentTransfn (optimizer lowering) */
-        /* BEGIN CODEGEN AGGREGATION GLUE: FloatUnionTransfn (optimizer lowering) */
+        /* END CODEGEN GLUE: TimestamptzExtentTransfn (optimizer lowering) */
+        /* BEGIN CODEGEN GLUE: FloatUnionTransfn (optimizer lowering) */
         if (name == std::string_view("FloatUnionTransfn"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<FloatUnionTransfnAggregationLogicalFunction>(descriptor);
@@ -1158,9 +1158,9 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: FloatUnionTransfn (optimizer lowering) */
+        /* END CODEGEN GLUE: FloatUnionTransfn (optimizer lowering) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: IntUnionTransfn (optimizer lowering) */
+        /* BEGIN CODEGEN GLUE: IntUnionTransfn (optimizer lowering) */
         if (name == std::string_view("IntUnionTransfn"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<IntUnionTransfnAggregationLogicalFunction>(descriptor);
@@ -1184,9 +1184,9 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: IntUnionTransfn (optimizer lowering) */
+        /* END CODEGEN GLUE: IntUnionTransfn (optimizer lowering) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: BigintUnionTransfn (optimizer lowering) */
+        /* BEGIN CODEGEN GLUE: BigintUnionTransfn (optimizer lowering) */
         if (name == std::string_view("BigintUnionTransfn"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<BigintUnionTransfnAggregationLogicalFunction>(descriptor);
@@ -1210,9 +1210,9 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: BigintUnionTransfn (optimizer lowering) */
+        /* END CODEGEN GLUE: BigintUnionTransfn (optimizer lowering) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: TimestamptzUnionTransfn (optimizer lowering) */
+        /* BEGIN CODEGEN GLUE: TimestamptzUnionTransfn (optimizer lowering) */
         if (name == std::string_view("TimestamptzUnionTransfn"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<TimestamptzUnionTransfnAggregationLogicalFunction>(descriptor);
@@ -1236,8 +1236,8 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: TimestamptzUnionTransfn (optimizer lowering) */
-        /* BEGIN CODEGEN AGGREGATION GLUE: TpointTrajectory (optimizer lowering) */
+        /* END CODEGEN GLUE: TimestamptzUnionTransfn (optimizer lowering) */
+        /* BEGIN CODEGEN GLUE: TpointTrajectory (optimizer lowering) */
         if (name == std::string_view("TpointTrajectory"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<TpointTrajectoryAggregationLogicalFunction>(descriptor);
@@ -1264,8 +1264,8 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: TpointTrajectory (optimizer lowering) */
-        /* BEGIN CODEGEN AGGREGATION GLUE: TgeoCentroid (optimizer lowering) */
+        /* END CODEGEN GLUE: TpointTrajectory (optimizer lowering) */
+        /* BEGIN CODEGEN GLUE: TgeoCentroid (optimizer lowering) */
         if (name == std::string_view("TgeoCentroid"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<TgeoCentroidAggregationLogicalFunction>(descriptor);
@@ -1292,9 +1292,9 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: TgeoCentroid (optimizer lowering) */
+        /* END CODEGEN GLUE: TgeoCentroid (optimizer lowering) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: TpointAzimuth (optimizer lowering) */
+        /* BEGIN CODEGEN GLUE: TpointAzimuth (optimizer lowering) */
         if (name == std::string_view("TpointAzimuth"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<TpointAzimuthAggregationLogicalFunction>(descriptor);
@@ -1321,9 +1321,9 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: TpointAzimuth (optimizer lowering) */
+        /* END CODEGEN GLUE: TpointAzimuth (optimizer lowering) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: TpointAngularDifference (optimizer lowering) */
+        /* BEGIN CODEGEN GLUE: TpointAngularDifference (optimizer lowering) */
         if (name == std::string_view("TpointAngularDifference"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<TpointAngularDifferenceAggregationLogicalFunction>(descriptor);
@@ -1350,9 +1350,9 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: TpointAngularDifference (optimizer lowering) */
+        /* END CODEGEN GLUE: TpointAngularDifference (optimizer lowering) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: TgeompointToTgeometry (optimizer lowering) */
+        /* BEGIN CODEGEN GLUE: TgeompointToTgeometry (optimizer lowering) */
         if (name == std::string_view("TgeompointToTgeometry"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<TgeompointToTgeometryAggregationLogicalFunction>(descriptor);
@@ -1379,9 +1379,9 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: TgeompointToTgeometry (optimizer lowering) */
+        /* END CODEGEN GLUE: TgeompointToTgeometry (optimizer lowering) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: TemporalCopy (optimizer lowering) */
+        /* BEGIN CODEGEN GLUE: TemporalCopy (optimizer lowering) */
         if (name == std::string_view("TemporalCopy"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<TemporalCopyAggregationLogicalFunction>(descriptor);
@@ -1408,8 +1408,8 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: TemporalCopy (optimizer lowering) */
-        /* BEGIN CODEGEN AGGREGATION GLUE: TnumberAbs (optimizer lowering) */
+        /* END CODEGEN GLUE: TemporalCopy (optimizer lowering) */
+        /* BEGIN CODEGEN GLUE: TnumberAbs (optimizer lowering) */
         if (name == std::string_view("TnumberAbs"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<TnumberAbsAggregationLogicalFunction>(descriptor);
@@ -1433,9 +1433,9 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: TnumberAbs (optimizer lowering) */
+        /* END CODEGEN GLUE: TnumberAbs (optimizer lowering) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: TnumberDeltaValue (optimizer lowering) */
+        /* BEGIN CODEGEN GLUE: TnumberDeltaValue (optimizer lowering) */
         if (name == std::string_view("TnumberDeltaValue"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<TnumberDeltaValueAggregationLogicalFunction>(descriptor);
@@ -1459,9 +1459,9 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: TnumberDeltaValue (optimizer lowering) */
+        /* END CODEGEN GLUE: TnumberDeltaValue (optimizer lowering) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: TnumberAngularDifference (optimizer lowering) */
+        /* BEGIN CODEGEN GLUE: TnumberAngularDifference (optimizer lowering) */
         if (name == std::string_view("TnumberAngularDifference"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<TnumberAngularDifferenceAggregationLogicalFunction>(descriptor);
@@ -1485,9 +1485,9 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: TnumberAngularDifference (optimizer lowering) */
+        /* END CODEGEN GLUE: TnumberAngularDifference (optimizer lowering) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: TemporalDerivative (optimizer lowering) */
+        /* BEGIN CODEGEN GLUE: TemporalDerivative (optimizer lowering) */
         if (name == std::string_view("TemporalDerivative"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<TemporalDerivativeAggregationLogicalFunction>(descriptor);
@@ -1511,9 +1511,9 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: TemporalDerivative (optimizer lowering) */
+        /* END CODEGEN GLUE: TemporalDerivative (optimizer lowering) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: TemporalAtMax (optimizer lowering) */
+        /* BEGIN CODEGEN GLUE: TemporalAtMax (optimizer lowering) */
         if (name == std::string_view("TemporalAtMax"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<TemporalAtMaxAggregationLogicalFunction>(descriptor);
@@ -1537,9 +1537,9 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: TemporalAtMax (optimizer lowering) */
+        /* END CODEGEN GLUE: TemporalAtMax (optimizer lowering) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: TemporalAtMin (optimizer lowering) */
+        /* BEGIN CODEGEN GLUE: TemporalAtMin (optimizer lowering) */
         if (name == std::string_view("TemporalAtMin"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<TemporalAtMinAggregationLogicalFunction>(descriptor);
@@ -1563,9 +1563,9 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: TemporalAtMin (optimizer lowering) */
+        /* END CODEGEN GLUE: TemporalAtMin (optimizer lowering) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: TemporalMinusMax (optimizer lowering) */
+        /* BEGIN CODEGEN GLUE: TemporalMinusMax (optimizer lowering) */
         if (name == std::string_view("TemporalMinusMax"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<TemporalMinusMaxAggregationLogicalFunction>(descriptor);
@@ -1589,9 +1589,9 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: TemporalMinusMax (optimizer lowering) */
+        /* END CODEGEN GLUE: TemporalMinusMax (optimizer lowering) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: TemporalMinusMin (optimizer lowering) */
+        /* BEGIN CODEGEN GLUE: TemporalMinusMin (optimizer lowering) */
         if (name == std::string_view("TemporalMinusMin"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<TemporalMinusMinAggregationLogicalFunction>(descriptor);
@@ -1615,9 +1615,9 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: TemporalMinusMin (optimizer lowering) */
+        /* END CODEGEN GLUE: TemporalMinusMin (optimizer lowering) */
 #if NPOINT
-        /* BEGIN CODEGEN AGGREGATION GLUE: TnpointCumulativeLength (optimizer lowering) */
+        /* BEGIN CODEGEN GLUE: TnpointCumulativeLength (optimizer lowering) */
         if (name == std::string_view("TnpointCumulativeLength"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<TnpointCumulativeLengthAggregationLogicalFunction>(descriptor);
@@ -1644,9 +1644,9 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: TnpointCumulativeLength (optimizer lowering) */
+        /* END CODEGEN GLUE: TnpointCumulativeLength (optimizer lowering) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: TnpointSpeed (optimizer lowering) */
+        /* BEGIN CODEGEN GLUE: TnpointSpeed (optimizer lowering) */
         if (name == std::string_view("TnpointSpeed"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<TnpointSpeedAggregationLogicalFunction>(descriptor);
@@ -1673,9 +1673,9 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: TnpointSpeed (optimizer lowering) */
+        /* END CODEGEN GLUE: TnpointSpeed (optimizer lowering) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: TnpointToTgeompoint (optimizer lowering) */
+        /* BEGIN CODEGEN GLUE: TnpointToTgeompoint (optimizer lowering) */
         if (name == std::string_view("TnpointToTgeompoint"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<TnpointToTgeompointAggregationLogicalFunction>(descriptor);
@@ -1702,9 +1702,9 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: TnpointToTgeompoint (optimizer lowering) */
+        /* END CODEGEN GLUE: TnpointToTgeompoint (optimizer lowering) */
 #endif
-        /* BEGIN CODEGEN AGGREGATION GLUE: TpointCumulativeLength (optimizer lowering) */
+        /* BEGIN CODEGEN GLUE: TpointCumulativeLength (optimizer lowering) */
         if (name == std::string_view("TpointCumulativeLength"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<TpointCumulativeLengthAggregationLogicalFunction>(descriptor);
@@ -1731,9 +1731,9 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: TpointCumulativeLength (optimizer lowering) */
+        /* END CODEGEN GLUE: TpointCumulativeLength (optimizer lowering) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: TpointSpeed (optimizer lowering) */
+        /* BEGIN CODEGEN GLUE: TpointSpeed (optimizer lowering) */
         if (name == std::string_view("TpointSpeed"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<TpointSpeedAggregationLogicalFunction>(descriptor);
@@ -1760,9 +1760,9 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: TpointSpeed (optimizer lowering) */
+        /* END CODEGEN GLUE: TpointSpeed (optimizer lowering) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: TpointGetX (optimizer lowering) */
+        /* BEGIN CODEGEN GLUE: TpointGetX (optimizer lowering) */
         if (name == std::string_view("TpointGetX"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<TpointGetXAggregationLogicalFunction>(descriptor);
@@ -1789,9 +1789,9 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: TpointGetX (optimizer lowering) */
+        /* END CODEGEN GLUE: TpointGetX (optimizer lowering) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: TpointGetY (optimizer lowering) */
+        /* BEGIN CODEGEN GLUE: TpointGetY (optimizer lowering) */
         if (name == std::string_view("TpointGetY"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<TpointGetYAggregationLogicalFunction>(descriptor);
@@ -1818,9 +1818,9 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: TpointGetY (optimizer lowering) */
+        /* END CODEGEN GLUE: TpointGetY (optimizer lowering) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: TnumberTrend (optimizer lowering) */
+        /* BEGIN CODEGEN GLUE: TnumberTrend (optimizer lowering) */
         if (name == std::string_view("TnumberTrend"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<TnumberTrendAggregationLogicalFunction>(descriptor);
@@ -1844,8 +1844,8 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: TnumberTrend (optimizer lowering) */
-        /* BEGIN CODEGEN AGGREGATION GLUE: TgeoStartValue (optimizer lowering) */
+        /* END CODEGEN GLUE: TnumberTrend (optimizer lowering) */
+        /* BEGIN CODEGEN GLUE: TgeoStartValue (optimizer lowering) */
         if (name == std::string_view("TgeoStartValue"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<TgeoStartValueAggregationLogicalFunction>(descriptor);
@@ -1872,9 +1872,9 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: TgeoStartValue (optimizer lowering) */
+        /* END CODEGEN GLUE: TgeoStartValue (optimizer lowering) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: TgeoEndValue (optimizer lowering) */
+        /* BEGIN CODEGEN GLUE: TgeoEndValue (optimizer lowering) */
         if (name == std::string_view("TgeoEndValue"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<TgeoEndValueAggregationLogicalFunction>(descriptor);
@@ -1901,9 +1901,9 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: TgeoEndValue (optimizer lowering) */
+        /* END CODEGEN GLUE: TgeoEndValue (optimizer lowering) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: TgeoConvexHull (optimizer lowering) */
+        /* BEGIN CODEGEN GLUE: TgeoConvexHull (optimizer lowering) */
         if (name == std::string_view("TgeoConvexHull"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<TgeoConvexHullAggregationLogicalFunction>(descriptor);
@@ -1930,9 +1930,9 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: TgeoConvexHull (optimizer lowering) */
+        /* END CODEGEN GLUE: TgeoConvexHull (optimizer lowering) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: TpointTwcentroid (optimizer lowering) */
+        /* BEGIN CODEGEN GLUE: TpointTwcentroid (optimizer lowering) */
         if (name == std::string_view("TpointTwcentroid"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<TpointTwcentroidAggregationLogicalFunction>(descriptor);
@@ -1959,8 +1959,8 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: TpointTwcentroid (optimizer lowering) */
-        /* BEGIN CODEGEN AGGREGATION GLUE: DateExtentTransfn (optimizer lowering) */
+        /* END CODEGEN GLUE: TpointTwcentroid (optimizer lowering) */
+        /* BEGIN CODEGEN GLUE: DateExtentTransfn (optimizer lowering) */
         if (name == std::string_view("DateExtentTransfn"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<DateExtentTransfnAggregationLogicalFunction>(descriptor);
@@ -1984,8 +1984,8 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: DateExtentTransfn (optimizer lowering) */
-        /* BEGIN CODEGEN AGGREGATION GLUE: DateUnionTransfn (optimizer lowering) */
+        /* END CODEGEN GLUE: DateExtentTransfn (optimizer lowering) */
+        /* BEGIN CODEGEN GLUE: DateUnionTransfn (optimizer lowering) */
         if (name == std::string_view("DateUnionTransfn"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<DateUnionTransfnAggregationLogicalFunction>(descriptor);
@@ -2009,8 +2009,8 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: DateUnionTransfn (optimizer lowering) */
-        /* BEGIN CODEGEN AGGREGATION GLUE: TintTsumTransfn (optimizer lowering) */
+        /* END CODEGEN GLUE: DateUnionTransfn (optimizer lowering) */
+        /* BEGIN CODEGEN GLUE: TintTsumTransfn (optimizer lowering) */
         if (name == std::string_view("TintTsumTransfn"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<TintTsumTransfnAggregationLogicalFunction>(descriptor);
@@ -2034,9 +2034,9 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: TintTsumTransfn (optimizer lowering) */
+        /* END CODEGEN GLUE: TintTsumTransfn (optimizer lowering) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: TintTminTransfn (optimizer lowering) */
+        /* BEGIN CODEGEN GLUE: TintTminTransfn (optimizer lowering) */
         if (name == std::string_view("TintTminTransfn"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<TintTminTransfnAggregationLogicalFunction>(descriptor);
@@ -2060,9 +2060,9 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: TintTminTransfn (optimizer lowering) */
+        /* END CODEGEN GLUE: TintTminTransfn (optimizer lowering) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: TintTmaxTransfn (optimizer lowering) */
+        /* BEGIN CODEGEN GLUE: TintTmaxTransfn (optimizer lowering) */
         if (name == std::string_view("TintTmaxTransfn"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<TintTmaxTransfnAggregationLogicalFunction>(descriptor);
@@ -2086,9 +2086,9 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: TintTmaxTransfn (optimizer lowering) */
+        /* END CODEGEN GLUE: TintTmaxTransfn (optimizer lowering) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: TfloatTsumTransfn (optimizer lowering) */
+        /* BEGIN CODEGEN GLUE: TfloatTsumTransfn (optimizer lowering) */
         if (name == std::string_view("TfloatTsumTransfn"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<TfloatTsumTransfnAggregationLogicalFunction>(descriptor);
@@ -2112,9 +2112,9 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: TfloatTsumTransfn (optimizer lowering) */
+        /* END CODEGEN GLUE: TfloatTsumTransfn (optimizer lowering) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: TfloatTminTransfn (optimizer lowering) */
+        /* BEGIN CODEGEN GLUE: TfloatTminTransfn (optimizer lowering) */
         if (name == std::string_view("TfloatTminTransfn"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<TfloatTminTransfnAggregationLogicalFunction>(descriptor);
@@ -2138,9 +2138,9 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: TfloatTminTransfn (optimizer lowering) */
+        /* END CODEGEN GLUE: TfloatTminTransfn (optimizer lowering) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: TfloatTmaxTransfn (optimizer lowering) */
+        /* BEGIN CODEGEN GLUE: TfloatTmaxTransfn (optimizer lowering) */
         if (name == std::string_view("TfloatTmaxTransfn"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<TfloatTmaxTransfnAggregationLogicalFunction>(descriptor);
@@ -2164,9 +2164,9 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: TfloatTmaxTransfn (optimizer lowering) */
+        /* END CODEGEN GLUE: TfloatTmaxTransfn (optimizer lowering) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: TnumberTavgTransfn (optimizer lowering) */
+        /* BEGIN CODEGEN GLUE: TnumberTavgTransfn (optimizer lowering) */
         if (name == std::string_view("TnumberTavgTransfn"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<TnumberTavgTransfnAggregationLogicalFunction>(descriptor);
@@ -2190,8 +2190,8 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: TnumberTavgTransfn (optimizer lowering) */
-        /* BEGIN CODEGEN AGGREGATION GLUE: TboolTandTransfn (optimizer lowering) */
+        /* END CODEGEN GLUE: TnumberTavgTransfn (optimizer lowering) */
+        /* BEGIN CODEGEN GLUE: TboolTandTransfn (optimizer lowering) */
         if (name == std::string_view("TboolTandTransfn"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<TboolTandTransfnAggregationLogicalFunction>(descriptor);
@@ -2215,9 +2215,9 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: TboolTandTransfn (optimizer lowering) */
+        /* END CODEGEN GLUE: TboolTandTransfn (optimizer lowering) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: TboolTorTransfn (optimizer lowering) */
+        /* BEGIN CODEGEN GLUE: TboolTorTransfn (optimizer lowering) */
         if (name == std::string_view("TboolTorTransfn"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<TboolTorTransfnAggregationLogicalFunction>(descriptor);
@@ -2241,9 +2241,9 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: TboolTorTransfn (optimizer lowering) */
+        /* END CODEGEN GLUE: TboolTorTransfn (optimizer lowering) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: TemporalTcountTransfn (optimizer lowering) */
+        /* BEGIN CODEGEN GLUE: TemporalTcountTransfn (optimizer lowering) */
         if (name == std::string_view("TemporalTcountTransfn"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<TemporalTcountTransfnAggregationLogicalFunction>(descriptor);
@@ -2267,8 +2267,8 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: TemporalTcountTransfn (optimizer lowering) */
-        /* BEGIN CODEGEN AGGREGATION GLUE: TintWminTransfn (optimizer lowering) */
+        /* END CODEGEN GLUE: TemporalTcountTransfn (optimizer lowering) */
+        /* BEGIN CODEGEN GLUE: TintWminTransfn (optimizer lowering) */
         if (name == std::string_view("TintWminTransfn"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<TintWminTransfnAggregationLogicalFunction>(descriptor);
@@ -2292,9 +2292,9 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: TintWminTransfn (optimizer lowering) */
+        /* END CODEGEN GLUE: TintWminTransfn (optimizer lowering) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: TintWmaxTransfn (optimizer lowering) */
+        /* BEGIN CODEGEN GLUE: TintWmaxTransfn (optimizer lowering) */
         if (name == std::string_view("TintWmaxTransfn"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<TintWmaxTransfnAggregationLogicalFunction>(descriptor);
@@ -2318,9 +2318,9 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: TintWmaxTransfn (optimizer lowering) */
+        /* END CODEGEN GLUE: TintWmaxTransfn (optimizer lowering) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: TintWsumTransfn (optimizer lowering) */
+        /* BEGIN CODEGEN GLUE: TintWsumTransfn (optimizer lowering) */
         if (name == std::string_view("TintWsumTransfn"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<TintWsumTransfnAggregationLogicalFunction>(descriptor);
@@ -2344,9 +2344,9 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: TintWsumTransfn (optimizer lowering) */
+        /* END CODEGEN GLUE: TintWsumTransfn (optimizer lowering) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: TfloatWminTransfn (optimizer lowering) */
+        /* BEGIN CODEGEN GLUE: TfloatWminTransfn (optimizer lowering) */
         if (name == std::string_view("TfloatWminTransfn"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<TfloatWminTransfnAggregationLogicalFunction>(descriptor);
@@ -2370,9 +2370,9 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: TfloatWminTransfn (optimizer lowering) */
+        /* END CODEGEN GLUE: TfloatWminTransfn (optimizer lowering) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: TfloatWmaxTransfn (optimizer lowering) */
+        /* BEGIN CODEGEN GLUE: TfloatWmaxTransfn (optimizer lowering) */
         if (name == std::string_view("TfloatWmaxTransfn"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<TfloatWmaxTransfnAggregationLogicalFunction>(descriptor);
@@ -2396,9 +2396,9 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: TfloatWmaxTransfn (optimizer lowering) */
+        /* END CODEGEN GLUE: TfloatWmaxTransfn (optimizer lowering) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: TfloatWsumTransfn (optimizer lowering) */
+        /* BEGIN CODEGEN GLUE: TfloatWsumTransfn (optimizer lowering) */
         if (name == std::string_view("TfloatWsumTransfn"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<TfloatWsumTransfnAggregationLogicalFunction>(descriptor);
@@ -2422,9 +2422,9 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: TfloatWsumTransfn (optimizer lowering) */
+        /* END CODEGEN GLUE: TfloatWsumTransfn (optimizer lowering) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: TnumberWavgTransfn (optimizer lowering) */
+        /* BEGIN CODEGEN GLUE: TnumberWavgTransfn (optimizer lowering) */
         if (name == std::string_view("TnumberWavgTransfn"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<TnumberWavgTransfnAggregationLogicalFunction>(descriptor);
@@ -2448,8 +2448,8 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: TnumberWavgTransfn (optimizer lowering) */
-        /* BEGIN CODEGEN AGGREGATION GLUE: TpointTcentroidTransfn (optimizer lowering) */
+        /* END CODEGEN GLUE: TnumberWavgTransfn (optimizer lowering) */
+        /* BEGIN CODEGEN GLUE: TpointTcentroidTransfn (optimizer lowering) */
         if (name == std::string_view("TpointTcentroidTransfn"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<TpointTcentroidTransfnAggregationLogicalFunction>(descriptor);
@@ -2476,8 +2476,8 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: TpointTcentroidTransfn (optimizer lowering) */
-        /* BEGIN CODEGEN AGGREGATION GLUE: TtextTminTransfn (optimizer lowering) */
+        /* END CODEGEN GLUE: TpointTcentroidTransfn (optimizer lowering) */
+        /* BEGIN CODEGEN GLUE: TtextTminTransfn (optimizer lowering) */
         if (name == std::string_view("TtextTminTransfn"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<TtextTminTransfnAggregationLogicalFunction>(descriptor);
@@ -2501,9 +2501,9 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: TtextTminTransfn (optimizer lowering) */
+        /* END CODEGEN GLUE: TtextTminTransfn (optimizer lowering) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: TtextTmaxTransfn (optimizer lowering) */
+        /* BEGIN CODEGEN GLUE: TtextTmaxTransfn (optimizer lowering) */
         if (name == std::string_view("TtextTmaxTransfn"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<TtextTmaxTransfnAggregationLogicalFunction>(descriptor);
@@ -2527,8 +2527,8 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: TtextTmaxTransfn (optimizer lowering) */
-        /* BEGIN CODEGEN AGGREGATION GLUE: SpanExtentTransfn (optimizer lowering) */
+        /* END CODEGEN GLUE: TtextTmaxTransfn (optimizer lowering) */
+        /* BEGIN CODEGEN GLUE: SpanExtentTransfn (optimizer lowering) */
         if (name == std::string_view("SpanExtentTransfn"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<SpanExtentTransfnAggregationLogicalFunction>(descriptor);
@@ -2552,9 +2552,9 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: SpanExtentTransfn (optimizer lowering) */
+        /* END CODEGEN GLUE: SpanExtentTransfn (optimizer lowering) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: SetExtentTransfn (optimizer lowering) */
+        /* BEGIN CODEGEN GLUE: SetExtentTransfn (optimizer lowering) */
         if (name == std::string_view("SetExtentTransfn"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<SetExtentTransfnAggregationLogicalFunction>(descriptor);
@@ -2578,9 +2578,9 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: SetExtentTransfn (optimizer lowering) */
+        /* END CODEGEN GLUE: SetExtentTransfn (optimizer lowering) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: SpansetExtentTransfn (optimizer lowering) */
+        /* BEGIN CODEGEN GLUE: SpansetExtentTransfn (optimizer lowering) */
         if (name == std::string_view("SpansetExtentTransfn"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<SpansetExtentTransfnAggregationLogicalFunction>(descriptor);
@@ -2604,9 +2604,9 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: SpansetExtentTransfn (optimizer lowering) */
+        /* END CODEGEN GLUE: SpansetExtentTransfn (optimizer lowering) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: TemporalExtentTransfn (optimizer lowering) */
+        /* BEGIN CODEGEN GLUE: TemporalExtentTransfn (optimizer lowering) */
         if (name == std::string_view("TemporalExtentTransfn"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<TemporalExtentTransfnAggregationLogicalFunction>(descriptor);
@@ -2630,9 +2630,9 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: TemporalExtentTransfn (optimizer lowering) */
+        /* END CODEGEN GLUE: TemporalExtentTransfn (optimizer lowering) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: SpanUnionTransfn (optimizer lowering) */
+        /* BEGIN CODEGEN GLUE: SpanUnionTransfn (optimizer lowering) */
         if (name == std::string_view("SpanUnionTransfn"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<SpanUnionTransfnAggregationLogicalFunction>(descriptor);
@@ -2656,9 +2656,9 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: SpanUnionTransfn (optimizer lowering) */
+        /* END CODEGEN GLUE: SpanUnionTransfn (optimizer lowering) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: SpansetUnionTransfn (optimizer lowering) */
+        /* BEGIN CODEGEN GLUE: SpansetUnionTransfn (optimizer lowering) */
         if (name == std::string_view("SpansetUnionTransfn"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<SpansetUnionTransfnAggregationLogicalFunction>(descriptor);
@@ -2682,10 +2682,10 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: SpansetUnionTransfn (optimizer lowering) */
+        /* END CODEGEN GLUE: SpansetUnionTransfn (optimizer lowering) */
 
 #if CBUFFER
-        /* BEGIN CODEGEN AGGREGATION GLUE: CbufferUnionTransfn (optimizer lowering) */
+        /* BEGIN CODEGEN GLUE: CbufferUnionTransfn (optimizer lowering) */
         if (name == std::string_view("CbufferUnionTransfn"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<CbufferUnionTransfnAggregationLogicalFunction>(descriptor);
@@ -2709,11 +2709,11 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: CbufferUnionTransfn (optimizer lowering) */
+        /* END CODEGEN GLUE: CbufferUnionTransfn (optimizer lowering) */
 
 #endif
 #if NPOINT
-        /* BEGIN CODEGEN AGGREGATION GLUE: NpointUnionTransfn (optimizer lowering) */
+        /* BEGIN CODEGEN GLUE: NpointUnionTransfn (optimizer lowering) */
         if (name == std::string_view("NpointUnionTransfn"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<NpointUnionTransfnAggregationLogicalFunction>(descriptor);
@@ -2737,11 +2737,11 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: NpointUnionTransfn (optimizer lowering) */
+        /* END CODEGEN GLUE: NpointUnionTransfn (optimizer lowering) */
 
 #endif
 #if POSE
-        /* BEGIN CODEGEN AGGREGATION GLUE: PoseUnionTransfn (optimizer lowering) */
+        /* BEGIN CODEGEN GLUE: PoseUnionTransfn (optimizer lowering) */
         if (name == std::string_view("PoseUnionTransfn"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<PoseUnionTransfnAggregationLogicalFunction>(descriptor);
@@ -2765,10 +2765,10 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: PoseUnionTransfn (optimizer lowering) */
+        /* END CODEGEN GLUE: PoseUnionTransfn (optimizer lowering) */
 
 #endif
-        /* BEGIN CODEGEN AGGREGATION GLUE: TextUnionTransfn (optimizer lowering) */
+        /* BEGIN CODEGEN GLUE: TextUnionTransfn (optimizer lowering) */
         if (name == std::string_view("TextUnionTransfn"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<TextUnionTransfnAggregationLogicalFunction>(descriptor);
@@ -2792,9 +2792,9 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: TextUnionTransfn (optimizer lowering) */
+        /* END CODEGEN GLUE: TextUnionTransfn (optimizer lowering) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: GeoUnionTransfn (optimizer lowering) */
+        /* BEGIN CODEGEN GLUE: GeoUnionTransfn (optimizer lowering) */
         if (name == std::string_view("GeoUnionTransfn"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<GeoUnionTransfnAggregationLogicalFunction>(descriptor);
@@ -2818,8 +2818,8 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: GeoUnionTransfn (optimizer lowering) */
-        /* BEGIN CODEGEN AGGREGATION GLUE: TemporalMergeTransfn (optimizer lowering) */
+        /* END CODEGEN GLUE: GeoUnionTransfn (optimizer lowering) */
+        /* BEGIN CODEGEN GLUE: TemporalMergeTransfn (optimizer lowering) */
         if (name == std::string_view("TemporalMergeTransfn"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<TemporalMergeTransfnAggregationLogicalFunction>(descriptor);
@@ -2843,9 +2843,9 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: TemporalMergeTransfn (optimizer lowering) */
+        /* END CODEGEN GLUE: TemporalMergeTransfn (optimizer lowering) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: TimestamptzTcountTransfn (optimizer lowering) */
+        /* BEGIN CODEGEN GLUE: TimestamptzTcountTransfn (optimizer lowering) */
         if (name == std::string_view("TimestamptzTcountTransfn"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<TimestamptzTcountTransfnAggregationLogicalFunction>(descriptor);
@@ -2869,9 +2869,9 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: TimestamptzTcountTransfn (optimizer lowering) */
+        /* END CODEGEN GLUE: TimestamptzTcountTransfn (optimizer lowering) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: TstzsetTcountTransfn (optimizer lowering) */
+        /* BEGIN CODEGEN GLUE: TstzsetTcountTransfn (optimizer lowering) */
         if (name == std::string_view("TstzsetTcountTransfn"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<TstzsetTcountTransfnAggregationLogicalFunction>(descriptor);
@@ -2895,9 +2895,9 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: TstzsetTcountTransfn (optimizer lowering) */
+        /* END CODEGEN GLUE: TstzsetTcountTransfn (optimizer lowering) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: TstzspanTcountTransfn (optimizer lowering) */
+        /* BEGIN CODEGEN GLUE: TstzspanTcountTransfn (optimizer lowering) */
         if (name == std::string_view("TstzspanTcountTransfn"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<TstzspanTcountTransfnAggregationLogicalFunction>(descriptor);
@@ -2921,9 +2921,9 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: TstzspanTcountTransfn (optimizer lowering) */
+        /* END CODEGEN GLUE: TstzspanTcountTransfn (optimizer lowering) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: TstzspansetTcountTransfn (optimizer lowering) */
+        /* BEGIN CODEGEN GLUE: TstzspansetTcountTransfn (optimizer lowering) */
         if (name == std::string_view("TstzspansetTcountTransfn"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<TstzspansetTcountTransfnAggregationLogicalFunction>(descriptor);
@@ -2947,10 +2947,10 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: TstzspansetTcountTransfn (optimizer lowering) */
+        /* END CODEGEN GLUE: TstzspansetTcountTransfn (optimizer lowering) */
 
 #if NPOINT
-        /* BEGIN CODEGEN AGGREGATION GLUE: TnpointTcentroidTransfn (optimizer lowering) */
+        /* BEGIN CODEGEN GLUE: TnpointTcentroidTransfn (optimizer lowering) */
         if (name == std::string_view("TnpointTcentroidTransfn"))
         {
             auto specificDescriptor = std::dynamic_pointer_cast<TnpointTcentroidTransfnAggregationLogicalFunction>(descriptor);
@@ -2974,7 +2974,7 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             aggregationPhysicalFunctions.push_back(std::move(phys));
             continue;
         }
-        /* END CODEGEN AGGREGATION GLUE: TnpointTcentroidTransfn (optimizer lowering) */
+        /* END CODEGEN GLUE: TnpointTcentroidTransfn (optimizer lowering) */
 
 #endif
 

@@ -13,7 +13,7 @@ TemporalEDWithinGeometryLogicalFunction), AND auto-injects:
 - AntlrSQLQueryPlanCreator.cpp #include + dispatch-case block
 
 Injection is idempotent — markers like
-`/* BEGIN CODEGEN PARSER GLUE: <token> */ … /* END CODEGEN PARSER GLUE */`
+`/* BEGIN CODEGEN GLUE: <token> */ … /* END CODEGEN GLUE */`
 gate each per-op block, and the script skips on re-run when the marker
 is already present.
 
@@ -4132,7 +4132,7 @@ PhysicalFunctionRegistryReturnType PhysicalFunctionGeneratedRegistrar::Register{
 
 # 4-arg shape: lon, lat, ts, geometry (geometry is the only constant — WKT).
 DISPATCH_CASE_ONE_TEMPORAL_POINT = """\
-        /* BEGIN CODEGEN PARSER GLUE: {sql_token} */
+        /* BEGIN CODEGEN GLUE: {sql_token} */
         case AntlrSQLLexer::{sql_token}:
         {{
             const auto argCount = context->expression().size();
@@ -4158,12 +4158,12 @@ DISPATCH_CASE_ONE_TEMPORAL_POINT = """\
                 {nebula_name}LogicalFunction(lon, lat, timestamp, geometry));
         }}
         break;
-        /* END CODEGEN PARSER GLUE: {sql_token} */
+        /* END CODEGEN GLUE: {sql_token} */
 """
 
 # 6-arg shape: lonA, latA, tsA, lonB, latB, tsB (no constants).
 DISPATCH_CASE_TWO_TEMPORAL_POINTS = """\
-        /* BEGIN CODEGEN PARSER GLUE: {sql_token} */
+        /* BEGIN CODEGEN GLUE: {sql_token} */
         case AntlrSQLLexer::{sql_token}:
         {{
             const auto argCount = context->expression().size();
@@ -4181,13 +4181,13 @@ DISPATCH_CASE_TWO_TEMPORAL_POINTS = """\
                 {nebula_name}LogicalFunction(lonA, latA, tsA, lonB, latB, tsB));
         }}
         break;
-        /* END CODEGEN PARSER GLUE: {sql_token} */
+        /* END CODEGEN GLUE: {sql_token} */
 """
 
 # 8-arg shape: xA, yA, thetaA, tsA, xB, yB, thetaB, tsB — two tpose instants,
 # each lifted to a tgeompoint via tpose_to_tpoint at run time (W15 composition).
 DISPATCH_CASE_TWO_TPOSE_POINTS = """\
-        /* BEGIN CODEGEN PARSER GLUE: {sql_token} */
+        /* BEGIN CODEGEN GLUE: {sql_token} */
         case AntlrSQLLexer::{sql_token}:
         {{
             const auto argCount = context->expression().size();
@@ -4207,13 +4207,13 @@ DISPATCH_CASE_TWO_TPOSE_POINTS = """\
                 {nebula_name}LogicalFunction(xA, yA, thetaA, tsA, xB, yB, thetaB, tsB));
         }}
         break;
-        /* END CODEGEN PARSER GLUE: {sql_token} */
+        /* END CODEGEN GLUE: {sql_token} */
 """
 
 # 5-arg shape: lon, lat, ts, geometry, dist (both geometry and dist are constants).
 # Constant lift uses mariana's pattern: TRUE/FALSE → BOOLEAN, strtod-clean → FLOAT64, else → VARSIZED.
 DISPATCH_CASE_ONE_TEMPORAL_POINT_WITH_DIST = """\
-        /* BEGIN CODEGEN PARSER GLUE: {sql_token} */
+        /* BEGIN CODEGEN GLUE: {sql_token} */
         case AntlrSQLLexer::{sql_token}:
         {{
             const auto argCount = context->expression().size();
@@ -4255,12 +4255,12 @@ DISPATCH_CASE_ONE_TEMPORAL_POINT_WITH_DIST = """\
                 {nebula_name}LogicalFunction(lon, lat, timestamp, geometry, dist));
         }}
         break;
-        /* END CODEGEN PARSER GLUE: {sql_token} */
+        /* END CODEGEN GLUE: {sql_token} */
 """
 
 # 7-arg shape: lonA, latA, tsA, lonB, latB, tsB, dist (only dist is constant).
 DISPATCH_CASE_TWO_TEMPORAL_POINTS_WITH_DIST = """\
-        /* BEGIN CODEGEN PARSER GLUE: {sql_token} */
+        /* BEGIN CODEGEN GLUE: {sql_token} */
         case AntlrSQLLexer::{sql_token}:
         {{
             const auto argCount = context->expression().size();
@@ -4289,13 +4289,13 @@ DISPATCH_CASE_TWO_TEMPORAL_POINTS_WITH_DIST = """\
                 {nebula_name}LogicalFunction(lonA, latA, tsA, lonB, latB, tsB, dist));
         }}
         break;
-        /* END CODEGEN PARSER GLUE: {sql_token} */
+        /* END CODEGEN GLUE: {sql_token} */
 """
 
 
 # 6-arg shape: lon, lat, radius, ts, geometry, dist — tcbuffer × static geom + dist.
 DISPATCH_CASE_TCBUFFER_POINT_WITH_DIST = """\
-        /* BEGIN CODEGEN PARSER GLUE: {sql_token} */
+        /* BEGIN CODEGEN GLUE: {sql_token} */
         case AntlrSQLLexer::{sql_token}:
         {{
             const auto argCount = context->expression().size();
@@ -4328,12 +4328,12 @@ DISPATCH_CASE_TCBUFFER_POINT_WITH_DIST = """\
                 {nebula_name}LogicalFunction(lon, lat, radius, timestamp, blobLast, distLast));
         }}
         break;
-        /* END CODEGEN PARSER GLUE: {sql_token} */
+        /* END CODEGEN GLUE: {sql_token} */
 """
 
 # 9-arg shape: lonA, latA, radiusA, tsA, lonB, latB, radiusB, tsB, dist — two tcbuffers + dist.
 DISPATCH_CASE_TWO_TCBUFFER_POINTS_WITH_DIST = """\
-        /* BEGIN CODEGEN PARSER GLUE: {sql_token} */
+        /* BEGIN CODEGEN GLUE: {sql_token} */
         case AntlrSQLLexer::{sql_token}:
         {{
             const auto argCount = context->expression().size();
@@ -4363,12 +4363,12 @@ DISPATCH_CASE_TWO_TCBUFFER_POINTS_WITH_DIST = """\
                 {nebula_name}LogicalFunction(lonA, latA, radiusA, tsA, lonB, latB, radiusB, tsB, dist));
         }}
         break;
-        /* END CODEGEN PARSER GLUE: {sql_token} */
+        /* END CODEGEN GLUE: {sql_token} */
 """
 
 # 8-arg shape: lonA, latA, radiusA, tsA, lonB, latB, radiusB, tsB (no constants).
 DISPATCH_CASE_TWO_TCBUFFER_POINTS = """\
-        /* BEGIN CODEGEN PARSER GLUE: {sql_token} */
+        /* BEGIN CODEGEN GLUE: {sql_token} */
         case AntlrSQLLexer::{sql_token}:
         {{
             const auto argCount = context->expression().size();
@@ -4388,14 +4388,14 @@ DISPATCH_CASE_TWO_TCBUFFER_POINTS = """\
                 {nebula_name}LogicalFunction(lonA, latA, radiusA, tsA, lonB, latB, radiusB, tsB));
         }}
         break;
-        /* END CODEGEN PARSER GLUE: {sql_token} */
+        /* END CODEGEN GLUE: {sql_token} */
 """
 
 # 5-arg shape: lon, lat, radius, ts, geometry — tcbuffer × static geom.
 # Geometry is the only constant (lifted to FLOAT64 / VARSIZED via the same lift
 # pattern as the existing with-dist templates).
 DISPATCH_CASE_TCBUFFER_POINT = """\
-        /* BEGIN CODEGEN PARSER GLUE: {sql_token} */
+        /* BEGIN CODEGEN GLUE: {sql_token} */
         case AntlrSQLLexer::{sql_token}:
         {{
             const auto argCount = context->expression().size();
@@ -4422,12 +4422,12 @@ DISPATCH_CASE_TCBUFFER_POINT = """\
                 {nebula_name}LogicalFunction(lon, lat, radius, timestamp, geometry));
         }}
         break;
-        /* END CODEGEN PARSER GLUE: {sql_token} */
+        /* END CODEGEN GLUE: {sql_token} */
 """
 
 # 3-arg shape: value, ts, scalar (scalar may be FLOAT64 or INT32, only one constant).
 DISPATCH_CASE_TNUMBER_POINT_WITH_SCALAR = """\
-        /* BEGIN CODEGEN PARSER GLUE: {sql_token} */
+        /* BEGIN CODEGEN GLUE: {sql_token} */
         case AntlrSQLLexer::{sql_token}:
         {{
             const auto argCount = context->expression().size();
@@ -4457,12 +4457,12 @@ DISPATCH_CASE_TNUMBER_POINT_WITH_SCALAR = """\
                 {nebula_name}LogicalFunction(value, timestamp, scalar));
         }}
         break;
-        /* END CODEGEN PARSER GLUE: {sql_token} */
+        /* END CODEGEN GLUE: {sql_token} */
 """
 
 # 4-arg shape: valueA, tsA, valueB, tsB (no constants).
 DISPATCH_CASE_TWO_TNUMBER_POINTS = """\
-        /* BEGIN CODEGEN PARSER GLUE: {sql_token} */
+        /* BEGIN CODEGEN GLUE: {sql_token} */
         case AntlrSQLLexer::{sql_token}:
         {{
             const auto argCount = context->expression().size();
@@ -4478,7 +4478,7 @@ DISPATCH_CASE_TWO_TNUMBER_POINTS = """\
                 {nebula_name}LogicalFunction(valueA, tsA, valueB, tsB));
         }}
         break;
-        /* END CODEGEN PARSER GLUE: {sql_token} */
+        /* END CODEGEN GLUE: {sql_token} */
 """
 
 
@@ -4553,7 +4553,7 @@ def _generic_dispatch_case(op):
         f"            auto a{i} = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();"
         for i in range(n - 1, -1, -1))
     ctor_args = ", ".join(f"a{i}" for i in range(n))
-    return f"""        /* BEGIN CODEGEN PARSER GLUE: {tok} */
+    return f"""        /* BEGIN CODEGEN GLUE: {tok} */
         case AntlrSQLLexer::{tok}:
         {{
             const auto argCount = context->expression().size();
@@ -4579,7 +4579,7 @@ def _generic_dispatch_case(op):
             helpers.top().functionBuilder.emplace_back({name}LogicalFunction({ctor_args}));
         }}
         break;
-        /* END CODEGEN PARSER GLUE: {tok} */
+        /* END CODEGEN GLUE: {tok} */
 """
 
 
@@ -4722,9 +4722,9 @@ def guard_parser_glue_by_family(body: str) -> str:
     #    is back-referenced so each BEGIN pairs with its own END.
     block_re = re.compile(
         rf"(?:#if (?:{fam_alt})\n)?"
-        r"(/\* BEGIN CODEGEN (?:PARSER|AGGREGATION) GLUE: (\S+)(?: \([^)]*\))? \*/"
+        r"(/\* BEGIN CODEGEN GLUE: (\S+)(?: \([^)]*\))? \*/"
         r".*?"
-        r"/\* END CODEGEN (?:PARSER|AGGREGATION) GLUE: \2(?: \([^)]*\))? \*/)"
+        r"/\* END CODEGEN GLUE: \2(?: \([^)]*\))? \*/)"
         rf"(?:\n#endif /\* (?:{fam_alt}) \*/)?",
         re.DOTALL)
     def _wrap_block(m):
@@ -4778,7 +4778,7 @@ def inject_parser_cpp(operators, cpp_path: Path) -> int:
     #    switch that already contains the TGEO_AT_STBOX case.
     cases_block = []
     for op in operators:
-        marker = f"/* BEGIN CODEGEN PARSER GLUE: {op['sql_token']} */"
+        marker = f"/* BEGIN CODEGEN GLUE: {op['sql_token']} */"
         if marker in body:
             continue
         # Also skip if a pre-existing hand-written case for this token already
@@ -4801,10 +4801,10 @@ def inject_parser_cpp(operators, cpp_path: Path) -> int:
         n_added += 1
     if cases_block:
         # Find the insertion point: prefer just after the LAST existing
-        # `/* END CODEGEN PARSER GLUE: ... */` marker (so successive codegen
+        # `/* END CODEGEN GLUE: ... */` marker (so successive codegen
         # runs cluster their cases), else fall back to inserting before the
         # `default:` that immediately follows the TGEO_AT_STBOX case block.
-        last_end_re = re.compile(r"/\* END CODEGEN PARSER GLUE: [^*]+\*/")
+        last_end_re = re.compile(r"/\* END CODEGEN GLUE: [^*]+\*/")
         ends = list(last_end_re.finditer(body))
         if ends:
             insert_at = ends[-1].end()

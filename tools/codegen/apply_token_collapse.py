@@ -161,8 +161,8 @@ def main():
         # operator stem, some by the SQL token — so strip blocks matching either.
         for key in set(remove_stems) | set(remove):
             ltext = re.sub(
-                r"[ \t]*/\* BEGIN CODEGEN AGGREGATION GLUE: " + re.escape(key) +
-                r" \(optimizer lowering\) \*/.*?/\* END CODEGEN AGGREGATION GLUE: " +
+                r"[ \t]*/\* BEGIN CODEGEN GLUE: " + re.escape(key) +
+                r" \(optimizer lowering\) \*/.*?/\* END CODEGEN GLUE: " +
                 re.escape(key) + r" \(optimizer lowering\) \*/\n?", "", ltext, flags=re.S)
         lower.write_text(ltext)
     g4_text = G4.read_text()
