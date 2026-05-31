@@ -1581,3 +1581,8 @@ add_plugin(GeoTimestamptzToStbox LogicalFunction nes-logical-operators GeoTimest
 add_plugin(NpointTimestamptzToStbox LogicalFunction nes-logical-operators NpointTimestamptzToStboxLogicalFunction.cpp)
 add_plugin(PoseTimestamptzToStbox LogicalFunction nes-logical-operators PoseTimestamptzToStboxLogicalFunction.cpp)
 add_plugin(CbufferTimestamptzToStbox LogicalFunction nes-logical-operators CbufferTimestamptzToStboxLogicalFunction.cpp)
+add_plugin(TfloatScaleValue LogicalFunction nes-logical-operators TfloatScaleValueLogicalFunction.cpp)
+add_plugin(TintScaleValue LogicalFunction nes-logical-operators TintScaleValueLogicalFunction.cpp)
+add_plugin(TrgeometryValueN LogicalFunction nes-logical-operators TrgeometryValueNLogicalFunction.cpp)
+add_plugin(TposeToTpoint LogicalFunction nes-logical-operators TposeToTpointLogicalFunction.cpp)
+add_plugin(TcbufferToTgeompoint LogicalFunction nes-logical-operators TcbufferToTgeompointLogicalFunction.cpp)

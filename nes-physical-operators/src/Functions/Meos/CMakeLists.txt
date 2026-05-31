@@ -1238,3 +1238,5 @@ add_plugin(GeoToStbox PhysicalFunction nes-physical-operators GeoToStboxPhysical
 add_plugin(SpatialsetToStbox PhysicalFunction nes-physical-operators SpatialsetToStboxPhysicalFunction.cpp)
 add_plugin(GeoTstzspanToStbox PhysicalFunction nes-physical-operators GeoTstzspanToStboxPhysicalFunction.cpp)
 add_plugin(GeoTimestamptzToStbox PhysicalFunction nes-physical-operators GeoTimestamptzToStboxPhysicalFunction.cpp)
+add_plugin(TfloatScaleValue PhysicalFunction nes-physical-operators TfloatScaleValuePhysicalFunction.cpp)
+add_plugin(TintScaleValue PhysicalFunction nes-physical-operators TintScaleValuePhysicalFunction.cpp)

@@ -1211,6 +1211,7 @@ tcbuffer_minus_cbuffer	proven
 tcbuffer_minus_geom	proven
 tcbuffer_minus_stbox	proven
 tcbuffer_to_tfloat	proven
+tcbuffer_to_tgeompoint	proven
 tcontains_cbuffer_tcbuffer	proven
 tcontains_geo_tcbuffer	proven
 tcontains_geo_tgeo	proven
@@ -1350,6 +1351,7 @@ tfloat_max_value	proven
 tfloat_min_value	proven
 tfloat_minus_value	proven
 tfloat_radians	proven
+tfloat_scale_value	proven
 tfloat_shift_value	proven
 tfloat_start_value	proven
 tfloat_time_boxes	proven
@@ -1413,6 +1415,7 @@ tint_from_base_temp	proven
 tint_max_value	proven
 tint_min_value	proven
 tint_minus_value	proven
+tint_scale_value	proven
 tint_shift_value	proven
 tint_start_value	proven
 tint_time_boxes	proven
@@ -1526,6 +1529,7 @@ tpose_minus_geom	proven
 tpose_minus_pose	proven
 tpose_minus_stbox	proven
 tpose_start_value	proven
+tpose_to_tpoint	proven
 tpose_trajectory	proven
 tpose_value_n	proven
 tpose_values	proven
@@ -1544,6 +1548,7 @@ trgeometry_start_value	proven
 trgeometry_to_tinstant	proven
 trgeometry_to_tpoint	proven
 trgeometry_to_tpose	proven
+trgeometry_value_n	proven
 tspatial_extent_transfn	proven
 tspatial_srid	proven
 tstzset_end_value	proven
