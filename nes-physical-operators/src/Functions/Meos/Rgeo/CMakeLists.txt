@@ -38,3 +38,4 @@ add_plugin(AlwaysNeTrgeometryTrgeometry PhysicalFunction nes-physical-operators 
 add_plugin(EverNeTrgeometryTrgeometry PhysicalFunction nes-physical-operators EverNeTrgeometryTrgeometryPhysicalFunction.cpp)
 add_plugin(TrgeometryValueN PhysicalFunction nes-physical-operators TrgeometryValueNPhysicalFunction.cpp)
 add_plugin(TrgeometryPoints PhysicalFunction nes-physical-operators TrgeometryPointsPhysicalFunction.cpp)
+add_plugin(TrgeometryRound PhysicalFunction nes-physical-operators TrgeometryRoundPhysicalFunction.cpp)

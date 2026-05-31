@@ -1242,7 +1242,12 @@ def classify(name, ret, plist):
                          token=name.upper(), sink=sink_of("double"))
             return entry, tmeta
         if ptr and base in ROUND_RET:
-            input_type, rkind = ROUND_RET[base]
+            # trgeometry_round returns a trgeometry (not the tfloat default for a
+            # Temporal round): build a trgeometry instant + serialize as geo WKT.
+            if name == "trgeometry_round":
+                input_type, rkind = "trgeometry", "tspatial_text"
+            else:
+                input_type, rkind = ROUND_RET[base]
             entry = dict(nebula_name=camel(name), sql_token=name.upper(), meos_call=name,
                          build_generic=True, input_type=input_type, return_kind=rkind,
                          extra_args=[], extra_call_args=["2"],
@@ -1250,6 +1255,10 @@ def classify(name, ret, plist):
             if input_type == "tfloat":
                 tmeta = dict(cols=[("value", "FLOAT64"), ("ts", "UINT64")],
                              rows=[("5.567", "1609459200"), ("8.123", "1609545600")],
+                             token=name.upper(), sink="VARSIZED")
+            elif input_type == "trgeometry":
+                tmeta = dict(cols=[("x", "FLOAT64"), ("y", "FLOAT64"), ("theta", "FLOAT64"), ("ts", "UINT64")],
+                             rows=[("0.123", "0.456", "0.5", "1609459200"), ("1.789", "1.234", "0.25", "1609545600")],
                              token=name.upper(), sink="VARSIZED")
             else:
                 l0, l1 = LITERALS[input_type]

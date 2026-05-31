@@ -1553,6 +1553,7 @@ trgeometry_restrict_tstzset	proven
 trgeometry_restrict_tstzspan	proven
 trgeometry_restrict_tstzspanset	proven
 trgeometry_rotation	proven
+trgeometry_round	proven
 trgeometry_start_instant	proven
 trgeometry_start_sequence	wired
 trgeometry_start_value	proven
