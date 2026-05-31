@@ -252,6 +252,9 @@ ARRAY_VALUES = {
     "tgeo_space_boxes":  dict(inp="tgeompoint", spec=dict(elem="STBox", kind="span_val", out="stbox_out", maxdd=True, header="meos_geo.h"),
                               icols=[("lon", "FLOAT64"), ("lat", "FLOAT64")], ra=["1.0", "1.0"], rb=["2.0", "2.0"],
                               extras=[("double", "FLOAT64", "5.0", "5.0"), ("double", "FLOAT64", "5.0", "5.0"), ("double", "FLOAT64", "5.0", "5.0"), dict(k="geom", sql="VARSIZED", a="SRID=4326;Point(0 0)", b="SRID=4326;Point(0 0)")], eca=["false", "true"]),
+    # the whole-trajectory STBox split: a temporal + count out-param, no extras.
+    "tgeo_stboxes":      dict(inp="tgeompoint", spec=dict(elem="STBox", kind="span_val", out="stbox_out", maxdd=True, header="meos_geo.h"),
+                              icols=[("lon", "FLOAT64"), ("lat", "FLOAT64")], ra=["1.0", "1.0"], rb=["2.0", "2.0"]),
 }
 SPAN_MAKE = {
     "intspan_make":    ("int_base", "INT32", "int32_t", "intspan_text", "1", "5", "2", "8"),

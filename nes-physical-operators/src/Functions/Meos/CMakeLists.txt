@@ -1256,3 +1256,4 @@ add_plugin(DatespansetDateN PhysicalFunction nes-physical-operators DatespansetD
 add_plugin(TstzspansetTimestamptzN PhysicalFunction nes-physical-operators TstzspansetTimestamptzNPhysicalFunction.cpp)
 add_plugin(TemporalInsert PhysicalFunction nes-physical-operators TemporalInsertPhysicalFunction.cpp)
 add_plugin(TemporalUpdate PhysicalFunction nes-physical-operators TemporalUpdatePhysicalFunction.cpp)
+add_plugin(TgeoStboxes PhysicalFunction nes-physical-operators TgeoStboxesPhysicalFunction.cpp)

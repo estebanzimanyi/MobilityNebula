@@ -1403,6 +1403,7 @@ tgeo_space_boxes	proven
 tgeo_split_each_n_stboxes	proven
 tgeo_split_n_stboxes	proven
 tgeo_start_value	proven
+tgeo_stboxes	proven
 tgeo_value_n	proven
 tgeo_values	proven
 tgeoinst_make	proven
