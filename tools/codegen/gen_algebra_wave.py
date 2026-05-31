@@ -622,6 +622,12 @@ SET_UNARY = {
     "intset_to_floatset": ("intset", "floatset_text"), "floatset_to_intset": ("floatset", "intset_text"),
     "dateset_to_tstzset": ("dateset", "tstzset_text"), "tstzset_to_dateset": ("tstzset", "dateset_text"),
     "tstzspanset_timestamps": ("tstzspanset", "tstzset_text"),
+    # container accessors returning a complete Set (serialized as text).
+    # NOTE: set_spans/spanset_spans return a Span* that is the FIRST of an
+    # internal array (the full-array forms are set_spanarr/spanset_spanarr),
+    # so they are NOT mapped here (a single-Span read would drop elements).
+    "datespanset_dates": ("datespanset", "dateset_text"),
+    "npointset_routes": ("npointset", "bigintset_text"),
 }
 
 # degrees(container, bool normalize) -> same container. Split from SET_UNARY

@@ -1590,3 +1590,5 @@ add_plugin(TextLower LogicalFunction nes-logical-operators TextLowerLogicalFunct
 add_plugin(TextUpper LogicalFunction nes-logical-operators TextUpperLogicalFunction.cpp)
 add_plugin(TextInitcap LogicalFunction nes-logical-operators TextInitcapLogicalFunction.cpp)
 add_plugin(TextCopy LogicalFunction nes-logical-operators TextCopyLogicalFunction.cpp)
+add_plugin(DatespansetDates LogicalFunction nes-logical-operators DatespansetDatesLogicalFunction.cpp)
+add_plugin(NpointsetRoutes LogicalFunction nes-logical-operators NpointsetRoutesLogicalFunction.cpp)

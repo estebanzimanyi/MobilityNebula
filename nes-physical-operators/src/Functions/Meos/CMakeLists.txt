@@ -1244,3 +1244,4 @@ add_plugin(TextLower PhysicalFunction nes-physical-operators TextLowerPhysicalFu
 add_plugin(TextUpper PhysicalFunction nes-physical-operators TextUpperPhysicalFunction.cpp)
 add_plugin(TextInitcap PhysicalFunction nes-physical-operators TextInitcapPhysicalFunction.cpp)
 add_plugin(TextCopy PhysicalFunction nes-physical-operators TextCopyPhysicalFunction.cpp)
+add_plugin(DatespansetDates PhysicalFunction nes-physical-operators DatespansetDatesPhysicalFunction.cpp)
