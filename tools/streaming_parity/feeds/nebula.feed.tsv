@@ -344,6 +344,7 @@ datespan_make	proven
 datespan_shift_scale	proven
 datespan_to_tstzspan	proven
 datespan_upper	proven
+datespanset_date_n	proven
 datespanset_dates	proven
 datespanset_duration	proven
 datespanset_end_date	proven
@@ -1313,6 +1314,7 @@ temporal_tcount_transfn	proven
 temporal_time	proven
 temporal_time_bins	proven
 temporal_timestamps	proven
+temporal_timestamptz_n	proven
 temporal_to_tstzspan	proven
 temporal_tprecision	proven
 temporal_upper_inc	proven
@@ -1596,6 +1598,7 @@ tstzspanset_shift_scale	proven
 tstzspanset_start_timestamptz	proven
 tstzspanset_tcount_transfn	proven
 tstzspanset_timestamps	proven
+tstzspanset_timestamptz_n	proven
 tstzspanset_to_datespanset	proven
 tstzspanset_to_stbox	proven
 tstzspanset_tprecision	proven

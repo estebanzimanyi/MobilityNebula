@@ -1754,6 +1754,9 @@
 #include <Functions/Meos/TemporalTprecisionLogicalFunction.hpp>
 #include <Functions/Meos/TemporalSimplifyDpLogicalFunction.hpp>
 #include <Functions/Meos/TemporalSimplifyMaxDistLogicalFunction.hpp>
+#include <Functions/Meos/TemporalTimestamptzNLogicalFunction.hpp>
+#include <Functions/Meos/DatespansetDateNLogicalFunction.hpp>
+#include <Functions/Meos/TstzspansetTimestamptzNLogicalFunction.hpp>
 #include <Plans/LogicalPlan.hpp>
 #include <Plans/LogicalPlanBuilder.hpp>
 #include <Util/Overloaded.hpp>
@@ -48337,6 +48340,91 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TEMPORAL_SIMPLIFY_MAX_DIST */
+        /* BEGIN CODEGEN PARSER GLUE: TEMPORAL_TIMESTAMPTZ_N */
+        case AntlrSQLLexer::TEMPORAL_TIMESTAMPTZ_N:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 2)
+                throw InvalidQuerySyntax("TEMPORAL_TIMESTAMPTZ_N requires exactly 2 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(TemporalTimestamptzNLogicalFunction(a0, a1));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: TEMPORAL_TIMESTAMPTZ_N */
+
+        /* BEGIN CODEGEN PARSER GLUE: DATESPANSET_DATE_N */
+        case AntlrSQLLexer::DATESPANSET_DATE_N:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 1)
+                throw InvalidQuerySyntax("DATESPANSET_DATE_N requires exactly 1 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(DatespansetDateNLogicalFunction(a0));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: DATESPANSET_DATE_N */
+
+        /* BEGIN CODEGEN PARSER GLUE: TSTZSPANSET_TIMESTAMPTZ_N */
+        case AntlrSQLLexer::TSTZSPANSET_TIMESTAMPTZ_N:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 1)
+                throw InvalidQuerySyntax("TSTZSPANSET_TIMESTAMPTZ_N requires exactly 1 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(TstzspansetTimestamptzNLogicalFunction(a0));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: TSTZSPANSET_TIMESTAMPTZ_N */
+
 
 
 

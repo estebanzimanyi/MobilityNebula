@@ -1007,11 +1007,21 @@ def classify(name, ret, plist):
     # ---- value_n: bool f(Temporal|Set*, int n, T *result) -> the n-th value via
     #      an out-param. Exercised with n=1 (the first value/element, always
     #      defined for a non-empty input) so the validity flag is true. ----
-    if (name.endswith("_value_n") and len(plist) == 3
+    _n_suffix = next((sfx for sfx in ("_value_n", "_timestamptz_n", "_date_n") if name.endswith(sfx)), None)
+    if (_n_suffix and len(plist) == 3
             and plist[0][1] and plist[1] == ("int", False) and plist[2][1]
             and (plist[2][0] in OUT_PARAM_RET or plist[2][0] in VALUE_N_VARSIZED)):
-        stem = name[:-len("_value_n")]
-        if plist[0][0] == "Temporal" and stem in VALUE_N_TEMPORAL:
+        stem = name[:-len(_n_suffix)]
+        if plist[0][0] == "Temporal" and stem == "temporal":
+            # generic temporal n-th timestamp accessor -> use a tfloat instant.
+            input_type = "tfloat"
+            cols = [("value", "FLOAT64"), ("ts", "UINT64")]
+            rows = [("5.5", "1609459200"), ("8.5", "1609545600")]
+        elif plist[0][0] == "SpanSet" and stem in LITERALS:
+            input_type = stem
+            l0, l1 = LITERALS[input_type]
+            cols, rows = [("a", "VARSIZED")], [(l0,), (l1,)]
+        elif plist[0][0] == "Temporal" and stem in VALUE_N_TEMPORAL:
             input_type = stem
             vsql, va, vb = VALUE_N_TEMPORAL[stem]
             cols = [("value", vsql), ("ts", "UINT64")]

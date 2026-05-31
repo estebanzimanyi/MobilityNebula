@@ -1604,3 +1604,6 @@ add_plugin(TemporalShiftScaleTime LogicalFunction nes-logical-operators Temporal
 add_plugin(TemporalTprecision LogicalFunction nes-logical-operators TemporalTprecisionLogicalFunction.cpp)
 add_plugin(TemporalSimplifyDp LogicalFunction nes-logical-operators TemporalSimplifyDpLogicalFunction.cpp)
 add_plugin(TemporalSimplifyMaxDist LogicalFunction nes-logical-operators TemporalSimplifyMaxDistLogicalFunction.cpp)
+add_plugin(TemporalTimestamptzN LogicalFunction nes-logical-operators TemporalTimestamptzNLogicalFunction.cpp)
+add_plugin(DatespansetDateN LogicalFunction nes-logical-operators DatespansetDateNLogicalFunction.cpp)
+add_plugin(TstzspansetTimestamptzN LogicalFunction nes-logical-operators TstzspansetTimestamptzNLogicalFunction.cpp)
