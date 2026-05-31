@@ -113,9 +113,15 @@
 #include <Operators/Windows/Aggregations/Meos/TemporalAtMinAggregationLogicalFunction.hpp>
 #include <Operators/Windows/Aggregations/Meos/TemporalMinusMaxAggregationLogicalFunction.hpp>
 #include <Operators/Windows/Aggregations/Meos/TemporalMinusMinAggregationLogicalFunction.hpp>
+#if NPOINT
 #include <Operators/Windows/Aggregations/Meos/TnpointCumulativeLengthAggregationLogicalFunction.hpp>
+#endif /* NPOINT */
+#if NPOINT
 #include <Operators/Windows/Aggregations/Meos/TnpointSpeedAggregationLogicalFunction.hpp>
+#endif /* NPOINT */
+#if NPOINT
 #include <Operators/Windows/Aggregations/Meos/TnpointToTgeompointAggregationLogicalFunction.hpp>
+#endif /* NPOINT */
 #include <Operators/Windows/Aggregations/Meos/TpointCumulativeLengthAggregationLogicalFunction.hpp>
 #include <Operators/Windows/Aggregations/Meos/TpointSpeedAggregationLogicalFunction.hpp>
 #include <Operators/Windows/Aggregations/Meos/TpointGetXAggregationLogicalFunction.hpp>
@@ -153,9 +159,15 @@
 #include <Operators/Windows/Aggregations/Meos/TemporalExtentTransfnAggregationLogicalFunction.hpp>
 #include <Operators/Windows/Aggregations/Meos/SpanUnionTransfnAggregationLogicalFunction.hpp>
 #include <Operators/Windows/Aggregations/Meos/SpansetUnionTransfnAggregationLogicalFunction.hpp>
+#if CBUFFER
 #include <Operators/Windows/Aggregations/Meos/CbufferUnionTransfnAggregationLogicalFunction.hpp>
+#endif /* CBUFFER */
+#if NPOINT
 #include <Operators/Windows/Aggregations/Meos/NpointUnionTransfnAggregationLogicalFunction.hpp>
+#endif /* NPOINT */
+#if POSE
 #include <Operators/Windows/Aggregations/Meos/PoseUnionTransfnAggregationLogicalFunction.hpp>
+#endif /* POSE */
 #include <Operators/Windows/Aggregations/Meos/TextUnionTransfnAggregationLogicalFunction.hpp>
 #include <Operators/Windows/Aggregations/Meos/GeoUnionTransfnAggregationLogicalFunction.hpp>
 #include <Operators/Windows/Aggregations/Meos/TemporalMergeTransfnAggregationLogicalFunction.hpp>
@@ -163,7 +175,9 @@
 #include <Operators/Windows/Aggregations/Meos/TstzsetTcountTransfnAggregationLogicalFunction.hpp>
 #include <Operators/Windows/Aggregations/Meos/TstzspanTcountTransfnAggregationLogicalFunction.hpp>
 #include <Operators/Windows/Aggregations/Meos/TstzspansetTcountTransfnAggregationLogicalFunction.hpp>
+#if NPOINT
 #include <Operators/Windows/Aggregations/Meos/TnpointTcentroidTransfnAggregationLogicalFunction.hpp>
+#endif /* NPOINT */
 #include <Functions/Meos/TemporalIntersectsGeometryLogicalFunction.hpp>
 #include <Functions/Meos/AintersectsTgeoGeoLogicalFunction.hpp>
 #include <Functions/Meos/EdwithinTgeoGeoLogicalFunction.hpp>
@@ -195,69 +209,195 @@
 #include <Functions/Meos/NadTintTintLogicalFunction.hpp>
 #include <Functions/Meos/TgeoAtGeomLogicalFunction.hpp>
 #include <Functions/Meos/TgeoMinusGeomLogicalFunction.hpp>
+#if CBUFFER
 #include <Functions/Meos/EcontainsTcbufferGeoLogicalFunction.hpp>
+#endif /* CBUFFER */
+#if CBUFFER
 #include <Functions/Meos/EcoversTcbufferGeoLogicalFunction.hpp>
+#endif /* CBUFFER */
+#if CBUFFER
 #include <Functions/Meos/EdisjointTcbufferGeoLogicalFunction.hpp>
+#endif /* CBUFFER */
+#if CBUFFER
 #include <Functions/Meos/EintersectsTcbufferGeoLogicalFunction.hpp>
+#endif /* CBUFFER */
+#if CBUFFER
 #include <Functions/Meos/EtouchesTcbufferGeoLogicalFunction.hpp>
+#endif /* CBUFFER */
+#if CBUFFER
 #include <Functions/Meos/AcontainsTcbufferGeoLogicalFunction.hpp>
+#endif /* CBUFFER */
+#if CBUFFER
 #include <Functions/Meos/AcoversTcbufferGeoLogicalFunction.hpp>
+#endif /* CBUFFER */
+#if CBUFFER
 #include <Functions/Meos/AdisjointTcbufferGeoLogicalFunction.hpp>
+#endif /* CBUFFER */
+#if CBUFFER
 #include <Functions/Meos/AintersectsTcbufferGeoLogicalFunction.hpp>
+#endif /* CBUFFER */
+#if CBUFFER
 #include <Functions/Meos/AtouchesTcbufferGeoLogicalFunction.hpp>
+#endif /* CBUFFER */
+#if CBUFFER
 #include <Functions/Meos/EcontainsTcbufferCbufferLogicalFunction.hpp>
+#endif /* CBUFFER */
+#if CBUFFER
 #include <Functions/Meos/EcoversTcbufferCbufferLogicalFunction.hpp>
+#endif /* CBUFFER */
+#if CBUFFER
 #include <Functions/Meos/EdisjointTcbufferCbufferLogicalFunction.hpp>
+#endif /* CBUFFER */
+#if CBUFFER
 #include <Functions/Meos/EintersectsTcbufferCbufferLogicalFunction.hpp>
+#endif /* CBUFFER */
+#if CBUFFER
 #include <Functions/Meos/EtouchesTcbufferCbufferLogicalFunction.hpp>
+#endif /* CBUFFER */
+#if CBUFFER
 #include <Functions/Meos/AcontainsTcbufferCbufferLogicalFunction.hpp>
+#endif /* CBUFFER */
+#if CBUFFER
 #include <Functions/Meos/AcoversTcbufferCbufferLogicalFunction.hpp>
+#endif /* CBUFFER */
+#if CBUFFER
 #include <Functions/Meos/AdisjointTcbufferCbufferLogicalFunction.hpp>
+#endif /* CBUFFER */
+#if CBUFFER
 #include <Functions/Meos/AintersectsTcbufferCbufferLogicalFunction.hpp>
+#endif /* CBUFFER */
+#if CBUFFER
 #include <Functions/Meos/AtouchesTcbufferCbufferLogicalFunction.hpp>
+#endif /* CBUFFER */
+#if CBUFFER
 #include <Functions/Meos/AdisjointTcbufferTcbufferLogicalFunction.hpp>
+#endif /* CBUFFER */
+#if CBUFFER
 #include <Functions/Meos/AintersectsTcbufferTcbufferLogicalFunction.hpp>
+#endif /* CBUFFER */
+#if CBUFFER
 #include <Functions/Meos/AtouchesTcbufferTcbufferLogicalFunction.hpp>
+#endif /* CBUFFER */
+#if CBUFFER
 #include <Functions/Meos/EcoversTcbufferTcbufferLogicalFunction.hpp>
+#endif /* CBUFFER */
+#if CBUFFER
 #include <Functions/Meos/EintersectsTcbufferTcbufferLogicalFunction.hpp>
+#endif /* CBUFFER */
+#if CBUFFER
 #include <Functions/Meos/EtouchesTcbufferTcbufferLogicalFunction.hpp>
+#endif /* CBUFFER */
+#if CBUFFER
 #include <Functions/Meos/EdwithinTcbufferGeoLogicalFunction.hpp>
+#endif /* CBUFFER */
+#if CBUFFER
 #include <Functions/Meos/AdwithinTcbufferGeoLogicalFunction.hpp>
+#endif /* CBUFFER */
+#if CBUFFER
 #include <Functions/Meos/EdwithinTcbufferCbufferLogicalFunction.hpp>
+#endif /* CBUFFER */
+#if CBUFFER
 #include <Functions/Meos/AdwithinTcbufferCbufferLogicalFunction.hpp>
+#endif /* CBUFFER */
+#if CBUFFER
 #include <Functions/Meos/EdwithinTcbufferTcbufferLogicalFunction.hpp>
+#endif /* CBUFFER */
+#if CBUFFER
 #include <Functions/Meos/AdwithinTcbufferTcbufferLogicalFunction.hpp>
+#endif /* CBUFFER */
+#if POSE
 #include <Functions/Meos/TemporalEContainsTPoseGeometryLogicalFunction.hpp>
+#endif /* POSE */
+#if POSE
 #include <Functions/Meos/TemporalECoversTPoseGeometryLogicalFunction.hpp>
+#endif /* POSE */
+#if POSE
 #include <Functions/Meos/TemporalEDisjointTPoseGeometryLogicalFunction.hpp>
+#endif /* POSE */
+#if POSE
 #include <Functions/Meos/TemporalEIntersectsTPoseGeometryLogicalFunction.hpp>
+#endif /* POSE */
+#if POSE
 #include <Functions/Meos/TemporalETouchesTPoseGeometryLogicalFunction.hpp>
+#endif /* POSE */
+#if POSE
 #include <Functions/Meos/TemporalAContainsTPoseGeometryLogicalFunction.hpp>
+#endif /* POSE */
+#if POSE
 #include <Functions/Meos/TemporalADisjointTPoseGeometryLogicalFunction.hpp>
+#endif /* POSE */
+#if POSE
 #include <Functions/Meos/TemporalAIntersectsTPoseGeometryLogicalFunction.hpp>
+#endif /* POSE */
+#if POSE
 #include <Functions/Meos/TemporalATouchesTPoseGeometryLogicalFunction.hpp>
+#endif /* POSE */
+#if NPOINT
 #include <Functions/Meos/TemporalEContainsTNpointGeometryLogicalFunction.hpp>
+#endif /* NPOINT */
+#if NPOINT
 #include <Functions/Meos/TemporalECoversTNpointGeometryLogicalFunction.hpp>
+#endif /* NPOINT */
+#if NPOINT
 #include <Functions/Meos/TemporalEDisjointTNpointGeometryLogicalFunction.hpp>
+#endif /* NPOINT */
+#if NPOINT
 #include <Functions/Meos/TemporalEIntersectsTNpointGeometryLogicalFunction.hpp>
+#endif /* NPOINT */
+#if NPOINT
 #include <Functions/Meos/TemporalETouchesTNpointGeometryLogicalFunction.hpp>
+#endif /* NPOINT */
+#if NPOINT
 #include <Functions/Meos/TemporalAContainsTNpointGeometryLogicalFunction.hpp>
+#endif /* NPOINT */
+#if NPOINT
 #include <Functions/Meos/TemporalADisjointTNpointGeometryLogicalFunction.hpp>
+#endif /* NPOINT */
+#if NPOINT
 #include <Functions/Meos/TemporalAIntersectsTNpointGeometryLogicalFunction.hpp>
+#endif /* NPOINT */
+#if NPOINT
 #include <Functions/Meos/TemporalATouchesTNpointGeometryLogicalFunction.hpp>
+#endif /* NPOINT */
+#if POSE
 #include <Functions/Meos/TemporalNADTPoseGeometryLogicalFunction.hpp>
+#endif /* POSE */
+#if NPOINT
 #include <Functions/Meos/TemporalNADTNpointGeometryLogicalFunction.hpp>
+#endif /* NPOINT */
+#if POSE
 #include <Functions/Meos/TemporalEDWithinTPoseGeometryLogicalFunction.hpp>
+#endif /* POSE */
+#if POSE
 #include <Functions/Meos/TemporalEDWithinTPoseTPoseLogicalFunction.hpp>
+#endif /* POSE */
+#if NPOINT
 #include <Functions/Meos/TemporalEDWithinTNpointGeometryLogicalFunction.hpp>
+#endif /* NPOINT */
+#if NPOINT
 #include <Functions/Meos/TemporalEDWithinTNpointTNpointLogicalFunction.hpp>
+#endif /* NPOINT */
+#if POSE
 #include <Functions/Meos/TemporalADWithinTPoseGeometryLogicalFunction.hpp>
+#endif /* POSE */
+#if POSE
 #include <Functions/Meos/TemporalADWithinTPoseTPoseLogicalFunction.hpp>
+#endif /* POSE */
+#if NPOINT
 #include <Functions/Meos/TemporalADWithinTNpointGeometryLogicalFunction.hpp>
+#endif /* NPOINT */
+#if NPOINT
 #include <Functions/Meos/TemporalADWithinTNpointTNpointLogicalFunction.hpp>
+#endif /* NPOINT */
+#if CBUFFER
 #include <Functions/Meos/NadTcbufferGeoLogicalFunction.hpp>
+#endif /* CBUFFER */
+#if CBUFFER
 #include <Functions/Meos/NadTcbufferCbufferLogicalFunction.hpp>
+#endif /* CBUFFER */
+#if CBUFFER
 #include <Functions/Meos/NadTcbufferTcbufferLogicalFunction.hpp>
+#endif /* CBUFFER */
 #include <Functions/Meos/AlwaysEqTfloatFloatLogicalFunction.hpp>
 #include <Functions/Meos/AlwaysEqTintIntLogicalFunction.hpp>
 #include <Functions/Meos/AlwaysGeTfloatFloatLogicalFunction.hpp>
@@ -318,22 +458,38 @@
 #include <Functions/Meos/EverNeFloatTfloatLogicalFunction.hpp>
 #include <Functions/Meos/EverNeIntTintLogicalFunction.hpp>
 #include <Functions/Meos/EverNeTemporalTemporalLogicalFunction.hpp>
+#if CBUFFER
 #include <Functions/Meos/AlwaysEqTcbufferCbufferLogicalFunction.hpp>
+#endif /* CBUFFER */
+#if CBUFFER
 #include <Functions/Meos/AlwaysEqTcbufferTcbufferLogicalFunction.hpp>
+#endif /* CBUFFER */
 #include <Functions/Meos/AlwaysEqTgeoGeoLogicalFunction.hpp>
 #include <Functions/Meos/AlwaysEqTgeoTgeoLogicalFunction.hpp>
+#if CBUFFER
 #include <Functions/Meos/AlwaysNeTcbufferCbufferLogicalFunction.hpp>
+#endif /* CBUFFER */
+#if CBUFFER
 #include <Functions/Meos/AlwaysNeTcbufferTcbufferLogicalFunction.hpp>
+#endif /* CBUFFER */
 #include <Functions/Meos/AlwaysNeTgeoGeoLogicalFunction.hpp>
 #include <Functions/Meos/AlwaysNeTgeoTgeoLogicalFunction.hpp>
 #include <Functions/Meos/AtouchesTpointGeoLogicalFunction.hpp>
 #include <Functions/Meos/EtouchesTpointGeoLogicalFunction.hpp>
+#if CBUFFER
 #include <Functions/Meos/EverEqTcbufferCbufferLogicalFunction.hpp>
+#endif /* CBUFFER */
+#if CBUFFER
 #include <Functions/Meos/EverEqTcbufferTcbufferLogicalFunction.hpp>
+#endif /* CBUFFER */
 #include <Functions/Meos/EverEqTgeoGeoLogicalFunction.hpp>
 #include <Functions/Meos/EverEqTgeoTgeoLogicalFunction.hpp>
+#if CBUFFER
 #include <Functions/Meos/EverNeTcbufferCbufferLogicalFunction.hpp>
+#endif /* CBUFFER */
+#if CBUFFER
 #include <Functions/Meos/EverNeTcbufferTcbufferLogicalFunction.hpp>
+#endif /* CBUFFER */
 #include <Functions/Meos/EverNeTgeoGeoLogicalFunction.hpp>
 #include <Functions/Meos/EverNeTgeoTgeoLogicalFunction.hpp>
 #include <Functions/Meos/AboveTspatialTspatialLogicalFunction.hpp>
@@ -355,8 +511,12 @@
 #include <Functions/Meos/EverNeTboolBoolLogicalFunction.hpp>
 #include <Functions/Meos/FrontTspatialTspatialLogicalFunction.hpp>
 #include <Functions/Meos/LeftTspatialTspatialLogicalFunction.hpp>
+#if NPOINT
 #include <Functions/Meos/NadTnpointGeoLogicalFunction.hpp>
+#endif /* NPOINT */
+#if POSE
 #include <Functions/Meos/NadTposeGeoLogicalFunction.hpp>
+#endif /* POSE */
 #include <Functions/Meos/OveraboveTspatialTspatialLogicalFunction.hpp>
 #include <Functions/Meos/OverafterTemporalTemporalLogicalFunction.hpp>
 #include <Functions/Meos/OverafterTspatialTspatialLogicalFunction.hpp>
@@ -384,9 +544,13 @@
 #include <Functions/Meos/TemporalLeLogicalFunction.hpp>
 #include <Functions/Meos/TemporalLtLogicalFunction.hpp>
 #include <Functions/Meos/TemporalNeLogicalFunction.hpp>
+#if NPOINT
 #include <Functions/Meos/TnpointLengthLogicalFunction.hpp>
+#endif /* NPOINT */
 #include <Functions/Meos/TboolToTintLogicalFunction.hpp>
+#if CBUFFER
 #include <Functions/Meos/TcbufferToTfloatLogicalFunction.hpp>
+#endif /* CBUFFER */
 #include <Functions/Meos/TfloatCeilLogicalFunction.hpp>
 #include <Functions/Meos/TfloatExpLogicalFunction.hpp>
 #include <Functions/Meos/TfloatFloorLogicalFunction.hpp>
@@ -401,12 +565,18 @@
 #include <Functions/Meos/ContainedTnumberTboxLogicalFunction.hpp>
 #include <Functions/Meos/ContainsTnumberTboxLogicalFunction.hpp>
 #include <Functions/Meos/LeftTnumberTboxLogicalFunction.hpp>
+#if CBUFFER
 #include <Functions/Meos/NadTcbufferStboxLogicalFunction.hpp>
+#endif /* CBUFFER */
 #include <Functions/Meos/NadTfloatTboxLogicalFunction.hpp>
 #include <Functions/Meos/NadTgeoStboxLogicalFunction.hpp>
 #include <Functions/Meos/NadTintTboxLogicalFunction.hpp>
+#if NPOINT
 #include <Functions/Meos/NadTnpointStboxLogicalFunction.hpp>
+#endif /* NPOINT */
+#if POSE
 #include <Functions/Meos/NadTposeStboxLogicalFunction.hpp>
+#endif /* POSE */
 #include <Functions/Meos/OverafterTnumberTboxLogicalFunction.hpp>
 #include <Functions/Meos/OverbeforeTnumberTboxLogicalFunction.hpp>
 #include <Functions/Meos/OverlapsTnumberTboxLogicalFunction.hpp>
@@ -512,29 +682,59 @@
 #include <Functions/Meos/OverrightTnumberTnumberLogicalFunction.hpp>
 #include <Functions/Meos/RightTnumberTnumberLogicalFunction.hpp>
 #include <Functions/Meos/SameTnumberTnumberLogicalFunction.hpp>
+#if NPOINT
 #include <Functions/Meos/AlwaysEqTnpointTnpointLogicalFunction.hpp>
+#endif /* NPOINT */
+#if POSE
 #include <Functions/Meos/AlwaysEqTposeTposeLogicalFunction.hpp>
+#endif /* POSE */
+#if NPOINT
 #include <Functions/Meos/AlwaysNeTnpointTnpointLogicalFunction.hpp>
+#endif /* NPOINT */
+#if POSE
 #include <Functions/Meos/AlwaysNeTposeTposeLogicalFunction.hpp>
+#endif /* POSE */
+#if NPOINT
 #include <Functions/Meos/EverEqTnpointTnpointLogicalFunction.hpp>
+#endif /* NPOINT */
+#if POSE
 #include <Functions/Meos/EverEqTposeTposeLogicalFunction.hpp>
+#endif /* POSE */
+#if NPOINT
 #include <Functions/Meos/EverNeTnpointTnpointLogicalFunction.hpp>
+#endif /* NPOINT */
+#if POSE
 #include <Functions/Meos/EverNeTposeTposeLogicalFunction.hpp>
+#endif /* POSE */
+#if NPOINT
 #include <Functions/Meos/NadTnpointTnpointLogicalFunction.hpp>
+#endif /* NPOINT */
+#if POSE
 #include <Functions/Meos/NadTposeTposeLogicalFunction.hpp>
+#endif /* POSE */
 #include <Functions/Meos/AddTnumberTnumberLogicalFunction.hpp>
 #include <Functions/Meos/DivTnumberTnumberLogicalFunction.hpp>
 #include <Functions/Meos/MulTnumberTnumberLogicalFunction.hpp>
 #include <Functions/Meos/SubTnumberTnumberLogicalFunction.hpp>
+#if CBUFFER
 #include <Functions/Meos/TcontainsTcbufferTcbufferLogicalFunction.hpp>
+#endif /* CBUFFER */
 #include <Functions/Meos/TcontainsTgeoTgeoLogicalFunction.hpp>
+#if CBUFFER
 #include <Functions/Meos/TcoversTcbufferTcbufferLogicalFunction.hpp>
+#endif /* CBUFFER */
 #include <Functions/Meos/TcoversTgeoTgeoLogicalFunction.hpp>
+#if CBUFFER
 #include <Functions/Meos/TdistanceTcbufferTcbufferLogicalFunction.hpp>
+#endif /* CBUFFER */
 #include <Functions/Meos/TdistanceTgeoTgeoLogicalFunction.hpp>
+#if NPOINT
 #include <Functions/Meos/TdistanceTnpointTnpointLogicalFunction.hpp>
+#endif /* NPOINT */
 #include <Functions/Meos/TdistanceTnumberTnumberLogicalFunction.hpp>
+#if POSE
 #include <Functions/Meos/TdistanceTposeTposeLogicalFunction.hpp>
+#endif /* POSE */
 #include <Functions/Meos/ContainsSpanSpanLogicalFunction.hpp>
 #include <Functions/Meos/ContainedSpanSpanLogicalFunction.hpp>
 #include <Functions/Meos/AdjacentSpanSpanLogicalFunction.hpp>
@@ -854,44 +1054,120 @@
 #include <Functions/Meos/SpansetUpperIncLogicalFunction.hpp>
 #include <Functions/Meos/SetNumValuesLogicalFunction.hpp>
 #include <Functions/Meos/SpansetNumSpansLogicalFunction.hpp>
+#if CBUFFER
 #include <Functions/Meos/CbufferCmpLogicalFunction.hpp>
+#endif /* CBUFFER */
+#if CBUFFER
 #include <Functions/Meos/CbufferEqLogicalFunction.hpp>
+#endif /* CBUFFER */
+#if CBUFFER
 #include <Functions/Meos/CbufferGeLogicalFunction.hpp>
+#endif /* CBUFFER */
+#if CBUFFER
 #include <Functions/Meos/CbufferGtLogicalFunction.hpp>
+#endif /* CBUFFER */
+#if CBUFFER
 #include <Functions/Meos/CbufferLeLogicalFunction.hpp>
+#endif /* CBUFFER */
+#if CBUFFER
 #include <Functions/Meos/CbufferLtLogicalFunction.hpp>
+#endif /* CBUFFER */
+#if CBUFFER
 #include <Functions/Meos/CbufferNeLogicalFunction.hpp>
+#endif /* CBUFFER */
+#if CBUFFER
 #include <Functions/Meos/CbufferNsameLogicalFunction.hpp>
+#endif /* CBUFFER */
+#if CBUFFER
 #include <Functions/Meos/CbufferSameLogicalFunction.hpp>
+#endif /* CBUFFER */
+#if CBUFFER
 #include <Functions/Meos/ContainsCbufferCbufferLogicalFunction.hpp>
+#endif /* CBUFFER */
+#if CBUFFER
 #include <Functions/Meos/CoversCbufferCbufferLogicalFunction.hpp>
+#endif /* CBUFFER */
+#if CBUFFER
 #include <Functions/Meos/DisjointCbufferCbufferLogicalFunction.hpp>
+#endif /* CBUFFER */
+#if CBUFFER
 #include <Functions/Meos/IntersectsCbufferCbufferLogicalFunction.hpp>
+#endif /* CBUFFER */
+#if NPOINT
 #include <Functions/Meos/NpointCmpLogicalFunction.hpp>
+#endif /* NPOINT */
+#if NPOINT
 #include <Functions/Meos/NpointEqLogicalFunction.hpp>
+#endif /* NPOINT */
+#if NPOINT
 #include <Functions/Meos/NpointGeLogicalFunction.hpp>
+#endif /* NPOINT */
+#if NPOINT
 #include <Functions/Meos/NpointGtLogicalFunction.hpp>
+#endif /* NPOINT */
+#if NPOINT
 #include <Functions/Meos/NpointLeLogicalFunction.hpp>
+#endif /* NPOINT */
+#if NPOINT
 #include <Functions/Meos/NpointLtLogicalFunction.hpp>
+#endif /* NPOINT */
+#if NPOINT
 #include <Functions/Meos/NpointNeLogicalFunction.hpp>
+#endif /* NPOINT */
+#if NPOINT
 #include <Functions/Meos/NpointSameLogicalFunction.hpp>
+#endif /* NPOINT */
+#if NPOINT
 #include <Functions/Meos/NsegmentCmpLogicalFunction.hpp>
+#endif /* NPOINT */
+#if NPOINT
 #include <Functions/Meos/NsegmentEqLogicalFunction.hpp>
+#endif /* NPOINT */
+#if NPOINT
 #include <Functions/Meos/NsegmentGeLogicalFunction.hpp>
+#endif /* NPOINT */
+#if NPOINT
 #include <Functions/Meos/NsegmentGtLogicalFunction.hpp>
+#endif /* NPOINT */
+#if NPOINT
 #include <Functions/Meos/NsegmentLeLogicalFunction.hpp>
+#endif /* NPOINT */
+#if NPOINT
 #include <Functions/Meos/NsegmentLtLogicalFunction.hpp>
+#endif /* NPOINT */
+#if NPOINT
 #include <Functions/Meos/NsegmentNeLogicalFunction.hpp>
+#endif /* NPOINT */
+#if POSE
 #include <Functions/Meos/PoseCmpLogicalFunction.hpp>
+#endif /* POSE */
+#if POSE
 #include <Functions/Meos/PoseEqLogicalFunction.hpp>
+#endif /* POSE */
+#if POSE
 #include <Functions/Meos/PoseGeLogicalFunction.hpp>
+#endif /* POSE */
+#if POSE
 #include <Functions/Meos/PoseGtLogicalFunction.hpp>
+#endif /* POSE */
+#if POSE
 #include <Functions/Meos/PoseLeLogicalFunction.hpp>
+#endif /* POSE */
+#if POSE
 #include <Functions/Meos/PoseLtLogicalFunction.hpp>
+#endif /* POSE */
+#if POSE
 #include <Functions/Meos/PoseNeLogicalFunction.hpp>
+#endif /* POSE */
+#if POSE
 #include <Functions/Meos/PoseNsameLogicalFunction.hpp>
+#endif /* POSE */
+#if POSE
 #include <Functions/Meos/PoseSameLogicalFunction.hpp>
+#endif /* POSE */
+#if CBUFFER
 #include <Functions/Meos/TouchesCbufferCbufferLogicalFunction.hpp>
+#endif /* CBUFFER */
 #include <Functions/Meos/AdjacentSpanBigintLogicalFunction.hpp>
 #include <Functions/Meos/AdjacentTboxTboxLogicalFunction.hpp>
 #include <Functions/Meos/AfterDateSetLogicalFunction.hpp>
@@ -903,7 +1179,9 @@
 #include <Functions/Meos/DistanceBigintspanBigintspanLogicalFunction.hpp>
 #include <Functions/Meos/DistanceBigintspansetBigintspanLogicalFunction.hpp>
 #include <Functions/Meos/DistanceBigintspansetBigintspansetLogicalFunction.hpp>
+#if CBUFFER
 #include <Functions/Meos/DistanceCbufferCbufferLogicalFunction.hpp>
+#endif /* CBUFFER */
 #include <Functions/Meos/DistanceDatesetDatesetLogicalFunction.hpp>
 #include <Functions/Meos/DistanceDatespanDatespanLogicalFunction.hpp>
 #include <Functions/Meos/DistanceDatespansetDatespanLogicalFunction.hpp>
@@ -916,7 +1194,9 @@
 #include <Functions/Meos/DistanceIntspanIntspanLogicalFunction.hpp>
 #include <Functions/Meos/DistanceIntspansetIntspanLogicalFunction.hpp>
 #include <Functions/Meos/DistanceIntspansetIntspansetLogicalFunction.hpp>
+#if POSE
 #include <Functions/Meos/DistancePosePoseLogicalFunction.hpp>
+#endif /* POSE */
 #include <Functions/Meos/DistanceSetBigintLogicalFunction.hpp>
 #include <Functions/Meos/DistanceSetDateLogicalFunction.hpp>
 #include <Functions/Meos/DistanceSetFloatLogicalFunction.hpp>
@@ -1004,29 +1284,69 @@
 #include <Functions/Meos/TneTfloatFloatLogicalFunction.hpp>
 #include <Functions/Meos/TneTintIntLogicalFunction.hpp>
 #include <Functions/Meos/AlwaysEqBoolTboolLogicalFunction.hpp>
+#if CBUFFER
 #include <Functions/Meos/AlwaysEqCbufferTcbufferLogicalFunction.hpp>
+#endif /* CBUFFER */
+#if NPOINT
 #include <Functions/Meos/AlwaysEqNpointTnpointLogicalFunction.hpp>
+#endif /* NPOINT */
+#if POSE
 #include <Functions/Meos/AlwaysEqPoseTposeLogicalFunction.hpp>
+#endif /* POSE */
+#if NPOINT
 #include <Functions/Meos/AlwaysEqTnpointNpointLogicalFunction.hpp>
+#endif /* NPOINT */
+#if POSE
 #include <Functions/Meos/AlwaysEqTposePoseLogicalFunction.hpp>
+#endif /* POSE */
 #include <Functions/Meos/AlwaysNeBoolTboolLogicalFunction.hpp>
+#if CBUFFER
 #include <Functions/Meos/AlwaysNeCbufferTcbufferLogicalFunction.hpp>
+#endif /* CBUFFER */
+#if NPOINT
 #include <Functions/Meos/AlwaysNeNpointTnpointLogicalFunction.hpp>
+#endif /* NPOINT */
+#if POSE
 #include <Functions/Meos/AlwaysNePoseTposeLogicalFunction.hpp>
+#endif /* POSE */
+#if NPOINT
 #include <Functions/Meos/AlwaysNeTnpointNpointLogicalFunction.hpp>
+#endif /* NPOINT */
+#if POSE
 #include <Functions/Meos/AlwaysNeTposePoseLogicalFunction.hpp>
+#endif /* POSE */
 #include <Functions/Meos/EverEqBoolTboolLogicalFunction.hpp>
+#if CBUFFER
 #include <Functions/Meos/EverEqCbufferTcbufferLogicalFunction.hpp>
+#endif /* CBUFFER */
+#if NPOINT
 #include <Functions/Meos/EverEqNpointTnpointLogicalFunction.hpp>
+#endif /* NPOINT */
+#if POSE
 #include <Functions/Meos/EverEqPoseTposeLogicalFunction.hpp>
+#endif /* POSE */
+#if NPOINT
 #include <Functions/Meos/EverEqTnpointNpointLogicalFunction.hpp>
+#endif /* NPOINT */
+#if POSE
 #include <Functions/Meos/EverEqTposePoseLogicalFunction.hpp>
+#endif /* POSE */
 #include <Functions/Meos/EverNeBoolTboolLogicalFunction.hpp>
+#if CBUFFER
 #include <Functions/Meos/EverNeCbufferTcbufferLogicalFunction.hpp>
+#endif /* CBUFFER */
+#if NPOINT
 #include <Functions/Meos/EverNeNpointTnpointLogicalFunction.hpp>
+#endif /* NPOINT */
+#if POSE
 #include <Functions/Meos/EverNePoseTposeLogicalFunction.hpp>
+#endif /* POSE */
+#if NPOINT
 #include <Functions/Meos/EverNeTnpointNpointLogicalFunction.hpp>
+#endif /* NPOINT */
+#if POSE
 #include <Functions/Meos/EverNeTposePoseLogicalFunction.hpp>
+#endif /* POSE */
 #include <Functions/Meos/AlwaysEqTextTtextLogicalFunction.hpp>
 #include <Functions/Meos/AlwaysEqTtextTextLogicalFunction.hpp>
 #include <Functions/Meos/AlwaysGeTextTtextLogicalFunction.hpp>
@@ -1088,52 +1408,136 @@
 #include <Functions/Meos/TneTgeoGeoLogicalFunction.hpp>
 #include <Functions/Meos/TtouchesGeoTgeoLogicalFunction.hpp>
 #include <Functions/Meos/TtouchesTgeoGeoLogicalFunction.hpp>
+#if CBUFFER
 #include <Functions/Meos/AcontainsCbufferTcbufferLogicalFunction.hpp>
+#endif /* CBUFFER */
+#if CBUFFER
 #include <Functions/Meos/AcontainsGeoTcbufferLogicalFunction.hpp>
+#endif /* CBUFFER */
+#if CBUFFER
 #include <Functions/Meos/AcoversCbufferTcbufferLogicalFunction.hpp>
+#endif /* CBUFFER */
+#if CBUFFER
 #include <Functions/Meos/AcoversGeoTcbufferLogicalFunction.hpp>
+#endif /* CBUFFER */
+#if CBUFFER
 #include <Functions/Meos/EcontainsCbufferTcbufferLogicalFunction.hpp>
+#endif /* CBUFFER */
+#if CBUFFER
 #include <Functions/Meos/EcoversCbufferTcbufferLogicalFunction.hpp>
+#endif /* CBUFFER */
+#if CBUFFER
 #include <Functions/Meos/TcontainsCbufferTcbufferLogicalFunction.hpp>
+#endif /* CBUFFER */
+#if CBUFFER
 #include <Functions/Meos/TcontainsGeoTcbufferLogicalFunction.hpp>
+#endif /* CBUFFER */
+#if CBUFFER
 #include <Functions/Meos/TcontainsTcbufferCbufferLogicalFunction.hpp>
+#endif /* CBUFFER */
+#if CBUFFER
 #include <Functions/Meos/TcontainsTcbufferGeoLogicalFunction.hpp>
+#endif /* CBUFFER */
+#if CBUFFER
 #include <Functions/Meos/TcoversCbufferTcbufferLogicalFunction.hpp>
+#endif /* CBUFFER */
+#if CBUFFER
 #include <Functions/Meos/TcoversGeoTcbufferLogicalFunction.hpp>
+#endif /* CBUFFER */
+#if CBUFFER
 #include <Functions/Meos/TcoversTcbufferCbufferLogicalFunction.hpp>
+#endif /* CBUFFER */
+#if CBUFFER
 #include <Functions/Meos/TcoversTcbufferGeoLogicalFunction.hpp>
+#endif /* CBUFFER */
+#if CBUFFER
 #include <Functions/Meos/TdisjointCbufferTcbufferLogicalFunction.hpp>
+#endif /* CBUFFER */
+#if CBUFFER
 #include <Functions/Meos/TdisjointGeoTcbufferLogicalFunction.hpp>
+#endif /* CBUFFER */
+#if CBUFFER
 #include <Functions/Meos/TdisjointTcbufferCbufferLogicalFunction.hpp>
+#endif /* CBUFFER */
+#if CBUFFER
 #include <Functions/Meos/TdisjointTcbufferGeoLogicalFunction.hpp>
+#endif /* CBUFFER */
+#if CBUFFER
 #include <Functions/Meos/TdistanceTcbufferCbufferLogicalFunction.hpp>
+#endif /* CBUFFER */
+#if CBUFFER
 #include <Functions/Meos/TdistanceTcbufferGeoLogicalFunction.hpp>
+#endif /* CBUFFER */
+#if NPOINT
 #include <Functions/Meos/TdistanceTnpointNpointLogicalFunction.hpp>
+#endif /* NPOINT */
+#if NPOINT
 #include <Functions/Meos/TdistanceTnpointPointLogicalFunction.hpp>
+#endif /* NPOINT */
+#if POSE
 #include <Functions/Meos/TdistanceTposePointLogicalFunction.hpp>
+#endif /* POSE */
+#if POSE
 #include <Functions/Meos/TdistanceTposePoseLogicalFunction.hpp>
+#endif /* POSE */
 #include <Functions/Meos/TeqBoolTboolLogicalFunction.hpp>
+#if CBUFFER
 #include <Functions/Meos/TeqCbufferTcbufferLogicalFunction.hpp>
+#endif /* CBUFFER */
+#if POSE
 #include <Functions/Meos/TeqPoseTposeLogicalFunction.hpp>
+#endif /* POSE */
 #include <Functions/Meos/TeqTboolBoolLogicalFunction.hpp>
+#if CBUFFER
 #include <Functions/Meos/TeqTcbufferCbufferLogicalFunction.hpp>
+#endif /* CBUFFER */
+#if NPOINT
 #include <Functions/Meos/TeqTnpointNpointLogicalFunction.hpp>
+#endif /* NPOINT */
+#if POSE
 #include <Functions/Meos/TeqTposePoseLogicalFunction.hpp>
+#endif /* POSE */
+#if CBUFFER
 #include <Functions/Meos/TintersectsCbufferTcbufferLogicalFunction.hpp>
+#endif /* CBUFFER */
+#if CBUFFER
 #include <Functions/Meos/TintersectsGeoTcbufferLogicalFunction.hpp>
+#endif /* CBUFFER */
+#if CBUFFER
 #include <Functions/Meos/TintersectsTcbufferCbufferLogicalFunction.hpp>
+#endif /* CBUFFER */
+#if CBUFFER
 #include <Functions/Meos/TintersectsTcbufferGeoLogicalFunction.hpp>
+#endif /* CBUFFER */
 #include <Functions/Meos/TneBoolTboolLogicalFunction.hpp>
+#if CBUFFER
 #include <Functions/Meos/TneCbufferTcbufferLogicalFunction.hpp>
+#endif /* CBUFFER */
+#if POSE
 #include <Functions/Meos/TnePoseTposeLogicalFunction.hpp>
+#endif /* POSE */
 #include <Functions/Meos/TneTboolBoolLogicalFunction.hpp>
+#if CBUFFER
 #include <Functions/Meos/TneTcbufferCbufferLogicalFunction.hpp>
+#endif /* CBUFFER */
+#if NPOINT
 #include <Functions/Meos/TneTnpointNpointLogicalFunction.hpp>
+#endif /* NPOINT */
+#if POSE
 #include <Functions/Meos/TneTposePoseLogicalFunction.hpp>
+#endif /* POSE */
+#if CBUFFER
 #include <Functions/Meos/TtouchesCbufferTcbufferLogicalFunction.hpp>
+#endif /* CBUFFER */
+#if CBUFFER
 #include <Functions/Meos/TtouchesGeoTcbufferLogicalFunction.hpp>
+#endif /* CBUFFER */
+#if CBUFFER
 #include <Functions/Meos/TtouchesTcbufferCbufferLogicalFunction.hpp>
+#endif /* CBUFFER */
+#if CBUFFER
 #include <Functions/Meos/TtouchesTcbufferGeoLogicalFunction.hpp>
+#endif /* CBUFFER */
 #include <Functions/Meos/TemporalAtTstzsetLogicalFunction.hpp>
 #include <Functions/Meos/TemporalAtTstzspanLogicalFunction.hpp>
 #include <Functions/Meos/TemporalAtTstzspansetLogicalFunction.hpp>
@@ -1154,12 +1558,18 @@
 #include <Functions/Meos/TleTemporalTemporalLogicalFunction.hpp>
 #include <Functions/Meos/TltTemporalTemporalLogicalFunction.hpp>
 #include <Functions/Meos/TneTemporalTemporalLogicalFunction.hpp>
+#if CBUFFER
 #include <Functions/Meos/TdisjointTcbufferTcbufferLogicalFunction.hpp>
+#endif /* CBUFFER */
 #include <Functions/Meos/TdisjointTgeoTgeoLogicalFunction.hpp>
 #include <Functions/Meos/TextcatTtextTtextLogicalFunction.hpp>
+#if CBUFFER
 #include <Functions/Meos/TintersectsTcbufferTcbufferLogicalFunction.hpp>
+#endif /* CBUFFER */
 #include <Functions/Meos/TintersectsTgeoTgeoLogicalFunction.hpp>
+#if CBUFFER
 #include <Functions/Meos/TtouchesTcbufferTcbufferLogicalFunction.hpp>
+#endif /* CBUFFER */
 #include <Functions/Meos/TtouchesTgeoTgeoLogicalFunction.hpp>
 #include <Functions/Meos/AdjacentTemporalTstzspanLogicalFunction.hpp>
 #include <Functions/Meos/AdjacentTstzspanTemporalLogicalFunction.hpp>
@@ -1303,10 +1713,18 @@
 #include <Functions/Meos/FloatTstzspanToTboxLogicalFunction.hpp>
 #include <Functions/Meos/NumspanTimestamptzToTboxLogicalFunction.hpp>
 #include <Functions/Meos/NumspanTstzspanToTboxLogicalFunction.hpp>
+#if CBUFFER
 #include <Functions/Meos/CbufferToStboxLogicalFunction.hpp>
+#endif /* CBUFFER */
+#if POSE
 #include <Functions/Meos/PoseToStboxLogicalFunction.hpp>
+#endif /* POSE */
+#if NPOINT
 #include <Functions/Meos/NpointToStboxLogicalFunction.hpp>
+#endif /* NPOINT */
+#if NPOINT
 #include <Functions/Meos/NsegmentToStboxLogicalFunction.hpp>
+#endif /* NPOINT */
 #include <Functions/Meos/TtextLowerLogicalFunction.hpp>
 #include <Functions/Meos/TtextUpperLogicalFunction.hpp>
 #include <Functions/Meos/TtextInitcapLogicalFunction.hpp>
@@ -1317,7 +1735,9 @@
 #include <Functions/Meos/TtextValueNLogicalFunction.hpp>
 #include <Functions/Meos/TextsetValueNLogicalFunction.hpp>
 #include <Functions/Meos/TgeoValueNLogicalFunction.hpp>
+#if POSE
 #include <Functions/Meos/TposeValueNLogicalFunction.hpp>
+#endif /* POSE */
 #include <Functions/Meos/TemporalToTstzspanLogicalFunction.hpp>
 #include <Functions/Meos/TemporalTimeLogicalFunction.hpp>
 #include <Functions/Meos/TnumberValuespansLogicalFunction.hpp>
@@ -1325,20 +1745,40 @@
 #include <Functions/Meos/SetHashLogicalFunction.hpp>
 #include <Functions/Meos/SpansetHashLogicalFunction.hpp>
 #include <Functions/Meos/StboxHashLogicalFunction.hpp>
+#if CBUFFER
 #include <Functions/Meos/CbufferHashLogicalFunction.hpp>
+#endif /* CBUFFER */
+#if NPOINT
 #include <Functions/Meos/NpointHashLogicalFunction.hpp>
+#endif /* NPOINT */
+#if POSE
 #include <Functions/Meos/PoseHashLogicalFunction.hpp>
+#endif /* POSE */
 #include <Functions/Meos/TemporalHashLogicalFunction.hpp>
+#if CBUFFER
 #include <Functions/Meos/CbufferSridLogicalFunction.hpp>
+#endif /* CBUFFER */
+#if NPOINT
 #include <Functions/Meos/NpointSridLogicalFunction.hpp>
+#endif /* NPOINT */
+#if NPOINT
 #include <Functions/Meos/NsegmentSridLogicalFunction.hpp>
+#endif /* NPOINT */
+#if POSE
 #include <Functions/Meos/PoseSridLogicalFunction.hpp>
+#endif /* POSE */
+#if CBUFFER
 #include <Functions/Meos/CbufferRoundLogicalFunction.hpp>
+#endif /* CBUFFER */
 #include <Functions/Meos/FloatRoundLogicalFunction.hpp>
 #include <Functions/Meos/FloatspanRoundLogicalFunction.hpp>
 #include <Functions/Meos/FloatspansetRoundLogicalFunction.hpp>
+#if NPOINT
 #include <Functions/Meos/NpointRoundLogicalFunction.hpp>
+#endif /* NPOINT */
+#if POSE
 #include <Functions/Meos/PoseRoundLogicalFunction.hpp>
+#endif /* POSE */
 #include <Functions/Meos/SetRoundLogicalFunction.hpp>
 #include <Functions/Meos/StboxRoundLogicalFunction.hpp>
 #include <Functions/Meos/TboxRoundLogicalFunction.hpp>
@@ -1348,17 +1788,27 @@
 #include <Functions/Meos/DatespansetDurationLogicalFunction.hpp>
 #include <Functions/Meos/TstzspansetDurationLogicalFunction.hpp>
 #include <Functions/Meos/TemporalDurationLogicalFunction.hpp>
+#if CBUFFER
 #include <Functions/Meos/CbufferRadiusLogicalFunction.hpp>
+#endif /* CBUFFER */
 #include <Functions/Meos/DatespanToTstzspanLogicalFunction.hpp>
 #include <Functions/Meos/DatespansetToTstzspansetLogicalFunction.hpp>
 #include <Functions/Meos/FloatspanToIntspanLogicalFunction.hpp>
 #include <Functions/Meos/FloatspansetToIntspansetLogicalFunction.hpp>
 #include <Functions/Meos/IntspanToFloatspanLogicalFunction.hpp>
 #include <Functions/Meos/IntspansetToFloatspansetLogicalFunction.hpp>
+#if NPOINT
 #include <Functions/Meos/NpointPositionLogicalFunction.hpp>
+#endif /* NPOINT */
+#if NPOINT
 #include <Functions/Meos/NpointRouteLogicalFunction.hpp>
+#endif /* NPOINT */
+#if NPOINT
 #include <Functions/Meos/NsegmentRouteLogicalFunction.hpp>
+#endif /* NPOINT */
+#if POSE
 #include <Functions/Meos/PoseRotationLogicalFunction.hpp>
+#endif /* POSE */
 #include <Functions/Meos/SpanToSpansetLogicalFunction.hpp>
 #include <Functions/Meos/StboxToTstzspanLogicalFunction.hpp>
 #include <Functions/Meos/StboxVolumeLogicalFunction.hpp>
@@ -1377,15 +1827,33 @@
 #include <Functions/Meos/GeosetStartValueLogicalFunction.hpp>
 #include <Functions/Meos/GeosetEndValueLogicalFunction.hpp>
 #include <Functions/Meos/GeosetValueNLogicalFunction.hpp>
+#if CBUFFER
 #include <Functions/Meos/CbuffersetStartValueLogicalFunction.hpp>
+#endif /* CBUFFER */
+#if CBUFFER
 #include <Functions/Meos/CbuffersetEndValueLogicalFunction.hpp>
+#endif /* CBUFFER */
+#if CBUFFER
 #include <Functions/Meos/CbuffersetValueNLogicalFunction.hpp>
+#endif /* CBUFFER */
+#if NPOINT
 #include <Functions/Meos/NpointsetStartValueLogicalFunction.hpp>
+#endif /* NPOINT */
+#if NPOINT
 #include <Functions/Meos/NpointsetEndValueLogicalFunction.hpp>
+#endif /* NPOINT */
+#if NPOINT
 #include <Functions/Meos/NpointsetValueNLogicalFunction.hpp>
+#endif /* NPOINT */
+#if POSE
 #include <Functions/Meos/PosesetStartValueLogicalFunction.hpp>
+#endif /* POSE */
+#if POSE
 #include <Functions/Meos/PosesetEndValueLogicalFunction.hpp>
+#endif /* POSE */
+#if POSE
 #include <Functions/Meos/PosesetValueNLogicalFunction.hpp>
+#endif /* POSE */
 #include <Functions/Meos/GeoCopyLogicalFunction.hpp>
 #include <Functions/Meos/GeoIsEmptyLogicalFunction.hpp>
 #include <Functions/Meos/GeoIsUnitaryLogicalFunction.hpp>
@@ -1414,31 +1882,61 @@
 #include <Functions/Meos/TimestamptzShiftLogicalFunction.hpp>
 #include <Functions/Meos/AddIntervalIntervalLogicalFunction.hpp>
 #include <Functions/Meos/MulIntervalDoubleLogicalFunction.hpp>
+#if CBUFFER
 #include <Functions/Meos/ContainedCbufferSetLogicalFunction.hpp>
+#endif /* CBUFFER */
 #include <Functions/Meos/ContainedGeoSetLogicalFunction.hpp>
+#if NPOINT
 #include <Functions/Meos/ContainedNpointSetLogicalFunction.hpp>
+#endif /* NPOINT */
+#if POSE
 #include <Functions/Meos/ContainedPoseSetLogicalFunction.hpp>
+#endif /* POSE */
 #include <Functions/Meos/ContainedTextSetLogicalFunction.hpp>
+#if CBUFFER
 #include <Functions/Meos/ContainsSetCbufferLogicalFunction.hpp>
+#endif /* CBUFFER */
 #include <Functions/Meos/ContainsSetGeoLogicalFunction.hpp>
+#if NPOINT
 #include <Functions/Meos/ContainsSetNpointLogicalFunction.hpp>
+#endif /* NPOINT */
+#if POSE
 #include <Functions/Meos/ContainsSetPoseLogicalFunction.hpp>
+#endif /* POSE */
 #include <Functions/Meos/ContainsSetTextLogicalFunction.hpp>
 #include <Functions/Meos/IntersectionGeoSetLogicalFunction.hpp>
+#if CBUFFER
 #include <Functions/Meos/IntersectionSetCbufferLogicalFunction.hpp>
+#endif /* CBUFFER */
 #include <Functions/Meos/IntersectionSetGeoLogicalFunction.hpp>
+#if NPOINT
 #include <Functions/Meos/IntersectionSetNpointLogicalFunction.hpp>
+#endif /* NPOINT */
+#if POSE
 #include <Functions/Meos/IntersectionSetPoseLogicalFunction.hpp>
+#endif /* POSE */
 #include <Functions/Meos/LeftSetTextLogicalFunction.hpp>
 #include <Functions/Meos/LeftTextSetLogicalFunction.hpp>
+#if CBUFFER
 #include <Functions/Meos/MinusCbufferSetLogicalFunction.hpp>
+#endif /* CBUFFER */
 #include <Functions/Meos/MinusGeoSetLogicalFunction.hpp>
+#if NPOINT
 #include <Functions/Meos/MinusNpointSetLogicalFunction.hpp>
+#endif /* NPOINT */
+#if POSE
 #include <Functions/Meos/MinusPoseSetLogicalFunction.hpp>
+#endif /* POSE */
+#if CBUFFER
 #include <Functions/Meos/MinusSetCbufferLogicalFunction.hpp>
+#endif /* CBUFFER */
 #include <Functions/Meos/MinusSetGeoLogicalFunction.hpp>
+#if NPOINT
 #include <Functions/Meos/MinusSetNpointLogicalFunction.hpp>
+#endif /* NPOINT */
+#if POSE
 #include <Functions/Meos/MinusSetPoseLogicalFunction.hpp>
+#endif /* POSE */
 #include <Functions/Meos/OverleftSetTextLogicalFunction.hpp>
 #include <Functions/Meos/OverleftTextSetLogicalFunction.hpp>
 #include <Functions/Meos/OverrightSetTextLogicalFunction.hpp>
@@ -1446,10 +1944,16 @@
 #include <Functions/Meos/RightSetTextLogicalFunction.hpp>
 #include <Functions/Meos/RightTextSetLogicalFunction.hpp>
 #include <Functions/Meos/UnionGeoSetLogicalFunction.hpp>
+#if CBUFFER
 #include <Functions/Meos/UnionSetCbufferLogicalFunction.hpp>
+#endif /* CBUFFER */
 #include <Functions/Meos/UnionSetGeoLogicalFunction.hpp>
+#if NPOINT
 #include <Functions/Meos/UnionSetNpointLogicalFunction.hpp>
+#endif /* NPOINT */
+#if POSE
 #include <Functions/Meos/UnionSetPoseLogicalFunction.hpp>
+#endif /* POSE */
 #include <Functions/Meos/ContainedNumspanTnumberLogicalFunction.hpp>
 #include <Functions/Meos/ContainedTemporalTstzspanLogicalFunction.hpp>
 #include <Functions/Meos/ContainedTnumberNumspanLogicalFunction.hpp>
@@ -1474,75 +1978,179 @@
 #include <Functions/Meos/SameTemporalTstzspanLogicalFunction.hpp>
 #include <Functions/Meos/SameTnumberNumspanLogicalFunction.hpp>
 #include <Functions/Meos/SameTstzspanTemporalLogicalFunction.hpp>
+#if NPOINT
 #include <Functions/Meos/NadTnpointNpointLogicalFunction.hpp>
+#endif /* NPOINT */
+#if POSE
 #include <Functions/Meos/NadTposePoseLogicalFunction.hpp>
+#endif /* POSE */
+#if CBUFFER
 #include <Functions/Meos/NaiTcbufferCbufferLogicalFunction.hpp>
+#endif /* CBUFFER */
+#if CBUFFER
 #include <Functions/Meos/NaiTcbufferGeoLogicalFunction.hpp>
+#endif /* CBUFFER */
+#if CBUFFER
 #include <Functions/Meos/NaiTcbufferTcbufferLogicalFunction.hpp>
+#endif /* CBUFFER */
 #include <Functions/Meos/NaiTgeoGeoLogicalFunction.hpp>
 #include <Functions/Meos/NaiTgeoTgeoLogicalFunction.hpp>
+#if NPOINT
 #include <Functions/Meos/NaiTnpointGeoLogicalFunction.hpp>
+#endif /* NPOINT */
+#if NPOINT
 #include <Functions/Meos/NaiTnpointNpointLogicalFunction.hpp>
+#endif /* NPOINT */
+#if NPOINT
 #include <Functions/Meos/NaiTnpointTnpointLogicalFunction.hpp>
+#endif /* NPOINT */
+#if POSE
 #include <Functions/Meos/NaiTposeGeoLogicalFunction.hpp>
+#endif /* POSE */
+#if POSE
 #include <Functions/Meos/NaiTposePoseLogicalFunction.hpp>
+#endif /* POSE */
+#if POSE
 #include <Functions/Meos/NaiTposeTposeLogicalFunction.hpp>
+#endif /* POSE */
+#if CBUFFER
 #include <Functions/Meos/ShortestlineTcbufferCbufferLogicalFunction.hpp>
+#endif /* CBUFFER */
+#if CBUFFER
 #include <Functions/Meos/ShortestlineTcbufferGeoLogicalFunction.hpp>
+#endif /* CBUFFER */
+#if CBUFFER
 #include <Functions/Meos/ShortestlineTcbufferTcbufferLogicalFunction.hpp>
+#endif /* CBUFFER */
 #include <Functions/Meos/ShortestlineTgeoGeoLogicalFunction.hpp>
 #include <Functions/Meos/ShortestlineTgeoTgeoLogicalFunction.hpp>
+#if NPOINT
 #include <Functions/Meos/ShortestlineTnpointGeoLogicalFunction.hpp>
+#endif /* NPOINT */
+#if NPOINT
 #include <Functions/Meos/ShortestlineTnpointNpointLogicalFunction.hpp>
+#endif /* NPOINT */
+#if NPOINT
 #include <Functions/Meos/ShortestlineTnpointTnpointLogicalFunction.hpp>
+#endif /* NPOINT */
+#if POSE
 #include <Functions/Meos/ShortestlineTposeGeoLogicalFunction.hpp>
+#endif /* POSE */
+#if POSE
 #include <Functions/Meos/ShortestlineTposePoseLogicalFunction.hpp>
+#endif /* POSE */
+#if POSE
 #include <Functions/Meos/ShortestlineTposeTposeLogicalFunction.hpp>
+#endif /* POSE */
+#if NPOINT
 #include <Functions/Meos/TnpointRouteLogicalFunction.hpp>
+#endif /* NPOINT */
+#if NPOINT
 #include <Functions/Meos/TnpointTrajectoryLogicalFunction.hpp>
+#endif /* NPOINT */
+#if NPOINT
 #include <Functions/Meos/TnpointTwcentroidLogicalFunction.hpp>
+#endif /* NPOINT */
+#if POSE
 #include <Functions/Meos/TposeStartValueLogicalFunction.hpp>
+#endif /* POSE */
+#if POSE
 #include <Functions/Meos/TposeEndValueLogicalFunction.hpp>
+#endif /* POSE */
+#if POSE
 #include <Functions/Meos/TposeTrajectoryLogicalFunction.hpp>
+#endif /* POSE */
+#if CBUFFER
 #include <Functions/Meos/CbufferCopyLogicalFunction.hpp>
+#endif /* CBUFFER */
+#if CBUFFER
 #include <Functions/Meos/CbufferPointLogicalFunction.hpp>
+#endif /* CBUFFER */
+#if CBUFFER
 #include <Functions/Meos/CbufferToGeomLogicalFunction.hpp>
+#endif /* CBUFFER */
+#if POSE
 #include <Functions/Meos/PoseCopyLogicalFunction.hpp>
+#endif /* POSE */
+#if POSE
 #include <Functions/Meos/PoseToPointLogicalFunction.hpp>
+#endif /* POSE */
+#if NPOINT
 #include <Functions/Meos/NpointToGeompointLogicalFunction.hpp>
+#endif /* NPOINT */
+#if NPOINT
 #include <Functions/Meos/NsegmentToGeomLogicalFunction.hpp>
+#endif /* NPOINT */
 #include <Functions/Meos/StboxToGeoLogicalFunction.hpp>
 #include <Functions/Meos/TextsetStartValueLogicalFunction.hpp>
 #include <Functions/Meos/TextsetEndValueLogicalFunction.hpp>
 #include <Functions/Meos/TboolFromBaseTempLogicalFunction.hpp>
 #include <Functions/Meos/TfloatDegreesLogicalFunction.hpp>
 #include <Functions/Meos/TboxMakeLogicalFunction.hpp>
+#if CBUFFER
 #include <Functions/Meos/TcbufferAtCbufferLogicalFunction.hpp>
+#endif /* CBUFFER */
+#if CBUFFER
 #include <Functions/Meos/TcbufferAtGeomLogicalFunction.hpp>
+#endif /* CBUFFER */
+#if CBUFFER
 #include <Functions/Meos/TcbufferMinusCbufferLogicalFunction.hpp>
+#endif /* CBUFFER */
+#if CBUFFER
 #include <Functions/Meos/TcbufferMinusGeomLogicalFunction.hpp>
+#endif /* CBUFFER */
 #include <Functions/Meos/TgeoAtValueLogicalFunction.hpp>
 #include <Functions/Meos/TgeoMinusValueLogicalFunction.hpp>
+#if NPOINT
 #include <Functions/Meos/TnpointAtNpointLogicalFunction.hpp>
+#endif /* NPOINT */
+#if NPOINT
 #include <Functions/Meos/TnpointMinusNpointLogicalFunction.hpp>
+#endif /* NPOINT */
 #include <Functions/Meos/TpointAtGeomLogicalFunction.hpp>
 #include <Functions/Meos/TpointAtValueLogicalFunction.hpp>
 #include <Functions/Meos/TpointMinusGeomLogicalFunction.hpp>
 #include <Functions/Meos/TpointMinusValueLogicalFunction.hpp>
+#if POSE
 #include <Functions/Meos/TposeAtGeomLogicalFunction.hpp>
+#endif /* POSE */
+#if POSE
 #include <Functions/Meos/TposeAtPoseLogicalFunction.hpp>
+#endif /* POSE */
+#if POSE
 #include <Functions/Meos/TposeMinusGeomLogicalFunction.hpp>
+#endif /* POSE */
+#if POSE
 #include <Functions/Meos/TposeMinusPoseLogicalFunction.hpp>
+#endif /* POSE */
+#if CBUFFER
 #include <Functions/Meos/TcbufferAtStboxLogicalFunction.hpp>
+#endif /* CBUFFER */
+#if CBUFFER
 #include <Functions/Meos/TcbufferMinusStboxLogicalFunction.hpp>
+#endif /* CBUFFER */
 #include <Functions/Meos/TgeoMinusStboxLogicalFunction.hpp>
+#if POSE
 #include <Functions/Meos/TposeAtStboxLogicalFunction.hpp>
+#endif /* POSE */
+#if POSE
 #include <Functions/Meos/TposeMinusStboxLogicalFunction.hpp>
+#endif /* POSE */
+#if CBUFFER
 #include <Functions/Meos/DistanceCbufferGeoLogicalFunction.hpp>
+#endif /* CBUFFER */
+#if CBUFFER
 #include <Functions/Meos/DistanceCbufferStboxLogicalFunction.hpp>
+#endif /* CBUFFER */
+#if POSE
 #include <Functions/Meos/DistancePoseGeoLogicalFunction.hpp>
+#endif /* POSE */
+#if POSE
 #include <Functions/Meos/DistancePoseStboxLogicalFunction.hpp>
+#endif /* POSE */
+#if CBUFFER
 #include <Functions/Meos/NadCbufferStboxLogicalFunction.hpp>
+#endif /* CBUFFER */
 #include <Functions/Meos/NadStboxGeoLogicalFunction.hpp>
 #include <Functions/Meos/IntspanMakeLogicalFunction.hpp>
 #include <Functions/Meos/BigintspanMakeLogicalFunction.hpp>
@@ -1553,11 +2161,21 @@
 #include <Functions/Meos/TintinstMakeLogicalFunction.hpp>
 #include <Functions/Meos/TpointinstMakeLogicalFunction.hpp>
 #include <Functions/Meos/TgeoinstMakeLogicalFunction.hpp>
+#if NPOINT
 #include <Functions/Meos/TnpointinstMakeLogicalFunction.hpp>
+#endif /* NPOINT */
+#if NPOINT
 #include <Functions/Meos/NpointMakeLogicalFunction.hpp>
+#endif /* NPOINT */
+#if CBUFFER
 #include <Functions/Meos/CbufferMakeLogicalFunction.hpp>
+#endif /* CBUFFER */
+#if POSE
 #include <Functions/Meos/PoseMake2dLogicalFunction.hpp>
+#endif /* POSE */
+#if POSE
 #include <Functions/Meos/PoseMakePoint2dLogicalFunction.hpp>
+#endif /* POSE */
 #include <Functions/Meos/GeoEqualsLogicalFunction.hpp>
 #include <Functions/Meos/GeoGeoNLogicalFunction.hpp>
 #include <Functions/Meos/GeoSameLogicalFunction.hpp>
@@ -1573,21 +2191,31 @@
 #include <Functions/Meos/GeomIntersects3dLogicalFunction.hpp>
 #include <Functions/Meos/GeomShortestline2dLogicalFunction.hpp>
 #include <Functions/Meos/GeomShortestline3dLogicalFunction.hpp>
+#if CBUFFER
 #include <Functions/Meos/GeomToCbufferLogicalFunction.hpp>
+#endif /* CBUFFER */
 #include <Functions/Meos/GeomTouchesLogicalFunction.hpp>
 #include <Functions/Meos/GeomUnaryUnionLogicalFunction.hpp>
 #include <Functions/Meos/TfloatValuesLogicalFunction.hpp>
 #include <Functions/Meos/TintValuesLogicalFunction.hpp>
 #include <Functions/Meos/TboolValuesLogicalFunction.hpp>
 #include <Functions/Meos/TgeoValuesLogicalFunction.hpp>
+#if POSE
 #include <Functions/Meos/TposeValuesLogicalFunction.hpp>
+#endif /* POSE */
 #include <Functions/Meos/TtextValuesLogicalFunction.hpp>
 #include <Functions/Meos/IntsetValuesLogicalFunction.hpp>
 #include <Functions/Meos/DatesetValuesLogicalFunction.hpp>
 #include <Functions/Meos/GeosetValuesLogicalFunction.hpp>
+#if CBUFFER
 #include <Functions/Meos/CbuffersetValuesLogicalFunction.hpp>
+#endif /* CBUFFER */
+#if NPOINT
 #include <Functions/Meos/NpointsetValuesLogicalFunction.hpp>
+#endif /* NPOINT */
+#if POSE
 #include <Functions/Meos/PosesetValuesLogicalFunction.hpp>
+#endif /* POSE */
 #include <Functions/Meos/TextsetValuesLogicalFunction.hpp>
 #include <Functions/Meos/TemporalTimestampsLogicalFunction.hpp>
 #include <Functions/Meos/FloatsetValuesLogicalFunction.hpp>
@@ -1595,9 +2223,15 @@
 #include <Functions/Meos/TstzsetValuesLogicalFunction.hpp>
 #include <Functions/Meos/TemporalSpansLogicalFunction.hpp>
 #include <Functions/Meos/TemporalInstantsLogicalFunction.hpp>
+#if CBUFFER
 #include <Functions/Meos/TdwithinTcbufferCbufferLogicalFunction.hpp>
+#endif /* CBUFFER */
+#if CBUFFER
 #include <Functions/Meos/TdwithinTcbufferGeoLogicalFunction.hpp>
+#endif /* CBUFFER */
+#if CBUFFER
 #include <Functions/Meos/TdwithinTcbufferTcbufferLogicalFunction.hpp>
+#endif /* CBUFFER */
 #include <Functions/Meos/TdwithinTgeoGeoLogicalFunction.hpp>
 #include <Functions/Meos/TdwithinTgeoTgeoLogicalFunction.hpp>
 #include <Functions/Meos/IntGetBinLogicalFunction.hpp>
@@ -1661,45 +2295,121 @@
 #include <Functions/Meos/TstzsetToDatesetLogicalFunction.hpp>
 #include <Functions/Meos/TstzspansetTimestampsLogicalFunction.hpp>
 #include <Functions/Meos/GeogToGeomLogicalFunction.hpp>
+#if RGEO
 #include <Functions/Meos/AlwaysEqGeoTrgeometryLogicalFunction.hpp>
+#endif /* RGEO */
+#if RGEO
 #include <Functions/Meos/AlwaysEqTrgeometryGeoLogicalFunction.hpp>
+#endif /* RGEO */
+#if RGEO
 #include <Functions/Meos/AlwaysNeGeoTrgeometryLogicalFunction.hpp>
+#endif /* RGEO */
+#if RGEO
 #include <Functions/Meos/AlwaysNeTrgeometryGeoLogicalFunction.hpp>
+#endif /* RGEO */
+#if RGEO
 #include <Functions/Meos/EverEqGeoTrgeometryLogicalFunction.hpp>
+#endif /* RGEO */
+#if RGEO
 #include <Functions/Meos/EverEqTrgeometryGeoLogicalFunction.hpp>
+#endif /* RGEO */
+#if RGEO
 #include <Functions/Meos/EverNeGeoTrgeometryLogicalFunction.hpp>
+#endif /* RGEO */
+#if RGEO
 #include <Functions/Meos/EverNeTrgeometryGeoLogicalFunction.hpp>
+#endif /* RGEO */
+#if RGEO
 #include <Functions/Meos/TdistanceTrgeometryGeoLogicalFunction.hpp>
+#endif /* RGEO */
+#if RGEO
 #include <Functions/Meos/TeqGeoTrgeometryLogicalFunction.hpp>
+#endif /* RGEO */
+#if RGEO
 #include <Functions/Meos/TeqTrgeometryGeoLogicalFunction.hpp>
+#endif /* RGEO */
+#if RGEO
 #include <Functions/Meos/TneGeoTrgeometryLogicalFunction.hpp>
+#endif /* RGEO */
+#if RGEO
 #include <Functions/Meos/TneTrgeometryGeoLogicalFunction.hpp>
+#endif /* RGEO */
+#if RGEO
 #include <Functions/Meos/TrgeometryEndValueLogicalFunction.hpp>
+#endif /* RGEO */
+#if RGEO
 #include <Functions/Meos/TrgeometryGeomLogicalFunction.hpp>
+#endif /* RGEO */
+#if RGEO
 #include <Functions/Meos/TrgeometryStartValueLogicalFunction.hpp>
+#endif /* RGEO */
+#if RGEO
 #include <Functions/Meos/NadTrgeometryTrgeometryLogicalFunction.hpp>
+#endif /* RGEO */
+#if RGEO
 #include <Functions/Meos/NaiTrgeometryTrgeometryLogicalFunction.hpp>
+#endif /* RGEO */
+#if RGEO
 #include <Functions/Meos/ShortestlineTrgeometryTrgeometryLogicalFunction.hpp>
+#endif /* RGEO */
+#if RGEO
 #include <Functions/Meos/TrgeometryRotationLogicalFunction.hpp>
+#endif /* RGEO */
+#if RGEO
 #include <Functions/Meos/TrgeometryToTinstantLogicalFunction.hpp>
+#endif /* RGEO */
+#if RGEO
 #include <Functions/Meos/TrgeometryToTpointLogicalFunction.hpp>
+#endif /* RGEO */
+#if RGEO
 #include <Functions/Meos/TrgeometryToTposeLogicalFunction.hpp>
+#endif /* RGEO */
+#if RGEO
 #include <Functions/Meos/TrgeometryStartInstantLogicalFunction.hpp>
+#endif /* RGEO */
+#if RGEO
 #include <Functions/Meos/TrgeometryEndInstantLogicalFunction.hpp>
+#endif /* RGEO */
+#if RGEO
 #include <Functions/Meos/TrgeometryStartSequenceLogicalFunction.hpp>
+#endif /* RGEO */
+#if RGEO
 #include <Functions/Meos/TrgeometryEndSequenceLogicalFunction.hpp>
+#endif /* RGEO */
+#if RGEO
 #include <Functions/Meos/NadTrgeometryGeoLogicalFunction.hpp>
+#endif /* RGEO */
+#if RGEO
 #include <Functions/Meos/NaiTrgeometryGeoLogicalFunction.hpp>
+#endif /* RGEO */
+#if RGEO
 #include <Functions/Meos/ShortestlineTrgeometryGeoLogicalFunction.hpp>
+#endif /* RGEO */
+#if RGEO
 #include <Functions/Meos/TrgeometryRestrictTimestamptzLogicalFunction.hpp>
+#endif /* RGEO */
+#if RGEO
 #include <Functions/Meos/TrgeometryRestrictTstzsetLogicalFunction.hpp>
+#endif /* RGEO */
+#if RGEO
 #include <Functions/Meos/TrgeometryRestrictTstzspanLogicalFunction.hpp>
+#endif /* RGEO */
+#if RGEO
 #include <Functions/Meos/TrgeometryRestrictTstzspansetLogicalFunction.hpp>
+#endif /* RGEO */
 #include <Functions/Meos/TspatialSridLogicalFunction.hpp>
+#if RGEO
 #include <Functions/Meos/AlwaysEqTrgeometryTrgeometryLogicalFunction.hpp>
+#endif /* RGEO */
+#if RGEO
 #include <Functions/Meos/EverEqTrgeometryTrgeometryLogicalFunction.hpp>
+#endif /* RGEO */
+#if RGEO
 #include <Functions/Meos/AlwaysNeTrgeometryTrgeometryLogicalFunction.hpp>
+#endif /* RGEO */
+#if RGEO
 #include <Functions/Meos/EverNeTrgeometryTrgeometryLogicalFunction.hpp>
+#endif /* RGEO */
 #include <Functions/Meos/FloatspanCeilLogicalFunction.hpp>
 #include <Functions/Meos/FloatspanFloorLogicalFunction.hpp>
 #include <Functions/Meos/FloatspanRadiansLogicalFunction.hpp>
@@ -1717,37 +2427,75 @@
 #include <Functions/Meos/IntspanExpandLogicalFunction.hpp>
 #include <Functions/Meos/BigintspanExpandLogicalFunction.hpp>
 #include <Functions/Meos/FloatspanExpandLogicalFunction.hpp>
+#if CBUFFER
 #include <Functions/Meos/CbufferToSetLogicalFunction.hpp>
+#endif /* CBUFFER */
+#if NPOINT
 #include <Functions/Meos/NpointToSetLogicalFunction.hpp>
+#endif /* NPOINT */
+#if POSE
 #include <Functions/Meos/PoseToSetLogicalFunction.hpp>
+#endif /* POSE */
 #include <Functions/Meos/GeoToSetLogicalFunction.hpp>
 #include <Functions/Meos/GeoToStboxLogicalFunction.hpp>
 #include <Functions/Meos/SpatialsetToStboxLogicalFunction.hpp>
 #include <Functions/Meos/GeoTstzspanToStboxLogicalFunction.hpp>
+#if NPOINT
 #include <Functions/Meos/NpointTstzspanToStboxLogicalFunction.hpp>
+#endif /* NPOINT */
+#if POSE
 #include <Functions/Meos/PoseTstzspanToStboxLogicalFunction.hpp>
+#endif /* POSE */
+#if CBUFFER
 #include <Functions/Meos/CbufferTstzspanToStboxLogicalFunction.hpp>
+#endif /* CBUFFER */
 #include <Functions/Meos/GeoTimestamptzToStboxLogicalFunction.hpp>
+#if NPOINT
 #include <Functions/Meos/NpointTimestamptzToStboxLogicalFunction.hpp>
+#endif /* NPOINT */
+#if POSE
 #include <Functions/Meos/PoseTimestamptzToStboxLogicalFunction.hpp>
+#endif /* POSE */
+#if CBUFFER
 #include <Functions/Meos/CbufferTimestamptzToStboxLogicalFunction.hpp>
+#endif /* CBUFFER */
 #include <Functions/Meos/TfloatScaleValueLogicalFunction.hpp>
 #include <Functions/Meos/TintScaleValueLogicalFunction.hpp>
+#if RGEO
 #include <Functions/Meos/TrgeometryValueNLogicalFunction.hpp>
+#endif /* RGEO */
+#if POSE
 #include <Functions/Meos/TposeToTpointLogicalFunction.hpp>
+#endif /* POSE */
+#if CBUFFER
 #include <Functions/Meos/TcbufferToTgeompointLogicalFunction.hpp>
+#endif /* CBUFFER */
 #include <Functions/Meos/TextLowerLogicalFunction.hpp>
 #include <Functions/Meos/TextUpperLogicalFunction.hpp>
 #include <Functions/Meos/TextInitcapLogicalFunction.hpp>
 #include <Functions/Meos/TextCopyLogicalFunction.hpp>
 #include <Functions/Meos/DatespansetDatesLogicalFunction.hpp>
+#if NPOINT
 #include <Functions/Meos/NpointsetRoutesLogicalFunction.hpp>
+#endif /* NPOINT */
+#if CBUFFER
 #include <Functions/Meos/TcbufferPointsLogicalFunction.hpp>
+#endif /* CBUFFER */
+#if POSE
 #include <Functions/Meos/TposePointsLogicalFunction.hpp>
+#endif /* POSE */
+#if RGEO
 #include <Functions/Meos/TrgeometryPointsLogicalFunction.hpp>
+#endif /* RGEO */
+#if NPOINT
 #include <Functions/Meos/TnpointRoutesLogicalFunction.hpp>
+#endif /* NPOINT */
+#if POSE
 #include <Functions/Meos/TposeRotationLogicalFunction.hpp>
+#endif /* POSE */
+#if RGEO
 #include <Functions/Meos/TrgeometryRoundLogicalFunction.hpp>
+#endif /* RGEO */
 #include <Functions/Meos/TfloatShiftScaleValueLogicalFunction.hpp>
 #include <Functions/Meos/TintShiftScaleValueLogicalFunction.hpp>
 #include <Functions/Meos/TemporalShiftScaleTimeLogicalFunction.hpp>
@@ -1757,12 +2505,24 @@
 #include <Functions/Meos/TemporalTimestamptzNLogicalFunction.hpp>
 #include <Functions/Meos/DatespansetDateNLogicalFunction.hpp>
 #include <Functions/Meos/TstzspansetTimestamptzNLogicalFunction.hpp>
+#if RGEO
 #include <Functions/Meos/TrgeometryDeleteTimestamptzLogicalFunction.hpp>
+#endif /* RGEO */
+#if RGEO
 #include <Functions/Meos/TrgeometryDeleteTstzsetLogicalFunction.hpp>
+#endif /* RGEO */
+#if RGEO
 #include <Functions/Meos/TrgeometryDeleteTstzspanLogicalFunction.hpp>
+#endif /* RGEO */
+#if RGEO
 #include <Functions/Meos/TrgeometryDeleteTstzspansetLogicalFunction.hpp>
+#endif /* RGEO */
+#if RGEO
 #include <Functions/Meos/TrgeometryAfterTimestamptzLogicalFunction.hpp>
+#endif /* RGEO */
+#if RGEO
 #include <Functions/Meos/TrgeometryBeforeTimestamptzLogicalFunction.hpp>
+#endif /* RGEO */
 #include <Plans/LogicalPlan.hpp>
 #include <Plans/LogicalPlanBuilder.hpp>
 #include <Util/Overloaded.hpp>
@@ -3682,7 +4442,8 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TGEO_MINUS_GEOM */
-        /* BEGIN CODEGEN PARSER GLUE: ECONTAINS_TCBUFFER_GEO */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: ECONTAINS_TCBUFFER_GEO */
         case AntlrSQLLexer::ECONTAINS_TCBUFFER_GEO:
         {
             const auto argCount = context->expression().size();
@@ -3710,8 +4471,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: ECONTAINS_TCBUFFER_GEO */
+#endif /* CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: ECOVERS_TCBUFFER_GEO */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: ECOVERS_TCBUFFER_GEO */
         case AntlrSQLLexer::ECOVERS_TCBUFFER_GEO:
         {
             const auto argCount = context->expression().size();
@@ -3739,8 +4502,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: ECOVERS_TCBUFFER_GEO */
+#endif /* CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: EDISJOINT_TCBUFFER_GEO */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: EDISJOINT_TCBUFFER_GEO */
         case AntlrSQLLexer::EDISJOINT_TCBUFFER_GEO:
         {
             const auto argCount = context->expression().size();
@@ -3768,8 +4533,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: EDISJOINT_TCBUFFER_GEO */
+#endif /* CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: EINTERSECTS_TCBUFFER_GEO */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: EINTERSECTS_TCBUFFER_GEO */
         case AntlrSQLLexer::EINTERSECTS_TCBUFFER_GEO:
         {
             const auto argCount = context->expression().size();
@@ -3797,8 +4564,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: EINTERSECTS_TCBUFFER_GEO */
+#endif /* CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: ETOUCHES_TCBUFFER_GEO */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: ETOUCHES_TCBUFFER_GEO */
         case AntlrSQLLexer::ETOUCHES_TCBUFFER_GEO:
         {
             const auto argCount = context->expression().size();
@@ -3826,8 +4595,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: ETOUCHES_TCBUFFER_GEO */
+#endif /* CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: ACONTAINS_TCBUFFER_GEO */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: ACONTAINS_TCBUFFER_GEO */
         case AntlrSQLLexer::ACONTAINS_TCBUFFER_GEO:
         {
             const auto argCount = context->expression().size();
@@ -3855,8 +4626,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: ACONTAINS_TCBUFFER_GEO */
+#endif /* CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: ACOVERS_TCBUFFER_GEO */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: ACOVERS_TCBUFFER_GEO */
         case AntlrSQLLexer::ACOVERS_TCBUFFER_GEO:
         {
             const auto argCount = context->expression().size();
@@ -3884,8 +4657,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: ACOVERS_TCBUFFER_GEO */
+#endif /* CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: ADISJOINT_TCBUFFER_GEO */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: ADISJOINT_TCBUFFER_GEO */
         case AntlrSQLLexer::ADISJOINT_TCBUFFER_GEO:
         {
             const auto argCount = context->expression().size();
@@ -3913,8 +4688,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: ADISJOINT_TCBUFFER_GEO */
+#endif /* CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: AINTERSECTS_TCBUFFER_GEO */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: AINTERSECTS_TCBUFFER_GEO */
         case AntlrSQLLexer::AINTERSECTS_TCBUFFER_GEO:
         {
             const auto argCount = context->expression().size();
@@ -3942,8 +4719,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: AINTERSECTS_TCBUFFER_GEO */
+#endif /* CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: ATOUCHES_TCBUFFER_GEO */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: ATOUCHES_TCBUFFER_GEO */
         case AntlrSQLLexer::ATOUCHES_TCBUFFER_GEO:
         {
             const auto argCount = context->expression().size();
@@ -3971,7 +4750,9 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: ATOUCHES_TCBUFFER_GEO */
-        /* BEGIN CODEGEN PARSER GLUE: ECONTAINS_TCBUFFER_CBUFFER */
+#endif /* CBUFFER */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: ECONTAINS_TCBUFFER_CBUFFER */
         case AntlrSQLLexer::ECONTAINS_TCBUFFER_CBUFFER:
         {
             const auto argCount = context->expression().size();
@@ -3999,8 +4780,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: ECONTAINS_TCBUFFER_CBUFFER */
+#endif /* CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: ECOVERS_TCBUFFER_CBUFFER */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: ECOVERS_TCBUFFER_CBUFFER */
         case AntlrSQLLexer::ECOVERS_TCBUFFER_CBUFFER:
         {
             const auto argCount = context->expression().size();
@@ -4028,8 +4811,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: ECOVERS_TCBUFFER_CBUFFER */
+#endif /* CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: EDISJOINT_TCBUFFER_CBUFFER */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: EDISJOINT_TCBUFFER_CBUFFER */
         case AntlrSQLLexer::EDISJOINT_TCBUFFER_CBUFFER:
         {
             const auto argCount = context->expression().size();
@@ -4057,8 +4842,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: EDISJOINT_TCBUFFER_CBUFFER */
+#endif /* CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: EINTERSECTS_TCBUFFER_CBUFFER */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: EINTERSECTS_TCBUFFER_CBUFFER */
         case AntlrSQLLexer::EINTERSECTS_TCBUFFER_CBUFFER:
         {
             const auto argCount = context->expression().size();
@@ -4086,8 +4873,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: EINTERSECTS_TCBUFFER_CBUFFER */
+#endif /* CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: ETOUCHES_TCBUFFER_CBUFFER */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: ETOUCHES_TCBUFFER_CBUFFER */
         case AntlrSQLLexer::ETOUCHES_TCBUFFER_CBUFFER:
         {
             const auto argCount = context->expression().size();
@@ -4115,8 +4904,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: ETOUCHES_TCBUFFER_CBUFFER */
+#endif /* CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: ACONTAINS_TCBUFFER_CBUFFER */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: ACONTAINS_TCBUFFER_CBUFFER */
         case AntlrSQLLexer::ACONTAINS_TCBUFFER_CBUFFER:
         {
             const auto argCount = context->expression().size();
@@ -4144,8 +4935,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: ACONTAINS_TCBUFFER_CBUFFER */
+#endif /* CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: ACOVERS_TCBUFFER_CBUFFER */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: ACOVERS_TCBUFFER_CBUFFER */
         case AntlrSQLLexer::ACOVERS_TCBUFFER_CBUFFER:
         {
             const auto argCount = context->expression().size();
@@ -4173,8 +4966,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: ACOVERS_TCBUFFER_CBUFFER */
+#endif /* CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: ADISJOINT_TCBUFFER_CBUFFER */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: ADISJOINT_TCBUFFER_CBUFFER */
         case AntlrSQLLexer::ADISJOINT_TCBUFFER_CBUFFER:
         {
             const auto argCount = context->expression().size();
@@ -4202,8 +4997,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: ADISJOINT_TCBUFFER_CBUFFER */
+#endif /* CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: AINTERSECTS_TCBUFFER_CBUFFER */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: AINTERSECTS_TCBUFFER_CBUFFER */
         case AntlrSQLLexer::AINTERSECTS_TCBUFFER_CBUFFER:
         {
             const auto argCount = context->expression().size();
@@ -4231,8 +5028,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: AINTERSECTS_TCBUFFER_CBUFFER */
+#endif /* CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: ATOUCHES_TCBUFFER_CBUFFER */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: ATOUCHES_TCBUFFER_CBUFFER */
         case AntlrSQLLexer::ATOUCHES_TCBUFFER_CBUFFER:
         {
             const auto argCount = context->expression().size();
@@ -4260,7 +5059,9 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: ATOUCHES_TCBUFFER_CBUFFER */
-        /* BEGIN CODEGEN PARSER GLUE: ADISJOINT_TCBUFFER_TCBUFFER */
+#endif /* CBUFFER */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: ADISJOINT_TCBUFFER_TCBUFFER */
         case AntlrSQLLexer::ADISJOINT_TCBUFFER_TCBUFFER:
         {
             const auto argCount = context->expression().size();
@@ -4281,8 +5082,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: ADISJOINT_TCBUFFER_TCBUFFER */
+#endif /* CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: AINTERSECTS_TCBUFFER_TCBUFFER */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: AINTERSECTS_TCBUFFER_TCBUFFER */
         case AntlrSQLLexer::AINTERSECTS_TCBUFFER_TCBUFFER:
         {
             const auto argCount = context->expression().size();
@@ -4303,8 +5106,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: AINTERSECTS_TCBUFFER_TCBUFFER */
+#endif /* CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: ATOUCHES_TCBUFFER_TCBUFFER */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: ATOUCHES_TCBUFFER_TCBUFFER */
         case AntlrSQLLexer::ATOUCHES_TCBUFFER_TCBUFFER:
         {
             const auto argCount = context->expression().size();
@@ -4325,8 +5130,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: ATOUCHES_TCBUFFER_TCBUFFER */
+#endif /* CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: ECOVERS_TCBUFFER_TCBUFFER */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: ECOVERS_TCBUFFER_TCBUFFER */
         case AntlrSQLLexer::ECOVERS_TCBUFFER_TCBUFFER:
         {
             const auto argCount = context->expression().size();
@@ -4347,8 +5154,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: ECOVERS_TCBUFFER_TCBUFFER */
+#endif /* CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: EINTERSECTS_TCBUFFER_TCBUFFER */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: EINTERSECTS_TCBUFFER_TCBUFFER */
         case AntlrSQLLexer::EINTERSECTS_TCBUFFER_TCBUFFER:
         {
             const auto argCount = context->expression().size();
@@ -4369,8 +5178,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: EINTERSECTS_TCBUFFER_TCBUFFER */
+#endif /* CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: ETOUCHES_TCBUFFER_TCBUFFER */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: ETOUCHES_TCBUFFER_TCBUFFER */
         case AntlrSQLLexer::ETOUCHES_TCBUFFER_TCBUFFER:
         {
             const auto argCount = context->expression().size();
@@ -4391,7 +5202,9 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: ETOUCHES_TCBUFFER_TCBUFFER */
-        /* BEGIN CODEGEN PARSER GLUE: EDWITHIN_TCBUFFER_GEO */
+#endif /* CBUFFER */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: EDWITHIN_TCBUFFER_GEO */
         case AntlrSQLLexer::EDWITHIN_TCBUFFER_GEO:
         {
             const auto argCount = context->expression().size();
@@ -4425,8 +5238,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: EDWITHIN_TCBUFFER_GEO */
+#endif /* CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: ADWITHIN_TCBUFFER_GEO */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: ADWITHIN_TCBUFFER_GEO */
         case AntlrSQLLexer::ADWITHIN_TCBUFFER_GEO:
         {
             const auto argCount = context->expression().size();
@@ -4460,8 +5275,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: ADWITHIN_TCBUFFER_GEO */
+#endif /* CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: EDWITHIN_TCBUFFER_CBUFFER */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: EDWITHIN_TCBUFFER_CBUFFER */
         case AntlrSQLLexer::EDWITHIN_TCBUFFER_CBUFFER:
         {
             const auto argCount = context->expression().size();
@@ -4495,8 +5312,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: EDWITHIN_TCBUFFER_CBUFFER */
+#endif /* CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: ADWITHIN_TCBUFFER_CBUFFER */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: ADWITHIN_TCBUFFER_CBUFFER */
         case AntlrSQLLexer::ADWITHIN_TCBUFFER_CBUFFER:
         {
             const auto argCount = context->expression().size();
@@ -4530,8 +5349,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: ADWITHIN_TCBUFFER_CBUFFER */
+#endif /* CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: EDWITHIN_TCBUFFER_TCBUFFER */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: EDWITHIN_TCBUFFER_TCBUFFER */
         case AntlrSQLLexer::EDWITHIN_TCBUFFER_TCBUFFER:
         {
             const auto argCount = context->expression().size();
@@ -4562,8 +5383,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: EDWITHIN_TCBUFFER_TCBUFFER */
+#endif /* CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: ADWITHIN_TCBUFFER_TCBUFFER */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: ADWITHIN_TCBUFFER_TCBUFFER */
         case AntlrSQLLexer::ADWITHIN_TCBUFFER_TCBUFFER:
         {
             const auto argCount = context->expression().size();
@@ -4594,6 +5417,7 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: ADWITHIN_TCBUFFER_TCBUFFER */
+#endif /* CBUFFER */
 
 
 
@@ -4637,7 +5461,8 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
 
 
 
-        /* BEGIN CODEGEN PARSER GLUE: NAD_TCBUFFER_GEO */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: NAD_TCBUFFER_GEO */
         case AntlrSQLLexer::NAD_TCBUFFER_GEO:
         {
             const auto argCount = context->expression().size();
@@ -4665,8 +5490,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: NAD_TCBUFFER_GEO */
+#endif /* CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: NAD_TCBUFFER_CBUFFER */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: NAD_TCBUFFER_CBUFFER */
         case AntlrSQLLexer::NAD_TCBUFFER_CBUFFER:
         {
             const auto argCount = context->expression().size();
@@ -4694,8 +5521,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: NAD_TCBUFFER_CBUFFER */
+#endif /* CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: NAD_TCBUFFER_TCBUFFER */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: NAD_TCBUFFER_TCBUFFER */
         case AntlrSQLLexer::NAD_TCBUFFER_TCBUFFER:
         {
             const auto argCount = context->expression().size();
@@ -4716,6 +5545,7 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: NAD_TCBUFFER_TCBUFFER */
+#endif /* CBUFFER */
         /* BEGIN CODEGEN PARSER GLUE: ALWAYS_EQ_TFLOAT_FLOAT */
         case AntlrSQLLexer::ALWAYS_EQ_TFLOAT_FLOAT:
         {
@@ -6466,7 +7296,8 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: EVER_NE_TEMPORAL_TEMPORAL */
-        /* BEGIN CODEGEN PARSER GLUE: ALWAYS_EQ_TCBUFFER_CBUFFER */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: ALWAYS_EQ_TCBUFFER_CBUFFER */
         case AntlrSQLLexer::ALWAYS_EQ_TCBUFFER_CBUFFER:
         {
             const auto argCount = context->expression().size();
@@ -6494,8 +7325,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: ALWAYS_EQ_TCBUFFER_CBUFFER */
+#endif /* CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: ALWAYS_EQ_TCBUFFER_TCBUFFER */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: ALWAYS_EQ_TCBUFFER_TCBUFFER */
         case AntlrSQLLexer::ALWAYS_EQ_TCBUFFER_TCBUFFER:
         {
             const auto argCount = context->expression().size();
@@ -6516,6 +7349,7 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: ALWAYS_EQ_TCBUFFER_TCBUFFER */
+#endif /* CBUFFER */
 
         /* BEGIN CODEGEN PARSER GLUE: ALWAYS_EQ_TGEO_GEO */
         case AntlrSQLLexer::ALWAYS_EQ_TGEO_GEO:
@@ -6565,7 +7399,8 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         break;
         /* END CODEGEN PARSER GLUE: ALWAYS_EQ_TGEO_TGEO */
 
-        /* BEGIN CODEGEN PARSER GLUE: ALWAYS_NE_TCBUFFER_CBUFFER */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: ALWAYS_NE_TCBUFFER_CBUFFER */
         case AntlrSQLLexer::ALWAYS_NE_TCBUFFER_CBUFFER:
         {
             const auto argCount = context->expression().size();
@@ -6593,8 +7428,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: ALWAYS_NE_TCBUFFER_CBUFFER */
+#endif /* CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: ALWAYS_NE_TCBUFFER_TCBUFFER */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: ALWAYS_NE_TCBUFFER_TCBUFFER */
         case AntlrSQLLexer::ALWAYS_NE_TCBUFFER_TCBUFFER:
         {
             const auto argCount = context->expression().size();
@@ -6615,6 +7452,7 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: ALWAYS_NE_TCBUFFER_TCBUFFER */
+#endif /* CBUFFER */
 
         /* BEGIN CODEGEN PARSER GLUE: ALWAYS_NE_TGEO_GEO */
         case AntlrSQLLexer::ALWAYS_NE_TGEO_GEO:
@@ -6720,7 +7558,8 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         break;
         /* END CODEGEN PARSER GLUE: ETOUCHES_TPOINT_GEO */
 
-        /* BEGIN CODEGEN PARSER GLUE: EVER_EQ_TCBUFFER_CBUFFER */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: EVER_EQ_TCBUFFER_CBUFFER */
         case AntlrSQLLexer::EVER_EQ_TCBUFFER_CBUFFER:
         {
             const auto argCount = context->expression().size();
@@ -6748,8 +7587,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: EVER_EQ_TCBUFFER_CBUFFER */
+#endif /* CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: EVER_EQ_TCBUFFER_TCBUFFER */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: EVER_EQ_TCBUFFER_TCBUFFER */
         case AntlrSQLLexer::EVER_EQ_TCBUFFER_TCBUFFER:
         {
             const auto argCount = context->expression().size();
@@ -6770,6 +7611,7 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: EVER_EQ_TCBUFFER_TCBUFFER */
+#endif /* CBUFFER */
 
         /* BEGIN CODEGEN PARSER GLUE: EVER_EQ_TGEO_GEO */
         case AntlrSQLLexer::EVER_EQ_TGEO_GEO:
@@ -6819,7 +7661,8 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         break;
         /* END CODEGEN PARSER GLUE: EVER_EQ_TGEO_TGEO */
 
-        /* BEGIN CODEGEN PARSER GLUE: EVER_NE_TCBUFFER_CBUFFER */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: EVER_NE_TCBUFFER_CBUFFER */
         case AntlrSQLLexer::EVER_NE_TCBUFFER_CBUFFER:
         {
             const auto argCount = context->expression().size();
@@ -6847,8 +7690,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: EVER_NE_TCBUFFER_CBUFFER */
+#endif /* CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: EVER_NE_TCBUFFER_TCBUFFER */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: EVER_NE_TCBUFFER_TCBUFFER */
         case AntlrSQLLexer::EVER_NE_TCBUFFER_TCBUFFER:
         {
             const auto argCount = context->expression().size();
@@ -6869,6 +7714,7 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: EVER_NE_TCBUFFER_TCBUFFER */
+#endif /* CBUFFER */
 
         /* BEGIN CODEGEN PARSER GLUE: EVER_NE_TGEO_GEO */
         case AntlrSQLLexer::EVER_NE_TGEO_GEO:
@@ -7299,7 +8145,8 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         break;
         /* END CODEGEN PARSER GLUE: LEFT_TSPATIAL_TSPATIAL */
 
-        /* BEGIN CODEGEN PARSER GLUE: NAD_TNPOINT_GEO */
+        #if NPOINT
+/* BEGIN CODEGEN PARSER GLUE: NAD_TNPOINT_GEO */
         case AntlrSQLLexer::NAD_TNPOINT_GEO:
         {
             const auto argCount = context->expression().size();
@@ -7329,8 +8176,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: NAD_TNPOINT_GEO */
+#endif /* NPOINT */
 
-        /* BEGIN CODEGEN PARSER GLUE: NAD_TPOSE_GEO */
+        #if POSE
+/* BEGIN CODEGEN PARSER GLUE: NAD_TPOSE_GEO */
         case AntlrSQLLexer::NAD_TPOSE_GEO:
         {
             const auto argCount = context->expression().size();
@@ -7361,6 +8210,7 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: NAD_TPOSE_GEO */
+#endif /* POSE */
 
         /* BEGIN CODEGEN PARSER GLUE: OVERABOVE_TSPATIAL_TSPATIAL */
         case AntlrSQLLexer::OVERABOVE_TSPATIAL_TSPATIAL:
@@ -7882,7 +8732,8 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         break;
         /* END CODEGEN PARSER GLUE: TEMPORAL_NE */
 
-        /* BEGIN CODEGEN PARSER GLUE: TNPOINT_LENGTH */
+        #if NPOINT
+/* BEGIN CODEGEN PARSER GLUE: TNPOINT_LENGTH */
         case AntlrSQLLexer::TNPOINT_LENGTH:
         {
             const auto argCount = context->expression().size();
@@ -7911,6 +8762,7 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TNPOINT_LENGTH */
+#endif /* NPOINT */
         /* BEGIN CODEGEN PARSER GLUE: TBOOL_TO_TINT */
         case AntlrSQLLexer::TBOOL_TO_TINT:
         {
@@ -7940,7 +8792,8 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         break;
         /* END CODEGEN PARSER GLUE: TBOOL_TO_TINT */
 
-        /* BEGIN CODEGEN PARSER GLUE: TCBUFFER_TO_TFLOAT */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: TCBUFFER_TO_TFLOAT */
         case AntlrSQLLexer::TCBUFFER_TO_TFLOAT:
         {
             const auto argCount = context->expression().size();
@@ -7970,6 +8823,7 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TCBUFFER_TO_TFLOAT */
+#endif /* CBUFFER */
 
         /* BEGIN CODEGEN PARSER GLUE: TFLOAT_CEIL */
         case AntlrSQLLexer::TFLOAT_CEIL:
@@ -8382,7 +9236,8 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         break;
         /* END CODEGEN PARSER GLUE: LEFT_TNUMBER_TBOX */
 
-        /* BEGIN CODEGEN PARSER GLUE: NAD_TCBUFFER_STBOX */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: NAD_TCBUFFER_STBOX */
         case AntlrSQLLexer::NAD_TCBUFFER_STBOX:
         {
             const auto argCount = context->expression().size();
@@ -8413,6 +9268,7 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: NAD_TCBUFFER_STBOX */
+#endif /* CBUFFER */
 
         /* BEGIN CODEGEN PARSER GLUE: NAD_TFLOAT_TBOX */
         case AntlrSQLLexer::NAD_TFLOAT_TBOX:
@@ -8505,7 +9361,8 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         break;
         /* END CODEGEN PARSER GLUE: NAD_TINT_TBOX */
 
-        /* BEGIN CODEGEN PARSER GLUE: NAD_TNPOINT_STBOX */
+        #if NPOINT
+/* BEGIN CODEGEN PARSER GLUE: NAD_TNPOINT_STBOX */
         case AntlrSQLLexer::NAD_TNPOINT_STBOX:
         {
             const auto argCount = context->expression().size();
@@ -8535,8 +9392,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: NAD_TNPOINT_STBOX */
+#endif /* NPOINT */
 
-        /* BEGIN CODEGEN PARSER GLUE: NAD_TPOSE_STBOX */
+        #if POSE
+/* BEGIN CODEGEN PARSER GLUE: NAD_TPOSE_STBOX */
         case AntlrSQLLexer::NAD_TPOSE_STBOX:
         {
             const auto argCount = context->expression().size();
@@ -8567,6 +9426,7 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: NAD_TPOSE_STBOX */
+#endif /* POSE */
 
         /* BEGIN CODEGEN PARSER GLUE: OVERAFTER_TNUMBER_TBOX */
         case AntlrSQLLexer::OVERAFTER_TNUMBER_TBOX:
@@ -11471,7 +12331,8 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: SAME_TNUMBER_TNUMBER */
-        /* BEGIN CODEGEN PARSER GLUE: ALWAYS_EQ_TNPOINT_TNPOINT */
+        #if NPOINT
+/* BEGIN CODEGEN PARSER GLUE: ALWAYS_EQ_TNPOINT_TNPOINT */
         case AntlrSQLLexer::ALWAYS_EQ_TNPOINT_TNPOINT:
         {
             const auto argCount = context->expression().size();
@@ -11499,8 +12360,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: ALWAYS_EQ_TNPOINT_TNPOINT */
+#endif /* NPOINT */
 
-        /* BEGIN CODEGEN PARSER GLUE: ALWAYS_EQ_TPOSE_TPOSE */
+        #if POSE
+/* BEGIN CODEGEN PARSER GLUE: ALWAYS_EQ_TPOSE_TPOSE */
         case AntlrSQLLexer::ALWAYS_EQ_TPOSE_TPOSE:
         {
             const auto argCount = context->expression().size();
@@ -11528,8 +12391,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: ALWAYS_EQ_TPOSE_TPOSE */
+#endif /* POSE */
 
-        /* BEGIN CODEGEN PARSER GLUE: ALWAYS_NE_TNPOINT_TNPOINT */
+        #if NPOINT
+/* BEGIN CODEGEN PARSER GLUE: ALWAYS_NE_TNPOINT_TNPOINT */
         case AntlrSQLLexer::ALWAYS_NE_TNPOINT_TNPOINT:
         {
             const auto argCount = context->expression().size();
@@ -11557,8 +12422,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: ALWAYS_NE_TNPOINT_TNPOINT */
+#endif /* NPOINT */
 
-        /* BEGIN CODEGEN PARSER GLUE: ALWAYS_NE_TPOSE_TPOSE */
+        #if POSE
+/* BEGIN CODEGEN PARSER GLUE: ALWAYS_NE_TPOSE_TPOSE */
         case AntlrSQLLexer::ALWAYS_NE_TPOSE_TPOSE:
         {
             const auto argCount = context->expression().size();
@@ -11586,8 +12453,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: ALWAYS_NE_TPOSE_TPOSE */
+#endif /* POSE */
 
-        /* BEGIN CODEGEN PARSER GLUE: EVER_EQ_TNPOINT_TNPOINT */
+        #if NPOINT
+/* BEGIN CODEGEN PARSER GLUE: EVER_EQ_TNPOINT_TNPOINT */
         case AntlrSQLLexer::EVER_EQ_TNPOINT_TNPOINT:
         {
             const auto argCount = context->expression().size();
@@ -11615,8 +12484,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: EVER_EQ_TNPOINT_TNPOINT */
+#endif /* NPOINT */
 
-        /* BEGIN CODEGEN PARSER GLUE: EVER_EQ_TPOSE_TPOSE */
+        #if POSE
+/* BEGIN CODEGEN PARSER GLUE: EVER_EQ_TPOSE_TPOSE */
         case AntlrSQLLexer::EVER_EQ_TPOSE_TPOSE:
         {
             const auto argCount = context->expression().size();
@@ -11644,8 +12515,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: EVER_EQ_TPOSE_TPOSE */
+#endif /* POSE */
 
-        /* BEGIN CODEGEN PARSER GLUE: EVER_NE_TNPOINT_TNPOINT */
+        #if NPOINT
+/* BEGIN CODEGEN PARSER GLUE: EVER_NE_TNPOINT_TNPOINT */
         case AntlrSQLLexer::EVER_NE_TNPOINT_TNPOINT:
         {
             const auto argCount = context->expression().size();
@@ -11673,8 +12546,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: EVER_NE_TNPOINT_TNPOINT */
+#endif /* NPOINT */
 
-        /* BEGIN CODEGEN PARSER GLUE: EVER_NE_TPOSE_TPOSE */
+        #if POSE
+/* BEGIN CODEGEN PARSER GLUE: EVER_NE_TPOSE_TPOSE */
         case AntlrSQLLexer::EVER_NE_TPOSE_TPOSE:
         {
             const auto argCount = context->expression().size();
@@ -11702,8 +12577,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: EVER_NE_TPOSE_TPOSE */
+#endif /* POSE */
 
-        /* BEGIN CODEGEN PARSER GLUE: NAD_TNPOINT_TNPOINT */
+        #if NPOINT
+/* BEGIN CODEGEN PARSER GLUE: NAD_TNPOINT_TNPOINT */
         case AntlrSQLLexer::NAD_TNPOINT_TNPOINT:
         {
             const auto argCount = context->expression().size();
@@ -11731,8 +12608,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: NAD_TNPOINT_TNPOINT */
+#endif /* NPOINT */
 
-        /* BEGIN CODEGEN PARSER GLUE: NAD_TPOSE_TPOSE */
+        #if POSE
+/* BEGIN CODEGEN PARSER GLUE: NAD_TPOSE_TPOSE */
         case AntlrSQLLexer::NAD_TPOSE_TPOSE:
         {
             const auto argCount = context->expression().size();
@@ -11760,6 +12639,7 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: NAD_TPOSE_TPOSE */
+#endif /* POSE */
         /* BEGIN CODEGEN PARSER GLUE: ADD_TNUMBER_TNUMBER */
         case AntlrSQLLexer::ADD_TNUMBER_TNUMBER:
         {
@@ -11876,7 +12756,8 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         break;
         /* END CODEGEN PARSER GLUE: SUB_TNUMBER_TNUMBER */
 
-        /* BEGIN CODEGEN PARSER GLUE: TCONTAINS_TCBUFFER_TCBUFFER */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: TCONTAINS_TCBUFFER_TCBUFFER */
         case AntlrSQLLexer::TCONTAINS_TCBUFFER_TCBUFFER:
         {
             const auto argCount = context->expression().size();
@@ -11904,6 +12785,7 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TCONTAINS_TCBUFFER_TCBUFFER */
+#endif /* CBUFFER */
 
         /* BEGIN CODEGEN PARSER GLUE: TCONTAINS_TGEO_TGEO */
         case AntlrSQLLexer::TCONTAINS_TGEO_TGEO:
@@ -11934,7 +12816,8 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         break;
         /* END CODEGEN PARSER GLUE: TCONTAINS_TGEO_TGEO */
 
-        /* BEGIN CODEGEN PARSER GLUE: TCOVERS_TCBUFFER_TCBUFFER */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: TCOVERS_TCBUFFER_TCBUFFER */
         case AntlrSQLLexer::TCOVERS_TCBUFFER_TCBUFFER:
         {
             const auto argCount = context->expression().size();
@@ -11962,6 +12845,7 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TCOVERS_TCBUFFER_TCBUFFER */
+#endif /* CBUFFER */
 
         /* BEGIN CODEGEN PARSER GLUE: TCOVERS_TGEO_TGEO */
         case AntlrSQLLexer::TCOVERS_TGEO_TGEO:
@@ -11992,7 +12876,8 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         break;
         /* END CODEGEN PARSER GLUE: TCOVERS_TGEO_TGEO */
 
-        /* BEGIN CODEGEN PARSER GLUE: TDISTANCE_TCBUFFER_TCBUFFER */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: TDISTANCE_TCBUFFER_TCBUFFER */
         case AntlrSQLLexer::TDISTANCE_TCBUFFER_TCBUFFER:
         {
             const auto argCount = context->expression().size();
@@ -12020,6 +12905,7 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TDISTANCE_TCBUFFER_TCBUFFER */
+#endif /* CBUFFER */
 
         /* BEGIN CODEGEN PARSER GLUE: TDISTANCE_TGEO_TGEO */
         case AntlrSQLLexer::TDISTANCE_TGEO_TGEO:
@@ -12050,7 +12936,8 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         break;
         /* END CODEGEN PARSER GLUE: TDISTANCE_TGEO_TGEO */
 
-        /* BEGIN CODEGEN PARSER GLUE: TDISTANCE_TNPOINT_TNPOINT */
+        #if NPOINT
+/* BEGIN CODEGEN PARSER GLUE: TDISTANCE_TNPOINT_TNPOINT */
         case AntlrSQLLexer::TDISTANCE_TNPOINT_TNPOINT:
         {
             const auto argCount = context->expression().size();
@@ -12078,6 +12965,7 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TDISTANCE_TNPOINT_TNPOINT */
+#endif /* NPOINT */
 
         /* BEGIN CODEGEN PARSER GLUE: TDISTANCE_TNUMBER_TNUMBER */
         case AntlrSQLLexer::TDISTANCE_TNUMBER_TNUMBER:
@@ -12108,7 +12996,8 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         break;
         /* END CODEGEN PARSER GLUE: TDISTANCE_TNUMBER_TNUMBER */
 
-        /* BEGIN CODEGEN PARSER GLUE: TDISTANCE_TPOSE_TPOSE */
+        #if POSE
+/* BEGIN CODEGEN PARSER GLUE: TDISTANCE_TPOSE_TPOSE */
         case AntlrSQLLexer::TDISTANCE_TPOSE_TPOSE:
         {
             const auto argCount = context->expression().size();
@@ -12136,6 +13025,7 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TDISTANCE_TPOSE_TPOSE */
+#endif /* POSE */
         /* BEGIN CODEGEN PARSER GLUE: CONTAINS_SPAN_SPAN */
         case AntlrSQLLexer::CONTAINS_SPAN_SPAN:
         {
@@ -21344,7 +22234,8 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: SPANSET_NUM_SPANS */
-        /* BEGIN CODEGEN PARSER GLUE: CBUFFER_CMP */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: CBUFFER_CMP */
         case AntlrSQLLexer::CBUFFER_CMP:
         {
             const auto argCount = context->expression().size();
@@ -21372,8 +22263,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: CBUFFER_CMP */
+#endif /* CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: CBUFFER_EQ */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: CBUFFER_EQ */
         case AntlrSQLLexer::CBUFFER_EQ:
         {
             const auto argCount = context->expression().size();
@@ -21401,8 +22294,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: CBUFFER_EQ */
+#endif /* CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: CBUFFER_GE */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: CBUFFER_GE */
         case AntlrSQLLexer::CBUFFER_GE:
         {
             const auto argCount = context->expression().size();
@@ -21430,8 +22325,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: CBUFFER_GE */
+#endif /* CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: CBUFFER_GT */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: CBUFFER_GT */
         case AntlrSQLLexer::CBUFFER_GT:
         {
             const auto argCount = context->expression().size();
@@ -21459,8 +22356,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: CBUFFER_GT */
+#endif /* CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: CBUFFER_LE */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: CBUFFER_LE */
         case AntlrSQLLexer::CBUFFER_LE:
         {
             const auto argCount = context->expression().size();
@@ -21488,8 +22387,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: CBUFFER_LE */
+#endif /* CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: CBUFFER_LT */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: CBUFFER_LT */
         case AntlrSQLLexer::CBUFFER_LT:
         {
             const auto argCount = context->expression().size();
@@ -21517,8 +22418,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: CBUFFER_LT */
+#endif /* CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: CBUFFER_NE */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: CBUFFER_NE */
         case AntlrSQLLexer::CBUFFER_NE:
         {
             const auto argCount = context->expression().size();
@@ -21546,8 +22449,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: CBUFFER_NE */
+#endif /* CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: CBUFFER_NSAME */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: CBUFFER_NSAME */
         case AntlrSQLLexer::CBUFFER_NSAME:
         {
             const auto argCount = context->expression().size();
@@ -21575,8 +22480,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: CBUFFER_NSAME */
+#endif /* CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: CBUFFER_SAME */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: CBUFFER_SAME */
         case AntlrSQLLexer::CBUFFER_SAME:
         {
             const auto argCount = context->expression().size();
@@ -21604,8 +22511,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: CBUFFER_SAME */
+#endif /* CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: CONTAINS_CBUFFER_CBUFFER */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: CONTAINS_CBUFFER_CBUFFER */
         case AntlrSQLLexer::CONTAINS_CBUFFER_CBUFFER:
         {
             const auto argCount = context->expression().size();
@@ -21633,8 +22542,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: CONTAINS_CBUFFER_CBUFFER */
+#endif /* CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: COVERS_CBUFFER_CBUFFER */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: COVERS_CBUFFER_CBUFFER */
         case AntlrSQLLexer::COVERS_CBUFFER_CBUFFER:
         {
             const auto argCount = context->expression().size();
@@ -21662,8 +22573,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: COVERS_CBUFFER_CBUFFER */
+#endif /* CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: DISJOINT_CBUFFER_CBUFFER */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: DISJOINT_CBUFFER_CBUFFER */
         case AntlrSQLLexer::DISJOINT_CBUFFER_CBUFFER:
         {
             const auto argCount = context->expression().size();
@@ -21691,8 +22604,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: DISJOINT_CBUFFER_CBUFFER */
+#endif /* CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: INTERSECTS_CBUFFER_CBUFFER */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: INTERSECTS_CBUFFER_CBUFFER */
         case AntlrSQLLexer::INTERSECTS_CBUFFER_CBUFFER:
         {
             const auto argCount = context->expression().size();
@@ -21720,8 +22635,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: INTERSECTS_CBUFFER_CBUFFER */
+#endif /* CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: NPOINT_CMP */
+        #if NPOINT
+/* BEGIN CODEGEN PARSER GLUE: NPOINT_CMP */
         case AntlrSQLLexer::NPOINT_CMP:
         {
             const auto argCount = context->expression().size();
@@ -21749,8 +22666,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: NPOINT_CMP */
+#endif /* NPOINT */
 
-        /* BEGIN CODEGEN PARSER GLUE: NPOINT_EQ */
+        #if NPOINT
+/* BEGIN CODEGEN PARSER GLUE: NPOINT_EQ */
         case AntlrSQLLexer::NPOINT_EQ:
         {
             const auto argCount = context->expression().size();
@@ -21778,8 +22697,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: NPOINT_EQ */
+#endif /* NPOINT */
 
-        /* BEGIN CODEGEN PARSER GLUE: NPOINT_GE */
+        #if NPOINT
+/* BEGIN CODEGEN PARSER GLUE: NPOINT_GE */
         case AntlrSQLLexer::NPOINT_GE:
         {
             const auto argCount = context->expression().size();
@@ -21807,8 +22728,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: NPOINT_GE */
+#endif /* NPOINT */
 
-        /* BEGIN CODEGEN PARSER GLUE: NPOINT_GT */
+        #if NPOINT
+/* BEGIN CODEGEN PARSER GLUE: NPOINT_GT */
         case AntlrSQLLexer::NPOINT_GT:
         {
             const auto argCount = context->expression().size();
@@ -21836,8 +22759,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: NPOINT_GT */
+#endif /* NPOINT */
 
-        /* BEGIN CODEGEN PARSER GLUE: NPOINT_LE */
+        #if NPOINT
+/* BEGIN CODEGEN PARSER GLUE: NPOINT_LE */
         case AntlrSQLLexer::NPOINT_LE:
         {
             const auto argCount = context->expression().size();
@@ -21865,8 +22790,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: NPOINT_LE */
+#endif /* NPOINT */
 
-        /* BEGIN CODEGEN PARSER GLUE: NPOINT_LT */
+        #if NPOINT
+/* BEGIN CODEGEN PARSER GLUE: NPOINT_LT */
         case AntlrSQLLexer::NPOINT_LT:
         {
             const auto argCount = context->expression().size();
@@ -21894,8 +22821,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: NPOINT_LT */
+#endif /* NPOINT */
 
-        /* BEGIN CODEGEN PARSER GLUE: NPOINT_NE */
+        #if NPOINT
+/* BEGIN CODEGEN PARSER GLUE: NPOINT_NE */
         case AntlrSQLLexer::NPOINT_NE:
         {
             const auto argCount = context->expression().size();
@@ -21923,8 +22852,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: NPOINT_NE */
+#endif /* NPOINT */
 
-        /* BEGIN CODEGEN PARSER GLUE: NPOINT_SAME */
+        #if NPOINT
+/* BEGIN CODEGEN PARSER GLUE: NPOINT_SAME */
         case AntlrSQLLexer::NPOINT_SAME:
         {
             const auto argCount = context->expression().size();
@@ -21952,8 +22883,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: NPOINT_SAME */
+#endif /* NPOINT */
 
-        /* BEGIN CODEGEN PARSER GLUE: NSEGMENT_CMP */
+        #if NPOINT
+/* BEGIN CODEGEN PARSER GLUE: NSEGMENT_CMP */
         case AntlrSQLLexer::NSEGMENT_CMP:
         {
             const auto argCount = context->expression().size();
@@ -21981,8 +22914,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: NSEGMENT_CMP */
+#endif /* NPOINT */
 
-        /* BEGIN CODEGEN PARSER GLUE: NSEGMENT_EQ */
+        #if NPOINT
+/* BEGIN CODEGEN PARSER GLUE: NSEGMENT_EQ */
         case AntlrSQLLexer::NSEGMENT_EQ:
         {
             const auto argCount = context->expression().size();
@@ -22010,8 +22945,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: NSEGMENT_EQ */
+#endif /* NPOINT */
 
-        /* BEGIN CODEGEN PARSER GLUE: NSEGMENT_GE */
+        #if NPOINT
+/* BEGIN CODEGEN PARSER GLUE: NSEGMENT_GE */
         case AntlrSQLLexer::NSEGMENT_GE:
         {
             const auto argCount = context->expression().size();
@@ -22039,8 +22976,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: NSEGMENT_GE */
+#endif /* NPOINT */
 
-        /* BEGIN CODEGEN PARSER GLUE: NSEGMENT_GT */
+        #if NPOINT
+/* BEGIN CODEGEN PARSER GLUE: NSEGMENT_GT */
         case AntlrSQLLexer::NSEGMENT_GT:
         {
             const auto argCount = context->expression().size();
@@ -22068,8 +23007,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: NSEGMENT_GT */
+#endif /* NPOINT */
 
-        /* BEGIN CODEGEN PARSER GLUE: NSEGMENT_LE */
+        #if NPOINT
+/* BEGIN CODEGEN PARSER GLUE: NSEGMENT_LE */
         case AntlrSQLLexer::NSEGMENT_LE:
         {
             const auto argCount = context->expression().size();
@@ -22097,8 +23038,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: NSEGMENT_LE */
+#endif /* NPOINT */
 
-        /* BEGIN CODEGEN PARSER GLUE: NSEGMENT_LT */
+        #if NPOINT
+/* BEGIN CODEGEN PARSER GLUE: NSEGMENT_LT */
         case AntlrSQLLexer::NSEGMENT_LT:
         {
             const auto argCount = context->expression().size();
@@ -22126,8 +23069,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: NSEGMENT_LT */
+#endif /* NPOINT */
 
-        /* BEGIN CODEGEN PARSER GLUE: NSEGMENT_NE */
+        #if NPOINT
+/* BEGIN CODEGEN PARSER GLUE: NSEGMENT_NE */
         case AntlrSQLLexer::NSEGMENT_NE:
         {
             const auto argCount = context->expression().size();
@@ -22155,8 +23100,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: NSEGMENT_NE */
+#endif /* NPOINT */
 
-        /* BEGIN CODEGEN PARSER GLUE: POSE_CMP */
+        #if POSE
+/* BEGIN CODEGEN PARSER GLUE: POSE_CMP */
         case AntlrSQLLexer::POSE_CMP:
         {
             const auto argCount = context->expression().size();
@@ -22184,8 +23131,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: POSE_CMP */
+#endif /* POSE */
 
-        /* BEGIN CODEGEN PARSER GLUE: POSE_EQ */
+        #if POSE
+/* BEGIN CODEGEN PARSER GLUE: POSE_EQ */
         case AntlrSQLLexer::POSE_EQ:
         {
             const auto argCount = context->expression().size();
@@ -22213,8 +23162,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: POSE_EQ */
+#endif /* POSE */
 
-        /* BEGIN CODEGEN PARSER GLUE: POSE_GE */
+        #if POSE
+/* BEGIN CODEGEN PARSER GLUE: POSE_GE */
         case AntlrSQLLexer::POSE_GE:
         {
             const auto argCount = context->expression().size();
@@ -22242,8 +23193,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: POSE_GE */
+#endif /* POSE */
 
-        /* BEGIN CODEGEN PARSER GLUE: POSE_GT */
+        #if POSE
+/* BEGIN CODEGEN PARSER GLUE: POSE_GT */
         case AntlrSQLLexer::POSE_GT:
         {
             const auto argCount = context->expression().size();
@@ -22271,8 +23224,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: POSE_GT */
+#endif /* POSE */
 
-        /* BEGIN CODEGEN PARSER GLUE: POSE_LE */
+        #if POSE
+/* BEGIN CODEGEN PARSER GLUE: POSE_LE */
         case AntlrSQLLexer::POSE_LE:
         {
             const auto argCount = context->expression().size();
@@ -22300,8 +23255,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: POSE_LE */
+#endif /* POSE */
 
-        /* BEGIN CODEGEN PARSER GLUE: POSE_LT */
+        #if POSE
+/* BEGIN CODEGEN PARSER GLUE: POSE_LT */
         case AntlrSQLLexer::POSE_LT:
         {
             const auto argCount = context->expression().size();
@@ -22329,8 +23286,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: POSE_LT */
+#endif /* POSE */
 
-        /* BEGIN CODEGEN PARSER GLUE: POSE_NE */
+        #if POSE
+/* BEGIN CODEGEN PARSER GLUE: POSE_NE */
         case AntlrSQLLexer::POSE_NE:
         {
             const auto argCount = context->expression().size();
@@ -22358,8 +23317,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: POSE_NE */
+#endif /* POSE */
 
-        /* BEGIN CODEGEN PARSER GLUE: POSE_NSAME */
+        #if POSE
+/* BEGIN CODEGEN PARSER GLUE: POSE_NSAME */
         case AntlrSQLLexer::POSE_NSAME:
         {
             const auto argCount = context->expression().size();
@@ -22387,8 +23348,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: POSE_NSAME */
+#endif /* POSE */
 
-        /* BEGIN CODEGEN PARSER GLUE: POSE_SAME */
+        #if POSE
+/* BEGIN CODEGEN PARSER GLUE: POSE_SAME */
         case AntlrSQLLexer::POSE_SAME:
         {
             const auto argCount = context->expression().size();
@@ -22416,8 +23379,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: POSE_SAME */
+#endif /* POSE */
 
-        /* BEGIN CODEGEN PARSER GLUE: TOUCHES_CBUFFER_CBUFFER */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: TOUCHES_CBUFFER_CBUFFER */
         case AntlrSQLLexer::TOUCHES_CBUFFER_CBUFFER:
         {
             const auto argCount = context->expression().size();
@@ -22445,6 +23410,7 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TOUCHES_CBUFFER_CBUFFER */
+#endif /* CBUFFER */
         /* BEGIN CODEGEN PARSER GLUE: ADJACENT_SPAN_BIGINT */
         case AntlrSQLLexer::ADJACENT_SPAN_BIGINT:
         {
@@ -22761,7 +23727,8 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         break;
         /* END CODEGEN PARSER GLUE: DISTANCE_BIGINTSPANSET_BIGINTSPANSET */
 
-        /* BEGIN CODEGEN PARSER GLUE: DISTANCE_CBUFFER_CBUFFER */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: DISTANCE_CBUFFER_CBUFFER */
         case AntlrSQLLexer::DISTANCE_CBUFFER_CBUFFER:
         {
             const auto argCount = context->expression().size();
@@ -22789,6 +23756,7 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: DISTANCE_CBUFFER_CBUFFER */
+#endif /* CBUFFER */
 
         /* BEGIN CODEGEN PARSER GLUE: DISTANCE_DATESET_DATESET */
         case AntlrSQLLexer::DISTANCE_DATESET_DATESET:
@@ -23138,7 +24106,8 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         break;
         /* END CODEGEN PARSER GLUE: DISTANCE_INTSPANSET_INTSPANSET */
 
-        /* BEGIN CODEGEN PARSER GLUE: DISTANCE_POSE_POSE */
+        #if POSE
+/* BEGIN CODEGEN PARSER GLUE: DISTANCE_POSE_POSE */
         case AntlrSQLLexer::DISTANCE_POSE_POSE:
         {
             const auto argCount = context->expression().size();
@@ -23166,6 +24135,7 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: DISTANCE_POSE_POSE */
+#endif /* POSE */
 
         /* BEGIN CODEGEN PARSER GLUE: DISTANCE_SET_BIGINT */
         case AntlrSQLLexer::DISTANCE_SET_BIGINT:
@@ -25730,7 +26700,8 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         break;
         /* END CODEGEN PARSER GLUE: ALWAYS_EQ_BOOL_TBOOL */
 
-        /* BEGIN CODEGEN PARSER GLUE: ALWAYS_EQ_CBUFFER_TCBUFFER */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: ALWAYS_EQ_CBUFFER_TCBUFFER */
         case AntlrSQLLexer::ALWAYS_EQ_CBUFFER_TCBUFFER:
         {
             const auto argCount = context->expression().size();
@@ -25761,8 +26732,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: ALWAYS_EQ_CBUFFER_TCBUFFER */
+#endif /* CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: ALWAYS_EQ_NPOINT_TNPOINT */
+        #if NPOINT
+/* BEGIN CODEGEN PARSER GLUE: ALWAYS_EQ_NPOINT_TNPOINT */
         case AntlrSQLLexer::ALWAYS_EQ_NPOINT_TNPOINT:
         {
             const auto argCount = context->expression().size();
@@ -25792,8 +26765,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: ALWAYS_EQ_NPOINT_TNPOINT */
+#endif /* NPOINT */
 
-        /* BEGIN CODEGEN PARSER GLUE: ALWAYS_EQ_POSE_TPOSE */
+        #if POSE
+/* BEGIN CODEGEN PARSER GLUE: ALWAYS_EQ_POSE_TPOSE */
         case AntlrSQLLexer::ALWAYS_EQ_POSE_TPOSE:
         {
             const auto argCount = context->expression().size();
@@ -25824,8 +26799,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: ALWAYS_EQ_POSE_TPOSE */
+#endif /* POSE */
 
-        /* BEGIN CODEGEN PARSER GLUE: ALWAYS_EQ_TNPOINT_NPOINT */
+        #if NPOINT
+/* BEGIN CODEGEN PARSER GLUE: ALWAYS_EQ_TNPOINT_NPOINT */
         case AntlrSQLLexer::ALWAYS_EQ_TNPOINT_NPOINT:
         {
             const auto argCount = context->expression().size();
@@ -25855,8 +26832,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: ALWAYS_EQ_TNPOINT_NPOINT */
+#endif /* NPOINT */
 
-        /* BEGIN CODEGEN PARSER GLUE: ALWAYS_EQ_TPOSE_POSE */
+        #if POSE
+/* BEGIN CODEGEN PARSER GLUE: ALWAYS_EQ_TPOSE_POSE */
         case AntlrSQLLexer::ALWAYS_EQ_TPOSE_POSE:
         {
             const auto argCount = context->expression().size();
@@ -25887,6 +26866,7 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: ALWAYS_EQ_TPOSE_POSE */
+#endif /* POSE */
 
         /* BEGIN CODEGEN PARSER GLUE: ALWAYS_NE_BOOL_TBOOL */
         case AntlrSQLLexer::ALWAYS_NE_BOOL_TBOOL:
@@ -25918,7 +26898,8 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         break;
         /* END CODEGEN PARSER GLUE: ALWAYS_NE_BOOL_TBOOL */
 
-        /* BEGIN CODEGEN PARSER GLUE: ALWAYS_NE_CBUFFER_TCBUFFER */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: ALWAYS_NE_CBUFFER_TCBUFFER */
         case AntlrSQLLexer::ALWAYS_NE_CBUFFER_TCBUFFER:
         {
             const auto argCount = context->expression().size();
@@ -25949,8 +26930,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: ALWAYS_NE_CBUFFER_TCBUFFER */
+#endif /* CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: ALWAYS_NE_NPOINT_TNPOINT */
+        #if NPOINT
+/* BEGIN CODEGEN PARSER GLUE: ALWAYS_NE_NPOINT_TNPOINT */
         case AntlrSQLLexer::ALWAYS_NE_NPOINT_TNPOINT:
         {
             const auto argCount = context->expression().size();
@@ -25980,8 +26963,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: ALWAYS_NE_NPOINT_TNPOINT */
+#endif /* NPOINT */
 
-        /* BEGIN CODEGEN PARSER GLUE: ALWAYS_NE_POSE_TPOSE */
+        #if POSE
+/* BEGIN CODEGEN PARSER GLUE: ALWAYS_NE_POSE_TPOSE */
         case AntlrSQLLexer::ALWAYS_NE_POSE_TPOSE:
         {
             const auto argCount = context->expression().size();
@@ -26012,8 +26997,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: ALWAYS_NE_POSE_TPOSE */
+#endif /* POSE */
 
-        /* BEGIN CODEGEN PARSER GLUE: ALWAYS_NE_TNPOINT_NPOINT */
+        #if NPOINT
+/* BEGIN CODEGEN PARSER GLUE: ALWAYS_NE_TNPOINT_NPOINT */
         case AntlrSQLLexer::ALWAYS_NE_TNPOINT_NPOINT:
         {
             const auto argCount = context->expression().size();
@@ -26043,8 +27030,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: ALWAYS_NE_TNPOINT_NPOINT */
+#endif /* NPOINT */
 
-        /* BEGIN CODEGEN PARSER GLUE: ALWAYS_NE_TPOSE_POSE */
+        #if POSE
+/* BEGIN CODEGEN PARSER GLUE: ALWAYS_NE_TPOSE_POSE */
         case AntlrSQLLexer::ALWAYS_NE_TPOSE_POSE:
         {
             const auto argCount = context->expression().size();
@@ -26075,6 +27064,7 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: ALWAYS_NE_TPOSE_POSE */
+#endif /* POSE */
 
         /* BEGIN CODEGEN PARSER GLUE: EVER_EQ_BOOL_TBOOL */
         case AntlrSQLLexer::EVER_EQ_BOOL_TBOOL:
@@ -26106,7 +27096,8 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         break;
         /* END CODEGEN PARSER GLUE: EVER_EQ_BOOL_TBOOL */
 
-        /* BEGIN CODEGEN PARSER GLUE: EVER_EQ_CBUFFER_TCBUFFER */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: EVER_EQ_CBUFFER_TCBUFFER */
         case AntlrSQLLexer::EVER_EQ_CBUFFER_TCBUFFER:
         {
             const auto argCount = context->expression().size();
@@ -26137,8 +27128,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: EVER_EQ_CBUFFER_TCBUFFER */
+#endif /* CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: EVER_EQ_NPOINT_TNPOINT */
+        #if NPOINT
+/* BEGIN CODEGEN PARSER GLUE: EVER_EQ_NPOINT_TNPOINT */
         case AntlrSQLLexer::EVER_EQ_NPOINT_TNPOINT:
         {
             const auto argCount = context->expression().size();
@@ -26168,8 +27161,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: EVER_EQ_NPOINT_TNPOINT */
+#endif /* NPOINT */
 
-        /* BEGIN CODEGEN PARSER GLUE: EVER_EQ_POSE_TPOSE */
+        #if POSE
+/* BEGIN CODEGEN PARSER GLUE: EVER_EQ_POSE_TPOSE */
         case AntlrSQLLexer::EVER_EQ_POSE_TPOSE:
         {
             const auto argCount = context->expression().size();
@@ -26200,8 +27195,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: EVER_EQ_POSE_TPOSE */
+#endif /* POSE */
 
-        /* BEGIN CODEGEN PARSER GLUE: EVER_EQ_TNPOINT_NPOINT */
+        #if NPOINT
+/* BEGIN CODEGEN PARSER GLUE: EVER_EQ_TNPOINT_NPOINT */
         case AntlrSQLLexer::EVER_EQ_TNPOINT_NPOINT:
         {
             const auto argCount = context->expression().size();
@@ -26231,8 +27228,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: EVER_EQ_TNPOINT_NPOINT */
+#endif /* NPOINT */
 
-        /* BEGIN CODEGEN PARSER GLUE: EVER_EQ_TPOSE_POSE */
+        #if POSE
+/* BEGIN CODEGEN PARSER GLUE: EVER_EQ_TPOSE_POSE */
         case AntlrSQLLexer::EVER_EQ_TPOSE_POSE:
         {
             const auto argCount = context->expression().size();
@@ -26263,6 +27262,7 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: EVER_EQ_TPOSE_POSE */
+#endif /* POSE */
 
         /* BEGIN CODEGEN PARSER GLUE: EVER_NE_BOOL_TBOOL */
         case AntlrSQLLexer::EVER_NE_BOOL_TBOOL:
@@ -26294,7 +27294,8 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         break;
         /* END CODEGEN PARSER GLUE: EVER_NE_BOOL_TBOOL */
 
-        /* BEGIN CODEGEN PARSER GLUE: EVER_NE_CBUFFER_TCBUFFER */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: EVER_NE_CBUFFER_TCBUFFER */
         case AntlrSQLLexer::EVER_NE_CBUFFER_TCBUFFER:
         {
             const auto argCount = context->expression().size();
@@ -26325,8 +27326,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: EVER_NE_CBUFFER_TCBUFFER */
+#endif /* CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: EVER_NE_NPOINT_TNPOINT */
+        #if NPOINT
+/* BEGIN CODEGEN PARSER GLUE: EVER_NE_NPOINT_TNPOINT */
         case AntlrSQLLexer::EVER_NE_NPOINT_TNPOINT:
         {
             const auto argCount = context->expression().size();
@@ -26356,8 +27359,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: EVER_NE_NPOINT_TNPOINT */
+#endif /* NPOINT */
 
-        /* BEGIN CODEGEN PARSER GLUE: EVER_NE_POSE_TPOSE */
+        #if POSE
+/* BEGIN CODEGEN PARSER GLUE: EVER_NE_POSE_TPOSE */
         case AntlrSQLLexer::EVER_NE_POSE_TPOSE:
         {
             const auto argCount = context->expression().size();
@@ -26388,8 +27393,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: EVER_NE_POSE_TPOSE */
+#endif /* POSE */
 
-        /* BEGIN CODEGEN PARSER GLUE: EVER_NE_TNPOINT_NPOINT */
+        #if NPOINT
+/* BEGIN CODEGEN PARSER GLUE: EVER_NE_TNPOINT_NPOINT */
         case AntlrSQLLexer::EVER_NE_TNPOINT_NPOINT:
         {
             const auto argCount = context->expression().size();
@@ -26419,8 +27426,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: EVER_NE_TNPOINT_NPOINT */
+#endif /* NPOINT */
 
-        /* BEGIN CODEGEN PARSER GLUE: EVER_NE_TPOSE_POSE */
+        #if POSE
+/* BEGIN CODEGEN PARSER GLUE: EVER_NE_TPOSE_POSE */
         case AntlrSQLLexer::EVER_NE_TPOSE_POSE:
         {
             const auto argCount = context->expression().size();
@@ -26451,6 +27460,7 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: EVER_NE_TPOSE_POSE */
+#endif /* POSE */
         /* BEGIN CODEGEN PARSER GLUE: ALWAYS_EQ_TEXT_TTEXT */
         case AntlrSQLLexer::ALWAYS_EQ_TEXT_TTEXT:
         {
@@ -28300,7 +29310,8 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TTOUCHES_TGEO_GEO */
-        /* BEGIN CODEGEN PARSER GLUE: ACONTAINS_CBUFFER_TCBUFFER */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: ACONTAINS_CBUFFER_TCBUFFER */
         case AntlrSQLLexer::ACONTAINS_CBUFFER_TCBUFFER:
         {
             const auto argCount = context->expression().size();
@@ -28331,8 +29342,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: ACONTAINS_CBUFFER_TCBUFFER */
+#endif /* CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: ACONTAINS_GEO_TCBUFFER */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: ACONTAINS_GEO_TCBUFFER */
         case AntlrSQLLexer::ACONTAINS_GEO_TCBUFFER:
         {
             const auto argCount = context->expression().size();
@@ -28363,8 +29376,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: ACONTAINS_GEO_TCBUFFER */
+#endif /* CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: ACOVERS_CBUFFER_TCBUFFER */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: ACOVERS_CBUFFER_TCBUFFER */
         case AntlrSQLLexer::ACOVERS_CBUFFER_TCBUFFER:
         {
             const auto argCount = context->expression().size();
@@ -28395,8 +29410,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: ACOVERS_CBUFFER_TCBUFFER */
+#endif /* CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: ACOVERS_GEO_TCBUFFER */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: ACOVERS_GEO_TCBUFFER */
         case AntlrSQLLexer::ACOVERS_GEO_TCBUFFER:
         {
             const auto argCount = context->expression().size();
@@ -28427,8 +29444,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: ACOVERS_GEO_TCBUFFER */
+#endif /* CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: ECONTAINS_CBUFFER_TCBUFFER */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: ECONTAINS_CBUFFER_TCBUFFER */
         case AntlrSQLLexer::ECONTAINS_CBUFFER_TCBUFFER:
         {
             const auto argCount = context->expression().size();
@@ -28459,8 +29478,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: ECONTAINS_CBUFFER_TCBUFFER */
+#endif /* CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: ECOVERS_CBUFFER_TCBUFFER */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: ECOVERS_CBUFFER_TCBUFFER */
         case AntlrSQLLexer::ECOVERS_CBUFFER_TCBUFFER:
         {
             const auto argCount = context->expression().size();
@@ -28491,8 +29512,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: ECOVERS_CBUFFER_TCBUFFER */
+#endif /* CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: TCONTAINS_CBUFFER_TCBUFFER */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: TCONTAINS_CBUFFER_TCBUFFER */
         case AntlrSQLLexer::TCONTAINS_CBUFFER_TCBUFFER:
         {
             const auto argCount = context->expression().size();
@@ -28523,8 +29546,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TCONTAINS_CBUFFER_TCBUFFER */
+#endif /* CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: TCONTAINS_GEO_TCBUFFER */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: TCONTAINS_GEO_TCBUFFER */
         case AntlrSQLLexer::TCONTAINS_GEO_TCBUFFER:
         {
             const auto argCount = context->expression().size();
@@ -28555,8 +29580,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TCONTAINS_GEO_TCBUFFER */
+#endif /* CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: TCONTAINS_TCBUFFER_CBUFFER */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: TCONTAINS_TCBUFFER_CBUFFER */
         case AntlrSQLLexer::TCONTAINS_TCBUFFER_CBUFFER:
         {
             const auto argCount = context->expression().size();
@@ -28587,8 +29614,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TCONTAINS_TCBUFFER_CBUFFER */
+#endif /* CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: TCONTAINS_TCBUFFER_GEO */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: TCONTAINS_TCBUFFER_GEO */
         case AntlrSQLLexer::TCONTAINS_TCBUFFER_GEO:
         {
             const auto argCount = context->expression().size();
@@ -28619,8 +29648,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TCONTAINS_TCBUFFER_GEO */
+#endif /* CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: TCOVERS_CBUFFER_TCBUFFER */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: TCOVERS_CBUFFER_TCBUFFER */
         case AntlrSQLLexer::TCOVERS_CBUFFER_TCBUFFER:
         {
             const auto argCount = context->expression().size();
@@ -28651,8 +29682,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TCOVERS_CBUFFER_TCBUFFER */
+#endif /* CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: TCOVERS_GEO_TCBUFFER */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: TCOVERS_GEO_TCBUFFER */
         case AntlrSQLLexer::TCOVERS_GEO_TCBUFFER:
         {
             const auto argCount = context->expression().size();
@@ -28683,8 +29716,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TCOVERS_GEO_TCBUFFER */
+#endif /* CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: TCOVERS_TCBUFFER_CBUFFER */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: TCOVERS_TCBUFFER_CBUFFER */
         case AntlrSQLLexer::TCOVERS_TCBUFFER_CBUFFER:
         {
             const auto argCount = context->expression().size();
@@ -28715,8 +29750,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TCOVERS_TCBUFFER_CBUFFER */
+#endif /* CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: TCOVERS_TCBUFFER_GEO */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: TCOVERS_TCBUFFER_GEO */
         case AntlrSQLLexer::TCOVERS_TCBUFFER_GEO:
         {
             const auto argCount = context->expression().size();
@@ -28747,8 +29784,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TCOVERS_TCBUFFER_GEO */
+#endif /* CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: TDISJOINT_CBUFFER_TCBUFFER */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: TDISJOINT_CBUFFER_TCBUFFER */
         case AntlrSQLLexer::TDISJOINT_CBUFFER_TCBUFFER:
         {
             const auto argCount = context->expression().size();
@@ -28779,8 +29818,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TDISJOINT_CBUFFER_TCBUFFER */
+#endif /* CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: TDISJOINT_GEO_TCBUFFER */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: TDISJOINT_GEO_TCBUFFER */
         case AntlrSQLLexer::TDISJOINT_GEO_TCBUFFER:
         {
             const auto argCount = context->expression().size();
@@ -28811,8 +29852,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TDISJOINT_GEO_TCBUFFER */
+#endif /* CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: TDISJOINT_TCBUFFER_CBUFFER */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: TDISJOINT_TCBUFFER_CBUFFER */
         case AntlrSQLLexer::TDISJOINT_TCBUFFER_CBUFFER:
         {
             const auto argCount = context->expression().size();
@@ -28843,8 +29886,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TDISJOINT_TCBUFFER_CBUFFER */
+#endif /* CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: TDISJOINT_TCBUFFER_GEO */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: TDISJOINT_TCBUFFER_GEO */
         case AntlrSQLLexer::TDISJOINT_TCBUFFER_GEO:
         {
             const auto argCount = context->expression().size();
@@ -28875,8 +29920,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TDISJOINT_TCBUFFER_GEO */
+#endif /* CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: TDISTANCE_TCBUFFER_CBUFFER */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: TDISTANCE_TCBUFFER_CBUFFER */
         case AntlrSQLLexer::TDISTANCE_TCBUFFER_CBUFFER:
         {
             const auto argCount = context->expression().size();
@@ -28907,8 +29954,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TDISTANCE_TCBUFFER_CBUFFER */
+#endif /* CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: TDISTANCE_TCBUFFER_GEO */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: TDISTANCE_TCBUFFER_GEO */
         case AntlrSQLLexer::TDISTANCE_TCBUFFER_GEO:
         {
             const auto argCount = context->expression().size();
@@ -28939,8 +29988,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TDISTANCE_TCBUFFER_GEO */
+#endif /* CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: TDISTANCE_TNPOINT_NPOINT */
+        #if NPOINT
+/* BEGIN CODEGEN PARSER GLUE: TDISTANCE_TNPOINT_NPOINT */
         case AntlrSQLLexer::TDISTANCE_TNPOINT_NPOINT:
         {
             const auto argCount = context->expression().size();
@@ -28970,8 +30021,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TDISTANCE_TNPOINT_NPOINT */
+#endif /* NPOINT */
 
-        /* BEGIN CODEGEN PARSER GLUE: TDISTANCE_TNPOINT_POINT */
+        #if NPOINT
+/* BEGIN CODEGEN PARSER GLUE: TDISTANCE_TNPOINT_POINT */
         case AntlrSQLLexer::TDISTANCE_TNPOINT_POINT:
         {
             const auto argCount = context->expression().size();
@@ -29001,8 +30054,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TDISTANCE_TNPOINT_POINT */
+#endif /* NPOINT */
 
-        /* BEGIN CODEGEN PARSER GLUE: TDISTANCE_TPOSE_POINT */
+        #if POSE
+/* BEGIN CODEGEN PARSER GLUE: TDISTANCE_TPOSE_POINT */
         case AntlrSQLLexer::TDISTANCE_TPOSE_POINT:
         {
             const auto argCount = context->expression().size();
@@ -29033,8 +30088,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TDISTANCE_TPOSE_POINT */
+#endif /* POSE */
 
-        /* BEGIN CODEGEN PARSER GLUE: TDISTANCE_TPOSE_POSE */
+        #if POSE
+/* BEGIN CODEGEN PARSER GLUE: TDISTANCE_TPOSE_POSE */
         case AntlrSQLLexer::TDISTANCE_TPOSE_POSE:
         {
             const auto argCount = context->expression().size();
@@ -29065,6 +30122,7 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TDISTANCE_TPOSE_POSE */
+#endif /* POSE */
 
         /* BEGIN CODEGEN PARSER GLUE: TEQ_BOOL_TBOOL */
         case AntlrSQLLexer::TEQ_BOOL_TBOOL:
@@ -29096,7 +30154,8 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         break;
         /* END CODEGEN PARSER GLUE: TEQ_BOOL_TBOOL */
 
-        /* BEGIN CODEGEN PARSER GLUE: TEQ_CBUFFER_TCBUFFER */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: TEQ_CBUFFER_TCBUFFER */
         case AntlrSQLLexer::TEQ_CBUFFER_TCBUFFER:
         {
             const auto argCount = context->expression().size();
@@ -29127,8 +30186,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TEQ_CBUFFER_TCBUFFER */
+#endif /* CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: TEQ_POSE_TPOSE */
+        #if POSE
+/* BEGIN CODEGEN PARSER GLUE: TEQ_POSE_TPOSE */
         case AntlrSQLLexer::TEQ_POSE_TPOSE:
         {
             const auto argCount = context->expression().size();
@@ -29159,6 +30220,7 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TEQ_POSE_TPOSE */
+#endif /* POSE */
 
         /* BEGIN CODEGEN PARSER GLUE: TEQ_TBOOL_BOOL */
         case AntlrSQLLexer::TEQ_TBOOL_BOOL:
@@ -29190,7 +30252,8 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         break;
         /* END CODEGEN PARSER GLUE: TEQ_TBOOL_BOOL */
 
-        /* BEGIN CODEGEN PARSER GLUE: TEQ_TCBUFFER_CBUFFER */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: TEQ_TCBUFFER_CBUFFER */
         case AntlrSQLLexer::TEQ_TCBUFFER_CBUFFER:
         {
             const auto argCount = context->expression().size();
@@ -29221,8 +30284,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TEQ_TCBUFFER_CBUFFER */
+#endif /* CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: TEQ_TNPOINT_NPOINT */
+        #if NPOINT
+/* BEGIN CODEGEN PARSER GLUE: TEQ_TNPOINT_NPOINT */
         case AntlrSQLLexer::TEQ_TNPOINT_NPOINT:
         {
             const auto argCount = context->expression().size();
@@ -29252,8 +30317,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TEQ_TNPOINT_NPOINT */
+#endif /* NPOINT */
 
-        /* BEGIN CODEGEN PARSER GLUE: TEQ_TPOSE_POSE */
+        #if POSE
+/* BEGIN CODEGEN PARSER GLUE: TEQ_TPOSE_POSE */
         case AntlrSQLLexer::TEQ_TPOSE_POSE:
         {
             const auto argCount = context->expression().size();
@@ -29284,8 +30351,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TEQ_TPOSE_POSE */
+#endif /* POSE */
 
-        /* BEGIN CODEGEN PARSER GLUE: TINTERSECTS_CBUFFER_TCBUFFER */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: TINTERSECTS_CBUFFER_TCBUFFER */
         case AntlrSQLLexer::TINTERSECTS_CBUFFER_TCBUFFER:
         {
             const auto argCount = context->expression().size();
@@ -29316,8 +30385,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TINTERSECTS_CBUFFER_TCBUFFER */
+#endif /* CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: TINTERSECTS_GEO_TCBUFFER */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: TINTERSECTS_GEO_TCBUFFER */
         case AntlrSQLLexer::TINTERSECTS_GEO_TCBUFFER:
         {
             const auto argCount = context->expression().size();
@@ -29348,8 +30419,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TINTERSECTS_GEO_TCBUFFER */
+#endif /* CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: TINTERSECTS_TCBUFFER_CBUFFER */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: TINTERSECTS_TCBUFFER_CBUFFER */
         case AntlrSQLLexer::TINTERSECTS_TCBUFFER_CBUFFER:
         {
             const auto argCount = context->expression().size();
@@ -29380,8 +30453,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TINTERSECTS_TCBUFFER_CBUFFER */
+#endif /* CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: TINTERSECTS_TCBUFFER_GEO */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: TINTERSECTS_TCBUFFER_GEO */
         case AntlrSQLLexer::TINTERSECTS_TCBUFFER_GEO:
         {
             const auto argCount = context->expression().size();
@@ -29412,6 +30487,7 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TINTERSECTS_TCBUFFER_GEO */
+#endif /* CBUFFER */
 
         /* BEGIN CODEGEN PARSER GLUE: TNE_BOOL_TBOOL */
         case AntlrSQLLexer::TNE_BOOL_TBOOL:
@@ -29443,7 +30519,8 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         break;
         /* END CODEGEN PARSER GLUE: TNE_BOOL_TBOOL */
 
-        /* BEGIN CODEGEN PARSER GLUE: TNE_CBUFFER_TCBUFFER */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: TNE_CBUFFER_TCBUFFER */
         case AntlrSQLLexer::TNE_CBUFFER_TCBUFFER:
         {
             const auto argCount = context->expression().size();
@@ -29474,8 +30551,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TNE_CBUFFER_TCBUFFER */
+#endif /* CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: TNE_POSE_TPOSE */
+        #if POSE
+/* BEGIN CODEGEN PARSER GLUE: TNE_POSE_TPOSE */
         case AntlrSQLLexer::TNE_POSE_TPOSE:
         {
             const auto argCount = context->expression().size();
@@ -29506,6 +30585,7 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TNE_POSE_TPOSE */
+#endif /* POSE */
 
         /* BEGIN CODEGEN PARSER GLUE: TNE_TBOOL_BOOL */
         case AntlrSQLLexer::TNE_TBOOL_BOOL:
@@ -29537,7 +30617,8 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         break;
         /* END CODEGEN PARSER GLUE: TNE_TBOOL_BOOL */
 
-        /* BEGIN CODEGEN PARSER GLUE: TNE_TCBUFFER_CBUFFER */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: TNE_TCBUFFER_CBUFFER */
         case AntlrSQLLexer::TNE_TCBUFFER_CBUFFER:
         {
             const auto argCount = context->expression().size();
@@ -29568,8 +30649,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TNE_TCBUFFER_CBUFFER */
+#endif /* CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: TNE_TNPOINT_NPOINT */
+        #if NPOINT
+/* BEGIN CODEGEN PARSER GLUE: TNE_TNPOINT_NPOINT */
         case AntlrSQLLexer::TNE_TNPOINT_NPOINT:
         {
             const auto argCount = context->expression().size();
@@ -29599,8 +30682,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TNE_TNPOINT_NPOINT */
+#endif /* NPOINT */
 
-        /* BEGIN CODEGEN PARSER GLUE: TNE_TPOSE_POSE */
+        #if POSE
+/* BEGIN CODEGEN PARSER GLUE: TNE_TPOSE_POSE */
         case AntlrSQLLexer::TNE_TPOSE_POSE:
         {
             const auto argCount = context->expression().size();
@@ -29631,8 +30716,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TNE_TPOSE_POSE */
+#endif /* POSE */
 
-        /* BEGIN CODEGEN PARSER GLUE: TTOUCHES_CBUFFER_TCBUFFER */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: TTOUCHES_CBUFFER_TCBUFFER */
         case AntlrSQLLexer::TTOUCHES_CBUFFER_TCBUFFER:
         {
             const auto argCount = context->expression().size();
@@ -29663,8 +30750,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TTOUCHES_CBUFFER_TCBUFFER */
+#endif /* CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: TTOUCHES_GEO_TCBUFFER */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: TTOUCHES_GEO_TCBUFFER */
         case AntlrSQLLexer::TTOUCHES_GEO_TCBUFFER:
         {
             const auto argCount = context->expression().size();
@@ -29695,8 +30784,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TTOUCHES_GEO_TCBUFFER */
+#endif /* CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: TTOUCHES_TCBUFFER_CBUFFER */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: TTOUCHES_TCBUFFER_CBUFFER */
         case AntlrSQLLexer::TTOUCHES_TCBUFFER_CBUFFER:
         {
             const auto argCount = context->expression().size();
@@ -29727,8 +30818,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TTOUCHES_TCBUFFER_CBUFFER */
+#endif /* CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: TTOUCHES_TCBUFFER_GEO */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: TTOUCHES_TCBUFFER_GEO */
         case AntlrSQLLexer::TTOUCHES_TCBUFFER_GEO:
         {
             const auto argCount = context->expression().size();
@@ -29759,6 +30852,7 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TTOUCHES_TCBUFFER_GEO */
+#endif /* CBUFFER */
         /* BEGIN CODEGEN PARSER GLUE: TEMPORAL_AT_TSTZSET */
         case AntlrSQLLexer::TEMPORAL_AT_TSTZSET:
         {
@@ -30363,7 +31457,8 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TNE_TEMPORAL_TEMPORAL */
-        /* BEGIN CODEGEN PARSER GLUE: TDISJOINT_TCBUFFER_TCBUFFER */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: TDISJOINT_TCBUFFER_TCBUFFER */
         case AntlrSQLLexer::TDISJOINT_TCBUFFER_TCBUFFER:
         {
             const auto argCount = context->expression().size();
@@ -30397,6 +31492,7 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TDISJOINT_TCBUFFER_TCBUFFER */
+#endif /* CBUFFER */
 
         /* BEGIN CODEGEN PARSER GLUE: TDISJOINT_TGEO_TGEO */
         case AntlrSQLLexer::TDISJOINT_TGEO_TGEO:
@@ -30462,7 +31558,8 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         break;
         /* END CODEGEN PARSER GLUE: TEXTCAT_TTEXT_TTEXT */
 
-        /* BEGIN CODEGEN PARSER GLUE: TINTERSECTS_TCBUFFER_TCBUFFER */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: TINTERSECTS_TCBUFFER_TCBUFFER */
         case AntlrSQLLexer::TINTERSECTS_TCBUFFER_TCBUFFER:
         {
             const auto argCount = context->expression().size();
@@ -30496,6 +31593,7 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TINTERSECTS_TCBUFFER_TCBUFFER */
+#endif /* CBUFFER */
 
         /* BEGIN CODEGEN PARSER GLUE: TINTERSECTS_TGEO_TGEO */
         case AntlrSQLLexer::TINTERSECTS_TGEO_TGEO:
@@ -30530,7 +31628,8 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         break;
         /* END CODEGEN PARSER GLUE: TINTERSECTS_TGEO_TGEO */
 
-        /* BEGIN CODEGEN PARSER GLUE: TTOUCHES_TCBUFFER_TCBUFFER */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: TTOUCHES_TCBUFFER_TCBUFFER */
         case AntlrSQLLexer::TTOUCHES_TCBUFFER_TCBUFFER:
         {
             const auto argCount = context->expression().size();
@@ -30564,6 +31663,7 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TTOUCHES_TCBUFFER_TCBUFFER */
+#endif /* CBUFFER */
 
         /* BEGIN CODEGEN PARSER GLUE: TTOUCHES_TGEO_TGEO */
         case AntlrSQLLexer::TTOUCHES_TGEO_TGEO:
@@ -34665,7 +35765,8 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: NUMSPAN_TSTZSPAN_TO_TBOX */
-        /* BEGIN CODEGEN PARSER GLUE: CBUFFER_TO_STBOX */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: CBUFFER_TO_STBOX */
         case AntlrSQLLexer::CBUFFER_TO_STBOX:
         {
             const auto argCount = context->expression().size();
@@ -34692,8 +35793,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: CBUFFER_TO_STBOX */
+#endif /* CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: POSE_TO_STBOX */
+        #if POSE
+/* BEGIN CODEGEN PARSER GLUE: POSE_TO_STBOX */
         case AntlrSQLLexer::POSE_TO_STBOX:
         {
             const auto argCount = context->expression().size();
@@ -34720,8 +35823,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: POSE_TO_STBOX */
+#endif /* POSE */
 
-        /* BEGIN CODEGEN PARSER GLUE: NPOINT_TO_STBOX */
+        #if NPOINT
+/* BEGIN CODEGEN PARSER GLUE: NPOINT_TO_STBOX */
         case AntlrSQLLexer::NPOINT_TO_STBOX:
         {
             const auto argCount = context->expression().size();
@@ -34748,8 +35853,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: NPOINT_TO_STBOX */
+#endif /* NPOINT */
 
-        /* BEGIN CODEGEN PARSER GLUE: NSEGMENT_TO_STBOX */
+        #if NPOINT
+/* BEGIN CODEGEN PARSER GLUE: NSEGMENT_TO_STBOX */
         case AntlrSQLLexer::NSEGMENT_TO_STBOX:
         {
             const auto argCount = context->expression().size();
@@ -34776,6 +35883,7 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: NSEGMENT_TO_STBOX */
+#endif /* NPOINT */
         /* BEGIN CODEGEN PARSER GLUE: TTEXT_LOWER */
         case AntlrSQLLexer::TTEXT_LOWER:
         {
@@ -35064,7 +36172,8 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         break;
         /* END CODEGEN PARSER GLUE: TGEO_VALUE_N */
 
-        /* BEGIN CODEGEN PARSER GLUE: TPOSE_VALUE_N */
+        #if POSE
+/* BEGIN CODEGEN PARSER GLUE: TPOSE_VALUE_N */
         case AntlrSQLLexer::TPOSE_VALUE_N:
         {
             const auto argCount = context->expression().size();
@@ -35094,6 +36203,7 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TPOSE_VALUE_N */
+#endif /* POSE */
         /* BEGIN CODEGEN PARSER GLUE: TEMPORAL_TO_TSTZSPAN */
         case AntlrSQLLexer::TEMPORAL_TO_TSTZSPAN:
         {
@@ -35292,7 +36402,8 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         break;
         /* END CODEGEN PARSER GLUE: STBOX_HASH */
 
-        /* BEGIN CODEGEN PARSER GLUE: CBUFFER_HASH */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: CBUFFER_HASH */
         case AntlrSQLLexer::CBUFFER_HASH:
         {
             const auto argCount = context->expression().size();
@@ -35319,8 +36430,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: CBUFFER_HASH */
+#endif /* CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: NPOINT_HASH */
+        #if NPOINT
+/* BEGIN CODEGEN PARSER GLUE: NPOINT_HASH */
         case AntlrSQLLexer::NPOINT_HASH:
         {
             const auto argCount = context->expression().size();
@@ -35347,8 +36460,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: NPOINT_HASH */
+#endif /* NPOINT */
 
-        /* BEGIN CODEGEN PARSER GLUE: POSE_HASH */
+        #if POSE
+/* BEGIN CODEGEN PARSER GLUE: POSE_HASH */
         case AntlrSQLLexer::POSE_HASH:
         {
             const auto argCount = context->expression().size();
@@ -35375,6 +36490,7 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: POSE_HASH */
+#endif /* POSE */
 
         /* BEGIN CODEGEN PARSER GLUE: TEMPORAL_HASH */
         case AntlrSQLLexer::TEMPORAL_HASH:
@@ -35405,7 +36521,8 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         break;
         /* END CODEGEN PARSER GLUE: TEMPORAL_HASH */
 
-        /* BEGIN CODEGEN PARSER GLUE: CBUFFER_SRID */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: CBUFFER_SRID */
         case AntlrSQLLexer::CBUFFER_SRID:
         {
             const auto argCount = context->expression().size();
@@ -35432,8 +36549,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: CBUFFER_SRID */
+#endif /* CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: NPOINT_SRID */
+        #if NPOINT
+/* BEGIN CODEGEN PARSER GLUE: NPOINT_SRID */
         case AntlrSQLLexer::NPOINT_SRID:
         {
             const auto argCount = context->expression().size();
@@ -35460,8 +36579,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: NPOINT_SRID */
+#endif /* NPOINT */
 
-        /* BEGIN CODEGEN PARSER GLUE: NSEGMENT_SRID */
+        #if NPOINT
+/* BEGIN CODEGEN PARSER GLUE: NSEGMENT_SRID */
         case AntlrSQLLexer::NSEGMENT_SRID:
         {
             const auto argCount = context->expression().size();
@@ -35488,8 +36609,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: NSEGMENT_SRID */
+#endif /* NPOINT */
 
-        /* BEGIN CODEGEN PARSER GLUE: POSE_SRID */
+        #if POSE
+/* BEGIN CODEGEN PARSER GLUE: POSE_SRID */
         case AntlrSQLLexer::POSE_SRID:
         {
             const auto argCount = context->expression().size();
@@ -35516,7 +36639,9 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: POSE_SRID */
-        /* BEGIN CODEGEN PARSER GLUE: CBUFFER_ROUND */
+#endif /* POSE */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: CBUFFER_ROUND */
         case AntlrSQLLexer::CBUFFER_ROUND:
         {
             const auto argCount = context->expression().size();
@@ -35543,6 +36668,7 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: CBUFFER_ROUND */
+#endif /* CBUFFER */
 
         /* BEGIN CODEGEN PARSER GLUE: FLOAT_ROUND */
         case AntlrSQLLexer::FLOAT_ROUND:
@@ -35628,7 +36754,8 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         break;
         /* END CODEGEN PARSER GLUE: FLOATSPANSET_ROUND */
 
-        /* BEGIN CODEGEN PARSER GLUE: NPOINT_ROUND */
+        #if NPOINT
+/* BEGIN CODEGEN PARSER GLUE: NPOINT_ROUND */
         case AntlrSQLLexer::NPOINT_ROUND:
         {
             const auto argCount = context->expression().size();
@@ -35655,8 +36782,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: NPOINT_ROUND */
+#endif /* NPOINT */
 
-        /* BEGIN CODEGEN PARSER GLUE: POSE_ROUND */
+        #if POSE
+/* BEGIN CODEGEN PARSER GLUE: POSE_ROUND */
         case AntlrSQLLexer::POSE_ROUND:
         {
             const auto argCount = context->expression().size();
@@ -35683,6 +36812,7 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: POSE_ROUND */
+#endif /* POSE */
 
         /* BEGIN CODEGEN PARSER GLUE: SET_ROUND */
         case AntlrSQLLexer::SET_ROUND:
@@ -35936,7 +37066,8 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TEMPORAL_DURATION */
-        /* BEGIN CODEGEN PARSER GLUE: CBUFFER_RADIUS */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: CBUFFER_RADIUS */
         case AntlrSQLLexer::CBUFFER_RADIUS:
         {
             const auto argCount = context->expression().size();
@@ -35963,6 +37094,7 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: CBUFFER_RADIUS */
+#endif /* CBUFFER */
 
         /* BEGIN CODEGEN PARSER GLUE: DATESPAN_TO_TSTZSPAN */
         case AntlrSQLLexer::DATESPAN_TO_TSTZSPAN:
@@ -36132,7 +37264,8 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         break;
         /* END CODEGEN PARSER GLUE: INTSPANSET_TO_FLOATSPANSET */
 
-        /* BEGIN CODEGEN PARSER GLUE: NPOINT_POSITION */
+        #if NPOINT
+/* BEGIN CODEGEN PARSER GLUE: NPOINT_POSITION */
         case AntlrSQLLexer::NPOINT_POSITION:
         {
             const auto argCount = context->expression().size();
@@ -36159,8 +37292,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: NPOINT_POSITION */
+#endif /* NPOINT */
 
-        /* BEGIN CODEGEN PARSER GLUE: NPOINT_ROUTE */
+        #if NPOINT
+/* BEGIN CODEGEN PARSER GLUE: NPOINT_ROUTE */
         case AntlrSQLLexer::NPOINT_ROUTE:
         {
             const auto argCount = context->expression().size();
@@ -36187,8 +37322,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: NPOINT_ROUTE */
+#endif /* NPOINT */
 
-        /* BEGIN CODEGEN PARSER GLUE: NSEGMENT_ROUTE */
+        #if NPOINT
+/* BEGIN CODEGEN PARSER GLUE: NSEGMENT_ROUTE */
         case AntlrSQLLexer::NSEGMENT_ROUTE:
         {
             const auto argCount = context->expression().size();
@@ -36215,8 +37352,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: NSEGMENT_ROUTE */
+#endif /* NPOINT */
 
-        /* BEGIN CODEGEN PARSER GLUE: POSE_ROTATION */
+        #if POSE
+/* BEGIN CODEGEN PARSER GLUE: POSE_ROTATION */
         case AntlrSQLLexer::POSE_ROTATION:
         {
             const auto argCount = context->expression().size();
@@ -36243,6 +37382,7 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: POSE_ROTATION */
+#endif /* POSE */
 
         /* BEGIN CODEGEN PARSER GLUE: SPAN_TO_SPANSET */
         case AntlrSQLLexer::SPAN_TO_SPANSET:
@@ -36747,7 +37887,8 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         break;
         /* END CODEGEN PARSER GLUE: GEOSET_VALUE_N */
 
-        /* BEGIN CODEGEN PARSER GLUE: CBUFFERSET_START_VALUE */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: CBUFFERSET_START_VALUE */
         case AntlrSQLLexer::CBUFFERSET_START_VALUE:
         {
             const auto argCount = context->expression().size();
@@ -36774,8 +37915,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: CBUFFERSET_START_VALUE */
+#endif /* CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: CBUFFERSET_END_VALUE */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: CBUFFERSET_END_VALUE */
         case AntlrSQLLexer::CBUFFERSET_END_VALUE:
         {
             const auto argCount = context->expression().size();
@@ -36802,8 +37945,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: CBUFFERSET_END_VALUE */
+#endif /* CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: CBUFFERSET_VALUE_N */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: CBUFFERSET_VALUE_N */
         case AntlrSQLLexer::CBUFFERSET_VALUE_N:
         {
             const auto argCount = context->expression().size();
@@ -36830,8 +37975,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: CBUFFERSET_VALUE_N */
+#endif /* CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: NPOINTSET_START_VALUE */
+        #if NPOINT
+/* BEGIN CODEGEN PARSER GLUE: NPOINTSET_START_VALUE */
         case AntlrSQLLexer::NPOINTSET_START_VALUE:
         {
             const auto argCount = context->expression().size();
@@ -36858,8 +38005,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: NPOINTSET_START_VALUE */
+#endif /* NPOINT */
 
-        /* BEGIN CODEGEN PARSER GLUE: NPOINTSET_END_VALUE */
+        #if NPOINT
+/* BEGIN CODEGEN PARSER GLUE: NPOINTSET_END_VALUE */
         case AntlrSQLLexer::NPOINTSET_END_VALUE:
         {
             const auto argCount = context->expression().size();
@@ -36886,8 +38035,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: NPOINTSET_END_VALUE */
+#endif /* NPOINT */
 
-        /* BEGIN CODEGEN PARSER GLUE: NPOINTSET_VALUE_N */
+        #if NPOINT
+/* BEGIN CODEGEN PARSER GLUE: NPOINTSET_VALUE_N */
         case AntlrSQLLexer::NPOINTSET_VALUE_N:
         {
             const auto argCount = context->expression().size();
@@ -36914,8 +38065,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: NPOINTSET_VALUE_N */
+#endif /* NPOINT */
 
-        /* BEGIN CODEGEN PARSER GLUE: POSESET_START_VALUE */
+        #if POSE
+/* BEGIN CODEGEN PARSER GLUE: POSESET_START_VALUE */
         case AntlrSQLLexer::POSESET_START_VALUE:
         {
             const auto argCount = context->expression().size();
@@ -36942,8 +38095,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: POSESET_START_VALUE */
+#endif /* POSE */
 
-        /* BEGIN CODEGEN PARSER GLUE: POSESET_END_VALUE */
+        #if POSE
+/* BEGIN CODEGEN PARSER GLUE: POSESET_END_VALUE */
         case AntlrSQLLexer::POSESET_END_VALUE:
         {
             const auto argCount = context->expression().size();
@@ -36970,8 +38125,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: POSESET_END_VALUE */
+#endif /* POSE */
 
-        /* BEGIN CODEGEN PARSER GLUE: POSESET_VALUE_N */
+        #if POSE
+/* BEGIN CODEGEN PARSER GLUE: POSESET_VALUE_N */
         case AntlrSQLLexer::POSESET_VALUE_N:
         {
             const auto argCount = context->expression().size();
@@ -36998,6 +38155,7 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: POSESET_VALUE_N */
+#endif /* POSE */
         /* BEGIN CODEGEN PARSER GLUE: GEO_COPY */
         case AntlrSQLLexer::GEO_COPY:
         {
@@ -37797,7 +38955,8 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: MUL_INTERVAL_DOUBLE */
-        /* BEGIN CODEGEN PARSER GLUE: CONTAINED_CBUFFER_SET */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: CONTAINED_CBUFFER_SET */
         case AntlrSQLLexer::CONTAINED_CBUFFER_SET:
         {
             const auto argCount = context->expression().size();
@@ -37825,6 +38984,7 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: CONTAINED_CBUFFER_SET */
+#endif /* CBUFFER */
 
         /* BEGIN CODEGEN PARSER GLUE: CONTAINED_GEO_SET */
         case AntlrSQLLexer::CONTAINED_GEO_SET:
@@ -37855,7 +39015,8 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         break;
         /* END CODEGEN PARSER GLUE: CONTAINED_GEO_SET */
 
-        /* BEGIN CODEGEN PARSER GLUE: CONTAINED_NPOINT_SET */
+        #if NPOINT
+/* BEGIN CODEGEN PARSER GLUE: CONTAINED_NPOINT_SET */
         case AntlrSQLLexer::CONTAINED_NPOINT_SET:
         {
             const auto argCount = context->expression().size();
@@ -37883,8 +39044,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: CONTAINED_NPOINT_SET */
+#endif /* NPOINT */
 
-        /* BEGIN CODEGEN PARSER GLUE: CONTAINED_POSE_SET */
+        #if POSE
+/* BEGIN CODEGEN PARSER GLUE: CONTAINED_POSE_SET */
         case AntlrSQLLexer::CONTAINED_POSE_SET:
         {
             const auto argCount = context->expression().size();
@@ -37912,6 +39075,7 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: CONTAINED_POSE_SET */
+#endif /* POSE */
 
         /* BEGIN CODEGEN PARSER GLUE: CONTAINED_TEXT_SET */
         case AntlrSQLLexer::CONTAINED_TEXT_SET:
@@ -37942,7 +39106,8 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         break;
         /* END CODEGEN PARSER GLUE: CONTAINED_TEXT_SET */
 
-        /* BEGIN CODEGEN PARSER GLUE: CONTAINS_SET_CBUFFER */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: CONTAINS_SET_CBUFFER */
         case AntlrSQLLexer::CONTAINS_SET_CBUFFER:
         {
             const auto argCount = context->expression().size();
@@ -37970,6 +39135,7 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: CONTAINS_SET_CBUFFER */
+#endif /* CBUFFER */
 
         /* BEGIN CODEGEN PARSER GLUE: CONTAINS_SET_GEO */
         case AntlrSQLLexer::CONTAINS_SET_GEO:
@@ -38000,7 +39166,8 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         break;
         /* END CODEGEN PARSER GLUE: CONTAINS_SET_GEO */
 
-        /* BEGIN CODEGEN PARSER GLUE: CONTAINS_SET_NPOINT */
+        #if NPOINT
+/* BEGIN CODEGEN PARSER GLUE: CONTAINS_SET_NPOINT */
         case AntlrSQLLexer::CONTAINS_SET_NPOINT:
         {
             const auto argCount = context->expression().size();
@@ -38028,8 +39195,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: CONTAINS_SET_NPOINT */
+#endif /* NPOINT */
 
-        /* BEGIN CODEGEN PARSER GLUE: CONTAINS_SET_POSE */
+        #if POSE
+/* BEGIN CODEGEN PARSER GLUE: CONTAINS_SET_POSE */
         case AntlrSQLLexer::CONTAINS_SET_POSE:
         {
             const auto argCount = context->expression().size();
@@ -38057,6 +39226,7 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: CONTAINS_SET_POSE */
+#endif /* POSE */
 
         /* BEGIN CODEGEN PARSER GLUE: CONTAINS_SET_TEXT */
         case AntlrSQLLexer::CONTAINS_SET_TEXT:
@@ -38116,7 +39286,8 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         break;
         /* END CODEGEN PARSER GLUE: INTERSECTION_GEO_SET */
 
-        /* BEGIN CODEGEN PARSER GLUE: INTERSECTION_SET_CBUFFER */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: INTERSECTION_SET_CBUFFER */
         case AntlrSQLLexer::INTERSECTION_SET_CBUFFER:
         {
             const auto argCount = context->expression().size();
@@ -38144,6 +39315,7 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: INTERSECTION_SET_CBUFFER */
+#endif /* CBUFFER */
 
         /* BEGIN CODEGEN PARSER GLUE: INTERSECTION_SET_GEO */
         case AntlrSQLLexer::INTERSECTION_SET_GEO:
@@ -38174,7 +39346,8 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         break;
         /* END CODEGEN PARSER GLUE: INTERSECTION_SET_GEO */
 
-        /* BEGIN CODEGEN PARSER GLUE: INTERSECTION_SET_NPOINT */
+        #if NPOINT
+/* BEGIN CODEGEN PARSER GLUE: INTERSECTION_SET_NPOINT */
         case AntlrSQLLexer::INTERSECTION_SET_NPOINT:
         {
             const auto argCount = context->expression().size();
@@ -38202,8 +39375,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: INTERSECTION_SET_NPOINT */
+#endif /* NPOINT */
 
-        /* BEGIN CODEGEN PARSER GLUE: INTERSECTION_SET_POSE */
+        #if POSE
+/* BEGIN CODEGEN PARSER GLUE: INTERSECTION_SET_POSE */
         case AntlrSQLLexer::INTERSECTION_SET_POSE:
         {
             const auto argCount = context->expression().size();
@@ -38231,6 +39406,7 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: INTERSECTION_SET_POSE */
+#endif /* POSE */
 
         /* BEGIN CODEGEN PARSER GLUE: LEFT_SET_TEXT */
         case AntlrSQLLexer::LEFT_SET_TEXT:
@@ -38290,7 +39466,8 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         break;
         /* END CODEGEN PARSER GLUE: LEFT_TEXT_SET */
 
-        /* BEGIN CODEGEN PARSER GLUE: MINUS_CBUFFER_SET */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: MINUS_CBUFFER_SET */
         case AntlrSQLLexer::MINUS_CBUFFER_SET:
         {
             const auto argCount = context->expression().size();
@@ -38318,6 +39495,7 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: MINUS_CBUFFER_SET */
+#endif /* CBUFFER */
 
         /* BEGIN CODEGEN PARSER GLUE: MINUS_GEO_SET */
         case AntlrSQLLexer::MINUS_GEO_SET:
@@ -38348,7 +39526,8 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         break;
         /* END CODEGEN PARSER GLUE: MINUS_GEO_SET */
 
-        /* BEGIN CODEGEN PARSER GLUE: MINUS_NPOINT_SET */
+        #if NPOINT
+/* BEGIN CODEGEN PARSER GLUE: MINUS_NPOINT_SET */
         case AntlrSQLLexer::MINUS_NPOINT_SET:
         {
             const auto argCount = context->expression().size();
@@ -38376,8 +39555,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: MINUS_NPOINT_SET */
+#endif /* NPOINT */
 
-        /* BEGIN CODEGEN PARSER GLUE: MINUS_POSE_SET */
+        #if POSE
+/* BEGIN CODEGEN PARSER GLUE: MINUS_POSE_SET */
         case AntlrSQLLexer::MINUS_POSE_SET:
         {
             const auto argCount = context->expression().size();
@@ -38405,8 +39586,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: MINUS_POSE_SET */
+#endif /* POSE */
 
-        /* BEGIN CODEGEN PARSER GLUE: MINUS_SET_CBUFFER */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: MINUS_SET_CBUFFER */
         case AntlrSQLLexer::MINUS_SET_CBUFFER:
         {
             const auto argCount = context->expression().size();
@@ -38434,6 +39617,7 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: MINUS_SET_CBUFFER */
+#endif /* CBUFFER */
 
         /* BEGIN CODEGEN PARSER GLUE: MINUS_SET_GEO */
         case AntlrSQLLexer::MINUS_SET_GEO:
@@ -38464,7 +39648,8 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         break;
         /* END CODEGEN PARSER GLUE: MINUS_SET_GEO */
 
-        /* BEGIN CODEGEN PARSER GLUE: MINUS_SET_NPOINT */
+        #if NPOINT
+/* BEGIN CODEGEN PARSER GLUE: MINUS_SET_NPOINT */
         case AntlrSQLLexer::MINUS_SET_NPOINT:
         {
             const auto argCount = context->expression().size();
@@ -38492,8 +39677,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: MINUS_SET_NPOINT */
+#endif /* NPOINT */
 
-        /* BEGIN CODEGEN PARSER GLUE: MINUS_SET_POSE */
+        #if POSE
+/* BEGIN CODEGEN PARSER GLUE: MINUS_SET_POSE */
         case AntlrSQLLexer::MINUS_SET_POSE:
         {
             const auto argCount = context->expression().size();
@@ -38521,6 +39708,7 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: MINUS_SET_POSE */
+#endif /* POSE */
 
         /* BEGIN CODEGEN PARSER GLUE: OVERLEFT_SET_TEXT */
         case AntlrSQLLexer::OVERLEFT_SET_TEXT:
@@ -38725,7 +39913,8 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         break;
         /* END CODEGEN PARSER GLUE: UNION_GEO_SET */
 
-        /* BEGIN CODEGEN PARSER GLUE: UNION_SET_CBUFFER */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: UNION_SET_CBUFFER */
         case AntlrSQLLexer::UNION_SET_CBUFFER:
         {
             const auto argCount = context->expression().size();
@@ -38753,6 +39942,7 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: UNION_SET_CBUFFER */
+#endif /* CBUFFER */
 
         /* BEGIN CODEGEN PARSER GLUE: UNION_SET_GEO */
         case AntlrSQLLexer::UNION_SET_GEO:
@@ -38783,7 +39973,8 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         break;
         /* END CODEGEN PARSER GLUE: UNION_SET_GEO */
 
-        /* BEGIN CODEGEN PARSER GLUE: UNION_SET_NPOINT */
+        #if NPOINT
+/* BEGIN CODEGEN PARSER GLUE: UNION_SET_NPOINT */
         case AntlrSQLLexer::UNION_SET_NPOINT:
         {
             const auto argCount = context->expression().size();
@@ -38811,8 +40002,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: UNION_SET_NPOINT */
+#endif /* NPOINT */
 
-        /* BEGIN CODEGEN PARSER GLUE: UNION_SET_POSE */
+        #if POSE
+/* BEGIN CODEGEN PARSER GLUE: UNION_SET_POSE */
         case AntlrSQLLexer::UNION_SET_POSE:
         {
             const auto argCount = context->expression().size();
@@ -38840,6 +40033,7 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: UNION_SET_POSE */
+#endif /* POSE */
         /* BEGIN CODEGEN PARSER GLUE: CONTAINED_NUMSPAN_TNUMBER */
         case AntlrSQLLexer::CONTAINED_NUMSPAN_TNUMBER:
         {
@@ -39559,7 +40753,8 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: SAME_TSTZSPAN_TEMPORAL */
-        /* BEGIN CODEGEN PARSER GLUE: NAD_TNPOINT_NPOINT */
+        #if NPOINT
+/* BEGIN CODEGEN PARSER GLUE: NAD_TNPOINT_NPOINT */
         case AntlrSQLLexer::NAD_TNPOINT_NPOINT:
         {
             const auto argCount = context->expression().size();
@@ -39589,8 +40784,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: NAD_TNPOINT_NPOINT */
+#endif /* NPOINT */
 
-        /* BEGIN CODEGEN PARSER GLUE: NAD_TPOSE_POSE */
+        #if POSE
+/* BEGIN CODEGEN PARSER GLUE: NAD_TPOSE_POSE */
         case AntlrSQLLexer::NAD_TPOSE_POSE:
         {
             const auto argCount = context->expression().size();
@@ -39621,8 +40818,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: NAD_TPOSE_POSE */
+#endif /* POSE */
 
-        /* BEGIN CODEGEN PARSER GLUE: NAI_TCBUFFER_CBUFFER */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: NAI_TCBUFFER_CBUFFER */
         case AntlrSQLLexer::NAI_TCBUFFER_CBUFFER:
         {
             const auto argCount = context->expression().size();
@@ -39653,8 +40852,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: NAI_TCBUFFER_CBUFFER */
+#endif /* CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: NAI_TCBUFFER_GEO */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: NAI_TCBUFFER_GEO */
         case AntlrSQLLexer::NAI_TCBUFFER_GEO:
         {
             const auto argCount = context->expression().size();
@@ -39685,8 +40886,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: NAI_TCBUFFER_GEO */
+#endif /* CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: NAI_TCBUFFER_TCBUFFER */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: NAI_TCBUFFER_TCBUFFER */
         case AntlrSQLLexer::NAI_TCBUFFER_TCBUFFER:
         {
             const auto argCount = context->expression().size();
@@ -39720,6 +40923,7 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: NAI_TCBUFFER_TCBUFFER */
+#endif /* CBUFFER */
 
         /* BEGIN CODEGEN PARSER GLUE: NAI_TGEO_GEO */
         case AntlrSQLLexer::NAI_TGEO_GEO:
@@ -39785,7 +40989,8 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         break;
         /* END CODEGEN PARSER GLUE: NAI_TGEO_TGEO */
 
-        /* BEGIN CODEGEN PARSER GLUE: NAI_TNPOINT_GEO */
+        #if NPOINT
+/* BEGIN CODEGEN PARSER GLUE: NAI_TNPOINT_GEO */
         case AntlrSQLLexer::NAI_TNPOINT_GEO:
         {
             const auto argCount = context->expression().size();
@@ -39815,8 +41020,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: NAI_TNPOINT_GEO */
+#endif /* NPOINT */
 
-        /* BEGIN CODEGEN PARSER GLUE: NAI_TNPOINT_NPOINT */
+        #if NPOINT
+/* BEGIN CODEGEN PARSER GLUE: NAI_TNPOINT_NPOINT */
         case AntlrSQLLexer::NAI_TNPOINT_NPOINT:
         {
             const auto argCount = context->expression().size();
@@ -39846,8 +41053,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: NAI_TNPOINT_NPOINT */
+#endif /* NPOINT */
 
-        /* BEGIN CODEGEN PARSER GLUE: NAI_TNPOINT_TNPOINT */
+        #if NPOINT
+/* BEGIN CODEGEN PARSER GLUE: NAI_TNPOINT_TNPOINT */
         case AntlrSQLLexer::NAI_TNPOINT_TNPOINT:
         {
             const auto argCount = context->expression().size();
@@ -39879,8 +41088,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: NAI_TNPOINT_TNPOINT */
+#endif /* NPOINT */
 
-        /* BEGIN CODEGEN PARSER GLUE: NAI_TPOSE_GEO */
+        #if POSE
+/* BEGIN CODEGEN PARSER GLUE: NAI_TPOSE_GEO */
         case AntlrSQLLexer::NAI_TPOSE_GEO:
         {
             const auto argCount = context->expression().size();
@@ -39911,8 +41122,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: NAI_TPOSE_GEO */
+#endif /* POSE */
 
-        /* BEGIN CODEGEN PARSER GLUE: NAI_TPOSE_POSE */
+        #if POSE
+/* BEGIN CODEGEN PARSER GLUE: NAI_TPOSE_POSE */
         case AntlrSQLLexer::NAI_TPOSE_POSE:
         {
             const auto argCount = context->expression().size();
@@ -39943,8 +41156,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: NAI_TPOSE_POSE */
+#endif /* POSE */
 
-        /* BEGIN CODEGEN PARSER GLUE: NAI_TPOSE_TPOSE */
+        #if POSE
+/* BEGIN CODEGEN PARSER GLUE: NAI_TPOSE_TPOSE */
         case AntlrSQLLexer::NAI_TPOSE_TPOSE:
         {
             const auto argCount = context->expression().size();
@@ -39978,8 +41193,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: NAI_TPOSE_TPOSE */
+#endif /* POSE */
 
-        /* BEGIN CODEGEN PARSER GLUE: SHORTESTLINE_TCBUFFER_CBUFFER */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: SHORTESTLINE_TCBUFFER_CBUFFER */
         case AntlrSQLLexer::SHORTESTLINE_TCBUFFER_CBUFFER:
         {
             const auto argCount = context->expression().size();
@@ -40010,8 +41227,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: SHORTESTLINE_TCBUFFER_CBUFFER */
+#endif /* CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: SHORTESTLINE_TCBUFFER_GEO */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: SHORTESTLINE_TCBUFFER_GEO */
         case AntlrSQLLexer::SHORTESTLINE_TCBUFFER_GEO:
         {
             const auto argCount = context->expression().size();
@@ -40042,8 +41261,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: SHORTESTLINE_TCBUFFER_GEO */
+#endif /* CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: SHORTESTLINE_TCBUFFER_TCBUFFER */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: SHORTESTLINE_TCBUFFER_TCBUFFER */
         case AntlrSQLLexer::SHORTESTLINE_TCBUFFER_TCBUFFER:
         {
             const auto argCount = context->expression().size();
@@ -40077,6 +41298,7 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: SHORTESTLINE_TCBUFFER_TCBUFFER */
+#endif /* CBUFFER */
 
         /* BEGIN CODEGEN PARSER GLUE: SHORTESTLINE_TGEO_GEO */
         case AntlrSQLLexer::SHORTESTLINE_TGEO_GEO:
@@ -40142,7 +41364,8 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         break;
         /* END CODEGEN PARSER GLUE: SHORTESTLINE_TGEO_TGEO */
 
-        /* BEGIN CODEGEN PARSER GLUE: SHORTESTLINE_TNPOINT_GEO */
+        #if NPOINT
+/* BEGIN CODEGEN PARSER GLUE: SHORTESTLINE_TNPOINT_GEO */
         case AntlrSQLLexer::SHORTESTLINE_TNPOINT_GEO:
         {
             const auto argCount = context->expression().size();
@@ -40172,8 +41395,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: SHORTESTLINE_TNPOINT_GEO */
+#endif /* NPOINT */
 
-        /* BEGIN CODEGEN PARSER GLUE: SHORTESTLINE_TNPOINT_NPOINT */
+        #if NPOINT
+/* BEGIN CODEGEN PARSER GLUE: SHORTESTLINE_TNPOINT_NPOINT */
         case AntlrSQLLexer::SHORTESTLINE_TNPOINT_NPOINT:
         {
             const auto argCount = context->expression().size();
@@ -40203,8 +41428,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: SHORTESTLINE_TNPOINT_NPOINT */
+#endif /* NPOINT */
 
-        /* BEGIN CODEGEN PARSER GLUE: SHORTESTLINE_TNPOINT_TNPOINT */
+        #if NPOINT
+/* BEGIN CODEGEN PARSER GLUE: SHORTESTLINE_TNPOINT_TNPOINT */
         case AntlrSQLLexer::SHORTESTLINE_TNPOINT_TNPOINT:
         {
             const auto argCount = context->expression().size();
@@ -40236,8 +41463,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: SHORTESTLINE_TNPOINT_TNPOINT */
+#endif /* NPOINT */
 
-        /* BEGIN CODEGEN PARSER GLUE: SHORTESTLINE_TPOSE_GEO */
+        #if POSE
+/* BEGIN CODEGEN PARSER GLUE: SHORTESTLINE_TPOSE_GEO */
         case AntlrSQLLexer::SHORTESTLINE_TPOSE_GEO:
         {
             const auto argCount = context->expression().size();
@@ -40268,8 +41497,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: SHORTESTLINE_TPOSE_GEO */
+#endif /* POSE */
 
-        /* BEGIN CODEGEN PARSER GLUE: SHORTESTLINE_TPOSE_POSE */
+        #if POSE
+/* BEGIN CODEGEN PARSER GLUE: SHORTESTLINE_TPOSE_POSE */
         case AntlrSQLLexer::SHORTESTLINE_TPOSE_POSE:
         {
             const auto argCount = context->expression().size();
@@ -40300,8 +41531,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: SHORTESTLINE_TPOSE_POSE */
+#endif /* POSE */
 
-        /* BEGIN CODEGEN PARSER GLUE: SHORTESTLINE_TPOSE_TPOSE */
+        #if POSE
+/* BEGIN CODEGEN PARSER GLUE: SHORTESTLINE_TPOSE_TPOSE */
         case AntlrSQLLexer::SHORTESTLINE_TPOSE_TPOSE:
         {
             const auto argCount = context->expression().size();
@@ -40335,7 +41568,9 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: SHORTESTLINE_TPOSE_TPOSE */
-        /* BEGIN CODEGEN PARSER GLUE: TNPOINT_ROUTE */
+#endif /* POSE */
+        #if NPOINT
+/* BEGIN CODEGEN PARSER GLUE: TNPOINT_ROUTE */
         case AntlrSQLLexer::TNPOINT_ROUTE:
         {
             const auto argCount = context->expression().size();
@@ -40364,8 +41599,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TNPOINT_ROUTE */
+#endif /* NPOINT */
 
-        /* BEGIN CODEGEN PARSER GLUE: TNPOINT_TRAJECTORY */
+        #if NPOINT
+/* BEGIN CODEGEN PARSER GLUE: TNPOINT_TRAJECTORY */
         case AntlrSQLLexer::TNPOINT_TRAJECTORY:
         {
             const auto argCount = context->expression().size();
@@ -40394,8 +41631,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TNPOINT_TRAJECTORY */
+#endif /* NPOINT */
 
-        /* BEGIN CODEGEN PARSER GLUE: TNPOINT_TWCENTROID */
+        #if NPOINT
+/* BEGIN CODEGEN PARSER GLUE: TNPOINT_TWCENTROID */
         case AntlrSQLLexer::TNPOINT_TWCENTROID:
         {
             const auto argCount = context->expression().size();
@@ -40424,8 +41663,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TNPOINT_TWCENTROID */
+#endif /* NPOINT */
 
-        /* BEGIN CODEGEN PARSER GLUE: TPOSE_START_VALUE */
+        #if POSE
+/* BEGIN CODEGEN PARSER GLUE: TPOSE_START_VALUE */
         case AntlrSQLLexer::TPOSE_START_VALUE:
         {
             const auto argCount = context->expression().size();
@@ -40455,8 +41696,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TPOSE_START_VALUE */
+#endif /* POSE */
 
-        /* BEGIN CODEGEN PARSER GLUE: TPOSE_END_VALUE */
+        #if POSE
+/* BEGIN CODEGEN PARSER GLUE: TPOSE_END_VALUE */
         case AntlrSQLLexer::TPOSE_END_VALUE:
         {
             const auto argCount = context->expression().size();
@@ -40486,8 +41729,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TPOSE_END_VALUE */
+#endif /* POSE */
 
-        /* BEGIN CODEGEN PARSER GLUE: TPOSE_TRAJECTORY */
+        #if POSE
+/* BEGIN CODEGEN PARSER GLUE: TPOSE_TRAJECTORY */
         case AntlrSQLLexer::TPOSE_TRAJECTORY:
         {
             const auto argCount = context->expression().size();
@@ -40517,8 +41762,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TPOSE_TRAJECTORY */
+#endif /* POSE */
 
-        /* BEGIN CODEGEN PARSER GLUE: CBUFFER_COPY */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: CBUFFER_COPY */
         case AntlrSQLLexer::CBUFFER_COPY:
         {
             const auto argCount = context->expression().size();
@@ -40545,8 +41792,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: CBUFFER_COPY */
+#endif /* CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: CBUFFER_POINT */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: CBUFFER_POINT */
         case AntlrSQLLexer::CBUFFER_POINT:
         {
             const auto argCount = context->expression().size();
@@ -40573,8 +41822,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: CBUFFER_POINT */
+#endif /* CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: CBUFFER_TO_GEOM */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: CBUFFER_TO_GEOM */
         case AntlrSQLLexer::CBUFFER_TO_GEOM:
         {
             const auto argCount = context->expression().size();
@@ -40601,8 +41852,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: CBUFFER_TO_GEOM */
+#endif /* CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: POSE_COPY */
+        #if POSE
+/* BEGIN CODEGEN PARSER GLUE: POSE_COPY */
         case AntlrSQLLexer::POSE_COPY:
         {
             const auto argCount = context->expression().size();
@@ -40629,8 +41882,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: POSE_COPY */
+#endif /* POSE */
 
-        /* BEGIN CODEGEN PARSER GLUE: POSE_TO_POINT */
+        #if POSE
+/* BEGIN CODEGEN PARSER GLUE: POSE_TO_POINT */
         case AntlrSQLLexer::POSE_TO_POINT:
         {
             const auto argCount = context->expression().size();
@@ -40657,8 +41912,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: POSE_TO_POINT */
+#endif /* POSE */
 
-        /* BEGIN CODEGEN PARSER GLUE: NPOINT_TO_GEOMPOINT */
+        #if NPOINT
+/* BEGIN CODEGEN PARSER GLUE: NPOINT_TO_GEOMPOINT */
         case AntlrSQLLexer::NPOINT_TO_GEOMPOINT:
         {
             const auto argCount = context->expression().size();
@@ -40685,8 +41942,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: NPOINT_TO_GEOMPOINT */
+#endif /* NPOINT */
 
-        /* BEGIN CODEGEN PARSER GLUE: NSEGMENT_TO_GEOM */
+        #if NPOINT
+/* BEGIN CODEGEN PARSER GLUE: NSEGMENT_TO_GEOM */
         case AntlrSQLLexer::NSEGMENT_TO_GEOM:
         {
             const auto argCount = context->expression().size();
@@ -40713,6 +41972,7 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: NSEGMENT_TO_GEOM */
+#endif /* NPOINT */
 
         /* BEGIN CODEGEN PARSER GLUE: STBOX_TO_GEO */
         case AntlrSQLLexer::STBOX_TO_GEO:
@@ -40886,7 +42146,8 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TBOX_MAKE */
-        /* BEGIN CODEGEN PARSER GLUE: TCBUFFER_AT_CBUFFER */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: TCBUFFER_AT_CBUFFER */
         case AntlrSQLLexer::TCBUFFER_AT_CBUFFER:
         {
             const auto argCount = context->expression().size();
@@ -40917,8 +42178,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TCBUFFER_AT_CBUFFER */
+#endif /* CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: TCBUFFER_AT_GEOM */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: TCBUFFER_AT_GEOM */
         case AntlrSQLLexer::TCBUFFER_AT_GEOM:
         {
             const auto argCount = context->expression().size();
@@ -40949,8 +42212,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TCBUFFER_AT_GEOM */
+#endif /* CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: TCBUFFER_MINUS_CBUFFER */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: TCBUFFER_MINUS_CBUFFER */
         case AntlrSQLLexer::TCBUFFER_MINUS_CBUFFER:
         {
             const auto argCount = context->expression().size();
@@ -40981,8 +42246,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TCBUFFER_MINUS_CBUFFER */
+#endif /* CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: TCBUFFER_MINUS_GEOM */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: TCBUFFER_MINUS_GEOM */
         case AntlrSQLLexer::TCBUFFER_MINUS_GEOM:
         {
             const auto argCount = context->expression().size();
@@ -41013,6 +42280,7 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TCBUFFER_MINUS_GEOM */
+#endif /* CBUFFER */
 
         /* BEGIN CODEGEN PARSER GLUE: TGEO_AT_VALUE */
         case AntlrSQLLexer::TGEO_AT_VALUE:
@@ -41076,7 +42344,8 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         break;
         /* END CODEGEN PARSER GLUE: TGEO_MINUS_VALUE */
 
-        /* BEGIN CODEGEN PARSER GLUE: TNPOINT_AT_NPOINT */
+        #if NPOINT
+/* BEGIN CODEGEN PARSER GLUE: TNPOINT_AT_NPOINT */
         case AntlrSQLLexer::TNPOINT_AT_NPOINT:
         {
             const auto argCount = context->expression().size();
@@ -41106,8 +42375,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TNPOINT_AT_NPOINT */
+#endif /* NPOINT */
 
-        /* BEGIN CODEGEN PARSER GLUE: TNPOINT_MINUS_NPOINT */
+        #if NPOINT
+/* BEGIN CODEGEN PARSER GLUE: TNPOINT_MINUS_NPOINT */
         case AntlrSQLLexer::TNPOINT_MINUS_NPOINT:
         {
             const auto argCount = context->expression().size();
@@ -41137,6 +42408,7 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TNPOINT_MINUS_NPOINT */
+#endif /* NPOINT */
 
         /* BEGIN CODEGEN PARSER GLUE: TPOINT_AT_GEOM */
         case AntlrSQLLexer::TPOINT_AT_GEOM:
@@ -41262,7 +42534,8 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         break;
         /* END CODEGEN PARSER GLUE: TPOINT_MINUS_VALUE */
 
-        /* BEGIN CODEGEN PARSER GLUE: TPOSE_AT_GEOM */
+        #if POSE
+/* BEGIN CODEGEN PARSER GLUE: TPOSE_AT_GEOM */
         case AntlrSQLLexer::TPOSE_AT_GEOM:
         {
             const auto argCount = context->expression().size();
@@ -41293,8 +42566,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TPOSE_AT_GEOM */
+#endif /* POSE */
 
-        /* BEGIN CODEGEN PARSER GLUE: TPOSE_AT_POSE */
+        #if POSE
+/* BEGIN CODEGEN PARSER GLUE: TPOSE_AT_POSE */
         case AntlrSQLLexer::TPOSE_AT_POSE:
         {
             const auto argCount = context->expression().size();
@@ -41325,8 +42600,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TPOSE_AT_POSE */
+#endif /* POSE */
 
-        /* BEGIN CODEGEN PARSER GLUE: TPOSE_MINUS_GEOM */
+        #if POSE
+/* BEGIN CODEGEN PARSER GLUE: TPOSE_MINUS_GEOM */
         case AntlrSQLLexer::TPOSE_MINUS_GEOM:
         {
             const auto argCount = context->expression().size();
@@ -41357,8 +42634,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TPOSE_MINUS_GEOM */
+#endif /* POSE */
 
-        /* BEGIN CODEGEN PARSER GLUE: TPOSE_MINUS_POSE */
+        #if POSE
+/* BEGIN CODEGEN PARSER GLUE: TPOSE_MINUS_POSE */
         case AntlrSQLLexer::TPOSE_MINUS_POSE:
         {
             const auto argCount = context->expression().size();
@@ -41389,7 +42668,9 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TPOSE_MINUS_POSE */
-        /* BEGIN CODEGEN PARSER GLUE: TCBUFFER_AT_STBOX */
+#endif /* POSE */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: TCBUFFER_AT_STBOX */
         case AntlrSQLLexer::TCBUFFER_AT_STBOX:
         {
             const auto argCount = context->expression().size();
@@ -41420,8 +42701,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TCBUFFER_AT_STBOX */
+#endif /* CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: TCBUFFER_MINUS_STBOX */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: TCBUFFER_MINUS_STBOX */
         case AntlrSQLLexer::TCBUFFER_MINUS_STBOX:
         {
             const auto argCount = context->expression().size();
@@ -41452,6 +42735,7 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TCBUFFER_MINUS_STBOX */
+#endif /* CBUFFER */
 
         /* BEGIN CODEGEN PARSER GLUE: TGEO_MINUS_STBOX */
         case AntlrSQLLexer::TGEO_MINUS_STBOX:
@@ -41484,7 +42768,8 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         break;
         /* END CODEGEN PARSER GLUE: TGEO_MINUS_STBOX */
 
-        /* BEGIN CODEGEN PARSER GLUE: TPOSE_AT_STBOX */
+        #if POSE
+/* BEGIN CODEGEN PARSER GLUE: TPOSE_AT_STBOX */
         case AntlrSQLLexer::TPOSE_AT_STBOX:
         {
             const auto argCount = context->expression().size();
@@ -41515,8 +42800,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TPOSE_AT_STBOX */
+#endif /* POSE */
 
-        /* BEGIN CODEGEN PARSER GLUE: TPOSE_MINUS_STBOX */
+        #if POSE
+/* BEGIN CODEGEN PARSER GLUE: TPOSE_MINUS_STBOX */
         case AntlrSQLLexer::TPOSE_MINUS_STBOX:
         {
             const auto argCount = context->expression().size();
@@ -41547,7 +42834,9 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TPOSE_MINUS_STBOX */
-        /* BEGIN CODEGEN PARSER GLUE: DISTANCE_CBUFFER_GEO */
+#endif /* POSE */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: DISTANCE_CBUFFER_GEO */
         case AntlrSQLLexer::DISTANCE_CBUFFER_GEO:
         {
             const auto argCount = context->expression().size();
@@ -41575,8 +42864,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: DISTANCE_CBUFFER_GEO */
+#endif /* CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: DISTANCE_CBUFFER_STBOX */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: DISTANCE_CBUFFER_STBOX */
         case AntlrSQLLexer::DISTANCE_CBUFFER_STBOX:
         {
             const auto argCount = context->expression().size();
@@ -41604,8 +42895,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: DISTANCE_CBUFFER_STBOX */
+#endif /* CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: DISTANCE_POSE_GEO */
+        #if POSE
+/* BEGIN CODEGEN PARSER GLUE: DISTANCE_POSE_GEO */
         case AntlrSQLLexer::DISTANCE_POSE_GEO:
         {
             const auto argCount = context->expression().size();
@@ -41633,8 +42926,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: DISTANCE_POSE_GEO */
+#endif /* POSE */
 
-        /* BEGIN CODEGEN PARSER GLUE: DISTANCE_POSE_STBOX */
+        #if POSE
+/* BEGIN CODEGEN PARSER GLUE: DISTANCE_POSE_STBOX */
         case AntlrSQLLexer::DISTANCE_POSE_STBOX:
         {
             const auto argCount = context->expression().size();
@@ -41662,8 +42957,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: DISTANCE_POSE_STBOX */
+#endif /* POSE */
 
-        /* BEGIN CODEGEN PARSER GLUE: NAD_CBUFFER_STBOX */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: NAD_CBUFFER_STBOX */
         case AntlrSQLLexer::NAD_CBUFFER_STBOX:
         {
             const auto argCount = context->expression().size();
@@ -41691,6 +42988,7 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: NAD_CBUFFER_STBOX */
+#endif /* CBUFFER */
 
         /* BEGIN CODEGEN PARSER GLUE: NAD_STBOX_GEO */
         case AntlrSQLLexer::NAD_STBOX_GEO:
@@ -41990,7 +43288,8 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         break;
         /* END CODEGEN PARSER GLUE: TGEOINST_MAKE */
 
-        /* BEGIN CODEGEN PARSER GLUE: TNPOINTINST_MAKE */
+        #if NPOINT
+/* BEGIN CODEGEN PARSER GLUE: TNPOINTINST_MAKE */
         case AntlrSQLLexer::TNPOINTINST_MAKE:
         {
             const auto argCount = context->expression().size();
@@ -42018,8 +43317,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TNPOINTINST_MAKE */
+#endif /* NPOINT */
 
-        /* BEGIN CODEGEN PARSER GLUE: NPOINT_MAKE */
+        #if NPOINT
+/* BEGIN CODEGEN PARSER GLUE: NPOINT_MAKE */
         case AntlrSQLLexer::NPOINT_MAKE:
         {
             const auto argCount = context->expression().size();
@@ -42047,8 +43348,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: NPOINT_MAKE */
+#endif /* NPOINT */
 
-        /* BEGIN CODEGEN PARSER GLUE: CBUFFER_MAKE */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: CBUFFER_MAKE */
         case AntlrSQLLexer::CBUFFER_MAKE:
         {
             const auto argCount = context->expression().size();
@@ -42076,8 +43379,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: CBUFFER_MAKE */
+#endif /* CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: POSE_MAKE_2D */
+        #if POSE
+/* BEGIN CODEGEN PARSER GLUE: POSE_MAKE_2D */
         case AntlrSQLLexer::POSE_MAKE_2D:
         {
             const auto argCount = context->expression().size();
@@ -42107,8 +43412,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: POSE_MAKE_2D */
+#endif /* POSE */
 
-        /* BEGIN CODEGEN PARSER GLUE: POSE_MAKE_POINT2D */
+        #if POSE
+/* BEGIN CODEGEN PARSER GLUE: POSE_MAKE_POINT2D */
         case AntlrSQLLexer::POSE_MAKE_POINT2D:
         {
             const auto argCount = context->expression().size();
@@ -42136,6 +43443,7 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: POSE_MAKE_POINT2D */
+#endif /* POSE */
         /* BEGIN CODEGEN PARSER GLUE: GEO_EQUALS */
         case AntlrSQLLexer::GEO_EQUALS:
         {
@@ -42571,7 +43879,8 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         break;
         /* END CODEGEN PARSER GLUE: GEOM_SHORTESTLINE3D */
 
-        /* BEGIN CODEGEN PARSER GLUE: GEOM_TO_CBUFFER */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: GEOM_TO_CBUFFER */
         case AntlrSQLLexer::GEOM_TO_CBUFFER:
         {
             const auto argCount = context->expression().size();
@@ -42598,6 +43907,7 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: GEOM_TO_CBUFFER */
+#endif /* CBUFFER */
 
         /* BEGIN CODEGEN PARSER GLUE: GEOM_TOUCHES */
         case AntlrSQLLexer::GEOM_TOUCHES:
@@ -42772,7 +44082,8 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         break;
         /* END CODEGEN PARSER GLUE: TGEO_VALUES */
 
-        /* BEGIN CODEGEN PARSER GLUE: TPOSE_VALUES */
+        #if POSE
+/* BEGIN CODEGEN PARSER GLUE: TPOSE_VALUES */
         case AntlrSQLLexer::TPOSE_VALUES:
         {
             const auto argCount = context->expression().size();
@@ -42802,6 +44113,7 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TPOSE_VALUES */
+#endif /* POSE */
 
         /* BEGIN CODEGEN PARSER GLUE: TTEXT_VALUES */
         case AntlrSQLLexer::TTEXT_VALUES:
@@ -42915,7 +44227,8 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         break;
         /* END CODEGEN PARSER GLUE: GEOSET_VALUES */
 
-        /* BEGIN CODEGEN PARSER GLUE: CBUFFERSET_VALUES */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: CBUFFERSET_VALUES */
         case AntlrSQLLexer::CBUFFERSET_VALUES:
         {
             const auto argCount = context->expression().size();
@@ -42942,8 +44255,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: CBUFFERSET_VALUES */
+#endif /* CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: NPOINTSET_VALUES */
+        #if NPOINT
+/* BEGIN CODEGEN PARSER GLUE: NPOINTSET_VALUES */
         case AntlrSQLLexer::NPOINTSET_VALUES:
         {
             const auto argCount = context->expression().size();
@@ -42970,8 +44285,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: NPOINTSET_VALUES */
+#endif /* NPOINT */
 
-        /* BEGIN CODEGEN PARSER GLUE: POSESET_VALUES */
+        #if POSE
+/* BEGIN CODEGEN PARSER GLUE: POSESET_VALUES */
         case AntlrSQLLexer::POSESET_VALUES:
         {
             const auto argCount = context->expression().size();
@@ -42998,6 +44315,7 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: POSESET_VALUES */
+#endif /* POSE */
 
         /* BEGIN CODEGEN PARSER GLUE: TEXTSET_VALUES */
         case AntlrSQLLexer::TEXTSET_VALUES:
@@ -43196,7 +44514,8 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TEMPORAL_INSTANTS */
-        /* BEGIN CODEGEN PARSER GLUE: TDWITHIN_TCBUFFER_CBUFFER */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: TDWITHIN_TCBUFFER_CBUFFER */
         case AntlrSQLLexer::TDWITHIN_TCBUFFER_CBUFFER:
         {
             const auto argCount = context->expression().size();
@@ -43228,8 +44547,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TDWITHIN_TCBUFFER_CBUFFER */
+#endif /* CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: TDWITHIN_TCBUFFER_GEO */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: TDWITHIN_TCBUFFER_GEO */
         case AntlrSQLLexer::TDWITHIN_TCBUFFER_GEO:
         {
             const auto argCount = context->expression().size();
@@ -43261,8 +44582,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TDWITHIN_TCBUFFER_GEO */
+#endif /* CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: TDWITHIN_TCBUFFER_TCBUFFER */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: TDWITHIN_TCBUFFER_TCBUFFER */
         case AntlrSQLLexer::TDWITHIN_TCBUFFER_TCBUFFER:
         {
             const auto argCount = context->expression().size();
@@ -43297,6 +44620,7 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TDWITHIN_TCBUFFER_TCBUFFER */
+#endif /* CBUFFER */
 
         /* BEGIN CODEGEN PARSER GLUE: TDWITHIN_TGEO_GEO */
         case AntlrSQLLexer::TDWITHIN_TGEO_GEO:
@@ -45535,7 +46859,8 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: GEOG_TO_GEOM */
-        /* BEGIN CODEGEN PARSER GLUE: ALWAYS_EQ_GEO_TRGEOMETRY */
+        #if RGEO
+/* BEGIN CODEGEN PARSER GLUE: ALWAYS_EQ_GEO_TRGEOMETRY */
         case AntlrSQLLexer::ALWAYS_EQ_GEO_TRGEOMETRY:
         {
             const auto argCount = context->expression().size();
@@ -45566,8 +46891,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: ALWAYS_EQ_GEO_TRGEOMETRY */
+#endif /* RGEO */
 
-        /* BEGIN CODEGEN PARSER GLUE: ALWAYS_EQ_TRGEOMETRY_GEO */
+        #if RGEO
+/* BEGIN CODEGEN PARSER GLUE: ALWAYS_EQ_TRGEOMETRY_GEO */
         case AntlrSQLLexer::ALWAYS_EQ_TRGEOMETRY_GEO:
         {
             const auto argCount = context->expression().size();
@@ -45598,8 +46925,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: ALWAYS_EQ_TRGEOMETRY_GEO */
+#endif /* RGEO */
 
-        /* BEGIN CODEGEN PARSER GLUE: ALWAYS_NE_GEO_TRGEOMETRY */
+        #if RGEO
+/* BEGIN CODEGEN PARSER GLUE: ALWAYS_NE_GEO_TRGEOMETRY */
         case AntlrSQLLexer::ALWAYS_NE_GEO_TRGEOMETRY:
         {
             const auto argCount = context->expression().size();
@@ -45630,8 +46959,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: ALWAYS_NE_GEO_TRGEOMETRY */
+#endif /* RGEO */
 
-        /* BEGIN CODEGEN PARSER GLUE: ALWAYS_NE_TRGEOMETRY_GEO */
+        #if RGEO
+/* BEGIN CODEGEN PARSER GLUE: ALWAYS_NE_TRGEOMETRY_GEO */
         case AntlrSQLLexer::ALWAYS_NE_TRGEOMETRY_GEO:
         {
             const auto argCount = context->expression().size();
@@ -45662,8 +46993,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: ALWAYS_NE_TRGEOMETRY_GEO */
+#endif /* RGEO */
 
-        /* BEGIN CODEGEN PARSER GLUE: EVER_EQ_GEO_TRGEOMETRY */
+        #if RGEO
+/* BEGIN CODEGEN PARSER GLUE: EVER_EQ_GEO_TRGEOMETRY */
         case AntlrSQLLexer::EVER_EQ_GEO_TRGEOMETRY:
         {
             const auto argCount = context->expression().size();
@@ -45694,8 +47027,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: EVER_EQ_GEO_TRGEOMETRY */
+#endif /* RGEO */
 
-        /* BEGIN CODEGEN PARSER GLUE: EVER_EQ_TRGEOMETRY_GEO */
+        #if RGEO
+/* BEGIN CODEGEN PARSER GLUE: EVER_EQ_TRGEOMETRY_GEO */
         case AntlrSQLLexer::EVER_EQ_TRGEOMETRY_GEO:
         {
             const auto argCount = context->expression().size();
@@ -45726,8 +47061,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: EVER_EQ_TRGEOMETRY_GEO */
+#endif /* RGEO */
 
-        /* BEGIN CODEGEN PARSER GLUE: EVER_NE_GEO_TRGEOMETRY */
+        #if RGEO
+/* BEGIN CODEGEN PARSER GLUE: EVER_NE_GEO_TRGEOMETRY */
         case AntlrSQLLexer::EVER_NE_GEO_TRGEOMETRY:
         {
             const auto argCount = context->expression().size();
@@ -45758,8 +47095,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: EVER_NE_GEO_TRGEOMETRY */
+#endif /* RGEO */
 
-        /* BEGIN CODEGEN PARSER GLUE: EVER_NE_TRGEOMETRY_GEO */
+        #if RGEO
+/* BEGIN CODEGEN PARSER GLUE: EVER_NE_TRGEOMETRY_GEO */
         case AntlrSQLLexer::EVER_NE_TRGEOMETRY_GEO:
         {
             const auto argCount = context->expression().size();
@@ -45790,8 +47129,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: EVER_NE_TRGEOMETRY_GEO */
+#endif /* RGEO */
 
-        /* BEGIN CODEGEN PARSER GLUE: TDISTANCE_TRGEOMETRY_GEO */
+        #if RGEO
+/* BEGIN CODEGEN PARSER GLUE: TDISTANCE_TRGEOMETRY_GEO */
         case AntlrSQLLexer::TDISTANCE_TRGEOMETRY_GEO:
         {
             const auto argCount = context->expression().size();
@@ -45822,8 +47163,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TDISTANCE_TRGEOMETRY_GEO */
+#endif /* RGEO */
 
-        /* BEGIN CODEGEN PARSER GLUE: TEQ_GEO_TRGEOMETRY */
+        #if RGEO
+/* BEGIN CODEGEN PARSER GLUE: TEQ_GEO_TRGEOMETRY */
         case AntlrSQLLexer::TEQ_GEO_TRGEOMETRY:
         {
             const auto argCount = context->expression().size();
@@ -45854,8 +47197,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TEQ_GEO_TRGEOMETRY */
+#endif /* RGEO */
 
-        /* BEGIN CODEGEN PARSER GLUE: TEQ_TRGEOMETRY_GEO */
+        #if RGEO
+/* BEGIN CODEGEN PARSER GLUE: TEQ_TRGEOMETRY_GEO */
         case AntlrSQLLexer::TEQ_TRGEOMETRY_GEO:
         {
             const auto argCount = context->expression().size();
@@ -45886,8 +47231,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TEQ_TRGEOMETRY_GEO */
+#endif /* RGEO */
 
-        /* BEGIN CODEGEN PARSER GLUE: TNE_GEO_TRGEOMETRY */
+        #if RGEO
+/* BEGIN CODEGEN PARSER GLUE: TNE_GEO_TRGEOMETRY */
         case AntlrSQLLexer::TNE_GEO_TRGEOMETRY:
         {
             const auto argCount = context->expression().size();
@@ -45918,8 +47265,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TNE_GEO_TRGEOMETRY */
+#endif /* RGEO */
 
-        /* BEGIN CODEGEN PARSER GLUE: TNE_TRGEOMETRY_GEO */
+        #if RGEO
+/* BEGIN CODEGEN PARSER GLUE: TNE_TRGEOMETRY_GEO */
         case AntlrSQLLexer::TNE_TRGEOMETRY_GEO:
         {
             const auto argCount = context->expression().size();
@@ -45950,8 +47299,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TNE_TRGEOMETRY_GEO */
+#endif /* RGEO */
 
-        /* BEGIN CODEGEN PARSER GLUE: TRGEOMETRY_END_VALUE */
+        #if RGEO
+/* BEGIN CODEGEN PARSER GLUE: TRGEOMETRY_END_VALUE */
         case AntlrSQLLexer::TRGEOMETRY_END_VALUE:
         {
             const auto argCount = context->expression().size();
@@ -45981,8 +47332,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TRGEOMETRY_END_VALUE */
+#endif /* RGEO */
 
-        /* BEGIN CODEGEN PARSER GLUE: TRGEOMETRY_GEOM */
+        #if RGEO
+/* BEGIN CODEGEN PARSER GLUE: TRGEOMETRY_GEOM */
         case AntlrSQLLexer::TRGEOMETRY_GEOM:
         {
             const auto argCount = context->expression().size();
@@ -46012,8 +47365,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TRGEOMETRY_GEOM */
+#endif /* RGEO */
 
-        /* BEGIN CODEGEN PARSER GLUE: TRGEOMETRY_START_VALUE */
+        #if RGEO
+/* BEGIN CODEGEN PARSER GLUE: TRGEOMETRY_START_VALUE */
         case AntlrSQLLexer::TRGEOMETRY_START_VALUE:
         {
             const auto argCount = context->expression().size();
@@ -46043,7 +47398,9 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TRGEOMETRY_START_VALUE */
-        /* BEGIN CODEGEN PARSER GLUE: NAD_TRGEOMETRY_TRGEOMETRY */
+#endif /* RGEO */
+        #if RGEO
+/* BEGIN CODEGEN PARSER GLUE: NAD_TRGEOMETRY_TRGEOMETRY */
         case AntlrSQLLexer::NAD_TRGEOMETRY_TRGEOMETRY:
         {
             const auto argCount = context->expression().size();
@@ -46077,8 +47434,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: NAD_TRGEOMETRY_TRGEOMETRY */
+#endif /* RGEO */
 
-        /* BEGIN CODEGEN PARSER GLUE: NAI_TRGEOMETRY_TRGEOMETRY */
+        #if RGEO
+/* BEGIN CODEGEN PARSER GLUE: NAI_TRGEOMETRY_TRGEOMETRY */
         case AntlrSQLLexer::NAI_TRGEOMETRY_TRGEOMETRY:
         {
             const auto argCount = context->expression().size();
@@ -46112,8 +47471,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: NAI_TRGEOMETRY_TRGEOMETRY */
+#endif /* RGEO */
 
-        /* BEGIN CODEGEN PARSER GLUE: SHORTESTLINE_TRGEOMETRY_TRGEOMETRY */
+        #if RGEO
+/* BEGIN CODEGEN PARSER GLUE: SHORTESTLINE_TRGEOMETRY_TRGEOMETRY */
         case AntlrSQLLexer::SHORTESTLINE_TRGEOMETRY_TRGEOMETRY:
         {
             const auto argCount = context->expression().size();
@@ -46147,8 +47508,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: SHORTESTLINE_TRGEOMETRY_TRGEOMETRY */
+#endif /* RGEO */
 
-        /* BEGIN CODEGEN PARSER GLUE: TRGEOMETRY_ROTATION */
+        #if RGEO
+/* BEGIN CODEGEN PARSER GLUE: TRGEOMETRY_ROTATION */
         case AntlrSQLLexer::TRGEOMETRY_ROTATION:
         {
             const auto argCount = context->expression().size();
@@ -46178,8 +47541,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TRGEOMETRY_ROTATION */
+#endif /* RGEO */
 
-        /* BEGIN CODEGEN PARSER GLUE: TRGEOMETRY_TO_TINSTANT */
+        #if RGEO
+/* BEGIN CODEGEN PARSER GLUE: TRGEOMETRY_TO_TINSTANT */
         case AntlrSQLLexer::TRGEOMETRY_TO_TINSTANT:
         {
             const auto argCount = context->expression().size();
@@ -46209,8 +47574,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TRGEOMETRY_TO_TINSTANT */
+#endif /* RGEO */
 
-        /* BEGIN CODEGEN PARSER GLUE: TRGEOMETRY_TO_TPOINT */
+        #if RGEO
+/* BEGIN CODEGEN PARSER GLUE: TRGEOMETRY_TO_TPOINT */
         case AntlrSQLLexer::TRGEOMETRY_TO_TPOINT:
         {
             const auto argCount = context->expression().size();
@@ -46240,8 +47607,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TRGEOMETRY_TO_TPOINT */
+#endif /* RGEO */
 
-        /* BEGIN CODEGEN PARSER GLUE: TRGEOMETRY_TO_TPOSE */
+        #if RGEO
+/* BEGIN CODEGEN PARSER GLUE: TRGEOMETRY_TO_TPOSE */
         case AntlrSQLLexer::TRGEOMETRY_TO_TPOSE:
         {
             const auto argCount = context->expression().size();
@@ -46271,7 +47640,9 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TRGEOMETRY_TO_TPOSE */
-        /* BEGIN CODEGEN PARSER GLUE: TRGEOMETRY_START_INSTANT */
+#endif /* RGEO */
+        #if RGEO
+/* BEGIN CODEGEN PARSER GLUE: TRGEOMETRY_START_INSTANT */
         case AntlrSQLLexer::TRGEOMETRY_START_INSTANT:
         {
             const auto argCount = context->expression().size();
@@ -46301,8 +47672,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TRGEOMETRY_START_INSTANT */
+#endif /* RGEO */
 
-        /* BEGIN CODEGEN PARSER GLUE: TRGEOMETRY_END_INSTANT */
+        #if RGEO
+/* BEGIN CODEGEN PARSER GLUE: TRGEOMETRY_END_INSTANT */
         case AntlrSQLLexer::TRGEOMETRY_END_INSTANT:
         {
             const auto argCount = context->expression().size();
@@ -46332,8 +47705,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TRGEOMETRY_END_INSTANT */
+#endif /* RGEO */
 
-        /* BEGIN CODEGEN PARSER GLUE: TRGEOMETRY_START_SEQUENCE */
+        #if RGEO
+/* BEGIN CODEGEN PARSER GLUE: TRGEOMETRY_START_SEQUENCE */
         case AntlrSQLLexer::TRGEOMETRY_START_SEQUENCE:
         {
             const auto argCount = context->expression().size();
@@ -46363,8 +47738,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TRGEOMETRY_START_SEQUENCE */
+#endif /* RGEO */
 
-        /* BEGIN CODEGEN PARSER GLUE: TRGEOMETRY_END_SEQUENCE */
+        #if RGEO
+/* BEGIN CODEGEN PARSER GLUE: TRGEOMETRY_END_SEQUENCE */
         case AntlrSQLLexer::TRGEOMETRY_END_SEQUENCE:
         {
             const auto argCount = context->expression().size();
@@ -46394,8 +47771,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TRGEOMETRY_END_SEQUENCE */
+#endif /* RGEO */
 
-        /* BEGIN CODEGEN PARSER GLUE: NAD_TRGEOMETRY_GEO */
+        #if RGEO
+/* BEGIN CODEGEN PARSER GLUE: NAD_TRGEOMETRY_GEO */
         case AntlrSQLLexer::NAD_TRGEOMETRY_GEO:
         {
             const auto argCount = context->expression().size();
@@ -46426,8 +47805,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: NAD_TRGEOMETRY_GEO */
+#endif /* RGEO */
 
-        /* BEGIN CODEGEN PARSER GLUE: NAI_TRGEOMETRY_GEO */
+        #if RGEO
+/* BEGIN CODEGEN PARSER GLUE: NAI_TRGEOMETRY_GEO */
         case AntlrSQLLexer::NAI_TRGEOMETRY_GEO:
         {
             const auto argCount = context->expression().size();
@@ -46458,8 +47839,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: NAI_TRGEOMETRY_GEO */
+#endif /* RGEO */
 
-        /* BEGIN CODEGEN PARSER GLUE: SHORTESTLINE_TRGEOMETRY_GEO */
+        #if RGEO
+/* BEGIN CODEGEN PARSER GLUE: SHORTESTLINE_TRGEOMETRY_GEO */
         case AntlrSQLLexer::SHORTESTLINE_TRGEOMETRY_GEO:
         {
             const auto argCount = context->expression().size();
@@ -46490,7 +47873,9 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: SHORTESTLINE_TRGEOMETRY_GEO */
-        /* BEGIN CODEGEN PARSER GLUE: TRGEOMETRY_RESTRICT_TIMESTAMPTZ */
+#endif /* RGEO */
+        #if RGEO
+/* BEGIN CODEGEN PARSER GLUE: TRGEOMETRY_RESTRICT_TIMESTAMPTZ */
         case AntlrSQLLexer::TRGEOMETRY_RESTRICT_TIMESTAMPTZ:
         {
             const auto argCount = context->expression().size();
@@ -46521,8 +47906,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TRGEOMETRY_RESTRICT_TIMESTAMPTZ */
+#endif /* RGEO */
 
-        /* BEGIN CODEGEN PARSER GLUE: TRGEOMETRY_RESTRICT_TSTZSET */
+        #if RGEO
+/* BEGIN CODEGEN PARSER GLUE: TRGEOMETRY_RESTRICT_TSTZSET */
         case AntlrSQLLexer::TRGEOMETRY_RESTRICT_TSTZSET:
         {
             const auto argCount = context->expression().size();
@@ -46553,8 +47940,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TRGEOMETRY_RESTRICT_TSTZSET */
+#endif /* RGEO */
 
-        /* BEGIN CODEGEN PARSER GLUE: TRGEOMETRY_RESTRICT_TSTZSPAN */
+        #if RGEO
+/* BEGIN CODEGEN PARSER GLUE: TRGEOMETRY_RESTRICT_TSTZSPAN */
         case AntlrSQLLexer::TRGEOMETRY_RESTRICT_TSTZSPAN:
         {
             const auto argCount = context->expression().size();
@@ -46585,8 +47974,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TRGEOMETRY_RESTRICT_TSTZSPAN */
+#endif /* RGEO */
 
-        /* BEGIN CODEGEN PARSER GLUE: TRGEOMETRY_RESTRICT_TSTZSPANSET */
+        #if RGEO
+/* BEGIN CODEGEN PARSER GLUE: TRGEOMETRY_RESTRICT_TSTZSPANSET */
         case AntlrSQLLexer::TRGEOMETRY_RESTRICT_TSTZSPANSET:
         {
             const auto argCount = context->expression().size();
@@ -46617,6 +48008,7 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TRGEOMETRY_RESTRICT_TSTZSPANSET */
+#endif /* RGEO */
         /* BEGIN CODEGEN PARSER GLUE: TSPATIAL_SRID */
         case AntlrSQLLexer::TSPATIAL_SRID:
         {
@@ -46646,7 +48038,8 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TSPATIAL_SRID */
-        /* BEGIN CODEGEN PARSER GLUE: ALWAYS_EQ_TRGEOMETRY_TRGEOMETRY */
+        #if RGEO
+/* BEGIN CODEGEN PARSER GLUE: ALWAYS_EQ_TRGEOMETRY_TRGEOMETRY */
         case AntlrSQLLexer::ALWAYS_EQ_TRGEOMETRY_TRGEOMETRY:
         {
             const auto argCount = context->expression().size();
@@ -46680,8 +48073,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: ALWAYS_EQ_TRGEOMETRY_TRGEOMETRY */
+#endif /* RGEO */
 
-        /* BEGIN CODEGEN PARSER GLUE: EVER_EQ_TRGEOMETRY_TRGEOMETRY */
+        #if RGEO
+/* BEGIN CODEGEN PARSER GLUE: EVER_EQ_TRGEOMETRY_TRGEOMETRY */
         case AntlrSQLLexer::EVER_EQ_TRGEOMETRY_TRGEOMETRY:
         {
             const auto argCount = context->expression().size();
@@ -46715,8 +48110,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: EVER_EQ_TRGEOMETRY_TRGEOMETRY */
+#endif /* RGEO */
 
-        /* BEGIN CODEGEN PARSER GLUE: ALWAYS_NE_TRGEOMETRY_TRGEOMETRY */
+        #if RGEO
+/* BEGIN CODEGEN PARSER GLUE: ALWAYS_NE_TRGEOMETRY_TRGEOMETRY */
         case AntlrSQLLexer::ALWAYS_NE_TRGEOMETRY_TRGEOMETRY:
         {
             const auto argCount = context->expression().size();
@@ -46750,8 +48147,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: ALWAYS_NE_TRGEOMETRY_TRGEOMETRY */
+#endif /* RGEO */
 
-        /* BEGIN CODEGEN PARSER GLUE: EVER_NE_TRGEOMETRY_TRGEOMETRY */
+        #if RGEO
+/* BEGIN CODEGEN PARSER GLUE: EVER_NE_TRGEOMETRY_TRGEOMETRY */
         case AntlrSQLLexer::EVER_NE_TRGEOMETRY_TRGEOMETRY:
         {
             const auto argCount = context->expression().size();
@@ -46785,6 +48184,7 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: EVER_NE_TRGEOMETRY_TRGEOMETRY */
+#endif /* RGEO */
         /* BEGIN CODEGEN PARSER GLUE: FLOATSPAN_CEIL */
         case AntlrSQLLexer::FLOATSPAN_CEIL:
         {
@@ -47265,7 +48665,8 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: FLOATSPAN_EXPAND */
-        /* BEGIN CODEGEN PARSER GLUE: CBUFFER_TO_SET */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: CBUFFER_TO_SET */
         case AntlrSQLLexer::CBUFFER_TO_SET:
         {
             const auto argCount = context->expression().size();
@@ -47292,8 +48693,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: CBUFFER_TO_SET */
+#endif /* CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: NPOINT_TO_SET */
+        #if NPOINT
+/* BEGIN CODEGEN PARSER GLUE: NPOINT_TO_SET */
         case AntlrSQLLexer::NPOINT_TO_SET:
         {
             const auto argCount = context->expression().size();
@@ -47320,8 +48723,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: NPOINT_TO_SET */
+#endif /* NPOINT */
 
-        /* BEGIN CODEGEN PARSER GLUE: POSE_TO_SET */
+        #if POSE
+/* BEGIN CODEGEN PARSER GLUE: POSE_TO_SET */
         case AntlrSQLLexer::POSE_TO_SET:
         {
             const auto argCount = context->expression().size();
@@ -47348,6 +48753,7 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: POSE_TO_SET */
+#endif /* POSE */
 
         /* BEGIN CODEGEN PARSER GLUE: GEO_TO_SET */
         case AntlrSQLLexer::GEO_TO_SET:
@@ -47461,7 +48867,8 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         break;
         /* END CODEGEN PARSER GLUE: GEO_TSTZSPAN_TO_STBOX */
 
-        /* BEGIN CODEGEN PARSER GLUE: NPOINT_TSTZSPAN_TO_STBOX */
+        #if NPOINT
+/* BEGIN CODEGEN PARSER GLUE: NPOINT_TSTZSPAN_TO_STBOX */
         case AntlrSQLLexer::NPOINT_TSTZSPAN_TO_STBOX:
         {
             const auto argCount = context->expression().size();
@@ -47489,8 +48896,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: NPOINT_TSTZSPAN_TO_STBOX */
+#endif /* NPOINT */
 
-        /* BEGIN CODEGEN PARSER GLUE: POSE_TSTZSPAN_TO_STBOX */
+        #if POSE
+/* BEGIN CODEGEN PARSER GLUE: POSE_TSTZSPAN_TO_STBOX */
         case AntlrSQLLexer::POSE_TSTZSPAN_TO_STBOX:
         {
             const auto argCount = context->expression().size();
@@ -47518,8 +48927,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: POSE_TSTZSPAN_TO_STBOX */
+#endif /* POSE */
 
-        /* BEGIN CODEGEN PARSER GLUE: CBUFFER_TSTZSPAN_TO_STBOX */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: CBUFFER_TSTZSPAN_TO_STBOX */
         case AntlrSQLLexer::CBUFFER_TSTZSPAN_TO_STBOX:
         {
             const auto argCount = context->expression().size();
@@ -47547,6 +48958,7 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: CBUFFER_TSTZSPAN_TO_STBOX */
+#endif /* CBUFFER */
         /* BEGIN CODEGEN PARSER GLUE: GEO_TIMESTAMPTZ_TO_STBOX */
         case AntlrSQLLexer::GEO_TIMESTAMPTZ_TO_STBOX:
         {
@@ -47576,7 +48988,8 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         break;
         /* END CODEGEN PARSER GLUE: GEO_TIMESTAMPTZ_TO_STBOX */
 
-        /* BEGIN CODEGEN PARSER GLUE: NPOINT_TIMESTAMPTZ_TO_STBOX */
+        #if NPOINT
+/* BEGIN CODEGEN PARSER GLUE: NPOINT_TIMESTAMPTZ_TO_STBOX */
         case AntlrSQLLexer::NPOINT_TIMESTAMPTZ_TO_STBOX:
         {
             const auto argCount = context->expression().size();
@@ -47604,8 +49017,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: NPOINT_TIMESTAMPTZ_TO_STBOX */
+#endif /* NPOINT */
 
-        /* BEGIN CODEGEN PARSER GLUE: POSE_TIMESTAMPTZ_TO_STBOX */
+        #if POSE
+/* BEGIN CODEGEN PARSER GLUE: POSE_TIMESTAMPTZ_TO_STBOX */
         case AntlrSQLLexer::POSE_TIMESTAMPTZ_TO_STBOX:
         {
             const auto argCount = context->expression().size();
@@ -47633,8 +49048,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: POSE_TIMESTAMPTZ_TO_STBOX */
+#endif /* POSE */
 
-        /* BEGIN CODEGEN PARSER GLUE: CBUFFER_TIMESTAMPTZ_TO_STBOX */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: CBUFFER_TIMESTAMPTZ_TO_STBOX */
         case AntlrSQLLexer::CBUFFER_TIMESTAMPTZ_TO_STBOX:
         {
             const auto argCount = context->expression().size();
@@ -47662,6 +49079,7 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: CBUFFER_TIMESTAMPTZ_TO_STBOX */
+#endif /* CBUFFER */
         /* BEGIN CODEGEN PARSER GLUE: TFLOAT_SCALE_VALUE */
         case AntlrSQLLexer::TFLOAT_SCALE_VALUE:
         {
@@ -47722,7 +49140,8 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         break;
         /* END CODEGEN PARSER GLUE: TINT_SCALE_VALUE */
 
-        /* BEGIN CODEGEN PARSER GLUE: TRGEOMETRY_VALUE_N */
+        #if RGEO
+/* BEGIN CODEGEN PARSER GLUE: TRGEOMETRY_VALUE_N */
         case AntlrSQLLexer::TRGEOMETRY_VALUE_N:
         {
             const auto argCount = context->expression().size();
@@ -47752,8 +49171,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TRGEOMETRY_VALUE_N */
+#endif /* RGEO */
 
-        /* BEGIN CODEGEN PARSER GLUE: TPOSE_TO_TPOINT */
+        #if POSE
+/* BEGIN CODEGEN PARSER GLUE: TPOSE_TO_TPOINT */
         case AntlrSQLLexer::TPOSE_TO_TPOINT:
         {
             const auto argCount = context->expression().size();
@@ -47783,8 +49204,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TPOSE_TO_TPOINT */
+#endif /* POSE */
 
-        /* BEGIN CODEGEN PARSER GLUE: TCBUFFER_TO_TGEOMPOINT */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: TCBUFFER_TO_TGEOMPOINT */
         case AntlrSQLLexer::TCBUFFER_TO_TGEOMPOINT:
         {
             const auto argCount = context->expression().size();
@@ -47814,6 +49237,7 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TCBUFFER_TO_TGEOMPOINT */
+#endif /* CBUFFER */
         /* BEGIN CODEGEN PARSER GLUE: TEXT_LOWER */
         case AntlrSQLLexer::TEXT_LOWER:
         {
@@ -47953,7 +49377,8 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         break;
         /* END CODEGEN PARSER GLUE: DATESPANSET_DATES */
 
-        /* BEGIN CODEGEN PARSER GLUE: NPOINTSET_ROUTES */
+        #if NPOINT
+/* BEGIN CODEGEN PARSER GLUE: NPOINTSET_ROUTES */
         case AntlrSQLLexer::NPOINTSET_ROUTES:
         {
             const auto argCount = context->expression().size();
@@ -47980,7 +49405,9 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: NPOINTSET_ROUTES */
-        /* BEGIN CODEGEN PARSER GLUE: TCBUFFER_POINTS */
+#endif /* NPOINT */
+        #if CBUFFER
+/* BEGIN CODEGEN PARSER GLUE: TCBUFFER_POINTS */
         case AntlrSQLLexer::TCBUFFER_POINTS:
         {
             const auto argCount = context->expression().size();
@@ -48010,8 +49437,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TCBUFFER_POINTS */
+#endif /* CBUFFER */
 
-        /* BEGIN CODEGEN PARSER GLUE: TPOSE_POINTS */
+        #if POSE
+/* BEGIN CODEGEN PARSER GLUE: TPOSE_POINTS */
         case AntlrSQLLexer::TPOSE_POINTS:
         {
             const auto argCount = context->expression().size();
@@ -48041,8 +49470,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TPOSE_POINTS */
+#endif /* POSE */
 
-        /* BEGIN CODEGEN PARSER GLUE: TRGEOMETRY_POINTS */
+        #if RGEO
+/* BEGIN CODEGEN PARSER GLUE: TRGEOMETRY_POINTS */
         case AntlrSQLLexer::TRGEOMETRY_POINTS:
         {
             const auto argCount = context->expression().size();
@@ -48072,8 +49503,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TRGEOMETRY_POINTS */
+#endif /* RGEO */
 
-        /* BEGIN CODEGEN PARSER GLUE: TNPOINT_ROUTES */
+        #if NPOINT
+/* BEGIN CODEGEN PARSER GLUE: TNPOINT_ROUTES */
         case AntlrSQLLexer::TNPOINT_ROUTES:
         {
             const auto argCount = context->expression().size();
@@ -48102,7 +49535,9 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TNPOINT_ROUTES */
-        /* BEGIN CODEGEN PARSER GLUE: TPOSE_ROTATION */
+#endif /* NPOINT */
+        #if POSE
+/* BEGIN CODEGEN PARSER GLUE: TPOSE_ROTATION */
         case AntlrSQLLexer::TPOSE_ROTATION:
         {
             const auto argCount = context->expression().size();
@@ -48132,7 +49567,9 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TPOSE_ROTATION */
-        /* BEGIN CODEGEN PARSER GLUE: TRGEOMETRY_ROUND */
+#endif /* POSE */
+        #if RGEO
+/* BEGIN CODEGEN PARSER GLUE: TRGEOMETRY_ROUND */
         case AntlrSQLLexer::TRGEOMETRY_ROUND:
         {
             const auto argCount = context->expression().size();
@@ -48162,6 +49599,7 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TRGEOMETRY_ROUND */
+#endif /* RGEO */
         /* BEGIN CODEGEN PARSER GLUE: TFLOAT_SHIFT_SCALE_VALUE */
         case AntlrSQLLexer::TFLOAT_SHIFT_SCALE_VALUE:
         {
@@ -48430,7 +49868,8 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TSTZSPANSET_TIMESTAMPTZ_N */
-        /* BEGIN CODEGEN PARSER GLUE: TRGEOMETRY_DELETE_TIMESTAMPTZ */
+        #if RGEO
+/* BEGIN CODEGEN PARSER GLUE: TRGEOMETRY_DELETE_TIMESTAMPTZ */
         case AntlrSQLLexer::TRGEOMETRY_DELETE_TIMESTAMPTZ:
         {
             const auto argCount = context->expression().size();
@@ -48461,8 +49900,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TRGEOMETRY_DELETE_TIMESTAMPTZ */
+#endif /* RGEO */
 
-        /* BEGIN CODEGEN PARSER GLUE: TRGEOMETRY_DELETE_TSTZSET */
+        #if RGEO
+/* BEGIN CODEGEN PARSER GLUE: TRGEOMETRY_DELETE_TSTZSET */
         case AntlrSQLLexer::TRGEOMETRY_DELETE_TSTZSET:
         {
             const auto argCount = context->expression().size();
@@ -48493,8 +49934,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TRGEOMETRY_DELETE_TSTZSET */
+#endif /* RGEO */
 
-        /* BEGIN CODEGEN PARSER GLUE: TRGEOMETRY_DELETE_TSTZSPAN */
+        #if RGEO
+/* BEGIN CODEGEN PARSER GLUE: TRGEOMETRY_DELETE_TSTZSPAN */
         case AntlrSQLLexer::TRGEOMETRY_DELETE_TSTZSPAN:
         {
             const auto argCount = context->expression().size();
@@ -48525,8 +49968,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TRGEOMETRY_DELETE_TSTZSPAN */
+#endif /* RGEO */
 
-        /* BEGIN CODEGEN PARSER GLUE: TRGEOMETRY_DELETE_TSTZSPANSET */
+        #if RGEO
+/* BEGIN CODEGEN PARSER GLUE: TRGEOMETRY_DELETE_TSTZSPANSET */
         case AntlrSQLLexer::TRGEOMETRY_DELETE_TSTZSPANSET:
         {
             const auto argCount = context->expression().size();
@@ -48557,8 +50002,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TRGEOMETRY_DELETE_TSTZSPANSET */
+#endif /* RGEO */
 
-        /* BEGIN CODEGEN PARSER GLUE: TRGEOMETRY_AFTER_TIMESTAMPTZ */
+        #if RGEO
+/* BEGIN CODEGEN PARSER GLUE: TRGEOMETRY_AFTER_TIMESTAMPTZ */
         case AntlrSQLLexer::TRGEOMETRY_AFTER_TIMESTAMPTZ:
         {
             const auto argCount = context->expression().size();
@@ -48589,8 +50036,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TRGEOMETRY_AFTER_TIMESTAMPTZ */
+#endif /* RGEO */
 
-        /* BEGIN CODEGEN PARSER GLUE: TRGEOMETRY_BEFORE_TIMESTAMPTZ */
+        #if RGEO
+/* BEGIN CODEGEN PARSER GLUE: TRGEOMETRY_BEFORE_TIMESTAMPTZ */
         case AntlrSQLLexer::TRGEOMETRY_BEFORE_TIMESTAMPTZ:
         {
             const auto argCount = context->expression().size();
@@ -48621,6 +50070,7 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TRGEOMETRY_BEFORE_TIMESTAMPTZ */
+#endif /* RGEO */
 
 
 
@@ -49860,7 +51310,8 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             }
             break;
         /* END CODEGEN AGGREGATION GLUE: TEMPORAL_MINUS_MIN (case-switch) */
-        /* BEGIN CODEGEN AGGREGATION GLUE: TNPOINT_CUMULATIVE_LENGTH (case-switch) */
+        #if NPOINT
+/* BEGIN CODEGEN AGGREGATION GLUE: TNPOINT_CUMULATIVE_LENGTH (case-switch) */
         case AntlrSQLLexer::TNPOINT_CUMULATIVE_LENGTH:
             // Windowed tnpoint_cumulative_length over the expandable tnpoint mini-series, emitted as hex-WKB.
             if (helpers.top().functionBuilder.size() != 3) {
@@ -49888,8 +51339,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             }
             break;
         /* END CODEGEN AGGREGATION GLUE: TNPOINT_CUMULATIVE_LENGTH (case-switch) */
+#endif /* NPOINT */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: TNPOINT_SPEED (case-switch) */
+        #if NPOINT
+/* BEGIN CODEGEN AGGREGATION GLUE: TNPOINT_SPEED (case-switch) */
         case AntlrSQLLexer::TNPOINT_SPEED:
             // Windowed tnpoint_speed over the expandable tnpoint mini-series, emitted as hex-WKB.
             if (helpers.top().functionBuilder.size() != 3) {
@@ -49917,8 +51370,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             }
             break;
         /* END CODEGEN AGGREGATION GLUE: TNPOINT_SPEED (case-switch) */
+#endif /* NPOINT */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: TNPOINT_TO_TGEOMPOINT (case-switch) */
+        #if NPOINT
+/* BEGIN CODEGEN AGGREGATION GLUE: TNPOINT_TO_TGEOMPOINT (case-switch) */
         case AntlrSQLLexer::TNPOINT_TO_TGEOMPOINT:
             // Windowed tnpoint_to_tgeompoint over the expandable tnpoint mini-series, emitted as hex-WKB.
             if (helpers.top().functionBuilder.size() != 3) {
@@ -49946,6 +51401,7 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             }
             break;
         /* END CODEGEN AGGREGATION GLUE: TNPOINT_TO_TGEOMPOINT (case-switch) */
+#endif /* NPOINT */
         /* BEGIN CODEGEN AGGREGATION GLUE: TPOINT_CUMULATIVE_LENGTH (case-switch) */
         case AntlrSQLLexer::TPOINT_CUMULATIVE_LENGTH:
             // Windowed tgeompoint mini-trip grown by appendInstant; tpoint_cumulative_length emits the running planar length as a tfloat (hex-WKB).
@@ -50898,7 +52354,8 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             break;
         /* END CODEGEN AGGREGATION GLUE: SPANSET_UNION_TRANSFN (case-switch) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: CBUFFER_UNION_TRANSFN (case-switch) */
+        #if CBUFFER
+/* BEGIN CODEGEN AGGREGATION GLUE: CBUFFER_UNION_TRANSFN (case-switch) */
         case AntlrSQLLexer::CBUFFER_UNION_TRANSFN:
             // Windowed CBUFFER_UNION_TRANSFN -> unioned container (text) via cbuffer_union_transfn/set_union_finalfn.
             if (helpers.top().functionBuilder.size() != 2) {
@@ -50922,8 +52379,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             }
             break;
         /* END CODEGEN AGGREGATION GLUE: CBUFFER_UNION_TRANSFN (case-switch) */
+#endif /* CBUFFER */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: NPOINT_UNION_TRANSFN (case-switch) */
+        #if NPOINT
+/* BEGIN CODEGEN AGGREGATION GLUE: NPOINT_UNION_TRANSFN (case-switch) */
         case AntlrSQLLexer::NPOINT_UNION_TRANSFN:
             // Windowed NPOINT_UNION_TRANSFN -> unioned container (text) via npoint_union_transfn/set_union_finalfn.
             if (helpers.top().functionBuilder.size() != 2) {
@@ -50947,8 +52406,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             }
             break;
         /* END CODEGEN AGGREGATION GLUE: NPOINT_UNION_TRANSFN (case-switch) */
+#endif /* NPOINT */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: POSE_UNION_TRANSFN (case-switch) */
+        #if POSE
+/* BEGIN CODEGEN AGGREGATION GLUE: POSE_UNION_TRANSFN (case-switch) */
         case AntlrSQLLexer::POSE_UNION_TRANSFN:
             // Windowed POSE_UNION_TRANSFN -> unioned container (text) via pose_union_transfn/set_union_finalfn.
             if (helpers.top().functionBuilder.size() != 2) {
@@ -50972,6 +52433,7 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             }
             break;
         /* END CODEGEN AGGREGATION GLUE: POSE_UNION_TRANSFN (case-switch) */
+#endif /* POSE */
 
         /* BEGIN CODEGEN AGGREGATION GLUE: TEXT_UNION_TRANSFN (case-switch) */
         case AntlrSQLLexer::TEXT_UNION_TRANSFN:
@@ -51147,7 +52609,8 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             break;
         /* END CODEGEN AGGREGATION GLUE: TSTZSPANSET_TCOUNT_TRANSFN (case-switch) */
 
-        /* BEGIN CODEGEN AGGREGATION GLUE: TNPOINT_TCENTROID_TRANSFN (case-switch) */
+        #if NPOINT
+/* BEGIN CODEGEN AGGREGATION GLUE: TNPOINT_TCENTROID_TRANSFN (case-switch) */
         case AntlrSQLLexer::TNPOINT_TCENTROID_TRANSFN:
             // Windowed TNPOINT_TCENTROID_TRANSFN -> aggregate Temporal (hex-WKB) via tnpoint_tcentroid_transfn/tpoint_tcentroid_finalfn.
             if (helpers.top().functionBuilder.size() != 2) {
@@ -51171,6 +52634,7 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             }
             break;
         /* END CODEGEN AGGREGATION GLUE: TNPOINT_TCENTROID_TRANSFN (case-switch) */
+#endif /* NPOINT */
 
 
 
@@ -51957,7 +53421,8 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
                 helpers.top().windowAggs.push_back(TemporalMinusMinAggregationLogicalFunction::create(value, ts));
             }
             /* END CODEGEN AGGREGATION GLUE: TEMPORAL_MINUS_MIN (funcName chain) */
-            /* BEGIN CODEGEN AGGREGATION GLUE: TNPOINT_CUMULATIVE_LENGTH (funcName chain) */
+            #if NPOINT
+/* BEGIN CODEGEN AGGREGATION GLUE: TNPOINT_CUMULATIVE_LENGTH (funcName chain) */
             else if (funcName == "TNPOINT_CUMULATIVE_LENGTH")
             {
                 if (helpers.top().functionBuilder.size() < 3)
@@ -51973,8 +53438,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
                 helpers.top().windowAggs.push_back(TnpointCumulativeLengthAggregationLogicalFunction::create(lon, lat, ts));
             }
             /* END CODEGEN AGGREGATION GLUE: TNPOINT_CUMULATIVE_LENGTH (funcName chain) */
+#endif /* NPOINT */
 
-            /* BEGIN CODEGEN AGGREGATION GLUE: TNPOINT_SPEED (funcName chain) */
+            #if NPOINT
+/* BEGIN CODEGEN AGGREGATION GLUE: TNPOINT_SPEED (funcName chain) */
             else if (funcName == "TNPOINT_SPEED")
             {
                 if (helpers.top().functionBuilder.size() < 3)
@@ -51990,8 +53457,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
                 helpers.top().windowAggs.push_back(TnpointSpeedAggregationLogicalFunction::create(lon, lat, ts));
             }
             /* END CODEGEN AGGREGATION GLUE: TNPOINT_SPEED (funcName chain) */
+#endif /* NPOINT */
 
-            /* BEGIN CODEGEN AGGREGATION GLUE: TNPOINT_TO_TGEOMPOINT (funcName chain) */
+            #if NPOINT
+/* BEGIN CODEGEN AGGREGATION GLUE: TNPOINT_TO_TGEOMPOINT (funcName chain) */
             else if (funcName == "TNPOINT_TO_TGEOMPOINT")
             {
                 if (helpers.top().functionBuilder.size() < 3)
@@ -52007,6 +53476,7 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
                 helpers.top().windowAggs.push_back(TnpointToTgeompointAggregationLogicalFunction::create(lon, lat, ts));
             }
             /* END CODEGEN AGGREGATION GLUE: TNPOINT_TO_TGEOMPOINT (funcName chain) */
+#endif /* NPOINT */
             /* BEGIN CODEGEN AGGREGATION GLUE: TPOINT_CUMULATIVE_LENGTH (funcName chain) */
             else if (funcName == "TPOINT_CUMULATIVE_LENGTH")
             {
@@ -52571,7 +54041,8 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             }
             /* END CODEGEN AGGREGATION GLUE: SPANSET_UNION_TRANSFN (funcName chain) */
 
-            /* BEGIN CODEGEN AGGREGATION GLUE: CBUFFER_UNION_TRANSFN (funcName chain) */
+            #if CBUFFER
+/* BEGIN CODEGEN AGGREGATION GLUE: CBUFFER_UNION_TRANSFN (funcName chain) */
             else if (funcName == "CBUFFER_UNION_TRANSFN")
             {
                 if (helpers.top().functionBuilder.size() < 2)
@@ -52585,8 +54056,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
                 helpers.top().windowAggs.push_back(CbufferUnionTransfnAggregationLogicalFunction::create(value, ts));
             }
             /* END CODEGEN AGGREGATION GLUE: CBUFFER_UNION_TRANSFN (funcName chain) */
+#endif /* CBUFFER */
 
-            /* BEGIN CODEGEN AGGREGATION GLUE: NPOINT_UNION_TRANSFN (funcName chain) */
+            #if NPOINT
+/* BEGIN CODEGEN AGGREGATION GLUE: NPOINT_UNION_TRANSFN (funcName chain) */
             else if (funcName == "NPOINT_UNION_TRANSFN")
             {
                 if (helpers.top().functionBuilder.size() < 2)
@@ -52600,8 +54073,10 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
                 helpers.top().windowAggs.push_back(NpointUnionTransfnAggregationLogicalFunction::create(value, ts));
             }
             /* END CODEGEN AGGREGATION GLUE: NPOINT_UNION_TRANSFN (funcName chain) */
+#endif /* NPOINT */
 
-            /* BEGIN CODEGEN AGGREGATION GLUE: POSE_UNION_TRANSFN (funcName chain) */
+            #if POSE
+/* BEGIN CODEGEN AGGREGATION GLUE: POSE_UNION_TRANSFN (funcName chain) */
             else if (funcName == "POSE_UNION_TRANSFN")
             {
                 if (helpers.top().functionBuilder.size() < 2)
@@ -52615,6 +54090,7 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
                 helpers.top().windowAggs.push_back(PoseUnionTransfnAggregationLogicalFunction::create(value, ts));
             }
             /* END CODEGEN AGGREGATION GLUE: POSE_UNION_TRANSFN (funcName chain) */
+#endif /* POSE */
 
             /* BEGIN CODEGEN AGGREGATION GLUE: TEXT_UNION_TRANSFN (funcName chain) */
             else if (funcName == "TEXT_UNION_TRANSFN")
@@ -52720,7 +54196,8 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             }
             /* END CODEGEN AGGREGATION GLUE: TSTZSPANSET_TCOUNT_TRANSFN (funcName chain) */
 
-            /* BEGIN CODEGEN AGGREGATION GLUE: TNPOINT_TCENTROID_TRANSFN (funcName chain) */
+            #if NPOINT
+/* BEGIN CODEGEN AGGREGATION GLUE: TNPOINT_TCENTROID_TRANSFN (funcName chain) */
             else if (funcName == "TNPOINT_TCENTROID_TRANSFN")
             {
                 if (helpers.top().functionBuilder.size() < 2)
@@ -52734,6 +54211,7 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
                 helpers.top().windowAggs.push_back(TnpointTcentroidTransfnAggregationLogicalFunction::create(value, ts));
             }
             /* END CODEGEN AGGREGATION GLUE: TNPOINT_TCENTROID_TRANSFN (funcName chain) */
+#endif /* NPOINT */
 
 
 

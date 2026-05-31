@@ -4702,6 +4702,51 @@ def inject_g4(operators, g4_path: Path) -> int:
     return n_added
 
 
+def _family_macro(name):
+    """The -D<FAMILY> macro guarding a name's parser glue, or None for core types."""
+    fam = meos_family(name)
+    return fam.upper() if fam else None
+
+
+def guard_parser_glue_by_family(body: str) -> str:
+    """Wrap each family op's parser #include and dispatch glue block in
+    `#if <FAMILY> ... #endif` so a `-D<FAMILY>=0` build omits the token entirely
+    (the parser then has no case for it and rejects the function at plan time,
+    matching MobilityDB/MEOS's -DCBUFFER=0 etc.). Idempotent + self-correcting:
+    it strips any existing guard around a glue block/include and re-applies the
+    right one, so re-runs and family reassignments converge."""
+    fam_alt = "CBUFFER|NPOINT|POSE|RGEO"
+    # 1) Dispatch glue blocks — both the function-op "PARSER GLUE" markers and the
+    #    windowed-aggregation "AGGREGATION GLUE: TOKEN (variant)" markers (a token
+    #    may have several variant blocks: case-switch / funcname-chain). The token
+    #    is back-referenced so each BEGIN pairs with its own END.
+    block_re = re.compile(
+        rf"(?:#if (?:{fam_alt})\n)?"
+        r"(/\* BEGIN CODEGEN (?:PARSER|AGGREGATION) GLUE: (\S+)(?: \([^)]*\))? \*/"
+        r".*?"
+        r"/\* END CODEGEN (?:PARSER|AGGREGATION) GLUE: \2(?: \([^)]*\))? \*/)"
+        rf"(?:\n#endif /\* (?:{fam_alt}) \*/)?",
+        re.DOTALL)
+    def _wrap_block(m):
+        block, token = m.group(1), m.group(2)
+        macro = _family_macro(token)
+        return f"#if {macro}\n{block}\n#endif /* {macro} */" if macro else block
+    body = block_re.sub(_wrap_block, body)
+    # 2) Per-op logical #includes — function-op (Functions/Meos/…LogicalFunction)
+    #    and windowed-aggregation (Operators/Windows/Aggregations/Meos/…Aggregation
+    #    LogicalFunction) headers alike.
+    inc_re = re.compile(
+        rf"(?:#if (?:{fam_alt})\n)?"
+        r"(#include <(?:Functions/Meos/([A-Za-z0-9]+)LogicalFunction"
+        r"|Operators/Windows/Aggregations/Meos/([A-Za-z0-9]+)AggregationLogicalFunction)\.hpp>)"
+        rf"(?:\n#endif /\* (?:{fam_alt}) \*/)?")
+    def _wrap_inc(m):
+        inc, name = m.group(1), (m.group(2) or m.group(3))
+        macro = _family_macro(name)
+        return f"#if {macro}\n{inc}\n#endif /* {macro} */" if macro else inc
+    return inc_re.sub(_wrap_inc, body)
+
+
 def inject_parser_cpp(operators, cpp_path: Path) -> int:
     """Inject #include + dispatch-case block into AntlrSQLQueryPlanCreator.cpp.
     Idempotent: skips when the per-op BEGIN marker is already present."""
@@ -4776,6 +4821,11 @@ def inject_parser_cpp(operators, cpp_path: Path) -> int:
                 insertion = m.group(1) + "\n" + "\n".join(cases_block) + "\n" + m.group(2)
                 body = body[: m.start()] + insertion + body[m.end():]
                 sys.stderr.write(f"  ✓ parser-cpp dispatch: added {len(cases_block)} case(s) before default:\n")
+
+    # Family-gate every per-op include + dispatch block so a -D<FAMILY>=0 build
+    # drops the token (idempotent; covers both the just-injected and pre-existing
+    # glue).
+    body = guard_parser_glue_by_family(body)
 
     cpp_path.write_text(body)
     return n_added
