@@ -330,6 +330,8 @@ date_get_bin	proven
 date_to_set	proven
 date_to_span	proven
 date_to_spanset	proven
+date_to_timestamp	proven
+date_to_timestamptz	proven
 date_union_transfn	proven
 dateset_end_value	proven
 dateset_shift_scale	proven
@@ -1415,10 +1417,12 @@ tgt_text_ttext	proven
 tgt_tfloat_float	proven
 tgt_tint_int	proven
 tgt_ttext_text	proven
+timestamp_to_date	proven
 timestamptz_extent_transfn	proven
 timestamptz_get_bin	proven
 timestamptz_shift	proven
 timestamptz_tcount_transfn	proven
+timestamptz_to_date	proven
 timestamptz_to_set	proven
 timestamptz_to_span	proven
 timestamptz_to_spanset	proven

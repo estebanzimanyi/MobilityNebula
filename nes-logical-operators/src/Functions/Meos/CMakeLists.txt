@@ -1616,3 +1616,7 @@ add_plugin(TrgeometryBeforeTimestamptz LogicalFunction nes-logical-operators Trg
 add_plugin(TemporalInsert LogicalFunction nes-logical-operators TemporalInsertLogicalFunction.cpp)
 add_plugin(TemporalUpdate LogicalFunction nes-logical-operators TemporalUpdateLogicalFunction.cpp)
 add_plugin(TgeoStboxes LogicalFunction nes-logical-operators TgeoStboxesLogicalFunction.cpp)
+add_plugin(DateToTimestamp LogicalFunction nes-logical-operators DateToTimestampLogicalFunction.cpp)
+add_plugin(DateToTimestamptz LogicalFunction nes-logical-operators DateToTimestamptzLogicalFunction.cpp)
+add_plugin(TimestampToDate LogicalFunction nes-logical-operators TimestampToDateLogicalFunction.cpp)
+add_plugin(TimestamptzToDate LogicalFunction nes-logical-operators TimestamptzToDateLogicalFunction.cpp)

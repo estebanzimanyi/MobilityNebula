@@ -711,6 +711,16 @@ SPAN_EXPAND = {
     "floatspan_expand": ("floatspan", "double", "FLOAT64", "floatspan_text", "2.5"),
 }
 
+# Scalar date/time conversions: base-scalar in -> base-scalar out (raw MEOS epoch
+# integer, same convention as stbox_tmin / temporal_timestamptz_n). name ->
+# (input primary, input col SQL, sample value, return_kind, sink SQL).
+SCALAR_CONV = {
+    "date_to_timestamp":   ("date_base", "INT32", "7305", "int64", "INT64"),
+    "date_to_timestamptz": ("date_base", "INT32", "7305", "int64", "INT64"),
+    "timestamp_to_date":   ("timestamptz_base", "INT64", "631152000000000", "int", "INT32"),
+    "timestamptz_to_date": ("timestamptz_base", "INT64", "631152000000000", "int", "INT32"),
+}
+
 SCALAR_MATH = {
     "float_exp":   dict(extras=[], rows=[("2.0",), ("0.5",)]),
     "float_ln":    dict(extras=[], rows=[("2.0",), ("10.0",)]),
@@ -792,6 +802,14 @@ def classify(name, ret, plist):
         l0, l1 = LITERALS[in_type]
         tmeta = dict(cols=[("a", "VARSIZED"), ("v", vsql)],
                      rows=[(l0, vlit), (l1, vlit)], token=name.upper(), sink="VARSIZED")
+        return entry, tmeta
+    # ---- scalar date/time conversion: base-scalar in -> base-scalar out. ----
+    if name in SCALAR_CONV:
+        prim, csql, sample, rk, sink = SCALAR_CONV[name]
+        entry = dict(nebula_name=camel(name), sql_token=name.upper(), meos_call=name,
+                     build_generic=True, input_type=prim, return_kind=rk, extra_args=[],
+                     comment_one_liner=f"{name} ({ret.strip()}) — scalar date/time conversion.")
+        tmeta = dict(cols=[("value", csql)], rows=[(sample,), (sample,)], token=name.upper(), sink=sink)
         return entry, tmeta
     # ---- scalar float math: double f(double [, extra]) -> double. ----
     if name in SCALAR_MATH:

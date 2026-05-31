@@ -2526,6 +2526,10 @@
 #include <Functions/Meos/TemporalInsertLogicalFunction.hpp>
 #include <Functions/Meos/TemporalUpdateLogicalFunction.hpp>
 #include <Functions/Meos/TgeoStboxesLogicalFunction.hpp>
+#include <Functions/Meos/DateToTimestampLogicalFunction.hpp>
+#include <Functions/Meos/DateToTimestamptzLogicalFunction.hpp>
+#include <Functions/Meos/TimestampToDateLogicalFunction.hpp>
+#include <Functions/Meos/TimestamptzToDateLogicalFunction.hpp>
 #include <Plans/LogicalPlan.hpp>
 #include <Plans/LogicalPlanBuilder.hpp>
 #include <Util/Overloaded.hpp>
@@ -50166,6 +50170,118 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN GLUE: TGEO_STBOXES */
+        /* BEGIN CODEGEN GLUE: DATE_TO_TIMESTAMP */
+        case AntlrSQLLexer::DATE_TO_TIMESTAMP:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 1)
+                throw InvalidQuerySyntax("DATE_TO_TIMESTAMP requires exactly 1 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(DateToTimestampLogicalFunction(a0));
+        }
+        break;
+        /* END CODEGEN GLUE: DATE_TO_TIMESTAMP */
+
+        /* BEGIN CODEGEN GLUE: DATE_TO_TIMESTAMPTZ */
+        case AntlrSQLLexer::DATE_TO_TIMESTAMPTZ:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 1)
+                throw InvalidQuerySyntax("DATE_TO_TIMESTAMPTZ requires exactly 1 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(DateToTimestamptzLogicalFunction(a0));
+        }
+        break;
+        /* END CODEGEN GLUE: DATE_TO_TIMESTAMPTZ */
+
+        /* BEGIN CODEGEN GLUE: TIMESTAMP_TO_DATE */
+        case AntlrSQLLexer::TIMESTAMP_TO_DATE:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 1)
+                throw InvalidQuerySyntax("TIMESTAMP_TO_DATE requires exactly 1 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(TimestampToDateLogicalFunction(a0));
+        }
+        break;
+        /* END CODEGEN GLUE: TIMESTAMP_TO_DATE */
+
+        /* BEGIN CODEGEN GLUE: TIMESTAMPTZ_TO_DATE */
+        case AntlrSQLLexer::TIMESTAMPTZ_TO_DATE:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 1)
+                throw InvalidQuerySyntax("TIMESTAMPTZ_TO_DATE requires exactly 1 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(TimestamptzToDateLogicalFunction(a0));
+        }
+        break;
+        /* END CODEGEN GLUE: TIMESTAMPTZ_TO_DATE */
+
 
 
 
