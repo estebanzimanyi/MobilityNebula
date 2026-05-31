@@ -168,6 +168,12 @@ ARITY3 = {
     "temporal_tprecision":      dict(prim="tfloat", pcols=[("value", "FLOAT64"), ("ts", "UINT64")],
                                      pvalsa=("5.5", "1609459200"), pvalsb=("8.5", "1609545600"),
                                      extras=[_a3iv(), _TSTZ0], ret="tfloat_out"),
+    "temporal_simplify_dp":     dict(prim="tfloat", pcols=[("value", "FLOAT64"), ("ts", "UINT64")],
+                                     pvalsa=("5.5", "1609459200"), pvalsb=("8.5", "1609545600"),
+                                     extras=[_a3sc("double", "FLOAT64", "1.0", "1.0"), _a3sc("bool", "BOOLEAN", "false", "false")], ret="tfloat_out"),
+    "temporal_simplify_max_dist":dict(prim="tfloat", pcols=[("value", "FLOAT64"), ("ts", "UINT64")],
+                                     pvalsa=("5.5", "1609459200"), pvalsb=("8.5", "1609545600"),
+                                     extras=[_a3sc("double", "FLOAT64", "1.0", "1.0"), _a3sc("bool", "BOOLEAN", "false", "false")], ret="tfloat_out"),
 }
 def _setspec(elem, kind, **kw):
     return dict(elem=elem, kind=kind, count_call="set_num_values", **kw)

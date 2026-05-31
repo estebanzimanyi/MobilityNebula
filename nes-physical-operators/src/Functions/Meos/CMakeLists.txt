@@ -1249,3 +1249,5 @@ add_plugin(TfloatShiftScaleValue PhysicalFunction nes-physical-operators TfloatS
 add_plugin(TintShiftScaleValue PhysicalFunction nes-physical-operators TintShiftScaleValuePhysicalFunction.cpp)
 add_plugin(TemporalShiftScaleTime PhysicalFunction nes-physical-operators TemporalShiftScaleTimePhysicalFunction.cpp)
 add_plugin(TemporalTprecision PhysicalFunction nes-physical-operators TemporalTprecisionPhysicalFunction.cpp)
+add_plugin(TemporalSimplifyDp PhysicalFunction nes-physical-operators TemporalSimplifyDpPhysicalFunction.cpp)
+add_plugin(TemporalSimplifyMaxDist PhysicalFunction nes-physical-operators TemporalSimplifyMaxDistPhysicalFunction.cpp)

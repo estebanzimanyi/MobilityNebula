@@ -1304,6 +1304,8 @@ temporal_num_timestamps	proven
 temporal_round	proven
 temporal_sequences	wired
 temporal_shift_scale_time	proven
+temporal_simplify_dp	proven
+temporal_simplify_max_dist	proven
 temporal_spans	proven
 temporal_start_timestamptz	proven
 temporal_tagg_finalfn	proven

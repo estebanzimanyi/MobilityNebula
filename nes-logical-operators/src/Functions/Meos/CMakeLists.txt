@@ -1602,3 +1602,5 @@ add_plugin(TfloatShiftScaleValue LogicalFunction nes-logical-operators TfloatShi
 add_plugin(TintShiftScaleValue LogicalFunction nes-logical-operators TintShiftScaleValueLogicalFunction.cpp)
 add_plugin(TemporalShiftScaleTime LogicalFunction nes-logical-operators TemporalShiftScaleTimeLogicalFunction.cpp)
 add_plugin(TemporalTprecision LogicalFunction nes-logical-operators TemporalTprecisionLogicalFunction.cpp)
+add_plugin(TemporalSimplifyDp LogicalFunction nes-logical-operators TemporalSimplifyDpLogicalFunction.cpp)
+add_plugin(TemporalSimplifyMaxDist LogicalFunction nes-logical-operators TemporalSimplifyMaxDistLogicalFunction.cpp)
