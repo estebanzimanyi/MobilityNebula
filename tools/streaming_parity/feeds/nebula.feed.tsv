@@ -1212,6 +1212,7 @@ tcbuffer_at_stbox	proven
 tcbuffer_minus_cbuffer	proven
 tcbuffer_minus_geom	proven
 tcbuffer_minus_stbox	proven
+tcbuffer_points	proven
 tcbuffer_to_tfloat	proven
 tcbuffer_to_tgeompoint	proven
 tcontains_cbuffer_tcbuffer	proven
@@ -1482,6 +1483,7 @@ tnpoint_cumulative_length	proven
 tnpoint_length	proven
 tnpoint_minus_npoint	proven
 tnpoint_route	proven
+tnpoint_routes	proven
 tnpoint_speed	proven
 tnpoint_tcentroid_transfn	proven
 tnpoint_to_tgeompoint	proven
@@ -1534,6 +1536,7 @@ tpose_end_value	proven
 tpose_minus_geom	proven
 tpose_minus_pose	proven
 tpose_minus_stbox	proven
+tpose_points	proven
 tpose_start_value	proven
 tpose_to_tpoint	proven
 tpose_trajectory	proven
@@ -1543,6 +1546,7 @@ trgeometry_end_instant	proven
 trgeometry_end_sequence	wired
 trgeometry_end_value	proven
 trgeometry_geom	proven
+trgeometry_points	proven
 trgeometry_restrict_timestamptz	proven
 trgeometry_restrict_tstzset	proven
 trgeometry_restrict_tstzspan	proven

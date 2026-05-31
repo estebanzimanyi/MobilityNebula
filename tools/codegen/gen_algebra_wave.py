@@ -666,6 +666,14 @@ OBJECT_TO_SET = {
     "geo_to_set": ("geom", "geoset_text", "SRID=4326;Point(1 1)", "SRID=4326;Point(2 2)"),
 }
 
+# Per-op unary return-kind overrides: a `Set *`/`Temporal *` return whose element
+# type cannot be inferred from the bare C type. Used by the unary-accessor branch.
+RETURN_KIND_OVERRIDE = {
+    "tcbuffer_points": "geoset_text", "tpose_points": "geoset_text", "trgeometry_points": "geoset_text",
+    "tnpoint_routes": "bigintset_text",
+    # tcbuffer_radius (Set of radii) returns empty at runtime on v7 — deferred.
+}
+
 TEXT_UNARY = {
     # text f(text) -> text scalar string transforms, serialized via text_out.
     "text_lower": ("text", "text_value_out"), "text_upper": ("text", "text_value_out"),
@@ -1174,7 +1182,9 @@ def classify(name, ret, plist):
         # A heap-object return (Cbuffer*/Npoint*/Pose*/GSERIALIZED*, e.g. the
         # object-set start_value/end_value) serialises through its *_value_out the
         # same way the value_n out-param family does; otherwise map a scalar sink.
-        if rbase in VALUE_N_VARSIZED:
+        if name in RETURN_KIND_OVERRIDE:
+            rkind = RETURN_KIND_OVERRIDE[name]
+        elif rbase in VALUE_N_VARSIZED:
             rkind = VALUE_N_VARSIZED[rbase]
         elif rbase in ("TInstant", "TSequence", "Temporal") and tinstant_sub:
             rkind = "tspatial_text"            # a spatial temporal instant/sequence accessor

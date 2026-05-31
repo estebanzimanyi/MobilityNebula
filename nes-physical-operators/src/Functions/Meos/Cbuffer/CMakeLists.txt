@@ -146,3 +146,4 @@ add_plugin(CbufferToSet PhysicalFunction nes-physical-operators CbufferToSetPhys
 add_plugin(CbufferTstzspanToStbox PhysicalFunction nes-physical-operators CbufferTstzspanToStboxPhysicalFunction.cpp)
 add_plugin(CbufferTimestamptzToStbox PhysicalFunction nes-physical-operators CbufferTimestamptzToStboxPhysicalFunction.cpp)
 add_plugin(TcbufferToTgeompoint PhysicalFunction nes-physical-operators TcbufferToTgeompointPhysicalFunction.cpp)
+add_plugin(TcbufferPoints PhysicalFunction nes-physical-operators TcbufferPointsPhysicalFunction.cpp)
