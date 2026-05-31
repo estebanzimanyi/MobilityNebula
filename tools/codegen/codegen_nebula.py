@@ -3301,6 +3301,7 @@ for _k, _c, _p in [
     ("datespanset", "SpanSet", "datespanset_in"),
     ("tstzspan", "Span", "tstzspan_in"), ("tstzset", "Set", "tstzset_in"),
     ("tstzspanset", "SpanSet", "tstzspanset_in"), ("textset", "Set", "textset_in"),
+    ("text", "text", "text_in"),
 ]:
     GENERIC_INPUTS.setdefault(_k, _text_literal_input(_c, _p))
 

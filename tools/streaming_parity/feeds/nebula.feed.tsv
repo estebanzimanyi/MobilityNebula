@@ -1327,7 +1327,11 @@ teq_tnpoint_npoint	proven
 teq_tpose_pose	proven
 teq_trgeometry_geo	proven
 teq_ttext_text	proven
+text_copy	proven
+text_initcap	proven
+text_lower	proven
 text_union_transfn	proven
+text_upper	proven
 textcat_text_ttext	proven
 textcat_ttext_text	proven
 textcat_ttext_ttext	proven

@@ -660,6 +660,12 @@ OBJECT_TO_SET = {
     "geo_to_set": ("geom", "geoset_text", "SRID=4326;Point(1 1)", "SRID=4326;Point(2 2)"),
 }
 
+TEXT_UNARY = {
+    # text f(text) -> text scalar string transforms, serialized via text_out.
+    "text_lower": ("text", "text_value_out"), "text_upper": ("text", "text_value_out"),
+    "text_initcap": ("text", "text_value_out"), "text_copy": ("text", "text_value_out"),
+}
+
 SPAN_EXPAND = {
     # *span_expand(Span, value) -> Span: a span primary + a same-domain scalar
     # delta that widens both bounds.
@@ -688,6 +694,15 @@ def classify(name, ret, plist):
                      extra_args=[], comment_one_liner=f"{name} ({ret.strip()}) — set transform/conversion.")
         l0, l1 = LITERALS[in_type]
         tmeta = dict(cols=[("a", "VARSIZED")], rows=[(l0,), (l1,)], token=name.upper(), sink="VARSIZED")
+        return entry, tmeta
+    # ---- text f(text) -> text: scalar string transform, serialize via text_out. ----
+    if name in TEXT_UNARY:
+        in_type, rkind = TEXT_UNARY[name]
+        entry = dict(nebula_name=camel(name), sql_token=name.upper(), meos_call=name,
+                     build_generic=True, input_type=in_type, return_kind=rkind,
+                     extra_args=[], comment_one_liner=f"{name} ({ret.strip()}) — text string transform.")
+        tmeta = dict(cols=[("a", "VARSIZED")], rows=[("Hello World",), ("foo bar",)],
+                     token=name.upper(), sink="VARSIZED")
         return entry, tmeta
     # ---- degrees(set/span/spanset, bool normalize) -> same container: a VARSIZED
     #      primary + a constant `normalize=false` bool flag (radians -> degrees). ----

@@ -1586,3 +1586,7 @@ add_plugin(TintScaleValue LogicalFunction nes-logical-operators TintScaleValueLo
 add_plugin(TrgeometryValueN LogicalFunction nes-logical-operators TrgeometryValueNLogicalFunction.cpp)
 add_plugin(TposeToTpoint LogicalFunction nes-logical-operators TposeToTpointLogicalFunction.cpp)
 add_plugin(TcbufferToTgeompoint LogicalFunction nes-logical-operators TcbufferToTgeompointLogicalFunction.cpp)
+add_plugin(TextLower LogicalFunction nes-logical-operators TextLowerLogicalFunction.cpp)
+add_plugin(TextUpper LogicalFunction nes-logical-operators TextUpperLogicalFunction.cpp)
+add_plugin(TextInitcap LogicalFunction nes-logical-operators TextInitcapLogicalFunction.cpp)
+add_plugin(TextCopy LogicalFunction nes-logical-operators TextCopyLogicalFunction.cpp)
