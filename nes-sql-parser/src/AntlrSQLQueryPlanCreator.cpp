@@ -144,6 +144,7 @@
 #include <Operators/Windows/Aggregations/Meos/TfloatWmaxTransfnAggregationLogicalFunction.hpp>
 #include <Operators/Windows/Aggregations/Meos/TfloatWsumTransfnAggregationLogicalFunction.hpp>
 #include <Operators/Windows/Aggregations/Meos/TnumberWavgTransfnAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TpointTcentroidTransfnAggregationLogicalFunction.hpp>
 #include <Functions/Meos/TemporalIntersectsGeometryLogicalFunction.hpp>
 #include <Functions/Meos/AintersectsTgeoGeoLogicalFunction.hpp>
 #include <Functions/Meos/EdwithinTgeoGeoLogicalFunction.hpp>
@@ -49650,6 +49651,35 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             }
             break;
         /* END CODEGEN AGGREGATION GLUE: TNUMBER_WAVG_TRANSFN (case-switch) */
+        /* BEGIN CODEGEN AGGREGATION GLUE: TPOINT_TCENTROID_TRANSFN (case-switch) */
+        case AntlrSQLLexer::TPOINT_TCENTROID_TRANSFN:
+            // Windowed TPOINT_TCENTROID_TRANSFN -> aggregate tgeompoint centroid (hex-WKB) via tpoint_tcentroid_transfn/finalfn.
+            if (helpers.top().functionBuilder.size() != 3) {
+                throw InvalidQuerySyntax("TPOINT_TCENTROID_TRANSFN requires exactly three arguments (longitude, latitude, timestamp), but got {}", helpers.top().functionBuilder.size());
+            }
+            {
+                const auto timestampFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto latitudeFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto longitudeFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+
+                if (!longitudeFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !latitudeFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
+                    throw InvalidQuerySyntax("TPOINT_TCENTROID_TRANSFN arguments must be field references");
+                }
+
+                helpers.top().windowAggs.push_back(
+                    TpointTcentroidTransfnAggregationLogicalFunction::create(longitudeFunction.get<FieldAccessLogicalFunction>(),
+                                                                    latitudeFunction.get<FieldAccessLogicalFunction>(),
+                                                                    timestampFunction.get<FieldAccessLogicalFunction>()));
+                helpers.top().functionBuilder.push_back(longitudeFunction);
+            }
+            break;
+        /* END CODEGEN AGGREGATION GLUE: TPOINT_TCENTROID_TRANSFN (case-switch) */
+
 
 
 
@@ -50911,6 +50941,23 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
                 helpers.top().windowAggs.push_back(TnumberWavgTransfnAggregationLogicalFunction::create(value, ts));
             }
             /* END CODEGEN AGGREGATION GLUE: TNUMBER_WAVG_TRANSFN (funcName chain) */
+            /* BEGIN CODEGEN AGGREGATION GLUE: TPOINT_TCENTROID_TRANSFN (funcName chain) */
+            else if (funcName == "TPOINT_TCENTROID_TRANSFN")
+            {
+                if (helpers.top().functionBuilder.size() < 3)
+                {
+                    throw InvalidQuerySyntax("TPOINT_TCENTROID_TRANSFN requires three arguments at {}", context->getText());
+                }
+                const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto lat = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto lon = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                helpers.top().windowAggs.push_back(TpointTcentroidTransfnAggregationLogicalFunction::create(lon, lat, ts));
+            }
+            /* END CODEGEN AGGREGATION GLUE: TPOINT_TCENTROID_TRANSFN (funcName chain) */
+
 
 
 

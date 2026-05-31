@@ -1499,6 +1499,8 @@ tpoint_length	proven
 tpoint_minus_geom	proven
 tpoint_minus_value	proven
 tpoint_speed	proven
+tpoint_tcentroid_finalfn	proven
+tpoint_tcentroid_transfn	proven
 tpoint_twcentroid	proven
 tpointinst_make	proven
 tpose_at_geom	proven

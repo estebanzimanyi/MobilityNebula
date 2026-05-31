@@ -1995,6 +1995,206 @@ PHYSICAL_CPP_TAGG_WKB = _swap_once(
     "scalarfold lower -> tagg skiplist lower (finalfn + hex-WKB)")
 
 # ===========================================================================
+# tgeo temporal-aggregate (windowed tpoint_tcentroid -> Temporal point, hex-WKB).
+# Reuses the tgeo (lon, lat, ts) scaffold but swaps the trajectory-assemble
+# lower() for a per-event SkipList fold (same-timestamp points averaged by the
+# centroid transfn), finalfn -> temporal_as_hexwkb. Same raw-buffer-replay
+# correctness as TAGG_WKB.
+# ===========================================================================
+_TGEO_LOWER_ASSEMBLE = '''\
+    auto trajectoryStr = nautilus::invoke(
+        +[](const Nautilus::Interface::PagedVector* pagedVector) -> char*
+        {{
+            size_t bufferSize = pagedVector->getTotalNumberOfEntries() * 150 + 50;
+            char* buffer = (char*)malloc(bufferSize);
+            memset(buffer, 0, bufferSize);
+            strcpy(buffer, "{{");
+            return buffer;
+        }},
+        pagedVectorPtr);
+
+    auto pointCounter = nautilus::val<int64_t>(0);
+
+    const auto endIt = pagedVectorRef.end(allFieldNames);
+    for (auto candidateIt = pagedVectorRef.begin(allFieldNames); candidateIt != endIt; ++candidateIt)
+    {{
+        const auto itemRecord = *candidateIt;
+
+        const auto lonValue = itemRecord.read(std::string(LonFieldName));
+        const auto latValue = itemRecord.read(std::string(LatFieldName));
+        const auto timestampValue = itemRecord.read(std::string(TimestampFieldName));
+
+        auto lon = lonValue.cast<nautilus::val<double>>();
+        auto lat = latValue.cast<nautilus::val<double>>();
+        auto timestamp = timestampValue.cast<nautilus::val<int64_t>>();
+
+        trajectoryStr = nautilus::invoke(
+            +[](char* buffer, double lonVal, double latVal, int64_t tsVal, int64_t counter) -> char*
+            {{
+                if (counter > 0) {{
+                    strcat(buffer, ", ");
+                }}
+
+                long long adjustedTime;
+                if (tsVal > 1000000000000LL) {{
+                    adjustedTime = tsVal / 1000;
+                }} else {{
+                    adjustedTime = tsVal;
+                }}
+
+                std::string timestampString = MEOS::Meos::convertSecondsToTimestamp(adjustedTime);
+                const char* timestampStr = timestampString.c_str();
+
+                char pointStr[120];
+                sprintf(pointStr, "Point(%.6f %.6f)@%s", lonVal, latVal, timestampStr);
+                strcat(buffer, pointStr);
+                return buffer;
+            }},
+            trajectoryStr,
+            lon,
+            lat,
+            timestamp,
+            pointCounter);
+
+        pointCounter = pointCounter + nautilus::val<int64_t>(1);
+    }}
+
+    trajectoryStr = nautilus::invoke(
+        +[](char* buffer) -> char*
+        {{
+            strcat(buffer, "}}");
+            return buffer;
+        }},
+        trajectoryStr);
+
+    auto resultValue = nautilus::invoke(
+        +[](const char* trajStr) -> {return_cpp_type}
+        {{
+            if (!trajStr || strlen(trajStr) == 0) {{
+                free((void*)trajStr);
+                return ({return_cpp_type})0;
+            }}
+
+            MEOS::Meos::ensureMeosInitialized();
+            std::lock_guard<std::mutex> lock({mutex_name});
+
+            std::string trajString(trajStr);
+            void* temp = MEOS::Meos::parseTemporalPoint(trajString);
+            if (!temp) {{
+                free((void*)trajStr);
+                return ({return_cpp_type})0;
+            }}
+
+            {value_compute}
+
+            MEOS::Meos::freeTemporalObject(temp);
+            free((void*)trajStr);
+            return value;
+        }},
+        trajectoryStr);
+
+    Nautilus::Record resultRecord;
+    resultRecord.write(resultFieldIdentifier, resultValue);
+    return resultRecord;'''
+
+_TGEO_TAGG_LOWER = '''\
+    // Fold each windowed point through the per-op centroid transfn into a
+    // SkipList (same-timestamp points averaged), then materialize via the
+    // finalfn and emit hex-WKB. Raw-buffer replay keeps combine correct.
+    auto skipState = nautilus::invoke(
+        +[](const Nautilus::Interface::PagedVector*) -> void* {{ return nullptr; }},
+        pagedVectorPtr);
+
+    const auto endIt = pagedVectorRef.end(allFieldNames);
+    for (auto candidateIt = pagedVectorRef.begin(allFieldNames); candidateIt != endIt; ++candidateIt)
+    {{
+        const auto itemRecord = *candidateIt;
+        const auto lonValue = itemRecord.read(std::string(LonFieldName));
+        const auto latValue = itemRecord.read(std::string(LatFieldName));
+        const auto timestampValue = itemRecord.read(std::string(TimestampFieldName));
+        auto lon = lonValue.cast<nautilus::val<double>>();
+        auto lat = latValue.cast<nautilus::val<double>>();
+        auto timestamp = timestampValue.cast<nautilus::val<int64_t>>();
+
+        skipState = nautilus::invoke(
+            +[](void* state, double lonVal, double latVal, int64_t tsVal) -> void*
+            {{
+                MEOS::Meos::ensureMeosInitialized();
+                std::lock_guard<std::mutex> lock({mutex_name});
+                long long adjustedTime = (tsVal > 1000000000000LL) ? (tsVal / 1000) : tsVal;
+                std::string tsS = MEOS::Meos::convertSecondsToTimestamp(adjustedTime);
+                char itemStr[120];
+                sprintf(itemStr, "Point(%.6f %.6f)@%s", lonVal, latVal, tsS.c_str());
+                Temporal* inst = tgeompoint_in(itemStr);
+                if (!inst) {{ return state; }}
+                SkipList* ns = {tagg_transfn}(static_cast<SkipList*>(state), inst);
+                free(inst);
+                return reinterpret_cast<void*>(ns);
+            }},
+            skipState, lon, lat, timestamp);
+    }}
+
+    auto boxStr = nautilus::invoke(
+        +[](void* state) -> char*
+        {{
+            if (!state) {{ return (char*)nullptr; }}
+            MEOS::Meos::ensureMeosInitialized();
+            std::lock_guard<std::mutex> lock({mutex_name});
+            Temporal* res = {tagg_finalfn}(static_cast<SkipList*>(state));
+            if (!res) {{ return (char*)nullptr; }}
+            size_t hexSize = 0;
+            char* hexOut = temporal_as_hexwkb(res, 0, &hexSize);
+            free(res);
+            return hexOut;
+        }},
+        skipState);
+
+    const auto boxStrLen = nautilus::invoke(
+        +[](const char* s) -> size_t {{ return s ? strlen(s) : (size_t) 0; }},
+        boxStr);
+
+    auto variableSized = pipelineMemoryProvider.arena.allocateVariableSizedData(boxStrLen);
+
+    nautilus::invoke(
+        +[](int8_t* dest, const char* s, size_t len) -> void
+        {{
+            if (s) {{
+                memcpy(dest, s, len);
+                free((void*)s);
+            }}
+        }},
+        variableSized.getContent(),
+        boxStr,
+        boxStrLen);
+
+    Nautilus::Record resultRecord;
+    resultRecord.write(resultFieldIdentifier, variableSized);
+    return resultRecord;'''
+
+# The tgeo scaffold's empty-window block returns nautilus::val<{return_cpp_type}>(0)
+# (a scalar); the tagg variant emits VARSIZED, so the empty case must write an
+# empty VariableSizedData instead.
+_TGEO_EMPTY_SCALAR = '''\
+    if (numberOfEntries == nautilus::val<size_t>(0)) {{
+        Nautilus::Record resultRecord;
+        resultRecord.write(resultFieldIdentifier, nautilus::val<{return_cpp_type}>(0));
+        return resultRecord;
+    }}'''
+_TGEO_EMPTY_VARSIZED = '''\
+    if (numberOfEntries == nautilus::val<size_t>(0)) {{
+        auto emptyVarSized = pipelineMemoryProvider.arena.allocateVariableSizedData(0);
+        Nautilus::Record resultRecord;
+        resultRecord.write(resultFieldIdentifier, emptyVarSized);
+        return resultRecord;
+    }}'''
+
+PHYSICAL_CPP_TGEO_TAGG_WKB = _swap_once(
+    _swap_once(PHYSICAL_CPP_TGEO, _TGEO_EMPTY_SCALAR, _TGEO_EMPTY_VARSIZED,
+               "tgeo empty-window scalar -> varsized"),
+    _TGEO_LOWER_ASSEMBLE, _TGEO_TAGG_LOWER,
+    "tgeo trajectory-assemble lower -> tgeo tagg skiplist lower (finalfn + hex-WKB)")
+
+# ===========================================================================
 # Parser-glue templates: TWO dispatch sites in AntlrSQLQueryPlanCreator.cpp.
 # Site 1 is the dedicated-token case-switch (~line 965 in mariana's tree).
 # Site 2 is the IDENTIFIER fallback `else if (funcName == "TOKEN")` chain
@@ -2430,6 +2630,8 @@ def physical_template_for(op):
             return PHYSICAL_HPP_TGEO, PHYSICAL_CPP_TGEO_EXPAND_GEO_WKB
         if op.get("return_mode") == "expand_wkb_tnpoint":
             return PHYSICAL_HPP_TGEO, PHYSICAL_CPP_TNPOINT_EXPAND_WKB
+        if op.get("fold") == "tagg":
+            return PHYSICAL_HPP_TGEO, PHYSICAL_CPP_TGEO_TAGG_WKB
         return PHYSICAL_HPP_TGEO, (PHYSICAL_CPP_TGEO_BOX if box else PHYSICAL_CPP_TGEO)
     if op["input_shape"] == "tnumber":
         # Scalar-fold reuses the tnumber (value, ts) HPP but folds the field

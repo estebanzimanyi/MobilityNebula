@@ -139,6 +139,8 @@
 #include <Aggregation/Function/Meos/TfloatWmaxTransfnAggregationPhysicalFunction.hpp>
 #include <Aggregation/Function/Meos/TfloatWsumTransfnAggregationPhysicalFunction.hpp>
 #include <Aggregation/Function/Meos/TnumberWavgTransfnAggregationPhysicalFunction.hpp>
+#include <Aggregation/Function/Meos/TpointTcentroidTransfnAggregationPhysicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TpointTcentroidTransfnAggregationLogicalFunction.hpp>
 #include <Operators/Windows/Aggregations/Meos/TintWminTransfnAggregationLogicalFunction.hpp>
 #include <Operators/Windows/Aggregations/Meos/TintWmaxTransfnAggregationLogicalFunction.hpp>
 #include <Operators/Windows/Aggregations/Meos/TintWsumTransfnAggregationLogicalFunction.hpp>
@@ -2401,6 +2403,35 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             continue;
         }
         /* END CODEGEN AGGREGATION GLUE: TnumberWavgTransfn (optimizer lowering) */
+        /* BEGIN CODEGEN AGGREGATION GLUE: TpointTcentroidTransfn (optimizer lowering) */
+        if (name == std::string_view("TpointTcentroidTransfn"))
+        {
+            auto specificDescriptor = std::dynamic_pointer_cast<TpointTcentroidTransfnAggregationLogicalFunction>(descriptor);
+            INVARIANT(specificDescriptor != nullptr, "Expected TpointTcentroidTransfnAggregationLogicalFunction for TpointTcentroidTransfn");
+
+            auto lonPF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getLonField());
+            auto latPF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getLatField());
+            auto tsPF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getTimestampField());
+
+            Schema stateSchema;
+            stateSchema.addField("lon", specificDescriptor->getLonField().getDataType());
+            stateSchema.addField("lat", specificDescriptor->getLatField().getDataType());
+            stateSchema.addField("timestamp", specificDescriptor->getTimestampField().getDataType());
+            auto tupleBufferRef = Interface::BufferRef::TupleBufferRef::create(configuration.pageSize.getValue(), stateSchema);
+
+            auto phys = std::make_shared<TpointTcentroidTransfnAggregationPhysicalFunction>(
+                std::move(physicalInputType),
+                std::move(physicalFinalType),
+                lonPF,
+                latPF,
+                tsPF,
+                resultFieldIdentifier,
+                tupleBufferRef);
+            aggregationPhysicalFunctions.push_back(std::move(phys));
+            continue;
+        }
+        /* END CODEGEN AGGREGATION GLUE: TpointTcentroidTransfn (optimizer lowering) */
+
 
 
 
