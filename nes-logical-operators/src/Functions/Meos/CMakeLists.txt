@@ -1596,3 +1596,4 @@ add_plugin(TcbufferPoints LogicalFunction nes-logical-operators TcbufferPointsLo
 add_plugin(TposePoints LogicalFunction nes-logical-operators TposePointsLogicalFunction.cpp)
 add_plugin(TrgeometryPoints LogicalFunction nes-logical-operators TrgeometryPointsLogicalFunction.cpp)
 add_plugin(TnpointRoutes LogicalFunction nes-logical-operators TnpointRoutesLogicalFunction.cpp)
+add_plugin(TposeRotation LogicalFunction nes-logical-operators TposeRotationLogicalFunction.cpp)

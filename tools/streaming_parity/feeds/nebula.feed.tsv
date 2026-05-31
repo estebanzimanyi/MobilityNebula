@@ -1537,6 +1537,7 @@ tpose_minus_geom	proven
 tpose_minus_pose	proven
 tpose_minus_stbox	proven
 tpose_points	proven
+tpose_rotation	proven
 tpose_start_value	proven
 tpose_to_tpoint	proven
 tpose_trajectory	proven

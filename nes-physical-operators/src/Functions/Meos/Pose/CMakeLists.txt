@@ -92,3 +92,4 @@ add_plugin(PoseTstzspanToStbox PhysicalFunction nes-physical-operators PoseTstzs
 add_plugin(PoseTimestamptzToStbox PhysicalFunction nes-physical-operators PoseTimestamptzToStboxPhysicalFunction.cpp)
 add_plugin(TposeToTpoint PhysicalFunction nes-physical-operators TposeToTpointPhysicalFunction.cpp)
 add_plugin(TposePoints PhysicalFunction nes-physical-operators TposePointsPhysicalFunction.cpp)
+add_plugin(TposeRotation PhysicalFunction nes-physical-operators TposeRotationPhysicalFunction.cpp)

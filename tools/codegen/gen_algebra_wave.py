@@ -604,6 +604,7 @@ TEMPORAL_TO_TEMPORAL = {
     "trgeometry_to_tpoint": ("trgeometry", "tspatial_text"),
     "trgeometry_to_tinstant": ("trgeometry", "tspatial_text"),
     "trgeometry_rotation": ("trgeometry", "tfloat_out"),
+    "tpose_rotation": ("tpose", "tfloat_out"),
 }
 SET_UNARY = {
     # element-wise set transforms + set/spanset conversions -> a new Set, via *set_out.
