@@ -242,6 +242,7 @@ cbuffer_to_geom	proven
 cbuffer_to_set	proven
 cbuffer_to_stbox	proven
 cbuffer_tstzspan_to_stbox	proven
+cbuffer_union_transfn	proven
 cbufferset_end_value	proven
 cbufferset_start_value	proven
 cbufferset_value_n	proven
@@ -577,6 +578,7 @@ geo_to_set	proven
 geo_to_stbox	proven
 geo_tpose_to_trgeometry	proven
 geo_tstzspan_to_stbox	proven
+geo_union_transfn	proven
 geog_dwithin	proven
 geog_to_geom	proven
 geom_boundary	proven
@@ -811,6 +813,7 @@ npoint_to_geompoint	proven
 npoint_to_set	proven
 npoint_to_stbox	proven
 npoint_tstzspan_to_stbox	proven
+npoint_union_transfn	proven
 npointset_end_value	proven
 npointset_start_value	proven
 npointset_value_n	proven
@@ -999,6 +1002,7 @@ pose_to_point	proven
 pose_to_set	proven
 pose_to_stbox	proven
 pose_tstzspan_to_stbox	proven
+pose_union_transfn	proven
 poseset_end_value	proven
 poseset_start_value	proven
 poseset_value_n	proven
@@ -1054,6 +1058,7 @@ same_tstzspan_temporal	proven
 set_cmp	proven
 set_copy	proven
 set_eq	proven
+set_extent_transfn	proven
 set_ge	proven
 set_gt	proven
 set_hash	proven
@@ -1085,6 +1090,7 @@ shortestline_trgeometry_trgeometry	wired
 span_cmp	proven
 span_copy	proven
 span_eq	proven
+span_extent_transfn	proven
 span_ge	proven
 span_gt	proven
 span_hash	proven
@@ -1094,11 +1100,13 @@ span_lt	proven
 span_ne	proven
 span_to_spanset	proven
 span_to_tbox	proven
+span_union_transfn	proven
 span_upper_inc	proven
 spanset_cmp	proven
 spanset_copy	proven
 spanset_end_span	proven
 spanset_eq	proven
+spanset_extent_transfn	proven
 spanset_ge	proven
 spanset_gt	proven
 spanset_hash	proven
@@ -1112,6 +1120,8 @@ spanset_split_each_n_spans	proven
 spanset_split_n_spans	proven
 spanset_start_span	proven
 spanset_to_tbox	proven
+spanset_union_finalfn	proven
+spanset_union_transfn	proven
 spanset_upper_inc	proven
 spatialset_to_stbox	proven
 stbox_area	proven
@@ -1265,6 +1275,7 @@ temporal_duration	proven
 temporal_dyntimewarp_distance	proven
 temporal_end_timestamptz	proven
 temporal_eq	proven
+temporal_extent_transfn	proven
 temporal_frechet_distance	proven
 temporal_ge	proven
 temporal_gt	proven
@@ -1314,6 +1325,7 @@ teq_tnpoint_npoint	proven
 teq_tpose_pose	proven
 teq_trgeometry_geo	proven
 teq_ttext_text	proven
+text_union_transfn	proven
 textcat_text_ttext	proven
 textcat_ttext_text	proven
 textcat_ttext_ttext	proven

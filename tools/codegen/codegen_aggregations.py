@@ -880,6 +880,10 @@ PHYSICAL_CPP_TNUMBER = """\
 #include <MEOSWrapper.hpp>
 extern "C" {{
 #include <meos.h>
+#include <meos_geo.h>
+#include <meos_cbuffer.h>
+#include <meos_npoint.h>
+#include <meos_pose.h>
 }}
 
 namespace NES
@@ -1652,6 +1656,10 @@ PHYSICAL_CPP_SCALARFOLD = """\
 #include <MEOSWrapper.hpp>
 extern "C" {{
 #include <meos.h>
+#include <meos_geo.h>
+#include <meos_cbuffer.h>
+#include <meos_npoint.h>
+#include <meos_pose.h>
 }}
 
 namespace NES
@@ -2057,6 +2065,56 @@ _TAGG_TEXT_READFOLD = '''\
 PHYSICAL_CPP_TTEXT_TAGG_WKB = _swap_once(
     PHYSICAL_CPP_TAGG_WKB, _TAGG_NUMERIC_READFOLD, _TAGG_TEXT_READFOLD,
     "tagg numeric read/fold -> ttext varsized read/fold")
+
+# ===========================================================================
+# Container-fold aggregate (windowed *_extent / *_union over a stream of VARSIZED
+# container literals: Span/Set/SpanSet/object -> Span/Set/SpanSet, serialized as
+# text). Reuses the scalar-fold scaffold (the timestamp is windowing-only, not
+# part of the aggregate, so there is NO ts in the fold). Per-op heterogeneity
+# (parser, state type, finalfn, *_out serializer) rides in two body placeholders.
+# ===========================================================================
+_CONTAINER_LOWER_FOLD = '''\
+    // Fold each windowed VARSIZED container literal through the MEOS transfn into
+    // a state pointer (Span/SpanSet/Set). Raw-buffer replay keeps combine correct.
+    auto cstate = nautilus::invoke(
+        +[](const Nautilus::Interface::PagedVector*) -> void* {{ return nullptr; }},
+        pagedVectorPtr);
+
+    const auto endIt = pagedVectorRef.end(allFieldNames);
+    for (auto candidateIt = pagedVectorRef.begin(allFieldNames); candidateIt != endIt; ++candidateIt)
+    {{
+        const auto itemRecord = *candidateIt;
+        const auto valueRaw = itemRecord.read(std::string(ValueFieldName));
+        auto valVar = valueRaw.cast<VariableSizedData>();
+
+        cstate = nautilus::invoke(
+            +[](void* state, const char* valPtr, uint32_t valSize) -> void*
+            {{
+                MEOS::Meos::ensureMeosInitialized();
+                std::lock_guard<std::mutex> lock({mutex_name});
+                std::string s(valPtr, valSize);
+                while (!s.empty() && (s.front()=='\\'' || s.front()=='"')) s.erase(s.begin());
+                while (!s.empty() && (s.back()=='\\'' || s.back()=='"')) s.pop_back();
+                {container_fold_body}
+            }},
+            cstate,
+            valVar.getContent(),
+            valVar.getContentSize());
+    }}
+
+    auto boxStr = nautilus::invoke(
+        +[](void* state) -> char*
+        {{
+            if (!state) {{ return (char*)nullptr; }}
+            MEOS::Meos::ensureMeosInitialized();
+            std::lock_guard<std::mutex> lock({mutex_name});
+            {container_serialize_body}
+        }},
+        cstate);'''
+
+PHYSICAL_CPP_CONTAINER_FOLD = _swap_once(
+    PHYSICAL_CPP_SCALARFOLD, _SCALARFOLD_LOWER_FOLD, _CONTAINER_LOWER_FOLD,
+    "scalarfold lower -> container varsized fold (parse + transfn + finalfn/out)")
 
 # ===========================================================================
 # tgeo temporal-aggregate (windowed tpoint_tcentroid -> Temporal point, hex-WKB).
@@ -2707,6 +2765,8 @@ def physical_template_for(op):
             return PHYSICAL_HPP_TNUMBER, PHYSICAL_CPP_SCALARFOLD
         if op.get("fold") == "set":
             return PHYSICAL_HPP_TNUMBER, PHYSICAL_CPP_SETFOLD
+        if op.get("fold") == "container":
+            return PHYSICAL_HPP_TNUMBER, PHYSICAL_CPP_CONTAINER_FOLD
         if op.get("fold") == "tagg":
             if op.get("tagg_value_kind") == "text":
                 return PHYSICAL_HPP_TNUMBER, PHYSICAL_CPP_TTEXT_TAGG_WKB
@@ -2780,6 +2840,10 @@ def emit_operator(op, output_root: Path):
         # aggregates (ttext / container extent+union) relax it to timestamp-only.
         "value_type_guard":    op.get("value_type_guard", "!valueField.getDataType().isNumeric() || "),
         "value_type_msg":      op.get("value_type_msg", "value and timestamp fields must be numeric"),
+        # container-fold (fold=container) bodies: parse `s` -> fold into `state`;
+        # and finalize+serialize `state` -> char* (full per-op expressions).
+        "container_fold_body":      op.get("container_fold_body", ""),
+        "container_serialize_body": op.get("container_serialize_body", ""),
     }
 
     # value_compute (point/tgeo finalize): either fold the windowed sequence

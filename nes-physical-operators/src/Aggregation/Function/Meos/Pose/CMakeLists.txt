@@ -1,0 +1,1 @@
+add_plugin(PoseUnionTransfn AggregationPhysicalFunction nes-physical-operators PoseUnionTransfnAggregationPhysicalFunction.cpp)
