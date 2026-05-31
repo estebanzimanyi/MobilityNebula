@@ -1551,6 +1551,12 @@ tpose_to_tpoint	proven
 tpose_trajectory	proven
 tpose_value_n	proven
 tpose_values	proven
+trgeometry_after_timestamptz	proven
+trgeometry_before_timestamptz	proven
+trgeometry_delete_timestamptz	proven
+trgeometry_delete_tstzset	proven
+trgeometry_delete_tstzspan	proven
+trgeometry_delete_tstzspanset	proven
 trgeometry_end_instant	proven
 trgeometry_end_sequence	wired
 trgeometry_end_value	proven
