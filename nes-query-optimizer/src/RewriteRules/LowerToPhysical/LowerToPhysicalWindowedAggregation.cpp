@@ -159,6 +159,20 @@
 #endif
 #include <Aggregation/Function/Meos/TextUnionTransfnAggregationPhysicalFunction.hpp>
 #include <Aggregation/Function/Meos/GeoUnionTransfnAggregationPhysicalFunction.hpp>
+#include <Aggregation/Function/Meos/TemporalMergeTransfnAggregationPhysicalFunction.hpp>
+#include <Aggregation/Function/Meos/TimestamptzTcountTransfnAggregationPhysicalFunction.hpp>
+#include <Aggregation/Function/Meos/TstzsetTcountTransfnAggregationPhysicalFunction.hpp>
+#include <Aggregation/Function/Meos/TstzspanTcountTransfnAggregationPhysicalFunction.hpp>
+#include <Aggregation/Function/Meos/TstzspansetTcountTransfnAggregationPhysicalFunction.hpp>
+#if NPOINT
+#include <Aggregation/Function/Meos/Npoint/TnpointTcentroidTransfnAggregationPhysicalFunction.hpp>
+#endif
+#include <Operators/Windows/Aggregations/Meos/TemporalMergeTransfnAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TimestamptzTcountTransfnAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TstzsetTcountTransfnAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TstzspanTcountTransfnAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TstzspansetTcountTransfnAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TnpointTcentroidTransfnAggregationLogicalFunction.hpp>
 #include <Operators/Windows/Aggregations/Meos/SpanExtentTransfnAggregationLogicalFunction.hpp>
 #include <Operators/Windows/Aggregations/Meos/SetExtentTransfnAggregationLogicalFunction.hpp>
 #include <Operators/Windows/Aggregations/Meos/SpansetExtentTransfnAggregationLogicalFunction.hpp>
@@ -2805,6 +2819,164 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             continue;
         }
         /* END CODEGEN AGGREGATION GLUE: GeoUnionTransfn (optimizer lowering) */
+        /* BEGIN CODEGEN AGGREGATION GLUE: TemporalMergeTransfn (optimizer lowering) */
+        if (name == std::string_view("TemporalMergeTransfn"))
+        {
+            auto specificDescriptor = std::dynamic_pointer_cast<TemporalMergeTransfnAggregationLogicalFunction>(descriptor);
+            INVARIANT(specificDescriptor != nullptr, "Expected TemporalMergeTransfnAggregationLogicalFunction for TemporalMergeTransfn");
+
+            auto valuePF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getValueField());
+            auto tsPF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getTimestampField());
+
+            Schema stateSchema;
+            stateSchema.addField("value", specificDescriptor->getValueField().getDataType());
+            stateSchema.addField("timestamp", specificDescriptor->getTimestampField().getDataType());
+            auto tupleBufferRef = Interface::BufferRef::TupleBufferRef::create(configuration.pageSize.getValue(), stateSchema);
+
+            auto phys = std::make_shared<TemporalMergeTransfnAggregationPhysicalFunction>(
+                std::move(physicalInputType),
+                std::move(physicalFinalType),
+                valuePF,
+                tsPF,
+                resultFieldIdentifier,
+                tupleBufferRef);
+            aggregationPhysicalFunctions.push_back(std::move(phys));
+            continue;
+        }
+        /* END CODEGEN AGGREGATION GLUE: TemporalMergeTransfn (optimizer lowering) */
+
+        /* BEGIN CODEGEN AGGREGATION GLUE: TimestamptzTcountTransfn (optimizer lowering) */
+        if (name == std::string_view("TimestamptzTcountTransfn"))
+        {
+            auto specificDescriptor = std::dynamic_pointer_cast<TimestamptzTcountTransfnAggregationLogicalFunction>(descriptor);
+            INVARIANT(specificDescriptor != nullptr, "Expected TimestamptzTcountTransfnAggregationLogicalFunction for TimestamptzTcountTransfn");
+
+            auto valuePF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getValueField());
+            auto tsPF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getTimestampField());
+
+            Schema stateSchema;
+            stateSchema.addField("value", specificDescriptor->getValueField().getDataType());
+            stateSchema.addField("timestamp", specificDescriptor->getTimestampField().getDataType());
+            auto tupleBufferRef = Interface::BufferRef::TupleBufferRef::create(configuration.pageSize.getValue(), stateSchema);
+
+            auto phys = std::make_shared<TimestamptzTcountTransfnAggregationPhysicalFunction>(
+                std::move(physicalInputType),
+                std::move(physicalFinalType),
+                valuePF,
+                tsPF,
+                resultFieldIdentifier,
+                tupleBufferRef);
+            aggregationPhysicalFunctions.push_back(std::move(phys));
+            continue;
+        }
+        /* END CODEGEN AGGREGATION GLUE: TimestamptzTcountTransfn (optimizer lowering) */
+
+        /* BEGIN CODEGEN AGGREGATION GLUE: TstzsetTcountTransfn (optimizer lowering) */
+        if (name == std::string_view("TstzsetTcountTransfn"))
+        {
+            auto specificDescriptor = std::dynamic_pointer_cast<TstzsetTcountTransfnAggregationLogicalFunction>(descriptor);
+            INVARIANT(specificDescriptor != nullptr, "Expected TstzsetTcountTransfnAggregationLogicalFunction for TstzsetTcountTransfn");
+
+            auto valuePF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getValueField());
+            auto tsPF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getTimestampField());
+
+            Schema stateSchema;
+            stateSchema.addField("value", specificDescriptor->getValueField().getDataType());
+            stateSchema.addField("timestamp", specificDescriptor->getTimestampField().getDataType());
+            auto tupleBufferRef = Interface::BufferRef::TupleBufferRef::create(configuration.pageSize.getValue(), stateSchema);
+
+            auto phys = std::make_shared<TstzsetTcountTransfnAggregationPhysicalFunction>(
+                std::move(physicalInputType),
+                std::move(physicalFinalType),
+                valuePF,
+                tsPF,
+                resultFieldIdentifier,
+                tupleBufferRef);
+            aggregationPhysicalFunctions.push_back(std::move(phys));
+            continue;
+        }
+        /* END CODEGEN AGGREGATION GLUE: TstzsetTcountTransfn (optimizer lowering) */
+
+        /* BEGIN CODEGEN AGGREGATION GLUE: TstzspanTcountTransfn (optimizer lowering) */
+        if (name == std::string_view("TstzspanTcountTransfn"))
+        {
+            auto specificDescriptor = std::dynamic_pointer_cast<TstzspanTcountTransfnAggregationLogicalFunction>(descriptor);
+            INVARIANT(specificDescriptor != nullptr, "Expected TstzspanTcountTransfnAggregationLogicalFunction for TstzspanTcountTransfn");
+
+            auto valuePF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getValueField());
+            auto tsPF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getTimestampField());
+
+            Schema stateSchema;
+            stateSchema.addField("value", specificDescriptor->getValueField().getDataType());
+            stateSchema.addField("timestamp", specificDescriptor->getTimestampField().getDataType());
+            auto tupleBufferRef = Interface::BufferRef::TupleBufferRef::create(configuration.pageSize.getValue(), stateSchema);
+
+            auto phys = std::make_shared<TstzspanTcountTransfnAggregationPhysicalFunction>(
+                std::move(physicalInputType),
+                std::move(physicalFinalType),
+                valuePF,
+                tsPF,
+                resultFieldIdentifier,
+                tupleBufferRef);
+            aggregationPhysicalFunctions.push_back(std::move(phys));
+            continue;
+        }
+        /* END CODEGEN AGGREGATION GLUE: TstzspanTcountTransfn (optimizer lowering) */
+
+        /* BEGIN CODEGEN AGGREGATION GLUE: TstzspansetTcountTransfn (optimizer lowering) */
+        if (name == std::string_view("TstzspansetTcountTransfn"))
+        {
+            auto specificDescriptor = std::dynamic_pointer_cast<TstzspansetTcountTransfnAggregationLogicalFunction>(descriptor);
+            INVARIANT(specificDescriptor != nullptr, "Expected TstzspansetTcountTransfnAggregationLogicalFunction for TstzspansetTcountTransfn");
+
+            auto valuePF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getValueField());
+            auto tsPF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getTimestampField());
+
+            Schema stateSchema;
+            stateSchema.addField("value", specificDescriptor->getValueField().getDataType());
+            stateSchema.addField("timestamp", specificDescriptor->getTimestampField().getDataType());
+            auto tupleBufferRef = Interface::BufferRef::TupleBufferRef::create(configuration.pageSize.getValue(), stateSchema);
+
+            auto phys = std::make_shared<TstzspansetTcountTransfnAggregationPhysicalFunction>(
+                std::move(physicalInputType),
+                std::move(physicalFinalType),
+                valuePF,
+                tsPF,
+                resultFieldIdentifier,
+                tupleBufferRef);
+            aggregationPhysicalFunctions.push_back(std::move(phys));
+            continue;
+        }
+        /* END CODEGEN AGGREGATION GLUE: TstzspansetTcountTransfn (optimizer lowering) */
+
+#if NPOINT
+        /* BEGIN CODEGEN AGGREGATION GLUE: TnpointTcentroidTransfn (optimizer lowering) */
+        if (name == std::string_view("TnpointTcentroidTransfn"))
+        {
+            auto specificDescriptor = std::dynamic_pointer_cast<TnpointTcentroidTransfnAggregationLogicalFunction>(descriptor);
+            INVARIANT(specificDescriptor != nullptr, "Expected TnpointTcentroidTransfnAggregationLogicalFunction for TnpointTcentroidTransfn");
+
+            auto valuePF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getValueField());
+            auto tsPF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getTimestampField());
+
+            Schema stateSchema;
+            stateSchema.addField("value", specificDescriptor->getValueField().getDataType());
+            stateSchema.addField("timestamp", specificDescriptor->getTimestampField().getDataType());
+            auto tupleBufferRef = Interface::BufferRef::TupleBufferRef::create(configuration.pageSize.getValue(), stateSchema);
+
+            auto phys = std::make_shared<TnpointTcentroidTransfnAggregationPhysicalFunction>(
+                std::move(physicalInputType),
+                std::move(physicalFinalType),
+                valuePF,
+                tsPF,
+                resultFieldIdentifier,
+                tupleBufferRef);
+            aggregationPhysicalFunctions.push_back(std::move(phys));
+            continue;
+        }
+        /* END CODEGEN AGGREGATION GLUE: TnpointTcentroidTransfn (optimizer lowering) */
+
+#endif
 
 
 

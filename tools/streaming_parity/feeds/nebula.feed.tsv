@@ -1286,6 +1286,7 @@ temporal_le	proven
 temporal_lower_inc	proven
 temporal_lt	proven
 temporal_merge	proven
+temporal_merge_transfn	proven
 temporal_minus_max	proven
 temporal_minus_min	proven
 temporal_minus_tstzset	proven
@@ -1398,6 +1399,7 @@ tgt_ttext_text	proven
 timestamptz_extent_transfn	proven
 timestamptz_get_bin	proven
 timestamptz_shift	proven
+timestamptz_tcount_transfn	proven
 timestamptz_to_set	proven
 timestamptz_to_span	proven
 timestamptz_to_spanset	proven
@@ -1472,6 +1474,7 @@ tnpoint_length	proven
 tnpoint_minus_npoint	proven
 tnpoint_route	proven
 tnpoint_speed	proven
+tnpoint_tcentroid_transfn	proven
 tnpoint_to_tgeompoint	proven
 tnpoint_trajectory	proven
 tnpoint_twcentroid	proven
@@ -1546,6 +1549,7 @@ tspatial_srid	proven
 tstzset_end_value	proven
 tstzset_shift_scale	proven
 tstzset_start_value	proven
+tstzset_tcount_transfn	proven
 tstzset_to_dateset	proven
 tstzset_to_stbox	proven
 tstzset_tprecision	proven
@@ -1556,6 +1560,7 @@ tstzspan_expand	proven
 tstzspan_lower	proven
 tstzspan_make	proven
 tstzspan_shift_scale	proven
+tstzspan_tcount_transfn	proven
 tstzspan_to_datespan	proven
 tstzspan_to_stbox	proven
 tstzspan_tprecision	proven
@@ -1566,6 +1571,7 @@ tstzspanset_lower	proven
 tstzspanset_num_timestamps	proven
 tstzspanset_shift_scale	proven
 tstzspanset_start_timestamptz	proven
+tstzspanset_tcount_transfn	proven
 tstzspanset_timestamps	proven
 tstzspanset_to_datespanset	proven
 tstzspanset_to_stbox	proven
