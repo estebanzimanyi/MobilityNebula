@@ -1656,3 +1656,7 @@ add_plugin(TstzspansetBins LogicalFunction nes-logical-operators TstzspansetBins
 add_plugin(DatespansetBins LogicalFunction nes-logical-operators DatespansetBinsLogicalFunction.cpp)
 add_plugin(TfloatValueTimeBoxes LogicalFunction nes-logical-operators TfloatValueTimeBoxesLogicalFunction.cpp)
 add_plugin(TintValueTimeBoxes LogicalFunction nes-logical-operators TintValueTimeBoxesLogicalFunction.cpp)
+add_plugin(SetHashExtended LogicalFunction nes-logical-operators SetHashExtendedLogicalFunction.cpp)
+add_plugin(SpanHashExtended LogicalFunction nes-logical-operators SpanHashExtendedLogicalFunction.cpp)
+add_plugin(SpansetHashExtended LogicalFunction nes-logical-operators SpansetHashExtendedLogicalFunction.cpp)
+add_plugin(TboxHashExtended LogicalFunction nes-logical-operators TboxHashExtendedLogicalFunction.cpp)

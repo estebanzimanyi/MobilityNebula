@@ -1766,3 +1766,7 @@ tstzspanset_bins	proven
 datespanset_bins	proven
 tfloat_value_time_boxes	proven
 tint_value_time_boxes	proven
+set_hash_extended	proven
+span_hash_extended	proven
+spanset_hash_extended	proven
+tbox_hash_extended	proven

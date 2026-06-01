@@ -1910,6 +1910,25 @@ def classify(name, ret, plist):
                      rows=[("5.5", "1609459200", slit[0]), ("8.5", "1609545600", slit[1])],
                      token=name.upper(), sink="INT32")
         return entry, tmeta
+    # ---- *_hash_extended: a container/box primary + a fixed uint64 seed ->
+    #      uint64 hash. The data-input hash accessors (public for set/span/
+    #      spanset/tbox); the seed rides as a fixed call arg. ----
+    HASH_OPS = {
+        "set_hash_extended":     ("intset",     ("{1, 3, 5}", "{2, 4}")),
+        "span_hash_extended":    ("intspan",    ("[1, 20)", "[3, 25)")),
+        "spanset_hash_extended": ("intspanset", ("{[1, 20)}", "{[3, 25)}")),
+        "tbox_hash_extended":    ("tbox_text",  ("TBOXFLOAT XT([1, 3],[2020-01-01, 2020-01-02])",
+                                                 "TBOXFLOAT XT([2, 4],[2020-01-03, 2020-01-04])")),
+    }
+    if name in HASH_OPS and plist and plist[0][1] and len(plist) == 2 and plist[1][0] in ("uint64", "int64"):
+        in_type, lits = HASH_OPS[name]
+        entry = dict(nebula_name=camel(name), sql_token=name.upper(), meos_call=name,
+                     build_generic=True, input_type=in_type, return_kind="int64",
+                     extra_args=[], extra_call_args=["1"],
+                     comment_one_liner=f"{name} (uint64) — data hash with fixed seed 1.")
+        tmeta = dict(cols=[("a", "VARSIZED")], rows=[(lits[0],), (lits[1],)],
+                     token=name.upper(), sink="INT64")
+        return entry, tmeta
     # ---- SRID set/transform on a spatial primary (temporal point / stbox /
     #      cbuffer / pose) with a fixed target SRID call arg. set_srid relabels,
     #      transform reprojects (probe-verified). The void-returning

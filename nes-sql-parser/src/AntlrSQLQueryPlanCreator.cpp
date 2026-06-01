@@ -2570,6 +2570,10 @@
 #include <Functions/Meos/DatespansetBinsLogicalFunction.hpp>
 #include <Functions/Meos/TfloatValueTimeBoxesLogicalFunction.hpp>
 #include <Functions/Meos/TintValueTimeBoxesLogicalFunction.hpp>
+#include <Functions/Meos/SetHashExtendedLogicalFunction.hpp>
+#include <Functions/Meos/SpanHashExtendedLogicalFunction.hpp>
+#include <Functions/Meos/SpansetHashExtendedLogicalFunction.hpp>
+#include <Functions/Meos/TboxHashExtendedLogicalFunction.hpp>
 #include <Plans/LogicalPlan.hpp>
 #include <Plans/LogicalPlanBuilder.hpp>
 #include <Util/Overloaded.hpp>
@@ -51366,6 +51370,118 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN GLUE: TINT_VALUE_TIME_BOXES */
+        /* BEGIN CODEGEN GLUE: SET_HASH_EXTENDED */
+        case AntlrSQLLexer::SET_HASH_EXTENDED:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 1)
+                throw InvalidQuerySyntax("SET_HASH_EXTENDED requires exactly 1 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(SetHashExtendedLogicalFunction(a0));
+        }
+        break;
+        /* END CODEGEN GLUE: SET_HASH_EXTENDED */
+
+        /* BEGIN CODEGEN GLUE: SPAN_HASH_EXTENDED */
+        case AntlrSQLLexer::SPAN_HASH_EXTENDED:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 1)
+                throw InvalidQuerySyntax("SPAN_HASH_EXTENDED requires exactly 1 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(SpanHashExtendedLogicalFunction(a0));
+        }
+        break;
+        /* END CODEGEN GLUE: SPAN_HASH_EXTENDED */
+
+        /* BEGIN CODEGEN GLUE: SPANSET_HASH_EXTENDED */
+        case AntlrSQLLexer::SPANSET_HASH_EXTENDED:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 1)
+                throw InvalidQuerySyntax("SPANSET_HASH_EXTENDED requires exactly 1 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(SpansetHashExtendedLogicalFunction(a0));
+        }
+        break;
+        /* END CODEGEN GLUE: SPANSET_HASH_EXTENDED */
+
+        /* BEGIN CODEGEN GLUE: TBOX_HASH_EXTENDED */
+        case AntlrSQLLexer::TBOX_HASH_EXTENDED:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 1)
+                throw InvalidQuerySyntax("TBOX_HASH_EXTENDED requires exactly 1 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(TboxHashExtendedLogicalFunction(a0));
+        }
+        break;
+        /* END CODEGEN GLUE: TBOX_HASH_EXTENDED */
+
 
 
 

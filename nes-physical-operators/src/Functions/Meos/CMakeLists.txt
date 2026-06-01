@@ -1295,3 +1295,7 @@ add_plugin(TstzspansetBins PhysicalFunction nes-physical-operators TstzspansetBi
 add_plugin(DatespansetBins PhysicalFunction nes-physical-operators DatespansetBinsPhysicalFunction.cpp)
 add_plugin(TfloatValueTimeBoxes PhysicalFunction nes-physical-operators TfloatValueTimeBoxesPhysicalFunction.cpp)
 add_plugin(TintValueTimeBoxes PhysicalFunction nes-physical-operators TintValueTimeBoxesPhysicalFunction.cpp)
+add_plugin(SetHashExtended PhysicalFunction nes-physical-operators SetHashExtendedPhysicalFunction.cpp)
+add_plugin(SpanHashExtended PhysicalFunction nes-physical-operators SpanHashExtendedPhysicalFunction.cpp)
+add_plugin(SpansetHashExtended PhysicalFunction nes-physical-operators SpansetHashExtendedPhysicalFunction.cpp)
+add_plugin(TboxHashExtended PhysicalFunction nes-physical-operators TboxHashExtendedPhysicalFunction.cpp)
