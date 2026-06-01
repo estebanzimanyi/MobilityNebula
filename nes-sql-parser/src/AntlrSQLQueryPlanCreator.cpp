@@ -2662,6 +2662,9 @@
 #include <Functions/Meos/StboxGetTimeTileLogicalFunction.hpp>
 #include <Functions/Meos/TgeoScaleLogicalFunction.hpp>
 #include <Functions/Meos/StboxGetSpaceTileLogicalFunction.hpp>
+#include <Functions/Meos/TemporalSplitNSpansLogicalFunction.hpp>
+#include <Functions/Meos/TemporalSplitEachNSpansLogicalFunction.hpp>
+#include <Functions/Meos/StboxQuadSplitLogicalFunction.hpp>
 #include <Plans/LogicalPlan.hpp>
 #include <Plans/LogicalPlanBuilder.hpp>
 #include <Util/Overloaded.hpp>
@@ -53503,6 +53506,94 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN GLUE: STBOX_GET_SPACE_TILE */
+        /* BEGIN CODEGEN GLUE: TEMPORAL_SPLIT_N_SPANS */
+        case AntlrSQLLexer::TEMPORAL_SPLIT_N_SPANS:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("TEMPORAL_SPLIT_N_SPANS requires exactly 3 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(TemporalSplitNSpansLogicalFunction(a0, a1, a2));
+        }
+        break;
+        /* END CODEGEN GLUE: TEMPORAL_SPLIT_N_SPANS */
+
+        /* BEGIN CODEGEN GLUE: TEMPORAL_SPLIT_EACH_N_SPANS */
+        case AntlrSQLLexer::TEMPORAL_SPLIT_EACH_N_SPANS:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("TEMPORAL_SPLIT_EACH_N_SPANS requires exactly 3 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(TemporalSplitEachNSpansLogicalFunction(a0, a1, a2));
+        }
+        break;
+        /* END CODEGEN GLUE: TEMPORAL_SPLIT_EACH_N_SPANS */
+
+        /* BEGIN CODEGEN GLUE: STBOX_QUAD_SPLIT */
+        case AntlrSQLLexer::STBOX_QUAD_SPLIT:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 1)
+                throw InvalidQuerySyntax("STBOX_QUAD_SPLIT requires exactly 1 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(StboxQuadSplitLogicalFunction(a0));
+        }
+        break;
+        /* END CODEGEN GLUE: STBOX_QUAD_SPLIT */
+
 
 
 

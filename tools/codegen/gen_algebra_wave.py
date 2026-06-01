@@ -231,6 +231,11 @@ ARRAY_VALUES = {
     "tnumber_split_each_n_tboxes":dict(inp="tfloat", spec=dict(elem="TBox", kind="span_val", out="tbox_out", maxdd=True, header="meos_geo.h"), icols=[("value", "FLOAT64")], ra=["5.5"], rb=["8.5"], extras=[("int32_t", "INT32", "2", "2")]),
     "geo_split_n_stboxes":       dict(inp="geom", spec=dict(elem="STBox", kind="span_val", out="stbox_out", maxdd=True, header="meos_geo.h"), lit=("SRID=4326;Linestring(0 0, 2 2, 4 4)", "SRID=4326;Linestring(1 1, 3 3)"), extras=[("int32_t", "INT32", "2", "2")]),
     "geo_split_each_n_stboxes":  dict(inp="geom", spec=dict(elem="STBox", kind="span_val", out="stbox_out", maxdd=True, header="meos_geo.h"), lit=("SRID=4326;Linestring(0 0, 2 2, 4 4)", "SRID=4326;Linestring(1 1, 3 3)"), extras=[("int32_t", "INT32", "2", "2")]),
+    # temporal split into N time spans (a single-instant input yields one span).
+    "temporal_split_n_spans":      dict(inp="tfloat", spec=dict(elem="Span", kind="span_val", out="tstzspan_out"), icols=[("value", "FLOAT64")], ra=["5.5"], rb=["8.5"], extras=[("int32_t", "INT32", "2", "2")]),
+    "temporal_split_each_n_spans": dict(inp="tfloat", spec=dict(elem="Span", kind="span_val", out="tstzspan_out"), icols=[("value", "FLOAT64")], ra=["5.5"], rb=["8.5"], extras=[("int32_t", "INT32", "2", "2")]),
+    # STBox quad split: a box -> its four quadrant boxes (int* count, no scalar).
+    "stbox_quad_split":            dict(inp="stbox_text", spec=dict(elem="STBox", kind="span_val", out="stbox_out", maxdd=True, header="meos_geo.h"), lit=("STBOX X((0,0),(10,10))", "STBOX X((0,0),(8,8))")),
     # numeric bins: primary + size + origin + int* count -> a Span struct array.
     "intspan_bins":     dict(inp="intspan", spec=dict(elem="Span", kind="span_val", out="intspan_out"), lit=("[1, 20)", "[3, 25)"), extras=[("int32_t", "INT32", "5", "5"), ("int32_t", "INT32", "0", "0")]),
     "floatspan_bins":   dict(inp="floatspan", spec=dict(elem="Span", kind="span_val", out="floatspan_out", maxdd=True), lit=("[1.5, 20.5)", "[3.5, 25.5)"), extras=[("double", "FLOAT64", "5.0", "5.0"), ("double", "FLOAT64", "0.0", "0.0")]),

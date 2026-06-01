@@ -1354,3 +1354,6 @@ add_plugin(TspatialTransformPipeline PhysicalFunction nes-physical-operators Tsp
 add_plugin(StboxGetTimeTile PhysicalFunction nes-physical-operators StboxGetTimeTilePhysicalFunction.cpp)
 add_plugin(TgeoScale PhysicalFunction nes-physical-operators TgeoScalePhysicalFunction.cpp)
 add_plugin(StboxGetSpaceTile PhysicalFunction nes-physical-operators StboxGetSpaceTilePhysicalFunction.cpp)
+add_plugin(TemporalSplitNSpans PhysicalFunction nes-physical-operators TemporalSplitNSpansPhysicalFunction.cpp)
+add_plugin(TemporalSplitEachNSpans PhysicalFunction nes-physical-operators TemporalSplitEachNSpansPhysicalFunction.cpp)
+add_plugin(StboxQuadSplit PhysicalFunction nes-physical-operators StboxQuadSplitPhysicalFunction.cpp)

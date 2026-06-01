@@ -1726,3 +1726,6 @@ add_plugin(PoseTransformPipeline LogicalFunction nes-logical-operators PoseTrans
 add_plugin(StboxGetTimeTile LogicalFunction nes-logical-operators StboxGetTimeTileLogicalFunction.cpp)
 add_plugin(TgeoScale LogicalFunction nes-logical-operators TgeoScaleLogicalFunction.cpp)
 add_plugin(StboxGetSpaceTile LogicalFunction nes-logical-operators StboxGetSpaceTileLogicalFunction.cpp)
+add_plugin(TemporalSplitNSpans LogicalFunction nes-logical-operators TemporalSplitNSpansLogicalFunction.cpp)
+add_plugin(TemporalSplitEachNSpans LogicalFunction nes-logical-operators TemporalSplitEachNSpansLogicalFunction.cpp)
+add_plugin(StboxQuadSplit LogicalFunction nes-logical-operators StboxQuadSplitLogicalFunction.cpp)

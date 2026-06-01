@@ -1836,3 +1836,6 @@ tspatial_transform_pipeline	proven
 stbox_get_space_tile	proven
 stbox_get_time_tile	proven
 tgeo_scale	proven
+stbox_quad_split	proven
+temporal_split_each_n_spans	proven
+temporal_split_n_spans	proven
