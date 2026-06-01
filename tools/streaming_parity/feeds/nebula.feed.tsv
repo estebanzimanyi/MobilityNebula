@@ -1806,3 +1806,6 @@ tgeo_type	proven
 tgeo_type_all	proven
 tgeometry_type	proven
 tgeodetic_type	proven
+int32_cmp	proven
+int64_cmp	proven
+text_cmp	proven

@@ -1696,3 +1696,6 @@ add_plugin(TgeoType LogicalFunction nes-logical-operators TgeoTypeLogicalFunctio
 add_plugin(TgeoTypeAll LogicalFunction nes-logical-operators TgeoTypeAllLogicalFunction.cpp)
 add_plugin(TgeometryType LogicalFunction nes-logical-operators TgeometryTypeLogicalFunction.cpp)
 add_plugin(TgeodeticType LogicalFunction nes-logical-operators TgeodeticTypeLogicalFunction.cpp)
+add_plugin(Int32Cmp LogicalFunction nes-logical-operators Int32CmpLogicalFunction.cpp)
+add_plugin(Int64Cmp LogicalFunction nes-logical-operators Int64CmpLogicalFunction.cpp)
+add_plugin(TextCmp LogicalFunction nes-logical-operators TextCmpLogicalFunction.cpp)

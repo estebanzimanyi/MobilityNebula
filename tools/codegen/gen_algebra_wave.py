@@ -990,6 +990,31 @@ def classify(name, ret, plist):
                            ("[3.5, 9.5)", "[2020-01-03 00:00:00+00, 2020-01-07 00:00:00+00)")],
                      token=name.upper(), sink="VARSIZED")
         return entry, tmeta
+    # ---- comparators: int32_cmp/int64_cmp(l, r) and text_cmp(t1, t2) -> int.
+    #      A base-scalar (or text) primary + a same-type second operand. ----
+    CMP_OPS = {
+        "int32_cmp": ("int_base", "INT32", "int32_t"),
+        "int64_cmp": ("bigint_base", "INT64", "int64_t"),
+        "text_cmp":  ("text", None, None),
+    }
+    if name in CMP_OPS and len(plist) == 2 and rbase == "int":
+        prim, vsql, cpp = CMP_OPS[name]
+        if prim == "text":
+            entry = dict(nebula_name=camel(name), sql_token=name.upper(), meos_call=name,
+                         build_generic=True, input_type="text", return_kind="int",
+                         extra_args=[dict(kind="box", box_type="text", parser="text_in", header="meos.h")],
+                         comment_one_liner=f"{name} (int) — text comparator.")
+            tmeta = dict(cols=[("a", "VARSIZED"), ("arg", "VARSIZED")],
+                         rows=[("AAA", "BBB"), ("DDD", "CCC")], token=name.upper(), sink="INT32")
+        else:
+            entry = dict(nebula_name=camel(name), sql_token=name.upper(), meos_call=name,
+                         build_generic=True, input_type=prim, return_kind="int",
+                         extra_args=[dict(kind="scalar", cpp=cpp)],
+                         comment_one_liner=f"{name} (int) — scalar comparator.")
+            a0, a1 = ("3", "5") if cpp == "int32_t" else ("3", "5")
+            tmeta = dict(cols=[("value", vsql), ("arg0", vsql)],
+                         rows=[(a0, a1), (a1, a0)], token=name.upper(), sink="INT32")
+        return entry, tmeta
     # ---- span_make(lower, upper, lower_inc, upper_inc) -> Span: a base-scalar
     #      primary (lower) + a same-type scalar (upper) + two bool flags. ----
     if name in SPAN_MAKE:
