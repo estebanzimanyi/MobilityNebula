@@ -255,6 +255,10 @@ ARRAY_VALUES = {
     # the whole-trajectory STBox split: a temporal + count out-param, no extras.
     "tgeo_stboxes":      dict(inp="tgeompoint", spec=dict(elem="STBox", kind="span_val", out="stbox_out", maxdd=True, header="meos_geo.h"),
                               icols=[("lon", "FLOAT64"), ("lat", "FLOAT64")], ra=["1.0", "1.0"], rb=["2.0", "2.0"]),
+    # tnumber whole-series value/time TBox array (count out-param, no extras).
+    # (tfloat_value_boxes / tint_value_boxes already live above.)
+    "tnumber_tboxes":     dict(inp="tfloat", spec=dict(elem="TBox", kind="span_val", out="tbox_out", maxdd=True, header="meos.h"),
+                               icols=[("value", "FLOAT64")], ra=["5.5"], rb=["8.5"]),
 }
 SPAN_MAKE = {
     "intspan_make":    ("int_base", "INT32", "int32_t", "intspan_text", "1", "5", "2", "8"),

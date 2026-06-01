@@ -1643,3 +1643,4 @@ add_plugin(StboxSetSrid LogicalFunction nes-logical-operators StboxSetSridLogica
 add_plugin(StboxTransform LogicalFunction nes-logical-operators StboxTransformLogicalFunction.cpp)
 add_plugin(CbufferTransform LogicalFunction nes-logical-operators CbufferTransformLogicalFunction.cpp)
 add_plugin(PoseTransform LogicalFunction nes-logical-operators PoseTransformLogicalFunction.cpp)
+add_plugin(TnumberTboxes LogicalFunction nes-logical-operators TnumberTboxesLogicalFunction.cpp)

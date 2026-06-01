@@ -1753,3 +1753,4 @@ stbox_set_srid	proven
 stbox_transform	proven
 cbuffer_transform	proven
 pose_transform	proven
+tnumber_tboxes	proven

@@ -1282,3 +1282,4 @@ add_plugin(TspatialSetSrid PhysicalFunction nes-physical-operators TspatialSetSr
 add_plugin(TspatialTransform PhysicalFunction nes-physical-operators TspatialTransformPhysicalFunction.cpp)
 add_plugin(StboxSetSrid PhysicalFunction nes-physical-operators StboxSetSridPhysicalFunction.cpp)
 add_plugin(StboxTransform PhysicalFunction nes-physical-operators StboxTransformPhysicalFunction.cpp)
+add_plugin(TnumberTboxes PhysicalFunction nes-physical-operators TnumberTboxesPhysicalFunction.cpp)
