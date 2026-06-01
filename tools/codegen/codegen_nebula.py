@@ -3414,6 +3414,7 @@ for _rk, _ct, _of, _md in [
     ("pose_value_out", "Pose", "pose_out", True),
     ("cbuffer_value_out", "Cbuffer", "cbuffer_out", True),
     ("npoint_value_out", "Npoint", "npoint_out", True),
+    ("nsegment_value_out", "Nsegment", "nsegment_out", True),
     # an Interval result (the *_duration accessors) -> its ISO text.
     ("interval_out", "Interval", "interval_out", False),
 ]:
@@ -3482,6 +3483,7 @@ def assemble_generic_varsized_output(op):
     # the result type's declaration header is not necessarily pulled in by the
     # primary input (e.g. a geom/base primary returning a Cbuffer/Npoint/Pose).
     headers.add({"Cbuffer": "meos_cbuffer.h", "Npoint": "meos_npoint.h",
+                 "Nsegment": "meos_npoint.h",
                  "Pose": "meos_pose.h", "GSERIALIZED": "meos_geo.h",
                  "Temporal": "meos_geo.h"}.get(res_ctype, "meos.h"))
     if array_out:

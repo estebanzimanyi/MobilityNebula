@@ -1337,3 +1337,5 @@ add_plugin(Int64Cmp PhysicalFunction nes-physical-operators Int64CmpPhysicalFunc
 add_plugin(TextCmp PhysicalFunction nes-physical-operators TextCmpPhysicalFunction.cpp)
 add_plugin(TboolinstMake PhysicalFunction nes-physical-operators TboolinstMakePhysicalFunction.cpp)
 add_plugin(TtextinstMake PhysicalFunction nes-physical-operators TtextinstMakePhysicalFunction.cpp)
+add_plugin(IntervalMake PhysicalFunction nes-physical-operators IntervalMakePhysicalFunction.cpp)
+add_plugin(StboxGetSpace PhysicalFunction nes-physical-operators StboxGetSpacePhysicalFunction.cpp)

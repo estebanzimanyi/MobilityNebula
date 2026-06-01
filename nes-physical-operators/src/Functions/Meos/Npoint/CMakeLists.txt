@@ -93,3 +93,6 @@ add_plugin(NpointTimestamptzToStbox PhysicalFunction nes-physical-operators Npoi
 add_plugin(NpointsetRoutes PhysicalFunction nes-physical-operators NpointsetRoutesPhysicalFunction.cpp)
 add_plugin(TnpointRoutes PhysicalFunction nes-physical-operators TnpointRoutesPhysicalFunction.cpp)
 add_plugin(NpointHashExtended PhysicalFunction nes-physical-operators NpointHashExtendedPhysicalFunction.cpp)
+add_plugin(NsegmentMake PhysicalFunction nes-physical-operators NsegmentMakePhysicalFunction.cpp)
+add_plugin(NpointToNsegment PhysicalFunction nes-physical-operators NpointToNsegmentPhysicalFunction.cpp)
+add_plugin(NsegmentRound PhysicalFunction nes-physical-operators NsegmentRoundPhysicalFunction.cpp)

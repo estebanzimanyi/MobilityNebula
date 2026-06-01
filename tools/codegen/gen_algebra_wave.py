@@ -291,6 +291,18 @@ MAKE_SPEC = {
     "pose_make_point2d":dict(prim="geom", plit=("Point(1 1)", "Point(2 2)"), extras=[("double", "FLOAT64", "0.5", "1.0")], ret="pose_value_out"),
     "tboolinst_make":   dict(prim="bool_base", psql="BOOLEAN", pa="true", pb="false", extras=[_TS], ret="tbool_out"),
     "ttextinst_make":   dict(prim="text", plit=("ABC", "DEF"), extras=[_TS], ret="ttext_out"),
+    "nsegment_make":    dict(prim="bigint_base", psql="INT64", pa="1", pb="2",
+                             extras=[("double", "FLOAT64", "0.2", "0.3"), ("double", "FLOAT64", "0.8", "0.9")], ret="nsegment_value_out"),
+    "interval_make":    dict(prim="int_base", psql="INT32", pa="1", pb="2",
+                             extras=[("int32_t", "INT32", "2", "3"), ("int32_t", "INT32", "0", "0"), ("int32_t", "INT32", "3", "4"),
+                                     ("int32_t", "INT32", "4", "5"), ("int32_t", "INT32", "5", "6"), ("double", "FLOAT64", "6.5", "7.5")], ret="interval_out"),
+    "pose_make_3d":     dict(prim="float_base", psql="FLOAT64", pa="1.0", pb="2.0",
+                             extras=[("double", "FLOAT64", "2.0", "3.0"), ("double", "FLOAT64", "3.0", "4.0"), ("double", "FLOAT64", "1.0", "1.0"),
+                                     ("double", "FLOAT64", "0.0", "0.0"), ("double", "FLOAT64", "0.0", "0.0"), ("double", "FLOAT64", "0.0", "0.0"),
+                                     ("int32_t", "INT32", "4326", "4326")], ret="pose_value_out"),
+    "pose_make_point3d":dict(prim="geom", plit=("SRID=4326;Point(1 1 1)", "SRID=4326;Point(2 2 2)"),
+                             extras=[("double", "FLOAT64", "1.0", "1.0"), ("double", "FLOAT64", "0.0", "0.0"),
+                                     ("double", "FLOAT64", "0.0", "0.0"), ("double", "FLOAT64", "0.0", "0.0")], ret="pose_value_out"),
 }
 BOX_PARSER = {"intspan": "intspan_in", "bigintspan": "bigintspan_in", "floatspan": "floatspan_in",
               "datespan": "datespan_in", "tstzspan": "tstzspan_in",
@@ -372,6 +384,7 @@ ROUND_RET = {
     "Cbuffer":  ("cbuffer",      "cbuffer_value_out"),
     "Pose":     ("pose",         "pose_value_out"),
     "Npoint":   ("npoint",       "npoint_value_out"),
+    "Nsegment": ("nsegment",     "nsegment_value_out"),
     "GSERIALIZED": ("geom",      "geo_value_out"),
 }
 #   per-op box literal override (tbox_to_intspan needs an INT box, not the
@@ -728,6 +741,8 @@ RETURN_KIND_OVERRIDE = {
     "tcbuffer_points": "geoset_text", "tpose_points": "geoset_text", "trgeometry_points": "geoset_text",
     "tnpoint_routes": "bigintset_text",
     # tcbuffer_radius (Set of radii) returns empty at runtime on v7 — deferred.
+    # unary object/box accessors with non-scalar returns.
+    "npoint_to_nsegment": "nsegment_value_out", "stbox_get_space": "stbox_text_out",
 }
 
 TEXT_UNARY = {
@@ -1040,6 +1055,7 @@ def classify(name, ret, plist):
                      comment_one_liner=f"{name} ({ret.strip()}) — constructor.")
         # the result type's header is not pulled in by a base/geom primary
         _rhdr = {"npoint_value_out": "meos_npoint.h", "cbuffer_value_out": "meos_cbuffer.h",
+                 "nsegment_value_out": "meos_npoint.h",
                  "pose_value_out": "meos_pose.h", "tspatial_text": "meos_geo.h"}.get(s["ret"])
         if _rhdr:
             entry["extra_headers"] = [_rhdr]
