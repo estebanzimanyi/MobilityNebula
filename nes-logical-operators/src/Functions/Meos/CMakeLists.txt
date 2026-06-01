@@ -1714,3 +1714,7 @@ add_plugin(TboolValueAtTimestamptz LogicalFunction nes-logical-operators TboolVa
 add_plugin(TgeoValueAtTimestamptz LogicalFunction nes-logical-operators TgeoValueAtTimestamptzLogicalFunction.cpp)
 add_plugin(TposeValueAtTimestamptz LogicalFunction nes-logical-operators TposeValueAtTimestamptzLogicalFunction.cpp)
 add_plugin(TtextValueAtTimestamptz LogicalFunction nes-logical-operators TtextValueAtTimestamptzLogicalFunction.cpp)
+add_plugin(TfloatboxShiftScale LogicalFunction nes-logical-operators TfloatboxShiftScaleLogicalFunction.cpp)
+add_plugin(TintboxShiftScale LogicalFunction nes-logical-operators TintboxShiftScaleLogicalFunction.cpp)
+add_plugin(GeomAzimuth LogicalFunction nes-logical-operators GeomAzimuthLogicalFunction.cpp)
+add_plugin(BearingPointPoint LogicalFunction nes-logical-operators BearingPointPointLogicalFunction.cpp)

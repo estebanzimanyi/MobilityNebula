@@ -1824,3 +1824,7 @@ tgeo_value_at_timestamptz	proven
 tint_value_at_timestamptz	proven
 tpose_value_at_timestamptz	proven
 ttext_value_at_timestamptz	proven
+bearing_point_point	proven
+geom_azimuth	proven
+tfloatbox_shift_scale	proven
+tintbox_shift_scale	proven

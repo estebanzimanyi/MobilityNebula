@@ -174,6 +174,14 @@ ARITY3 = {
     "temporal_simplify_max_dist":dict(prim="tfloat", pcols=[("value", "FLOAT64"), ("ts", "UINT64")],
                                      pvalsa=("5.5", "1609459200"), pvalsb=("8.5", "1609545600"),
                                      extras=[_a3sc("double", "FLOAT64", "1.0", "1.0"), _a3sc("bool", "BOOLEAN", "false", "false")], ret="tfloat_out"),
+    # value-dimension box shift+scale: a TBox + shift + width + hasshift + haswidth
+    # (both flags true => shift AND scale the value span). Probe-verified.
+    "tfloatbox_shift_scale":    dict(prim="tbox_text", plit=("TBOXFLOAT XT([1, 5],[2020-01-01, 2020-01-05])", "TBOXFLOAT XT([3, 7],[2020-01-03, 2020-01-07])"),
+                                     extras=[_a3sc("double", "FLOAT64", "2.0", "2.0"), _a3sc("double", "FLOAT64", "2.0", "2.0"),
+                                             _a3sc("bool", "BOOLEAN", "true", "true"), _a3sc("bool", "BOOLEAN", "true", "true")], ret="tbox_text_out"),
+    "tintbox_shift_scale":      dict(prim="tbox_text", plit=("TBOXINT XT([1, 5],[2020-01-01, 2020-01-05])", "TBOXINT XT([3, 7],[2020-01-03, 2020-01-07])"),
+                                     extras=[_a3sc("int32_t", "INT32", "2", "2"), _a3sc("int32_t", "INT32", "2", "2"),
+                                             _a3sc("bool", "BOOLEAN", "true", "true"), _a3sc("bool", "BOOLEAN", "true", "true")], ret="tbox_text_out"),
 }
 def _setspec(elem, kind, **kw):
     return dict(elem=elem, kind=kind, count_call="set_num_values", **kw)
@@ -1474,7 +1482,10 @@ def classify(name, ret, plist):
     # buffer params / use_spheroid): arity 3, geom primary — handled below.
     _geomfixed3 = (len(plist) == 3 and name in GEOM_FIXEDARG_OP_NAMES
                    and plist[0] == ("GSERIALIZED", True))
-    if len(plist) != 2 and not (_restrict3 or _tdwithin3 or _temp3 or _tmod3 or _geomfixed3):
+    # geom out-param measure: bool f(geom, geom, double *result) (azimuth/bearing).
+    _geomaz3 = (len(plist) == 3 and name in ("geom_azimuth", "bearing_point_point")
+                and plist[0] == ("GSERIALIZED", True))
+    if len(plist) != 2 and not (_restrict3 or _tdwithin3 or _temp3 or _tmod3 or _geomfixed3 or _geomaz3):
         return None, f"arity {len(plist)} (not 2)"
     # ---- `_round`: f(operand, int maxdd) -> SAME type. The operand base picks
     #      the primary input and its same-type *_out return; maxdd is a fixed
@@ -2145,6 +2156,22 @@ def classify(name, ret, plist):
                          token=name.upper(), sink=sink)
             return entry, tmeta
         return None, "geog shape unhandled"
+    # ---- geom out-param measure: bool f(geom, geom, double *result) -> the angle
+    #      in *result (geom_azimuth, bearing_point_point). A second geom event
+    #      column + the scalar out-param. Probe-verified (Point(0 0)->Point(1 1)
+    #      gives pi/4). ----
+    if (name in ("geom_azimuth", "bearing_point_point") and len(plist) == 3
+            and plist[0] == ("GSERIALIZED", True) and plist[1] == ("GSERIALIZED", True)
+            and plist[2] == ("double", True) and ret.strip() == "bool"):
+        entry = dict(nebula_name=camel(name), sql_token=name.upper(), meos_call=name,
+                     build_generic=True, input_type="geom", return_kind="double",
+                     extra_args=[dict(kind="geom")], out_param=dict(cpp="double"),
+                     comment_one_liner=f"{name} (out-param double) — geometry azimuth/bearing.")
+        tmeta = dict(cols=[("a", "VARSIZED"), ("arg", "VARSIZED")],
+                     rows=[("SRID=4326;Point(0 0)", "SRID=4326;Point(1 1)"),
+                           ("SRID=4326;Point(0 0)", "SRID=4326;Point(2 2)")],
+                     token=name.upper(), sink="FLOAT64")
+        return entry, tmeta
     # ---- pure-geometry binary ops: a geom primary ⊗ {geom, int/double scalar} ->
     #      bool/int predicate, double measure, or a geometry via geo_out. Excludes
     #      geography (geog_, needs a geography input), array-input ops, and
