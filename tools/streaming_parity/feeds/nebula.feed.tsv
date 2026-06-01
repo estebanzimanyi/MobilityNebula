@@ -1828,3 +1828,8 @@ bearing_point_point	proven
 geom_azimuth	proven
 tfloatbox_shift_scale	proven
 tintbox_shift_scale	proven
+cbuffer_transform_pipeline	proven
+geo_transform_pipeline	proven
+pose_transform_pipeline	proven
+stbox_transform_pipeline	proven
+tspatial_transform_pipeline	proven

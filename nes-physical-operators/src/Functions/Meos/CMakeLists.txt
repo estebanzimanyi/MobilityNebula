@@ -1348,3 +1348,6 @@ add_plugin(TfloatboxShiftScale PhysicalFunction nes-physical-operators Tfloatbox
 add_plugin(TintboxShiftScale PhysicalFunction nes-physical-operators TintboxShiftScalePhysicalFunction.cpp)
 add_plugin(GeomAzimuth PhysicalFunction nes-physical-operators GeomAzimuthPhysicalFunction.cpp)
 add_plugin(BearingPointPoint PhysicalFunction nes-physical-operators BearingPointPointPhysicalFunction.cpp)
+add_plugin(GeoTransformPipeline PhysicalFunction nes-physical-operators GeoTransformPipelinePhysicalFunction.cpp)
+add_plugin(StboxTransformPipeline PhysicalFunction nes-physical-operators StboxTransformPipelinePhysicalFunction.cpp)
+add_plugin(TspatialTransformPipeline PhysicalFunction nes-physical-operators TspatialTransformPipelinePhysicalFunction.cpp)

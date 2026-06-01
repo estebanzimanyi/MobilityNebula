@@ -2650,6 +2650,15 @@
 #include <Functions/Meos/TintboxShiftScaleLogicalFunction.hpp>
 #include <Functions/Meos/GeomAzimuthLogicalFunction.hpp>
 #include <Functions/Meos/BearingPointPointLogicalFunction.hpp>
+#include <Functions/Meos/GeoTransformPipelineLogicalFunction.hpp>
+#include <Functions/Meos/StboxTransformPipelineLogicalFunction.hpp>
+#include <Functions/Meos/TspatialTransformPipelineLogicalFunction.hpp>
+#if CBUFFER
+#include <Functions/Meos/CbufferTransformPipelineLogicalFunction.hpp>
+#endif /* CBUFFER */
+#if POSE
+#include <Functions/Meos/PoseTransformPipelineLogicalFunction.hpp>
+#endif /* POSE */
 #include <Plans/LogicalPlan.hpp>
 #include <Plans/LogicalPlanBuilder.hpp>
 #include <Util/Overloaded.hpp>
@@ -53259,6 +53268,152 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN GLUE: BEARING_POINT_POINT */
+        /* BEGIN CODEGEN GLUE: GEO_TRANSFORM_PIPELINE */
+        case AntlrSQLLexer::GEO_TRANSFORM_PIPELINE:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 1)
+                throw InvalidQuerySyntax("GEO_TRANSFORM_PIPELINE requires exactly 1 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(GeoTransformPipelineLogicalFunction(a0));
+        }
+        break;
+        /* END CODEGEN GLUE: GEO_TRANSFORM_PIPELINE */
+
+        /* BEGIN CODEGEN GLUE: STBOX_TRANSFORM_PIPELINE */
+        case AntlrSQLLexer::STBOX_TRANSFORM_PIPELINE:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 1)
+                throw InvalidQuerySyntax("STBOX_TRANSFORM_PIPELINE requires exactly 1 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(StboxTransformPipelineLogicalFunction(a0));
+        }
+        break;
+        /* END CODEGEN GLUE: STBOX_TRANSFORM_PIPELINE */
+
+        /* BEGIN CODEGEN GLUE: TSPATIAL_TRANSFORM_PIPELINE */
+        case AntlrSQLLexer::TSPATIAL_TRANSFORM_PIPELINE:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("TSPATIAL_TRANSFORM_PIPELINE requires exactly 3 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(TspatialTransformPipelineLogicalFunction(a0, a1, a2));
+        }
+        break;
+        /* END CODEGEN GLUE: TSPATIAL_TRANSFORM_PIPELINE */
+
+        #if CBUFFER
+/* BEGIN CODEGEN GLUE: CBUFFER_TRANSFORM_PIPELINE */
+        case AntlrSQLLexer::CBUFFER_TRANSFORM_PIPELINE:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 1)
+                throw InvalidQuerySyntax("CBUFFER_TRANSFORM_PIPELINE requires exactly 1 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(CbufferTransformPipelineLogicalFunction(a0));
+        }
+        break;
+        /* END CODEGEN GLUE: CBUFFER_TRANSFORM_PIPELINE */
+#endif /* CBUFFER */
+
+        #if POSE
+/* BEGIN CODEGEN GLUE: POSE_TRANSFORM_PIPELINE */
+        case AntlrSQLLexer::POSE_TRANSFORM_PIPELINE:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 1)
+                throw InvalidQuerySyntax("POSE_TRANSFORM_PIPELINE requires exactly 1 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(PoseTransformPipelineLogicalFunction(a0));
+        }
+        break;
+        /* END CODEGEN GLUE: POSE_TRANSFORM_PIPELINE */
+#endif /* POSE */
+
 
 
 

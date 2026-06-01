@@ -1485,7 +1485,10 @@ def classify(name, ret, plist):
     # geom out-param measure: bool f(geom, geom, double *result) (azimuth/bearing).
     _geomaz3 = (len(plist) == 3 and name in ("geom_azimuth", "bearing_point_point")
                 and plist[0] == ("GSERIALIZED", True))
-    if len(plist) != 2 and not (_restrict3 or _tdwithin3 or _temp3 or _tmod3 or _geomfixed3 or _geomaz3):
+    # PROJ-pipeline transform: f(input, char* pipeline, int32_t srid, bool fwd).
+    _tpipe4 = (len(plist) == 4 and name.endswith("_transform_pipeline")
+               and plist[0][1] and plist[1][0] == "char")
+    if len(plist) != 2 and not (_restrict3 or _tdwithin3 or _temp3 or _tmod3 or _geomfixed3 or _geomaz3 or _tpipe4):
         return None, f"arity {len(plist)} (not 2)"
     # ---- `_round`: f(operand, int maxdd) -> SAME type. The operand base picks
     #      the primary input and its same-type *_out return; maxdd is a fixed
@@ -2092,6 +2095,42 @@ def classify(name, ret, plist):
                          token=name.upper(), sink=sink_of(rkind))
         else:
             lits = {"stbox_text": ("SRID=4326;STBOX X((4.3 50.8),(4.4 50.9))",
+                                   "SRID=4326;STBOX X((4.1 50.7),(4.2 50.8))"),
+                    "cbuffer":    ("SRID=4326;Cbuffer(Point(4.35 50.85),0.5)",
+                                   "SRID=4326;Cbuffer(Point(4.36 50.86),0.3)"),
+                    "pose":       ("SRID=4326;Pose(Point(4.35 50.85),0.5)",
+                                   "SRID=4326;Pose(Point(4.36 50.86),0.3)")}[in_type]
+            tmeta = dict(cols=[("a", "VARSIZED")], rows=[(lits[0],), (lits[1],)],
+                         token=name.upper(), sink=sink_of(rkind))
+        return entry, tmeta
+    # ---- PROJ-pipeline transform: f(input, char* pipeline, int32_t srid, bool
+    #      is_forward) -> reprojected input. A 4326->3857 webmerc pipeline + srid
+    #      3857 + forward ride as fixed call args (probe-verified across geo /
+    #      stbox / tspatial / cbuffer / pose). ----
+    TRANSFORM_PIPELINE_OPS = {
+        "geo_transform_pipeline":      ("geom",       "geo_value_out",     False),
+        "stbox_transform_pipeline":    ("stbox_text", "stbox_text_out",    False),
+        "tspatial_transform_pipeline": ("tgeompoint", "tspatial_text",     True),
+        "cbuffer_transform_pipeline":  ("cbuffer",    "cbuffer_value_out", False),
+        "pose_transform_pipeline":     ("pose",       "pose_value_out",    False),
+    }
+    if (name in TRANSFORM_PIPELINE_OPS and plist and plist[0][1] and len(plist) == 4
+            and plist[1][0] == "char" and plist[1][1]
+            and plist[2] == ("int32_t", False) and plist[3] == ("bool", False)):
+        in_type, rkind, tgeo_cols = TRANSFORM_PIPELINE_OPS[name]
+        pipeline = ('(char*)"+proj=pipeline +step +proj=unitconvert +xy_in=deg '
+                    '+xy_out=rad +step +proj=webmerc +ellps=WGS84"')
+        entry = dict(nebula_name=camel(name), sql_token=name.upper(), meos_call=name,
+                     build_generic=True, input_type=in_type, return_kind=rkind,
+                     extra_args=[], extra_call_args=[pipeline, "3857", "true"],
+                     comment_one_liner=f"{name} ({ret.strip()}) — PROJ-pipeline transform to 3857.")
+        if tgeo_cols:
+            tmeta = dict(cols=[("lon", "FLOAT64"), ("lat", "FLOAT64"), ("ts", "UINT64")],
+                         rows=[("4.35", "50.85", "1609459200"), ("4.36", "50.86", "1609545600")],
+                         token=name.upper(), sink=sink_of(rkind))
+        else:
+            lits = {"geom":       ("SRID=4326;Point(4.35 50.85)", "SRID=4326;Point(4.36 50.86)"),
+                    "stbox_text": ("SRID=4326;STBOX X((4.3 50.8),(4.4 50.9))",
                                    "SRID=4326;STBOX X((4.1 50.7),(4.2 50.8))"),
                     "cbuffer":    ("SRID=4326;Cbuffer(Point(4.35 50.85),0.5)",
                                    "SRID=4326;Cbuffer(Point(4.36 50.86),0.3)"),
