@@ -1649,3 +1649,5 @@ add_plugin(TgeometryToTgeography LogicalFunction nes-logical-operators Tgeometry
 add_plugin(TgeographyToTgeometry LogicalFunction nes-logical-operators TgeographyToTgeometryLogicalFunction.cpp)
 add_plugin(TgeographyToTgeogpoint LogicalFunction nes-logical-operators TgeographyToTgeogpointLogicalFunction.cpp)
 add_plugin(TgeogpointToTgeography LogicalFunction nes-logical-operators TgeogpointToTgeographyLogicalFunction.cpp)
+add_plugin(TemporalInstantN LogicalFunction nes-logical-operators TemporalInstantNLogicalFunction.cpp)
+add_plugin(TpointGetZ LogicalFunction nes-logical-operators TpointGetZLogicalFunction.cpp)

@@ -1288,3 +1288,5 @@ add_plugin(TgeometryToTgeography PhysicalFunction nes-physical-operators Tgeomet
 add_plugin(TgeographyToTgeometry PhysicalFunction nes-physical-operators TgeographyToTgeometryPhysicalFunction.cpp)
 add_plugin(TgeographyToTgeogpoint PhysicalFunction nes-physical-operators TgeographyToTgeogpointPhysicalFunction.cpp)
 add_plugin(TgeogpointToTgeography PhysicalFunction nes-physical-operators TgeogpointToTgeographyPhysicalFunction.cpp)
+add_plugin(TemporalInstantN PhysicalFunction nes-physical-operators TemporalInstantNPhysicalFunction.cpp)
+add_plugin(TpointGetZ PhysicalFunction nes-physical-operators TpointGetZPhysicalFunction.cpp)

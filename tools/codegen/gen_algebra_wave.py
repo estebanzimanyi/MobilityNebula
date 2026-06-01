@@ -757,6 +757,31 @@ SCALAR_MATH = {
 def classify(name, ret, plist):
     """Return (spec_entry, test_meta) or (None, reason)."""
     rbase = ret.replace("*", "").strip()
+    # ---- tpoint / temporal accessors on a (3D) temporal-point primary, some with
+    #      a fixed trailing arg. Intercepted here so the generic unary/arity-2
+    #      branches don't mis-map the tpoint subtype to a tfloat instant. All
+    #      probe-verified. (input_type, return_kind, sink, [fixed call args]) ----
+    # (tpoint_trajectory / tpoint_is_simple are EXCLUDED: both already carry an
+    # aggregation registration, so a windowless per-event query routes to the
+    # NebulaStream agg path and throws 9005 "Only TimeBasedWindowType".)
+    TPOINT_OPS = {
+        "temporal_instant_n": ("tgeompoint",   "tspatial_text", "VARSIZED", ["1"]),
+        "tpoint_get_z":       ("tgeompoint3d", "tfloat_out",    "VARSIZED", []),
+    }
+    if name in TPOINT_OPS and plist and plist[0] == ("Temporal", True):
+        in_type, rkind, sink, eca = TPOINT_OPS[name]
+        if in_type == "tgeompoint3d":
+            cols = [("lon", "FLOAT64"), ("lat", "FLOAT64"), ("z", "FLOAT64"), ("ts", "UINT64")]
+            rows = [("4.35", "50.85", "10.0", "1609459200"), ("4.36", "50.86", "20.0", "1609545600")]
+        else:
+            cols = [("lon", "FLOAT64"), ("lat", "FLOAT64"), ("ts", "UINT64")]
+            rows = [("4.35", "50.85", "1609459200"), ("4.36", "50.86", "1609545600")]
+        entry = dict(nebula_name=camel(name), sql_token=name.upper(), meos_call=name,
+                     build_generic=True, input_type=in_type, return_kind=rkind,
+                     extra_args=[], extra_call_args=eca,
+                     comment_one_liner=f"{name} ({ret.strip()}) — temporal-point accessor.")
+        tmeta = dict(cols=cols, rows=rows, token=name.upper(), sink=sink)
+        return entry, tmeta
     # ---- unary Set/SpanSet -> Set transforms & conversions (serialize via *set_out) ----
     if name in SET_UNARY:
         in_type, rkind = SET_UNARY[name]

@@ -1759,3 +1759,5 @@ tgeometry_to_tgeography	proven
 tgeography_to_tgeometry	proven
 tgeography_to_tgeogpoint	proven
 tgeogpoint_to_tgeography	proven
+temporal_instant_n	proven
+tpoint_get_z	proven
