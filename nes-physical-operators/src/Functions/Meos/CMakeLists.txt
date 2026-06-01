@@ -1266,3 +1266,8 @@ add_plugin(TemporalEndInstant PhysicalFunction nes-physical-operators TemporalEn
 add_plugin(TemporalMinInstant PhysicalFunction nes-physical-operators TemporalMinInstantPhysicalFunction.cpp)
 add_plugin(TemporalMaxInstant PhysicalFunction nes-physical-operators TemporalMaxInstantPhysicalFunction.cpp)
 add_plugin(TemporalToTinstant PhysicalFunction nes-physical-operators TemporalToTinstantPhysicalFunction.cpp)
+add_plugin(GeogArea PhysicalFunction nes-physical-operators GeogAreaPhysicalFunction.cpp)
+add_plugin(GeogLength PhysicalFunction nes-physical-operators GeogLengthPhysicalFunction.cpp)
+add_plugin(GeogPerimeter PhysicalFunction nes-physical-operators GeogPerimeterPhysicalFunction.cpp)
+add_plugin(GeogCentroid PhysicalFunction nes-physical-operators GeogCentroidPhysicalFunction.cpp)
+add_plugin(GeogDistance PhysicalFunction nes-physical-operators GeogDistancePhysicalFunction.cpp)

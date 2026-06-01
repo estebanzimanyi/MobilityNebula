@@ -1845,6 +1845,40 @@ def classify(name, ret, plist):
                      rows=[("5.5", "1609459200", slit[0]), ("8.5", "1609545600", slit[1])],
                      token=name.upper(), sink="INT32")
         return entry, tmeta
+    # ---- geography measurement ops: geog_area/length/perimeter (geog, bool) ->
+    #      double, geog_centroid (geog, bool) -> geog, geog_distance (geog, geog)
+    #      -> double. The geography input is a geom_in-parsed geometry — MEOS
+    #      computes the geodetic value on it (probe-verified: area/perimeter/
+    #      centroid/distance non-zero, length 0 on a polygon). use_spheroid is a
+    #      fixed `true` call arg (no event column), the maxdd pattern. ----
+    if toks[0] == "geog" and plist and plist[0] == ("GSERIALIZED", True):
+        if rbase == "double":
+            rkind, sink = "double", "FLOAT64"
+        elif rbase == "GSERIALIZED":
+            rkind, sink = "geo_value_out", "VARSIZED"
+        else:
+            return None, f"geog return {rbase} unmapped"
+        if len(plist) == 2 and plist[1] == ("bool", False):
+            entry = dict(nebula_name=camel(name), sql_token=name.upper(), meos_call=name,
+                         build_generic=True, input_type="geom", return_kind=rkind,
+                         extra_args=[], extra_call_args=["true"],
+                         comment_one_liner=f"{name} ({ret.strip()}) — geodetic measure (use_spheroid=true).")
+            tmeta = dict(cols=[("a", "VARSIZED")],
+                         rows=[("SRID=4326;Polygon((0 0,0 1,1 1,1 0,0 0))",),
+                               ("SRID=4326;Polygon((0 0,0 2,2 2,2 0,0 0))",)],
+                         token=name.upper(), sink=sink)
+            return entry, tmeta
+        if len(plist) == 2 and plist[1] == ("GSERIALIZED", True):
+            entry = dict(nebula_name=camel(name), sql_token=name.upper(), meos_call=name,
+                         build_generic=True, input_type="geom", return_kind=rkind,
+                         extra_args=[dict(kind="geom")],
+                         comment_one_liner=f"{name} ({ret.strip()}) — geodetic binary measure.")
+            tmeta = dict(cols=[("a", "VARSIZED"), ("arg", "VARSIZED")],
+                         rows=[("SRID=4326;Point(0 0)", "SRID=4326;Point(1 1)"),
+                               ("SRID=4326;Point(0 0)", "SRID=4326;Point(2 2)")],
+                         token=name.upper(), sink=sink)
+            return entry, tmeta
+        return None, "geog shape unhandled"
     # ---- pure-geometry binary ops: a geom primary ⊗ {geom, int/double scalar} ->
     #      bool/int predicate, double measure, or a geometry via geo_out. Excludes
     #      geography (geog_, needs a geography input), array-input ops, and

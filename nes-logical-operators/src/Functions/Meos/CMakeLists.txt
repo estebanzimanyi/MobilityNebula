@@ -1625,3 +1625,8 @@ add_plugin(TemporalEndInstant LogicalFunction nes-logical-operators TemporalEndI
 add_plugin(TemporalMinInstant LogicalFunction nes-logical-operators TemporalMinInstantLogicalFunction.cpp)
 add_plugin(TemporalMaxInstant LogicalFunction nes-logical-operators TemporalMaxInstantLogicalFunction.cpp)
 add_plugin(TemporalToTinstant LogicalFunction nes-logical-operators TemporalToTinstantLogicalFunction.cpp)
+add_plugin(GeogArea LogicalFunction nes-logical-operators GeogAreaLogicalFunction.cpp)
+add_plugin(GeogLength LogicalFunction nes-logical-operators GeogLengthLogicalFunction.cpp)
+add_plugin(GeogPerimeter LogicalFunction nes-logical-operators GeogPerimeterLogicalFunction.cpp)
+add_plugin(GeogCentroid LogicalFunction nes-logical-operators GeogCentroidLogicalFunction.cpp)
+add_plugin(GeogDistance LogicalFunction nes-logical-operators GeogDistanceLogicalFunction.cpp)

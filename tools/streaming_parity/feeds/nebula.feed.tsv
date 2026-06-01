@@ -1735,3 +1735,8 @@ temporal_end_instant	proven
 temporal_min_instant	proven
 temporal_max_instant	proven
 temporal_to_tinstant	proven
+geog_area	proven
+geog_length	proven
+geog_perimeter	proven
+geog_centroid	proven
+geog_distance	proven
