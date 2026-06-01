@@ -789,6 +789,40 @@ def classify(name, ret, plist):
                      comment_one_liner=f"{name} ({ret.strip()}) — temporal-point accessor.")
         tmeta = dict(cols=cols, rows=rows, token=name.upper(), sink=sink)
         return entry, tmeta
+    # ---- type-dispatch predicates: bool <x>_type/_basetype/_spantype(MeosType).
+    #      Streaming-runtime metadata a window op invokes on a value's type (the
+    #      reason MobilitySpark needs temporal_basetype). Bound to the data value:
+    #      build the value, pass its public type-field cast to MeosType. Declared
+    #      in meos_internal.h (exported); MeosType in meos_catalog.h. ----
+    TYPE_PREDICATE_OPS = {n: ("tfloat", "temptype") for n in (
+        "temporal_type", "temporal_basetype", "tnumber_type", "tnumber_basetype",
+        "tnumber_spantype", "tgeo_type", "tgeo_type_all", "tgeodetic_type",
+        "tgeometry_type", "tpoint_type", "tspatial_type", "talpha_type", "talphanum_type")}
+    TYPE_PREDICATE_OPS.update({n: ("intset", "settype") for n in (
+        "set_type", "set_basetype", "set_spantype", "numset_type", "geoset_type",
+        "spatialset_type", "alphanumset_type", "timeset_type")})
+    TYPE_PREDICATE_OPS.update({n: ("intspan", "spantype") for n in (
+        "span_type", "span_basetype", "span_canon_basetype", "span_tbox_type",
+        "numspan_type", "numspan_basetype", "timespan_type", "timespan_basetype", "time_type")})
+    TYPE_PREDICATE_OPS.update({n: ("intspanset", "spantype") for n in (
+        "spanset_type", "timespanset_type")})
+    if name in TYPE_PREDICATE_OPS and len(plist) == 1 and plist[0] == ("MeosType", False):
+        in_type, field = TYPE_PREDICATE_OPS[name]
+        entry = dict(nebula_name=camel(name), sql_token=name.upper(), meos_call=name,
+                     build_generic=True, input_type=in_type, return_kind="int",
+                     extra_args=[], type_field=field,
+                     extra_headers=["meos_catalog.h"],
+                     comment_one_liner=f"{name} (bool) — type-dispatch predicate on a value's {field}.")
+        if in_type == "tfloat":
+            tmeta = dict(cols=[("value", "FLOAT64"), ("ts", "UINT64")],
+                         rows=[("5.5", "1609459200"), ("8.5", "1609545600")],
+                         token=name.upper(), sink="INT32")
+        else:
+            lits = {"intset": ("{1, 3, 5}", "{2, 4}"), "intspan": ("[1, 20)", "[3, 25)"),
+                    "intspanset": ("{[1, 20)}", "{[3, 25)}")}[in_type]
+            tmeta = dict(cols=[("a", "VARSIZED")], rows=[(lits[0],), (lits[1],)],
+                         token=name.upper(), sink="INT32")
+        return entry, tmeta
     # ---- unary Set/SpanSet -> Set transforms & conversions (serialize via *set_out) ----
     if name in SET_UNARY:
         in_type, rkind = SET_UNARY[name]

@@ -3565,6 +3565,13 @@ def assemble_generic_varsized_output(op):
                     ["meos.h"] + sorted(h for h in headers if h != "meos.h"))
     if op.get("box_first") and len(call_terms) == 2:
         call_terms = [call_terms[1], call_terms[0]]
+    # Type-dispatch predicate mode: the MEOS fn takes the value's MeosType, not
+    # the value itself (e.g. temporal_basetype((MeosType) temp->temptype)). The
+    # primary is still built (its public type-field is read) and freed; its
+    # call-term is replaced by the deref expression. Used by the streaming
+    # metadata predicates a window op invokes to dispatch on a value's type.
+    if op.get("type_field"):
+        call_terms[0] = f"(MeosType) temp->{op['type_field']}"
     # Fixed trailing C-literal args appended to the MEOS call (e.g. a `boundspan`
     # bool that the MEOS signature requires but is not a per-event input).
     call_terms = call_terms + [str(a) for a in op.get("extra_call_args", [])]
@@ -3771,6 +3778,13 @@ def assemble_generic_physical(op):
     # literal before the temporal; the default order is temporal-first.
     if op.get("box_first") and len(call_terms) == 2:
         call_terms = [call_terms[1], call_terms[0]]
+    # Type-dispatch predicate mode: the MEOS fn takes the value's MeosType, not
+    # the value itself (e.g. temporal_basetype((MeosType) temp->temptype)). The
+    # primary is still built (its public type-field is read) and freed; its
+    # call-term is replaced by the deref expression. Used by the streaming
+    # metadata predicates a window op invokes to dispatch on a value's type.
+    if op.get("type_field"):
+        call_terms[0] = f"(MeosType) temp->{op['type_field']}"
     # Fixed trailing C-literal args appended to the MEOS call (e.g. a `boundspan`
     # bool that the MEOS signature requires but is not a per-event input).
     call_terms = call_terms + [str(a) for a in op.get("extra_call_args", [])]
