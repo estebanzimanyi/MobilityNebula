@@ -235,6 +235,13 @@ ARRAY_VALUES = {
     # time bins (Interval duration + tstz/date origin).
     "temporal_time_bins":dict(inp="tfloat", spec=dict(elem="Span", kind="span_val", out="tstzspan_out"), icols=[("value", "FLOAT64")], ra=["5.5"], rb=["8.5"], extras=[_a3iv(), _TSTZ0]),
     "datespan_bins":    dict(inp="datespan", spec=dict(elem="Span", kind="span_val", out="datespan_out"), lit=("[2020-01-01, 2020-03-01)", "[2020-02-01, 2020-04-01)"), extras=[_a3iv(), _a3st("DateADT", "date_in", "", "2020-01-01", "2020-01-01")]),
+    # time-span bins: a tstz/date span(set) primary + duration interval + origin.
+    "tstzspan_bins":    dict(inp="tstzspan", spec=dict(elem="Span", kind="span_val", out="tstzspan_out"), lit=("[2020-01-01 00:00:00+00, 2020-01-10 00:00:00+00)", "[2020-01-05 00:00:00+00, 2020-01-20 00:00:00+00)"), extras=[_a3iv(), _TSTZ0]),
+    "tstzspanset_bins": dict(inp="tstzspanset", spec=dict(elem="Span", kind="span_val", out="tstzspan_out"), lit=("{[2020-01-01 00:00:00+00, 2020-01-10 00:00:00+00)}", "{[2020-01-05 00:00:00+00, 2020-01-20 00:00:00+00)}"), extras=[_a3iv(), _TSTZ0]),
+    "datespanset_bins": dict(inp="datespanset", spec=dict(elem="Span", kind="span_val", out="datespan_out"), lit=("{[2020-01-01, 2020-01-10)}", "{[2020-01-05, 2020-01-20)}"), extras=[_a3iv(), _a3st("DateADT", "date_in", "", "2020-01-01", "2020-01-01")]),
+    # value+time TBox bins: a tnumber primary + vsize + duration interval + vorigin + torigin.
+    "tfloat_value_time_boxes": dict(inp="tfloat", spec=dict(elem="TBox", kind="span_val", out="tbox_out", maxdd=True, header="meos.h"), icols=[("value", "FLOAT64")], ra=["5.5"], rb=["8.5"], extras=[("double", "FLOAT64", "2.0", "2.0"), _a3iv(), ("double", "FLOAT64", "0.0", "0.0"), _TSTZ0]),
+    "tint_value_time_boxes":   dict(inp="tint", spec=dict(elem="TBox", kind="span_val", out="tbox_out", maxdd=True, header="meos.h"), icols=[("value", "INT32")], ra=["5"], rb=["8"], extras=[("int32_t", "INT32", "2", "2"), _a3iv(), ("int32_t", "INT32", "0", "0"), _TSTZ0]),
     "bigintspan_bins":    dict(inp="bigintspan", spec=dict(elem="Span", kind="span_val", out="bigintspan_out"), lit=("[1, 20)", "[3, 25)"), extras=[("int64_t", "INT64", "5", "5"), ("int64_t", "INT64", "0", "0")]),
     "bigintspanset_bins": dict(inp="bigintspanset", spec=dict(elem="Span", kind="span_val", out="bigintspan_out"), lit=("{[1, 20)}", "{[3, 25)}"), extras=[("int64_t", "INT64", "5", "5"), ("int64_t", "INT64", "0", "0")]),
     # STBox tiles & tgeo space boxes: a box/temporal -> an STBox struct array given

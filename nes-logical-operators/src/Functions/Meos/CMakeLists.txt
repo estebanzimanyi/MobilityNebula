@@ -1651,3 +1651,8 @@ add_plugin(TgeographyToTgeogpoint LogicalFunction nes-logical-operators Tgeograp
 add_plugin(TgeogpointToTgeography LogicalFunction nes-logical-operators TgeogpointToTgeographyLogicalFunction.cpp)
 add_plugin(TemporalInstantN LogicalFunction nes-logical-operators TemporalInstantNLogicalFunction.cpp)
 add_plugin(TpointGetZ LogicalFunction nes-logical-operators TpointGetZLogicalFunction.cpp)
+add_plugin(TstzspanBins LogicalFunction nes-logical-operators TstzspanBinsLogicalFunction.cpp)
+add_plugin(TstzspansetBins LogicalFunction nes-logical-operators TstzspansetBinsLogicalFunction.cpp)
+add_plugin(DatespansetBins LogicalFunction nes-logical-operators DatespansetBinsLogicalFunction.cpp)
+add_plugin(TfloatValueTimeBoxes LogicalFunction nes-logical-operators TfloatValueTimeBoxesLogicalFunction.cpp)
+add_plugin(TintValueTimeBoxes LogicalFunction nes-logical-operators TintValueTimeBoxesLogicalFunction.cpp)

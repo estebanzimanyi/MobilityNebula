@@ -1290,3 +1290,8 @@ add_plugin(TgeographyToTgeogpoint PhysicalFunction nes-physical-operators Tgeogr
 add_plugin(TgeogpointToTgeography PhysicalFunction nes-physical-operators TgeogpointToTgeographyPhysicalFunction.cpp)
 add_plugin(TemporalInstantN PhysicalFunction nes-physical-operators TemporalInstantNPhysicalFunction.cpp)
 add_plugin(TpointGetZ PhysicalFunction nes-physical-operators TpointGetZPhysicalFunction.cpp)
+add_plugin(TstzspanBins PhysicalFunction nes-physical-operators TstzspanBinsPhysicalFunction.cpp)
+add_plugin(TstzspansetBins PhysicalFunction nes-physical-operators TstzspansetBinsPhysicalFunction.cpp)
+add_plugin(DatespansetBins PhysicalFunction nes-physical-operators DatespansetBinsPhysicalFunction.cpp)
+add_plugin(TfloatValueTimeBoxes PhysicalFunction nes-physical-operators TfloatValueTimeBoxesPhysicalFunction.cpp)
+add_plugin(TintValueTimeBoxes PhysicalFunction nes-physical-operators TintValueTimeBoxesPhysicalFunction.cpp)

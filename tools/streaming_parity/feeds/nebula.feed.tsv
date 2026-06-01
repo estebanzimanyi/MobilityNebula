@@ -1761,3 +1761,8 @@ tgeography_to_tgeogpoint	proven
 tgeogpoint_to_tgeography	proven
 temporal_instant_n	proven
 tpoint_get_z	proven
+tstzspan_bins	proven
+tstzspanset_bins	proven
+datespanset_bins	proven
+tfloat_value_time_boxes	proven
+tint_value_time_boxes	proven
