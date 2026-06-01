@@ -1723,3 +1723,6 @@ add_plugin(StboxTransformPipeline LogicalFunction nes-logical-operators StboxTra
 add_plugin(TspatialTransformPipeline LogicalFunction nes-logical-operators TspatialTransformPipelineLogicalFunction.cpp)
 add_plugin(CbufferTransformPipeline LogicalFunction nes-logical-operators CbufferTransformPipelineLogicalFunction.cpp)
 add_plugin(PoseTransformPipeline LogicalFunction nes-logical-operators PoseTransformPipelineLogicalFunction.cpp)
+add_plugin(StboxGetTimeTile LogicalFunction nes-logical-operators StboxGetTimeTileLogicalFunction.cpp)
+add_plugin(TgeoScale LogicalFunction nes-logical-operators TgeoScaleLogicalFunction.cpp)
+add_plugin(StboxGetSpaceTile LogicalFunction nes-logical-operators StboxGetSpaceTileLogicalFunction.cpp)

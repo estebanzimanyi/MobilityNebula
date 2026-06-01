@@ -182,6 +182,9 @@ ARITY3 = {
     "tintbox_shift_scale":      dict(prim="tbox_text", plit=("TBOXINT XT([1, 5],[2020-01-01, 2020-01-05])", "TBOXINT XT([3, 7],[2020-01-03, 2020-01-07])"),
                                      extras=[_a3sc("int32_t", "INT32", "2", "2"), _a3sc("int32_t", "INT32", "2", "2"),
                                              _a3sc("bool", "BOOLEAN", "true", "true"), _a3sc("bool", "BOOLEAN", "true", "true")], ret="tbox_text_out"),
+    # a time tile of a timestamp: t + tile duration + a tstz origin -> STBox(T).
+    "stbox_get_time_tile":      dict(prim="timestamptz_base", psql="INT64", pa="631152000000000", pb="631238400000000",
+                                     extras=[_a3iv(), _TSTZ0], ret="stbox_text_out"),
 }
 def _setspec(elem, kind, **kw):
     return dict(elem=elem, kind=kind, count_call="set_num_values", **kw)
@@ -1482,6 +1485,28 @@ def classify(name, ret, plist):
     # buffer params / use_spheroid): arity 3, geom primary — handled below.
     _geomfixed3 = (len(plist) == 3 and name in GEOM_FIXEDARG_OP_NAMES
                    and plist[0] == ("GSERIALIZED", True))
+    # ---- fixed-geom-operand ops: a temporal/geom primary whose extra operands
+    #      (scale + origin geometry, or tile sizes + a space origin) are constants
+    #      passed inline as call args. Probe-verified. ----
+    if name == "tgeo_scale" and len(plist) == 3 and plist[0] == ("Temporal", True):
+        entry = dict(nebula_name=camel(name), sql_token=name.upper(), meos_call=name,
+                     build_generic=True, input_type="tgeompoint", return_kind="tspatial_text",
+                     extra_args=[],
+                     extra_call_args=['geom_in((char*)"Point(2 2)", -1)', 'geom_in((char*)"Point(0 0)", -1)'],
+                     comment_one_liner=f"{name} (Temporal) — scale by (2,2) about origin (0,0).")
+        tmeta = dict(cols=[("lon", "FLOAT64"), ("lat", "FLOAT64"), ("ts", "UINT64")],
+                     rows=[("2.0", "4.0", "1609459200"), ("3.0", "6.0", "1609545600")],
+                     token=name.upper(), sink="VARSIZED")
+        return entry, tmeta
+    if name == "stbox_get_space_tile" and len(plist) == 5 and plist[0] == ("GSERIALIZED", True):
+        entry = dict(nebula_name=camel(name), sql_token=name.upper(), meos_call=name,
+                     build_generic=True, input_type="geom", return_kind="stbox_text_out",
+                     extra_args=[],
+                     extra_call_args=["5.0", "5.0", "5.0", 'geom_in((char*)"Point(0 0 0)", -1)'],
+                     comment_one_liner=f"{name} (STBox) — 5x5x5 space tile from origin (0,0,0).")
+        tmeta = dict(cols=[("a", "VARSIZED")], rows=[("Point(7 7 7)",), ("Point(2 2 2)",)],
+                     token=name.upper(), sink="VARSIZED")
+        return entry, tmeta
     # geom out-param measure: bool f(geom, geom, double *result) (azimuth/bearing).
     _geomaz3 = (len(plist) == 3 and name in ("geom_azimuth", "bearing_point_point")
                 and plist[0] == ("GSERIALIZED", True))

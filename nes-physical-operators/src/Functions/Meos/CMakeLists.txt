@@ -1351,3 +1351,6 @@ add_plugin(BearingPointPoint PhysicalFunction nes-physical-operators BearingPoin
 add_plugin(GeoTransformPipeline PhysicalFunction nes-physical-operators GeoTransformPipelinePhysicalFunction.cpp)
 add_plugin(StboxTransformPipeline PhysicalFunction nes-physical-operators StboxTransformPipelinePhysicalFunction.cpp)
 add_plugin(TspatialTransformPipeline PhysicalFunction nes-physical-operators TspatialTransformPipelinePhysicalFunction.cpp)
+add_plugin(StboxGetTimeTile PhysicalFunction nes-physical-operators StboxGetTimeTilePhysicalFunction.cpp)
+add_plugin(TgeoScale PhysicalFunction nes-physical-operators TgeoScalePhysicalFunction.cpp)
+add_plugin(StboxGetSpaceTile PhysicalFunction nes-physical-operators StboxGetSpaceTilePhysicalFunction.cpp)
