@@ -2665,6 +2665,12 @@
 #include <Functions/Meos/TemporalSplitNSpansLogicalFunction.hpp>
 #include <Functions/Meos/TemporalSplitEachNSpansLogicalFunction.hpp>
 #include <Functions/Meos/StboxQuadSplitLogicalFunction.hpp>
+#include <Functions/Meos/TemporalShiftTimeLogicalFunction.hpp>
+#include <Functions/Meos/TemporalScaleTimeLogicalFunction.hpp>
+#include <Functions/Meos/TemporalAtTimestamptzLogicalFunction.hpp>
+#include <Functions/Meos/TemporalMinusTimestamptzLogicalFunction.hpp>
+#include <Functions/Meos/TemporalToTsequenceLogicalFunction.hpp>
+#include <Functions/Meos/TemporalToTsequencesetLogicalFunction.hpp>
 #include <Plans/LogicalPlan.hpp>
 #include <Plans/LogicalPlanBuilder.hpp>
 #include <Util/Overloaded.hpp>
@@ -53593,6 +53599,184 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN GLUE: STBOX_QUAD_SPLIT */
+        /* BEGIN CODEGEN GLUE: TEMPORAL_SHIFT_TIME */
+        case AntlrSQLLexer::TEMPORAL_SHIFT_TIME:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("TEMPORAL_SHIFT_TIME requires exactly 3 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(TemporalShiftTimeLogicalFunction(a0, a1, a2));
+        }
+        break;
+        /* END CODEGEN GLUE: TEMPORAL_SHIFT_TIME */
+
+        /* BEGIN CODEGEN GLUE: TEMPORAL_SCALE_TIME */
+        case AntlrSQLLexer::TEMPORAL_SCALE_TIME:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("TEMPORAL_SCALE_TIME requires exactly 3 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(TemporalScaleTimeLogicalFunction(a0, a1, a2));
+        }
+        break;
+        /* END CODEGEN GLUE: TEMPORAL_SCALE_TIME */
+
+        /* BEGIN CODEGEN GLUE: TEMPORAL_AT_TIMESTAMPTZ */
+        case AntlrSQLLexer::TEMPORAL_AT_TIMESTAMPTZ:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("TEMPORAL_AT_TIMESTAMPTZ requires exactly 3 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(TemporalAtTimestamptzLogicalFunction(a0, a1, a2));
+        }
+        break;
+        /* END CODEGEN GLUE: TEMPORAL_AT_TIMESTAMPTZ */
+
+        /* BEGIN CODEGEN GLUE: TEMPORAL_MINUS_TIMESTAMPTZ */
+        case AntlrSQLLexer::TEMPORAL_MINUS_TIMESTAMPTZ:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("TEMPORAL_MINUS_TIMESTAMPTZ requires exactly 3 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(TemporalMinusTimestamptzLogicalFunction(a0, a1, a2));
+        }
+        break;
+        /* END CODEGEN GLUE: TEMPORAL_MINUS_TIMESTAMPTZ */
+
+        /* BEGIN CODEGEN GLUE: TEMPORAL_TO_TSEQUENCE */
+        case AntlrSQLLexer::TEMPORAL_TO_TSEQUENCE:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 2)
+                throw InvalidQuerySyntax("TEMPORAL_TO_TSEQUENCE requires exactly 2 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(TemporalToTsequenceLogicalFunction(a0, a1));
+        }
+        break;
+        /* END CODEGEN GLUE: TEMPORAL_TO_TSEQUENCE */
+
+        /* BEGIN CODEGEN GLUE: TEMPORAL_TO_TSEQUENCESET */
+        case AntlrSQLLexer::TEMPORAL_TO_TSEQUENCESET:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 2)
+                throw InvalidQuerySyntax("TEMPORAL_TO_TSEQUENCESET requires exactly 2 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(TemporalToTsequencesetLogicalFunction(a0, a1));
+        }
+        break;
+        /* END CODEGEN GLUE: TEMPORAL_TO_TSEQUENCESET */
+
 
 
 

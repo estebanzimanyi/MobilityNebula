@@ -1225,6 +1225,40 @@ def classify(name, ret, plist):
                      comment_one_liner=f"{name} (out-param {plist[2][0]}, n=1) — {input_type} value_n.")
         tmeta = dict(cols=cols, rows=rows, token=name.upper(), sink=sink_of(rkind))
         return entry, tmeta
+    # ---- temporal time ops: a Temporal + (Interval shift/scale | TimestampTz
+    #      at/minus | interpType conversion) -> a Temporal. The generic branches
+    #      reject a Temporal primary for these operands, so handle them here.
+    #      Probe-verified on a single instant (at-ts matches each event's ts;
+    #      minus-ts misses so the instant survives). ----
+    TEMPORAL_TIMEOP = {
+        "temporal_shift_time":        ("iv",     ("1 day", "1 day"),   None),
+        "temporal_scale_time":        ("iv",     ("2 days", "2 days"), None),
+        "temporal_at_timestamptz":    ("tstz",   ("2021-01-01 00:00:00+00", "2021-01-02 00:00:00+00"), None),
+        "temporal_minus_timestamptz": ("tstz",   ("2021-06-01 00:00:00+00", "2021-06-01 00:00:00+00"), None),
+        "temporal_to_tsequence":      ("interp", None, "(interpType) 2"),
+        "temporal_to_tsequenceset":   ("interp", None, "(interpType) 2"),
+    }
+    if name in TEMPORAL_TIMEOP and plist and plist[0] == ("Temporal", True):
+        kind, val, eca = TEMPORAL_TIMEOP[name]
+        entry = dict(nebula_name=camel(name), sql_token=name.upper(), meos_call=name,
+                     build_generic=True, input_type="tfloat", return_kind="tfloat_out",
+                     extra_args=[],
+                     comment_one_liner=f"{name} ({ret.strip()}) — temporal time op.")
+        if kind == "iv":
+            entry["extra_args"] = [dict(IVAL_EXTRA)]
+            cols = [("value", "FLOAT64"), ("ts", "UINT64"), ("arg", "VARSIZED")]
+            rows = [("5.5", "1609459200", val[0]), ("8.5", "1609545600", val[1])]
+        elif kind == "tstz":
+            entry["extra_args"] = [dict(kind="scalar_text", ctype="TimestampTz", parser="timestamptz_in",
+                                        parser_extra=", -1", header="meos.h")]
+            cols = [("value", "FLOAT64"), ("ts", "UINT64"), ("arg", "VARSIZED")]
+            rows = [("5.5", "1609459200", val[0]), ("8.5", "1609545600", val[1])]
+        else:                                    # interpType: a fixed enum call arg
+            entry["extra_call_args"] = [eca]
+            cols = [("value", "FLOAT64"), ("ts", "UINT64")]
+            rows = [("5.5", "1609459200"), ("8.5", "1609545600")]
+        tmeta = dict(cols=cols, rows=rows, token=name.upper(), sink="VARSIZED")
+        return entry, tmeta
     # ---- value_at_timestamptz: bool f(Temporal*, TimestampTz t, bool strict,
     #      T *result) -> the value at t via an out-param. The per-event instant is
     #      built at 2021-01-01 / 2021-01-02 (epochs 1609459200 / 1609545600); the
