@@ -1261,3 +1261,8 @@ add_plugin(DateToTimestamp PhysicalFunction nes-physical-operators DateToTimesta
 add_plugin(DateToTimestamptz PhysicalFunction nes-physical-operators DateToTimestamptzPhysicalFunction.cpp)
 add_plugin(TimestampToDate PhysicalFunction nes-physical-operators TimestampToDatePhysicalFunction.cpp)
 add_plugin(TimestamptzToDate PhysicalFunction nes-physical-operators TimestamptzToDatePhysicalFunction.cpp)
+add_plugin(TemporalStartInstant PhysicalFunction nes-physical-operators TemporalStartInstantPhysicalFunction.cpp)
+add_plugin(TemporalEndInstant PhysicalFunction nes-physical-operators TemporalEndInstantPhysicalFunction.cpp)
+add_plugin(TemporalMinInstant PhysicalFunction nes-physical-operators TemporalMinInstantPhysicalFunction.cpp)
+add_plugin(TemporalMaxInstant PhysicalFunction nes-physical-operators TemporalMaxInstantPhysicalFunction.cpp)
+add_plugin(TemporalToTinstant PhysicalFunction nes-physical-operators TemporalToTinstantPhysicalFunction.cpp)

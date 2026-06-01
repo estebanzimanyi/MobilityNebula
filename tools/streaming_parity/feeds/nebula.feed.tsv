@@ -1730,3 +1730,8 @@ trgeo_to_tinstant	proven
 trgeo_to_tpoint	proven
 trgeo_to_tpose	proven
 trgeo_value_n	proven
+temporal_start_instant	proven
+temporal_end_instant	proven
+temporal_min_instant	proven
+temporal_max_instant	proven
+temporal_to_tinstant	proven

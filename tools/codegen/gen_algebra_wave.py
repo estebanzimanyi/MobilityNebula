@@ -1244,6 +1244,12 @@ def classify(name, ret, plist):
             rkind = VALUE_N_VARSIZED[rbase]
         elif rbase in ("TInstant", "TSequence", "Temporal") and tinstant_sub:
             rkind = "tspatial_text"            # a spatial temporal instant/sequence accessor
+        elif rbase == "TInstant" and tfloat_instant:
+            # a plain-temporal instant accessor (temporal_start/end/min/max_instant,
+            # temporal_to_tinstant): the returned TInstant* exists on a single-event
+            # instant and serializes (cast to Temporal*) via tfloat_out. TSequence*
+            # returns are deliberately left unmapped — they are sequence-only.
+            rkind = "tfloat_out"
         else:
             rkind = SCALAR_RET.get(ret.strip())
             if rkind is None:

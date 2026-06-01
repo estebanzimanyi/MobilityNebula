@@ -1620,3 +1620,8 @@ add_plugin(DateToTimestamp LogicalFunction nes-logical-operators DateToTimestamp
 add_plugin(DateToTimestamptz LogicalFunction nes-logical-operators DateToTimestamptzLogicalFunction.cpp)
 add_plugin(TimestampToDate LogicalFunction nes-logical-operators TimestampToDateLogicalFunction.cpp)
 add_plugin(TimestamptzToDate LogicalFunction nes-logical-operators TimestamptzToDateLogicalFunction.cpp)
+add_plugin(TemporalStartInstant LogicalFunction nes-logical-operators TemporalStartInstantLogicalFunction.cpp)
+add_plugin(TemporalEndInstant LogicalFunction nes-logical-operators TemporalEndInstantLogicalFunction.cpp)
+add_plugin(TemporalMinInstant LogicalFunction nes-logical-operators TemporalMinInstantLogicalFunction.cpp)
+add_plugin(TemporalMaxInstant LogicalFunction nes-logical-operators TemporalMaxInstantLogicalFunction.cpp)
+add_plugin(TemporalToTinstant LogicalFunction nes-logical-operators TemporalToTinstantLogicalFunction.cpp)
