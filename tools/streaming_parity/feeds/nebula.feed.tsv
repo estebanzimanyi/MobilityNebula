@@ -1740,3 +1740,10 @@ geog_length	proven
 geog_perimeter	proven
 geog_centroid	proven
 geog_distance	proven
+geo_set_srid	proven
+geo_transform	proven
+geom_buffer	proven
+geom_dwithin2d	proven
+geom_dwithin3d	proven
+geog_intersects	proven
+geom_relate_pattern	proven

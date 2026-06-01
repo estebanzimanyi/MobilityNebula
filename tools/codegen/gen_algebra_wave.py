@@ -442,6 +442,20 @@ ALWAYS_TINPUT = {
 }
 # temporal subtype token -> codegen GENERIC_INPUTS builder key (when they differ).
 ALWAYS_INPUT_TYPE = {"tgeo": "tgeompoint"}
+# Geometry ops with a FIXED trailing arg (srid / tolerance / pattern / buffer
+# params / use_spheroid). A geom primary, an optional second geom event column,
+# then constant call args (the maxdd pattern). All probe-verified on geom_in
+# inputs. name -> (second_geom_event_extra?, [fixed call args], return_kind, sink).
+GEOM_FIXEDARG_OPS = {
+    "geo_set_srid":        (False, ["4326"],          "geo_value_out", "VARSIZED"),
+    "geo_transform":       (False, ["3857"],          "geo_value_out", "VARSIZED"),
+    "geom_buffer":         (False, ["1.0", '""'],     "geo_value_out", "VARSIZED"),
+    "geom_dwithin2d":      (True,  ["2.0"],           "int",           "INT32"),
+    "geom_dwithin3d":      (True,  ["2.0"],           "int",           "INT32"),
+    "geog_intersects":     (True,  ["true"],          "int",           "INT32"),
+    "geom_relate_pattern": (True,  ['(char*)"T*F**FFF*"'], "int",       "INT32"),
+}
+GEOM_FIXEDARG_OP_NAMES = frozenset(GEOM_FIXEDARG_OPS)
 # Temporal-returning result families: a temporal comparison / spatial relation
 # yields a tbool; tdistance yields a tfloat. (Everything else temporal-returning —
 # e.g. a tgeo restriction — serializes to geo WKT with '(' and is deferred.)
@@ -1292,7 +1306,11 @@ def classify(name, ret, plist):
     _tmod3 = (len(plist) == 3 and rbase == "Temporal" and plist[0] == ("Temporal", True)
               and plist[1] == ("Temporal", True) and plist[2] == ("bool", False)
               and name in ("temporal_insert", "temporal_update"))
-    if len(plist) != 2 and not (_restrict3 or _tdwithin3 or _temp3 or _tmod3):
+    # geometry ops with a fixed trailing arg (dwithin tolerance / relate pattern /
+    # buffer params / use_spheroid): arity 3, geom primary — handled below.
+    _geomfixed3 = (len(plist) == 3 and name in GEOM_FIXEDARG_OP_NAMES
+                   and plist[0] == ("GSERIALIZED", True))
+    if len(plist) != 2 and not (_restrict3 or _tdwithin3 or _temp3 or _tmod3 or _geomfixed3):
         return None, f"arity {len(plist)} (not 2)"
     # ---- `_round`: f(operand, int maxdd) -> SAME type. The operand base picks
     #      the primary input and its same-type *_out return; maxdd is a fixed
@@ -1844,6 +1862,28 @@ def classify(name, ret, plist):
         tmeta = dict(cols=[("value", "FLOAT64"), ("ts", "UINT64"), ("arg", "VARSIZED")],
                      rows=[("5.5", "1609459200", slit[0]), ("8.5", "1609545600", slit[1])],
                      token=name.upper(), sink="INT32")
+        return entry, tmeta
+    # ---- geometry ops with a FIXED trailing arg (srid / tolerance / pattern /
+    #      buffer-params / use_spheroid). A geom primary, an optional second geom
+    #      event column, then constant call args appended after it (the maxdd
+    #      pattern). All probe-verified on geom_in inputs. `geom` extra => a second
+    #      geometry event column; the constants ride in extra_call_args. ----
+    if name in GEOM_FIXEDARG_OPS and plist and plist[0] == ("GSERIALIZED", True):
+        has_geom_extra, fixed, rkind, sink = GEOM_FIXEDARG_OPS[name]
+        entry = dict(nebula_name=camel(name), sql_token=name.upper(), meos_call=name,
+                     build_generic=True, input_type="geom", return_kind=rkind,
+                     extra_args=[dict(kind="geom")] if has_geom_extra else [],
+                     extra_call_args=fixed,
+                     comment_one_liner=f"{name} ({ret.strip()}) — geometry op with fixed {', '.join(fixed)}.")
+        if has_geom_extra:
+            tmeta = dict(cols=[("a", "VARSIZED"), ("arg", "VARSIZED")],
+                         rows=[("SRID=4326;Point(0 0)", "SRID=4326;Point(1 1)"),
+                               ("SRID=4326;Point(0 0)", "SRID=4326;Point(0 0)")],
+                         token=name.upper(), sink=sink)
+        else:
+            tmeta = dict(cols=[("a", "VARSIZED")],
+                         rows=[("SRID=4326;Point(1 1)",), ("SRID=4326;Point(2 2)",)],
+                         token=name.upper(), sink=sink)
         return entry, tmeta
     # ---- geography measurement ops: geog_area/length/perimeter (geog, bool) ->
     #      double, geog_centroid (geog, bool) -> geog, geog_distance (geog, geog)
