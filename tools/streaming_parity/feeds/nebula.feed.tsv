@@ -1747,3 +1747,9 @@ geom_dwithin2d	proven
 geom_dwithin3d	proven
 geog_intersects	proven
 geom_relate_pattern	proven
+tspatial_set_srid	proven
+tspatial_transform	proven
+stbox_set_srid	proven
+stbox_transform	proven
+cbuffer_transform	proven
+pose_transform	proven

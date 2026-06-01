@@ -1278,3 +1278,7 @@ add_plugin(GeomDwithin2d PhysicalFunction nes-physical-operators GeomDwithin2dPh
 add_plugin(GeomDwithin3d PhysicalFunction nes-physical-operators GeomDwithin3dPhysicalFunction.cpp)
 add_plugin(GeogIntersects PhysicalFunction nes-physical-operators GeogIntersectsPhysicalFunction.cpp)
 add_plugin(GeomRelatePattern PhysicalFunction nes-physical-operators GeomRelatePatternPhysicalFunction.cpp)
+add_plugin(TspatialSetSrid PhysicalFunction nes-physical-operators TspatialSetSridPhysicalFunction.cpp)
+add_plugin(TspatialTransform PhysicalFunction nes-physical-operators TspatialTransformPhysicalFunction.cpp)
+add_plugin(StboxSetSrid PhysicalFunction nes-physical-operators StboxSetSridPhysicalFunction.cpp)
+add_plugin(StboxTransform PhysicalFunction nes-physical-operators StboxTransformPhysicalFunction.cpp)

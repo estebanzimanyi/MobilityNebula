@@ -1863,6 +1863,40 @@ def classify(name, ret, plist):
                      rows=[("5.5", "1609459200", slit[0]), ("8.5", "1609545600", slit[1])],
                      token=name.upper(), sink="INT32")
         return entry, tmeta
+    # ---- SRID set/transform on a spatial primary (temporal point / stbox /
+    #      cbuffer / pose) with a fixed target SRID call arg. set_srid relabels,
+    #      transform reprojects (probe-verified). The void-returning
+    #      cbuffer_set_srid / pose_set_srid are excluded (no value to emit). ----
+    SRID_FIXEDARG_OPS = {
+        # name: (input_type, target srid, return_kind, single-instant tgeo cols?)
+        "tspatial_set_srid":  ("tgeompoint", "4326", "tspatial_text",     True),
+        "tspatial_transform": ("tgeompoint", "3857", "tspatial_text",     True),
+        "stbox_set_srid":     ("stbox_text", "4326", "stbox_text_out",    False),
+        "stbox_transform":    ("stbox_text", "3857", "stbox_text_out",    False),
+        "cbuffer_transform":  ("cbuffer",    "3857", "cbuffer_value_out", False),
+        "pose_transform":     ("pose",       "3857", "pose_value_out",    False),
+    }
+    if name in SRID_FIXEDARG_OPS and plist and plist[0][1] and len(plist) == 2 \
+            and plist[1] == ("int32_t", False):
+        in_type, srid, rkind, tgeo_cols = SRID_FIXEDARG_OPS[name]
+        entry = dict(nebula_name=camel(name), sql_token=name.upper(), meos_call=name,
+                     build_generic=True, input_type=in_type, return_kind=rkind,
+                     extra_args=[], extra_call_args=[srid],
+                     comment_one_liner=f"{name} ({ret.strip()}) — SRID set/transform to {srid}.")
+        if tgeo_cols:
+            tmeta = dict(cols=[("lon", "FLOAT64"), ("lat", "FLOAT64"), ("ts", "UINT64")],
+                         rows=[("4.35", "50.85", "1609459200"), ("4.36", "50.86", "1609545600")],
+                         token=name.upper(), sink=sink_of(rkind))
+        else:
+            lits = {"stbox_text": ("SRID=4326;STBOX X((4.3 50.8),(4.4 50.9))",
+                                   "SRID=4326;STBOX X((4.1 50.7),(4.2 50.8))"),
+                    "cbuffer":    ("SRID=4326;Cbuffer(Point(4.35 50.85),0.5)",
+                                   "SRID=4326;Cbuffer(Point(4.36 50.86),0.3)"),
+                    "pose":       ("SRID=4326;Pose(Point(4.35 50.85),0.5)",
+                                   "SRID=4326;Pose(Point(4.36 50.86),0.3)")}[in_type]
+            tmeta = dict(cols=[("a", "VARSIZED")], rows=[(lits[0],), (lits[1],)],
+                         token=name.upper(), sink=sink_of(rkind))
+        return entry, tmeta
     # ---- geometry ops with a FIXED trailing arg (srid / tolerance / pattern /
     #      buffer-params / use_spheroid). A geom primary, an optional second geom
     #      event column, then constant call args appended after it (the maxdd
