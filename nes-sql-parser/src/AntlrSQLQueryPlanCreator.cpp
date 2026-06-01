@@ -2574,6 +2574,16 @@
 #include <Functions/Meos/SpanHashExtendedLogicalFunction.hpp>
 #include <Functions/Meos/SpansetHashExtendedLogicalFunction.hpp>
 #include <Functions/Meos/TboxHashExtendedLogicalFunction.hpp>
+#if CBUFFER
+#include <Functions/Meos/CbufferHashExtendedLogicalFunction.hpp>
+#endif /* CBUFFER */
+#if NPOINT
+#include <Functions/Meos/NpointHashExtendedLogicalFunction.hpp>
+#endif /* NPOINT */
+#if POSE
+#include <Functions/Meos/PoseHashExtendedLogicalFunction.hpp>
+#endif /* POSE */
+#include <Functions/Meos/StboxHashExtendedLogicalFunction.hpp>
 #include <Plans/LogicalPlan.hpp>
 #include <Plans/LogicalPlanBuilder.hpp>
 #include <Util/Overloaded.hpp>
@@ -51481,6 +51491,124 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN GLUE: TBOX_HASH_EXTENDED */
+        #if CBUFFER
+/* BEGIN CODEGEN GLUE: CBUFFER_HASH_EXTENDED */
+        case AntlrSQLLexer::CBUFFER_HASH_EXTENDED:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 1)
+                throw InvalidQuerySyntax("CBUFFER_HASH_EXTENDED requires exactly 1 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(CbufferHashExtendedLogicalFunction(a0));
+        }
+        break;
+        /* END CODEGEN GLUE: CBUFFER_HASH_EXTENDED */
+#endif /* CBUFFER */
+
+        #if NPOINT
+/* BEGIN CODEGEN GLUE: NPOINT_HASH_EXTENDED */
+        case AntlrSQLLexer::NPOINT_HASH_EXTENDED:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 1)
+                throw InvalidQuerySyntax("NPOINT_HASH_EXTENDED requires exactly 1 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(NpointHashExtendedLogicalFunction(a0));
+        }
+        break;
+        /* END CODEGEN GLUE: NPOINT_HASH_EXTENDED */
+#endif /* NPOINT */
+
+        #if POSE
+/* BEGIN CODEGEN GLUE: POSE_HASH_EXTENDED */
+        case AntlrSQLLexer::POSE_HASH_EXTENDED:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 1)
+                throw InvalidQuerySyntax("POSE_HASH_EXTENDED requires exactly 1 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(PoseHashExtendedLogicalFunction(a0));
+        }
+        break;
+        /* END CODEGEN GLUE: POSE_HASH_EXTENDED */
+#endif /* POSE */
+
+        /* BEGIN CODEGEN GLUE: STBOX_HASH_EXTENDED */
+        case AntlrSQLLexer::STBOX_HASH_EXTENDED:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 1)
+                throw InvalidQuerySyntax("STBOX_HASH_EXTENDED requires exactly 1 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(StboxHashExtendedLogicalFunction(a0));
+        }
+        break;
+        /* END CODEGEN GLUE: STBOX_HASH_EXTENDED */
+
 
 
 

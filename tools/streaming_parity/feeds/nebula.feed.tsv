@@ -1770,3 +1770,7 @@ set_hash_extended	proven
 span_hash_extended	proven
 spanset_hash_extended	proven
 tbox_hash_extended	proven
+cbuffer_hash_extended	proven
+npoint_hash_extended	proven
+pose_hash_extended	proven
+stbox_hash_extended	proven

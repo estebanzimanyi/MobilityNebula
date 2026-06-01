@@ -94,3 +94,4 @@ add_plugin(TposeToTpoint PhysicalFunction nes-physical-operators TposeToTpointPh
 add_plugin(TposePoints PhysicalFunction nes-physical-operators TposePointsPhysicalFunction.cpp)
 add_plugin(TposeRotation PhysicalFunction nes-physical-operators TposeRotationPhysicalFunction.cpp)
 add_plugin(PoseTransform PhysicalFunction nes-physical-operators PoseTransformPhysicalFunction.cpp)
+add_plugin(PoseHashExtended PhysicalFunction nes-physical-operators PoseHashExtendedPhysicalFunction.cpp)

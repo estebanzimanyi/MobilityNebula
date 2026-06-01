@@ -1660,3 +1660,7 @@ add_plugin(SetHashExtended LogicalFunction nes-logical-operators SetHashExtended
 add_plugin(SpanHashExtended LogicalFunction nes-logical-operators SpanHashExtendedLogicalFunction.cpp)
 add_plugin(SpansetHashExtended LogicalFunction nes-logical-operators SpansetHashExtendedLogicalFunction.cpp)
 add_plugin(TboxHashExtended LogicalFunction nes-logical-operators TboxHashExtendedLogicalFunction.cpp)
+add_plugin(CbufferHashExtended LogicalFunction nes-logical-operators CbufferHashExtendedLogicalFunction.cpp)
+add_plugin(NpointHashExtended LogicalFunction nes-logical-operators NpointHashExtendedLogicalFunction.cpp)
+add_plugin(PoseHashExtended LogicalFunction nes-logical-operators PoseHashExtendedLogicalFunction.cpp)
+add_plugin(StboxHashExtended LogicalFunction nes-logical-operators StboxHashExtendedLogicalFunction.cpp)

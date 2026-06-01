@@ -1914,18 +1914,27 @@ def classify(name, ret, plist):
     #      uint64 hash. The data-input hash accessors (public for set/span/
     #      spanset/tbox); the seed rides as a fixed call arg. ----
     HASH_OPS = {
-        "set_hash_extended":     ("intset",     ("{1, 3, 5}", "{2, 4}")),
-        "span_hash_extended":    ("intspan",    ("[1, 20)", "[3, 25)")),
-        "spanset_hash_extended": ("intspanset", ("{[1, 20)}", "{[3, 25)}")),
+        # name: (input_type, (lit0, lit1), internal_header?)
+        "set_hash_extended":     ("intset",     ("{1, 3, 5}", "{2, 4}"), False),
+        "span_hash_extended":    ("intspan",    ("[1, 20)", "[3, 25)"), False),
+        "spanset_hash_extended": ("intspanset", ("{[1, 20)}", "{[3, 25)}"), False),
         "tbox_hash_extended":    ("tbox_text",  ("TBOXFLOAT XT([1, 3],[2020-01-01, 2020-01-02])",
-                                                 "TBOXFLOAT XT([2, 4],[2020-01-03, 2020-01-04])")),
+                                                 "TBOXFLOAT XT([2, 4],[2020-01-03, 2020-01-04])"), False),
+        # cbuffer/npoint/pose/stbox hashes are declared in meos_internal.h (exported);
+        # include it pending the public-visibility handoff.
+        "cbuffer_hash_extended": ("cbuffer",    ("Cbuffer(Point(1 1),0.5)", "Cbuffer(Point(2 2),0.5)"), True),
+        "npoint_hash_extended":  ("npoint",     ("Npoint(1,0.5)", "Npoint(2,0.5)"), True),
+        "pose_hash_extended":    ("pose",       ("Pose(Point(1 1),0.5)", "Pose(Point(2 2),0.5)"), True),
+        "stbox_hash_extended":   ("stbox_text", ("SRID=4326;STBOX X((1 1),(2 2))", "SRID=4326;STBOX X((3 3),(4 4))"), True),
     }
     if name in HASH_OPS and plist and plist[0][1] and len(plist) == 2 and plist[1][0] in ("uint64", "int64"):
-        in_type, lits = HASH_OPS[name]
+        in_type, lits, internal = HASH_OPS[name]
         entry = dict(nebula_name=camel(name), sql_token=name.upper(), meos_call=name,
                      build_generic=True, input_type=in_type, return_kind="int64",
                      extra_args=[], extra_call_args=["1"],
                      comment_one_liner=f"{name} (uint64) — data hash with fixed seed 1.")
+        if internal:
+            entry["extra_headers"] = ["meos_internal.h"]
         tmeta = dict(cols=[("a", "VARSIZED")], rows=[(lits[0],), (lits[1],)],
                      token=name.upper(), sink="INT64")
         return entry, tmeta

@@ -1299,3 +1299,4 @@ add_plugin(SetHashExtended PhysicalFunction nes-physical-operators SetHashExtend
 add_plugin(SpanHashExtended PhysicalFunction nes-physical-operators SpanHashExtendedPhysicalFunction.cpp)
 add_plugin(SpansetHashExtended PhysicalFunction nes-physical-operators SpansetHashExtendedPhysicalFunction.cpp)
 add_plugin(TboxHashExtended PhysicalFunction nes-physical-operators TboxHashExtendedPhysicalFunction.cpp)
+add_plugin(StboxHashExtended PhysicalFunction nes-physical-operators StboxHashExtendedPhysicalFunction.cpp)
