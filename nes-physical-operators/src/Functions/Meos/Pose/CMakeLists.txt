@@ -97,3 +97,4 @@ add_plugin(PoseTransform PhysicalFunction nes-physical-operators PoseTransformPh
 add_plugin(PoseHashExtended PhysicalFunction nes-physical-operators PoseHashExtendedPhysicalFunction.cpp)
 add_plugin(PoseMake3d PhysicalFunction nes-physical-operators PoseMake3dPhysicalFunction.cpp)
 add_plugin(PoseMakePoint3d PhysicalFunction nes-physical-operators PoseMakePoint3dPhysicalFunction.cpp)
+add_plugin(TposeValueAtTimestamptz PhysicalFunction nes-physical-operators TposeValueAtTimestamptzPhysicalFunction.cpp)

@@ -1209,6 +1209,46 @@ def classify(name, ret, plist):
                      comment_one_liner=f"{name} (out-param {plist[2][0]}, n=1) — {input_type} value_n.")
         tmeta = dict(cols=cols, rows=rows, token=name.upper(), sink=sink_of(rkind))
         return entry, tmeta
+    # ---- value_at_timestamptz: bool f(Temporal*, TimestampTz t, bool strict,
+    #      T *result) -> the value at t via an out-param. The per-event instant is
+    #      built at 2021-01-01 / 2021-01-02 (epochs 1609459200 / 1609545600); the
+    #      query-ts arg is set to the SAME timestamp so value_at hits the instant
+    #      and the validity flag is true. strict=false. ----
+    if (name.endswith("_value_at_timestamptz") and len(plist) == 4
+            and plist[0][0] == "Temporal" and plist[0][1]
+            and plist[1][0] == "TimestampTz" and plist[2] == ("bool", False)
+            and plist[3][1]
+            and (plist[3][0] in OUT_PARAM_RET or plist[3][0] in VALUE_N_VARSIZED)):
+        stem = name[:-len("_value_at_timestamptz")]
+        ts_a, ts_b = "2021-01-01 00:00:00+00", "2021-01-02 00:00:00+00"
+        if stem in VALUE_N_TEMPORAL:
+            input_type = stem
+            vsql, va, vb = VALUE_N_TEMPORAL[stem]
+            base_cols = [("value", vsql), ("ts", "UINT64")]
+            base_rowa, base_rowb = [va, "1609459200"], [vb, "1609545600"]
+        elif stem in ALWAYS_TINPUT:
+            input_type = ALWAYS_INPUT_TYPE.get(stem, stem)
+            tcols = ALWAYS_TINPUT[stem]
+            base_cols = [(c, s) for c, s, _, _ in tcols] + [("ts", "UINT64")]
+            base_rowa = [a for _, _, a, _ in tcols] + ["1609459200"]
+            base_rowb = [b for _, _, _, b in tcols] + ["1609545600"]
+        else:
+            return None, f"value_at operand {stem} unsupported"
+        if plist[3][0] in VALUE_N_VARSIZED:
+            oc, rkind = plist[3][0], VALUE_N_VARSIZED[plist[3][0]]
+        else:
+            oc, rkind = OUT_PARAM_RET[plist[3][0]]
+        extra_args = [dict(kind="scalar_text", ctype="TimestampTz", parser="timestamptz_in",
+                           parser_extra=", -1", header="meos.h"),
+                      dict(kind="scalar", cpp="bool")]
+        cols = base_cols + [("qts", "VARSIZED"), ("strict", "BOOLEAN")]
+        rows = [tuple(base_rowa + [ts_a, "false"]), tuple(base_rowb + [ts_b, "false"])]
+        entry = dict(nebula_name=camel(name), sql_token=name.upper(), meos_call=name,
+                     build_generic=True, input_type=input_type, return_kind=rkind,
+                     extra_args=extra_args, out_param=dict(cpp=oc),
+                     comment_one_liner=f"{name} (out-param {plist[3][0]}) — {input_type} value at a timestamp.")
+        tmeta = dict(cols=cols, rows=rows, token=name.upper(), sink=sink_of(rkind))
+        return entry, tmeta
     # ---- arity-2 (base | numspan) + (timestamptz | tstzspan) -> TBox constructor
     #      (int/float/numspan _timestamptz/_tstzspan _to_tbox). Must precede the
     #      generic container+scalar branch, whose subtype-from-name guess is wrong
