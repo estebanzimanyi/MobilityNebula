@@ -1335,3 +1335,5 @@ add_plugin(TgeodeticType PhysicalFunction nes-physical-operators TgeodeticTypePh
 add_plugin(Int32Cmp PhysicalFunction nes-physical-operators Int32CmpPhysicalFunction.cpp)
 add_plugin(Int64Cmp PhysicalFunction nes-physical-operators Int64CmpPhysicalFunction.cpp)
 add_plugin(TextCmp PhysicalFunction nes-physical-operators TextCmpPhysicalFunction.cpp)
+add_plugin(TboolinstMake PhysicalFunction nes-physical-operators TboolinstMakePhysicalFunction.cpp)
+add_plugin(TtextinstMake PhysicalFunction nes-physical-operators TtextinstMakePhysicalFunction.cpp)

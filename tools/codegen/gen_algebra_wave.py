@@ -289,6 +289,8 @@ MAKE_SPEC = {
     "pose_make_2d":     dict(prim="float_base", psql="FLOAT64", pa="1.0", pb="2.0",
                              extras=[("double", "FLOAT64", "1.0", "2.0"), ("double", "FLOAT64", "0.5", "1.0"), ("int32_t", "INT32", "0", "0")], ret="pose_value_out"),
     "pose_make_point2d":dict(prim="geom", plit=("Point(1 1)", "Point(2 2)"), extras=[("double", "FLOAT64", "0.5", "1.0")], ret="pose_value_out"),
+    "tboolinst_make":   dict(prim="bool_base", psql="BOOLEAN", pa="true", pb="false", extras=[_TS], ret="tbool_out"),
+    "ttextinst_make":   dict(prim="text", plit=("ABC", "DEF"), extras=[_TS], ret="ttext_out"),
 }
 BOX_PARSER = {"intspan": "intspan_in", "bigintspan": "bigintspan_in", "floatspan": "floatspan_in",
               "datespan": "datespan_in", "tstzspan": "tstzspan_in",

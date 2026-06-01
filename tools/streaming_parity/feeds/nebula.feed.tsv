@@ -1809,3 +1809,5 @@ tgeodetic_type	proven
 int32_cmp	proven
 int64_cmp	proven
 text_cmp	proven
+tboolinst_make	proven
+ttextinst_make	proven

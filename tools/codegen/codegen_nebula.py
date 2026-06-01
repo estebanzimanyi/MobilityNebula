@@ -3364,6 +3364,7 @@ for _k, _field_cpp, _ctype in [
     ("float_base", "double", "double"),
     ("date_base", "int32_t", "DateADT"),
     ("timestamptz_base", "int64_t", "TimestampTz"),
+    ("bool_base", "bool", "bool"),
 ]:
     GENERIC_INPUTS.setdefault(_k, dict(
         fields=[("value", _field_cpp)], header="meos.h", frees=False,

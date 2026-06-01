@@ -1699,3 +1699,5 @@ add_plugin(TgeodeticType LogicalFunction nes-logical-operators TgeodeticTypeLogi
 add_plugin(Int32Cmp LogicalFunction nes-logical-operators Int32CmpLogicalFunction.cpp)
 add_plugin(Int64Cmp LogicalFunction nes-logical-operators Int64CmpLogicalFunction.cpp)
 add_plugin(TextCmp LogicalFunction nes-logical-operators TextCmpLogicalFunction.cpp)
+add_plugin(TboolinstMake LogicalFunction nes-logical-operators TboolinstMakeLogicalFunction.cpp)
+add_plugin(TtextinstMake LogicalFunction nes-logical-operators TtextinstMakeLogicalFunction.cpp)
