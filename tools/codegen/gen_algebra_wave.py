@@ -645,6 +645,12 @@ TEMPORAL_TO_TEMPORAL = {
     "trgeometry_to_tinstant": ("trgeometry", "tspatial_text"),
     "trgeometry_rotation": ("trgeometry", "tfloat_out"),
     "tpose_rotation": ("tpose", "tfloat_out"),
+    # tgeometry/tgeography/tgeogpoint cross-conversions (WKT-primary inputs).
+    "tgeometry_to_tgeompoint":  ("tgeometry",  "tspatial_text"),
+    "tgeometry_to_tgeography":  ("tgeometry",  "tspatial_text"),
+    "tgeography_to_tgeometry":  ("tgeography", "tspatial_text"),
+    "tgeography_to_tgeogpoint": ("tgeography", "tspatial_text"),
+    "tgeogpoint_to_tgeography": ("tgeogpoint", "tspatial_text"),
 }
 SET_UNARY = {
     # element-wise set transforms + set/spanset conversions -> a new Set, via *set_out.
@@ -973,6 +979,11 @@ def classify(name, ret, plist):
         if in_type == "tgeompoint":
             cols = [("lon", "FLOAT64"), ("lat", "FLOAT64"), ("ts", "UINT64")]
             rows = [("1.0", "1.0", "1609459200"), ("2.0", "2.0", "1609545600")]
+        elif in_type in ("tgeometry", "tgeography", "tgeogpoint"):
+            # WKT-primary spatial temporals: a geometry/geography WKT + ts.
+            cols = [("geomWkt", "VARSIZED"), ("ts", "UINT64")]
+            rows = [("SRID=4326;Point(4.35 50.85)", "1609459200"),
+                    ("SRID=4326;Point(4.36 50.86)", "1609545600")]
         else:                                            # trgeometry (x, y, theta, ts)
             tcols = ALWAYS_TINPUT[in_type]
             cols = [(c, s) for c, s, _, _ in tcols] + [("ts", "UINT64")]

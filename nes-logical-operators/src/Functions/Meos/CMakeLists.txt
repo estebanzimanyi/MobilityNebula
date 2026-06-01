@@ -1644,3 +1644,8 @@ add_plugin(StboxTransform LogicalFunction nes-logical-operators StboxTransformLo
 add_plugin(CbufferTransform LogicalFunction nes-logical-operators CbufferTransformLogicalFunction.cpp)
 add_plugin(PoseTransform LogicalFunction nes-logical-operators PoseTransformLogicalFunction.cpp)
 add_plugin(TnumberTboxes LogicalFunction nes-logical-operators TnumberTboxesLogicalFunction.cpp)
+add_plugin(TgeometryToTgeompoint LogicalFunction nes-logical-operators TgeometryToTgeompointLogicalFunction.cpp)
+add_plugin(TgeometryToTgeography LogicalFunction nes-logical-operators TgeometryToTgeographyLogicalFunction.cpp)
+add_plugin(TgeographyToTgeometry LogicalFunction nes-logical-operators TgeographyToTgeometryLogicalFunction.cpp)
+add_plugin(TgeographyToTgeogpoint LogicalFunction nes-logical-operators TgeographyToTgeogpointLogicalFunction.cpp)
+add_plugin(TgeogpointToTgeography LogicalFunction nes-logical-operators TgeogpointToTgeographyLogicalFunction.cpp)

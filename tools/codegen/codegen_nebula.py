@@ -3069,8 +3069,24 @@ GENERIC_INPUTS = {
         '                if (!{var}) return {z};\n')),
     "tgeometry": dict(fields=[("geomWkt", "VariableSizedData"), ("ts", "uint64_t")], header="meos_geo.h", build=(
         '                std::string {var}G(geomWktPtr, geomWktSize);\n'
+        '                while (!{var}G.empty() && ({var}G.front()==\'\\\'\' || {var}G.front()==\'"\')) {var}G.erase({var}G.begin());\n'
+        '                while (!{var}G.empty() && ({var}G.back()==\'\\\'\' || {var}G.back()==\'"\')) {var}G.pop_back();\n'
         '                std::string {var}Wkt = {var}G + "@" + MEOS::Meos::convertEpochToTimestamp(ts);\n'
         '                Temporal* {var} = tgeometry_in({var}Wkt.c_str());\n'
+        '                if (!{var}) return {z};\n')),
+    "tgeography": dict(fields=[("geomWkt", "VariableSizedData"), ("ts", "uint64_t")], header="meos_geo.h", build=(
+        '                std::string {var}G(geomWktPtr, geomWktSize);\n'
+        '                while (!{var}G.empty() && ({var}G.front()==\'\\\'\' || {var}G.front()==\'"\')) {var}G.erase({var}G.begin());\n'
+        '                while (!{var}G.empty() && ({var}G.back()==\'\\\'\' || {var}G.back()==\'"\')) {var}G.pop_back();\n'
+        '                std::string {var}Wkt = {var}G + "@" + MEOS::Meos::convertEpochToTimestamp(ts);\n'
+        '                Temporal* {var} = tgeography_in({var}Wkt.c_str());\n'
+        '                if (!{var}) return {z};\n')),
+    "tgeogpoint": dict(fields=[("geomWkt", "VariableSizedData"), ("ts", "uint64_t")], header="meos_geo.h", build=(
+        '                std::string {var}G(geomWktPtr, geomWktSize);\n'
+        '                while (!{var}G.empty() && ({var}G.front()==\'\\\'\' || {var}G.front()==\'"\')) {var}G.erase({var}G.begin());\n'
+        '                while (!{var}G.empty() && ({var}G.back()==\'\\\'\' || {var}G.back()==\'"\')) {var}G.pop_back();\n'
+        '                std::string {var}Wkt = {var}G + "@" + MEOS::Meos::convertEpochToTimestamp(ts);\n'
+        '                Temporal* {var} = tgeogpoint_in({var}Wkt.c_str());\n'
         '                if (!{var}) return {z};\n')),
     "tcbuffer": dict(fields=[("lon", "double"), ("lat", "double"), ("radius", "double"), ("ts", "uint64_t")], header="meos_cbuffer.h", build=(
         '                if (!(lon >= -180.0 && lon <= 180.0 && lat >= -90.0 && lat <= 90.0) || radius < 0.0) return {z};\n'

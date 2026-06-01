@@ -2558,6 +2558,11 @@
 #include <Functions/Meos/PoseTransformLogicalFunction.hpp>
 #endif /* POSE */
 #include <Functions/Meos/TnumberTboxesLogicalFunction.hpp>
+#include <Functions/Meos/TgeometryToTgeompointLogicalFunction.hpp>
+#include <Functions/Meos/TgeometryToTgeographyLogicalFunction.hpp>
+#include <Functions/Meos/TgeographyToTgeometryLogicalFunction.hpp>
+#include <Functions/Meos/TgeographyToTgeogpointLogicalFunction.hpp>
+#include <Functions/Meos/TgeogpointToTgeographyLogicalFunction.hpp>
 #include <Plans/LogicalPlan.hpp>
 #include <Plans/LogicalPlanBuilder.hpp>
 #include <Util/Overloaded.hpp>
@@ -50995,6 +51000,151 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN GLUE: TNUMBER_TBOXES */
+        /* BEGIN CODEGEN GLUE: TGEOMETRY_TO_TGEOMPOINT */
+        case AntlrSQLLexer::TGEOMETRY_TO_TGEOMPOINT:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 2)
+                throw InvalidQuerySyntax("TGEOMETRY_TO_TGEOMPOINT requires exactly 2 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(TgeometryToTgeompointLogicalFunction(a0, a1));
+        }
+        break;
+        /* END CODEGEN GLUE: TGEOMETRY_TO_TGEOMPOINT */
+
+        /* BEGIN CODEGEN GLUE: TGEOMETRY_TO_TGEOGRAPHY */
+        case AntlrSQLLexer::TGEOMETRY_TO_TGEOGRAPHY:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 2)
+                throw InvalidQuerySyntax("TGEOMETRY_TO_TGEOGRAPHY requires exactly 2 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(TgeometryToTgeographyLogicalFunction(a0, a1));
+        }
+        break;
+        /* END CODEGEN GLUE: TGEOMETRY_TO_TGEOGRAPHY */
+
+        /* BEGIN CODEGEN GLUE: TGEOGRAPHY_TO_TGEOMETRY */
+        case AntlrSQLLexer::TGEOGRAPHY_TO_TGEOMETRY:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 2)
+                throw InvalidQuerySyntax("TGEOGRAPHY_TO_TGEOMETRY requires exactly 2 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(TgeographyToTgeometryLogicalFunction(a0, a1));
+        }
+        break;
+        /* END CODEGEN GLUE: TGEOGRAPHY_TO_TGEOMETRY */
+
+        /* BEGIN CODEGEN GLUE: TGEOGRAPHY_TO_TGEOGPOINT */
+        case AntlrSQLLexer::TGEOGRAPHY_TO_TGEOGPOINT:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 2)
+                throw InvalidQuerySyntax("TGEOGRAPHY_TO_TGEOGPOINT requires exactly 2 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(TgeographyToTgeogpointLogicalFunction(a0, a1));
+        }
+        break;
+        /* END CODEGEN GLUE: TGEOGRAPHY_TO_TGEOGPOINT */
+
+        /* BEGIN CODEGEN GLUE: TGEOGPOINT_TO_TGEOGRAPHY */
+        case AntlrSQLLexer::TGEOGPOINT_TO_TGEOGRAPHY:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 2)
+                throw InvalidQuerySyntax("TGEOGPOINT_TO_TGEOGRAPHY requires exactly 2 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(TgeogpointToTgeographyLogicalFunction(a0, a1));
+        }
+        break;
+        /* END CODEGEN GLUE: TGEOGPOINT_TO_TGEOGRAPHY */
+
 
 
 

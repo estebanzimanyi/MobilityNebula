@@ -1754,3 +1754,8 @@ stbox_transform	proven
 cbuffer_transform	proven
 pose_transform	proven
 tnumber_tboxes	proven
+tgeometry_to_tgeompoint	proven
+tgeometry_to_tgeography	proven
+tgeography_to_tgeometry	proven
+tgeography_to_tgeogpoint	proven
+tgeogpoint_to_tgeography	proven
