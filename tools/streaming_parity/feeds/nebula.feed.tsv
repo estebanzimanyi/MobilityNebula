@@ -1852,3 +1852,5 @@ tfloat_value_split	proven
 tint_value_split	proven
 tfloat_value_time_split	proven
 tint_value_time_split	proven
+tgeo_space_split	proven
+tgeo_space_time_split	proven
