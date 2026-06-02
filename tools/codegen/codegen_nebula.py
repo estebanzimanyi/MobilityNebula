@@ -3609,12 +3609,20 @@ def assemble_generic_varsized_output(op):
             cnt_decl = (f"                int _cnt = {array_out['count_call']}(temp);\n"
                         f"                {elem}* arr = ({elem}*) {op['meos_call']}({callargs});\n")
         elif array_out.get("aux_out"):
-            # the *_split family also writes an auxiliary bins array (double**/int**/
-            # TimestampTz**) before the int* count; capture and free it, ignore its value.
-            cnt_decl = (f"                int _cnt = 0;\n"
-                        f"                {array_out['aux_out']} _aux = nullptr;\n"
-                        f"                {elem}* arr = ({elem}*) {op['meos_call']}({callargs}, &_aux, &_cnt);\n")
-            aux_free = "                free(_aux);\n"
+            # the *_split family also writes auxiliary bins array(s) (double**/int**/
+            # TimestampTz**) before the int* count; capture and free them, ignore
+            # their value. value_time_split writes TWO (value_bins + time_bins).
+            if array_out.get("aux_out2"):
+                cnt_decl = (f"                int _cnt = 0;\n"
+                            f"                {array_out['aux_out']} _aux = nullptr;\n"
+                            f"                {array_out['aux_out2']} _aux2 = nullptr;\n"
+                            f"                {elem}* arr = ({elem}*) {op['meos_call']}({callargs}, &_aux, &_aux2, &_cnt);\n")
+                aux_free = "                free(_aux);\n                free(_aux2);\n"
+            else:
+                cnt_decl = (f"                int _cnt = 0;\n"
+                            f"                {array_out['aux_out']} _aux = nullptr;\n"
+                            f"                {elem}* arr = ({elem}*) {op['meos_call']}({callargs}, &_aux, &_cnt);\n")
+                aux_free = "                free(_aux);\n"
         else:
             cnt_decl = (f"                int _cnt = 0;\n"
                         f"                {elem}* arr = ({elem}*) {op['meos_call']}({callargs}, &_cnt);\n")

@@ -1740,3 +1740,5 @@ add_plugin(TemporalSimplifyMinTdelta LogicalFunction nes-logical-operators Tempo
 add_plugin(TfloatValueSplit LogicalFunction nes-logical-operators TfloatValueSplitLogicalFunction.cpp)
 add_plugin(TintValueSplit LogicalFunction nes-logical-operators TintValueSplitLogicalFunction.cpp)
 add_plugin(TemporalTimeSplit LogicalFunction nes-logical-operators TemporalTimeSplitLogicalFunction.cpp)
+add_plugin(TfloatValueTimeSplit LogicalFunction nes-logical-operators TfloatValueTimeSplitLogicalFunction.cpp)
+add_plugin(TintValueTimeSplit LogicalFunction nes-logical-operators TintValueTimeSplitLogicalFunction.cpp)

@@ -1850,3 +1850,5 @@ temporal_simplify_min_tdelta	proven
 temporal_time_split	proven
 tfloat_value_split	proven
 tint_value_split	proven
+tfloat_value_time_split	proven
+tint_value_time_split	proven

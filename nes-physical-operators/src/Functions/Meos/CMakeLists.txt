@@ -1368,3 +1368,5 @@ add_plugin(TemporalSimplifyMinTdelta PhysicalFunction nes-physical-operators Tem
 add_plugin(TfloatValueSplit PhysicalFunction nes-physical-operators TfloatValueSplitPhysicalFunction.cpp)
 add_plugin(TintValueSplit PhysicalFunction nes-physical-operators TintValueSplitPhysicalFunction.cpp)
 add_plugin(TemporalTimeSplit PhysicalFunction nes-physical-operators TemporalTimeSplitPhysicalFunction.cpp)
+add_plugin(TfloatValueTimeSplit PhysicalFunction nes-physical-operators TfloatValueTimeSplitPhysicalFunction.cpp)
+add_plugin(TintValueTimeSplit PhysicalFunction nes-physical-operators TintValueTimeSplitPhysicalFunction.cpp)

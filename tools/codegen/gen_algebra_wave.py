@@ -241,6 +241,10 @@ ARRAY_VALUES = {
     "tfloat_value_split":   dict(inp="tfloat", spec=dict(elem="Temporal *", kind="ptr", out="tfloat_out", maxdd=True, cast="Temporal *", aux_out="double *"), icols=[("value", "FLOAT64")], ra=["5.5"], rb=["8.5"], extras=[("double", "FLOAT64", "5.0", "5.0"), ("double", "FLOAT64", "0.0", "0.0")]),
     "tint_value_split":     dict(inp="tint", spec=dict(elem="Temporal *", kind="ptr", out="tint_out", cast="Temporal *", aux_out="int *"), icols=[("value", "INT32")], ra=["5"], rb=["8"], extras=[("int32_t", "INT32", "5", "5"), ("int32_t", "INT32", "0", "0")]),
     "temporal_time_split":  dict(inp="tfloat", spec=dict(elem="Temporal *", kind="ptr", out="tfloat_out", maxdd=True, cast="Temporal *", aux_out="TimestampTz *"), icols=[("value", "FLOAT64")], ra=["5.5"], rb=["8.5"], extras=[_a3iv(), _TSTZ0]),
+    # value+time split: a temporal -> its pieces, plus TWO aux bins out-arrays
+    # (value_bins + time_bins). Args: vsize, duration, vorigin, torigin.
+    "tfloat_value_time_split": dict(inp="tfloat", spec=dict(elem="Temporal *", kind="ptr", out="tfloat_out", maxdd=True, cast="Temporal *", aux_out="double *", aux_out2="TimestampTz *"), icols=[("value", "FLOAT64")], ra=["5.5"], rb=["8.5"], extras=[("double", "FLOAT64", "5.0", "5.0"), _a3iv(), ("double", "FLOAT64", "0.0", "0.0"), _TSTZ0]),
+    "tint_value_time_split":   dict(inp="tint", spec=dict(elem="Temporal *", kind="ptr", out="tint_out", cast="Temporal *", aux_out="int *", aux_out2="TimestampTz *"), icols=[("value", "INT32")], ra=["5"], rb=["8"], extras=[("int32_t", "INT32", "5", "5"), _a3iv(), ("int32_t", "INT32", "0", "0"), _TSTZ0]),
     # numeric bins: primary + size + origin + int* count -> a Span struct array.
     "intspan_bins":     dict(inp="intspan", spec=dict(elem="Span", kind="span_val", out="intspan_out"), lit=("[1, 20)", "[3, 25)"), extras=[("int32_t", "INT32", "5", "5"), ("int32_t", "INT32", "0", "0")]),
     "floatspan_bins":   dict(inp="floatspan", spec=dict(elem="Span", kind="span_val", out="floatspan_out", maxdd=True), lit=("[1.5, 20.5)", "[3.5, 25.5)"), extras=[("double", "FLOAT64", "5.0", "5.0"), ("double", "FLOAT64", "0.0", "0.0")]),
