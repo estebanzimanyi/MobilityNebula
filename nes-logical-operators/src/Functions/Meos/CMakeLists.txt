@@ -1751,3 +1751,5 @@ add_plugin(GeoClusterIntersecting LogicalFunction nes-logical-operators GeoClust
 add_plugin(GeoClusterWithin LogicalFunction nes-logical-operators GeoClusterWithinLogicalFunction.cpp)
 add_plugin(GeoClusterKmeans LogicalFunction nes-logical-operators GeoClusterKmeansLogicalFunction.cpp)
 add_plugin(GeoClusterDbscan LogicalFunction nes-logical-operators GeoClusterDbscanLogicalFunction.cpp)
+add_plugin(StboxarrRound LogicalFunction nes-logical-operators StboxarrRoundLogicalFunction.cpp)
+add_plugin(TnpointPositions LogicalFunction nes-logical-operators TnpointPositionsLogicalFunction.cpp)

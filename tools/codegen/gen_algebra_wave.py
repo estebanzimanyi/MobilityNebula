@@ -254,6 +254,8 @@ ARRAY_VALUES = {
     # array; the result is the cluster geometry collection(s), an int* count array.
     "geo_cluster_intersecting": dict(inp="geom", spec=dict(elem="GSERIALIZED *", kind="ptr", out="geo_out", cast="GSERIALIZED *", header="meos_geo.h", array_in="GSERIALIZED"), lit=("SRID=4326;Point(1 1)", "SRID=4326;Point(2 2)")),
     "geo_cluster_within":       dict(inp="geom", spec=dict(elem="GSERIALIZED *", kind="ptr", out="geo_out", cast="GSERIALIZED *", header="meos_geo.h", array_in="GSERIALIZED"), lit=("SRID=4326;Point(1 1)", "SRID=4326;Point(2 2)"), eca=["5.0"]),
+    # tnpoint positions: the network segments a temporal network point occupies.
+    "tnpoint_positions":        dict(inp="tnpoint", spec=dict(elem="Nsegment *", kind="ptr", out="nsegment_out", cast="Nsegment *", maxdd=True, header="meos_npoint.h"), icols=[("rid", "INT64"), ("frac", "FLOAT64")], ra=["1", "0.5"], rb=["1", "0.7"]),
     # numeric bins: primary + size + origin + int* count -> a Span struct array.
     "intspan_bins":     dict(inp="intspan", spec=dict(elem="Span", kind="span_val", out="intspan_out"), lit=("[1, 20)", "[3, 25)"), extras=[("int32_t", "INT32", "5", "5"), ("int32_t", "INT32", "0", "0")]),
     "floatspan_bins":   dict(inp="floatspan", spec=dict(elem="Span", kind="span_val", out="floatspan_out", maxdd=True), lit=("[1.5, 20.5)", "[3.5, 25.5)"), extras=[("double", "FLOAT64", "5.0", "5.0"), ("double", "FLOAT64", "0.0", "0.0")]),
@@ -1554,6 +1556,14 @@ def classify(name, ret, plist):
                              ("Pose(Point(1.234567 2.345678),0.5)", "Pose(Point(2.345678 3.456789),0.3)")),
         "temparr_round":    ("tfloat", "Temporal", "tfloat_out", "Temporal**", "meos.h", None),
     }
+    if name == "stboxarr_round":
+        entry = dict(nebula_name=camel(name), sql_token=name.upper(), meos_call=name,
+                     build_generic=True, input_type="stbox_text", return_kind="array_in_round",
+                     array_in_round=dict(elem="STBox", out="stbox_out", maxdd="6", contig=True, header="meos_geo.h"),
+                     extra_args=[], comment_one_liner=f"{name} — round a 1-element STBox array.")
+        tmeta = dict(cols=[("a", "VARSIZED")], rows=[("STBOX X((1.234567 2.345678),(5.5 5.5))",), ("STBOX X((2.345678 3.456789),(6.6 6.6))",)],
+                     token=name.upper(), sink="VARSIZED")
+        return entry, tmeta
     if name in ARR_ROUND:
         inp_key, et, outfn, cast, hdr, lits = ARR_ROUND[name]
         entry = dict(nebula_name=camel(name), sql_token=name.upper(), meos_call=name,

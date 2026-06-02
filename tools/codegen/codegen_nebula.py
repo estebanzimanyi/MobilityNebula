@@ -3656,16 +3656,29 @@ def assemble_generic_varsized_output(op):
         # the one result element. (Proves the array-input function is wired.)
         et = array_in_round["elem"]
         dd = array_in_round["maxdd"]
-        cast = array_in_round.get("call_cast", f"const {et}**")
-        call_marshal = (
-            f"                {et}* _ina[1] = {{ ({et}*) temp }};\n"
-            f"                {et}** _out = ({et}**) {op['meos_call']}(({cast}) _ina, 1, {dd});\n"
-            f"{free_primary}"
-            f"{bf}"
-            f"                if (!_out || !_out[0]) return (char*) nullptr;\n"
-            f"                char* outStr = {array_in_round['out']}(_out[0], {dd});\n"
-            f"                free(_out[0]); free(_out);\n"
-            f"                return outStr;")
+        if array_in_round.get("contig"):
+            # contiguous-array variant: f(const T *arr, count, maxdd) -> T * (a
+            # contiguous struct array). Pass the single object directly, serialize
+            # the first result struct by address (e.g. stboxarr_round).
+            call_marshal = (
+                f"                {et}* _out = ({et}*) {op['meos_call']}(({et}*) temp, 1, {dd});\n"
+                f"{free_primary}"
+                f"{bf}"
+                f"                if (!_out) return (char*) nullptr;\n"
+                f"                char* outStr = {array_in_round['out']}(&_out[0], {dd});\n"
+                f"                free(_out);\n"
+                f"                return outStr;")
+        else:
+            cast = array_in_round.get("call_cast", f"const {et}**")
+            call_marshal = (
+                f"                {et}* _ina[1] = {{ ({et}*) temp }};\n"
+                f"                {et}** _out = ({et}**) {op['meos_call']}(({cast}) _ina, 1, {dd});\n"
+                f"{free_primary}"
+                f"{bf}"
+                f"                if (!_out || !_out[0]) return (char*) nullptr;\n"
+                f"                char* outStr = {array_in_round['out']}(_out[0], {dd});\n"
+                f"                free(_out[0]); free(_out);\n"
+                f"                return outStr;")
     elif op.get("out_param") is not None:
         # VARSIZED out-param accessor: bool f(operand…, T **result) writes a heap
         # object pointer into *result and returns a validity flag. Serialise it

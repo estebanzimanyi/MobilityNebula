@@ -1226,6 +1226,7 @@ stbox_ymax	proven
 stbox_ymin	proven
 stbox_zmax	proven
 stbox_zmin	proven
+stboxarr_round	proven
 sub_float_tfloat	proven
 sub_int_tint	proven
 sub_tfloat_float	proven
@@ -1613,6 +1614,7 @@ tnpoint_at_npoint	proven
 tnpoint_cumulative_length	proven
 tnpoint_length	proven
 tnpoint_minus_npoint	proven
+tnpoint_positions	proven
 tnpoint_route	proven
 tnpoint_routes	proven
 tnpoint_speed	proven

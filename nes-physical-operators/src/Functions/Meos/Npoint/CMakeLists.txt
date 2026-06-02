@@ -96,3 +96,4 @@ add_plugin(NpointHashExtended PhysicalFunction nes-physical-operators NpointHash
 add_plugin(NsegmentMake PhysicalFunction nes-physical-operators NsegmentMakePhysicalFunction.cpp)
 add_plugin(NpointToNsegment PhysicalFunction nes-physical-operators NpointToNsegmentPhysicalFunction.cpp)
 add_plugin(NsegmentRound PhysicalFunction nes-physical-operators NsegmentRoundPhysicalFunction.cpp)
+add_plugin(TnpointPositions PhysicalFunction nes-physical-operators TnpointPositionsPhysicalFunction.cpp)

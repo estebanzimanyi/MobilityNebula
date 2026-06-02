@@ -1377,3 +1377,4 @@ add_plugin(GeoClusterIntersecting PhysicalFunction nes-physical-operators GeoClu
 add_plugin(GeoClusterWithin PhysicalFunction nes-physical-operators GeoClusterWithinPhysicalFunction.cpp)
 add_plugin(GeoClusterKmeans PhysicalFunction nes-physical-operators GeoClusterKmeansPhysicalFunction.cpp)
 add_plugin(GeoClusterDbscan PhysicalFunction nes-physical-operators GeoClusterDbscanPhysicalFunction.cpp)
+add_plugin(StboxarrRound PhysicalFunction nes-physical-operators StboxarrRoundPhysicalFunction.cpp)

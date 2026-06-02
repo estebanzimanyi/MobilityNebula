@@ -2691,6 +2691,10 @@
 #include <Functions/Meos/GeoClusterWithinLogicalFunction.hpp>
 #include <Functions/Meos/GeoClusterKmeansLogicalFunction.hpp>
 #include <Functions/Meos/GeoClusterDbscanLogicalFunction.hpp>
+#include <Functions/Meos/StboxarrRoundLogicalFunction.hpp>
+#if NPOINT
+#include <Functions/Meos/TnpointPositionsLogicalFunction.hpp>
+#endif /* NPOINT */
 #include <Plans/LogicalPlan.hpp>
 #include <Plans/LogicalPlanBuilder.hpp>
 #include <Util/Overloaded.hpp>
@@ -54277,6 +54281,66 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN GLUE: GEO_CLUSTER_DBSCAN */
+        /* BEGIN CODEGEN GLUE: STBOXARR_ROUND */
+        case AntlrSQLLexer::STBOXARR_ROUND:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 1)
+                throw InvalidQuerySyntax("STBOXARR_ROUND requires exactly 1 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(StboxarrRoundLogicalFunction(a0));
+        }
+        break;
+        /* END CODEGEN GLUE: STBOXARR_ROUND */
+
+        #if NPOINT
+/* BEGIN CODEGEN GLUE: TNPOINT_POSITIONS */
+        case AntlrSQLLexer::TNPOINT_POSITIONS:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("TNPOINT_POSITIONS requires exactly 3 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(TnpointPositionsLogicalFunction(a0, a1, a2));
+        }
+        break;
+        /* END CODEGEN GLUE: TNPOINT_POSITIONS */
+#endif /* NPOINT */
+
 
 
 
