@@ -1237,6 +1237,8 @@ def classify(name, ret, plist):
         "temporal_minus_timestamptz": ("tstz",   ("2021-06-01 00:00:00+00", "2021-06-01 00:00:00+00"), None),
         "temporal_to_tsequence":      ("interp", None, "(interpType) 2"),
         "temporal_to_tsequenceset":   ("interp", None, "(interpType) 2"),
+        "temporal_set_interp":        ("interp", None, "(interpType) 2"),
+        "temporal_simplify_min_tdelta":("iv",    ("1 hour", "1 hour"), None),
     }
     if name in TEMPORAL_TIMEOP and plist and plist[0] == ("Temporal", True):
         kind, val, eca = TEMPORAL_TIMEOP[name]

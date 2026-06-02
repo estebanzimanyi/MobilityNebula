@@ -1735,3 +1735,5 @@ add_plugin(TemporalAtTimestamptz LogicalFunction nes-logical-operators TemporalA
 add_plugin(TemporalMinusTimestamptz LogicalFunction nes-logical-operators TemporalMinusTimestamptzLogicalFunction.cpp)
 add_plugin(TemporalToTsequence LogicalFunction nes-logical-operators TemporalToTsequenceLogicalFunction.cpp)
 add_plugin(TemporalToTsequenceset LogicalFunction nes-logical-operators TemporalToTsequencesetLogicalFunction.cpp)
+add_plugin(TemporalSetInterp LogicalFunction nes-logical-operators TemporalSetInterpLogicalFunction.cpp)
+add_plugin(TemporalSimplifyMinTdelta LogicalFunction nes-logical-operators TemporalSimplifyMinTdeltaLogicalFunction.cpp)

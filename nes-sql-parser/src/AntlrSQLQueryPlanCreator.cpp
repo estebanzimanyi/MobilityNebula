@@ -2671,6 +2671,8 @@
 #include <Functions/Meos/TemporalMinusTimestamptzLogicalFunction.hpp>
 #include <Functions/Meos/TemporalToTsequenceLogicalFunction.hpp>
 #include <Functions/Meos/TemporalToTsequencesetLogicalFunction.hpp>
+#include <Functions/Meos/TemporalSetInterpLogicalFunction.hpp>
+#include <Functions/Meos/TemporalSimplifyMinTdeltaLogicalFunction.hpp>
 #include <Plans/LogicalPlan.hpp>
 #include <Plans/LogicalPlanBuilder.hpp>
 #include <Util/Overloaded.hpp>
@@ -53776,6 +53778,65 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN GLUE: TEMPORAL_TO_TSEQUENCESET */
+        /* BEGIN CODEGEN GLUE: TEMPORAL_SET_INTERP */
+        case AntlrSQLLexer::TEMPORAL_SET_INTERP:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 2)
+                throw InvalidQuerySyntax("TEMPORAL_SET_INTERP requires exactly 2 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(TemporalSetInterpLogicalFunction(a0, a1));
+        }
+        break;
+        /* END CODEGEN GLUE: TEMPORAL_SET_INTERP */
+
+        /* BEGIN CODEGEN GLUE: TEMPORAL_SIMPLIFY_MIN_TDELTA */
+        case AntlrSQLLexer::TEMPORAL_SIMPLIFY_MIN_TDELTA:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("TEMPORAL_SIMPLIFY_MIN_TDELTA requires exactly 3 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(TemporalSimplifyMinTdeltaLogicalFunction(a0, a1, a2));
+        }
+        break;
+        /* END CODEGEN GLUE: TEMPORAL_SIMPLIFY_MIN_TDELTA */
+
 
 
 

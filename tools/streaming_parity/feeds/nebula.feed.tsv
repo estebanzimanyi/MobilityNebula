@@ -1845,3 +1845,5 @@ temporal_scale_time	proven
 temporal_shift_time	proven
 temporal_to_tsequence	proven
 temporal_to_tsequenceset	proven
+temporal_set_interp	proven
+temporal_simplify_min_tdelta	proven
