@@ -1857,3 +1857,5 @@ tgeo_space_time_split	proven
 cbufferarr_round	proven
 posearr_round	proven
 temparr_round	proven
+geo_cluster_intersecting	proven
+geo_cluster_within	proven

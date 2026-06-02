@@ -3587,6 +3587,14 @@ def assemble_generic_varsized_output(op):
     # A base-scalar primary input (frees: False) is a plain value, not a heap
     # pointer, so it must not be freed.
     free_primary = "                free(temp);\n" if inp.get("frees", True) else ""
+    # array-input: the function takes a (const T **arr, count) pair, not a single
+    # value (e.g. geo_cluster_*). Wrap the per-event object in a one-element array
+    # and replace the leading `temp` call-term with `(const T**) _ina, 1`.
+    arr_in_decl = ""
+    if array_out and array_out.get("array_in"):
+        _ait = array_out["array_in"]
+        arr_in_decl = f"                {_ait}* _ina[1] = {{ ({_ait}*) temp }};\n"
+        callargs = callargs.replace("temp", f"(const {_ait}**) _ina, 1", 1)
     if array_out:
         # T *f(operand…, int *count) / T **f(…) -> a heap array of `count`
         # elements. Loop, serialize each (a scalar formatted inline, or a heap
@@ -3631,6 +3639,7 @@ def assemble_generic_varsized_output(op):
             cnt_decl = (f"                int _cnt = 0;\n"
                         f"                {elem}* arr = ({elem}*) {op['meos_call']}({callargs}, &_cnt);\n")
         call_marshal = (
+            f"{arr_in_decl}"
             f"{cnt_decl}"
             f"{free_primary}"
             f"{bf}"

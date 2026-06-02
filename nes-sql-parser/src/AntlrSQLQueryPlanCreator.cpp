@@ -2687,6 +2687,8 @@
 #include <Functions/Meos/PosearrRoundLogicalFunction.hpp>
 #endif /* POSE */
 #include <Functions/Meos/TemparrRoundLogicalFunction.hpp>
+#include <Functions/Meos/GeoClusterIntersectingLogicalFunction.hpp>
+#include <Functions/Meos/GeoClusterWithinLogicalFunction.hpp>
 #include <Plans/LogicalPlan.hpp>
 #include <Plans/LogicalPlanBuilder.hpp>
 #include <Util/Overloaded.hpp>
@@ -54163,6 +54165,62 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN GLUE: TEMPARR_ROUND */
+        /* BEGIN CODEGEN GLUE: GEO_CLUSTER_INTERSECTING */
+        case AntlrSQLLexer::GEO_CLUSTER_INTERSECTING:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 1)
+                throw InvalidQuerySyntax("GEO_CLUSTER_INTERSECTING requires exactly 1 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(GeoClusterIntersectingLogicalFunction(a0));
+        }
+        break;
+        /* END CODEGEN GLUE: GEO_CLUSTER_INTERSECTING */
+
+        /* BEGIN CODEGEN GLUE: GEO_CLUSTER_WITHIN */
+        case AntlrSQLLexer::GEO_CLUSTER_WITHIN:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 1)
+                throw InvalidQuerySyntax("GEO_CLUSTER_WITHIN requires exactly 1 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(GeoClusterWithinLogicalFunction(a0));
+        }
+        break;
+        /* END CODEGEN GLUE: GEO_CLUSTER_WITHIN */
+
 
 
 
