@@ -1749,3 +1749,5 @@ add_plugin(PosearrRound LogicalFunction nes-logical-operators PosearrRoundLogica
 add_plugin(TemparrRound LogicalFunction nes-logical-operators TemparrRoundLogicalFunction.cpp)
 add_plugin(GeoClusterIntersecting LogicalFunction nes-logical-operators GeoClusterIntersectingLogicalFunction.cpp)
 add_plugin(GeoClusterWithin LogicalFunction nes-logical-operators GeoClusterWithinLogicalFunction.cpp)
+add_plugin(GeoClusterKmeans LogicalFunction nes-logical-operators GeoClusterKmeansLogicalFunction.cpp)
+add_plugin(GeoClusterDbscan LogicalFunction nes-logical-operators GeoClusterDbscanLogicalFunction.cpp)

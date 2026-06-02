@@ -1859,3 +1859,5 @@ posearr_round	proven
 temparr_round	proven
 geo_cluster_intersecting	proven
 geo_cluster_within	proven
+geo_cluster_dbscan	proven
+geo_cluster_kmeans	proven

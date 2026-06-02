@@ -1567,6 +1567,23 @@ def classify(name, ret, plist):
                          rows=[("5.5555555", "1609459200"), ("8.8888888", "1609545600")],
                          token=name.upper(), sink="VARSIZED")
         return entry, tmeta
+    # ---- geo clustering -> a per-geometry cluster id (int). Array input wrapped
+    #      to one element; the single result element is returned. k / tolerance /
+    #      minpoints ride as fixed call args. ----
+    GEO_CLUSTER_SCALAR = {
+        "geo_cluster_kmeans": dict(ret_type="int *", count=False, eca=["1"]),
+        "geo_cluster_dbscan": dict(ret_type="uint32_t *", count=True, eca=["5.0", "1"]),
+    }
+    if name in GEO_CLUSTER_SCALAR:
+        s = GEO_CLUSTER_SCALAR[name]
+        entry = dict(nebula_name=camel(name), sql_token=name.upper(), meos_call=name,
+                     build_generic=True, input_type="geom", return_kind="int",
+                     extra_args=[], extra_call_args=s["eca"],
+                     array_in_scalar=dict(elem="GSERIALIZED", ret_type=s["ret_type"], count=s["count"]),
+                     comment_one_liner=f"{name} (int) — geometry cluster id (array input).")
+        tmeta = dict(cols=[("a", "VARSIZED")], rows=[("SRID=4326;Point(1 1)",), ("SRID=4326;Point(2 2)",)],
+                     token=name.upper(), sink="INT32")
+        return entry, tmeta
     # ---- fixed-geom-operand ops: a temporal/geom primary whose extra operands
     #      (scale + origin geometry, or tile sizes + a space origin) are constants
     #      passed inline as call args. Probe-verified. ----

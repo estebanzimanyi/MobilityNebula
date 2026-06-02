@@ -3842,8 +3842,26 @@ def assemble_generic_physical(op):
     # A base-scalar primary input (frees: False) is a plain value, not a heap
     # pointer, so it must not be freed.
     free_primary = "                free(temp);\n" if inp.get("frees", True) else ""
-    op_out = op.get("out_param")
-    if op_out is not None:
+    # array-input scalar: f(const T **arr, count, …[, int *cnt]) -> a scalar array
+    # (e.g. geo_cluster_kmeans/dbscan cluster ids). Wrap the per-event object in a
+    # one-element array; return the single result element. Proves it is wired.
+    ais = op.get("array_in_scalar")
+    if ais:
+        _ait = ais["elem"]
+        ai_decl = f"                {_ait}* _ina[1] = {{ ({_ait}*) temp }};\n"
+        callargs = callargs.replace("temp", f"(const {_ait}**) _ina, 1", 1)
+        if ais.get("count"):
+            ai_call = f"                int _cnt = 0;\n                {ais['ret_type']} _out = {op['meos_call']}({callargs}, &_cnt);\n"
+        else:
+            ai_call = f"                {ais['ret_type']} _out = {op['meos_call']}({callargs});\n"
+        call_marshal = (f"{ai_decl}{ai_call}"
+                        f"{free_primary}{bf}"
+                        f"                if (!_out) return {zero};\n"
+                        f"                {ret_cpp} r = ({ret_cpp}) _out[0];\n"
+                        f"                free(_out);\n"
+                        f"                return r;")
+        op_out = None
+    elif (op_out := op.get("out_param")) is not None:
         # out-param accessor: bool f(operand…, T *result) writes the real value
         # into *result and returns a validity flag. Declare the result, pass its
         # address as the final arg, and return it (zero when the flag is false).

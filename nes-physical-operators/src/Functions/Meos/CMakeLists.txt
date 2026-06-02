@@ -1375,3 +1375,5 @@ add_plugin(TgeoSpaceTimeSplit PhysicalFunction nes-physical-operators TgeoSpaceT
 add_plugin(TemparrRound PhysicalFunction nes-physical-operators TemparrRoundPhysicalFunction.cpp)
 add_plugin(GeoClusterIntersecting PhysicalFunction nes-physical-operators GeoClusterIntersectingPhysicalFunction.cpp)
 add_plugin(GeoClusterWithin PhysicalFunction nes-physical-operators GeoClusterWithinPhysicalFunction.cpp)
+add_plugin(GeoClusterKmeans PhysicalFunction nes-physical-operators GeoClusterKmeansPhysicalFunction.cpp)
+add_plugin(GeoClusterDbscan PhysicalFunction nes-physical-operators GeoClusterDbscanPhysicalFunction.cpp)

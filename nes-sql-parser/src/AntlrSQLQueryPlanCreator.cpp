@@ -2689,6 +2689,8 @@
 #include <Functions/Meos/TemparrRoundLogicalFunction.hpp>
 #include <Functions/Meos/GeoClusterIntersectingLogicalFunction.hpp>
 #include <Functions/Meos/GeoClusterWithinLogicalFunction.hpp>
+#include <Functions/Meos/GeoClusterKmeansLogicalFunction.hpp>
+#include <Functions/Meos/GeoClusterDbscanLogicalFunction.hpp>
 #include <Plans/LogicalPlan.hpp>
 #include <Plans/LogicalPlanBuilder.hpp>
 #include <Util/Overloaded.hpp>
@@ -54220,6 +54222,62 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN GLUE: GEO_CLUSTER_WITHIN */
+        /* BEGIN CODEGEN GLUE: GEO_CLUSTER_KMEANS */
+        case AntlrSQLLexer::GEO_CLUSTER_KMEANS:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 1)
+                throw InvalidQuerySyntax("GEO_CLUSTER_KMEANS requires exactly 1 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(GeoClusterKmeansLogicalFunction(a0));
+        }
+        break;
+        /* END CODEGEN GLUE: GEO_CLUSTER_KMEANS */
+
+        /* BEGIN CODEGEN GLUE: GEO_CLUSTER_DBSCAN */
+        case AntlrSQLLexer::GEO_CLUSTER_DBSCAN:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 1)
+                throw InvalidQuerySyntax("GEO_CLUSTER_DBSCAN requires exactly 1 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(GeoClusterDbscanLogicalFunction(a0));
+        }
+        break;
+        /* END CODEGEN GLUE: GEO_CLUSTER_DBSCAN */
+
 
 
 
