@@ -1365,3 +1365,6 @@ add_plugin(TemporalToTsequence PhysicalFunction nes-physical-operators TemporalT
 add_plugin(TemporalToTsequenceset PhysicalFunction nes-physical-operators TemporalToTsequencesetPhysicalFunction.cpp)
 add_plugin(TemporalSetInterp PhysicalFunction nes-physical-operators TemporalSetInterpPhysicalFunction.cpp)
 add_plugin(TemporalSimplifyMinTdelta PhysicalFunction nes-physical-operators TemporalSimplifyMinTdeltaPhysicalFunction.cpp)
+add_plugin(TfloatValueSplit PhysicalFunction nes-physical-operators TfloatValueSplitPhysicalFunction.cpp)
+add_plugin(TintValueSplit PhysicalFunction nes-physical-operators TintValueSplitPhysicalFunction.cpp)
+add_plugin(TemporalTimeSplit PhysicalFunction nes-physical-operators TemporalTimeSplitPhysicalFunction.cpp)

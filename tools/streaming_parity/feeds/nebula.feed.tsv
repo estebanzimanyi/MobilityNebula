@@ -1847,3 +1847,6 @@ temporal_to_tsequence	proven
 temporal_to_tsequenceset	proven
 temporal_set_interp	proven
 temporal_simplify_min_tdelta	proven
+temporal_time_split	proven
+tfloat_value_split	proven
+tint_value_split	proven

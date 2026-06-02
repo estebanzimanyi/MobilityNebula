@@ -3604,9 +3604,17 @@ def assemble_generic_varsized_output(op):
         # most array ops write the length to an int* count out-param; a few
         # (the *set_values family) return a bare array whose length comes from a
         # separate count_call (set_num_values) on the operand.
+        aux_free = ""
         if array_out.get("count_call"):
             cnt_decl = (f"                int _cnt = {array_out['count_call']}(temp);\n"
                         f"                {elem}* arr = ({elem}*) {op['meos_call']}({callargs});\n")
+        elif array_out.get("aux_out"):
+            # the *_split family also writes an auxiliary bins array (double**/int**/
+            # TimestampTz**) before the int* count; capture and free it, ignore its value.
+            cnt_decl = (f"                int _cnt = 0;\n"
+                        f"                {array_out['aux_out']} _aux = nullptr;\n"
+                        f"                {elem}* arr = ({elem}*) {op['meos_call']}({callargs}, &_aux, &_cnt);\n")
+            aux_free = "                free(_aux);\n"
         else:
             cnt_decl = (f"                int _cnt = 0;\n"
                         f"                {elem}* arr = ({elem}*) {op['meos_call']}({callargs}, &_cnt);\n")
@@ -3619,6 +3627,7 @@ def assemble_generic_varsized_output(op):
             f'                for (int _i = 0; _i < _cnt; _i++) {{ if (_i) _s += ", "; {app} }}\n'
             f'                _s += "}}";\n'
             f"                free(arr);\n"
+            f"{aux_free}"
             f"                return strdup(_s.c_str());")
     elif op.get("out_param") is not None:
         # VARSIZED out-param accessor: bool f(operand…, T **result) writes a heap

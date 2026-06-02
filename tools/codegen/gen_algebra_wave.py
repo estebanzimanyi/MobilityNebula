@@ -236,6 +236,11 @@ ARRAY_VALUES = {
     "temporal_split_each_n_spans": dict(inp="tfloat", spec=dict(elem="Span", kind="span_val", out="tstzspan_out"), icols=[("value", "FLOAT64")], ra=["5.5"], rb=["8.5"], extras=[("int32_t", "INT32", "2", "2")]),
     # STBox quad split: a box -> its four quadrant boxes (int* count, no scalar).
     "stbox_quad_split":            dict(inp="stbox_text", spec=dict(elem="STBox", kind="span_val", out="stbox_out", maxdd=True, header="meos_geo.h"), lit=("STBOX X((0,0),(10,10))", "STBOX X((0,0),(8,8))")),
+    # value/time split: a temporal -> its pieces (Temporal** array), plus an
+    # auxiliary bins out-array (double**/int**/TimestampTz**) that is freed+ignored.
+    "tfloat_value_split":   dict(inp="tfloat", spec=dict(elem="Temporal *", kind="ptr", out="tfloat_out", maxdd=True, cast="Temporal *", aux_out="double *"), icols=[("value", "FLOAT64")], ra=["5.5"], rb=["8.5"], extras=[("double", "FLOAT64", "5.0", "5.0"), ("double", "FLOAT64", "0.0", "0.0")]),
+    "tint_value_split":     dict(inp="tint", spec=dict(elem="Temporal *", kind="ptr", out="tint_out", cast="Temporal *", aux_out="int *"), icols=[("value", "INT32")], ra=["5"], rb=["8"], extras=[("int32_t", "INT32", "5", "5"), ("int32_t", "INT32", "0", "0")]),
+    "temporal_time_split":  dict(inp="tfloat", spec=dict(elem="Temporal *", kind="ptr", out="tfloat_out", maxdd=True, cast="Temporal *", aux_out="TimestampTz *"), icols=[("value", "FLOAT64")], ra=["5.5"], rb=["8.5"], extras=[_a3iv(), _TSTZ0]),
     # numeric bins: primary + size + origin + int* count -> a Span struct array.
     "intspan_bins":     dict(inp="intspan", spec=dict(elem="Span", kind="span_val", out="intspan_out"), lit=("[1, 20)", "[3, 25)"), extras=[("int32_t", "INT32", "5", "5"), ("int32_t", "INT32", "0", "0")]),
     "floatspan_bins":   dict(inp="floatspan", spec=dict(elem="Span", kind="span_val", out="floatspan_out", maxdd=True), lit=("[1.5, 20.5)", "[3.5, 25.5)"), extras=[("double", "FLOAT64", "5.0", "5.0"), ("double", "FLOAT64", "0.0", "0.0")]),
