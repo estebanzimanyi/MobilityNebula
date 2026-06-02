@@ -150,3 +150,4 @@ add_plugin(TcbufferPoints PhysicalFunction nes-physical-operators TcbufferPoints
 add_plugin(CbufferTransform PhysicalFunction nes-physical-operators CbufferTransformPhysicalFunction.cpp)
 add_plugin(CbufferHashExtended PhysicalFunction nes-physical-operators CbufferHashExtendedPhysicalFunction.cpp)
 add_plugin(CbufferTransformPipeline PhysicalFunction nes-physical-operators CbufferTransformPipelinePhysicalFunction.cpp)
+add_plugin(CbufferarrRound PhysicalFunction nes-physical-operators CbufferarrRoundPhysicalFunction.cpp)

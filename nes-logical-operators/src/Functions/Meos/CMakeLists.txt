@@ -1744,3 +1744,6 @@ add_plugin(TfloatValueTimeSplit LogicalFunction nes-logical-operators TfloatValu
 add_plugin(TintValueTimeSplit LogicalFunction nes-logical-operators TintValueTimeSplitLogicalFunction.cpp)
 add_plugin(TgeoSpaceSplit LogicalFunction nes-logical-operators TgeoSpaceSplitLogicalFunction.cpp)
 add_plugin(TgeoSpaceTimeSplit LogicalFunction nes-logical-operators TgeoSpaceTimeSplitLogicalFunction.cpp)
+add_plugin(CbufferarrRound LogicalFunction nes-logical-operators CbufferarrRoundLogicalFunction.cpp)
+add_plugin(PosearrRound LogicalFunction nes-logical-operators PosearrRoundLogicalFunction.cpp)
+add_plugin(TemparrRound LogicalFunction nes-logical-operators TemparrRoundLogicalFunction.cpp)

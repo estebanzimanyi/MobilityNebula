@@ -1372,3 +1372,4 @@ add_plugin(TfloatValueTimeSplit PhysicalFunction nes-physical-operators TfloatVa
 add_plugin(TintValueTimeSplit PhysicalFunction nes-physical-operators TintValueTimeSplitPhysicalFunction.cpp)
 add_plugin(TgeoSpaceSplit PhysicalFunction nes-physical-operators TgeoSpaceSplitPhysicalFunction.cpp)
 add_plugin(TgeoSpaceTimeSplit PhysicalFunction nes-physical-operators TgeoSpaceTimeSplitPhysicalFunction.cpp)
+add_plugin(TemparrRound PhysicalFunction nes-physical-operators TemparrRoundPhysicalFunction.cpp)

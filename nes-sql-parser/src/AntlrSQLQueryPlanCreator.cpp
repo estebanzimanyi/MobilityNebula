@@ -2680,6 +2680,13 @@
 #include <Functions/Meos/TintValueTimeSplitLogicalFunction.hpp>
 #include <Functions/Meos/TgeoSpaceSplitLogicalFunction.hpp>
 #include <Functions/Meos/TgeoSpaceTimeSplitLogicalFunction.hpp>
+#if CBUFFER
+#include <Functions/Meos/CbufferarrRoundLogicalFunction.hpp>
+#endif /* CBUFFER */
+#if POSE
+#include <Functions/Meos/PosearrRoundLogicalFunction.hpp>
+#endif /* POSE */
+#include <Functions/Meos/TemparrRoundLogicalFunction.hpp>
 #include <Plans/LogicalPlan.hpp>
 #include <Plans/LogicalPlanBuilder.hpp>
 #include <Util/Overloaded.hpp>
@@ -54068,6 +54075,95 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN GLUE: TGEO_SPACE_TIME_SPLIT */
+        #if CBUFFER
+/* BEGIN CODEGEN GLUE: CBUFFERARR_ROUND */
+        case AntlrSQLLexer::CBUFFERARR_ROUND:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 1)
+                throw InvalidQuerySyntax("CBUFFERARR_ROUND requires exactly 1 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(CbufferarrRoundLogicalFunction(a0));
+        }
+        break;
+        /* END CODEGEN GLUE: CBUFFERARR_ROUND */
+#endif /* CBUFFER */
+
+        #if POSE
+/* BEGIN CODEGEN GLUE: POSEARR_ROUND */
+        case AntlrSQLLexer::POSEARR_ROUND:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 1)
+                throw InvalidQuerySyntax("POSEARR_ROUND requires exactly 1 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(PosearrRoundLogicalFunction(a0));
+        }
+        break;
+        /* END CODEGEN GLUE: POSEARR_ROUND */
+#endif /* POSE */
+
+        /* BEGIN CODEGEN GLUE: TEMPARR_ROUND */
+        case AntlrSQLLexer::TEMPARR_ROUND:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 2)
+                throw InvalidQuerySyntax("TEMPARR_ROUND requires exactly 2 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(TemparrRoundLogicalFunction(a0, a1));
+        }
+        break;
+        /* END CODEGEN GLUE: TEMPARR_ROUND */
+
 
 
 

@@ -1854,3 +1854,6 @@ tfloat_value_time_split	proven
 tint_value_time_split	proven
 tgeo_space_split	proven
 tgeo_space_time_split	proven
+cbufferarr_round	proven
+posearr_round	proven
+temparr_round	proven

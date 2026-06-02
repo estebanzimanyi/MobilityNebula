@@ -3267,6 +3267,7 @@ GENERIC_RETURNS = {
     "double":  ("double", "FLOAT64", "0.0", None),
     "bool":    ("bool", "BOOLEAN", "false", None),
     "array_out":      ("VariableSizedData", "VARSIZED", "(char*) nullptr", None),
+    "array_in_round": ("VariableSizedData", "VARSIZED", "(char*) nullptr", None),
     "extract_int":    ("int", "INT32", "0", "tint_start_value"),
     "extract_double": ("double", "FLOAT64", "0.0", "tfloat_start_value"),
     "extract_bool":   ("bool", "BOOLEAN", "false", "tbool_start_value"),
@@ -3467,7 +3468,8 @@ def assemble_generic_varsized_output(op):
     name = op["nebula_name"]
     inp = GENERIC_INPUTS[op["input_type"]]
     array_out = op.get("array_out")
-    if array_out:
+    array_in_round = op.get("array_in_round")
+    if array_out or array_in_round:
         res_ctype, out_fn, out_maxdd = None, None, False
     else:
         _ret = VARSIZED_OUT_RETURNS[op["return_kind"]]
@@ -3488,6 +3490,8 @@ def assemble_generic_varsized_output(op):
                  "Temporal": "meos_geo.h"}.get(res_ctype, "meos.h"))
     if array_out:
         headers.add(array_out.get("header", "meos_geo.h"))
+    if array_in_round:
+        headers.add(array_in_round.get("header", "meos.h"))
     call_terms = ["temp"]
     parse_lines = []
     box_frees = []
@@ -3637,6 +3641,22 @@ def assemble_generic_varsized_output(op):
             f"                free(arr);\n"
             f"{aux_free}"
             f"                return strdup(_s.c_str());")
+    elif array_in_round:
+        # array-input round: f(const T **arr, int count, int maxdd) -> T **. Wrap
+        # the single per-event object in a one-element array, round it, serialise
+        # the one result element. (Proves the array-input function is wired.)
+        et = array_in_round["elem"]
+        dd = array_in_round["maxdd"]
+        cast = array_in_round.get("call_cast", f"const {et}**")
+        call_marshal = (
+            f"                {et}* _ina[1] = {{ ({et}*) temp }};\n"
+            f"                {et}** _out = ({et}**) {op['meos_call']}(({cast}) _ina, 1, {dd});\n"
+            f"{free_primary}"
+            f"{bf}"
+            f"                if (!_out || !_out[0]) return (char*) nullptr;\n"
+            f"                char* outStr = {array_in_round['out']}(_out[0], {dd});\n"
+            f"                free(_out[0]); free(_out);\n"
+            f"                return outStr;")
     elif op.get("out_param") is not None:
         # VARSIZED out-param accessor: bool f(operand…, T **result) writes a heap
         # object pointer into *result and returns a validity flag. Serialise it
@@ -3684,7 +3704,7 @@ def assemble_generic_physical(op):
     name = op["nebula_name"]
     if op["return_kind"] == "wkb":
         return assemble_wkb_output(op)
-    if op["return_kind"] in VARSIZED_OUT_RETURNS or op.get("array_out"):
+    if op["return_kind"] in VARSIZED_OUT_RETURNS or op.get("array_out") or op.get("array_in_round"):
         return assemble_generic_varsized_output(op)
     inp = GENERIC_INPUTS[op["input_type"]]
     ret_cpp, _, zero, extract_fn = GENERIC_RETURNS[op["return_kind"]]

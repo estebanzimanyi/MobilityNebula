@@ -1540,6 +1540,29 @@ def classify(name, ret, plist):
     # buffer params / use_spheroid): arity 3, geom primary — handled below.
     _geomfixed3 = (len(plist) == 3 and name in GEOM_FIXEDARG_OP_NAMES
                    and plist[0] == ("GSERIALIZED", True))
+    # ---- array-input round: f(const T **arr, int count, int maxdd) -> T **. The
+    #      per-event object is wrapped in a one-element array, rounded, and the one
+    #      result element serialized (proves the array-input function is wired). ----
+    ARR_ROUND = {
+        "cbufferarr_round": ("cbuffer", "Cbuffer", "cbuffer_out", "const Cbuffer**", "meos_cbuffer.h",
+                             ("Cbuffer(Point(1.234567 2.345678),0.5)", "Cbuffer(Point(2.345678 3.456789),0.3)")),
+        "posearr_round":    ("pose", "Pose", "pose_out", "const Pose**", "meos_pose.h",
+                             ("Pose(Point(1.234567 2.345678),0.5)", "Pose(Point(2.345678 3.456789),0.3)")),
+        "temparr_round":    ("tfloat", "Temporal", "tfloat_out", "Temporal**", "meos.h", None),
+    }
+    if name in ARR_ROUND:
+        inp_key, et, outfn, cast, hdr, lits = ARR_ROUND[name]
+        entry = dict(nebula_name=camel(name), sql_token=name.upper(), meos_call=name,
+                     build_generic=True, input_type=inp_key, return_kind="array_in_round",
+                     array_in_round=dict(elem=et, out=outfn, maxdd="6", call_cast=cast, header=hdr),
+                     extra_args=[], comment_one_liner=f"{name} — round a 1-element {et} array.")
+        if lits:
+            tmeta = dict(cols=[("a", "VARSIZED")], rows=[(lits[0],), (lits[1],)], token=name.upper(), sink="VARSIZED")
+        else:
+            tmeta = dict(cols=[("value", "FLOAT64"), ("ts", "UINT64")],
+                         rows=[("5.5555555", "1609459200"), ("8.8888888", "1609545600")],
+                         token=name.upper(), sink="VARSIZED")
+        return entry, tmeta
     # ---- fixed-geom-operand ops: a temporal/geom primary whose extra operands
     #      (scale + origin geometry, or tile sizes + a space origin) are constants
     #      passed inline as call args. Probe-verified. ----
