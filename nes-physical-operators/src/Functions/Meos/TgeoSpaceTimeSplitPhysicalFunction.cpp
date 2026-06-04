@@ -105,10 +105,9 @@ VarVal TgeoSpaceTimeSplitPhysicalFunction::execute(const Record& record, ArenaRe
                 Interval* arg3B = interval_in(arg3S.c_str(), -1);
                 if (!arg3B) { free(temp); return (char*) nullptr; }
 
-                int _cnt = 0;
-                GSERIALIZED ** _aux = nullptr;
-                TimestampTz * _aux2 = nullptr;
-                Temporal ** arr = (Temporal **) tgeo_space_time_split(temp, arg0, arg1, arg2, arg3B, geom_in((char*)"SRID=4326;Point(0 0 0)", -1), timestamptz_in((char*)"2020-01-01", -1), false, true, &_aux, &_aux2, &_cnt);
+                SpaceTimeSplit _sp = tgeo_space_time_split(temp, arg0, arg1, arg2, arg3B, geom_in((char*)"SRID=4326;Point(0 0 0)", -1), timestamptz_in((char*)"2020-01-01", -1), false, true);
+                Temporal ** arr = (Temporal **) _sp.fragments;
+                int _cnt = _sp.count;
                 free(temp);
                 free(arg3B);
                 if (!arr || _cnt <= 0) return (char*) nullptr;
@@ -116,8 +115,8 @@ VarVal TgeoSpaceTimeSplitPhysicalFunction::execute(const Record& record, ArenaRe
                 for (int _i = 0; _i < _cnt; _i++) { if (_i) _s += ", "; char* _e = tspatial_as_text((Temporal *) arr[_i], 15); if (_e) { _s += _e; free(_e); } free(arr[_i]); }
                 _s += "}";
                 free(arr);
-                free(_aux);
-                free(_aux2);
+                free(_sp.space_bins);
+                free(_sp.time_bins);
                 return strdup(_s.c_str());
             }
             catch (const std::exception&)

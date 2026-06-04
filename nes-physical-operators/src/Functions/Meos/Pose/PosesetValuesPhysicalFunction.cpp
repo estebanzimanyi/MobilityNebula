@@ -73,8 +73,8 @@ VarVal PosesetValuesPhysicalFunction::execute(const Record& record, ArenaRef& ar
                 Set* temp = poseset_in(tempS.c_str());
                 if (!temp) return (char*) nullptr;
 
-                int _cnt = set_num_values(temp);
-                Pose ** arr = (Pose **) poseset_values(temp);
+                int _cnt = 0;
+                Pose ** arr = (Pose **) poseset_values(temp, &_cnt);
                 free(temp);
                 if (!arr || _cnt <= 0) return (char*) nullptr;
                 std::string _s = "{";

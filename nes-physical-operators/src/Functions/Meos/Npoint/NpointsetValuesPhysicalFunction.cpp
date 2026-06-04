@@ -73,8 +73,8 @@ VarVal NpointsetValuesPhysicalFunction::execute(const Record& record, ArenaRef& 
                 Set* temp = npointset_in(tempS.c_str());
                 if (!temp) return (char*) nullptr;
 
-                int _cnt = set_num_values(temp);
-                Npoint ** arr = (Npoint **) npointset_values(temp);
+                int _cnt = 0;
+                Npoint ** arr = (Npoint **) npointset_values(temp, &_cnt);
                 free(temp);
                 if (!arr || _cnt <= 0) return (char*) nullptr;
                 std::string _s = "{";

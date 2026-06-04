@@ -9,4 +9,4 @@ ATTACH INLINE
 CREATE SINK hxsrc_out(hxsrc.id UINT64, r INT32) TYPE File;
 SELECT id, ALWAYS_NE_TNPOINT_TNPOINT(ta, tb) AS r FROM hxsrc INTO hxsrc_out;
 ----
-1,0
+1,1

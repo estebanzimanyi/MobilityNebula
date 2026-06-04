@@ -73,8 +73,8 @@ VarVal GeosetValuesPhysicalFunction::execute(const Record& record, ArenaRef& are
                 Set* temp = geomset_in(tempS.c_str());
                 if (!temp) return (char*) nullptr;
 
-                int _cnt = set_num_values(temp);
-                GSERIALIZED ** arr = (GSERIALIZED **) geoset_values(temp);
+                int _cnt = 0;
+                GSERIALIZED ** arr = (GSERIALIZED **) geoset_values(temp, &_cnt);
                 free(temp);
                 if (!arr || _cnt <= 0) return (char*) nullptr;
                 std::string _s = "{";

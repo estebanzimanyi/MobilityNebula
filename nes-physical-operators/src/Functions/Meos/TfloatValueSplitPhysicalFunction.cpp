@@ -83,16 +83,16 @@ VarVal TfloatValueSplitPhysicalFunction::execute(const Record& record, ArenaRef&
                 Temporal* temp = tfloat_in(tempWkt.c_str());
                 if (!temp) return (char*) nullptr;
 
-                int _cnt = 0;
-                double * _aux = nullptr;
-                Temporal ** arr = (Temporal **) tfloat_value_split(temp, arg0, arg1, &_aux, &_cnt);
+                FloatSplit _sp = tfloat_value_split(temp, arg0, arg1);
+                Temporal ** arr = (Temporal **) _sp.fragments;
+                int _cnt = _sp.count;
                 free(temp);
                 if (!arr || _cnt <= 0) return (char*) nullptr;
                 std::string _s = "{";
                 for (int _i = 0; _i < _cnt; _i++) { if (_i) _s += ", "; char* _e = tfloat_out((Temporal *) arr[_i], 15); if (_e) { _s += _e; free(_e); } free(arr[_i]); }
                 _s += "}";
                 free(arr);
-                free(_aux);
+                free(_sp.bins);
                 return strdup(_s.c_str());
             }
             catch (const std::exception&)

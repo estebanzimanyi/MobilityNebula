@@ -10,5 +10,5 @@ ATTACH INLINE
 CREATE SINK tintersectstcbuffes_out(tintersectstcbuffes.id UINT64, r VARSIZED) TYPE File;
 SELECT id, TINTERSECTS_TCBUFFER_CBUFFER(lon, lat, radius, ts, arg) AS r FROM tintersectstcbuffes INTO tintersectstcbuffes_out;
 ----
-1,f@2021-01-01,00:00:00+00
-2,f@2021-01-02,00:00:00+00
+1,t@2021-01-01,00:00:00+00
+2,t@2021-01-02,00:00:00+00

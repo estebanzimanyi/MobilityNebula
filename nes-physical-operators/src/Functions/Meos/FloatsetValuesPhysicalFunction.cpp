@@ -73,8 +73,8 @@ VarVal FloatsetValuesPhysicalFunction::execute(const Record& record, ArenaRef& a
                 Set* temp = floatset_in(tempS.c_str());
                 if (!temp) return (char*) nullptr;
 
-                int _cnt = set_num_values(temp);
-                double* arr = (double*) floatset_values(temp);
+                int _cnt = 0;
+                double* arr = (double*) floatset_values(temp, &_cnt);
                 free(temp);
                 if (!arr || _cnt <= 0) return (char*) nullptr;
                 std::string _s = "{";

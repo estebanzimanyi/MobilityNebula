@@ -1183,7 +1183,7 @@ PhysicalFunctionRegistryReturnType PhysicalFunctionGeneratedRegistrar::Register{
 # Physical .cpp template for tpose × static geom spatial-rels VIA
 # COMPOSITION — the existing _tgeo_geo MEOS call is applied to a tpose
 # converted to tgeompoint at run time. Per-event tpose instant from
-# (x, y, theta, ts), then tpose_to_tpoint(), then the MEOS spatial-rel
+# (x, y, theta, ts), then tpose_to_tgeompoint(), then the MEOS spatial-rel
 # call. Matches MobilityDB PR #987's SQL-level composition recipe at the
 # binding layer (no new MEOS spatial-rel symbols are needed for tpose).
 # 5 SQL args: x, y, theta, ts, geometry.
@@ -1269,7 +1269,7 @@ VarVal {nebula_name}PhysicalFunction::execute(const Record& record, ArenaRef& ar
 
                 Temporal* tpose = tpose_in(tposeWkt.c_str());
                 if (!tpose) return 0;
-                Temporal* tgeo = tpose_to_tpoint(tpose);
+                Temporal* tgeo = tpose_to_tgeompoint(tpose);
                 if (!tgeo) {{ free(tpose); return 0; }}
                 MEOS::Meos::StaticGeometry staticGeometry(staticGeometryWkt);
                 if (!staticGeometry.getGeometry()) {{ free(tgeo); free(tpose); return 0; }}
@@ -1306,7 +1306,7 @@ PhysicalFunctionRegistryReturnType PhysicalFunctionGeneratedRegistrar::Register{
 # the existing _tgeo_tgeo MEOS call is applied to two tposes each converted
 # to a single-instant tgeompoint at run time. Per-event tpose instants from
 # (xA, yA, thetaA, tsA) and (xB, yB, thetaB, tsB), each tpose_in() then
-# tpose_to_tpoint(), then the MEOS two-temporal spatial-rel call. Mirrors the
+# tpose_to_tgeompoint(), then the MEOS two-temporal spatial-rel call. Mirrors the
 # W14 one-tpose composition recipe; no new MEOS symbols are needed for tpose
 # (the _tgeo_tgeo row was shipped in W3). 8 SQL args.
 PHYSICAL_CPP_TEMPLATE_TWO_TPOSE_POINTS_VIA_COMPOSITION = """\
@@ -1390,11 +1390,11 @@ VarVal {nebula_name}PhysicalFunction::execute(const Record& record, ArenaRef& ar
 
                 Temporal* tposeA = tpose_in(tposeAWkt.c_str());
                 if (!tposeA) return 0;
-                Temporal* tgeoA = tpose_to_tpoint(tposeA);
+                Temporal* tgeoA = tpose_to_tgeompoint(tposeA);
                 if (!tgeoA) {{ free(tposeA); return 0; }}
                 Temporal* tposeB = tpose_in(tposeBWkt.c_str());
                 if (!tposeB) {{ free(tgeoA); free(tposeA); return 0; }}
-                Temporal* tgeoB = tpose_to_tpoint(tposeB);
+                Temporal* tgeoB = tpose_to_tgeompoint(tposeB);
                 if (!tgeoB) {{ free(tposeB); free(tgeoA); free(tposeA); return 0; }}
 
                 {return_type} r = {meos_call}(tgeoA, tgeoB);
@@ -1755,7 +1755,7 @@ VarVal {nebula_name}PhysicalFunction::execute(const Record& record, ArenaRef& ar
 
                 Temporal* tpose = tpose_in(tposeWkt.c_str());
                 if (!tpose) return 0;
-                Temporal* tgeo = tpose_to_tpoint(tpose);
+                Temporal* tgeo = tpose_to_tgeompoint(tpose);
                 if (!tgeo) {{ free(tpose); return 0; }}
                 MEOS::Meos::StaticGeometry staticGeometry(staticGeometryWkt);
                 if (!staticGeometry.getGeometry()) {{ free(tgeo); free(tpose); return 0; }}
@@ -1874,11 +1874,11 @@ VarVal {nebula_name}PhysicalFunction::execute(const Record& record, ArenaRef& ar
 
                 Temporal* tposeA = tpose_in(tposeAWkt.c_str());
                 if (!tposeA) return 0;
-                Temporal* tgeoA = tpose_to_tpoint(tposeA);
+                Temporal* tgeoA = tpose_to_tgeompoint(tposeA);
                 if (!tgeoA) {{ free(tposeA); return 0; }}
                 Temporal* tposeB = tpose_in(tposeBWkt.c_str());
                 if (!tposeB) {{ free(tgeoA); free(tposeA); return 0; }}
-                Temporal* tgeoB = tpose_to_tpoint(tposeB);
+                Temporal* tgeoB = tpose_to_tgeompoint(tposeB);
                 if (!tgeoB) {{ free(tposeB); free(tgeoA); free(tposeA); return 0; }}
 
                 {return_type} r = {meos_call}(tgeoA, tgeoB, distValue);
@@ -3618,23 +3618,22 @@ def assemble_generic_varsized_output(op):
         # separate count_call (set_num_values) on the operand.
         aux_free = ""
         if array_out.get("count_call"):
-            cnt_decl = (f"                int _cnt = {array_out['count_call']}(temp);\n"
-                        f"                {elem}* arr = ({elem}*) {op['meos_call']}({callargs});\n")
-        elif array_out.get("aux_out"):
-            # the *_split family also writes auxiliary bins array(s) (double**/int**/
-            # TimestampTz**) before the int* count; capture and free them, ignore
-            # their value. value_time_split writes TWO (value_bins + time_bins).
-            if array_out.get("aux_out2"):
-                cnt_decl = (f"                int _cnt = 0;\n"
-                            f"                {array_out['aux_out']} _aux = nullptr;\n"
-                            f"                {array_out['aux_out2']} _aux2 = nullptr;\n"
-                            f"                {elem}* arr = ({elem}*) {op['meos_call']}({callargs}, &_aux, &_aux2, &_cnt);\n")
-                aux_free = "                free(_aux);\n                free(_aux2);\n"
-            else:
-                cnt_decl = (f"                int _cnt = 0;\n"
-                            f"                {array_out['aux_out']} _aux = nullptr;\n"
-                            f"                {elem}* arr = ({elem}*) {op['meos_call']}({callargs}, &_aux, &_cnt);\n")
-                aux_free = "                free(_aux);\n"
+            # array-returning accessors (the *set_values family) now take a trailing
+            # int* count out-param (MEOS 1.4 array-return convention); the value is the
+            # array length, replacing the old separate count_call (set_num_values).
+            cnt_decl = (f"                int _cnt = 0;\n"
+                        f"                {elem}* arr = ({elem}*) {op['meos_call']}({callargs}, &_cnt);\n")
+        elif array_out.get("struct_ret"):
+            # the *_split family returns a struct {fragments, <bins...>, count} (MEOS
+            # 1.4 multi-output convention, replacing out-params); read fragments+count
+            # and free the auxiliary bins array(s). arr aliases _sp.fragments so the
+            # shared free(arr) below releases the fragments array.
+            st = array_out["struct_ret"]
+            cnt_decl = (f"                {st} _sp = {op['meos_call']}({callargs});\n"
+                        f"                {elem}* arr = ({elem}*) _sp.fragments;\n"
+                        f"                int _cnt = _sp.count;\n")
+            aux_free = "".join(f"                free(_sp.{bf});\n"
+                               for bf in array_out.get("bins_fields", []))
         else:
             cnt_decl = (f"                int _cnt = 0;\n"
                         f"                {elem}* arr = ({elem}*) {op['meos_call']}({callargs}, &_cnt);\n")
@@ -4295,7 +4294,7 @@ DISPATCH_CASE_TWO_TEMPORAL_POINTS = """\
 """
 
 # 8-arg shape: xA, yA, thetaA, tsA, xB, yB, thetaB, tsB — two tpose instants,
-# each lifted to a tgeompoint via tpose_to_tpoint at run time (W15 composition).
+# each lifted to a tgeompoint via tpose_to_tgeompoint at run time (W15 composition).
 DISPATCH_CASE_TWO_TPOSE_POINTS = """\
         /* BEGIN CODEGEN GLUE: {sql_token} */
         case AntlrSQLLexer::{sql_token}:
@@ -4634,7 +4633,7 @@ def dispatch_case_for(op):
        or op.get("build_tpose_point_via_composition"):
         # All three shapes share the same 5-arg dispatch (lon/x, lat/y, radius/theta, ts, blob);
         # only the physical-cpp body differs (blob parsed as GSERIALIZED vs Cbuffer; per-event
-        # type construction is tcbuffer vs tpose with optional tpose_to_tpoint composition).
+        # type construction is tcbuffer vs tpose with optional tpose_to_tgeompoint composition).
         return DISPATCH_CASE_TCBUFFER_POINT
     if op.get("build_two_tcbuffer_points"):
         return DISPATCH_CASE_TWO_TCBUFFER_POINTS

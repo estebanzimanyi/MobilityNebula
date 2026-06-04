@@ -91,7 +91,7 @@ VarVal TemporalAIntersectsTPoseGeometryPhysicalFunction::execute(const Record& r
 
                 Temporal* tpose = tpose_in(tposeWkt.c_str());
                 if (!tpose) return 0;
-                Temporal* tgeo = tpose_to_tpoint(tpose);
+                Temporal* tgeo = tpose_to_tgeompoint(tpose);
                 if (!tgeo) { free(tpose); return 0; }
                 MEOS::Meos::StaticGeometry staticGeometry(staticGeometryWkt);
                 if (!staticGeometry.getGeometry()) { free(tgeo); free(tpose); return 0; }

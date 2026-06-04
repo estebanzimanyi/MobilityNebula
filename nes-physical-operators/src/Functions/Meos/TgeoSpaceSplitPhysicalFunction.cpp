@@ -96,16 +96,16 @@ VarVal TgeoSpaceSplitPhysicalFunction::execute(const Record& record, ArenaRef& a
                 Temporal* temp = tgeompoint_in(tempWkt.c_str());
                 if (!temp) return (char*) nullptr;
 
-                int _cnt = 0;
-                GSERIALIZED ** _aux = nullptr;
-                Temporal ** arr = (Temporal **) tgeo_space_split(temp, arg0, arg1, arg2, geom_in((char*)"SRID=4326;Point(0 0 0)", -1), false, true, &_aux, &_cnt);
+                SpaceSplit _sp = tgeo_space_split(temp, arg0, arg1, arg2, geom_in((char*)"SRID=4326;Point(0 0 0)", -1), false, true);
+                Temporal ** arr = (Temporal **) _sp.fragments;
+                int _cnt = _sp.count;
                 free(temp);
                 if (!arr || _cnt <= 0) return (char*) nullptr;
                 std::string _s = "{";
                 for (int _i = 0; _i < _cnt; _i++) { if (_i) _s += ", "; char* _e = tspatial_as_text((Temporal *) arr[_i], 15); if (_e) { _s += _e; free(_e); } free(arr[_i]); }
                 _s += "}";
                 free(arr);
-                free(_aux);
+                free(_sp.bins);
                 return strdup(_s.c_str());
             }
             catch (const std::exception&)

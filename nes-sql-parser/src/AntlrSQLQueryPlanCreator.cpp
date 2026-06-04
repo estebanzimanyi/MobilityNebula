@@ -1472,10 +1472,8 @@
 #include <Functions/Meos/TdistanceTnpointNpointLogicalFunction.hpp>
 #endif /* NPOINT */
 #if NPOINT
-#include <Functions/Meos/TdistanceTnpointPointLogicalFunction.hpp>
 #endif /* NPOINT */
 #if POSE
-#include <Functions/Meos/TdistanceTposePointLogicalFunction.hpp>
 #endif /* POSE */
 #if POSE
 #include <Functions/Meos/TdistanceTposePoseLogicalFunction.hpp>
@@ -2585,13 +2583,11 @@
 #endif /* POSE */
 #include <Functions/Meos/StboxHashExtendedLogicalFunction.hpp>
 #include <Functions/Meos/TemporalTypeLogicalFunction.hpp>
-#include <Functions/Meos/TemporalBasetypeLogicalFunction.hpp>
 #include <Functions/Meos/SetTypeLogicalFunction.hpp>
 #include <Functions/Meos/SpanTypeLogicalFunction.hpp>
 #include <Functions/Meos/SpansetTypeLogicalFunction.hpp>
 #include <Functions/Meos/TnumberBasetypeLogicalFunction.hpp>
 #include <Functions/Meos/TimeTypeLogicalFunction.hpp>
-#include <Functions/Meos/SetBasetypeLogicalFunction.hpp>
 #include <Functions/Meos/NumsetTypeLogicalFunction.hpp>
 #include <Functions/Meos/TimesetTypeLogicalFunction.hpp>
 #include <Functions/Meos/SetSpantypeLogicalFunction.hpp>
@@ -2606,7 +2602,6 @@
 #include <Functions/Meos/TimespanBasetypeLogicalFunction.hpp>
 #include <Functions/Meos/TimespanTypeLogicalFunction.hpp>
 #include <Functions/Meos/TimespansetTypeLogicalFunction.hpp>
-#include <Functions/Meos/TalphanumTypeLogicalFunction.hpp>
 #include <Functions/Meos/TalphaTypeLogicalFunction.hpp>
 #include <Functions/Meos/TnumberTypeLogicalFunction.hpp>
 #include <Functions/Meos/TnumberSpantypeLogicalFunction.hpp>
@@ -30196,70 +30191,9 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
 #endif /* NPOINT */
 
         #if NPOINT
-/* BEGIN CODEGEN GLUE: TDISTANCE_TNPOINT_POINT */
-        case AntlrSQLLexer::TDISTANCE_TNPOINT_POINT:
-        {
-            const auto argCount = context->expression().size();
-            if (argCount != 4)
-                throw InvalidQuerySyntax("TDISTANCE_TNPOINT_POINT requires exactly 4 arguments, but got {}", argCount);
-
-            while (!helpers.top().constantBuilder.empty())
-            {
-                auto constantValue = std::move(helpers.top().constantBuilder.back());
-                helpers.top().constantBuilder.pop_back();
-                DataType dataType;
-                char* endPtr = nullptr;
-                std::strtod(constantValue.c_str(), &endPtr);
-                if (endPtr != nullptr && *endPtr == '\0')
-                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
-                else
-                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
-                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
-            }
-
-            auto a3 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
-            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
-            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
-            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
-
-            helpers.top().functionBuilder.emplace_back(TdistanceTnpointPointLogicalFunction(a0, a1, a2, a3));
-        }
-        break;
-        /* END CODEGEN GLUE: TDISTANCE_TNPOINT_POINT */
 #endif /* NPOINT */
 
         #if POSE
-/* BEGIN CODEGEN GLUE: TDISTANCE_TPOSE_POINT */
-        case AntlrSQLLexer::TDISTANCE_TPOSE_POINT:
-        {
-            const auto argCount = context->expression().size();
-            if (argCount != 5)
-                throw InvalidQuerySyntax("TDISTANCE_TPOSE_POINT requires exactly 5 arguments, but got {}", argCount);
-
-            while (!helpers.top().constantBuilder.empty())
-            {
-                auto constantValue = std::move(helpers.top().constantBuilder.back());
-                helpers.top().constantBuilder.pop_back();
-                DataType dataType;
-                char* endPtr = nullptr;
-                std::strtod(constantValue.c_str(), &endPtr);
-                if (endPtr != nullptr && *endPtr == '\0')
-                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
-                else
-                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
-                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
-            }
-
-            auto a4 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
-            auto a3 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
-            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
-            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
-            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
-
-            helpers.top().functionBuilder.emplace_back(TdistanceTposePointLogicalFunction(a0, a1, a2, a3, a4));
-        }
-        break;
-        /* END CODEGEN GLUE: TDISTANCE_TPOSE_POINT */
 #endif /* POSE */
 
         #if POSE
@@ -51748,34 +51682,6 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         break;
         /* END CODEGEN GLUE: TEMPORAL_TYPE */
 
-        /* BEGIN CODEGEN GLUE: TEMPORAL_BASETYPE */
-        case AntlrSQLLexer::TEMPORAL_BASETYPE:
-        {
-            const auto argCount = context->expression().size();
-            if (argCount != 2)
-                throw InvalidQuerySyntax("TEMPORAL_BASETYPE requires exactly 2 arguments, but got {}", argCount);
-
-            while (!helpers.top().constantBuilder.empty())
-            {
-                auto constantValue = std::move(helpers.top().constantBuilder.back());
-                helpers.top().constantBuilder.pop_back();
-                DataType dataType;
-                char* endPtr = nullptr;
-                std::strtod(constantValue.c_str(), &endPtr);
-                if (endPtr != nullptr && *endPtr == '\0')
-                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
-                else
-                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
-                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
-            }
-
-            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
-            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
-
-            helpers.top().functionBuilder.emplace_back(TemporalBasetypeLogicalFunction(a0, a1));
-        }
-        break;
-        /* END CODEGEN GLUE: TEMPORAL_BASETYPE */
 
         /* BEGIN CODEGEN GLUE: SET_TYPE */
         case AntlrSQLLexer::SET_TYPE:
@@ -51917,33 +51823,6 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         break;
         /* END CODEGEN GLUE: TIME_TYPE */
 
-        /* BEGIN CODEGEN GLUE: SET_BASETYPE */
-        case AntlrSQLLexer::SET_BASETYPE:
-        {
-            const auto argCount = context->expression().size();
-            if (argCount != 1)
-                throw InvalidQuerySyntax("SET_BASETYPE requires exactly 1 arguments, but got {}", argCount);
-
-            while (!helpers.top().constantBuilder.empty())
-            {
-                auto constantValue = std::move(helpers.top().constantBuilder.back());
-                helpers.top().constantBuilder.pop_back();
-                DataType dataType;
-                char* endPtr = nullptr;
-                std::strtod(constantValue.c_str(), &endPtr);
-                if (endPtr != nullptr && *endPtr == '\0')
-                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
-                else
-                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
-                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
-            }
-
-            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
-
-            helpers.top().functionBuilder.emplace_back(SetBasetypeLogicalFunction(a0));
-        }
-        break;
-        /* END CODEGEN GLUE: SET_BASETYPE */
 
         /* BEGIN CODEGEN GLUE: NUMSET_TYPE */
         case AntlrSQLLexer::NUMSET_TYPE:
@@ -52337,34 +52216,6 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         break;
         /* END CODEGEN GLUE: TIMESPANSET_TYPE */
 
-        /* BEGIN CODEGEN GLUE: TALPHANUM_TYPE */
-        case AntlrSQLLexer::TALPHANUM_TYPE:
-        {
-            const auto argCount = context->expression().size();
-            if (argCount != 2)
-                throw InvalidQuerySyntax("TALPHANUM_TYPE requires exactly 2 arguments, but got {}", argCount);
-
-            while (!helpers.top().constantBuilder.empty())
-            {
-                auto constantValue = std::move(helpers.top().constantBuilder.back());
-                helpers.top().constantBuilder.pop_back();
-                DataType dataType;
-                char* endPtr = nullptr;
-                std::strtod(constantValue.c_str(), &endPtr);
-                if (endPtr != nullptr && *endPtr == '\0')
-                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
-                else
-                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
-                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
-            }
-
-            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
-            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
-
-            helpers.top().functionBuilder.emplace_back(TalphanumTypeLogicalFunction(a0, a1));
-        }
-        break;
-        /* END CODEGEN GLUE: TALPHANUM_TYPE */
 
         /* BEGIN CODEGEN GLUE: TALPHA_TYPE */
         case AntlrSQLLexer::TALPHA_TYPE:

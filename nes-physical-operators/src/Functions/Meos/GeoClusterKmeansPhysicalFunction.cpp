@@ -68,7 +68,8 @@ VarVal GeoClusterKmeansPhysicalFunction::execute(const Record& record, ArenaRef&
                 if (!temp) return 0;
 
                 GSERIALIZED* _ina[1] = { (GSERIALIZED*) temp };
-                int * _out = geo_cluster_kmeans((const GSERIALIZED**) _ina, 1, 1);
+                int _cnt = 0;
+                int * _out = geo_cluster_kmeans((const GSERIALIZED**) _ina, 1, 1, &_cnt);
                 if (!_out) return 0;
                 int r = (int) _out[0];
                 free(_out);

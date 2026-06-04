@@ -42,7 +42,6 @@ add_plugin(EverEqPoseTpose PhysicalFunction nes-physical-operators EverEqPoseTpo
 add_plugin(EverEqTposePose PhysicalFunction nes-physical-operators EverEqTposePosePhysicalFunction.cpp)
 add_plugin(EverNePoseTpose PhysicalFunction nes-physical-operators EverNePoseTposePhysicalFunction.cpp)
 add_plugin(EverNeTposePose PhysicalFunction nes-physical-operators EverNeTposePosePhysicalFunction.cpp)
-add_plugin(TdistanceTposePoint PhysicalFunction nes-physical-operators TdistanceTposePointPhysicalFunction.cpp)
 add_plugin(TdistanceTposePose PhysicalFunction nes-physical-operators TdistanceTposePosePhysicalFunction.cpp)
 add_plugin(TeqPoseTpose PhysicalFunction nes-physical-operators TeqPoseTposePhysicalFunction.cpp)
 add_plugin(TeqTposePose PhysicalFunction nes-physical-operators TeqTposePosePhysicalFunction.cpp)

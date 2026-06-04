@@ -238,18 +238,18 @@ ARRAY_VALUES = {
     "stbox_quad_split":            dict(inp="stbox_text", spec=dict(elem="STBox", kind="span_val", out="stbox_out", maxdd=True, header="meos_geo.h"), lit=("STBOX X((0,0),(10,10))", "STBOX X((0,0),(8,8))")),
     # value/time split: a temporal -> its pieces (Temporal** array), plus an
     # auxiliary bins out-array (double**/int**/TimestampTz**) that is freed+ignored.
-    "tfloat_value_split":   dict(inp="tfloat", spec=dict(elem="Temporal *", kind="ptr", out="tfloat_out", maxdd=True, cast="Temporal *", aux_out="double *"), icols=[("value", "FLOAT64")], ra=["5.5"], rb=["8.5"], extras=[("double", "FLOAT64", "5.0", "5.0"), ("double", "FLOAT64", "0.0", "0.0")]),
-    "tint_value_split":     dict(inp="tint", spec=dict(elem="Temporal *", kind="ptr", out="tint_out", cast="Temporal *", aux_out="int *"), icols=[("value", "INT32")], ra=["5"], rb=["8"], extras=[("int32_t", "INT32", "5", "5"), ("int32_t", "INT32", "0", "0")]),
-    "temporal_time_split":  dict(inp="tfloat", spec=dict(elem="Temporal *", kind="ptr", out="tfloat_out", maxdd=True, cast="Temporal *", aux_out="TimestampTz *"), icols=[("value", "FLOAT64")], ra=["5.5"], rb=["8.5"], extras=[_a3iv(), _TSTZ0]),
+    "tfloat_value_split":   dict(inp="tfloat", spec=dict(elem="Temporal *", kind="ptr", out="tfloat_out", maxdd=True, cast="Temporal *", struct_ret="FloatSplit", bins_fields=["bins"]), icols=[("value", "FLOAT64")], ra=["5.5"], rb=["8.5"], extras=[("double", "FLOAT64", "5.0", "5.0"), ("double", "FLOAT64", "0.0", "0.0")]),
+    "tint_value_split":     dict(inp="tint", spec=dict(elem="Temporal *", kind="ptr", out="tint_out", cast="Temporal *", struct_ret="IntSplit", bins_fields=["bins"]), icols=[("value", "INT32")], ra=["5"], rb=["8"], extras=[("int32_t", "INT32", "5", "5"), ("int32_t", "INT32", "0", "0")]),
+    "temporal_time_split":  dict(inp="tfloat", spec=dict(elem="Temporal *", kind="ptr", out="tfloat_out", maxdd=True, cast="Temporal *", struct_ret="TimeSplit", bins_fields=["bins"]), icols=[("value", "FLOAT64")], ra=["5.5"], rb=["8.5"], extras=[_a3iv(), _TSTZ0]),
     # value+time split: a temporal -> its pieces, plus TWO aux bins out-arrays
     # (value_bins + time_bins). Args: vsize, duration, vorigin, torigin.
-    "tfloat_value_time_split": dict(inp="tfloat", spec=dict(elem="Temporal *", kind="ptr", out="tfloat_out", maxdd=True, cast="Temporal *", aux_out="double *", aux_out2="TimestampTz *"), icols=[("value", "FLOAT64")], ra=["5.5"], rb=["8.5"], extras=[("double", "FLOAT64", "5.0", "5.0"), _a3iv(), ("double", "FLOAT64", "0.0", "0.0"), _TSTZ0]),
-    "tint_value_time_split":   dict(inp="tint", spec=dict(elem="Temporal *", kind="ptr", out="tint_out", cast="Temporal *", aux_out="int *", aux_out2="TimestampTz *"), icols=[("value", "INT32")], ra=["5"], rb=["8"], extras=[("int32_t", "INT32", "5", "5"), _a3iv(), ("int32_t", "INT32", "0", "0"), _TSTZ0]),
+    "tfloat_value_time_split": dict(inp="tfloat", spec=dict(elem="Temporal *", kind="ptr", out="tfloat_out", maxdd=True, cast="Temporal *", struct_ret="FloatTimeSplit", bins_fields=["value_bins", "time_bins"]), icols=[("value", "FLOAT64")], ra=["5.5"], rb=["8.5"], extras=[("double", "FLOAT64", "5.0", "5.0"), _a3iv(), ("double", "FLOAT64", "0.0", "0.0"), _TSTZ0]),
+    "tint_value_time_split":   dict(inp="tint", spec=dict(elem="Temporal *", kind="ptr", out="tint_out", cast="Temporal *", struct_ret="IntTimeSplit", bins_fields=["value_bins", "time_bins"]), icols=[("value", "INT32")], ra=["5"], rb=["8"], extras=[("int32_t", "INT32", "5", "5"), _a3iv(), ("int32_t", "INT32", "0", "0"), _TSTZ0]),
     # geo space split: a 3D temporal point -> its pieces, plus an auxiliary
     # GSERIALIZED** space_bins out-array. xsize/ysize/zsize event cols; the space
     # origin + bitmatrix/border_inc flags ride as fixed call args (SRID 4326).
-    "tgeo_space_split":      dict(inp="tgeompoint3d", spec=dict(elem="Temporal *", kind="ptr", out="tspatial_as_text", maxdd=True, cast="Temporal *", aux_out="GSERIALIZED **", header="meos_geo.h"), icols=[("lon", "FLOAT64"), ("lat", "FLOAT64"), ("z", "FLOAT64")], ra=["3.0", "3.0", "3.0"], rb=["6.0", "6.0", "6.0"], extras=[("double", "FLOAT64", "5.0", "5.0"), ("double", "FLOAT64", "5.0", "5.0"), ("double", "FLOAT64", "5.0", "5.0")], eca=['geom_in((char*)"SRID=4326;Point(0 0 0)", -1)', "false", "true"]),
-    "tgeo_space_time_split": dict(inp="tgeompoint3d", spec=dict(elem="Temporal *", kind="ptr", out="tspatial_as_text", maxdd=True, cast="Temporal *", aux_out="GSERIALIZED **", aux_out2="TimestampTz *", header="meos_geo.h"), icols=[("lon", "FLOAT64"), ("lat", "FLOAT64"), ("z", "FLOAT64")], ra=["3.0", "3.0", "3.0"], rb=["6.0", "6.0", "6.0"], extras=[("double", "FLOAT64", "5.0", "5.0"), ("double", "FLOAT64", "5.0", "5.0"), ("double", "FLOAT64", "5.0", "5.0"), _a3iv()], eca=['geom_in((char*)"SRID=4326;Point(0 0 0)", -1)', 'timestamptz_in((char*)"2020-01-01", -1)', "false", "true"]),
+    "tgeo_space_split":      dict(inp="tgeompoint3d", spec=dict(elem="Temporal *", kind="ptr", out="tspatial_as_text", maxdd=True, cast="Temporal *", struct_ret="SpaceSplit", bins_fields=["bins"], header="meos_geo.h"), icols=[("lon", "FLOAT64"), ("lat", "FLOAT64"), ("z", "FLOAT64")], ra=["3.0", "3.0", "3.0"], rb=["6.0", "6.0", "6.0"], extras=[("double", "FLOAT64", "5.0", "5.0"), ("double", "FLOAT64", "5.0", "5.0"), ("double", "FLOAT64", "5.0", "5.0")], eca=['geom_in((char*)"SRID=4326;Point(0 0 0)", -1)', "false", "true"]),
+    "tgeo_space_time_split": dict(inp="tgeompoint3d", spec=dict(elem="Temporal *", kind="ptr", out="tspatial_as_text", maxdd=True, cast="Temporal *", struct_ret="SpaceTimeSplit", bins_fields=["space_bins", "time_bins"], header="meos_geo.h"), icols=[("lon", "FLOAT64"), ("lat", "FLOAT64"), ("z", "FLOAT64")], ra=["3.0", "3.0", "3.0"], rb=["6.0", "6.0", "6.0"], extras=[("double", "FLOAT64", "5.0", "5.0"), ("double", "FLOAT64", "5.0", "5.0"), ("double", "FLOAT64", "5.0", "5.0"), _a3iv()], eca=['geom_in((char*)"SRID=4326;Point(0 0 0)", -1)', 'timestamptz_in((char*)"2020-01-01", -1)', "false", "true"]),
     # geo clustering (array input): wrap the per-event geometry in a one-element
     # array; the result is the cluster geometry collection(s), an int* count array.
     "geo_cluster_intersecting": dict(inp="geom", spec=dict(elem="GSERIALIZED *", kind="ptr", out="geo_out", cast="GSERIALIZED *", header="meos_geo.h", array_in="GSERIALIZED"), lit=("SRID=4326;Point(1 1)", "SRID=4326;Point(2 2)")),
@@ -848,11 +848,11 @@ def classify(name, ret, plist):
     #      build the value, pass its public type-field cast to MeosType. Declared
     #      in meos_internal.h (exported); MeosType in meos_catalog.h. ----
     TYPE_PREDICATE_OPS = {n: ("tfloat", "temptype") for n in (
-        "temporal_type", "temporal_basetype", "tnumber_type", "tnumber_basetype",
+        "temporal_type", "tnumber_type", "tnumber_basetype",
         "tnumber_spantype", "tgeo_type", "tgeo_type_all", "tgeodetic_type",
-        "tgeometry_type", "tpoint_type", "tspatial_type", "talpha_type", "talphanum_type")}
+        "tgeometry_type", "tpoint_type", "tspatial_type", "talpha_type")}
     TYPE_PREDICATE_OPS.update({n: ("intset", "settype") for n in (
-        "set_type", "set_basetype", "set_spantype", "numset_type", "geoset_type",
+        "set_type", "set_spantype", "numset_type", "geoset_type",
         "spatialset_type", "alphanumset_type", "timeset_type")})
     TYPE_PREDICATE_OPS.update({n: ("intspan", "spantype") for n in (
         "span_type", "span_basetype", "span_canon_basetype", "span_tbox_type",
@@ -1581,7 +1581,7 @@ def classify(name, ret, plist):
     #      to one element; the single result element is returned. k / tolerance /
     #      minpoints ride as fixed call args. ----
     GEO_CLUSTER_SCALAR = {
-        "geo_cluster_kmeans": dict(ret_type="int *", count=False, eca=["1"]),
+        "geo_cluster_kmeans": dict(ret_type="int *", count=True, eca=["1"]),
         "geo_cluster_dbscan": dict(ret_type="uint32_t *", count=True, eca=["5.0", "1"]),
     }
     if name in GEO_CLUSTER_SCALAR:

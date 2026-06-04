@@ -73,8 +73,8 @@ VarVal IntsetValuesPhysicalFunction::execute(const Record& record, ArenaRef& are
                 Set* temp = intset_in(tempS.c_str());
                 if (!temp) return (char*) nullptr;
 
-                int _cnt = set_num_values(temp);
-                int* arr = (int*) intset_values(temp);
+                int _cnt = 0;
+                int* arr = (int*) intset_values(temp, &_cnt);
                 free(temp);
                 if (!arr || _cnt <= 0) return (char*) nullptr;
                 std::string _s = "{";

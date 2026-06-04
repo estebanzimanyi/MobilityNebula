@@ -49,7 +49,6 @@ add_plugin(EverEqTnpointNpoint PhysicalFunction nes-physical-operators EverEqTnp
 add_plugin(EverNeNpointTnpoint PhysicalFunction nes-physical-operators EverNeNpointTnpointPhysicalFunction.cpp)
 add_plugin(EverNeTnpointNpoint PhysicalFunction nes-physical-operators EverNeTnpointNpointPhysicalFunction.cpp)
 add_plugin(TdistanceTnpointNpoint PhysicalFunction nes-physical-operators TdistanceTnpointNpointPhysicalFunction.cpp)
-add_plugin(TdistanceTnpointPoint PhysicalFunction nes-physical-operators TdistanceTnpointPointPhysicalFunction.cpp)
 add_plugin(TeqTnpointNpoint PhysicalFunction nes-physical-operators TeqTnpointNpointPhysicalFunction.cpp)
 add_plugin(TneTnpointNpoint PhysicalFunction nes-physical-operators TneTnpointNpointPhysicalFunction.cpp)
 add_plugin(NpointToStbox PhysicalFunction nes-physical-operators NpointToStboxPhysicalFunction.cpp)
