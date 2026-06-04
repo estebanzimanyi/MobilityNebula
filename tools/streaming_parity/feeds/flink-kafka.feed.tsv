@@ -1524,7 +1524,7 @@ tcbuffer_points	proven
 tcbuffer_radius	proven
 tcbuffer_to_tfloat	proven
 tcbuffer_to_tgeompoint	proven
-tcbuffer_trav_area	proven
+tcbuffer_traversed_area	proven
 tcontains_cbuffer_tcbuffer	proven
 tcontains_geo_tcbuffer	proven
 tcontains_geo_tgeo	proven
@@ -1557,10 +1557,10 @@ tdistance_tgeo_geo	proven
 tdistance_tgeo_tgeo	proven
 tdistance_tint_int	proven
 tdistance_tnpoint_npoint	proven
-tdistance_tnpoint_point	proven
+tdistance_tnpoint_geo	proven
 tdistance_tnpoint_tnpoint	proven
 tdistance_tnumber_tnumber	proven
-tdistance_tpose_point	proven
+tdistance_tpose_geo	proven
 tdistance_tpose_pose	proven
 tdistance_tpose_tpose	proven
 tdistance_trgeometry_geo	proven

@@ -86,8 +86,6 @@ aintersects_tcbuffer_geo
 aintersects_tcbuffer_tcbuffer
 aintersects_tgeo_geo
 aintersects_tgeo_tgeo
-alphanum_basetype
-alphanum_temptype
 alphanumset_type
 always_eq_bool_tbool
 always_eq_cbuffer_tcbuffer
@@ -1145,7 +1143,6 @@ same_tnumber_tnumber
 same_tspatial_stbox
 same_tspatial_tspatial
 same_tstzspan_temporal
-set_basetype
 set_cmp
 set_copy
 set_eq
@@ -1291,7 +1288,6 @@ sub_tfloat_float
 sub_tint_int
 sub_tnumber_tnumber
 talpha_type
-talphanum_type
 tbool_at_value
 tbool_end_value
 tbool_from_base_temp
@@ -1348,7 +1344,7 @@ tcbuffer_points
 tcbuffer_radius
 tcbuffer_to_tfloat
 tcbuffer_to_tgeompoint
-tcbuffer_trav_area
+tcbuffer_traversed_area
 tcontains_cbuffer_tcbuffer
 tcontains_geo_tcbuffer
 tcontains_geo_tgeo
@@ -1380,11 +1376,11 @@ tdistance_tfloat_float
 tdistance_tgeo_geo
 tdistance_tgeo_tgeo
 tdistance_tint_int
+tdistance_tnpoint_geo
 tdistance_tnpoint_npoint
-tdistance_tnpoint_point
 tdistance_tnpoint_tnpoint
 tdistance_tnumber_tnumber
-tdistance_tpose_point
+tdistance_tpose_geo
 tdistance_tpose_pose
 tdistance_tpose_tpose
 tdistance_trgeometry_geo
@@ -1408,7 +1404,6 @@ temporal_at_tstzset
 temporal_at_tstzspan
 temporal_at_tstzspanset
 temporal_at_values
-temporal_basetype
 temporal_before_timestamptz
 temporal_cmp
 temporal_copy
@@ -1830,7 +1825,6 @@ trgeometry_to_tpoint
 trgeometry_to_tpose
 trgeometry_traversed_area
 trgeometry_value_n
-trgeometryinst_make
 tsequenceset_make_gaps
 tspatial_extent_transfn
 tspatial_set_srid

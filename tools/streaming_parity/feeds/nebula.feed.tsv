@@ -1102,7 +1102,6 @@ same_tnumber_tnumber	proven
 same_tspatial_stbox	proven
 same_tspatial_tspatial	proven
 same_tstzspan_temporal	proven
-set_basetype	proven
 set_cmp	proven
 set_copy	proven
 set_eq	proven
@@ -1233,7 +1232,6 @@ sub_tfloat_float	proven
 sub_tint_int	proven
 sub_tnumber_tnumber	proven
 talpha_type	proven
-talphanum_type	proven
 tbool_at_value	proven
 tbool_end_value	proven
 tbool_from_base_temp	proven
@@ -1318,10 +1316,8 @@ tdistance_tgeo_geo	proven
 tdistance_tgeo_tgeo	proven
 tdistance_tint_int	proven
 tdistance_tnpoint_npoint	proven
-tdistance_tnpoint_point	wired
 tdistance_tnpoint_tnpoint	proven
 tdistance_tnumber_tnumber	proven
-tdistance_tpose_point	proven
 tdistance_tpose_pose	proven
 tdistance_tpose_tpose	proven
 tdistance_trgeometry_geo	wired
@@ -1340,7 +1336,6 @@ temporal_at_tstzset	proven
 temporal_at_tstzspan	proven
 temporal_at_tstzspanset	proven
 temporal_at_values	proven
-temporal_basetype	proven
 temporal_before_timestamptz	proven
 temporal_cmp	proven
 temporal_copy	proven
@@ -1678,7 +1673,6 @@ tpose_minus_stbox	proven
 tpose_points	proven
 tpose_rotation	proven
 tpose_start_value	proven
-tpose_to_tpoint	proven
 tpose_trajectory	proven
 tpose_value_at_timestamptz	proven
 tpose_value_n	proven

@@ -2,14 +2,15 @@
 
 Result of the [streaming-parity methodology](./streaming_parity.md) across the
 three streaming platforms, each over its accumulated-PR build. The reference
-surface is the **1,945** streamable MEOS public functions (tiers
-`stateless`/`bounded-state`/`windowed`/`cross-stream`).
+surface is the **1,939** streamable MEOS public functions (tiers
+`stateless`/`bounded-state`/`windowed`/`cross-stream`), reconciled to the
+ecosystem pin `7c8b25c97` (`ecosystem-pin-2026-06-04d`).
 
 | Platform | **L3 CALLABLE** (binding invokes it, confirmed) | L2 wired-only (registered, not yet confirmed callable) | gap (streamable, not wired) |
 |---|---|---|---|
-| **NebulaStream** | **61 — 3.1%** | 345 — 17.7% | 1,539 — 79.1% |
-| **Flink** | **1,945 — 100.0%** | 0 — 0.0% | 0 — 0.0% |
-| **Kafka** | **1,945 — 100.0%** | 0 — 0.0% | 0 — 0.0% |
+| **NebulaStream** | **1,796 — 92.6%** | 15 — 0.8% | 128 — 6.6% |
+| **Flink** | **1,939 — 100.0%** | 0 — 0.0% | 0 — 0.0% |
+| **Kafka** | **1,939 — 100.0%** | 0 — 0.0% | 0 — 0.0% |
 
 > L3 is **callability** — the binding actually invoked the function on real
 > `libmeos` (correctness is inherited from MEOS's PostgreSQL suite; see the
@@ -37,7 +38,7 @@ here uses the `accumulate/parity-1.4` libmeos.
 
 ## Flink / Kafka — 100% confirmed callable, 0 residual
 
-Every one of the 1,945 streamable functions has a facade method and is confirmed
+Every one of the 1,939 streamable functions has a facade method and is confirmed
 callable on real `libmeos` — no wired-only, no gap. The harness builds each
 input from the function-name tokens, with native `T**` arrays
 (`Memory.allocateDirect`) for set/array constructors, a `trgeometryinst_make`
@@ -45,7 +46,7 @@ sample for the `trgeometry` family, `Interval`/`OffsetDateTime`/`LocalDateTime`
 samples for the time functions, and an out-param buffer for the catalog/SRID
 out-params. Four functions (`tfloat_avg_value`, `geog_from_binary`,
 `srid_check_latlong`, `nad_stbox_trgeometry`) are not in the surface, which
-totals 1,945.
+totals 1,939.
 
 ## Reason-marked (NOT streamable, never gaps)
 
@@ -90,14 +91,14 @@ production form; both serve the one scope.
 
 ## Status
 
-- **Flink / Kafka: 100% PROVEN** (1,945 / 1,945 confirmed callable on real
+- **Flink / Kafka: 100% PROVEN** (1,939 / 1,939 confirmed callable on real
   libmeos). The CI gate (`ci_gate.py` + `.github/workflows/streaming_parity_gate.yml`)
-  holds the floor at 1,945 and blocks any regression or over-claim; the committed
+  holds the floor at 1,939 and blocks any regression or over-claim; the committed
   feed reproduces it without re-running the harness.
-- **NebulaStream: 406 / 1,945 wired and locally compile-verified.** The
+- **NebulaStream: 1,796 / 1,939 confirmed callable (92.6%), 15 wired-only, 128 gap.** The
   generated `nes-{physical,logical}-operators` + `nes-sql-parser` libraries link
   clean in the `nebulastream/nes-development` dev image against the `libmeos`
-  under test; 61 are confirmed callable via systests that run end-to-end against
+  under test; 1,796 are confirmed callable via systests that run end-to-end against
   a local single-node worker (query plan serialized, deserialized, compiled, and
   executed; result matched against the value a faithful MEOS probe produces). The wired surface
   spans per-event operators over the tgeompoint/tcbuffer/tpose/tnumber families
