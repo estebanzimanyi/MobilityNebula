@@ -1389,3 +1389,5 @@ add_plugin(StboxToBox3d PhysicalFunction nes-physical-operators StboxToBox3dPhys
 add_plugin(StboxToGbox PhysicalFunction nes-physical-operators StboxToGboxPhysicalFunction.cpp)
 add_plugin(Box3dToStbox PhysicalFunction nes-physical-operators Box3dToStboxPhysicalFunction.cpp)
 add_plugin(GboxToStbox PhysicalFunction nes-physical-operators GboxToStboxPhysicalFunction.cpp)
+add_plugin(TemporalSubtype PhysicalFunction nes-physical-operators TemporalSubtypePhysicalFunction.cpp)
+add_plugin(TemporalInterp PhysicalFunction nes-physical-operators TemporalInterpPhysicalFunction.cpp)

@@ -1773,3 +1773,5 @@ add_plugin(StboxToBox3d LogicalFunction nes-logical-operators StboxToBox3dLogica
 add_plugin(StboxToGbox LogicalFunction nes-logical-operators StboxToGboxLogicalFunction.cpp)
 add_plugin(Box3dToStbox LogicalFunction nes-logical-operators Box3dToStboxLogicalFunction.cpp)
 add_plugin(GboxToStbox LogicalFunction nes-logical-operators GboxToStboxLogicalFunction.cpp)
+add_plugin(TemporalSubtype LogicalFunction nes-logical-operators TemporalSubtypeLogicalFunction.cpp)
+add_plugin(TemporalInterp LogicalFunction nes-logical-operators TemporalInterpLogicalFunction.cpp)

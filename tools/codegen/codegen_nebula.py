@@ -3418,6 +3418,10 @@ for _rk, _ct, _of, _md in [
     # NOT here: MEOS exposes no box3d_in/gbox_in parser to read the operand.
     ("box3d_text_out", "BOX3D", "box3d_out", True),
     ("gbox_text_out", "GBOX", "gbox_out", True),
+    # A const char* result that is a STATIC catalog string (temporal_subtype /
+    # temporal_interp / *_name) — copied out and NEVER freed (not heap-owned).
+    # The serializer is None; assemble_generic_varsized_output special-cases it.
+    ("const_char_out", "const char", None, False),
     # Temporal* results serialized to their canonical WKT (value@timestamp ...)
     # via the subtype *_out. Used by the temporal-instant ⊗ scalar wave: the op
     # returns a tint/tfloat (arithmetic, at/minus, shift/scale) or a tbool
@@ -3617,7 +3621,17 @@ def assemble_generic_varsized_output(op):
         _ait = array_out["array_in"]
         arr_in_decl = f"                {_ait}* _ina[1] = {{ ({_ait}*) temp }};\n"
         callargs = callargs.replace("temp", f"(const {_ait}**) _ina, 1", 1)
-    if array_out:
+    if op["return_kind"] == "const_char_out":
+        # A const char* result (a static catalog string: temporal_subtype /
+        # temporal_interp / *_name). Copy it out; it is NOT heap-owned, so never
+        # free it. A null result yields a zero-length VARSIZED.
+        call_marshal = (
+            f"                const char* res = {op['meos_call']}({callargs});\n"
+            f"{free_primary}"
+            f"{bf}"
+            f"                if (!res) return (char*) nullptr;\n"
+            f"                return strdup(res);")
+    elif array_out:
         # T *f(operand…, int *count) / T **f(…) -> a heap array of `count`
         # elements. Loop, serialize each (a scalar formatted inline, or a heap
         # element via its *_out then freed), join into a brace-list, free the

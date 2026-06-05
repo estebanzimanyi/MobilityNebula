@@ -1375,6 +1375,7 @@ temporal_hausdorff_distance	proven
 temporal_insert	proven
 temporal_instant_n	proven
 temporal_instants	proven
+temporal_interp	proven
 temporal_le	proven
 temporal_lower_inc	proven
 temporal_lt	proven
@@ -1407,6 +1408,7 @@ temporal_split_each_n_spans	proven
 temporal_split_n_spans	proven
 temporal_start_instant	proven
 temporal_start_timestamptz	proven
+temporal_subtype	proven
 temporal_tagg_finalfn	proven
 temporal_tcount_transfn	proven
 temporal_time	proven
