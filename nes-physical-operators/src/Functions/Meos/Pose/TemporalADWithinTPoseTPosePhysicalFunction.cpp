@@ -100,11 +100,11 @@ VarVal TemporalADWithinTPoseTPosePhysicalFunction::execute(const Record& record,
 
                 Temporal* tposeA = tpose_in(tposeAWkt.c_str());
                 if (!tposeA) return 0;
-                Temporal* tgeoA = tpose_to_tgeompoint(tposeA);
+                Temporal* tgeoA = tpose_to_tpoint(tposeA);
                 if (!tgeoA) { free(tposeA); return 0; }
                 Temporal* tposeB = tpose_in(tposeBWkt.c_str());
                 if (!tposeB) { free(tgeoA); free(tposeA); return 0; }
-                Temporal* tgeoB = tpose_to_tgeompoint(tposeB);
+                Temporal* tgeoB = tpose_to_tpoint(tposeB);
                 if (!tgeoB) { free(tposeB); free(tgeoA); free(tposeA); return 0; }
 
                 int r = adwithin_tgeo_tgeo(tgeoA, tgeoB, distValue);

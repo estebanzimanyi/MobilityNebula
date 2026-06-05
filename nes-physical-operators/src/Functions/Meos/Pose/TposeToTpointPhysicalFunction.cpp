@@ -84,7 +84,7 @@ VarVal TposeToTpointPhysicalFunction::execute(const Record& record, ArenaRef& ar
                 Temporal* temp = tpose_in(tempWkt.c_str());
                 if (!temp) return (char*) nullptr;
 
-                Temporal* res = (Temporal*) tpose_to_tgeompoint(temp);
+                Temporal* res = (Temporal*) tpose_to_tpoint(temp);
                 free(temp);
                 if (!res) return (char*) nullptr;
                 char* outStr = tspatial_as_text(res, 15);
