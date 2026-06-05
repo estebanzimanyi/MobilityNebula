@@ -1784,3 +1784,6 @@ add_plugin(MeosoperName LogicalFunction nes-logical-operators MeosoperNameLogica
 add_plugin(GeoTypename LogicalFunction nes-logical-operators GeoTypenameLogicalFunction.cpp)
 add_plugin(TempsubtypeName LogicalFunction nes-logical-operators TempsubtypeNameLogicalFunction.cpp)
 add_plugin(InterptypeName LogicalFunction nes-logical-operators InterptypeNameLogicalFunction.cpp)
+add_plugin(TdistanceTrgeometryTrgeometry LogicalFunction nes-logical-operators TdistanceTrgeometryTrgeometryLogicalFunction.cpp)
+add_plugin(TnpointAtNpointset LogicalFunction nes-logical-operators TnpointAtNpointsetLogicalFunction.cpp)
+add_plugin(TnpointMinusNpointset LogicalFunction nes-logical-operators TnpointMinusNpointsetLogicalFunction.cpp)

@@ -1382,6 +1382,61 @@ PHYSICAL_CPP_TGEO_WKB = _swap_once(
     _FINALIZE_SCALAR_TGEO, _FINALIZE_WKB_TGEO, "tgeo-wkb finalize tail")
 
 # ===========================================================================
+# Sequence-accessor aggregates (fold "tgeoseq" / "tgeoseqtext"): the windowed
+# point stream is built as a CONTINUOUS sequence ("[...]", linear interp) — NOT
+# the discrete instant-set ("{...}") the other tgeo aggregates build — because
+# the MEOS sequence accessors (temporal_num_sequences / _start_sequence /
+# _end_sequence / _sequence_n) require a continuous sequence/sequence-set and
+# raise "Input must be a temporal continuous sequence (set)" on a discrete one.
+# Two output shapes:
+#   tgeoseq      -> a scalar accessor (temporal_num_sequences -> INT32), reusing
+#                   the scalar finalize tail (value_compute = meos_scalar_fn(temp)).
+#   tgeoseqtext  -> an accessor that returns a TSequence* (start/end/sequence_n),
+#                   serialized to text via tspatial_out and emitted as VARSIZED.
+#                   The accessor call rides in {seq_accessor_call}.
+# Both derive from PHYSICAL_CPP_TGEO by swapping only the brace pair (discrete ->
+# continuous); the text variant additionally swaps the scalar finalize tail for a
+# parse -> accessor -> tspatial_out -> VARSIZED tail (modeled on _FINALIZE_BOX_TGEO).
+# ===========================================================================
+_FINALIZE_SEQTEXT_TGEO = _swap_once(
+    _FINALIZE_BOX_TGEO,
+    """\
+            {extent_box_type}* aggBox = {extent_transfn}(nullptr, static_cast<Temporal*>(temp));
+            MEOS::Meos::freeTemporalObject(temp);
+            if (!aggBox) {{
+                return (char*)nullptr;
+            }}
+
+            char* boxText = {box_out_fn}(aggBox, 15);
+            free(aggBox);
+            return boxText;""",
+    """\
+            Temporal* seqRes = (Temporal*) {seq_accessor_call};
+            MEOS::Meos::freeTemporalObject(temp);
+            if (!seqRes) {{
+                return (char*)nullptr;
+            }}
+
+            char* boxText = tspatial_out(seqRes, 6);
+            free(seqRes);
+            return boxText;""",
+    "tgeo box-apply -> sequence-accessor text-out")
+
+PHYSICAL_CPP_TGEO_SEQ = _swap_once(
+    _swap_once(
+        PHYSICAL_CPP_TGEO,
+        '            strcpy(buffer, "{{");', '            strcpy(buffer, "[");', "tgeo-seq open bracket -> continuous"),
+    '            strcat(buffer, "}}");', '            strcat(buffer, "]");', "tgeo-seq close bracket -> continuous")
+
+PHYSICAL_CPP_TGEO_SEQ_TEXT = _swap_once(
+    _swap_once(
+        _swap_once(
+            _swap_once(PHYSICAL_CPP_TGEO, _EMPTY_SCALAR, _EMPTY_BOX, "tgeo-seqtext empty-window block"),
+            '            strcpy(buffer, "{{");', '            strcpy(buffer, "[");', "tgeo-seqtext open bracket -> continuous"),
+        '            strcat(buffer, "}}");', '            strcat(buffer, "]");', "tgeo-seqtext close bracket -> continuous"),
+    _FINALIZE_SCALAR_TGEO, _FINALIZE_SEQTEXT_TGEO, "tgeo-seqtext finalize tail")
+
+# ===========================================================================
 # Expandable-Temporal* aggregate (return_mode "expand"): the MEOS-native
 # streaming model — the aggregate STATE is a live expandable `Temporal*` (a
 # mini-trip trajectory), grown in place per event via the public streaming
@@ -2853,6 +2908,10 @@ def physical_template_for(op):
             return PHYSICAL_HPP_TGEO, PHYSICAL_CPP_TNPOINT_EXPAND_WKB
         if op.get("fold") == "tagg":
             return PHYSICAL_HPP_TGEO, PHYSICAL_CPP_TGEO_TAGG_WKB
+        if op.get("fold") == "tgeoseq":
+            return PHYSICAL_HPP_TGEO, PHYSICAL_CPP_TGEO_SEQ
+        if op.get("fold") == "tgeoseqtext":
+            return PHYSICAL_HPP_TGEO, PHYSICAL_CPP_TGEO_SEQ_TEXT
         return PHYSICAL_HPP_TGEO, (PHYSICAL_CPP_TGEO_BOX if box else PHYSICAL_CPP_TGEO)
     if op["input_shape"] == "tnumber":
         # Scalar-fold reuses the tnumber (value, ts) HPP but folds the field
@@ -2951,6 +3010,9 @@ def emit_operator(op, output_root: Path):
         # and finalize+serialize `state` -> char* (full per-op expressions).
         "container_fold_body":      op.get("container_fold_body", ""),
         "container_serialize_body": op.get("container_serialize_body", ""),
+        # sequence-accessor (fold=tgeoseqtext) extra: the TSequence*-returning
+        # accessor applied to the windowed continuous sequence `temp`.
+        "seq_accessor_call":        op.get("seq_accessor_call", ""),
     }
 
     # value_compute (point/tgeo finalize): either fold the windowed sequence

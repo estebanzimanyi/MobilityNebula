@@ -12,7 +12,7 @@
     limitations under the License.
 */
 
-#include <Aggregation/Function/Meos/TemporalNumSequencesAggregationPhysicalFunction.hpp>
+#include <Aggregation/Function/Meos/TemporalSequenceNAggregationPhysicalFunction.hpp>
 
 #include <cstddef>
 #include <cstdint>
@@ -54,10 +54,10 @@ constexpr static std::string_view LonFieldName = "lon";
 constexpr static std::string_view LatFieldName = "lat";
 constexpr static std::string_view TimestampFieldName = "timestamp";
 
-static std::mutex meos_temporalnumsequences_mutex;
+static std::mutex meos_temporalsequencen_mutex;
 
 
-TemporalNumSequencesAggregationPhysicalFunction::TemporalNumSequencesAggregationPhysicalFunction(
+TemporalSequenceNAggregationPhysicalFunction::TemporalSequenceNAggregationPhysicalFunction(
     DataType inputType,
     DataType resultType,
     PhysicalFunction lonFunctionParam,
@@ -73,7 +73,7 @@ TemporalNumSequencesAggregationPhysicalFunction::TemporalNumSequencesAggregation
 {
 }
 
-void TemporalNumSequencesAggregationPhysicalFunction::lift(
+void TemporalSequenceNAggregationPhysicalFunction::lift(
     const nautilus::val<AggregationState*>& aggregationState, PipelineMemoryProvider& pipelineMemoryProvider, const Nautilus::Record& record)
 {
     const auto pagedVectorPtr = static_cast<nautilus::val<Nautilus::Interface::PagedVector*>>(aggregationState);
@@ -92,7 +92,7 @@ void TemporalNumSequencesAggregationPhysicalFunction::lift(
     pagedVectorRef.writeRecord(aggregateStateRecord, pipelineMemoryProvider.bufferProvider);
 }
 
-void TemporalNumSequencesAggregationPhysicalFunction::combine(
+void TemporalSequenceNAggregationPhysicalFunction::combine(
     const nautilus::val<AggregationState*> aggregationState1,
     const nautilus::val<AggregationState*> aggregationState2,
     PipelineMemoryProvider&)
@@ -107,7 +107,7 @@ void TemporalNumSequencesAggregationPhysicalFunction::combine(
         memArea2);
 }
 
-Nautilus::Record TemporalNumSequencesAggregationPhysicalFunction::lower(
+Nautilus::Record TemporalSequenceNAggregationPhysicalFunction::lower(
     const nautilus::val<AggregationState*> aggregationState, [[maybe_unused]] PipelineMemoryProvider& pipelineMemoryProvider)
 {
     MEOS::Meos::ensureMeosInitialized();
@@ -123,8 +123,9 @@ Nautilus::Record TemporalNumSequencesAggregationPhysicalFunction::lower(
         pagedVectorPtr);
 
     if (numberOfEntries == nautilus::val<size_t>(0)) {
+        auto emptyVarSized = pipelineMemoryProvider.arena.allocateVariableSizedData(0);
         Nautilus::Record resultRecord;
-        resultRecord.write(resultFieldIdentifier, nautilus::val<int>(0));
+        resultRecord.write(resultFieldIdentifier, emptyVarSized);
         return resultRecord;
     }
 
@@ -193,38 +194,60 @@ Nautilus::Record TemporalNumSequencesAggregationPhysicalFunction::lower(
         },
         trajectoryStr);
 
-    auto resultValue = nautilus::invoke(
-        +[](const char* trajStr) -> int
+    auto boxStr = nautilus::invoke(
+        +[](const char* trajStr) -> char*
         {
             if (!trajStr || strlen(trajStr) == 0) {
                 free((void*)trajStr);
-                return (int)0;
+                return (char*)nullptr;
             }
 
             MEOS::Meos::ensureMeosInitialized();
-            std::lock_guard<std::mutex> lock(meos_temporalnumsequences_mutex);
+            std::lock_guard<std::mutex> lock(meos_temporalsequencen_mutex);
 
             std::string trajString(trajStr);
             void* temp = MEOS::Meos::parseTemporalPoint(trajString);
+            free((void*)trajStr);
             if (!temp) {
-                free((void*)trajStr);
-                return (int)0;
+                return (char*)nullptr;
             }
 
-            int value = temporal_num_sequences(static_cast<Temporal*>(temp));
-
+            Temporal* seqRes = (Temporal*) temporal_sequence_n(static_cast<Temporal*>(temp), 1);
             MEOS::Meos::freeTemporalObject(temp);
-            free((void*)trajStr);
-            return value;
+            if (!seqRes) {
+                return (char*)nullptr;
+            }
+
+            char* boxText = tspatial_out(seqRes, 6);
+            free(seqRes);
+            return boxText;
         },
         trajectoryStr);
 
+    const auto boxStrLen = nautilus::invoke(
+        +[](const char* s) -> size_t { return s ? strlen(s) : (size_t) 0; },
+        boxStr);
+
+    auto variableSized = pipelineMemoryProvider.arena.allocateVariableSizedData(boxStrLen);
+
+    nautilus::invoke(
+        +[](int8_t* dest, const char* s, size_t len) -> void
+        {
+            if (s) {
+                memcpy(dest, s, len);
+                free((void*)s);
+            }
+        },
+        variableSized.getContent(),
+        boxStr,
+        boxStrLen);
+
     Nautilus::Record resultRecord;
-    resultRecord.write(resultFieldIdentifier, resultValue);
+    resultRecord.write(resultFieldIdentifier, variableSized);
     return resultRecord;
 }
 
-void TemporalNumSequencesAggregationPhysicalFunction::reset(const nautilus::val<AggregationState*> aggregationState, PipelineMemoryProvider&)
+void TemporalSequenceNAggregationPhysicalFunction::reset(const nautilus::val<AggregationState*> aggregationState, PipelineMemoryProvider&)
 {
     nautilus::invoke(
         +[](AggregationState* pagedVectorMemArea) -> void
@@ -235,12 +258,12 @@ void TemporalNumSequencesAggregationPhysicalFunction::reset(const nautilus::val<
         aggregationState);
 }
 
-size_t TemporalNumSequencesAggregationPhysicalFunction::getSizeOfStateInBytes() const
+size_t TemporalSequenceNAggregationPhysicalFunction::getSizeOfStateInBytes() const
 {
     return sizeof(Nautilus::Interface::PagedVector);
 }
 
-void TemporalNumSequencesAggregationPhysicalFunction::cleanup(nautilus::val<AggregationState*> aggregationState)
+void TemporalSequenceNAggregationPhysicalFunction::cleanup(nautilus::val<AggregationState*> aggregationState)
 {
     nautilus::invoke(
         +[](AggregationState* pagedVectorMemArea) -> void
@@ -252,10 +275,10 @@ void TemporalNumSequencesAggregationPhysicalFunction::cleanup(nautilus::val<Aggr
 }
 
 
-AggregationPhysicalFunctionRegistryReturnType AggregationPhysicalFunctionGeneratedRegistrar::RegisterTemporalNumSequencesAggregationPhysicalFunction(
+AggregationPhysicalFunctionRegistryReturnType AggregationPhysicalFunctionGeneratedRegistrar::RegisterTemporalSequenceNAggregationPhysicalFunction(
     AggregationPhysicalFunctionRegistryArguments)
 {
-    throw std::runtime_error("TemporalNumSequences aggregation cannot be created through the registry. "
+    throw std::runtime_error("TemporalSequenceN aggregation cannot be created through the registry. "
                              "It requires three field functions (longitude, latitude, timestamp)");
 }
 

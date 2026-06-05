@@ -1793,6 +1793,20 @@ def classify(name, ret, plist):
                 near = f"{srid}STBOX X((0,0),(3,3))"
             a0, a1 = (far, far) if is_minus else (near, near)
             eca = ["true"]                              # border_inc
+        elif secb == "Set" and tsub == "tnpoint":
+            # tnpoint restricted by a network-point Set (npointset). Network
+            # points compare by (rid, frac), so no ways-network geometry is
+            # resolved: the at-set carries each row's Npoint(1,0.5)/(1,0.7) to
+            # keep both instants; the minus-set carries far Npoints so nothing
+            # is removed. Both leave a non-empty restricted tnpoint.
+            extra = dict(kind="box", box_type="Set", parser="npointset_in",
+                         header="meos_npoint.h")
+            extra_hdr = "meos_npoint.h"
+            # npointset_in wants the object-set form: a brace-list of double-
+            # quoted element WKTs ({"Npoint(rid,frac)", ...}).
+            keep = '{"Npoint(1,0.5)", "Npoint(1,0.7)"}'
+            miss = '{"Npoint(9,0.5)", "Npoint(9,0.7)"}'
+            a0, a1 = (miss, miss) if is_minus else (keep, keep)
         else:
             return None, f"spatial restriction 2nd operand {secb} unsupported"
         entry = dict(nebula_name=camel(name), sql_token=name.upper(), meos_call=name,
@@ -2064,6 +2078,10 @@ def classify(name, ret, plist):
                 rkind = "tbool_out"
             elif pref == "textcat":
                 rkind = "ttext_out"
+            elif pref == "tdistance":
+                # the temporal distance between two same-family temporals is a
+                # tfloat (MEOS sets restype = T_TFLOAT), serialized via tfloat_out.
+                rkind = "tfloat_out"
             else:
                 return None, f"two-temporal {pref} not a clean tbool/ttext family"
             spec = TWO_TEMPORAL[sub]

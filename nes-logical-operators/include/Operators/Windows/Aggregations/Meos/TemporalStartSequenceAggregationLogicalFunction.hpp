@@ -20,26 +20,26 @@ namespace NES
 {
 
 /**
- * @brief temporal_num_sequences (int) - the number of sequences in the windowed continuous trajectory.
+ * @brief temporal_start_sequence (Temporal *) - the first sequence of the windowed continuous trajectory.
  *
  * Three-input (lon, lat, ts) tgeo aggregation. Lift accumulates the events
  * into a paged vector; lower assembles the per-(window, group) trajectory
- * and calls MEOS `temporal_num_sequences` to fold it to a single scalar.
+ * and calls MEOS `` to fold it to a single scalar.
  */
-class TemporalNumSequencesAggregationLogicalFunction : public WindowAggregationLogicalFunction
+class TemporalStartSequenceAggregationLogicalFunction : public WindowAggregationLogicalFunction
 {
 public:
     static std::shared_ptr<WindowAggregationLogicalFunction>
     create(const FieldAccessLogicalFunction& lonField, const FieldAccessLogicalFunction& latField, const FieldAccessLogicalFunction& timestampField);
 
-    TemporalNumSequencesAggregationLogicalFunction(
+    TemporalStartSequenceAggregationLogicalFunction(
         const FieldAccessLogicalFunction& lonField,
         const FieldAccessLogicalFunction& latField,
         const FieldAccessLogicalFunction& timestampField,
         const FieldAccessLogicalFunction& asField);
 
     void inferStamp(const Schema& schema) override;
-    ~TemporalNumSequencesAggregationLogicalFunction() override = default;
+    ~TemporalStartSequenceAggregationLogicalFunction() override = default;
     [[nodiscard]] NES::SerializableAggregationFunction serialize() const override;
     [[nodiscard]] std::string_view getName() const noexcept override;
     [[nodiscard]] bool requiresSequentialAggregation() const { return true; }
@@ -49,9 +49,9 @@ public:
     [[nodiscard]] const FieldAccessLogicalFunction& getTimestampField() const noexcept { return timestampField; }
 
 private:
-    static constexpr std::string_view NAME = "TemporalNumSequences";
+    static constexpr std::string_view NAME = "TemporalStartSequence";
     static constexpr DataType::Type partialAggregateStampType = DataType::Type::UNDEFINED;
-    static constexpr DataType::Type finalAggregateStampType = DataType::Type::INT32;
+    static constexpr DataType::Type finalAggregateStampType = DataType::Type::VARSIZED;
 
     FieldAccessLogicalFunction lonField;
     FieldAccessLogicalFunction latField;

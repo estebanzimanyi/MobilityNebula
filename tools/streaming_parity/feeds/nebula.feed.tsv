@@ -1345,6 +1345,7 @@ tdistance_tpose_geo	proven
 tdistance_tpose_pose	proven
 tdistance_tpose_tpose	proven
 tdistance_trgeometry_geo	proven
+tdistance_trgeometry_trgeometry	proven
 tdwithin_tcbuffer_cbuffer	proven
 tdwithin_tcbuffer_geo	proven
 tdwithin_tcbuffer_tcbuffer	proven
@@ -1371,6 +1372,7 @@ temporal_derivative	proven
 temporal_duration	proven
 temporal_dyntimewarp_distance	proven
 temporal_end_instant	proven
+temporal_end_sequence	proven
 temporal_end_timestamptz	proven
 temporal_eq	proven
 temporal_extent_transfn	proven
@@ -1399,10 +1401,11 @@ temporal_minus_tstzspanset	proven
 temporal_minus_values	proven
 temporal_ne	proven
 temporal_num_instants	proven
-temporal_num_sequences	wired
+temporal_num_sequences	proven
 temporal_num_timestamps	proven
 temporal_round	proven
 temporal_scale_time	proven
+temporal_sequence_n	proven
 temporal_sequences	wired
 temporal_set_interp	proven
 temporal_shift_scale_time	proven
@@ -1414,6 +1417,7 @@ temporal_spans	proven
 temporal_split_each_n_spans	proven
 temporal_split_n_spans	proven
 temporal_start_instant	proven
+temporal_start_sequence	proven
 temporal_start_timestamptz	proven
 temporal_subtype	proven
 temporal_tagg_finalfn	proven
@@ -1640,11 +1644,13 @@ tne_trgeometry_geo	proven
 tne_ttext_text	proven
 tnpoint_at_geom	proven
 tnpoint_at_npoint	proven
+tnpoint_at_npointset	proven
 tnpoint_at_stbox	proven
 tnpoint_cumulative_length	proven
 tnpoint_length	proven
 tnpoint_minus_geom	proven
 tnpoint_minus_npoint	proven
+tnpoint_minus_npointset	proven
 tnpoint_minus_stbox	proven
 tnpoint_positions	proven
 tnpoint_route	proven
