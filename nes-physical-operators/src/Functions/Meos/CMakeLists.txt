@@ -1385,3 +1385,5 @@ add_plugin(TintboxExpand PhysicalFunction nes-physical-operators TintboxExpandPh
 add_plugin(TspatialToStbox PhysicalFunction nes-physical-operators TspatialToStboxPhysicalFunction.cpp)
 add_plugin(SpatialsetSrid PhysicalFunction nes-physical-operators SpatialsetSridPhysicalFunction.cpp)
 add_plugin(TgeoTraversedArea PhysicalFunction nes-physical-operators TgeoTraversedAreaPhysicalFunction.cpp)
+add_plugin(StboxToBox3d PhysicalFunction nes-physical-operators StboxToBox3dPhysicalFunction.cpp)
+add_plugin(StboxToGbox PhysicalFunction nes-physical-operators StboxToGboxPhysicalFunction.cpp)

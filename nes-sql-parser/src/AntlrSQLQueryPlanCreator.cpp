@@ -2740,6 +2740,8 @@
 #if CBUFFER
 #include <Functions/Meos/TcbufferTraversedAreaLogicalFunction.hpp>
 #endif /* CBUFFER */
+#include <Functions/Meos/StboxToBox3dLogicalFunction.hpp>
+#include <Functions/Meos/StboxToGboxLogicalFunction.hpp>
 #include <Plans/LogicalPlan.hpp>
 #include <Plans/LogicalPlanBuilder.hpp>
 #include <Util/Overloaded.hpp>
@@ -54899,6 +54901,62 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         break;
         /* END CODEGEN GLUE: TCBUFFER_TRAVERSED_AREA */
 #endif /* CBUFFER */
+        /* BEGIN CODEGEN GLUE: STBOX_TO_BOX3D */
+        case AntlrSQLLexer::STBOX_TO_BOX3D:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 1)
+                throw InvalidQuerySyntax("STBOX_TO_BOX3D requires exactly 1 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(StboxToBox3dLogicalFunction(a0));
+        }
+        break;
+        /* END CODEGEN GLUE: STBOX_TO_BOX3D */
+
+        /* BEGIN CODEGEN GLUE: STBOX_TO_GBOX */
+        case AntlrSQLLexer::STBOX_TO_GBOX:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 1)
+                throw InvalidQuerySyntax("STBOX_TO_GBOX requires exactly 1 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(StboxToGboxLogicalFunction(a0));
+        }
+        break;
+        /* END CODEGEN GLUE: STBOX_TO_GBOX */
+
 
 
 

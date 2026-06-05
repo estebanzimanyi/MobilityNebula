@@ -1221,6 +1221,8 @@ stbox_tmax	proven
 stbox_tmax_inc	proven
 stbox_tmin	proven
 stbox_tmin_inc	proven
+stbox_to_box3d	proven
+stbox_to_gbox	proven
 stbox_to_geo	proven
 stbox_to_tstzspan	proven
 stbox_transform	proven

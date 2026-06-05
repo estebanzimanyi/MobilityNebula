@@ -3396,6 +3396,12 @@ for _rk, _ct, _of, _md in [
     ("tstzspanset_text", "SpanSet", "tstzspanset_out", False),
     ("stbox_text_out", "STBox", "stbox_out", True),
     ("tbox_text_out", "TBox", "tbox_out", True),
+    # PostGIS box results of an STBox conversion (stbox_to_box3d/stbox_to_gbox).
+    # The heap BOX3D*/GBOX* is serialized via box3d_out/gbox_out (maxdd arg) and
+    # freed like any other VARSIZED return. The reverse box3d/gbox_to_stbox are
+    # NOT here: MEOS exposes no box3d_in/gbox_in parser to read the operand.
+    ("box3d_text_out", "BOX3D", "box3d_out", True),
+    ("gbox_text_out", "GBOX", "gbox_out", True),
     # Temporal* results serialized to their canonical WKT (value@timestamp ...)
     # via the subtype *_out. Used by the temporal-instant ⊗ scalar wave: the op
     # returns a tint/tfloat (arithmetic, at/minus, shift/scale) or a tbool

@@ -1769,3 +1769,5 @@ add_plugin(SpatialsetSrid LogicalFunction nes-logical-operators SpatialsetSridLo
 add_plugin(TgeoTraversedArea LogicalFunction nes-logical-operators TgeoTraversedAreaLogicalFunction.cpp)
 add_plugin(TrgeometryTraversedArea LogicalFunction nes-logical-operators TrgeometryTraversedAreaLogicalFunction.cpp)
 add_plugin(TcbufferTraversedArea LogicalFunction nes-logical-operators TcbufferTraversedAreaLogicalFunction.cpp)
+add_plugin(StboxToBox3d LogicalFunction nes-logical-operators StboxToBox3dLogicalFunction.cpp)
+add_plugin(StboxToGbox LogicalFunction nes-logical-operators StboxToGboxLogicalFunction.cpp)
