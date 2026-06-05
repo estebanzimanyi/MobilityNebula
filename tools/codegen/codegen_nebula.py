@@ -3387,6 +3387,19 @@ for _k, _field_cpp, _ctype in [
         fields=[("value", _field_cpp)], header="meos.h", frees=False,
         build="                " + _ctype + " {var} = (" + _ctype + ") value;\n"))
 
+# Catalog enum primary inputs: an INT32 field cast to a MEOS catalog enum, the
+# operand of the now-public meos_catalog.h type-reflection functions
+# (geo_basetype(MeosType), meosoper_name(MeosOper), tempsubtype_name(tempSubtype),
+# interptype_name(interpType)). header=meos_catalog.h provides MeosType/MeosOper
+# AND the functions; tempSubtype/interpType come from the always-included meos.h.
+for _k, _ctype in [
+    ("meostype_base", "MeosType"), ("meosoper_base", "MeosOper"),
+    ("tempsubtype_base", "tempSubtype"), ("interptype_base", "interpType"),
+]:
+    GENERIC_INPUTS.setdefault(_k, dict(
+        fields=[("value", "int32_t")], header="meos_catalog.h", frees=False,
+        build="                " + _ctype + " {var} = (" + _ctype + ") value;\n"))
+
 # return_kind -> (result C type, *_out serializer, takes_maxdd). float/STBox/TBox
 # serializers take a trailing maxdd arg; the others take only the pointer.
 for _rk, _ct, _of, _md in [

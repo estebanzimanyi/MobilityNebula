@@ -172,6 +172,8 @@ back_stbox_stbox	proven
 back_stbox_tspatial	proven
 back_tspatial_stbox	proven
 back_tspatial_tspatial	proven
+basetype_byvalue	proven
+basetype_varlength	proven
 bearing_point_point	proven
 before_date_set	proven
 before_date_span	proven
@@ -575,6 +577,7 @@ front_stbox_tspatial	proven
 front_tspatial_stbox	proven
 front_tspatial_tspatial	proven
 gbox_to_stbox	proven
+geo_basetype	proven
 geo_cluster_dbscan	proven
 geo_cluster_intersecting	proven
 geo_cluster_kmeans	proven
@@ -601,6 +604,7 @@ geo_tpose_to_trgeometry	proven
 geo_transform	proven
 geo_transform_pipeline	proven
 geo_tstzspan_to_stbox	proven
+geo_typename	proven
 geo_union_transfn	proven
 geog_area	proven
 geog_centroid	proven
@@ -652,6 +656,7 @@ int_to_spanset	proven
 int_to_tbox	proven
 int_tstzspan_to_tbox	proven
 int_union_transfn	proven
+interptype_name	proven
 intersection_bigint_set	proven
 intersection_date_set	proven
 intersection_float_set	proven
@@ -745,6 +750,7 @@ left_tnumber_tnumber	proven
 left_tspatial_stbox	proven
 left_tspatial_tspatial	proven
 line_numpoints	proven
+meosoper_name	proven
 minus_bigint_set	proven
 minus_bigint_span	proven
 minus_bigint_spanset	proven
@@ -1187,6 +1193,7 @@ spanset_type	proven
 spanset_union_finalfn	proven
 spanset_union_transfn	proven
 spanset_upper_inc	proven
+spatial_basetype	proven
 spatialset_srid	proven
 spatialset_to_stbox	proven
 spatialset_type	proven
@@ -1424,6 +1431,7 @@ temporal_tprecision	proven
 temporal_type	proven
 temporal_update	proven
 temporal_upper_inc	proven
+tempsubtype_name	proven
 teq_bool_tbool	proven
 teq_cbuffer_tcbuffer	proven
 teq_float_tfloat	proven
@@ -1798,6 +1806,7 @@ ttouches_tcbuffer_geo	proven
 ttouches_tcbuffer_tcbuffer	proven
 ttouches_tgeo_geo	proven
 ttouches_tgeo_tgeo	proven
+type_span_bbox	proven
 union_bigint_set	proven
 union_bigint_span	proven
 union_bigint_spanset	proven
