@@ -1893,6 +1893,105 @@ PHYSICAL_CPP_SETFOLD = _swap_once(
     "scalarfold serialize -> setfold (finalfn)")
 
 # ===========================================================================
+# Array-make aggregate template (windowed value-collect -> {make_fn}(arr, n)).
+#
+# Unlike SCALARFOLD/SETFOLD (which fold each event through a MEOS transition fn
+# into an opaque state), this COLLECTS the window's scalar values into a malloc'd
+# C array (size = numberOfEntries, known at lower()) and calls the MEOS array
+# constructor `{make_fn}(({elem_cpp}*) arr, n)` ONCE at finalize, serializing the
+# resulting Set via the external typed wrapper `{set_out_call}`. Same proven
+# cross-invoke pointer-threading as CrossDistanceAggregation's scratch buffer.
+# Derived from SCALARFOLD by swapping ONLY the fold+serialize region of lower();
+# lift / combine / reset / cleanup / ctor stay byte-identical.
+# ===========================================================================
+_SCALARFOLD_FOLD_AND_SERIALIZE = """\
+    // Fold the windowed scalar field through the MEOS extent transition fn.
+    // The Span state threads across events as an opaque pointer; a NULL initial
+    // state makes the first call allocate, later calls expand in place.
+    auto spanState = nautilus::invoke(
+        +[](const Nautilus::Interface::PagedVector*) -> void* {{ return nullptr; }},
+        pagedVectorPtr);
+
+    const auto endIt = pagedVectorRef.end(allFieldNames);
+    for (auto candidateIt = pagedVectorRef.begin(allFieldNames); candidateIt != endIt; ++candidateIt)
+    {{
+        const auto itemRecord = *candidateIt;
+        const auto valueRaw = itemRecord.read(std::string(ValueFieldName));
+        auto value = valueRaw.cast<nautilus::val<{fold_field_cpp_type}>>();
+
+        spanState = nautilus::invoke(
+            +[](void* state, {fold_field_cpp_type} val) -> void*
+            {{
+                MEOS::Meos::ensureMeosInitialized();
+            std::lock_guard<std::mutex> lock({mutex_name});
+                {fold_invoke_body}
+            }},
+            spanState,
+            value);
+    }}
+
+    auto boxStr = nautilus::invoke(
+        +[](void* state) -> char*
+        {{
+            if (!state) {{
+                return (char*)nullptr;
+            }}
+            MEOS::Meos::ensureMeosInitialized();
+            std::lock_guard<std::mutex> lock({mutex_name});
+            Span* sp = static_cast<Span*>(state);
+            char* out = {box_out_call};
+            free(state);
+            return out;
+        }},
+        spanState);"""
+
+_ARRAYMAKE_FOLD_AND_SERIALIZE = """\
+    // Collect the windowed scalar values into a C array, then build the result
+    // via the MEOS array constructor {make_fn}. The array pointer threads across
+    // events as an opaque void* (Nautilus invoke ABI), sized to numberOfEntries.
+    auto arrState = nautilus::invoke(
+        +[](size_t n) -> void* {{ return malloc(sizeof({elem_cpp}) * (n > 0 ? n : 1)); }},
+        numberOfEntries);
+
+    auto arrIdx = nautilus::val<int64_t>(0);
+    const auto endIt = pagedVectorRef.end(allFieldNames);
+    for (auto candidateIt = pagedVectorRef.begin(allFieldNames); candidateIt != endIt; ++candidateIt)
+    {{
+        const auto itemRecord = *candidateIt;
+        const auto valueRaw = itemRecord.read(std::string(ValueFieldName));
+        auto value = valueRaw.cast<nautilus::val<{fold_field_cpp_type}>>();
+
+        nautilus::invoke(
+            +[](void* a, int64_t i, {fold_field_cpp_type} val) -> void
+            {{ (({elem_cpp}*) a)[i] = ({elem_cpp}) val; }},
+            arrState,
+            arrIdx,
+            value);
+        arrIdx = arrIdx + nautilus::val<int64_t>(1);
+    }}
+
+    auto boxStr = nautilus::invoke(
+        +[](void* a, int64_t n) -> char*
+        {{
+            MEOS::Meos::ensureMeosInitialized();
+            std::lock_guard<std::mutex> lock({mutex_name});
+            {make_ret_type}* s = {make_fn}(({elem_cpp}*) a, (int) n);
+            free(a);
+            if (!s) {{
+                return (char*)nullptr;
+            }}
+            char* out = {set_out_call};
+            free(s);
+            return out;
+        }},
+        arrState,
+        arrIdx);"""
+
+PHYSICAL_CPP_ARRAYMAKE = _swap_once(
+    PHYSICAL_CPP_SCALARFOLD, _SCALARFOLD_FOLD_AND_SERIALIZE, _ARRAYMAKE_FOLD_AND_SERIALIZE,
+    "scalarfold fold+serialize -> arraymake (collect C array + *_make)")
+
+# ===========================================================================
 # Temporal-aggregate template (windowed tMin/tMax/tSum/tAnd/tOr/tAvg -> Temporal,
 # serialized as hex-WKB). Reuses the scalar-fold PagedVector scaffold (lift =
 # buffer raw (value, ts); combine = concat raw events), but lower() folds EACH
@@ -2765,6 +2864,8 @@ def physical_template_for(op):
             return PHYSICAL_HPP_TNUMBER, PHYSICAL_CPP_SCALARFOLD
         if op.get("fold") == "set":
             return PHYSICAL_HPP_TNUMBER, PHYSICAL_CPP_SETFOLD
+        if op.get("fold") == "arraymake":
+            return PHYSICAL_HPP_TNUMBER, PHYSICAL_CPP_ARRAYMAKE
         if op.get("fold") == "container":
             return PHYSICAL_HPP_TNUMBER, PHYSICAL_CPP_CONTAINER_FOLD
         if op.get("fold") == "tagg":
@@ -2824,6 +2925,12 @@ def emit_operator(op, output_root: Path):
         "fold_invoke_body":    op.get("fold_invoke_body", ""),
         "box_out_call":        op.get("box_out_call", ""),
         "finalfn":             op.get("finalfn", ""),
+        # array-make (fold=arraymake) extras — collect window values into a C
+        # array then call the MEOS array constructor and serialize the result.
+        "elem_cpp":            op.get("elem_cpp", "double"),
+        "make_fn":             op.get("make_fn", ""),
+        "make_ret_type":       op.get("make_ret_type", "Set"),
+        "set_out_call":        op.get("set_out_call", ""),
         # temporal-aggregate (fold=tagg) extras — per-op transfn + finalfn.
         "tagg_transfn":        op.get("tagg_transfn", ""),
         "tagg_finalfn":        op.get("tagg_finalfn", ""),

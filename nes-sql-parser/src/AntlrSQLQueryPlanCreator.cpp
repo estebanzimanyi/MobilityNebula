@@ -178,6 +178,11 @@
 #if NPOINT
 #include <Operators/Windows/Aggregations/Meos/TnpointTcentroidTransfnAggregationLogicalFunction.hpp>
 #endif /* NPOINT */
+#include <Operators/Windows/Aggregations/Meos/FloatsetMakeAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/IntsetMakeAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/BigintsetMakeAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/DatesetMakeAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TstzsetMakeAggregationLogicalFunction.hpp>
 #include <Functions/Meos/TemporalIntersectsGeometryLogicalFunction.hpp>
 #include <Functions/Meos/AintersectsTgeoGeoLogicalFunction.hpp>
 #include <Functions/Meos/EdwithinTgeoGeoLogicalFunction.hpp>
@@ -57494,6 +57499,131 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             break;
         /* END CODEGEN GLUE: TNPOINT_TCENTROID_TRANSFN (case-switch) */
 #endif /* NPOINT */
+        /* BEGIN CODEGEN GLUE: FLOATSET_MAKE (case-switch) */
+        case AntlrSQLLexer::FLOATSET_MAKE:
+            // floatset_make (Set *) - the float set collected from a window of float values.
+            if (helpers.top().functionBuilder.size() != 2) {
+                throw InvalidQuerySyntax("FLOATSET_MAKE requires exactly two arguments (value, timestamp), but got {}", helpers.top().functionBuilder.size());
+            }
+            {
+                const auto timestampFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto valueFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+
+                if (!valueFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
+                    throw InvalidQuerySyntax("FLOATSET_MAKE arguments must be field references");
+                }
+
+                helpers.top().windowAggs.push_back(
+                    FloatsetMakeAggregationLogicalFunction::create(valueFunction.get<FieldAccessLogicalFunction>(),
+                                                                    timestampFunction.get<FieldAccessLogicalFunction>()));
+                helpers.top().functionBuilder.push_back(valueFunction);
+            }
+            break;
+        /* END CODEGEN GLUE: FLOATSET_MAKE (case-switch) */
+
+        /* BEGIN CODEGEN GLUE: INTSET_MAKE (case-switch) */
+        case AntlrSQLLexer::INTSET_MAKE:
+            // intset_make (Set *) - the integer set collected from a window of int values.
+            if (helpers.top().functionBuilder.size() != 2) {
+                throw InvalidQuerySyntax("INTSET_MAKE requires exactly two arguments (value, timestamp), but got {}", helpers.top().functionBuilder.size());
+            }
+            {
+                const auto timestampFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto valueFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+
+                if (!valueFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
+                    throw InvalidQuerySyntax("INTSET_MAKE arguments must be field references");
+                }
+
+                helpers.top().windowAggs.push_back(
+                    IntsetMakeAggregationLogicalFunction::create(valueFunction.get<FieldAccessLogicalFunction>(),
+                                                                    timestampFunction.get<FieldAccessLogicalFunction>()));
+                helpers.top().functionBuilder.push_back(valueFunction);
+            }
+            break;
+        /* END CODEGEN GLUE: INTSET_MAKE (case-switch) */
+
+        /* BEGIN CODEGEN GLUE: BIGINTSET_MAKE (case-switch) */
+        case AntlrSQLLexer::BIGINTSET_MAKE:
+            // bigintset_make (Set *) - the bigint set collected from a window of bigint values.
+            if (helpers.top().functionBuilder.size() != 2) {
+                throw InvalidQuerySyntax("BIGINTSET_MAKE requires exactly two arguments (value, timestamp), but got {}", helpers.top().functionBuilder.size());
+            }
+            {
+                const auto timestampFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto valueFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+
+                if (!valueFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
+                    throw InvalidQuerySyntax("BIGINTSET_MAKE arguments must be field references");
+                }
+
+                helpers.top().windowAggs.push_back(
+                    BigintsetMakeAggregationLogicalFunction::create(valueFunction.get<FieldAccessLogicalFunction>(),
+                                                                    timestampFunction.get<FieldAccessLogicalFunction>()));
+                helpers.top().functionBuilder.push_back(valueFunction);
+            }
+            break;
+        /* END CODEGEN GLUE: BIGINTSET_MAKE (case-switch) */
+        /* BEGIN CODEGEN GLUE: DATESET_MAKE (case-switch) */
+        case AntlrSQLLexer::DATESET_MAKE:
+            // dateset_make (Set *) - the date set collected from a window of date values.
+            if (helpers.top().functionBuilder.size() != 2) {
+                throw InvalidQuerySyntax("DATESET_MAKE requires exactly two arguments (value, timestamp), but got {}", helpers.top().functionBuilder.size());
+            }
+            {
+                const auto timestampFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto valueFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+
+                if (!valueFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
+                    throw InvalidQuerySyntax("DATESET_MAKE arguments must be field references");
+                }
+
+                helpers.top().windowAggs.push_back(
+                    DatesetMakeAggregationLogicalFunction::create(valueFunction.get<FieldAccessLogicalFunction>(),
+                                                                    timestampFunction.get<FieldAccessLogicalFunction>()));
+                helpers.top().functionBuilder.push_back(valueFunction);
+            }
+            break;
+        /* END CODEGEN GLUE: DATESET_MAKE (case-switch) */
+
+        /* BEGIN CODEGEN GLUE: TSTZSET_MAKE (case-switch) */
+        case AntlrSQLLexer::TSTZSET_MAKE:
+            // tstzset_make (Set *) - the timestamptz set collected from a window of timestamp values.
+            if (helpers.top().functionBuilder.size() != 2) {
+                throw InvalidQuerySyntax("TSTZSET_MAKE requires exactly two arguments (value, timestamp), but got {}", helpers.top().functionBuilder.size());
+            }
+            {
+                const auto timestampFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto valueFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+
+                if (!valueFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
+                    throw InvalidQuerySyntax("TSTZSET_MAKE arguments must be field references");
+                }
+
+                helpers.top().windowAggs.push_back(
+                    TstzsetMakeAggregationLogicalFunction::create(valueFunction.get<FieldAccessLogicalFunction>(),
+                                                                    timestampFunction.get<FieldAccessLogicalFunction>()));
+                helpers.top().functionBuilder.push_back(valueFunction);
+            }
+            break;
+        /* END CODEGEN GLUE: TSTZSET_MAKE (case-switch) */
+
+
 
 
 
@@ -59071,6 +59201,81 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             }
             /* END CODEGEN GLUE: TNPOINT_TCENTROID_TRANSFN (funcName chain) */
 #endif /* NPOINT */
+            /* BEGIN CODEGEN GLUE: FLOATSET_MAKE (funcName chain) */
+            else if (funcName == "FLOATSET_MAKE")
+            {
+                if (helpers.top().functionBuilder.size() < 2)
+                {
+                    throw InvalidQuerySyntax("FLOATSET_MAKE requires two arguments at {}", context->getText());
+                }
+                const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto value = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                helpers.top().windowAggs.push_back(FloatsetMakeAggregationLogicalFunction::create(value, ts));
+            }
+            /* END CODEGEN GLUE: FLOATSET_MAKE (funcName chain) */
+
+            /* BEGIN CODEGEN GLUE: INTSET_MAKE (funcName chain) */
+            else if (funcName == "INTSET_MAKE")
+            {
+                if (helpers.top().functionBuilder.size() < 2)
+                {
+                    throw InvalidQuerySyntax("INTSET_MAKE requires two arguments at {}", context->getText());
+                }
+                const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto value = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                helpers.top().windowAggs.push_back(IntsetMakeAggregationLogicalFunction::create(value, ts));
+            }
+            /* END CODEGEN GLUE: INTSET_MAKE (funcName chain) */
+
+            /* BEGIN CODEGEN GLUE: BIGINTSET_MAKE (funcName chain) */
+            else if (funcName == "BIGINTSET_MAKE")
+            {
+                if (helpers.top().functionBuilder.size() < 2)
+                {
+                    throw InvalidQuerySyntax("BIGINTSET_MAKE requires two arguments at {}", context->getText());
+                }
+                const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto value = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                helpers.top().windowAggs.push_back(BigintsetMakeAggregationLogicalFunction::create(value, ts));
+            }
+            /* END CODEGEN GLUE: BIGINTSET_MAKE (funcName chain) */
+            /* BEGIN CODEGEN GLUE: DATESET_MAKE (funcName chain) */
+            else if (funcName == "DATESET_MAKE")
+            {
+                if (helpers.top().functionBuilder.size() < 2)
+                {
+                    throw InvalidQuerySyntax("DATESET_MAKE requires two arguments at {}", context->getText());
+                }
+                const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto value = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                helpers.top().windowAggs.push_back(DatesetMakeAggregationLogicalFunction::create(value, ts));
+            }
+            /* END CODEGEN GLUE: DATESET_MAKE (funcName chain) */
+
+            /* BEGIN CODEGEN GLUE: TSTZSET_MAKE (funcName chain) */
+            else if (funcName == "TSTZSET_MAKE")
+            {
+                if (helpers.top().functionBuilder.size() < 2)
+                {
+                    throw InvalidQuerySyntax("TSTZSET_MAKE requires two arguments at {}", context->getText());
+                }
+                const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto value = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                helpers.top().windowAggs.push_back(TstzsetMakeAggregationLogicalFunction::create(value, ts));
+            }
+            /* END CODEGEN GLUE: TSTZSET_MAKE (funcName chain) */
+
+
 
 
 
