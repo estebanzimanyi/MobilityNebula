@@ -1760,11 +1760,17 @@ def classify(name, ret, plist):
         srid = "SRID=4326;" if tsub == "tgeo" else ""
         eca, extra_hdr = [], None
         if secb == "GSERIALIZED":
-            if tsub == "tnpoint":
-                return None, "tnpoint geo restriction needs network-SRID literal"
             extra = dict(kind="geom")
-            a0, a1 = ((f"{srid}Point(40 40)", f"{srid}Point(50 50)") if is_minus
-                      else (f"{srid}Point(1 1)", f"{srid}Point(2 2)"))
+            if tsub == "tnpoint":
+                # tnpoint resolves against the loaded ways network (SRID 5676):
+                # the at-operand must equal each row's network-resolved point
+                # (rid 1, frac 0.5 / 0.7); the minus-operand is a far point.
+                a0, a1 = (("SRID=5676;Point(0 0)", "SRID=5676;Point(0 0)") if is_minus
+                          else ("SRID=5676;Point(48.71866291282778 77.76407051015086)",
+                                "SRID=5676;Point(34.65069274168137 75.38458482058755)"))
+            else:
+                a0, a1 = ((f"{srid}Point(40 40)", f"{srid}Point(50 50)") if is_minus
+                          else (f"{srid}Point(1 1)", f"{srid}Point(2 2)"))
         elif secb in ("Cbuffer", "Npoint", "Pose"):
             lits = {"Cbuffer": ("Cbuffer(Point(1 1),1)", "Cbuffer(Point(2 2),0.5)",
                                 "Cbuffer(Point(40 40),1)", "Cbuffer(Point(50 50),1)"),
@@ -1776,11 +1782,15 @@ def classify(name, ret, plist):
             extra_hdr = ALWAYS_BASE_HDR[secb]
             a0, a1 = (lits[2], lits[3]) if is_minus else (lits[0], lits[1])
         elif secb == "STBox" and len(plist) == 3 and plist[2] == ("bool", False):
-            if tsub == "tnpoint":
-                return None, "tnpoint stbox restriction needs network-SRID box"
             extra = dict(kind="box", box_type="STBox", parser="stbox_in", header="meos_geo.h")
-            far = f"{srid}STBOX X((40,40),(60,60))"
-            near = f"{srid}STBOX X((0,0),(3,3))"
+            if tsub == "tnpoint":
+                # SRID 5676 network: the near box covers the resolved points
+                # (~48,77 / ~34,75), the far box misses them.
+                far = "SRID=5676;STBOX X((1000000,1000000),(2000000,2000000))"
+                near = "SRID=5676;STBOX X((0,0),(100,100))"
+            else:
+                far = f"{srid}STBOX X((40,40),(60,60))"
+                near = f"{srid}STBOX X((0,0),(3,3))"
             a0, a1 = (far, far) if is_minus else (near, near)
             eca = ["true"]                              # border_inc
         else:

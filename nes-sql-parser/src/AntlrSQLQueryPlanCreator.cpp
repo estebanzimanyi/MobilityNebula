@@ -2696,6 +2696,18 @@
 #if POSE
 #include <Functions/Meos/TdistanceTposeGeoLogicalFunction.hpp>
 #endif /* POSE */
+#if NPOINT
+#include <Functions/Meos/TnpointAtGeomLogicalFunction.hpp>
+#endif /* NPOINT */
+#if NPOINT
+#include <Functions/Meos/TnpointMinusGeomLogicalFunction.hpp>
+#endif /* NPOINT */
+#if NPOINT
+#include <Functions/Meos/TnpointAtStboxLogicalFunction.hpp>
+#endif /* NPOINT */
+#if NPOINT
+#include <Functions/Meos/TnpointMinusStboxLogicalFunction.hpp>
+#endif /* NPOINT */
 #include <Plans/LogicalPlan.hpp>
 #include <Plans/LogicalPlanBuilder.hpp>
 #include <Util/Overloaded.hpp>
@@ -54263,6 +54275,138 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         break;
         /* END CODEGEN GLUE: TDISTANCE_TPOSE_GEO */
 #endif /* POSE */
+        #if NPOINT
+/* BEGIN CODEGEN GLUE: TNPOINT_AT_GEOM */
+        case AntlrSQLLexer::TNPOINT_AT_GEOM:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 4)
+                throw InvalidQuerySyntax("TNPOINT_AT_GEOM requires exactly 4 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a3 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(TnpointAtGeomLogicalFunction(a0, a1, a2, a3));
+        }
+        break;
+        /* END CODEGEN GLUE: TNPOINT_AT_GEOM */
+#endif /* NPOINT */
+
+        #if NPOINT
+/* BEGIN CODEGEN GLUE: TNPOINT_MINUS_GEOM */
+        case AntlrSQLLexer::TNPOINT_MINUS_GEOM:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 4)
+                throw InvalidQuerySyntax("TNPOINT_MINUS_GEOM requires exactly 4 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a3 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(TnpointMinusGeomLogicalFunction(a0, a1, a2, a3));
+        }
+        break;
+        /* END CODEGEN GLUE: TNPOINT_MINUS_GEOM */
+#endif /* NPOINT */
+
+        #if NPOINT
+/* BEGIN CODEGEN GLUE: TNPOINT_AT_STBOX */
+        case AntlrSQLLexer::TNPOINT_AT_STBOX:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 4)
+                throw InvalidQuerySyntax("TNPOINT_AT_STBOX requires exactly 4 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a3 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(TnpointAtStboxLogicalFunction(a0, a1, a2, a3));
+        }
+        break;
+        /* END CODEGEN GLUE: TNPOINT_AT_STBOX */
+#endif /* NPOINT */
+
+        #if NPOINT
+/* BEGIN CODEGEN GLUE: TNPOINT_MINUS_STBOX */
+        case AntlrSQLLexer::TNPOINT_MINUS_STBOX:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 4)
+                throw InvalidQuerySyntax("TNPOINT_MINUS_STBOX requires exactly 4 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a3 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(TnpointMinusStboxLogicalFunction(a0, a1, a2, a3));
+        }
+        break;
+        /* END CODEGEN GLUE: TNPOINT_MINUS_STBOX */
+#endif /* NPOINT */
+
 
 
 

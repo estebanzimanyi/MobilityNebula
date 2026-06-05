@@ -1750,3 +1750,7 @@ add_plugin(StboxarrRound LogicalFunction nes-logical-operators StboxarrRoundLogi
 add_plugin(TnpointPositions LogicalFunction nes-logical-operators TnpointPositionsLogicalFunction.cpp)
 add_plugin(TdistanceTnpointGeo LogicalFunction nes-logical-operators TdistanceTnpointGeoLogicalFunction.cpp)
 add_plugin(TdistanceTposeGeo LogicalFunction nes-logical-operators TdistanceTposeGeoLogicalFunction.cpp)
+add_plugin(TnpointAtGeom LogicalFunction nes-logical-operators TnpointAtGeomLogicalFunction.cpp)
+add_plugin(TnpointMinusGeom LogicalFunction nes-logical-operators TnpointMinusGeomLogicalFunction.cpp)
+add_plugin(TnpointAtStbox LogicalFunction nes-logical-operators TnpointAtStboxLogicalFunction.cpp)
+add_plugin(TnpointMinusStbox LogicalFunction nes-logical-operators TnpointMinusStboxLogicalFunction.cpp)
