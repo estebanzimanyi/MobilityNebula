@@ -29,7 +29,7 @@ import re
 import subprocess
 import sys
 
-IMAGE_DEFAULT = "localhost/nes-development:mobilitynebula-v6"
+IMAGE_DEFAULT = "localhost/nes-development:mobilitynebula-v12"
 BUILD_DIR_DEFAULT = "build-w15"
 PASS_MARK = "All queries passed"
 SEP = "----"
@@ -65,13 +65,31 @@ def parse_actual_rows(output):
         if not m:
             continue
         act = m.group("act").strip()
+        # Skip the result-table header ("Expected Results(Sorted) | Actual Results(Sorted)").
+        if act.startswith("Actual Results"):
+            continue
         # Skip schema-mismatch / explanatory notes (e.g. "... (expected sink ...)").
-        if "(" in act and ")" in act:
+        # MEOS value literals also carry parentheses (NPoint(1 0.5), STBOX(...),
+        # {NSegment(...)}), so only drop a paren-bearing line when its text reads
+        # like an English explanatory note, not a recordable value.
+        low = act.lower()
+        NOTE_MARKERS = ("expected", "schema", "sink", "unsupported", "mismatch",
+                        "error", "cannot", "unknown", "no such", "unable")
+        if "(" in act and ")" in act and any(k in low for k in NOTE_MARKERS):
             continue
         fields = act.split()
         if not fields or all(f == "_" for f in fields):
             continue
-        rows.append(",".join(fields))
+        # Temporal values print as "<id> <value>@<timestamp>", where the trailing
+        # timestamp carries internal spaces (e.g. "2021-01-01 00:00:00+00") that
+        # the systest comparison preserves. Commas join the top-level fields and
+        # any value sub-parts (NPoint(1 0.5) -> NPoint(1,0.5)) BEFORE the '@', but
+        # the timestamp keeps its spaces. Rows with no '@' are plain comma-joins.
+        at = act.find("@")
+        if at != -1:
+            rows.append(",".join(act[:at].split()) + "@" + act[at + 1:].strip())
+        else:
+            rows.append(",".join(fields))
     return rows or None
 
 
