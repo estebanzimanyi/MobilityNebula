@@ -3143,6 +3143,22 @@ GENERIC_INPUTS = {
         '                while (!{var}S.empty() && ({var}S.back()==\'\\\'\' || {var}S.back()==\'"\')) {var}S.pop_back();\n'
         '                STBox* {var} = stbox_in({var}S.c_str());\n'
         '                if (!{var}) return {z};\n')),
+    # A PostGIS BOX3D / GBOX text literal parsed via box3d_in / gbox_in (the
+    # inverses of box3d_out / gbox_out). Primary input of the reverse box
+    # conversions box3d_to_stbox / gbox_to_stbox. Same VARSIZED + quote-strip
+    # shape as stbox_text, only the parser and pointer type differ.
+    "box3d_text": dict(fields=[("box", "VariableSizedData")], header="meos_geo.h", build=(
+        '                std::string {var}S(boxPtr, boxSize);\n'
+        '                while (!{var}S.empty() && ({var}S.front()==\'\\\'\' || {var}S.front()==\'"\')) {var}S.erase({var}S.begin());\n'
+        '                while (!{var}S.empty() && ({var}S.back()==\'\\\'\' || {var}S.back()==\'"\')) {var}S.pop_back();\n'
+        '                BOX3D* {var} = box3d_in({var}S.c_str());\n'
+        '                if (!{var}) return {z};\n')),
+    "gbox_text": dict(fields=[("box", "VariableSizedData")], header="meos_geo.h", build=(
+        '                std::string {var}S(boxPtr, boxSize);\n'
+        '                while (!{var}S.empty() && ({var}S.front()==\'\\\'\' || {var}S.front()==\'"\')) {var}S.erase({var}S.begin());\n'
+        '                while (!{var}S.empty() && ({var}S.back()==\'\\\'\' || {var}S.back()==\'"\')) {var}S.pop_back();\n'
+        '                GBOX* {var} = gbox_in({var}S.c_str());\n'
+        '                if (!{var}) return {z};\n')),
     # First operand of a set/span/spanset/box-algebra predicate, parsed from a
     # VARSIZED text literal via a typed single-arg parser. The second operand is
     # a `box` extra arg with the matching parser. Concrete (int/bigint/date)

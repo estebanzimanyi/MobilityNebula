@@ -224,6 +224,7 @@ bigintspanset_lower	proven
 bigintspanset_shift_scale	proven
 bigintspanset_upper	proven
 bigintspanset_width	proven
+box3d_to_stbox	proven
 cbuffer_cmp	proven
 cbuffer_copy	proven
 cbuffer_eq	proven
@@ -573,6 +574,7 @@ front_stbox_stbox	proven
 front_stbox_tspatial	proven
 front_tspatial_stbox	proven
 front_tspatial_tspatial	proven
+gbox_to_stbox	proven
 geo_cluster_dbscan	proven
 geo_cluster_intersecting	proven
 geo_cluster_kmeans	proven

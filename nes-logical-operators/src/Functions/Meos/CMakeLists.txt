@@ -1771,3 +1771,5 @@ add_plugin(TrgeometryTraversedArea LogicalFunction nes-logical-operators Trgeome
 add_plugin(TcbufferTraversedArea LogicalFunction nes-logical-operators TcbufferTraversedAreaLogicalFunction.cpp)
 add_plugin(StboxToBox3d LogicalFunction nes-logical-operators StboxToBox3dLogicalFunction.cpp)
 add_plugin(StboxToGbox LogicalFunction nes-logical-operators StboxToGboxLogicalFunction.cpp)
+add_plugin(Box3dToStbox LogicalFunction nes-logical-operators Box3dToStboxLogicalFunction.cpp)
+add_plugin(GboxToStbox LogicalFunction nes-logical-operators GboxToStboxLogicalFunction.cpp)

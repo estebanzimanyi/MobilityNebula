@@ -1387,3 +1387,5 @@ add_plugin(SpatialsetSrid PhysicalFunction nes-physical-operators SpatialsetSrid
 add_plugin(TgeoTraversedArea PhysicalFunction nes-physical-operators TgeoTraversedAreaPhysicalFunction.cpp)
 add_plugin(StboxToBox3d PhysicalFunction nes-physical-operators StboxToBox3dPhysicalFunction.cpp)
 add_plugin(StboxToGbox PhysicalFunction nes-physical-operators StboxToGboxPhysicalFunction.cpp)
+add_plugin(Box3dToStbox PhysicalFunction nes-physical-operators Box3dToStboxPhysicalFunction.cpp)
+add_plugin(GboxToStbox PhysicalFunction nes-physical-operators GboxToStboxPhysicalFunction.cpp)
