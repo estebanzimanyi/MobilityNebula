@@ -1315,9 +1315,11 @@ tdistance_tfloat_float	proven
 tdistance_tgeo_geo	proven
 tdistance_tgeo_tgeo	proven
 tdistance_tint_int	proven
+tdistance_tnpoint_geo	proven
 tdistance_tnpoint_npoint	proven
 tdistance_tnpoint_tnpoint	proven
 tdistance_tnumber_tnumber	proven
+tdistance_tpose_geo	proven
 tdistance_tpose_pose	proven
 tdistance_tpose_tpose	proven
 tdistance_trgeometry_geo	wired

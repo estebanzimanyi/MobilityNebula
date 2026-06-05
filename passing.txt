@@ -1300,9 +1300,11 @@ tdistance_tfloat_float
 tdistance_tgeo_geo
 tdistance_tgeo_tgeo
 tdistance_tint_int
+tdistance_tnpoint_geo
 tdistance_tnpoint_npoint
 tdistance_tnpoint_tnpoint
 tdistance_tnumber_tnumber
+tdistance_tpose_geo
 tdistance_tpose_pose
 tdistance_tpose_tpose
 tdwithin_tcbuffer_cbuffer
