@@ -185,6 +185,16 @@
 #include <Aggregation/Function/Meos/Pose/PosesetMakeAggregationPhysicalFunction.hpp>
 #endif
 #include <Aggregation/Function/Meos/GeosetMakeAggregationPhysicalFunction.hpp>
+#include <Aggregation/Function/Meos/GeoCollectGarrayAggregationPhysicalFunction.hpp>
+#include <Aggregation/Function/Meos/GeoMakelineGarrayAggregationPhysicalFunction.hpp>
+#include <Aggregation/Function/Meos/GeomArrayUnionAggregationPhysicalFunction.hpp>
+#if CBUFFER
+#include <Aggregation/Function/Meos/Cbuffer/CbufferarrToGeomAggregationPhysicalFunction.hpp>
+#endif
+#include <Operators/Windows/Aggregations/Meos/GeoCollectGarrayAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/GeoMakelineGarrayAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/GeomArrayUnionAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/CbufferarrToGeomAggregationLogicalFunction.hpp>
 #include <Operators/Windows/Aggregations/Meos/TextsetMakeAggregationLogicalFunction.hpp>
 #include <Operators/Windows/Aggregations/Meos/CbuffersetMakeAggregationLogicalFunction.hpp>
 #include <Operators/Windows/Aggregations/Meos/NpointsetMakeAggregationLogicalFunction.hpp>
@@ -3356,6 +3366,112 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             continue;
         }
         /* END CODEGEN GLUE: GeosetMake (optimizer lowering) */
+        /* BEGIN CODEGEN GLUE: GeoCollectGarray (optimizer lowering) */
+        if (name == std::string_view("GeoCollectGarray"))
+        {
+            auto specificDescriptor = std::dynamic_pointer_cast<GeoCollectGarrayAggregationLogicalFunction>(descriptor);
+            INVARIANT(specificDescriptor != nullptr, "Expected GeoCollectGarrayAggregationLogicalFunction for GeoCollectGarray");
+
+            auto valuePF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getValueField());
+            auto tsPF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getTimestampField());
+
+            Schema stateSchema;
+            stateSchema.addField("value", specificDescriptor->getValueField().getDataType());
+            stateSchema.addField("timestamp", specificDescriptor->getTimestampField().getDataType());
+            auto tupleBufferRef = Interface::BufferRef::TupleBufferRef::create(configuration.pageSize.getValue(), stateSchema);
+
+            auto phys = std::make_shared<GeoCollectGarrayAggregationPhysicalFunction>(
+                std::move(physicalInputType),
+                std::move(physicalFinalType),
+                valuePF,
+                tsPF,
+                resultFieldIdentifier,
+                tupleBufferRef);
+            aggregationPhysicalFunctions.push_back(std::move(phys));
+            continue;
+        }
+        /* END CODEGEN GLUE: GeoCollectGarray (optimizer lowering) */
+
+        /* BEGIN CODEGEN GLUE: GeoMakelineGarray (optimizer lowering) */
+        if (name == std::string_view("GeoMakelineGarray"))
+        {
+            auto specificDescriptor = std::dynamic_pointer_cast<GeoMakelineGarrayAggregationLogicalFunction>(descriptor);
+            INVARIANT(specificDescriptor != nullptr, "Expected GeoMakelineGarrayAggregationLogicalFunction for GeoMakelineGarray");
+
+            auto valuePF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getValueField());
+            auto tsPF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getTimestampField());
+
+            Schema stateSchema;
+            stateSchema.addField("value", specificDescriptor->getValueField().getDataType());
+            stateSchema.addField("timestamp", specificDescriptor->getTimestampField().getDataType());
+            auto tupleBufferRef = Interface::BufferRef::TupleBufferRef::create(configuration.pageSize.getValue(), stateSchema);
+
+            auto phys = std::make_shared<GeoMakelineGarrayAggregationPhysicalFunction>(
+                std::move(physicalInputType),
+                std::move(physicalFinalType),
+                valuePF,
+                tsPF,
+                resultFieldIdentifier,
+                tupleBufferRef);
+            aggregationPhysicalFunctions.push_back(std::move(phys));
+            continue;
+        }
+        /* END CODEGEN GLUE: GeoMakelineGarray (optimizer lowering) */
+
+        /* BEGIN CODEGEN GLUE: GeomArrayUnion (optimizer lowering) */
+        if (name == std::string_view("GeomArrayUnion"))
+        {
+            auto specificDescriptor = std::dynamic_pointer_cast<GeomArrayUnionAggregationLogicalFunction>(descriptor);
+            INVARIANT(specificDescriptor != nullptr, "Expected GeomArrayUnionAggregationLogicalFunction for GeomArrayUnion");
+
+            auto valuePF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getValueField());
+            auto tsPF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getTimestampField());
+
+            Schema stateSchema;
+            stateSchema.addField("value", specificDescriptor->getValueField().getDataType());
+            stateSchema.addField("timestamp", specificDescriptor->getTimestampField().getDataType());
+            auto tupleBufferRef = Interface::BufferRef::TupleBufferRef::create(configuration.pageSize.getValue(), stateSchema);
+
+            auto phys = std::make_shared<GeomArrayUnionAggregationPhysicalFunction>(
+                std::move(physicalInputType),
+                std::move(physicalFinalType),
+                valuePF,
+                tsPF,
+                resultFieldIdentifier,
+                tupleBufferRef);
+            aggregationPhysicalFunctions.push_back(std::move(phys));
+            continue;
+        }
+        /* END CODEGEN GLUE: GeomArrayUnion (optimizer lowering) */
+
+#if CBUFFER
+        /* BEGIN CODEGEN GLUE: CbufferarrToGeom (optimizer lowering) */
+        if (name == std::string_view("CbufferarrToGeom"))
+        {
+            auto specificDescriptor = std::dynamic_pointer_cast<CbufferarrToGeomAggregationLogicalFunction>(descriptor);
+            INVARIANT(specificDescriptor != nullptr, "Expected CbufferarrToGeomAggregationLogicalFunction for CbufferarrToGeom");
+
+            auto valuePF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getValueField());
+            auto tsPF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getTimestampField());
+
+            Schema stateSchema;
+            stateSchema.addField("value", specificDescriptor->getValueField().getDataType());
+            stateSchema.addField("timestamp", specificDescriptor->getTimestampField().getDataType());
+            auto tupleBufferRef = Interface::BufferRef::TupleBufferRef::create(configuration.pageSize.getValue(), stateSchema);
+
+            auto phys = std::make_shared<CbufferarrToGeomAggregationPhysicalFunction>(
+                std::move(physicalInputType),
+                std::move(physicalFinalType),
+                valuePF,
+                tsPF,
+                resultFieldIdentifier,
+                tupleBufferRef);
+            aggregationPhysicalFunctions.push_back(std::move(phys));
+            continue;
+        }
+        /* END CODEGEN GLUE: CbufferarrToGeom (optimizer lowering) */
+
+#endif
 
 
 

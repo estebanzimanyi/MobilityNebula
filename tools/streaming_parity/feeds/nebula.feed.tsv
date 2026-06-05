@@ -253,6 +253,7 @@ cbuffer_transform_pipeline	proven
 cbuffer_tstzspan_to_stbox	proven
 cbuffer_union_transfn	proven
 cbufferarr_round	proven
+cbufferarr_to_geom	proven
 cbufferset_end_value	proven
 cbufferset_make	proven
 cbufferset_start_value	proven
@@ -583,11 +584,13 @@ geo_cluster_dbscan	proven
 geo_cluster_intersecting	proven
 geo_cluster_kmeans	proven
 geo_cluster_within	proven
+geo_collect_garray	proven
 geo_copy	proven
 geo_equals	proven
 geo_geo_n	proven
 geo_is_empty	proven
 geo_is_unitary	proven
+geo_makeline_garray	proven
 geo_num_geos	proven
 geo_num_points	proven
 geo_points	proven
@@ -615,6 +618,7 @@ geog_intersects	proven
 geog_length	proven
 geog_perimeter	proven
 geog_to_geom	proven
+geom_array_union	proven
 geom_azimuth	proven
 geom_boundary	proven
 geom_buffer	proven

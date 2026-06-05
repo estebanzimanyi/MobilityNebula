@@ -197,6 +197,12 @@
 #include <Operators/Windows/Aggregations/Meos/PosesetMakeAggregationLogicalFunction.hpp>
 #endif /* POSE */
 #include <Operators/Windows/Aggregations/Meos/GeosetMakeAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/GeoCollectGarrayAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/GeoMakelineGarrayAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/GeomArrayUnionAggregationLogicalFunction.hpp>
+#if CBUFFER
+#include <Operators/Windows/Aggregations/Meos/CbufferarrToGeomAggregationLogicalFunction.hpp>
+#endif /* CBUFFER */
 #include <Functions/Meos/TemporalIntersectsGeometryLogicalFunction.hpp>
 #include <Functions/Meos/AintersectsTgeoGeoLogicalFunction.hpp>
 #include <Functions/Meos/EdwithinTgeoGeoLogicalFunction.hpp>
@@ -58401,6 +58407,108 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             }
             break;
         /* END CODEGEN GLUE: GEOSET_MAKE (case-switch) */
+        /* BEGIN CODEGEN GLUE: GEO_COLLECT_GARRAY (case-switch) */
+        case AntlrSQLLexer::GEO_COLLECT_GARRAY:
+            // geo_collect_garray (GSERIALIZED *) - the geometry collection built from a window of geometry values.
+            if (helpers.top().functionBuilder.size() != 2) {
+                throw InvalidQuerySyntax("GEO_COLLECT_GARRAY requires exactly two arguments (value, timestamp), but got {}", helpers.top().functionBuilder.size());
+            }
+            {
+                const auto timestampFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto valueFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+
+                if (!valueFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
+                    throw InvalidQuerySyntax("GEO_COLLECT_GARRAY arguments must be field references");
+                }
+
+                helpers.top().windowAggs.push_back(
+                    GeoCollectGarrayAggregationLogicalFunction::create(valueFunction.get<FieldAccessLogicalFunction>(),
+                                                                    timestampFunction.get<FieldAccessLogicalFunction>()));
+                helpers.top().functionBuilder.push_back(valueFunction);
+            }
+            break;
+        /* END CODEGEN GLUE: GEO_COLLECT_GARRAY (case-switch) */
+
+        /* BEGIN CODEGEN GLUE: GEO_MAKELINE_GARRAY (case-switch) */
+        case AntlrSQLLexer::GEO_MAKELINE_GARRAY:
+            // geo_makeline_garray (GSERIALIZED *) - the line built from a window of point values.
+            if (helpers.top().functionBuilder.size() != 2) {
+                throw InvalidQuerySyntax("GEO_MAKELINE_GARRAY requires exactly two arguments (value, timestamp), but got {}", helpers.top().functionBuilder.size());
+            }
+            {
+                const auto timestampFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto valueFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+
+                if (!valueFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
+                    throw InvalidQuerySyntax("GEO_MAKELINE_GARRAY arguments must be field references");
+                }
+
+                helpers.top().windowAggs.push_back(
+                    GeoMakelineGarrayAggregationLogicalFunction::create(valueFunction.get<FieldAccessLogicalFunction>(),
+                                                                    timestampFunction.get<FieldAccessLogicalFunction>()));
+                helpers.top().functionBuilder.push_back(valueFunction);
+            }
+            break;
+        /* END CODEGEN GLUE: GEO_MAKELINE_GARRAY (case-switch) */
+
+        /* BEGIN CODEGEN GLUE: GEOM_ARRAY_UNION (case-switch) */
+        case AntlrSQLLexer::GEOM_ARRAY_UNION:
+            // geom_array_union (GSERIALIZED *) - the union built from a window of geometry values.
+            if (helpers.top().functionBuilder.size() != 2) {
+                throw InvalidQuerySyntax("GEOM_ARRAY_UNION requires exactly two arguments (value, timestamp), but got {}", helpers.top().functionBuilder.size());
+            }
+            {
+                const auto timestampFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto valueFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+
+                if (!valueFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
+                    throw InvalidQuerySyntax("GEOM_ARRAY_UNION arguments must be field references");
+                }
+
+                helpers.top().windowAggs.push_back(
+                    GeomArrayUnionAggregationLogicalFunction::create(valueFunction.get<FieldAccessLogicalFunction>(),
+                                                                    timestampFunction.get<FieldAccessLogicalFunction>()));
+                helpers.top().functionBuilder.push_back(valueFunction);
+            }
+            break;
+        /* END CODEGEN GLUE: GEOM_ARRAY_UNION (case-switch) */
+
+        #if CBUFFER
+/* BEGIN CODEGEN GLUE: CBUFFERARR_TO_GEOM (case-switch) */
+        case AntlrSQLLexer::CBUFFERARR_TO_GEOM:
+            // cbufferarr_to_geom (GSERIALIZED *) - the geometry built from a window of cbuffer values.
+            if (helpers.top().functionBuilder.size() != 2) {
+                throw InvalidQuerySyntax("CBUFFERARR_TO_GEOM requires exactly two arguments (value, timestamp), but got {}", helpers.top().functionBuilder.size());
+            }
+            {
+                const auto timestampFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto valueFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+
+                if (!valueFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
+                    throw InvalidQuerySyntax("CBUFFERARR_TO_GEOM arguments must be field references");
+                }
+
+                helpers.top().windowAggs.push_back(
+                    CbufferarrToGeomAggregationLogicalFunction::create(valueFunction.get<FieldAccessLogicalFunction>(),
+                                                                    timestampFunction.get<FieldAccessLogicalFunction>()));
+                helpers.top().functionBuilder.push_back(valueFunction);
+            }
+            break;
+        /* END CODEGEN GLUE: CBUFFERARR_TO_GEOM (case-switch) */
+#endif /* CBUFFER */
+
 
 
 
@@ -60185,6 +60293,68 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
                 helpers.top().windowAggs.push_back(GeosetMakeAggregationLogicalFunction::create(value, ts));
             }
             /* END CODEGEN GLUE: GEOSET_MAKE (funcName chain) */
+            /* BEGIN CODEGEN GLUE: GEO_COLLECT_GARRAY (funcName chain) */
+            else if (funcName == "GEO_COLLECT_GARRAY")
+            {
+                if (helpers.top().functionBuilder.size() < 2)
+                {
+                    throw InvalidQuerySyntax("GEO_COLLECT_GARRAY requires two arguments at {}", context->getText());
+                }
+                const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto value = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                helpers.top().windowAggs.push_back(GeoCollectGarrayAggregationLogicalFunction::create(value, ts));
+            }
+            /* END CODEGEN GLUE: GEO_COLLECT_GARRAY (funcName chain) */
+
+            /* BEGIN CODEGEN GLUE: GEO_MAKELINE_GARRAY (funcName chain) */
+            else if (funcName == "GEO_MAKELINE_GARRAY")
+            {
+                if (helpers.top().functionBuilder.size() < 2)
+                {
+                    throw InvalidQuerySyntax("GEO_MAKELINE_GARRAY requires two arguments at {}", context->getText());
+                }
+                const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto value = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                helpers.top().windowAggs.push_back(GeoMakelineGarrayAggregationLogicalFunction::create(value, ts));
+            }
+            /* END CODEGEN GLUE: GEO_MAKELINE_GARRAY (funcName chain) */
+
+            /* BEGIN CODEGEN GLUE: GEOM_ARRAY_UNION (funcName chain) */
+            else if (funcName == "GEOM_ARRAY_UNION")
+            {
+                if (helpers.top().functionBuilder.size() < 2)
+                {
+                    throw InvalidQuerySyntax("GEOM_ARRAY_UNION requires two arguments at {}", context->getText());
+                }
+                const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto value = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                helpers.top().windowAggs.push_back(GeomArrayUnionAggregationLogicalFunction::create(value, ts));
+            }
+            /* END CODEGEN GLUE: GEOM_ARRAY_UNION (funcName chain) */
+
+            #if CBUFFER
+/* BEGIN CODEGEN GLUE: CBUFFERARR_TO_GEOM (funcName chain) */
+            else if (funcName == "CBUFFERARR_TO_GEOM")
+            {
+                if (helpers.top().functionBuilder.size() < 2)
+                {
+                    throw InvalidQuerySyntax("CBUFFERARR_TO_GEOM requires two arguments at {}", context->getText());
+                }
+                const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto value = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                helpers.top().windowAggs.push_back(CbufferarrToGeomAggregationLogicalFunction::create(value, ts));
+            }
+            /* END CODEGEN GLUE: CBUFFERARR_TO_GEOM (funcName chain) */
+#endif /* CBUFFER */
+
 
 
 
