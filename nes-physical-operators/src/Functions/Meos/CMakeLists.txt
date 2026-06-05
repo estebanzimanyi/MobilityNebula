@@ -1382,3 +1382,6 @@ add_plugin(TboolWhenTrue PhysicalFunction nes-physical-operators TboolWhenTruePh
 add_plugin(StboxExpandSpace PhysicalFunction nes-physical-operators StboxExpandSpacePhysicalFunction.cpp)
 add_plugin(TfloatboxExpand PhysicalFunction nes-physical-operators TfloatboxExpandPhysicalFunction.cpp)
 add_plugin(TintboxExpand PhysicalFunction nes-physical-operators TintboxExpandPhysicalFunction.cpp)
+add_plugin(TspatialToStbox PhysicalFunction nes-physical-operators TspatialToStboxPhysicalFunction.cpp)
+add_plugin(SpatialsetSrid PhysicalFunction nes-physical-operators SpatialsetSridPhysicalFunction.cpp)
+add_plugin(TgeoTraversedArea PhysicalFunction nes-physical-operators TgeoTraversedAreaPhysicalFunction.cpp)

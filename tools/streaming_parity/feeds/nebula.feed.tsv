@@ -813,6 +813,7 @@ nad_tpose_pose	proven
 nad_tpose_stbox	proven
 nad_tpose_tpose	proven
 nad_trgeometry_geo	proven
+nad_trgeometry_stbox	proven
 nad_trgeometry_trgeometry	proven
 nai_tcbuffer_cbuffer	proven
 nai_tcbuffer_geo	proven
@@ -1180,6 +1181,7 @@ spanset_type	proven
 spanset_union_finalfn	proven
 spanset_union_transfn	proven
 spanset_upper_inc	proven
+spatialset_srid	proven
 spatialset_to_stbox	proven
 spatialset_type	proven
 stbox_area	proven
@@ -1288,6 +1290,7 @@ tcbuffer_points	proven
 tcbuffer_radius	wired
 tcbuffer_to_tfloat	proven
 tcbuffer_to_tgeompoint	proven
+tcbuffer_traversed_area	proven
 tcontains_cbuffer_tcbuffer	proven
 tcontains_geo_tcbuffer	proven
 tcontains_geo_tgeo	proven
@@ -1508,6 +1511,7 @@ tgeo_split_each_n_stboxes	proven
 tgeo_split_n_stboxes	proven
 tgeo_start_value	proven
 tgeo_stboxes	proven
+tgeo_traversed_area	proven
 tgeo_type	proven
 tgeo_type_all	proven
 tgeo_value_at_timestamptz	proven
@@ -1716,10 +1720,12 @@ trgeometry_start_value	proven
 trgeometry_to_tinstant	proven
 trgeometry_to_tpoint	proven
 trgeometry_to_tpose	proven
+trgeometry_traversed_area	proven
 trgeometry_value_n	proven
 tspatial_extent_transfn	proven
 tspatial_set_srid	proven
 tspatial_srid	proven
+tspatial_to_stbox	proven
 tspatial_transform	proven
 tspatial_transform_pipeline	proven
 tspatial_type	proven
