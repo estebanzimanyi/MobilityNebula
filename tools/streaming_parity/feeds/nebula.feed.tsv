@@ -1186,6 +1186,7 @@ stbox_area	proven
 stbox_cmp	proven
 stbox_copy	proven
 stbox_eq	proven
+stbox_expand_space	proven
 stbox_expand_time	proven
 stbox_ge	proven
 stbox_get_space	proven
@@ -1243,6 +1244,7 @@ tbool_tor_transfn	proven
 tbool_value_at_timestamptz	proven
 tbool_value_n	proven
 tbool_values	proven
+tbool_when_true	proven
 tboolinst_make	proven
 tbox_cmp	proven
 tbox_copy	proven
@@ -1278,10 +1280,12 @@ tboxint_xmin	proven
 tcbuffer_at_cbuffer	proven
 tcbuffer_at_geom	proven
 tcbuffer_at_stbox	proven
+tcbuffer_expand	proven
 tcbuffer_minus_cbuffer	proven
 tcbuffer_minus_geom	proven
 tcbuffer_minus_stbox	proven
 tcbuffer_points	proven
+tcbuffer_radius	wired
 tcbuffer_to_tfloat	proven
 tcbuffer_to_tgeompoint	proven
 tcontains_cbuffer_tcbuffer	proven
@@ -1429,9 +1433,12 @@ text_cmp	proven
 text_copy	proven
 text_initcap	proven
 text_lower	proven
+text_to_set	proven
 text_union_transfn	proven
 text_upper	proven
+textcat_text_text	proven
 textcat_text_ttext	proven
+textcat_textset_text	proven
 textcat_ttext_text	proven
 textcat_ttext_ttext	proven
 textset_end_value	proven
@@ -1474,6 +1481,7 @@ tfloat_values	proven
 tfloat_wmax_transfn	proven
 tfloat_wmin_transfn	proven
 tfloat_wsum_transfn	proven
+tfloatbox_expand	proven
 tfloatbox_shift_scale	proven
 tfloatinst_make	proven
 tge_float_tfloat	proven
@@ -1565,6 +1573,7 @@ tint_values	proven
 tint_wmax_transfn	proven
 tint_wmin_transfn	proven
 tint_wsum_transfn	proven
+tintbox_expand	proven
 tintbox_shift_scale	proven
 tintersects_cbuffer_tcbuffer	proven
 tintersects_geo_tcbuffer	proven
