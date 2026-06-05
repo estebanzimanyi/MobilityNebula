@@ -174,6 +174,22 @@
 #include <Aggregation/Function/Meos/TemporalStartSequenceAggregationPhysicalFunction.hpp>
 #include <Aggregation/Function/Meos/TemporalEndSequenceAggregationPhysicalFunction.hpp>
 #include <Aggregation/Function/Meos/TemporalSequenceNAggregationPhysicalFunction.hpp>
+#include <Aggregation/Function/Meos/TextsetMakeAggregationPhysicalFunction.hpp>
+#if CBUFFER
+#include <Aggregation/Function/Meos/Cbuffer/CbuffersetMakeAggregationPhysicalFunction.hpp>
+#endif
+#if NPOINT
+#include <Aggregation/Function/Meos/Npoint/NpointsetMakeAggregationPhysicalFunction.hpp>
+#endif
+#if POSE
+#include <Aggregation/Function/Meos/Pose/PosesetMakeAggregationPhysicalFunction.hpp>
+#endif
+#include <Aggregation/Function/Meos/GeosetMakeAggregationPhysicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TextsetMakeAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/CbuffersetMakeAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/NpointsetMakeAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/PosesetMakeAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/GeosetMakeAggregationLogicalFunction.hpp>
 #include <Operators/Windows/Aggregations/Meos/TemporalStartSequenceAggregationLogicalFunction.hpp>
 #include <Operators/Windows/Aggregations/Meos/TemporalEndSequenceAggregationLogicalFunction.hpp>
 #include <Operators/Windows/Aggregations/Meos/TemporalSequenceNAggregationLogicalFunction.hpp>
@@ -3205,6 +3221,142 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             continue;
         }
         /* END CODEGEN GLUE: TemporalSequenceN (optimizer lowering) */
+        /* BEGIN CODEGEN GLUE: TextsetMake (optimizer lowering) */
+        if (name == std::string_view("TextsetMake"))
+        {
+            auto specificDescriptor = std::dynamic_pointer_cast<TextsetMakeAggregationLogicalFunction>(descriptor);
+            INVARIANT(specificDescriptor != nullptr, "Expected TextsetMakeAggregationLogicalFunction for TextsetMake");
+
+            auto valuePF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getValueField());
+            auto tsPF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getTimestampField());
+
+            Schema stateSchema;
+            stateSchema.addField("value", specificDescriptor->getValueField().getDataType());
+            stateSchema.addField("timestamp", specificDescriptor->getTimestampField().getDataType());
+            auto tupleBufferRef = Interface::BufferRef::TupleBufferRef::create(configuration.pageSize.getValue(), stateSchema);
+
+            auto phys = std::make_shared<TextsetMakeAggregationPhysicalFunction>(
+                std::move(physicalInputType),
+                std::move(physicalFinalType),
+                valuePF,
+                tsPF,
+                resultFieldIdentifier,
+                tupleBufferRef);
+            aggregationPhysicalFunctions.push_back(std::move(phys));
+            continue;
+        }
+        /* END CODEGEN GLUE: TextsetMake (optimizer lowering) */
+
+#if CBUFFER
+        /* BEGIN CODEGEN GLUE: CbuffersetMake (optimizer lowering) */
+        if (name == std::string_view("CbuffersetMake"))
+        {
+            auto specificDescriptor = std::dynamic_pointer_cast<CbuffersetMakeAggregationLogicalFunction>(descriptor);
+            INVARIANT(specificDescriptor != nullptr, "Expected CbuffersetMakeAggregationLogicalFunction for CbuffersetMake");
+
+            auto valuePF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getValueField());
+            auto tsPF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getTimestampField());
+
+            Schema stateSchema;
+            stateSchema.addField("value", specificDescriptor->getValueField().getDataType());
+            stateSchema.addField("timestamp", specificDescriptor->getTimestampField().getDataType());
+            auto tupleBufferRef = Interface::BufferRef::TupleBufferRef::create(configuration.pageSize.getValue(), stateSchema);
+
+            auto phys = std::make_shared<CbuffersetMakeAggregationPhysicalFunction>(
+                std::move(physicalInputType),
+                std::move(physicalFinalType),
+                valuePF,
+                tsPF,
+                resultFieldIdentifier,
+                tupleBufferRef);
+            aggregationPhysicalFunctions.push_back(std::move(phys));
+            continue;
+        }
+        /* END CODEGEN GLUE: CbuffersetMake (optimizer lowering) */
+
+#endif
+#if NPOINT
+        /* BEGIN CODEGEN GLUE: NpointsetMake (optimizer lowering) */
+        if (name == std::string_view("NpointsetMake"))
+        {
+            auto specificDescriptor = std::dynamic_pointer_cast<NpointsetMakeAggregationLogicalFunction>(descriptor);
+            INVARIANT(specificDescriptor != nullptr, "Expected NpointsetMakeAggregationLogicalFunction for NpointsetMake");
+
+            auto valuePF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getValueField());
+            auto tsPF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getTimestampField());
+
+            Schema stateSchema;
+            stateSchema.addField("value", specificDescriptor->getValueField().getDataType());
+            stateSchema.addField("timestamp", specificDescriptor->getTimestampField().getDataType());
+            auto tupleBufferRef = Interface::BufferRef::TupleBufferRef::create(configuration.pageSize.getValue(), stateSchema);
+
+            auto phys = std::make_shared<NpointsetMakeAggregationPhysicalFunction>(
+                std::move(physicalInputType),
+                std::move(physicalFinalType),
+                valuePF,
+                tsPF,
+                resultFieldIdentifier,
+                tupleBufferRef);
+            aggregationPhysicalFunctions.push_back(std::move(phys));
+            continue;
+        }
+        /* END CODEGEN GLUE: NpointsetMake (optimizer lowering) */
+
+#endif
+#if POSE
+        /* BEGIN CODEGEN GLUE: PosesetMake (optimizer lowering) */
+        if (name == std::string_view("PosesetMake"))
+        {
+            auto specificDescriptor = std::dynamic_pointer_cast<PosesetMakeAggregationLogicalFunction>(descriptor);
+            INVARIANT(specificDescriptor != nullptr, "Expected PosesetMakeAggregationLogicalFunction for PosesetMake");
+
+            auto valuePF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getValueField());
+            auto tsPF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getTimestampField());
+
+            Schema stateSchema;
+            stateSchema.addField("value", specificDescriptor->getValueField().getDataType());
+            stateSchema.addField("timestamp", specificDescriptor->getTimestampField().getDataType());
+            auto tupleBufferRef = Interface::BufferRef::TupleBufferRef::create(configuration.pageSize.getValue(), stateSchema);
+
+            auto phys = std::make_shared<PosesetMakeAggregationPhysicalFunction>(
+                std::move(physicalInputType),
+                std::move(physicalFinalType),
+                valuePF,
+                tsPF,
+                resultFieldIdentifier,
+                tupleBufferRef);
+            aggregationPhysicalFunctions.push_back(std::move(phys));
+            continue;
+        }
+        /* END CODEGEN GLUE: PosesetMake (optimizer lowering) */
+
+#endif
+        /* BEGIN CODEGEN GLUE: GeosetMake (optimizer lowering) */
+        if (name == std::string_view("GeosetMake"))
+        {
+            auto specificDescriptor = std::dynamic_pointer_cast<GeosetMakeAggregationLogicalFunction>(descriptor);
+            INVARIANT(specificDescriptor != nullptr, "Expected GeosetMakeAggregationLogicalFunction for GeosetMake");
+
+            auto valuePF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getValueField());
+            auto tsPF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getTimestampField());
+
+            Schema stateSchema;
+            stateSchema.addField("value", specificDescriptor->getValueField().getDataType());
+            stateSchema.addField("timestamp", specificDescriptor->getTimestampField().getDataType());
+            auto tupleBufferRef = Interface::BufferRef::TupleBufferRef::create(configuration.pageSize.getValue(), stateSchema);
+
+            auto phys = std::make_shared<GeosetMakeAggregationPhysicalFunction>(
+                std::move(physicalInputType),
+                std::move(physicalFinalType),
+                valuePF,
+                tsPF,
+                resultFieldIdentifier,
+                tupleBufferRef);
+            aggregationPhysicalFunctions.push_back(std::move(phys));
+            continue;
+        }
+        /* END CODEGEN GLUE: GeosetMake (optimizer lowering) */
+
 
 
 

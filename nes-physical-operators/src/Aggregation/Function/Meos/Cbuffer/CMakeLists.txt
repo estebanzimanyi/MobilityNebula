@@ -1,1 +1,2 @@
 add_plugin(CbufferUnionTransfn AggregationPhysicalFunction nes-physical-operators CbufferUnionTransfnAggregationPhysicalFunction.cpp)
+add_plugin(CbuffersetMake AggregationPhysicalFunction nes-physical-operators CbuffersetMakeAggregationPhysicalFunction.cpp)

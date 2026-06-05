@@ -186,6 +186,17 @@
 #include <Operators/Windows/Aggregations/Meos/TemporalStartSequenceAggregationLogicalFunction.hpp>
 #include <Operators/Windows/Aggregations/Meos/TemporalEndSequenceAggregationLogicalFunction.hpp>
 #include <Operators/Windows/Aggregations/Meos/TemporalSequenceNAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TextsetMakeAggregationLogicalFunction.hpp>
+#if CBUFFER
+#include <Operators/Windows/Aggregations/Meos/CbuffersetMakeAggregationLogicalFunction.hpp>
+#endif /* CBUFFER */
+#if NPOINT
+#include <Operators/Windows/Aggregations/Meos/NpointsetMakeAggregationLogicalFunction.hpp>
+#endif /* NPOINT */
+#if POSE
+#include <Operators/Windows/Aggregations/Meos/PosesetMakeAggregationLogicalFunction.hpp>
+#endif /* POSE */
+#include <Operators/Windows/Aggregations/Meos/GeosetMakeAggregationLogicalFunction.hpp>
 #include <Functions/Meos/TemporalIntersectsGeometryLogicalFunction.hpp>
 #include <Functions/Meos/AintersectsTgeoGeoLogicalFunction.hpp>
 #include <Functions/Meos/EdwithinTgeoGeoLogicalFunction.hpp>
@@ -58260,6 +58271,137 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             }
             break;
         /* END CODEGEN GLUE: TEMPORAL_SEQUENCE_N (case-switch) */
+        /* BEGIN CODEGEN GLUE: TEXTSET_MAKE (case-switch) */
+        case AntlrSQLLexer::TEXTSET_MAKE:
+            // textset_make (Set *) - the text set collected from a window of text values.
+            if (helpers.top().functionBuilder.size() != 2) {
+                throw InvalidQuerySyntax("TEXTSET_MAKE requires exactly two arguments (value, timestamp), but got {}", helpers.top().functionBuilder.size());
+            }
+            {
+                const auto timestampFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto valueFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+
+                if (!valueFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
+                    throw InvalidQuerySyntax("TEXTSET_MAKE arguments must be field references");
+                }
+
+                helpers.top().windowAggs.push_back(
+                    TextsetMakeAggregationLogicalFunction::create(valueFunction.get<FieldAccessLogicalFunction>(),
+                                                                    timestampFunction.get<FieldAccessLogicalFunction>()));
+                helpers.top().functionBuilder.push_back(valueFunction);
+            }
+            break;
+        /* END CODEGEN GLUE: TEXTSET_MAKE (case-switch) */
+
+        #if CBUFFER
+/* BEGIN CODEGEN GLUE: CBUFFERSET_MAKE (case-switch) */
+        case AntlrSQLLexer::CBUFFERSET_MAKE:
+            // cbufferset_make (Set *) - the circular-buffer set collected from a window of cbuffer values.
+            if (helpers.top().functionBuilder.size() != 2) {
+                throw InvalidQuerySyntax("CBUFFERSET_MAKE requires exactly two arguments (value, timestamp), but got {}", helpers.top().functionBuilder.size());
+            }
+            {
+                const auto timestampFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto valueFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+
+                if (!valueFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
+                    throw InvalidQuerySyntax("CBUFFERSET_MAKE arguments must be field references");
+                }
+
+                helpers.top().windowAggs.push_back(
+                    CbuffersetMakeAggregationLogicalFunction::create(valueFunction.get<FieldAccessLogicalFunction>(),
+                                                                    timestampFunction.get<FieldAccessLogicalFunction>()));
+                helpers.top().functionBuilder.push_back(valueFunction);
+            }
+            break;
+        /* END CODEGEN GLUE: CBUFFERSET_MAKE (case-switch) */
+#endif /* CBUFFER */
+
+        #if NPOINT
+/* BEGIN CODEGEN GLUE: NPOINTSET_MAKE (case-switch) */
+        case AntlrSQLLexer::NPOINTSET_MAKE:
+            // npointset_make (Set *) - the network-point set collected from a window of npoint values.
+            if (helpers.top().functionBuilder.size() != 2) {
+                throw InvalidQuerySyntax("NPOINTSET_MAKE requires exactly two arguments (value, timestamp), but got {}", helpers.top().functionBuilder.size());
+            }
+            {
+                const auto timestampFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto valueFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+
+                if (!valueFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
+                    throw InvalidQuerySyntax("NPOINTSET_MAKE arguments must be field references");
+                }
+
+                helpers.top().windowAggs.push_back(
+                    NpointsetMakeAggregationLogicalFunction::create(valueFunction.get<FieldAccessLogicalFunction>(),
+                                                                    timestampFunction.get<FieldAccessLogicalFunction>()));
+                helpers.top().functionBuilder.push_back(valueFunction);
+            }
+            break;
+        /* END CODEGEN GLUE: NPOINTSET_MAKE (case-switch) */
+#endif /* NPOINT */
+
+        #if POSE
+/* BEGIN CODEGEN GLUE: POSESET_MAKE (case-switch) */
+        case AntlrSQLLexer::POSESET_MAKE:
+            // poseset_make (Set *) - the pose set collected from a window of pose values.
+            if (helpers.top().functionBuilder.size() != 2) {
+                throw InvalidQuerySyntax("POSESET_MAKE requires exactly two arguments (value, timestamp), but got {}", helpers.top().functionBuilder.size());
+            }
+            {
+                const auto timestampFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto valueFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+
+                if (!valueFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
+                    throw InvalidQuerySyntax("POSESET_MAKE arguments must be field references");
+                }
+
+                helpers.top().windowAggs.push_back(
+                    PosesetMakeAggregationLogicalFunction::create(valueFunction.get<FieldAccessLogicalFunction>(),
+                                                                    timestampFunction.get<FieldAccessLogicalFunction>()));
+                helpers.top().functionBuilder.push_back(valueFunction);
+            }
+            break;
+        /* END CODEGEN GLUE: POSESET_MAKE (case-switch) */
+#endif /* POSE */
+
+        /* BEGIN CODEGEN GLUE: GEOSET_MAKE (case-switch) */
+        case AntlrSQLLexer::GEOSET_MAKE:
+            // geoset_make (Set *) - the geometry set collected from a window of geometry values.
+            if (helpers.top().functionBuilder.size() != 2) {
+                throw InvalidQuerySyntax("GEOSET_MAKE requires exactly two arguments (value, timestamp), but got {}", helpers.top().functionBuilder.size());
+            }
+            {
+                const auto timestampFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto valueFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+
+                if (!valueFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
+                    throw InvalidQuerySyntax("GEOSET_MAKE arguments must be field references");
+                }
+
+                helpers.top().windowAggs.push_back(
+                    GeosetMakeAggregationLogicalFunction::create(valueFunction.get<FieldAccessLogicalFunction>(),
+                                                                    timestampFunction.get<FieldAccessLogicalFunction>()));
+                helpers.top().functionBuilder.push_back(valueFunction);
+            }
+            break;
+        /* END CODEGEN GLUE: GEOSET_MAKE (case-switch) */
+
 
 
 
@@ -59963,6 +60105,87 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
                 helpers.top().windowAggs.push_back(TemporalSequenceNAggregationLogicalFunction::create(lon, lat, ts));
             }
             /* END CODEGEN GLUE: TEMPORAL_SEQUENCE_N (funcName chain) */
+            /* BEGIN CODEGEN GLUE: TEXTSET_MAKE (funcName chain) */
+            else if (funcName == "TEXTSET_MAKE")
+            {
+                if (helpers.top().functionBuilder.size() < 2)
+                {
+                    throw InvalidQuerySyntax("TEXTSET_MAKE requires two arguments at {}", context->getText());
+                }
+                const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto value = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                helpers.top().windowAggs.push_back(TextsetMakeAggregationLogicalFunction::create(value, ts));
+            }
+            /* END CODEGEN GLUE: TEXTSET_MAKE (funcName chain) */
+
+            #if CBUFFER
+/* BEGIN CODEGEN GLUE: CBUFFERSET_MAKE (funcName chain) */
+            else if (funcName == "CBUFFERSET_MAKE")
+            {
+                if (helpers.top().functionBuilder.size() < 2)
+                {
+                    throw InvalidQuerySyntax("CBUFFERSET_MAKE requires two arguments at {}", context->getText());
+                }
+                const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto value = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                helpers.top().windowAggs.push_back(CbuffersetMakeAggregationLogicalFunction::create(value, ts));
+            }
+            /* END CODEGEN GLUE: CBUFFERSET_MAKE (funcName chain) */
+#endif /* CBUFFER */
+
+            #if NPOINT
+/* BEGIN CODEGEN GLUE: NPOINTSET_MAKE (funcName chain) */
+            else if (funcName == "NPOINTSET_MAKE")
+            {
+                if (helpers.top().functionBuilder.size() < 2)
+                {
+                    throw InvalidQuerySyntax("NPOINTSET_MAKE requires two arguments at {}", context->getText());
+                }
+                const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto value = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                helpers.top().windowAggs.push_back(NpointsetMakeAggregationLogicalFunction::create(value, ts));
+            }
+            /* END CODEGEN GLUE: NPOINTSET_MAKE (funcName chain) */
+#endif /* NPOINT */
+
+            #if POSE
+/* BEGIN CODEGEN GLUE: POSESET_MAKE (funcName chain) */
+            else if (funcName == "POSESET_MAKE")
+            {
+                if (helpers.top().functionBuilder.size() < 2)
+                {
+                    throw InvalidQuerySyntax("POSESET_MAKE requires two arguments at {}", context->getText());
+                }
+                const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto value = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                helpers.top().windowAggs.push_back(PosesetMakeAggregationLogicalFunction::create(value, ts));
+            }
+            /* END CODEGEN GLUE: POSESET_MAKE (funcName chain) */
+#endif /* POSE */
+
+            /* BEGIN CODEGEN GLUE: GEOSET_MAKE (funcName chain) */
+            else if (funcName == "GEOSET_MAKE")
+            {
+                if (helpers.top().functionBuilder.size() < 2)
+                {
+                    throw InvalidQuerySyntax("GEOSET_MAKE requires two arguments at {}", context->getText());
+                }
+                const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto value = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                helpers.top().windowAggs.push_back(GeosetMakeAggregationLogicalFunction::create(value, ts));
+            }
+            /* END CODEGEN GLUE: GEOSET_MAKE (funcName chain) */
+
 
 
 

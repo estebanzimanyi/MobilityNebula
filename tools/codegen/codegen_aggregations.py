@@ -2046,6 +2046,68 @@ PHYSICAL_CPP_ARRAYMAKE = _swap_once(
     PHYSICAL_CPP_SCALARFOLD, _SCALARFOLD_FOLD_AND_SERIALIZE, _ARRAYMAKE_FOLD_AND_SERIALIZE,
     "scalarfold fold+serialize -> arraymake (collect C array + *_make)")
 
+# Object-set array constructor (fold "objarraymake"): the windowed VALUES are
+# VARSIZED object literals (text / Cbuffer / Npoint / Pose / geometry), not
+# numbers. Parse each event's literal via {elem_in} into a heap {elem_cpp}*,
+# collect the pointers into a {elem_cpp}*[] array, build the set via {make_fn}
+# ({make_arg_type}), then free each element and the array. Derived from the
+# numeric arraymake by swapping only the collect/serialize body; the value field
+# is VARSIZED so the descriptor relaxes value_type_guard.
+_OBJ_ARRAYMAKE_FOLD_AND_SERIALIZE = """\
+    // Collect the windowed object literals: parse each event's VARSIZED value
+    // via {elem_in} into a heap pointer, store it in a {elem_cpp}*[] array, then
+    // build the result set via {make_fn} and free each element + the array.
+    auto arrState = nautilus::invoke(
+        +[](size_t n) -> void* {{ return malloc(sizeof({elem_cpp}*) * (n > 0 ? n : 1)); }},
+        numberOfEntries);
+
+    auto arrIdx = nautilus::val<int64_t>(0);
+    const auto endIt = pagedVectorRef.end(allFieldNames);
+    for (auto candidateIt = pagedVectorRef.begin(allFieldNames); candidateIt != endIt; ++candidateIt)
+    {{
+        const auto itemRecord = *candidateIt;
+        const auto valueRaw = itemRecord.read(std::string(ValueFieldName));
+        auto valVar = valueRaw.cast<VariableSizedData>();
+
+        arrIdx = nautilus::invoke(
+            +[](void* a, int64_t i, const char* vp, uint32_t vs) -> int64_t
+            {{
+                MEOS::Meos::ensureMeosInitialized();
+                std::lock_guard<std::mutex> lock({mutex_name});
+                std::string s(vp, vs);
+                while (!s.empty() && (s.front()=='\\'' || s.front()=='"')) s.erase(s.begin());
+                while (!s.empty() && (s.back()=='\\'' || s.back()=='"')) s.pop_back();
+                {elem_cpp}* e = {elem_in}(s.c_str(){elem_in_extra});
+                if (e) {{ (({elem_cpp}**) a)[i] = e; return i + 1; }}
+                return i;
+            }},
+            arrState,
+            arrIdx,
+            valVar.getContent(),
+            valVar.getContentSize());
+    }}
+
+    auto boxStr = nautilus::invoke(
+        +[](void* a, int64_t n) -> char*
+        {{
+            MEOS::Meos::ensureMeosInitialized();
+            std::lock_guard<std::mutex> lock({mutex_name});
+            if (n <= 0) {{ free(a); return (char*)nullptr; }}
+            {make_ret_type}* s = {make_fn}(({make_arg_type}) a, (int) n);
+            for (int64_t i = 0; i < n; i++) {{ free((({elem_cpp}**) a)[i]); }}
+            free(a);
+            if (!s) {{ return (char*)nullptr; }}
+            char* out = {set_out_call};
+            free(s);
+            return out;
+        }},
+        arrState,
+        arrIdx);"""
+
+PHYSICAL_CPP_OBJ_ARRAYMAKE = _swap_once(
+    PHYSICAL_CPP_ARRAYMAKE, _ARRAYMAKE_FOLD_AND_SERIALIZE, _OBJ_ARRAYMAKE_FOLD_AND_SERIALIZE,
+    "arraymake numeric collect -> object-pointer collect (*_in parse + *set_make)")
+
 # ===========================================================================
 # Temporal-aggregate template (windowed tMin/tMax/tSum/tAnd/tOr/tAvg -> Temporal,
 # serialized as hex-WKB). Reuses the scalar-fold PagedVector scaffold (lift =
@@ -2925,6 +2987,8 @@ def physical_template_for(op):
             return PHYSICAL_HPP_TNUMBER, PHYSICAL_CPP_SETFOLD
         if op.get("fold") == "arraymake":
             return PHYSICAL_HPP_TNUMBER, PHYSICAL_CPP_ARRAYMAKE
+        if op.get("fold") == "objarraymake":
+            return PHYSICAL_HPP_TNUMBER, PHYSICAL_CPP_OBJ_ARRAYMAKE
         if op.get("fold") == "container":
             return PHYSICAL_HPP_TNUMBER, PHYSICAL_CPP_CONTAINER_FOLD
         if op.get("fold") == "tagg":
@@ -3013,6 +3077,13 @@ def emit_operator(op, output_root: Path):
         # sequence-accessor (fold=tgeoseqtext) extra: the TSequence*-returning
         # accessor applied to the windowed continuous sequence `temp`.
         "seq_accessor_call":        op.get("seq_accessor_call", ""),
+        # object-set array-make (fold=objarraymake) extras: the element parser
+        # (*_in), any trailing parser arg (geom_in needs ", -1"), and the exact
+        # pointer-array type the *set_make constructor expects (handles the const
+        # on poseset_make).
+        "elem_in":                  op.get("elem_in", ""),
+        "elem_in_extra":            op.get("elem_in_extra", ""),
+        "make_arg_type":            op.get("make_arg_type", op.get("elem_cpp", "void") + " **"),
     }
 
     # value_compute (point/tgeo finalize): either fold the windowed sequence

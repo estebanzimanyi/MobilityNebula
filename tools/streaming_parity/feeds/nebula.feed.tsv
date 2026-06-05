@@ -254,6 +254,7 @@ cbuffer_tstzspan_to_stbox	proven
 cbuffer_union_transfn	proven
 cbufferarr_round	proven
 cbufferset_end_value	proven
+cbufferset_make	proven
 cbufferset_start_value	proven
 cbufferset_value_n	proven
 cbufferset_values	proven
@@ -641,6 +642,7 @@ geom_to_geog	proven
 geom_touches	proven
 geom_unary_union	proven
 geoset_end_value	proven
+geoset_make	proven
 geoset_start_value	proven
 geoset_type	proven
 geoset_value_n	proven
@@ -863,6 +865,7 @@ npoint_to_stbox	proven
 npoint_tstzspan_to_stbox	proven
 npoint_union_transfn	proven
 npointset_end_value	proven
+npointset_make	proven
 npointset_routes	proven
 npointset_start_value	proven
 npointset_value_n	proven
@@ -1064,6 +1067,7 @@ pose_tstzspan_to_stbox	proven
 pose_union_transfn	proven
 posearr_round	proven
 poseset_end_value	proven
+poseset_make	proven
 poseset_start_value	proven
 poseset_value_n	proven
 poseset_values	proven
@@ -1469,6 +1473,7 @@ textcat_ttext_ttext	proven
 textset_end_value	proven
 textset_initcap	proven
 textset_lower	proven
+textset_make	proven
 textset_start_value	proven
 textset_upper	proven
 textset_value_n	proven
