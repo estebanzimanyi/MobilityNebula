@@ -1607,10 +1607,14 @@ tne_tnpoint_npoint	proven
 tne_tpose_pose	proven
 tne_trgeometry_geo	proven
 tne_ttext_text	proven
+tnpoint_at_geom	proven
 tnpoint_at_npoint	proven
+tnpoint_at_stbox	proven
 tnpoint_cumulative_length	proven
 tnpoint_length	proven
+tnpoint_minus_geom	proven
 tnpoint_minus_npoint	proven
+tnpoint_minus_stbox	proven
 tnpoint_positions	proven
 tnpoint_route	proven
 tnpoint_routes	proven
@@ -1675,6 +1679,7 @@ tpose_minus_stbox	proven
 tpose_points	proven
 tpose_rotation	proven
 tpose_start_value	proven
+tpose_to_tpoint	proven
 tpose_trajectory	proven
 tpose_value_at_timestamptz	proven
 tpose_value_n	proven
