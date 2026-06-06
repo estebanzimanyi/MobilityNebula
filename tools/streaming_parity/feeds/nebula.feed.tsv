@@ -1432,6 +1432,7 @@ temporal_num_sequences	proven
 temporal_num_timestamps	proven
 temporal_round	proven
 temporal_scale_time	proven
+temporal_segm_duration	proven
 temporal_segments	proven
 temporal_sequence_n	proven
 temporal_sequences	proven
@@ -1448,6 +1449,7 @@ temporal_split_n_spans	proven
 temporal_start_instant	proven
 temporal_start_sequence	proven
 temporal_start_timestamptz	proven
+temporal_stops	proven
 temporal_subtype	proven
 temporal_tagg_finalfn	proven
 temporal_tcount_transfn	proven
@@ -1461,6 +1463,7 @@ temporal_to_tsequence	proven
 temporal_to_tsequenceset	proven
 temporal_to_tstzspan	proven
 temporal_tprecision	proven
+temporal_tsample	proven
 temporal_type	proven
 temporal_update	proven
 temporal_upper_inc	proven

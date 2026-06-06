@@ -12,7 +12,7 @@
     limitations under the License.
 */
 
-#include <Aggregation/Function/Meos/TemporalSimplifyMinDistAggregationPhysicalFunction.hpp>
+#include <Aggregation/Function/Meos/TemporalStopsAggregationPhysicalFunction.hpp>
 
 #include <cstddef>
 #include <cstdint>
@@ -54,10 +54,10 @@ constexpr static std::string_view LonFieldName = "lon";
 constexpr static std::string_view LatFieldName = "lat";
 constexpr static std::string_view TimestampFieldName = "timestamp";
 
-static std::mutex meos_temporalsimplifymindist_mutex;
+static std::mutex meos_temporalstops_mutex;
 
 
-TemporalSimplifyMinDistAggregationPhysicalFunction::TemporalSimplifyMinDistAggregationPhysicalFunction(
+TemporalStopsAggregationPhysicalFunction::TemporalStopsAggregationPhysicalFunction(
     DataType inputType,
     DataType resultType,
     PhysicalFunction lonFunctionParam,
@@ -75,7 +75,7 @@ TemporalSimplifyMinDistAggregationPhysicalFunction::TemporalSimplifyMinDistAggre
 {
 }
 
-void TemporalSimplifyMinDistAggregationPhysicalFunction::lift(
+void TemporalStopsAggregationPhysicalFunction::lift(
     const nautilus::val<AggregationState*>& aggregationState, PipelineMemoryProvider& pipelineMemoryProvider, const Nautilus::Record& record)
 {
     const auto pagedVectorPtr = static_cast<nautilus::val<Nautilus::Interface::PagedVector*>>(aggregationState);
@@ -94,7 +94,7 @@ void TemporalSimplifyMinDistAggregationPhysicalFunction::lift(
     pagedVectorRef.writeRecord(aggregateStateRecord, pipelineMemoryProvider.bufferProvider);
 }
 
-void TemporalSimplifyMinDistAggregationPhysicalFunction::combine(
+void TemporalStopsAggregationPhysicalFunction::combine(
     const nautilus::val<AggregationState*> aggregationState1,
     const nautilus::val<AggregationState*> aggregationState2,
     PipelineMemoryProvider&)
@@ -109,7 +109,7 @@ void TemporalSimplifyMinDistAggregationPhysicalFunction::combine(
         memArea2);
 }
 
-Nautilus::Record TemporalSimplifyMinDistAggregationPhysicalFunction::lower(
+Nautilus::Record TemporalStopsAggregationPhysicalFunction::lower(
     const nautilus::val<AggregationState*> aggregationState, [[maybe_unused]] PipelineMemoryProvider& pipelineMemoryProvider)
 {
     MEOS::Meos::ensureMeosInitialized();
@@ -197,7 +197,7 @@ Nautilus::Record TemporalSimplifyMinDistAggregationPhysicalFunction::lower(
         trajectoryStr);
 
     auto boxStr = nautilus::invoke(
-        +[](const char* trajStr, const char* constArg0) -> char*
+        +[](const char* trajStr, const char* constArg0, const char* constArg1) -> char*
         {
             if (!trajStr || strlen(trajStr) == 0) {
                 free((void*)trajStr);
@@ -205,7 +205,7 @@ Nautilus::Record TemporalSimplifyMinDistAggregationPhysicalFunction::lower(
             }
 
             MEOS::Meos::ensureMeosInitialized();
-            std::lock_guard<std::mutex> lock(meos_temporalsimplifymindist_mutex);
+            std::lock_guard<std::mutex> lock(meos_temporalstops_mutex);
 
             std::string trajString(trajStr);
             void* temp = MEOS::Meos::parseTemporalPoint(trajString);
@@ -216,10 +216,11 @@ Nautilus::Record TemporalSimplifyMinDistAggregationPhysicalFunction::lower(
 
             // Parse each constant literal string to its C value/object.
             double c0 = atof(constArg0);
+            Interval* c1 = interval_in(constArg1, -1);
 
-            Temporal* res = (Temporal*) temporal_simplify_min_dist(static_cast<Temporal*>(temp), c0);
+            Temporal* res = (Temporal*) temporal_stops(static_cast<Temporal*>(temp), c0, c1);
             MEOS::Meos::freeTemporalObject(temp);
-
+            if (c1) free(c1);
             if (!res) {
                 return (char*)nullptr;
             }
@@ -230,7 +231,8 @@ Nautilus::Record TemporalSimplifyMinDistAggregationPhysicalFunction::lower(
             return hexOut;
         },
         trajectoryStr,
-        nautilus::val<const char*>(constArgs[0].c_str()));
+        nautilus::val<const char*>(constArgs[0].c_str()),
+        nautilus::val<const char*>(constArgs[1].c_str()));
 
     const auto boxStrLen = nautilus::invoke(
         +[](const char* s) -> size_t { return s ? strlen(s) : (size_t) 0; },
@@ -255,7 +257,7 @@ Nautilus::Record TemporalSimplifyMinDistAggregationPhysicalFunction::lower(
     return resultRecord;
 }
 
-void TemporalSimplifyMinDistAggregationPhysicalFunction::reset(const nautilus::val<AggregationState*> aggregationState, PipelineMemoryProvider&)
+void TemporalStopsAggregationPhysicalFunction::reset(const nautilus::val<AggregationState*> aggregationState, PipelineMemoryProvider&)
 {
     nautilus::invoke(
         +[](AggregationState* pagedVectorMemArea) -> void
@@ -266,12 +268,12 @@ void TemporalSimplifyMinDistAggregationPhysicalFunction::reset(const nautilus::v
         aggregationState);
 }
 
-size_t TemporalSimplifyMinDistAggregationPhysicalFunction::getSizeOfStateInBytes() const
+size_t TemporalStopsAggregationPhysicalFunction::getSizeOfStateInBytes() const
 {
     return sizeof(Nautilus::Interface::PagedVector);
 }
 
-void TemporalSimplifyMinDistAggregationPhysicalFunction::cleanup(nautilus::val<AggregationState*> aggregationState)
+void TemporalStopsAggregationPhysicalFunction::cleanup(nautilus::val<AggregationState*> aggregationState)
 {
     nautilus::invoke(
         +[](AggregationState* pagedVectorMemArea) -> void
@@ -283,10 +285,10 @@ void TemporalSimplifyMinDistAggregationPhysicalFunction::cleanup(nautilus::val<A
 }
 
 
-AggregationPhysicalFunctionRegistryReturnType AggregationPhysicalFunctionGeneratedRegistrar::RegisterTemporalSimplifyMinDistAggregationPhysicalFunction(
+AggregationPhysicalFunctionRegistryReturnType AggregationPhysicalFunctionGeneratedRegistrar::RegisterTemporalStopsAggregationPhysicalFunction(
     AggregationPhysicalFunctionRegistryArguments)
 {
-    throw std::runtime_error("TemporalSimplifyMinDist aggregation cannot be created through the registry. "
+    throw std::runtime_error("TemporalStops aggregation cannot be created through the registry. "
                              "It requires three field functions (longitude, latitude, timestamp)");
 }
 

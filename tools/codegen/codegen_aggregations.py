@@ -2049,7 +2049,7 @@ _FINALIZE_WKB_TGEO_CONST = """\
             // Parse each constant literal string to its C value/object.
 {const_parse_block}
 
-            Temporal* res = {meos_scalar_fn}(static_cast<Temporal*>(temp){const_call_args});
+            Temporal* res = (Temporal*) {meos_scalar_fn}(static_cast<Temporal*>(temp){const_call_args});
             MEOS::Meos::freeTemporalObject(temp);
 {const_free_block}
             if (!res) {{

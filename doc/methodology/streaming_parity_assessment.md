@@ -8,7 +8,7 @@ ecosystem pin `a37a23a672` (`ecosystem-pin-2026-06-06d`).
 
 | Platform | **L3 CALLABLE** (binding invokes it, confirmed) | L2 wired-only (registered, not yet confirmed callable) | gap (streamable, not wired) |
 |---|---|---|---|
-| **NebulaStream** | **1,901 — 98.1%** | 1 — 0.1% | 36 — 1.9% |
+| **NebulaStream** | **1,904 — 98.2%** | 1 — 0.1% | 33 — 1.7% |
 | **Flink** | **1,938 — 100.0%** | 0 — 0.0% | 0 — 0.0% |
 | **Kafka** | **1,938 — 100.0%** | 0 — 0.0% | 0 — 0.0% |
 
@@ -95,10 +95,10 @@ production form; both serve the one scope.
   libmeos). The CI gate (`ci_gate.py` + `.github/workflows/streaming_parity_gate.yml`)
   holds the floor at 1,938 and blocks any regression or over-claim; the committed
   feed reproduces it without re-running the harness.
-- **NebulaStream: 1,901 / 1,938 confirmed callable (98.1%), 1 wired-only, 36 gap.** The
+- **NebulaStream: 1,904 / 1,938 confirmed callable (98.2%), 1 wired-only, 33 gap.** The
   generated `nes-{physical,logical}-operators` + `nes-sql-parser` libraries link
   clean in the `nebulastream/nes-development` dev image against the `libmeos`
-  under test; 1,901 are confirmed callable via systests that run end-to-end against
+  under test; 1,904 are confirmed callable via systests that run end-to-end against
   a local single-node worker (query plan serialized, deserialized, compiled, and
   executed; result matched against the value a faithful MEOS probe produces). The wired surface
   spans per-event operators over the tgeompoint/tcbuffer/tpose/tnumber families

@@ -222,6 +222,9 @@
 #endif /* RGEO */
 #include <Operators/Windows/Aggregations/Meos/TpointDirectionAggregationLogicalFunction.hpp>
 #include <Operators/Windows/Aggregations/Meos/TemporalSimplifyMinDistAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TemporalTsampleAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TemporalStopsAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TemporalSegmDurationAggregationLogicalFunction.hpp>
 #include <Functions/Meos/TemporalIntersectsGeometryLogicalFunction.hpp>
 #include <Functions/Meos/AintersectsTgeoGeoLogicalFunction.hpp>
 #include <Functions/Meos/EdwithinTgeoGeoLogicalFunction.hpp>
@@ -59607,6 +59610,123 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             }
             break;
         /* END CODEGEN GLUE: TEMPORAL_SIMPLIFY_MIN_DIST (case-switch) */
+        /* BEGIN CODEGEN GLUE: TEMPORAL_TSAMPLE (case-switch) */
+        case AntlrSQLLexer::TEMPORAL_TSAMPLE:
+            // temporal_tsample (Temporal* -> hex-WKB) - the windowed trajectory resampled at a fixed interval from an origin, with the given interpolation.
+            {
+                if (helpers.top().constantBuilder.size() < 3) {
+                    throw InvalidQuerySyntax("TEMPORAL_TSAMPLE requires 3 constant argument(s) after lon, lat, timestamp, but got {}", helpers.top().constantBuilder.size());
+                }
+                std::vector<std::string> constArgs(3);
+                for (size_t i = 0; i < static_cast<size_t>(3); ++i) {
+                    constArgs[static_cast<size_t>(3) - 1 - i] = std::move(helpers.top().constantBuilder.back());
+                    helpers.top().constantBuilder.pop_back();
+                }
+
+                if (helpers.top().functionBuilder.size() != 3) {
+                    throw InvalidQuerySyntax("TEMPORAL_TSAMPLE requires exactly three field arguments (longitude, latitude, timestamp), but got {}", helpers.top().functionBuilder.size());
+                }
+                const auto timestampFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto latitudeFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto longitudeFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+
+                if (!longitudeFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !latitudeFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
+                    throw InvalidQuerySyntax("TEMPORAL_TSAMPLE field arguments must be field references");
+                }
+
+                helpers.top().windowAggs.push_back(
+                    TemporalTsampleAggregationLogicalFunction::create(longitudeFunction.get<FieldAccessLogicalFunction>(),
+                                                                    latitudeFunction.get<FieldAccessLogicalFunction>(),
+                                                                    timestampFunction.get<FieldAccessLogicalFunction>(),
+                                                                    std::move(constArgs)));
+                helpers.top().functionBuilder.push_back(longitudeFunction);
+            }
+            break;
+        /* END CODEGEN GLUE: TEMPORAL_TSAMPLE (case-switch) */
+
+        /* BEGIN CODEGEN GLUE: TEMPORAL_STOPS (case-switch) */
+        case AntlrSQLLexer::TEMPORAL_STOPS:
+            // temporal_stops (Temporal* -> hex-WKB) - the windowed trajectory's stop subsequences (within maxdist for at least minduration).
+            {
+                if (helpers.top().constantBuilder.size() < 2) {
+                    throw InvalidQuerySyntax("TEMPORAL_STOPS requires 2 constant argument(s) after lon, lat, timestamp, but got {}", helpers.top().constantBuilder.size());
+                }
+                std::vector<std::string> constArgs(2);
+                for (size_t i = 0; i < static_cast<size_t>(2); ++i) {
+                    constArgs[static_cast<size_t>(2) - 1 - i] = std::move(helpers.top().constantBuilder.back());
+                    helpers.top().constantBuilder.pop_back();
+                }
+
+                if (helpers.top().functionBuilder.size() != 3) {
+                    throw InvalidQuerySyntax("TEMPORAL_STOPS requires exactly three field arguments (longitude, latitude, timestamp), but got {}", helpers.top().functionBuilder.size());
+                }
+                const auto timestampFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto latitudeFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto longitudeFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+
+                if (!longitudeFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !latitudeFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
+                    throw InvalidQuerySyntax("TEMPORAL_STOPS field arguments must be field references");
+                }
+
+                helpers.top().windowAggs.push_back(
+                    TemporalStopsAggregationLogicalFunction::create(longitudeFunction.get<FieldAccessLogicalFunction>(),
+                                                                    latitudeFunction.get<FieldAccessLogicalFunction>(),
+                                                                    timestampFunction.get<FieldAccessLogicalFunction>(),
+                                                                    std::move(constArgs)));
+                helpers.top().functionBuilder.push_back(longitudeFunction);
+            }
+            break;
+        /* END CODEGEN GLUE: TEMPORAL_STOPS (case-switch) */
+
+        /* BEGIN CODEGEN GLUE: TEMPORAL_SEGM_DURATION (case-switch) */
+        case AntlrSQLLexer::TEMPORAL_SEGM_DURATION:
+            // temporal_segm_duration (Temporal* -> hex-WKB) - the windowed trajectory split into segments of the given duration.
+            {
+                if (helpers.top().constantBuilder.size() < 3) {
+                    throw InvalidQuerySyntax("TEMPORAL_SEGM_DURATION requires 3 constant argument(s) after lon, lat, timestamp, but got {}", helpers.top().constantBuilder.size());
+                }
+                std::vector<std::string> constArgs(3);
+                for (size_t i = 0; i < static_cast<size_t>(3); ++i) {
+                    constArgs[static_cast<size_t>(3) - 1 - i] = std::move(helpers.top().constantBuilder.back());
+                    helpers.top().constantBuilder.pop_back();
+                }
+
+                if (helpers.top().functionBuilder.size() != 3) {
+                    throw InvalidQuerySyntax("TEMPORAL_SEGM_DURATION requires exactly three field arguments (longitude, latitude, timestamp), but got {}", helpers.top().functionBuilder.size());
+                }
+                const auto timestampFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto latitudeFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto longitudeFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+
+                if (!longitudeFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !latitudeFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
+                    throw InvalidQuerySyntax("TEMPORAL_SEGM_DURATION field arguments must be field references");
+                }
+
+                helpers.top().windowAggs.push_back(
+                    TemporalSegmDurationAggregationLogicalFunction::create(longitudeFunction.get<FieldAccessLogicalFunction>(),
+                                                                    latitudeFunction.get<FieldAccessLogicalFunction>(),
+                                                                    timestampFunction.get<FieldAccessLogicalFunction>(),
+                                                                    std::move(constArgs)));
+                helpers.top().functionBuilder.push_back(longitudeFunction);
+            }
+            break;
+        /* END CODEGEN GLUE: TEMPORAL_SEGM_DURATION (case-switch) */
+
 
 
 
@@ -61635,6 +61755,84 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
                 helpers.top().windowAggs.push_back(TemporalSimplifyMinDistAggregationLogicalFunction::create(lon, lat, ts, std::move(constArgs)));
             }
             /* END CODEGEN GLUE: TEMPORAL_SIMPLIFY_MIN_DIST (funcName chain) */
+            /* BEGIN CODEGEN GLUE: TEMPORAL_TSAMPLE (funcName chain) */
+            else if (funcName == "TEMPORAL_TSAMPLE")
+            {
+                if (helpers.top().constantBuilder.size() < 3)
+                {
+                    throw InvalidQuerySyntax("TEMPORAL_TSAMPLE requires 3 constant argument(s) at {}", context->getText());
+                }
+                std::vector<std::string> constArgs(3);
+                for (size_t i = 0; i < static_cast<size_t>(3); ++i) {
+                    constArgs[static_cast<size_t>(3) - 1 - i] = std::move(helpers.top().constantBuilder.back());
+                    helpers.top().constantBuilder.pop_back();
+                }
+                if (helpers.top().functionBuilder.size() < 3)
+                {
+                    throw InvalidQuerySyntax("TEMPORAL_TSAMPLE requires three field arguments at {}", context->getText());
+                }
+                const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto lat = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto lon = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                helpers.top().windowAggs.push_back(TemporalTsampleAggregationLogicalFunction::create(lon, lat, ts, std::move(constArgs)));
+            }
+            /* END CODEGEN GLUE: TEMPORAL_TSAMPLE (funcName chain) */
+
+            /* BEGIN CODEGEN GLUE: TEMPORAL_STOPS (funcName chain) */
+            else if (funcName == "TEMPORAL_STOPS")
+            {
+                if (helpers.top().constantBuilder.size() < 2)
+                {
+                    throw InvalidQuerySyntax("TEMPORAL_STOPS requires 2 constant argument(s) at {}", context->getText());
+                }
+                std::vector<std::string> constArgs(2);
+                for (size_t i = 0; i < static_cast<size_t>(2); ++i) {
+                    constArgs[static_cast<size_t>(2) - 1 - i] = std::move(helpers.top().constantBuilder.back());
+                    helpers.top().constantBuilder.pop_back();
+                }
+                if (helpers.top().functionBuilder.size() < 3)
+                {
+                    throw InvalidQuerySyntax("TEMPORAL_STOPS requires three field arguments at {}", context->getText());
+                }
+                const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto lat = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto lon = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                helpers.top().windowAggs.push_back(TemporalStopsAggregationLogicalFunction::create(lon, lat, ts, std::move(constArgs)));
+            }
+            /* END CODEGEN GLUE: TEMPORAL_STOPS (funcName chain) */
+
+            /* BEGIN CODEGEN GLUE: TEMPORAL_SEGM_DURATION (funcName chain) */
+            else if (funcName == "TEMPORAL_SEGM_DURATION")
+            {
+                if (helpers.top().constantBuilder.size() < 3)
+                {
+                    throw InvalidQuerySyntax("TEMPORAL_SEGM_DURATION requires 3 constant argument(s) at {}", context->getText());
+                }
+                std::vector<std::string> constArgs(3);
+                for (size_t i = 0; i < static_cast<size_t>(3); ++i) {
+                    constArgs[static_cast<size_t>(3) - 1 - i] = std::move(helpers.top().constantBuilder.back());
+                    helpers.top().constantBuilder.pop_back();
+                }
+                if (helpers.top().functionBuilder.size() < 3)
+                {
+                    throw InvalidQuerySyntax("TEMPORAL_SEGM_DURATION requires three field arguments at {}", context->getText());
+                }
+                const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto lat = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto lon = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                helpers.top().windowAggs.push_back(TemporalSegmDurationAggregationLogicalFunction::create(lon, lat, ts, std::move(constArgs)));
+            }
+            /* END CODEGEN GLUE: TEMPORAL_SEGM_DURATION (funcName chain) */
+
 
 
 
