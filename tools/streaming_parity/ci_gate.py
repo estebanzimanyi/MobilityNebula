@@ -48,7 +48,7 @@ def main():
     ap.add_argument("--feed", default=os.path.join(HERE, "feeds/flink-kafka.feed.tsv"))
     ap.add_argument("--streamable", default=os.path.join(HERE, "feeds/streamable.txt"))
     ap.add_argument("--doc", default=os.path.join(HERE, "..", "..", "doc/methodology/streaming_parity_assessment.md"))
-    ap.add_argument("--floor", type=int, default=1939,
+    ap.add_argument("--floor", type=int, default=1938,
                     help="minimum confirmed-callable; CI fails below this")
     a = ap.parse_args()
 

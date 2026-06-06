@@ -29,7 +29,7 @@ import re
 import subprocess
 import sys
 
-IMAGE_DEFAULT = "localhost/nes-development:mobilitynebula-v15"
+IMAGE_DEFAULT = "localhost/nes-development:mobilitynebula-v17"
 BUILD_DIR_DEFAULT = "build-w15"
 PASS_MARK = "All queries passed"
 SEP = "----"

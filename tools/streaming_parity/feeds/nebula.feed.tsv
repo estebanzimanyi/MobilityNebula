@@ -1432,6 +1432,7 @@ temporal_num_sequences	proven
 temporal_num_timestamps	proven
 temporal_round	proven
 temporal_scale_time	proven
+temporal_segments	proven
 temporal_sequence_n	proven
 temporal_sequences	wired
 temporal_set_interp	proven
@@ -1731,6 +1732,7 @@ tpoint_get_y	proven
 tpoint_get_z	proven
 tpoint_is_simple	proven
 tpoint_length	proven
+tpoint_make_simple	proven
 tpoint_minus_elevation	proven
 tpoint_minus_geom	proven
 tpoint_minus_value	proven

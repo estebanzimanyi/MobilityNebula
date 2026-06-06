@@ -202,6 +202,8 @@
 #if CBUFFER
 #include <Operators/Windows/Aggregations/Meos/CbufferarrToGeomAggregationLogicalFunction.hpp>
 #endif /* CBUFFER */
+#include <Operators/Windows/Aggregations/Meos/TemporalSegmentsAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TpointMakeSimpleAggregationLogicalFunction.hpp>
 #include <Functions/Meos/TemporalIntersectsGeometryLogicalFunction.hpp>
 #include <Functions/Meos/AintersectsTgeoGeoLogicalFunction.hpp>
 #include <Functions/Meos/EdwithinTgeoGeoLogicalFunction.hpp>
@@ -59363,6 +59365,64 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             break;
         /* END CODEGEN GLUE: CBUFFERARR_TO_GEOM (case-switch) */
 #endif /* CBUFFER */
+        /* BEGIN CODEGEN GLUE: TEMPORAL_SEGMENTS (case-switch) */
+        case AntlrSQLLexer::TEMPORAL_SEGMENTS:
+            // temporal_segments (TSequence **) - the array of maximal segments of the windowed continuous trajectory, each as EWKB hex.
+            if (helpers.top().functionBuilder.size() != 3) {
+                throw InvalidQuerySyntax("TEMPORAL_SEGMENTS requires exactly three arguments (longitude, latitude, timestamp), but got {}", helpers.top().functionBuilder.size());
+            }
+            {
+                const auto timestampFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto latitudeFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto longitudeFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+
+                if (!longitudeFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !latitudeFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
+                    throw InvalidQuerySyntax("TEMPORAL_SEGMENTS arguments must be field references");
+                }
+
+                helpers.top().windowAggs.push_back(
+                    TemporalSegmentsAggregationLogicalFunction::create(longitudeFunction.get<FieldAccessLogicalFunction>(),
+                                                                    latitudeFunction.get<FieldAccessLogicalFunction>(),
+                                                                    timestampFunction.get<FieldAccessLogicalFunction>()));
+                helpers.top().functionBuilder.push_back(longitudeFunction);
+            }
+            break;
+        /* END CODEGEN GLUE: TEMPORAL_SEGMENTS (case-switch) */
+
+        /* BEGIN CODEGEN GLUE: TPOINT_MAKE_SIMPLE (case-switch) */
+        case AntlrSQLLexer::TPOINT_MAKE_SIMPLE:
+            // tpoint_make_simple (Temporal **) - the array of simple (non-self-intersecting) fragments of the windowed point trajectory, each as EWKB hex.
+            if (helpers.top().functionBuilder.size() != 3) {
+                throw InvalidQuerySyntax("TPOINT_MAKE_SIMPLE requires exactly three arguments (longitude, latitude, timestamp), but got {}", helpers.top().functionBuilder.size());
+            }
+            {
+                const auto timestampFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto latitudeFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto longitudeFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+
+                if (!longitudeFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !latitudeFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
+                    throw InvalidQuerySyntax("TPOINT_MAKE_SIMPLE arguments must be field references");
+                }
+
+                helpers.top().windowAggs.push_back(
+                    TpointMakeSimpleAggregationLogicalFunction::create(longitudeFunction.get<FieldAccessLogicalFunction>(),
+                                                                    latitudeFunction.get<FieldAccessLogicalFunction>(),
+                                                                    timestampFunction.get<FieldAccessLogicalFunction>()));
+                helpers.top().functionBuilder.push_back(longitudeFunction);
+            }
+            break;
+        /* END CODEGEN GLUE: TPOINT_MAKE_SIMPLE (case-switch) */
+
 
 
 
@@ -61192,6 +61252,40 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             }
             /* END CODEGEN GLUE: CBUFFERARR_TO_GEOM (funcName chain) */
 #endif /* CBUFFER */
+            /* BEGIN CODEGEN GLUE: TEMPORAL_SEGMENTS (funcName chain) */
+            else if (funcName == "TEMPORAL_SEGMENTS")
+            {
+                if (helpers.top().functionBuilder.size() < 3)
+                {
+                    throw InvalidQuerySyntax("TEMPORAL_SEGMENTS requires three arguments at {}", context->getText());
+                }
+                const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto lat = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto lon = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                helpers.top().windowAggs.push_back(TemporalSegmentsAggregationLogicalFunction::create(lon, lat, ts));
+            }
+            /* END CODEGEN GLUE: TEMPORAL_SEGMENTS (funcName chain) */
+
+            /* BEGIN CODEGEN GLUE: TPOINT_MAKE_SIMPLE (funcName chain) */
+            else if (funcName == "TPOINT_MAKE_SIMPLE")
+            {
+                if (helpers.top().functionBuilder.size() < 3)
+                {
+                    throw InvalidQuerySyntax("TPOINT_MAKE_SIMPLE requires three arguments at {}", context->getText());
+                }
+                const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto lat = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto lon = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                helpers.top().windowAggs.push_back(TpointMakeSimpleAggregationLogicalFunction::create(lon, lat, ts));
+            }
+            /* END CODEGEN GLUE: TPOINT_MAKE_SIMPLE (funcName chain) */
+
 
 
 

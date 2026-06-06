@@ -1436,6 +1436,57 @@ PHYSICAL_CPP_TGEO_SEQ_TEXT = _swap_once(
         '            strcat(buffer, "}}");', '            strcat(buffer, "]");', "tgeo-seqtext close bracket -> continuous"),
     _FINALIZE_SCALAR_TGEO, _FINALIZE_SEQTEXT_TGEO, "tgeo-seqtext finalize tail")
 
+# Array-of-temporal accessor (fold "tgeoseqarray"): same windowed continuous
+# sequence as tgeoseqtext, but the accessor returns a HEAP ARRAY of Temporal*
+# (T **f(temp, int *count) — temporal_segments / temporal_sequences /
+# tpoint_make_simple and the trgeometry instants/segments/sequences). Each
+# element is serialized to EWKB hex via temporal_as_hexwkb(elem, 0x04) — the
+# SRID-preserving variant, matching the rest of the temporal-out path — then
+# freed; the elements are brace-joined into a "{e1, e2, ...}" VARSIZED. The
+# accessor call (which writes `_cnt`) rides in {seq_accessor_call}, e.g.
+# `temporal_segments(static_cast<Temporal*>(temp), &_cnt)`.
+_FINALIZE_SEQARRAY_TGEO = _swap_once(
+    _FINALIZE_BOX_TGEO,
+    """\
+            {extent_box_type}* aggBox = {extent_transfn}(nullptr, static_cast<Temporal*>(temp));
+            MEOS::Meos::freeTemporalObject(temp);
+            if (!aggBox) {{
+                return (char*)nullptr;
+            }}
+
+            char* boxText = {box_out_fn}(aggBox, 15);
+            free(aggBox);
+            return boxText;""",
+    """\
+            int _cnt = 0;
+            void** arr = (void**) {seq_accessor_call};
+            MEOS::Meos::freeTemporalObject(temp);
+            if (!arr || _cnt <= 0) {{
+                if (arr) free(arr);
+                return (char*)nullptr;
+            }}
+
+            std::string _s = "{{";
+            for (int _i = 0; _i < _cnt; _i++) {{
+                if (_i) _s += ", ";
+                size_t _z = 0;
+                char* _e = temporal_as_hexwkb((const Temporal*) arr[_i], 0x04 /* WKB_EXTENDED */, &_z);
+                if (_e) {{ _s += _e; free(_e); }}
+                free(arr[_i]);
+            }}
+            _s += "}}";
+            free(arr);
+            return strdup(_s.c_str());""",
+    "tgeo box-apply -> sequence-accessor array-of-temporal hex-out")
+
+PHYSICAL_CPP_TGEO_SEQ_ARRAY = _swap_once(
+    _swap_once(
+        _swap_once(
+            _swap_once(PHYSICAL_CPP_TGEO, _EMPTY_SCALAR, _EMPTY_BOX, "tgeo-seqarray empty-window block"),
+            '            strcpy(buffer, "{{");', '            strcpy(buffer, "[");', "tgeo-seqarray open bracket -> continuous"),
+        '            strcat(buffer, "}}");', '            strcat(buffer, "]");', "tgeo-seqarray close bracket -> continuous"),
+    _FINALIZE_SCALAR_TGEO, _FINALIZE_SEQARRAY_TGEO, "tgeo-seqarray finalize tail")
+
 # ===========================================================================
 # Expandable-Temporal* aggregate (return_mode "expand"): the MEOS-native
 # streaming model — the aggregate STATE is a live expandable `Temporal*` (a
@@ -2974,6 +3025,8 @@ def physical_template_for(op):
             return PHYSICAL_HPP_TGEO, PHYSICAL_CPP_TGEO_SEQ
         if op.get("fold") == "tgeoseqtext":
             return PHYSICAL_HPP_TGEO, PHYSICAL_CPP_TGEO_SEQ_TEXT
+        if op.get("fold") == "tgeoseqarray":
+            return PHYSICAL_HPP_TGEO, PHYSICAL_CPP_TGEO_SEQ_ARRAY
         return PHYSICAL_HPP_TGEO, (PHYSICAL_CPP_TGEO_BOX if box else PHYSICAL_CPP_TGEO)
     if op["input_shape"] == "tnumber":
         # Scalar-fold reuses the tnumber (value, ts) HPP but folds the field
@@ -3250,6 +3303,19 @@ def inject_g4(operators, g4_path: Path) -> int:
     return n_added
 
 
+def _skip_past_family_endif(body: str, insert_at: int) -> int:
+    """If the chosen insertion point sits immediately before a family-guard close
+    `#endif /* CBUFFER|NPOINT|POSE|RGEO */`, advance past it. Mirrors the
+    function-op generator (codegen_nebula.inject_parser_cpp): the last END marker
+    may be the LAST block inside a family `#if <FAMILY> … #endif` guard, so
+    inserting right after it would nest a (possibly generic) block inside the
+    guard and leave the original `#endif` orphaned — unbalancing #if/#endif. The
+    later guard pass re-wraps each family block in its own tight guard, so landing
+    at switch scope here is always correct."""
+    m_endif = re.match(r"\s*\n#endif /\* (?:CBUFFER|NPOINT|POSE|RGEO) \*/", body[insert_at:])
+    return insert_at + m_endif.end() if m_endif else insert_at
+
+
 def inject_parser_cpp(operators, cpp_path: Path) -> int:
     """Inject TWO dispatch sites + per-op #include."""
     if not cpp_path.exists():
@@ -3308,11 +3374,11 @@ def inject_parser_cpp(operators, cpp_path: Path) -> int:
         last_end_agg = list(re.finditer(r"/\* END CODEGEN GLUE: [^*]+\(case-switch\)\s*\*/", body))
         last_end_nebula = list(re.finditer(r"/\* END CODEGEN GLUE: [^*(]+\*/", body))
         if last_end_agg:
-            insert_at = last_end_agg[-1].end()
+            insert_at = _skip_past_family_endif(body, last_end_agg[-1].end())
             body = body[:insert_at] + "\n" + "\n".join(new_case_blocks) + body[insert_at:]
             sys.stderr.write(f"  ✓ parser-cpp case-switch: added {len(new_case_blocks)} (after own marker)\n")
         elif last_end_nebula:
-            insert_at = last_end_nebula[-1].end()
+            insert_at = _skip_past_family_endif(body, last_end_nebula[-1].end())
             body = body[:insert_at] + "\n" + "\n".join(new_case_blocks) + body[insert_at:]
             sys.stderr.write(f"  ✓ parser-cpp case-switch: added {len(new_case_blocks)} (after codegen_nebula marker)\n")
         else:
@@ -3344,7 +3410,7 @@ def inject_parser_cpp(operators, cpp_path: Path) -> int:
         last_end_re = re.compile(r"/\* END CODEGEN GLUE: [^*]+\(funcName chain\)\s*\*/")
         ends = list(last_end_re.finditer(body))
         if ends:
-            insert_at = ends[-1].end()
+            insert_at = _skip_past_family_endif(body, ends[-1].end())
             body = body[:insert_at] + "\n" + "\n".join(new_chain_blocks) + body[insert_at:]
             sys.stderr.write(f"  ✓ parser-cpp funcName chain: added {len(new_chain_blocks)} (after marker)\n")
         else:

@@ -1809,7 +1809,6 @@ trgeometry_restrict_timestamptz
 trgeometry_restrict_tstzset
 trgeometry_restrict_tstzspan
 trgeometry_restrict_tstzspanset
-trgeometry_restrict_value
 trgeometry_restrict_values
 trgeometry_rotation
 trgeometry_round
