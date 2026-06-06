@@ -1799,3 +1799,6 @@ add_plugin(SetSpans LogicalFunction nes-logical-operators SetSpansLogicalFunctio
 add_plugin(SpansetSpans LogicalFunction nes-logical-operators SpansetSpansLogicalFunction.cpp)
 add_plugin(SpansetSpanarr LogicalFunction nes-logical-operators SpansetSpanarrLogicalFunction.cpp)
 add_plugin(DwithinCbufferCbuffer LogicalFunction nes-logical-operators DwithinCbufferCbufferLogicalFunction.cpp)
+add_plugin(CbufferSetSrid LogicalFunction nes-logical-operators CbufferSetSridLogicalFunction.cpp)
+add_plugin(PoseSetSrid LogicalFunction nes-logical-operators PoseSetSridLogicalFunction.cpp)
+add_plugin(PoseOrientation LogicalFunction nes-logical-operators PoseOrientationLogicalFunction.cpp)

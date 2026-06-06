@@ -245,6 +245,7 @@ cbuffer_point	proven
 cbuffer_radius	proven
 cbuffer_round	proven
 cbuffer_same	proven
+cbuffer_set_srid	proven
 cbuffer_srid	proven
 cbuffer_timestamptz_to_stbox	proven
 cbuffer_to_geom	proven
@@ -1064,9 +1065,11 @@ pose_make_point2d	proven
 pose_make_point3d	proven
 pose_ne	proven
 pose_nsame	proven
+pose_orientation	proven
 pose_rotation	proven
 pose_round	proven
 pose_same	proven
+pose_set_srid	proven
 pose_srid	proven
 pose_timestamptz_to_stbox	proven
 pose_to_point	proven

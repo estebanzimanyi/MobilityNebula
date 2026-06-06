@@ -3491,6 +3491,13 @@ VALUE_OUT_RETURNS = {
 for _rk in VALUE_OUT_RETURNS:
     GENERIC_RETURNS.setdefault(_rk, ("VariableSizedData", "VARSIZED", "(char*) nullptr", None))
 
+# In-place mutator operators: a void MEOS call f(obj, args...) that MUTATES the
+# primary object (cbuffer_set_srid / pose_set_srid), whose result is the MUTATED
+# PRIMARY serialized via its own *_out (self_out_fn). The primary is serialized
+# THEN freed. Routed to the varsized assembler via a dedicated self-out branch;
+# the op supplies "self_out_fn" (and optional "self_out_maxdd").
+GENERIC_RETURNS.setdefault("self_out", ("VariableSizedData", "VARSIZED", "(char*) nullptr", None))
+
 
 def _generic_field_decl(name, cpp):
     """Lambda parameter declaration + the cast expression for one event field."""
@@ -3538,7 +3545,8 @@ def assemble_generic_varsized_output(op):
     inp = GENERIC_INPUTS[op["input_type"]]
     array_out = op.get("array_out")
     array_in_round = op.get("array_in_round")
-    if array_out or array_in_round or op["return_kind"] in VALUE_OUT_RETURNS:
+    if (array_out or array_in_round or op["return_kind"] in VALUE_OUT_RETURNS
+            or op["return_kind"] == "self_out"):
         res_ctype, out_fn, out_maxdd = None, None, False
     else:
         _ret = VARSIZED_OUT_RETURNS[op["return_kind"]]
@@ -3769,6 +3777,18 @@ def assemble_generic_varsized_output(op):
             f"                char* outStr = {ser}(res);\n"
             f"                if (!outStr) return (char*) nullptr;\n"
             f"                return outStr;")
+    elif op["return_kind"] == "self_out":
+        # In-place mutator: a void call f(temp, args...) mutates the primary; the
+        # result is the MUTATED primary serialized via its own *_out, then freed.
+        of = op["self_out_fn"]
+        md = ", 15" if op.get("self_out_maxdd") else ""
+        call_marshal = (
+            f"                {op['meos_call']}({callargs});\n"
+            f"{bf}"
+            f"                char* outStr = {of}(temp{md});\n"
+            f"{free_primary}"
+            f"                if (!outStr) return (char*) nullptr;\n"
+            f"                return outStr;")
     elif op.get("out_param") is not None:
         # VARSIZED out-param accessor: bool f(operand…, T **result) writes a heap
         # object pointer into *result and returns a validity flag. Serialise it
@@ -3817,6 +3837,7 @@ def assemble_generic_physical(op):
     if op["return_kind"] == "wkb":
         return assemble_wkb_output(op)
     if (op["return_kind"] in VARSIZED_OUT_RETURNS or op["return_kind"] in VALUE_OUT_RETURNS
+            or op["return_kind"] == "self_out"
             or op.get("array_out") or op.get("array_in_round")):
         return assemble_generic_varsized_output(op)
     inp = GENERIC_INPUTS[op["input_type"]]

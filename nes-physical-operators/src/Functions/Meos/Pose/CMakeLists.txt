@@ -101,3 +101,5 @@ add_plugin(PoseTransformPipeline PhysicalFunction nes-physical-operators PoseTra
 add_plugin(PosearrRound PhysicalFunction nes-physical-operators PosearrRoundPhysicalFunction.cpp)
 add_plugin(TdistanceTposeGeo PhysicalFunction nes-physical-operators TdistanceTposeGeoPhysicalFunction.cpp)
 add_plugin(TposeMake PhysicalFunction nes-physical-operators TposeMakePhysicalFunction.cpp)
+add_plugin(PoseSetSrid PhysicalFunction nes-physical-operators PoseSetSridPhysicalFunction.cpp)
+add_plugin(PoseOrientation PhysicalFunction nes-physical-operators PoseOrientationPhysicalFunction.cpp)

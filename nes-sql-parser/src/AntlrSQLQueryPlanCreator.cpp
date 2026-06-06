@@ -2802,6 +2802,15 @@
 #if CBUFFER
 #include <Functions/Meos/DwithinCbufferCbufferLogicalFunction.hpp>
 #endif /* CBUFFER */
+#if CBUFFER
+#include <Functions/Meos/CbufferSetSridLogicalFunction.hpp>
+#endif /* CBUFFER */
+#if POSE
+#include <Functions/Meos/PoseSetSridLogicalFunction.hpp>
+#endif /* POSE */
+#if POSE
+#include <Functions/Meos/PoseOrientationLogicalFunction.hpp>
+#endif /* POSE */
 #include <Plans/LogicalPlan.hpp>
 #include <Plans/LogicalPlanBuilder.hpp>
 #include <Util/Overloaded.hpp>
@@ -55841,6 +55850,98 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         break;
         /* END CODEGEN GLUE: DWITHIN_CBUFFER_CBUFFER */
 #endif /* CBUFFER */
+        #if CBUFFER
+/* BEGIN CODEGEN GLUE: CBUFFER_SET_SRID */
+        case AntlrSQLLexer::CBUFFER_SET_SRID:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 2)
+                throw InvalidQuerySyntax("CBUFFER_SET_SRID requires exactly 2 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(CbufferSetSridLogicalFunction(a0, a1));
+        }
+        break;
+        /* END CODEGEN GLUE: CBUFFER_SET_SRID */
+#endif /* CBUFFER */
+
+        #if POSE
+/* BEGIN CODEGEN GLUE: POSE_SET_SRID */
+        case AntlrSQLLexer::POSE_SET_SRID:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 2)
+                throw InvalidQuerySyntax("POSE_SET_SRID requires exactly 2 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(PoseSetSridLogicalFunction(a0, a1));
+        }
+        break;
+        /* END CODEGEN GLUE: POSE_SET_SRID */
+#endif /* POSE */
+
+        #if POSE
+/* BEGIN CODEGEN GLUE: POSE_ORIENTATION */
+        case AntlrSQLLexer::POSE_ORIENTATION:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 1)
+                throw InvalidQuerySyntax("POSE_ORIENTATION requires exactly 1 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(PoseOrientationLogicalFunction(a0));
+        }
+        break;
+        /* END CODEGEN GLUE: POSE_ORIENTATION */
+#endif /* POSE */
+
 
 
 
