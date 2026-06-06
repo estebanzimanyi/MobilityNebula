@@ -77,6 +77,67 @@ def meos_family(nebula_name):
 
 
 # ===========================================================================
+# CONSTANT (non-field) argument support for the parameterized tgeo transform
+# fold (fold == "tgeotransform"). Each op carries a `const_args` list; each entry
+# is {"kind": "..."} (plus op-supplied extras for the `set` kind). The constants
+# travel end-to-end as LITERAL STRINGS (parser constantBuilder -> logical
+# constArgs -> serde FunctionList/literals -> physical ctor), and are parsed to
+# their C value/object only inside the plain-C finalize lambda. This map gives,
+# per kind: the C parse statement (templated on the local var name `cN` and the
+# source literal `cstr`), and an optional free statement for heap kinds.
+# ===========================================================================
+_CONST_KIND_PARSE = {
+    "double":      ("double {var} = atof({src});", None),
+    "int":         ("int {var} = atoi({src});", None),
+    "bool":        ("bool {var} = ({src}[0]=='t'||{src}[0]=='T'||{src}[0]=='1');", None),
+    "interval":    ("Interval* {var} = interval_in({src}, -1);", "if ({var}) free({var});"),
+    "timestamptz": ("TimestampTz {var} = timestamptz_in({src}, -1);", None),
+    "interptype":  ("interpType {var} = (interpType) atoi({src});", None),
+    "set":         ("Set* {var} = {set_in_fn}({src});", "if ({var}) free({var});"),
+}
+
+
+def render_const_args(op):
+    """Build the physical-finalize const fragments for a `const_args` op:
+      * const_parse_block : C statements parsing constArgs[i] -> local cN (one per const)
+      * const_call_args   : the comma-PREFIXED list of parsed C vars, e.g. ", c0, c1"
+      * const_free_block  : C statements freeing any heap consts after the MEOS call
+      * num_const_args    : count
+    The finalize reads each literal from the captured `constArg0`..`constArgN` C
+    strings; render_const_args emits parse stmts referencing those names."""
+    consts = op.get("const_args", []) or []
+    parse_lines = []
+    free_lines = []
+    call_args = []
+    lambda_params = []
+    invoke_args = []
+    for i, c in enumerate(consts):
+        kind = c["kind"]
+        if kind not in _CONST_KIND_PARSE:
+            raise ValueError(f"unknown const_args kind: {kind!r} (op {op.get('nebula_name')})")
+        parse_tmpl, free_tmpl = _CONST_KIND_PARSE[kind]
+        var = f"c{i}"
+        src = f"constArg{i}"
+        parse_lines.append("            " + parse_tmpl.format(var=var, src=src, set_in_fn=c.get("set_in_fn", "")))
+        if free_tmpl:
+            free_lines.append("            " + free_tmpl.format(var=var))
+        call_args.append(var)
+        # The literal string is threaded into the captureless finalize lambda as an
+        # extra `const char*` arg, sourced from the constArgs member's c_str() (valid
+        # for the synchronous invoke). Same ABI PairMeeting uses for its scalar.
+        lambda_params.append(f"const char* {src}")
+        invoke_args.append(f"nautilus::val<const char*>(constArgs[{i}].c_str())")
+    return {
+        "const_parse_block":  "\n".join(parse_lines),
+        "const_call_args":    "".join(", " + a for a in call_args),
+        "const_free_block":   "\n".join(free_lines),
+        "const_lambda_params": "".join(", " + p for p in lambda_params),
+        "const_invoke_args":  "".join(",\n        " + a for a in invoke_args),
+        "num_const_args":     len(consts),
+    }
+
+
+# ===========================================================================
 # Logical-layer .hpp template (mirrors TemporalLengthAggregationLogicalFunction.hpp).
 # ===========================================================================
 LOGICAL_HPP_TGEO = """\
@@ -1928,6 +1989,291 @@ PHYSICAL_CPP_TGEO_WKB = _swap_once(
     _FINALIZE_SCALAR_TGEO, _FINALIZE_WKB_TGEO, "tgeo-wkb finalize tail")
 
 # ===========================================================================
+# Parameterized transform aggregate (fold "tgeotransform"): build the windowed
+# CONTINUOUS sequence, apply a MEOS transform that takes the Temporal* PLUS one
+# or more CONSTANT (non-field) args, and emit the resulting Temporal* as hex-WKB.
+# The constants travel as LITERAL STRINGS: stored on the physical object as a
+# std::vector<std::string> `constArgs`, threaded into the captureless finalize
+# lambda as extra `nautilus::val<const char*>` invoke args (same ABI PairMeeting
+# uses for its scalar dMeet), and parsed to their C type inside the lambda by the
+# {const_parse_block} the generator builds from op["const_args"].
+#
+# Derived from PHYSICAL_CPP_TGEO: empty-window -> VARSIZED, instant-set braces ->
+# sequence brackets, ctor gains the constArgs param+member, and the scalar
+# finalize tail is replaced by _FINALIZE_WKB_TGEO_CONST.
+# ===========================================================================
+
+# ctor: append a constArgs parameter + initializer + member (3 surgical swaps on
+# the shared PHYSICAL_CPP_TGEO ctor/lift scaffold).
+_CTOR_PARAM_TGEO = """\
+    PhysicalFunction timestampFunctionParam,
+    Nautilus::Record::RecordFieldIdentifier resultFieldIdentifier,
+    std::shared_ptr<Nautilus::Interface::BufferRef::TupleBufferRef> bufferRef)"""
+_CTOR_PARAM_TGEO_CONST = """\
+    PhysicalFunction timestampFunctionParam,
+    Nautilus::Record::RecordFieldIdentifier resultFieldIdentifier,
+    std::shared_ptr<Nautilus::Interface::BufferRef::TupleBufferRef> bufferRef,
+    std::vector<std::string> constArgsParam)"""
+
+_CTOR_INIT_TGEO = """\
+    , timestampFunction(std::move(timestampFunctionParam))
+{{
+}}"""
+_CTOR_INIT_TGEO_CONST = """\
+    , timestampFunction(std::move(timestampFunctionParam))
+    , constArgs(std::move(constArgsParam))
+{{
+}}"""
+
+# Finalize tail — parameterized transform: parse the constants, apply the MEOS
+# transform fn to the windowed sequence + constants, emit the Temporal* as hex.
+_FINALIZE_WKB_TGEO_CONST = """\
+    auto boxStr = nautilus::invoke(
+        +[](const char* trajStr{const_lambda_params}) -> char*
+        {{
+            if (!trajStr || strlen(trajStr) == 0) {{
+                free((void*)trajStr);
+                return (char*)nullptr;
+            }}
+
+            MEOS::Meos::ensureMeosInitialized();
+            std::lock_guard<std::mutex> lock({mutex_name});
+
+            std::string trajString(trajStr);
+            void* temp = MEOS::Meos::parseTemporalPoint(trajString);
+            free((void*)trajStr);
+            if (!temp) {{
+                return (char*)nullptr;
+            }}
+
+            // Parse each constant literal string to its C value/object.
+{const_parse_block}
+
+            Temporal* res = {meos_scalar_fn}(static_cast<Temporal*>(temp){const_call_args});
+            MEOS::Meos::freeTemporalObject(temp);
+{const_free_block}
+            if (!res) {{
+                return (char*)nullptr;
+            }}
+
+            size_t hexSize = 0;
+            char* hexOut = temporal_as_hexwkb(res, 0x04 /* WKB_EXTENDED */, &hexSize);
+            free(res);
+            return hexOut;
+        }},
+        trajectoryStr{const_invoke_args});
+
+    const auto boxStrLen = nautilus::invoke(
+        +[](const char* s) -> size_t {{ return s ? strlen(s) : (size_t) 0; }},
+        boxStr);
+
+    auto variableSized = pipelineMemoryProvider.arena.allocateVariableSizedData(boxStrLen);
+
+    nautilus::invoke(
+        +[](int8_t* dest, const char* s, size_t len) -> void
+        {{
+            if (s) {{
+                memcpy(dest, s, len);
+                free((void*)s);
+            }}
+        }},
+        variableSized.getContent(),
+        boxStr,
+        boxStrLen);
+
+    Nautilus::Record resultRecord;
+    resultRecord.write(resultFieldIdentifier, variableSized);
+    return resultRecord;"""
+
+PHYSICAL_CPP_TGEO_CONST = _swap_once(
+    _swap_once(
+        _swap_once(
+            _swap_once(
+                _swap_once(
+                    _swap_once(PHYSICAL_CPP_TGEO, _EMPTY_SCALAR, _EMPTY_BOX, "tgeo-const empty-window block"),
+                    '            strcpy(buffer, "{{");', '            strcpy(buffer, "[");', "tgeo-const open bracket -> sequence"),
+                '            strcat(buffer, "}}");', '            strcat(buffer, "]");', "tgeo-const close bracket -> sequence"),
+            _CTOR_PARAM_TGEO, _CTOR_PARAM_TGEO_CONST, "tgeo-const ctor param"),
+        _CTOR_INIT_TGEO, _CTOR_INIT_TGEO_CONST, "tgeo-const ctor init"),
+    _FINALIZE_SCALAR_TGEO, _FINALIZE_WKB_TGEO_CONST, "tgeo-const finalize tail")
+
+# Physical .hpp — append the constArgs ctor param + member to the base tgeo .hpp.
+_HPP_CTOR_TGEO = """\
+        PhysicalFunction timestampFunctionParam,
+        Nautilus::Record::RecordFieldIdentifier resultFieldIdentifier,
+        std::shared_ptr<Nautilus::Interface::BufferRef::TupleBufferRef> bufferRef);"""
+_HPP_CTOR_TGEO_CONST = """\
+        PhysicalFunction timestampFunctionParam,
+        Nautilus::Record::RecordFieldIdentifier resultFieldIdentifier,
+        std::shared_ptr<Nautilus::Interface::BufferRef::TupleBufferRef> bufferRef,
+        std::vector<std::string> constArgsParam);"""
+_HPP_MEMBER_TGEO = """\
+    PhysicalFunction timestampFunction;
+}};"""
+_HPP_MEMBER_TGEO_CONST = """\
+    PhysicalFunction timestampFunction;
+    std::vector<std::string> constArgs;
+}};"""
+
+PHYSICAL_HPP_TGEO_CONST = _swap_once(
+    _swap_once(
+        _swap_once(PHYSICAL_HPP_TGEO, "#include <cstddef>", "#include <cstddef>\n#include <string>\n#include <vector>",
+                   "tgeo-const hpp includes"),
+        _HPP_CTOR_TGEO, _HPP_CTOR_TGEO_CONST, "tgeo-const hpp ctor param"),
+    _HPP_MEMBER_TGEO, _HPP_MEMBER_TGEO_CONST, "tgeo-const hpp member")
+
+# ===========================================================================
+# Logical const variant (fold "tgeotransform"): the logical op additionally
+# stores the constant literal strings, packs them via serializeConstArgs(), and
+# the registrar reconstructs them from arguments.literals. Derived from the base
+# tgeo logical templates by surgical swaps so the field-handling scaffold stays
+# shared.
+# ===========================================================================
+
+# --- HPP swaps ---
+_LHPP_CREATE_TGEO = """\
+    static std::shared_ptr<WindowAggregationLogicalFunction>
+    create(const FieldAccessLogicalFunction& lonField, const FieldAccessLogicalFunction& latField, const FieldAccessLogicalFunction& timestampField);
+
+    {nebula_name}AggregationLogicalFunction(
+        const FieldAccessLogicalFunction& lonField,
+        const FieldAccessLogicalFunction& latField,
+        const FieldAccessLogicalFunction& timestampField,
+        const FieldAccessLogicalFunction& asField);"""
+_LHPP_CREATE_TGEO_CONST = """\
+    static std::shared_ptr<WindowAggregationLogicalFunction>
+    create(const FieldAccessLogicalFunction& lonField, const FieldAccessLogicalFunction& latField, const FieldAccessLogicalFunction& timestampField, std::vector<std::string> constArgs);
+
+    {nebula_name}AggregationLogicalFunction(
+        const FieldAccessLogicalFunction& lonField,
+        const FieldAccessLogicalFunction& latField,
+        const FieldAccessLogicalFunction& timestampField,
+        const FieldAccessLogicalFunction& asField,
+        std::vector<std::string> constArgs);
+
+    [[nodiscard]] const std::vector<std::string>& getConstArgs() const noexcept {{ return constArgs; }}"""
+_LHPP_MEMBER_TGEO = """\
+    FieldAccessLogicalFunction lonField;
+    FieldAccessLogicalFunction latField;
+    FieldAccessLogicalFunction timestampField;
+}};"""
+_LHPP_MEMBER_TGEO_CONST = """\
+    FieldAccessLogicalFunction lonField;
+    FieldAccessLogicalFunction latField;
+    FieldAccessLogicalFunction timestampField;
+    std::vector<std::string> constArgs;
+}};"""
+
+LOGICAL_HPP_TGEO_CONST = _swap_once(
+    _swap_once(
+        _swap_once(LOGICAL_HPP_TGEO,
+                   "#include <Operators/Windows/Aggregations/WindowAggregationLogicalFunction.hpp>",
+                   "#include <string>\n#include <vector>\n#include <Operators/Windows/Aggregations/WindowAggregationLogicalFunction.hpp>",
+                   "tgeo-const lhpp includes"),
+        _LHPP_CREATE_TGEO, _LHPP_CREATE_TGEO_CONST, "tgeo-const lhpp create/ctor"),
+    _LHPP_MEMBER_TGEO, _LHPP_MEMBER_TGEO_CONST, "tgeo-const lhpp member")
+
+# --- CPP swaps ---
+_LCPP_INCLUDES_TGEO = "#include <memory>\n#include <string>\n#include <string_view>"
+_LCPP_INCLUDES_TGEO_CONST = "#include <memory>\n#include <string>\n#include <string_view>\n#include <utility>\n#include <vector>"
+
+_LCPP_CTOR_TGEO = """\
+{nebula_name}AggregationLogicalFunction::{nebula_name}AggregationLogicalFunction(
+    const FieldAccessLogicalFunction& lonField,
+    const FieldAccessLogicalFunction& latField,
+    const FieldAccessLogicalFunction& timestampField,
+    const FieldAccessLogicalFunction& asField)
+    : WindowAggregationLogicalFunction(
+          lonField.getDataType(),
+          DataTypeProvider::provideDataType(partialAggregateStampType),
+          DataTypeProvider::provideDataType(finalAggregateStampType),
+          lonField,
+          asField)
+    , lonField(lonField)
+    , latField(latField)
+    , timestampField(timestampField)
+{{
+}}
+
+std::shared_ptr<WindowAggregationLogicalFunction>
+{nebula_name}AggregationLogicalFunction::create(
+    const FieldAccessLogicalFunction& lonField,
+    const FieldAccessLogicalFunction& latField,
+    const FieldAccessLogicalFunction& timestampField)
+{{
+    return std::make_shared<{nebula_name}AggregationLogicalFunction>(lonField, latField, timestampField, lonField);
+}}"""
+_LCPP_CTOR_TGEO_CONST = """\
+{nebula_name}AggregationLogicalFunction::{nebula_name}AggregationLogicalFunction(
+    const FieldAccessLogicalFunction& lonField,
+    const FieldAccessLogicalFunction& latField,
+    const FieldAccessLogicalFunction& timestampField,
+    const FieldAccessLogicalFunction& asField,
+    std::vector<std::string> constArgs)
+    : WindowAggregationLogicalFunction(
+          lonField.getDataType(),
+          DataTypeProvider::provideDataType(partialAggregateStampType),
+          DataTypeProvider::provideDataType(finalAggregateStampType),
+          lonField,
+          asField)
+    , lonField(lonField)
+    , latField(latField)
+    , timestampField(timestampField)
+    , constArgs(std::move(constArgs))
+{{
+}}
+
+std::shared_ptr<WindowAggregationLogicalFunction>
+{nebula_name}AggregationLogicalFunction::create(
+    const FieldAccessLogicalFunction& lonField,
+    const FieldAccessLogicalFunction& latField,
+    const FieldAccessLogicalFunction& timestampField,
+    std::vector<std::string> constArgs)
+{{
+    return std::make_shared<{nebula_name}AggregationLogicalFunction>(lonField, latField, timestampField, lonField, std::move(constArgs));
+}}"""
+
+_LCPP_SERIALIZE_TGEO = """\
+    auto saf = TemporalAggregationSerde::serializeTemporalSequence(lonField, latField, timestampField, asField);
+    saf.set_type(std::string(NAME));
+    return saf;"""
+_LCPP_SERIALIZE_TGEO_CONST = """\
+    auto saf = TemporalAggregationSerde::serializeTemporalSequence(lonField, latField, timestampField, asField);
+    TemporalAggregationSerde::serializeConstArgs(saf, constArgs);
+    saf.set_type(std::string(NAME));
+    return saf;"""
+
+_LCPP_REGISTRAR_TGEO = """\
+    if (arguments.fields.size() == 4)
+    {{
+        auto ptr = std::make_shared<{nebula_name}AggregationLogicalFunction>(
+            arguments.fields[0], arguments.fields[1], arguments.fields[2], arguments.fields[3]);
+        return ptr;
+    }}
+    throw CannotDeserialize(
+        "{nebula_name}AggregationLogicalFunction requires lon, lat, timestamp, and alias fields but got {{}}",
+        arguments.fields.size());"""
+_LCPP_REGISTRAR_TGEO_CONST = """\
+    if (arguments.fields.size() == 4)
+    {{
+        auto ptr = std::make_shared<{nebula_name}AggregationLogicalFunction>(
+            arguments.fields[0], arguments.fields[1], arguments.fields[2], arguments.fields[3],
+            arguments.literals);
+        return ptr;
+    }}
+    throw CannotDeserialize(
+        "{nebula_name}AggregationLogicalFunction requires lon, lat, timestamp, and alias fields but got {{}}",
+        arguments.fields.size());"""
+
+LOGICAL_CPP_TGEO_CONST = _swap_once(
+    _swap_once(
+        _swap_once(
+            _swap_once(LOGICAL_CPP_TGEO, _LCPP_INCLUDES_TGEO, _LCPP_INCLUDES_TGEO_CONST, "tgeo-const lcpp includes"),
+            _LCPP_CTOR_TGEO, _LCPP_CTOR_TGEO_CONST, "tgeo-const lcpp ctor+create"),
+        _LCPP_SERIALIZE_TGEO, _LCPP_SERIALIZE_TGEO_CONST, "tgeo-const lcpp serialize"),
+    _LCPP_REGISTRAR_TGEO, _LCPP_REGISTRAR_TGEO_CONST, "tgeo-const lcpp registrar")
+
+# ===========================================================================
 # Sequence-accessor aggregates (fold "tgeoseq" / "tgeoseqtext"): the windowed
 # point stream is built as a CONTINUOUS sequence ("[...]", linear interp) — NOT
 # the discrete instant-set ("{...}") the other tgeo aggregates build — because
@@ -3483,6 +3829,115 @@ OPTIMIZER_LOWERING_TPOSE = """\
 """
 
 # ===========================================================================
+# Parameterized tgeo transform glue (fold "tgeotransform"): the SQL call is
+# {sql_token}(lon, lat, ts, <const0>, <const1>, ...). The 3 field args land in
+# functionBuilder; the trailing {num_const_args} literal constants land in
+# constantBuilder (the parser parks literals there). Pop the constants (reverse
+# order -> source order), then the 3 fields, and pass the const literal STRINGS
+# straight to create(). Mirrors PAIR_MEETING / CROSS_DISTANCE.
+# ===========================================================================
+CASE_SWITCH_TGEO_CONST = """\
+        /* BEGIN CODEGEN GLUE: {sql_token} (case-switch) */
+        case AntlrSQLLexer::{sql_token}:
+            // {comment_one_liner}
+            {{
+                if (helpers.top().constantBuilder.size() < {num_const_args}) {{
+                    throw InvalidQuerySyntax("{sql_token} requires {num_const_args} constant argument(s) after lon, lat, timestamp, but got {{}}", helpers.top().constantBuilder.size());
+                }}
+                std::vector<std::string> constArgs({num_const_args});
+                for (size_t i = 0; i < static_cast<size_t>({num_const_args}); ++i) {{
+                    constArgs[static_cast<size_t>({num_const_args}) - 1 - i] = std::move(helpers.top().constantBuilder.back());
+                    helpers.top().constantBuilder.pop_back();
+                }}
+
+                if (helpers.top().functionBuilder.size() != 3) {{
+                    throw InvalidQuerySyntax("{sql_token} requires exactly three field arguments (longitude, latitude, timestamp), but got {{}}", helpers.top().functionBuilder.size());
+                }}
+                const auto timestampFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto latitudeFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto longitudeFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+
+                if (!longitudeFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !latitudeFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {{
+                    throw InvalidQuerySyntax("{sql_token} field arguments must be field references");
+                }}
+
+                helpers.top().windowAggs.push_back(
+                    {nebula_name}AggregationLogicalFunction::create(longitudeFunction.get<FieldAccessLogicalFunction>(),
+                                                                    latitudeFunction.get<FieldAccessLogicalFunction>(),
+                                                                    timestampFunction.get<FieldAccessLogicalFunction>(),
+                                                                    std::move(constArgs)));
+                helpers.top().functionBuilder.push_back(longitudeFunction);
+            }}
+            break;
+        /* END CODEGEN GLUE: {sql_token} (case-switch) */
+"""
+
+FUNCNAME_CHAIN_TGEO_CONST = """\
+            /* BEGIN CODEGEN GLUE: {sql_token} (funcName chain) */
+            else if (funcName == "{sql_token}")
+            {{
+                if (helpers.top().constantBuilder.size() < {num_const_args})
+                {{
+                    throw InvalidQuerySyntax("{sql_token} requires {num_const_args} constant argument(s) at {{}}", context->getText());
+                }}
+                std::vector<std::string> constArgs({num_const_args});
+                for (size_t i = 0; i < static_cast<size_t>({num_const_args}); ++i) {{
+                    constArgs[static_cast<size_t>({num_const_args}) - 1 - i] = std::move(helpers.top().constantBuilder.back());
+                    helpers.top().constantBuilder.pop_back();
+                }}
+                if (helpers.top().functionBuilder.size() < 3)
+                {{
+                    throw InvalidQuerySyntax("{sql_token} requires three field arguments at {{}}", context->getText());
+                }}
+                const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto lat = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto lon = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                helpers.top().windowAggs.push_back({nebula_name}AggregationLogicalFunction::create(lon, lat, ts, std::move(constArgs)));
+            }}
+            /* END CODEGEN GLUE: {sql_token} (funcName chain) */
+"""
+
+OPTIMIZER_LOWERING_TGEO_CONST = """\
+        /* BEGIN CODEGEN GLUE: {class_name_token} (optimizer lowering) */
+        if (name == std::string_view("{class_name_token}"))
+        {{
+            auto specificDescriptor = std::dynamic_pointer_cast<{nebula_name}AggregationLogicalFunction>(descriptor);
+            INVARIANT(specificDescriptor != nullptr, "Expected {nebula_name}AggregationLogicalFunction for {class_name_token}");
+
+            auto lonPF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getLonField());
+            auto latPF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getLatField());
+            auto tsPF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getTimestampField());
+
+            Schema stateSchema;
+            stateSchema.addField("lon", specificDescriptor->getLonField().getDataType());
+            stateSchema.addField("lat", specificDescriptor->getLatField().getDataType());
+            stateSchema.addField("timestamp", specificDescriptor->getTimestampField().getDataType());
+            auto tupleBufferRef = Interface::BufferRef::TupleBufferRef::create(configuration.pageSize.getValue(), stateSchema);
+
+            auto phys = std::make_shared<{nebula_name}AggregationPhysicalFunction>(
+                std::move(physicalInputType),
+                std::move(physicalFinalType),
+                lonPF,
+                latPF,
+                tsPF,
+                resultFieldIdentifier,
+                tupleBufferRef,
+                specificDescriptor->getConstArgs());
+            aggregationPhysicalFunctions.push_back(std::move(phys));
+            continue;
+        }}
+        /* END CODEGEN GLUE: {class_name_token} (optimizer lowering) */
+"""
+
+# ===========================================================================
 # Expandable-Temporal* VALUE-OUTPUT: f(live mini-trip) -> Temporal* result,
 # serialized to hex-WKB as VARSIZED (the proven box-output VARSIZED tail).
 # Derived from PHYSICAL_CPP_TGEO_EXPAND by swapping only the scalar lower() for
@@ -3745,6 +4200,8 @@ PHYSICAL_CPP_TNPOINT_EXPAND_WKB = _swap_once(
 def physical_template_for(op):
     box = op.get("return_mode") == "box"
     if op["input_shape"] == "tgeo":
+        if op.get("fold") == "tgeotransform":
+            return PHYSICAL_HPP_TGEO_CONST, PHYSICAL_CPP_TGEO_CONST
         if op.get("return_mode") == "wkb":
             return PHYSICAL_HPP_TGEO, PHYSICAL_CPP_TGEO_WKB
         if op.get("return_mode") == "expand":
@@ -3796,6 +4253,8 @@ def physical_template_for(op):
 
 def logical_template_for(op):
     if op["input_shape"] == "tgeo":
+        if op.get("fold") == "tgeotransform":
+            return LOGICAL_HPP_TGEO_CONST, LOGICAL_CPP_TGEO_CONST
         return LOGICAL_HPP_TGEO, LOGICAL_CPP_TGEO
     if op["input_shape"] == "tpose":
         return LOGICAL_HPP_TPOSE, LOGICAL_CPP_TPOSE
@@ -3806,6 +4265,8 @@ def logical_template_for(op):
 
 def case_switch_template_for(op):
     if op["input_shape"] == "tgeo":
+        if op.get("fold") == "tgeotransform":
+            return CASE_SWITCH_TGEO_CONST
         return CASE_SWITCH_TGEO
     if op["input_shape"] == "tpose":
         return CASE_SWITCH_TPOSE
@@ -3814,6 +4275,8 @@ def case_switch_template_for(op):
 
 def funcname_chain_template_for(op):
     if op["input_shape"] == "tgeo":
+        if op.get("fold") == "tgeotransform":
+            return FUNCNAME_CHAIN_TGEO_CONST
         return FUNCNAME_CHAIN_TGEO
     if op["input_shape"] == "tpose":
         return FUNCNAME_CHAIN_TPOSE
@@ -3822,6 +4285,8 @@ def funcname_chain_template_for(op):
 
 def optimizer_lowering_template_for(op):
     if op["input_shape"] == "tgeo":
+        if op.get("fold") == "tgeotransform":
+            return OPTIMIZER_LOWERING_TGEO_CONST
         return OPTIMIZER_LOWERING_TGEO
     if op["input_shape"] == "tpose":
         return OPTIMIZER_LOWERING_TPOSE
@@ -3894,6 +4359,12 @@ def emit_operator(op, output_root: Path):
         "elem_in_extra":            op.get("elem_in_extra", ""),
         "make_arg_type":            op.get("make_arg_type", op.get("elem_cpp", "void") + " **"),
     }
+
+    # Parameterized-transform (fold=tgeotransform) const-arg fragments: the per-const
+    # parse block, the comma-prefixed C call args, any heap-free block, and the
+    # finalize lambda's extra `const char*` params / nautilus invoke args. Empty for
+    # every other op (harmless — the placeholders only appear in the const templates).
+    fmt.update(render_const_args(op))
 
     # value_compute (point/tgeo finalize): either fold the windowed sequence
     # directly with meos_scalar_fn, or — for the EXTENT shape — first reduce the
@@ -4128,6 +4599,7 @@ def inject_parser_cpp(operators, cpp_path: Path) -> int:
             continue
         new_case_blocks.append(tmpl.format(
             sql_token=op["sql_token"], nebula_name=op["nebula_name"], comment_one_liner=op["comment_one_liner"],
+            num_const_args=len(op.get("const_args", []) or []),
         ))
     if new_case_blocks:
         # Anchor preference order:
@@ -4168,7 +4640,8 @@ def inject_parser_cpp(operators, cpp_path: Path) -> int:
                 f"  ! parser-cpp: pre-existing funcName chain for {op['sql_token']}; skipping\n"
             )
             continue
-        new_chain_blocks.append(tmpl.format(sql_token=op["sql_token"], nebula_name=op["nebula_name"]))
+        new_chain_blocks.append(tmpl.format(sql_token=op["sql_token"], nebula_name=op["nebula_name"],
+                                            num_const_args=len(op.get("const_args", []) or [])))
     if new_chain_blocks:
         last_end_re = re.compile(r"/\* END CODEGEN GLUE: [^*]+\(funcName chain\)\s*\*/")
         ends = list(last_end_re.finditer(body))

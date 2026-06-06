@@ -221,6 +221,7 @@
 #include <Operators/Windows/Aggregations/Meos/TrgeometryEndSequenceAggregationLogicalFunction.hpp>
 #endif /* RGEO */
 #include <Operators/Windows/Aggregations/Meos/TpointDirectionAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TemporalSimplifyMinDistAggregationLogicalFunction.hpp>
 #include <Functions/Meos/TemporalIntersectsGeometryLogicalFunction.hpp>
 #include <Functions/Meos/AintersectsTgeoGeoLogicalFunction.hpp>
 #include <Functions/Meos/EdwithinTgeoGeoLogicalFunction.hpp>
@@ -59568,6 +59569,45 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             }
             break;
         /* END CODEGEN GLUE: TPOINT_DIRECTION (case-switch) */
+        /* BEGIN CODEGEN GLUE: TEMPORAL_SIMPLIFY_MIN_DIST (case-switch) */
+        case AntlrSQLLexer::TEMPORAL_SIMPLIFY_MIN_DIST:
+            // temporal_simplify_min_dist (Temporal* -> hex-WKB) - the windowed trajectory simplified to a minimum-distance tolerance (double constant arg).
+            {
+                if (helpers.top().constantBuilder.size() < 1) {
+                    throw InvalidQuerySyntax("TEMPORAL_SIMPLIFY_MIN_DIST requires 1 constant argument(s) after lon, lat, timestamp, but got {}", helpers.top().constantBuilder.size());
+                }
+                std::vector<std::string> constArgs(1);
+                for (size_t i = 0; i < static_cast<size_t>(1); ++i) {
+                    constArgs[static_cast<size_t>(1) - 1 - i] = std::move(helpers.top().constantBuilder.back());
+                    helpers.top().constantBuilder.pop_back();
+                }
+
+                if (helpers.top().functionBuilder.size() != 3) {
+                    throw InvalidQuerySyntax("TEMPORAL_SIMPLIFY_MIN_DIST requires exactly three field arguments (longitude, latitude, timestamp), but got {}", helpers.top().functionBuilder.size());
+                }
+                const auto timestampFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto latitudeFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto longitudeFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+
+                if (!longitudeFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !latitudeFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
+                    throw InvalidQuerySyntax("TEMPORAL_SIMPLIFY_MIN_DIST field arguments must be field references");
+                }
+
+                helpers.top().windowAggs.push_back(
+                    TemporalSimplifyMinDistAggregationLogicalFunction::create(longitudeFunction.get<FieldAccessLogicalFunction>(),
+                                                                    latitudeFunction.get<FieldAccessLogicalFunction>(),
+                                                                    timestampFunction.get<FieldAccessLogicalFunction>(),
+                                                                    std::move(constArgs)));
+                helpers.top().functionBuilder.push_back(longitudeFunction);
+            }
+            break;
+        /* END CODEGEN GLUE: TEMPORAL_SIMPLIFY_MIN_DIST (case-switch) */
+
 
 
 
@@ -61570,6 +61610,32 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
                 helpers.top().windowAggs.push_back(TpointDirectionAggregationLogicalFunction::create(lon, lat, ts));
             }
             /* END CODEGEN GLUE: TPOINT_DIRECTION (funcName chain) */
+            /* BEGIN CODEGEN GLUE: TEMPORAL_SIMPLIFY_MIN_DIST (funcName chain) */
+            else if (funcName == "TEMPORAL_SIMPLIFY_MIN_DIST")
+            {
+                if (helpers.top().constantBuilder.size() < 1)
+                {
+                    throw InvalidQuerySyntax("TEMPORAL_SIMPLIFY_MIN_DIST requires 1 constant argument(s) at {}", context->getText());
+                }
+                std::vector<std::string> constArgs(1);
+                for (size_t i = 0; i < static_cast<size_t>(1); ++i) {
+                    constArgs[static_cast<size_t>(1) - 1 - i] = std::move(helpers.top().constantBuilder.back());
+                    helpers.top().constantBuilder.pop_back();
+                }
+                if (helpers.top().functionBuilder.size() < 3)
+                {
+                    throw InvalidQuerySyntax("TEMPORAL_SIMPLIFY_MIN_DIST requires three field arguments at {}", context->getText());
+                }
+                const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto lat = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto lon = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                helpers.top().windowAggs.push_back(TemporalSimplifyMinDistAggregationLogicalFunction::create(lon, lat, ts, std::move(constArgs)));
+            }
+            /* END CODEGEN GLUE: TEMPORAL_SIMPLIFY_MIN_DIST (funcName chain) */
+
 
 
 
