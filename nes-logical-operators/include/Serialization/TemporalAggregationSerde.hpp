@@ -31,6 +31,16 @@ SerializableAggregationFunction serializeTemporalSequence(
     const FieldAccessLogicalFunction& ts,
     const FieldAccessLogicalFunction& asField);
 
+/// Four-data-field (x, y, theta, ts) overload for the tpose shape: packs
+/// (y, theta, ts) as 3 extras inside on_field.config so parseTemporalSequence()
+/// (which loops over any number of extras) round-trips [x, y, theta, ts, as].
+SerializableAggregationFunction serializeTemporalSequence(
+    const FieldAccessLogicalFunction& x,
+    const FieldAccessLogicalFunction& y,
+    const FieldAccessLogicalFunction& theta,
+    const FieldAccessLogicalFunction& ts,
+    const FieldAccessLogicalFunction& asField);
+
 /// Parse lon, lat, ts, as FieldAccessLogicalFunctions from a SerializableAggregationFunction created by serializeTemporalSequence().
 /// Returns fields in the order: lon, lat, ts, as.
 std::vector<FieldAccessLogicalFunction> parseTemporalSequence(const SerializableAggregationFunction& saf);

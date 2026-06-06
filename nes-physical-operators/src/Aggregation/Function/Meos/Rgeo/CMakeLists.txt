@@ -1,0 +1,3 @@
+add_plugin(TrgeometryInstants AggregationPhysicalFunction nes-physical-operators TrgeometryInstantsAggregationPhysicalFunction.cpp)
+add_plugin(TrgeometrySegments AggregationPhysicalFunction nes-physical-operators TrgeometrySegmentsAggregationPhysicalFunction.cpp)
+add_plugin(TrgeometrySequences AggregationPhysicalFunction nes-physical-operators TrgeometrySequencesAggregationPhysicalFunction.cpp)

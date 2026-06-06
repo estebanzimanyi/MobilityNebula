@@ -129,3 +129,7 @@ add_plugin(GeomArrayUnion AggregationPhysicalFunction nes-physical-operators Geo
 add_plugin(TemporalSegments AggregationPhysicalFunction nes-physical-operators TemporalSegmentsAggregationPhysicalFunction.cpp)
 add_plugin(TpointMakeSimple AggregationPhysicalFunction nes-physical-operators TpointMakeSimpleAggregationPhysicalFunction.cpp)
 add_plugin(TemporalSequences AggregationPhysicalFunction nes-physical-operators TemporalSequencesAggregationPhysicalFunction.cpp)
+
+if(RGEO)
+    add_subdirectory(Rgeo)
+endif()

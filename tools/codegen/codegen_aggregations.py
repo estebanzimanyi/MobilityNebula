@@ -323,6 +323,202 @@ AggregationLogicalFunctionRegistryReturnType AggregationLogicalFunctionGenerated
 }} // namespace NES
 """
 
+# ===========================================================================
+# tpose logical .hpp — FOUR fields (x, y, theta, ts). Mirrors LOGICAL_HPP_TGEO
+# but the window is collected as a Pose sequence and folded into a trgeometry.
+# ===========================================================================
+LOGICAL_HPP_TPOSE = """\
+/*
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        https://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+*/
+
+#pragma once
+
+#include <Operators/Windows/Aggregations/WindowAggregationLogicalFunction.hpp>
+
+namespace NES
+{{
+
+/**
+ * @brief {comment_one_liner}
+ *
+ * Four-input (x, y, theta, ts) tpose aggregation. Lift accumulates the events
+ * into a paged vector; lower assembles the per-(window, group) pose sequence,
+ * converts it to a trgeometry via `geo_tpose_to_trgeometry`, and applies the
+ * MEOS sequence accessor `{seq_accessor_call}` to fold it.
+ */
+class {nebula_name}AggregationLogicalFunction : public WindowAggregationLogicalFunction
+{{
+public:
+    static std::shared_ptr<WindowAggregationLogicalFunction>
+    create(const FieldAccessLogicalFunction& xField, const FieldAccessLogicalFunction& yField, const FieldAccessLogicalFunction& thetaField, const FieldAccessLogicalFunction& timestampField);
+
+    {nebula_name}AggregationLogicalFunction(
+        const FieldAccessLogicalFunction& xField,
+        const FieldAccessLogicalFunction& yField,
+        const FieldAccessLogicalFunction& thetaField,
+        const FieldAccessLogicalFunction& timestampField,
+        const FieldAccessLogicalFunction& asField);
+
+    void inferStamp(const Schema& schema) override;
+    ~{nebula_name}AggregationLogicalFunction() override = default;
+    [[nodiscard]] NES::SerializableAggregationFunction serialize() const override;
+    [[nodiscard]] std::string_view getName() const noexcept override;
+    [[nodiscard]] bool requiresSequentialAggregation() const {{ return true; }}
+
+    [[nodiscard]] const FieldAccessLogicalFunction& getXField() const noexcept {{ return xField; }}
+    [[nodiscard]] const FieldAccessLogicalFunction& getYField() const noexcept {{ return yField; }}
+    [[nodiscard]] const FieldAccessLogicalFunction& getThetaField() const noexcept {{ return thetaField; }}
+    [[nodiscard]] const FieldAccessLogicalFunction& getTimestampField() const noexcept {{ return timestampField; }}
+
+private:
+    static constexpr std::string_view NAME = "{class_name_token}";
+    static constexpr DataType::Type partialAggregateStampType = DataType::Type::UNDEFINED;
+    static constexpr DataType::Type finalAggregateStampType = DataType::Type::{final_stamp_type};
+
+    FieldAccessLogicalFunction xField;
+    FieldAccessLogicalFunction yField;
+    FieldAccessLogicalFunction thetaField;
+    FieldAccessLogicalFunction timestampField;
+}};
+}}
+"""
+
+# tpose logical .cpp — four-field ctor; serialize() uses the 5-arg serde overload.
+LOGICAL_CPP_TPOSE = """\
+/*
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        https://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+*/
+
+#include <Operators/Windows/Aggregations/Meos/{nebula_name}AggregationLogicalFunction.hpp>
+
+#include <memory>
+#include <string>
+#include <string_view>
+#include <Configurations/Descriptor.hpp>
+#include <DataTypes/DataTypeProvider.hpp>
+#include <DataTypes/Schema.hpp>
+#include <Functions/FieldAccessLogicalFunction.hpp>
+#include <Functions/LogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/WindowAggregationLogicalFunction.hpp>
+#include <Serialization/TemporalAggregationSerde.hpp>
+
+#include <AggregationLogicalFunctionRegistry.hpp>
+#include <ErrorHandling.hpp>
+#include <SerializableVariantDescriptor.pb.h>
+
+namespace NES
+{{
+
+{nebula_name}AggregationLogicalFunction::{nebula_name}AggregationLogicalFunction(
+    const FieldAccessLogicalFunction& xField,
+    const FieldAccessLogicalFunction& yField,
+    const FieldAccessLogicalFunction& thetaField,
+    const FieldAccessLogicalFunction& timestampField,
+    const FieldAccessLogicalFunction& asField)
+    : WindowAggregationLogicalFunction(
+          xField.getDataType(),
+          DataTypeProvider::provideDataType(partialAggregateStampType),
+          DataTypeProvider::provideDataType(finalAggregateStampType),
+          xField,
+          asField)
+    , xField(xField)
+    , yField(yField)
+    , thetaField(thetaField)
+    , timestampField(timestampField)
+{{
+}}
+
+std::shared_ptr<WindowAggregationLogicalFunction>
+{nebula_name}AggregationLogicalFunction::create(
+    const FieldAccessLogicalFunction& xField,
+    const FieldAccessLogicalFunction& yField,
+    const FieldAccessLogicalFunction& thetaField,
+    const FieldAccessLogicalFunction& timestampField)
+{{
+    return std::make_shared<{nebula_name}AggregationLogicalFunction>(xField, yField, thetaField, timestampField, xField);
+}}
+
+std::string_view {nebula_name}AggregationLogicalFunction::getName() const noexcept
+{{
+    return NAME;
+}}
+
+void {nebula_name}AggregationLogicalFunction::inferStamp(const Schema& schema)
+{{
+    xField = xField.withInferredDataType(schema).get<FieldAccessLogicalFunction>();
+    yField = yField.withInferredDataType(schema).get<FieldAccessLogicalFunction>();
+    thetaField = thetaField.withInferredDataType(schema).get<FieldAccessLogicalFunction>();
+    timestampField = timestampField.withInferredDataType(schema).get<FieldAccessLogicalFunction>();
+
+    onField = xField;
+
+    if (!xField.getDataType().isNumeric() || !yField.getDataType().isNumeric()
+        || !thetaField.getDataType().isNumeric() || !timestampField.getDataType().isNumeric())
+    {{
+        throw CannotInferSchema("{nebula_name}AggregationLogicalFunction: x, y, theta, and timestamp fields must be numeric.");
+    }}
+
+    const auto onFieldName = onField.getFieldName();
+    const auto asFieldName = asField.getFieldName();
+    const auto attributeNameResolver = onFieldName.substr(0, onFieldName.find(Schema::ATTRIBUTE_NAME_SEPARATOR) + 1);
+    if (asFieldName.find(Schema::ATTRIBUTE_NAME_SEPARATOR) == std::string::npos)
+    {{
+        asField = asField.withFieldName(attributeNameResolver + asFieldName).get<FieldAccessLogicalFunction>();
+    }}
+    else
+    {{
+        const auto fieldName = asFieldName.substr(asFieldName.find_last_of(Schema::ATTRIBUTE_NAME_SEPARATOR) + 1);
+        asField = asField.withFieldName(attributeNameResolver + fieldName).get<FieldAccessLogicalFunction>();
+    }}
+    asField = asField.withDataType(getFinalAggregateStamp()).get<FieldAccessLogicalFunction>();
+    inputStamp = onField.getDataType();
+}}
+
+NES::SerializableAggregationFunction {nebula_name}AggregationLogicalFunction::serialize() const
+{{
+    auto saf = TemporalAggregationSerde::serializeTemporalSequence(xField, yField, thetaField, timestampField, asField);
+    saf.set_type(std::string(NAME));
+    return saf;
+}}
+
+AggregationLogicalFunctionRegistryReturnType AggregationLogicalFunctionGeneratedRegistrar::Register{nebula_name}AggregationLogicalFunction(
+    AggregationLogicalFunctionRegistryArguments arguments)
+{{
+    if (arguments.fields.size() == 5)
+    {{
+        auto ptr = std::make_shared<{nebula_name}AggregationLogicalFunction>(
+            arguments.fields[0], arguments.fields[1], arguments.fields[2], arguments.fields[3], arguments.fields[4]);
+        return ptr;
+    }}
+    throw CannotDeserialize(
+        "{nebula_name}AggregationLogicalFunction requires x, y, theta, timestamp, and alias fields but got {{}}",
+        arguments.fields.size());
+}}
+
+}} // namespace NES
+"""
+
 LOGICAL_CPP_TNUMBER = """\
 /*
     Licensed under the Apache License, Version 2.0 (the "License");
@@ -499,6 +695,72 @@ private:
     std::shared_ptr<Nautilus::Interface::BufferRef::TupleBufferRef> bufferRef;
     PhysicalFunction lonFunction;
     PhysicalFunction latFunction;
+    PhysicalFunction timestampFunction;
+}};
+
+}}
+"""
+
+# tpose physical .hpp — FOUR PhysicalFunctions (x, y, theta, ts).
+PHYSICAL_HPP_TPOSE = """\
+/*
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        https://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+*/
+
+#pragma once
+
+#include <cstddef>
+#include <memory>
+#include <Aggregation/Function/AggregationPhysicalFunction.hpp>
+#include <Nautilus/Interface/BufferRef/TupleBufferRef.hpp>
+#include <Nautilus/Interface/Record.hpp>
+#include <val_concepts.hpp>
+
+namespace NES
+{{
+
+class {nebula_name}AggregationPhysicalFunction : public AggregationPhysicalFunction
+{{
+public:
+    {nebula_name}AggregationPhysicalFunction(
+        DataType inputType,
+        DataType resultType,
+        PhysicalFunction xFunctionParam,
+        PhysicalFunction yFunctionParam,
+        PhysicalFunction thetaFunctionParam,
+        PhysicalFunction timestampFunctionParam,
+        Nautilus::Record::RecordFieldIdentifier resultFieldIdentifier,
+        std::shared_ptr<Nautilus::Interface::BufferRef::TupleBufferRef> bufferRef);
+    void lift(
+        const nautilus::val<AggregationState*>& aggregationState,
+        PipelineMemoryProvider& pipelineMemoryProvider,
+        const Nautilus::Record& record)
+        override;
+    void combine(
+        nautilus::val<AggregationState*> aggregationState1,
+        nautilus::val<AggregationState*> aggregationState2,
+        PipelineMemoryProvider& pipelineMemoryProvider) override;
+    Nautilus::Record lower(nautilus::val<AggregationState*> aggregationState, [[maybe_unused]] PipelineMemoryProvider& pipelineMemoryProvider) override;
+    void reset(nautilus::val<AggregationState*> aggregationState, PipelineMemoryProvider& pipelineMemoryProvider) override;
+    [[nodiscard]] size_t getSizeOfStateInBytes() const override;
+    ~{nebula_name}AggregationPhysicalFunction() override = default;
+    void cleanup(nautilus::val<AggregationState*> aggregationState) override;
+
+private:
+    std::shared_ptr<Nautilus::Interface::BufferRef::TupleBufferRef> bufferRef;
+    PhysicalFunction xFunction;
+    PhysicalFunction yFunction;
+    PhysicalFunction thetaFunction;
     PhysicalFunction timestampFunction;
 }};
 
@@ -828,6 +1090,290 @@ AggregationPhysicalFunctionRegistryReturnType AggregationPhysicalFunctionGenerat
 {{
     throw std::runtime_error("{class_name_token} aggregation cannot be created through the registry. "
                              "It requires three field functions (longitude, latitude, timestamp)");
+}}
+
+}} // namespace NES
+"""
+
+# ===========================================================================
+# tpose physical .cpp (base) — FOUR fields (x, y, theta, ts). Mirrors
+# PHYSICAL_CPP_TGEO but builds a "Pose(Point(x y),theta)@ts" item string and a
+# wider per-entry buffer (~200 bytes). The finalize-tail body is kept BYTE-
+# IDENTICAL to _FINALIZE_SCALAR_TGEO so the seq-array derivation below can swap
+# it via _swap_once (the base is never wired directly — only the SEQ_ARRAY form
+# is selected by physical_template_for). The extern "C" block adds meos_pose.h
+# (tpose_in) and meos_rgeo.h (geo_tpose_to_trgeometry + trgeometry accessors).
+# ===========================================================================
+PHYSICAL_CPP_TPOSE = """\
+/*
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        https://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+*/
+
+#include <Aggregation/Function/Meos/{nebula_name}AggregationPhysicalFunction.hpp>
+
+#include <cstddef>
+#include <cstdint>
+#include <memory>
+#include <stdexcept>
+#include <utility>
+#include <string_view>
+#include <cstdlib>
+#include <ctime>
+#include <mutex>
+#include <cstring>
+#include <cstdio>
+#include <string>
+
+#include <MemoryLayout/ColumnLayout.hpp>
+#include <Nautilus/Interface/BufferRef/TupleBufferRef.hpp>
+#include <Nautilus/Interface/PagedVector/PagedVector.hpp>
+#include <Nautilus/Interface/PagedVector/PagedVectorRef.hpp>
+#include <Nautilus/Interface/Record.hpp>
+#include <Nautilus/DataTypes/VariableSizedData.hpp>
+#include <nautilus/function.hpp>
+
+#include <AggregationPhysicalFunctionRegistry.hpp>
+#include <ErrorHandling.hpp>
+#include <val.hpp>
+#include <val_concepts.hpp>
+#include <val_ptr.hpp>
+
+#include <MEOSWrapper.hpp>
+extern "C" {{
+#include <meos.h>
+#include <meos_geo.h>
+#include <meos_pose.h>
+#include <meos_rgeo.h>
+}}
+
+namespace NES
+{{
+
+constexpr static std::string_view XFieldName = "x";
+constexpr static std::string_view YFieldName = "y";
+constexpr static std::string_view ThetaFieldName = "theta";
+constexpr static std::string_view TimestampFieldName = "timestamp";
+
+static std::mutex {mutex_name};
+
+
+{nebula_name}AggregationPhysicalFunction::{nebula_name}AggregationPhysicalFunction(
+    DataType inputType,
+    DataType resultType,
+    PhysicalFunction xFunctionParam,
+    PhysicalFunction yFunctionParam,
+    PhysicalFunction thetaFunctionParam,
+    PhysicalFunction timestampFunctionParam,
+    Nautilus::Record::RecordFieldIdentifier resultFieldIdentifier,
+    std::shared_ptr<Nautilus::Interface::BufferRef::TupleBufferRef> bufferRef)
+    : AggregationPhysicalFunction(std::move(inputType), std::move(resultType), xFunctionParam, std::move(resultFieldIdentifier))
+    , bufferRef(std::move(bufferRef))
+    , xFunction(std::move(xFunctionParam))
+    , yFunction(std::move(yFunctionParam))
+    , thetaFunction(std::move(thetaFunctionParam))
+    , timestampFunction(std::move(timestampFunctionParam))
+{{
+}}
+
+void {nebula_name}AggregationPhysicalFunction::lift(
+    const nautilus::val<AggregationState*>& aggregationState, PipelineMemoryProvider& pipelineMemoryProvider, const Nautilus::Record& record)
+{{
+    const auto pagedVectorPtr = static_cast<nautilus::val<Nautilus::Interface::PagedVector*>>(aggregationState);
+
+    auto xValue = xFunction.execute(record, pipelineMemoryProvider.arena);
+    auto yValue = yFunction.execute(record, pipelineMemoryProvider.arena);
+    auto thetaValue = thetaFunction.execute(record, pipelineMemoryProvider.arena);
+    auto timestampValue = timestampFunction.execute(record, pipelineMemoryProvider.arena);
+
+    Record aggregateStateRecord({{
+        {{std::string(XFieldName), xValue}},
+        {{std::string(YFieldName), yValue}},
+        {{std::string(ThetaFieldName), thetaValue}},
+        {{std::string(TimestampFieldName), timestampValue}}
+    }});
+
+    const Nautilus::Interface::PagedVectorRef pagedVectorRef(pagedVectorPtr, bufferRef);
+    pagedVectorRef.writeRecord(aggregateStateRecord, pipelineMemoryProvider.bufferProvider);
+}}
+
+void {nebula_name}AggregationPhysicalFunction::combine(
+    const nautilus::val<AggregationState*> aggregationState1,
+    const nautilus::val<AggregationState*> aggregationState2,
+    PipelineMemoryProvider&)
+{{
+    const auto memArea1 = static_cast<nautilus::val<Nautilus::Interface::PagedVector*>>(aggregationState1);
+    const auto memArea2 = static_cast<nautilus::val<Nautilus::Interface::PagedVector*>>(aggregationState2);
+
+    nautilus::invoke(
+        +[](Nautilus::Interface::PagedVector* vector1, const Nautilus::Interface::PagedVector* vector2) -> void
+        {{ vector1->copyFrom(*vector2); }},
+        memArea1,
+        memArea2);
+}}
+
+Nautilus::Record {nebula_name}AggregationPhysicalFunction::lower(
+    const nautilus::val<AggregationState*> aggregationState, [[maybe_unused]] PipelineMemoryProvider& pipelineMemoryProvider)
+{{
+    MEOS::Meos::ensureMeosInitialized();
+
+    const auto pagedVectorPtr = static_cast<nautilus::val<Nautilus::Interface::PagedVector*>>(aggregationState);
+    const Nautilus::Interface::PagedVectorRef pagedVectorRef(pagedVectorPtr, bufferRef);
+    const auto allFieldNames = bufferRef->getMemoryLayout()->getSchema().getFieldNames();
+    const auto numberOfEntries = invoke(
+        +[](const Nautilus::Interface::PagedVector* pagedVector)
+        {{
+            return pagedVector->getTotalNumberOfEntries();
+        }},
+        pagedVectorPtr);
+
+    if (numberOfEntries == nautilus::val<size_t>(0)) {{
+        Nautilus::Record resultRecord;
+        resultRecord.write(resultFieldIdentifier, nautilus::val<{return_cpp_type}>(0));
+        return resultRecord;
+    }}
+
+    auto trajectoryStr = nautilus::invoke(
+        +[](const Nautilus::Interface::PagedVector* pagedVector) -> char*
+        {{
+            size_t bufferSize = pagedVector->getTotalNumberOfEntries() * 200 + 50;
+            char* buffer = (char*)malloc(bufferSize);
+            memset(buffer, 0, bufferSize);
+            strcpy(buffer, "{{");
+            return buffer;
+        }},
+        pagedVectorPtr);
+
+    auto pointCounter = nautilus::val<int64_t>(0);
+
+    const auto endIt = pagedVectorRef.end(allFieldNames);
+    for (auto candidateIt = pagedVectorRef.begin(allFieldNames); candidateIt != endIt; ++candidateIt)
+    {{
+        const auto itemRecord = *candidateIt;
+
+        const auto xValue = itemRecord.read(std::string(XFieldName));
+        const auto yValue = itemRecord.read(std::string(YFieldName));
+        const auto thetaValue = itemRecord.read(std::string(ThetaFieldName));
+        const auto timestampValue = itemRecord.read(std::string(TimestampFieldName));
+
+        auto x = xValue.cast<nautilus::val<double>>();
+        auto y = yValue.cast<nautilus::val<double>>();
+        auto theta = thetaValue.cast<nautilus::val<double>>();
+        auto timestamp = timestampValue.cast<nautilus::val<int64_t>>();
+
+        trajectoryStr = nautilus::invoke(
+            +[](char* buffer, double xVal, double yVal, double thetaVal, int64_t tsVal, int64_t counter) -> char*
+            {{
+                if (counter > 0) {{
+                    strcat(buffer, ", ");
+                }}
+
+                long long adjustedTime;
+                if (tsVal > 1000000000000LL) {{
+                    adjustedTime = tsVal / 1000;
+                }} else {{
+                    adjustedTime = tsVal;
+                }}
+
+                std::string timestampString = MEOS::Meos::convertSecondsToTimestamp(adjustedTime);
+                const char* timestampStr = timestampString.c_str();
+
+                char poseStr[160];
+                sprintf(poseStr, "Pose(Point(%.6f %.6f),%.6f)@%s", xVal, yVal, thetaVal, timestampStr);
+                strcat(buffer, poseStr);
+                return buffer;
+            }},
+            trajectoryStr,
+            x,
+            y,
+            theta,
+            timestamp,
+            pointCounter);
+
+        pointCounter = pointCounter + nautilus::val<int64_t>(1);
+    }}
+
+    trajectoryStr = nautilus::invoke(
+        +[](char* buffer) -> char*
+        {{
+            strcat(buffer, "}}");
+            return buffer;
+        }},
+        trajectoryStr);
+
+    auto resultValue = nautilus::invoke(
+        +[](const char* trajStr) -> {return_cpp_type}
+        {{
+            if (!trajStr || strlen(trajStr) == 0) {{
+                free((void*)trajStr);
+                return ({return_cpp_type})0;
+            }}
+
+            MEOS::Meos::ensureMeosInitialized();
+            std::lock_guard<std::mutex> lock({mutex_name});
+
+            std::string trajString(trajStr);
+            void* temp = MEOS::Meos::parseTemporalPoint(trajString);
+            if (!temp) {{
+                free((void*)trajStr);
+                return ({return_cpp_type})0;
+            }}
+
+            {value_compute}
+
+            MEOS::Meos::freeTemporalObject(temp);
+            free((void*)trajStr);
+            return value;
+        }},
+        trajectoryStr);
+
+    Nautilus::Record resultRecord;
+    resultRecord.write(resultFieldIdentifier, resultValue);
+    return resultRecord;
+}}
+
+void {nebula_name}AggregationPhysicalFunction::reset(const nautilus::val<AggregationState*> aggregationState, PipelineMemoryProvider&)
+{{
+    nautilus::invoke(
+        +[](AggregationState* pagedVectorMemArea) -> void
+        {{
+            auto* pagedVector = reinterpret_cast<Nautilus::Interface::PagedVector*>(pagedVectorMemArea);
+            new (pagedVector) Nautilus::Interface::PagedVector();
+        }},
+        aggregationState);
+}}
+
+size_t {nebula_name}AggregationPhysicalFunction::getSizeOfStateInBytes() const
+{{
+    return sizeof(Nautilus::Interface::PagedVector);
+}}
+
+void {nebula_name}AggregationPhysicalFunction::cleanup(nautilus::val<AggregationState*> aggregationState)
+{{
+    nautilus::invoke(
+        +[](AggregationState* pagedVectorMemArea) -> void
+        {{
+            auto* pagedVector = reinterpret_cast<Nautilus::Interface::PagedVector*>(pagedVectorMemArea);
+            pagedVector->~PagedVector();
+        }},
+        aggregationState);
+}}
+
+
+AggregationPhysicalFunctionRegistryReturnType AggregationPhysicalFunctionGeneratedRegistrar::Register{nebula_name}AggregationPhysicalFunction(
+    AggregationPhysicalFunctionRegistryArguments)
+{{
+    throw std::runtime_error("{class_name_token} aggregation cannot be created through the registry. "
+                             "It requires four field functions (x, y, theta, timestamp)");
 }}
 
 }} // namespace NES
@@ -1486,6 +2032,56 @@ PHYSICAL_CPP_TGEO_SEQ_ARRAY = _swap_once(
             '            strcpy(buffer, "{{");', '            strcpy(buffer, "[");', "tgeo-seqarray open bracket -> continuous"),
         '            strcat(buffer, "}}");', '            strcat(buffer, "]");', "tgeo-seqarray close bracket -> continuous"),
     _FINALIZE_SCALAR_TGEO, _FINALIZE_SEQARRAY_TGEO, "tgeo-seqarray finalize tail")
+
+# ===========================================================================
+# tpose array-of-temporal accessor (fold "tposeseqarray"): the windowed
+# "[Pose(Point(x y),theta)@ts, ...]" continuous sequence is parsed via tpose_in,
+# converted to a trgeometry via geo_tpose_to_trgeometry(refGeom, poseSeq) (the
+# proven Nebula path — a unit-square reference geometry, matching the per-event
+# Trgeometry* physical functions), then the T**-returning trgeometry accessor
+# rides in {seq_accessor_call}; each element is serialized to EWKB hex exactly
+# like the tgeo seqarray form. Derived from _FINALIZE_SEQARRAY_TGEO by swapping
+# ONLY the `temp` construction (parseTemporalPoint -> tpose_in + convert).
+# The whole construction stays inside the same nautilus::invoke lambda (plain C
+# context), not nautilus val space. tpose_in / geom_in / geo_tpose_to_trgeometry
+# come from meos_pose.h / meos_geo.h / meos_rgeo.h (added to PHYSICAL_CPP_TPOSE).
+# ===========================================================================
+_FINALIZE_SEQARRAY_TPOSE = _swap_once(
+    _FINALIZE_SEQARRAY_TGEO,
+    """\
+            std::string trajString(trajStr);
+            void* temp = MEOS::Meos::parseTemporalPoint(trajString);
+            free((void*)trajStr);
+            if (!temp) {{
+                return (char*)nullptr;
+            }}""",
+    """\
+            std::string trajString(trajStr);
+            Temporal* _poseSeq = tpose_in(trajString.c_str());
+            free((void*)trajStr);
+            if (!_poseSeq) {{
+                return (char*)nullptr;
+            }}
+            GSERIALIZED* _refGeom = geom_in("Polygon((0 0,1 0,1 1,0 1,0 0))", -1);
+            if (!_refGeom) {{
+                free(_poseSeq);
+                return (char*)nullptr;
+            }}
+            void* temp = geo_tpose_to_trgeometry(_refGeom, _poseSeq);
+            free(_refGeom);
+            free(_poseSeq);
+            if (!temp) {{
+                return (char*)nullptr;
+            }}""",
+    "tpose seqarray temp construction (tpose_in + geo_tpose_to_trgeometry)")
+
+PHYSICAL_CPP_TPOSE_SEQ_ARRAY = _swap_once(
+    _swap_once(
+        _swap_once(
+            _swap_once(PHYSICAL_CPP_TPOSE, _EMPTY_SCALAR, _EMPTY_BOX, "tpose-seqarray empty-window block"),
+            '            strcpy(buffer, "{{");', '            strcpy(buffer, "[");', "tpose-seqarray open bracket -> continuous"),
+        '            strcat(buffer, "}}");', '            strcat(buffer, "]");', "tpose-seqarray close bracket -> continuous"),
+    _FINALIZE_SCALAR_TGEO, _FINALIZE_SEQARRAY_TPOSE, "tpose-seqarray finalize tail")
 
 # ===========================================================================
 # Expandable-Temporal* aggregate (return_mode "expand"): the MEOS-native
@@ -2746,6 +3342,97 @@ OPTIMIZER_LOWERING_TNUMBER = """\
         /* END CODEGEN GLUE: {class_name_token} (optimizer lowering) */
 """
 
+# tpose parser/optimizer glue — FOUR field args (x, y, theta, ts).
+CASE_SWITCH_TPOSE = """\
+        /* BEGIN CODEGEN GLUE: {sql_token} (case-switch) */
+        case AntlrSQLLexer::{sql_token}:
+            // {comment_one_liner}
+            if (helpers.top().functionBuilder.size() != 4) {{
+                throw InvalidQuerySyntax("{sql_token} requires exactly four arguments (x, y, theta, timestamp), but got {{}}", helpers.top().functionBuilder.size());
+            }}
+            {{
+                const auto timestampFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto thetaFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto yFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto xFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+
+                if (!xFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !yFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !thetaFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {{
+                    throw InvalidQuerySyntax("{sql_token} arguments must be field references");
+                }}
+
+                helpers.top().windowAggs.push_back(
+                    {nebula_name}AggregationLogicalFunction::create(xFunction.get<FieldAccessLogicalFunction>(),
+                                                                    yFunction.get<FieldAccessLogicalFunction>(),
+                                                                    thetaFunction.get<FieldAccessLogicalFunction>(),
+                                                                    timestampFunction.get<FieldAccessLogicalFunction>()));
+                helpers.top().functionBuilder.push_back(xFunction);
+            }}
+            break;
+        /* END CODEGEN GLUE: {sql_token} (case-switch) */
+"""
+
+FUNCNAME_CHAIN_TPOSE = """\
+            /* BEGIN CODEGEN GLUE: {sql_token} (funcName chain) */
+            else if (funcName == "{sql_token}")
+            {{
+                if (helpers.top().functionBuilder.size() < 4)
+                {{
+                    throw InvalidQuerySyntax("{sql_token} requires four arguments at {{}}", context->getText());
+                }}
+                const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto theta = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto y = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto x = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                helpers.top().windowAggs.push_back({nebula_name}AggregationLogicalFunction::create(x, y, theta, ts));
+            }}
+            /* END CODEGEN GLUE: {sql_token} (funcName chain) */
+"""
+
+OPTIMIZER_LOWERING_TPOSE = """\
+        /* BEGIN CODEGEN GLUE: {class_name_token} (optimizer lowering) */
+        if (name == std::string_view("{class_name_token}"))
+        {{
+            auto specificDescriptor = std::dynamic_pointer_cast<{nebula_name}AggregationLogicalFunction>(descriptor);
+            INVARIANT(specificDescriptor != nullptr, "Expected {nebula_name}AggregationLogicalFunction for {class_name_token}");
+
+            auto xPF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getXField());
+            auto yPF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getYField());
+            auto thetaPF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getThetaField());
+            auto tsPF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getTimestampField());
+
+            Schema stateSchema;
+            stateSchema.addField("x", specificDescriptor->getXField().getDataType());
+            stateSchema.addField("y", specificDescriptor->getYField().getDataType());
+            stateSchema.addField("theta", specificDescriptor->getThetaField().getDataType());
+            stateSchema.addField("timestamp", specificDescriptor->getTimestampField().getDataType());
+            auto tupleBufferRef = Interface::BufferRef::TupleBufferRef::create(configuration.pageSize.getValue(), stateSchema);
+
+            auto phys = std::make_shared<{nebula_name}AggregationPhysicalFunction>(
+                std::move(physicalInputType),
+                std::move(physicalFinalType),
+                xPF,
+                yPF,
+                thetaPF,
+                tsPF,
+                resultFieldIdentifier,
+                tupleBufferRef);
+            aggregationPhysicalFunctions.push_back(std::move(phys));
+            continue;
+        }}
+        /* END CODEGEN GLUE: {class_name_token} (optimizer lowering) */
+"""
+
 # ===========================================================================
 # Expandable-Temporal* VALUE-OUTPUT: f(live mini-trip) -> Temporal* result,
 # serialized to hex-WKB as VARSIZED (the proven box-output VARSIZED tail).
@@ -3028,6 +3715,10 @@ def physical_template_for(op):
         if op.get("fold") == "tgeoseqarray":
             return PHYSICAL_HPP_TGEO, PHYSICAL_CPP_TGEO_SEQ_ARRAY
         return PHYSICAL_HPP_TGEO, (PHYSICAL_CPP_TGEO_BOX if box else PHYSICAL_CPP_TGEO)
+    if op["input_shape"] == "tpose":
+        if op.get("fold") == "tposeseqarray":
+            return PHYSICAL_HPP_TPOSE, PHYSICAL_CPP_TPOSE_SEQ_ARRAY
+        return PHYSICAL_HPP_TPOSE, PHYSICAL_CPP_TPOSE
     if op["input_shape"] == "tnumber":
         # Scalar-fold reuses the tnumber (value, ts) HPP but folds the field
         # directly through the MEOS extent transition fn (no string / no parse);
@@ -3055,21 +3746,35 @@ def physical_template_for(op):
 def logical_template_for(op):
     if op["input_shape"] == "tgeo":
         return LOGICAL_HPP_TGEO, LOGICAL_CPP_TGEO
+    if op["input_shape"] == "tpose":
+        return LOGICAL_HPP_TPOSE, LOGICAL_CPP_TPOSE
     if op["input_shape"] == "tnumber":
         return LOGICAL_HPP_TNUMBER, LOGICAL_CPP_TNUMBER
     raise ValueError(f"unknown input_shape: {op['input_shape']}")
 
 
 def case_switch_template_for(op):
-    return CASE_SWITCH_TGEO if op["input_shape"] == "tgeo" else CASE_SWITCH_TNUMBER
+    if op["input_shape"] == "tgeo":
+        return CASE_SWITCH_TGEO
+    if op["input_shape"] == "tpose":
+        return CASE_SWITCH_TPOSE
+    return CASE_SWITCH_TNUMBER
 
 
 def funcname_chain_template_for(op):
-    return FUNCNAME_CHAIN_TGEO if op["input_shape"] == "tgeo" else FUNCNAME_CHAIN_TNUMBER
+    if op["input_shape"] == "tgeo":
+        return FUNCNAME_CHAIN_TGEO
+    if op["input_shape"] == "tpose":
+        return FUNCNAME_CHAIN_TPOSE
+    return FUNCNAME_CHAIN_TNUMBER
 
 
 def optimizer_lowering_template_for(op):
-    return OPTIMIZER_LOWERING_TGEO if op["input_shape"] == "tgeo" else OPTIMIZER_LOWERING_TNUMBER
+    if op["input_shape"] == "tgeo":
+        return OPTIMIZER_LOWERING_TGEO
+    if op["input_shape"] == "tpose":
+        return OPTIMIZER_LOWERING_TPOSE
+    return OPTIMIZER_LOWERING_TNUMBER
 
 
 def emit_operator(op, output_root: Path):

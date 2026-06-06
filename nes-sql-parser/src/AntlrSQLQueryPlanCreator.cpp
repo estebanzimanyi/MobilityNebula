@@ -205,6 +205,15 @@
 #include <Operators/Windows/Aggregations/Meos/TemporalSegmentsAggregationLogicalFunction.hpp>
 #include <Operators/Windows/Aggregations/Meos/TpointMakeSimpleAggregationLogicalFunction.hpp>
 #include <Operators/Windows/Aggregations/Meos/TemporalSequencesAggregationLogicalFunction.hpp>
+#if RGEO
+#include <Operators/Windows/Aggregations/Meos/TrgeometryInstantsAggregationLogicalFunction.hpp>
+#endif /* RGEO */
+#if RGEO
+#include <Operators/Windows/Aggregations/Meos/TrgeometrySegmentsAggregationLogicalFunction.hpp>
+#endif /* RGEO */
+#if RGEO
+#include <Operators/Windows/Aggregations/Meos/TrgeometrySequencesAggregationLogicalFunction.hpp>
+#endif /* RGEO */
 #include <Functions/Meos/TemporalIntersectsGeometryLogicalFunction.hpp>
 #include <Functions/Meos/AintersectsTgeoGeoLogicalFunction.hpp>
 #include <Functions/Meos/EdwithinTgeoGeoLogicalFunction.hpp>
@@ -59422,6 +59431,111 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             }
             break;
         /* END CODEGEN GLUE: TEMPORAL_SEQUENCES (case-switch) */
+        #if RGEO
+/* BEGIN CODEGEN GLUE: TRGEOMETRY_INSTANTS (case-switch) */
+        case AntlrSQLLexer::TRGEOMETRY_INSTANTS:
+            // trgeometry_instants (TInstant **) - the array of instants of the windowed continuous trgeometry, each as EWKB hex.
+            if (helpers.top().functionBuilder.size() != 4) {
+                throw InvalidQuerySyntax("TRGEOMETRY_INSTANTS requires exactly four arguments (x, y, theta, timestamp), but got {}", helpers.top().functionBuilder.size());
+            }
+            {
+                const auto timestampFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto thetaFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto yFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto xFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+
+                if (!xFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !yFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !thetaFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
+                    throw InvalidQuerySyntax("TRGEOMETRY_INSTANTS arguments must be field references");
+                }
+
+                helpers.top().windowAggs.push_back(
+                    TrgeometryInstantsAggregationLogicalFunction::create(xFunction.get<FieldAccessLogicalFunction>(),
+                                                                    yFunction.get<FieldAccessLogicalFunction>(),
+                                                                    thetaFunction.get<FieldAccessLogicalFunction>(),
+                                                                    timestampFunction.get<FieldAccessLogicalFunction>()));
+                helpers.top().functionBuilder.push_back(xFunction);
+            }
+            break;
+        /* END CODEGEN GLUE: TRGEOMETRY_INSTANTS (case-switch) */
+#endif /* RGEO */
+
+        #if RGEO
+/* BEGIN CODEGEN GLUE: TRGEOMETRY_SEGMENTS (case-switch) */
+        case AntlrSQLLexer::TRGEOMETRY_SEGMENTS:
+            // trgeometry_segments (TSequence **) - the array of maximal segments of the windowed continuous trgeometry, each as EWKB hex.
+            if (helpers.top().functionBuilder.size() != 4) {
+                throw InvalidQuerySyntax("TRGEOMETRY_SEGMENTS requires exactly four arguments (x, y, theta, timestamp), but got {}", helpers.top().functionBuilder.size());
+            }
+            {
+                const auto timestampFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto thetaFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto yFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto xFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+
+                if (!xFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !yFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !thetaFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
+                    throw InvalidQuerySyntax("TRGEOMETRY_SEGMENTS arguments must be field references");
+                }
+
+                helpers.top().windowAggs.push_back(
+                    TrgeometrySegmentsAggregationLogicalFunction::create(xFunction.get<FieldAccessLogicalFunction>(),
+                                                                    yFunction.get<FieldAccessLogicalFunction>(),
+                                                                    thetaFunction.get<FieldAccessLogicalFunction>(),
+                                                                    timestampFunction.get<FieldAccessLogicalFunction>()));
+                helpers.top().functionBuilder.push_back(xFunction);
+            }
+            break;
+        /* END CODEGEN GLUE: TRGEOMETRY_SEGMENTS (case-switch) */
+#endif /* RGEO */
+
+        #if RGEO
+/* BEGIN CODEGEN GLUE: TRGEOMETRY_SEQUENCES (case-switch) */
+        case AntlrSQLLexer::TRGEOMETRY_SEQUENCES:
+            // trgeometry_sequences (TSequence **) - the array of sequences of the windowed continuous trgeometry, each as EWKB hex.
+            if (helpers.top().functionBuilder.size() != 4) {
+                throw InvalidQuerySyntax("TRGEOMETRY_SEQUENCES requires exactly four arguments (x, y, theta, timestamp), but got {}", helpers.top().functionBuilder.size());
+            }
+            {
+                const auto timestampFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto thetaFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto yFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto xFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+
+                if (!xFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !yFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !thetaFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
+                    throw InvalidQuerySyntax("TRGEOMETRY_SEQUENCES arguments must be field references");
+                }
+
+                helpers.top().windowAggs.push_back(
+                    TrgeometrySequencesAggregationLogicalFunction::create(xFunction.get<FieldAccessLogicalFunction>(),
+                                                                    yFunction.get<FieldAccessLogicalFunction>(),
+                                                                    thetaFunction.get<FieldAccessLogicalFunction>(),
+                                                                    timestampFunction.get<FieldAccessLogicalFunction>()));
+                helpers.top().functionBuilder.push_back(xFunction);
+            }
+            break;
+        /* END CODEGEN GLUE: TRGEOMETRY_SEQUENCES (case-switch) */
+#endif /* RGEO */
+
 
 
 
@@ -61302,6 +61416,69 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
                 helpers.top().windowAggs.push_back(TemporalSequencesAggregationLogicalFunction::create(lon, lat, ts));
             }
             /* END CODEGEN GLUE: TEMPORAL_SEQUENCES (funcName chain) */
+            #if RGEO
+/* BEGIN CODEGEN GLUE: TRGEOMETRY_INSTANTS (funcName chain) */
+            else if (funcName == "TRGEOMETRY_INSTANTS")
+            {
+                if (helpers.top().functionBuilder.size() < 4)
+                {
+                    throw InvalidQuerySyntax("TRGEOMETRY_INSTANTS requires four arguments at {}", context->getText());
+                }
+                const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto theta = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto y = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto x = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                helpers.top().windowAggs.push_back(TrgeometryInstantsAggregationLogicalFunction::create(x, y, theta, ts));
+            }
+            /* END CODEGEN GLUE: TRGEOMETRY_INSTANTS (funcName chain) */
+#endif /* RGEO */
+
+            #if RGEO
+/* BEGIN CODEGEN GLUE: TRGEOMETRY_SEGMENTS (funcName chain) */
+            else if (funcName == "TRGEOMETRY_SEGMENTS")
+            {
+                if (helpers.top().functionBuilder.size() < 4)
+                {
+                    throw InvalidQuerySyntax("TRGEOMETRY_SEGMENTS requires four arguments at {}", context->getText());
+                }
+                const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto theta = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto y = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto x = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                helpers.top().windowAggs.push_back(TrgeometrySegmentsAggregationLogicalFunction::create(x, y, theta, ts));
+            }
+            /* END CODEGEN GLUE: TRGEOMETRY_SEGMENTS (funcName chain) */
+#endif /* RGEO */
+
+            #if RGEO
+/* BEGIN CODEGEN GLUE: TRGEOMETRY_SEQUENCES (funcName chain) */
+            else if (funcName == "TRGEOMETRY_SEQUENCES")
+            {
+                if (helpers.top().functionBuilder.size() < 4)
+                {
+                    throw InvalidQuerySyntax("TRGEOMETRY_SEQUENCES requires four arguments at {}", context->getText());
+                }
+                const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto theta = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto y = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto x = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                helpers.top().windowAggs.push_back(TrgeometrySequencesAggregationLogicalFunction::create(x, y, theta, ts));
+            }
+            /* END CODEGEN GLUE: TRGEOMETRY_SEQUENCES (funcName chain) */
+#endif /* RGEO */
+
 
 
 
