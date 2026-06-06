@@ -48,3 +48,4 @@ add_plugin(TrgeometryBeforeTimestamptz PhysicalFunction nes-physical-operators T
 add_plugin(NadTrgeometryStbox PhysicalFunction nes-physical-operators NadTrgeometryStboxPhysicalFunction.cpp)
 add_plugin(TrgeometryTraversedArea PhysicalFunction nes-physical-operators TrgeometryTraversedAreaPhysicalFunction.cpp)
 add_plugin(TdistanceTrgeometryTrgeometry PhysicalFunction nes-physical-operators TdistanceTrgeometryTrgeometryPhysicalFunction.cpp)
+add_plugin(TrgeometryInstantN PhysicalFunction nes-physical-operators TrgeometryInstantNPhysicalFunction.cpp)

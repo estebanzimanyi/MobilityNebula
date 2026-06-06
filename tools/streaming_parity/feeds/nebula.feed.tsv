@@ -1489,6 +1489,7 @@ text_to_set	proven
 text_union_transfn	proven
 text_upper	proven
 textcat_text_text	proven
+textcat_text_textset	proven
 textcat_text_ttext	proven
 textcat_textset_text	proven
 textcat_ttext_text	proven
@@ -1765,6 +1766,7 @@ trgeometry_end_instant	proven
 trgeometry_end_sequence	wired
 trgeometry_end_value	proven
 trgeometry_geom	proven
+trgeometry_instant_n	proven
 trgeometry_points	proven
 trgeometry_restrict_timestamptz	proven
 trgeometry_restrict_tstzset	proven

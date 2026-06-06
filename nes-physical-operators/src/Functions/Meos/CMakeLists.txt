@@ -1417,3 +1417,4 @@ add_plugin(TgeoFromBaseTemp PhysicalFunction nes-physical-operators TgeoFromBase
 add_plugin(GeoPointarr PhysicalFunction nes-physical-operators GeoPointarrPhysicalFunction.cpp)
 add_plugin(GeoStboxes PhysicalFunction nes-physical-operators GeoStboxesPhysicalFunction.cpp)
 add_plugin(SpansetSpanN PhysicalFunction nes-physical-operators SpansetSpanNPhysicalFunction.cpp)
+add_plugin(TextcatTextTextset PhysicalFunction nes-physical-operators TextcatTextTextsetPhysicalFunction.cpp)

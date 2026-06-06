@@ -2824,6 +2824,10 @@
 #include <Functions/Meos/GeoPointarrLogicalFunction.hpp>
 #include <Functions/Meos/GeoStboxesLogicalFunction.hpp>
 #include <Functions/Meos/SpansetSpanNLogicalFunction.hpp>
+#if RGEO
+#include <Functions/Meos/TrgeometryInstantNLogicalFunction.hpp>
+#endif /* RGEO */
+#include <Functions/Meos/TextcatTextTextsetLogicalFunction.hpp>
 #include <Plans/LogicalPlan.hpp>
 #include <Plans/LogicalPlanBuilder.hpp>
 #include <Util/Overloaded.hpp>
@@ -56274,6 +56278,69 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN GLUE: SPANSET_SPAN_N */
+        #if RGEO
+/* BEGIN CODEGEN GLUE: TRGEOMETRY_INSTANT_N */
+        case AntlrSQLLexer::TRGEOMETRY_INSTANT_N:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 5)
+                throw InvalidQuerySyntax("TRGEOMETRY_INSTANT_N requires exactly 5 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a4 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a3 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(TrgeometryInstantNLogicalFunction(a0, a1, a2, a3, a4));
+        }
+        break;
+        /* END CODEGEN GLUE: TRGEOMETRY_INSTANT_N */
+#endif /* RGEO */
+
+        /* BEGIN CODEGEN GLUE: TEXTCAT_TEXT_TEXTSET */
+        case AntlrSQLLexer::TEXTCAT_TEXT_TEXTSET:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 2)
+                throw InvalidQuerySyntax("TEXTCAT_TEXT_TEXTSET requires exactly 2 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(TextcatTextTextsetLogicalFunction(a0, a1));
+        }
+        break;
+        /* END CODEGEN GLUE: TEXTCAT_TEXT_TEXTSET */
+
 
 
 

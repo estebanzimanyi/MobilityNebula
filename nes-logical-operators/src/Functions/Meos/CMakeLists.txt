@@ -1812,3 +1812,5 @@ add_plugin(TgeoFromBaseTemp LogicalFunction nes-logical-operators TgeoFromBaseTe
 add_plugin(GeoPointarr LogicalFunction nes-logical-operators GeoPointarrLogicalFunction.cpp)
 add_plugin(GeoStboxes LogicalFunction nes-logical-operators GeoStboxesLogicalFunction.cpp)
 add_plugin(SpansetSpanN LogicalFunction nes-logical-operators SpansetSpanNLogicalFunction.cpp)
+add_plugin(TrgeometryInstantN LogicalFunction nes-logical-operators TrgeometryInstantNLogicalFunction.cpp)
+add_plugin(TextcatTextTextset LogicalFunction nes-logical-operators TextcatTextTextsetLogicalFunction.cpp)

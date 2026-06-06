@@ -3380,6 +3380,7 @@ for _k, _ctype, _parser, _hdr in [
     ("cbuffer", "Cbuffer", "cbuffer_in", "meos_cbuffer.h"),
     ("pose",    "Pose",    "pose_in",    "meos_pose.h"),
     ("npoint",  "Npoint",  "npoint_in",  "meos_npoint.h"),
+    ("text",    "text",    "text_in",    "meos.h"),
 ]:
     GENERIC_INPUTS.setdefault(_k, dict(
         fields=[("lit", "VariableSizedData")], header=_hdr, build=(
