@@ -214,6 +214,12 @@
 #if RGEO
 #include <Operators/Windows/Aggregations/Meos/TrgeometrySequencesAggregationLogicalFunction.hpp>
 #endif /* RGEO */
+#if RGEO
+#include <Operators/Windows/Aggregations/Meos/TrgeometryStartSequenceAggregationLogicalFunction.hpp>
+#endif /* RGEO */
+#if RGEO
+#include <Operators/Windows/Aggregations/Meos/TrgeometryEndSequenceAggregationLogicalFunction.hpp>
+#endif /* RGEO */
 #include <Functions/Meos/TemporalIntersectsGeometryLogicalFunction.hpp>
 #include <Functions/Meos/AintersectsTgeoGeoLogicalFunction.hpp>
 #include <Functions/Meos/EdwithinTgeoGeoLogicalFunction.hpp>
@@ -2402,12 +2408,6 @@
 #endif /* RGEO */
 #if RGEO
 #include <Functions/Meos/TrgeometryEndInstantLogicalFunction.hpp>
-#endif /* RGEO */
-#if RGEO
-#include <Functions/Meos/TrgeometryStartSequenceLogicalFunction.hpp>
-#endif /* RGEO */
-#if RGEO
-#include <Functions/Meos/TrgeometryEndSequenceLogicalFunction.hpp>
 #endif /* RGEO */
 #if RGEO
 #include <Functions/Meos/NadTrgeometryGeoLogicalFunction.hpp>
@@ -47934,71 +47934,6 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         /* END CODEGEN GLUE: TRGEOMETRY_END_INSTANT */
 #endif /* RGEO */
 
-        #if RGEO
-/* BEGIN CODEGEN GLUE: TRGEOMETRY_START_SEQUENCE */
-        case AntlrSQLLexer::TRGEOMETRY_START_SEQUENCE:
-        {
-            const auto argCount = context->expression().size();
-            if (argCount != 4)
-                throw InvalidQuerySyntax("TRGEOMETRY_START_SEQUENCE requires exactly 4 arguments, but got {}", argCount);
-
-            while (!helpers.top().constantBuilder.empty())
-            {
-                auto constantValue = std::move(helpers.top().constantBuilder.back());
-                helpers.top().constantBuilder.pop_back();
-                DataType dataType;
-                char* endPtr = nullptr;
-                std::strtod(constantValue.c_str(), &endPtr);
-                if (endPtr != nullptr && *endPtr == '\0')
-                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
-                else
-                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
-                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
-            }
-
-            auto a3 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
-            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
-            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
-            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
-
-            helpers.top().functionBuilder.emplace_back(TrgeometryStartSequenceLogicalFunction(a0, a1, a2, a3));
-        }
-        break;
-        /* END CODEGEN GLUE: TRGEOMETRY_START_SEQUENCE */
-#endif /* RGEO */
-
-        #if RGEO
-/* BEGIN CODEGEN GLUE: TRGEOMETRY_END_SEQUENCE */
-        case AntlrSQLLexer::TRGEOMETRY_END_SEQUENCE:
-        {
-            const auto argCount = context->expression().size();
-            if (argCount != 4)
-                throw InvalidQuerySyntax("TRGEOMETRY_END_SEQUENCE requires exactly 4 arguments, but got {}", argCount);
-
-            while (!helpers.top().constantBuilder.empty())
-            {
-                auto constantValue = std::move(helpers.top().constantBuilder.back());
-                helpers.top().constantBuilder.pop_back();
-                DataType dataType;
-                char* endPtr = nullptr;
-                std::strtod(constantValue.c_str(), &endPtr);
-                if (endPtr != nullptr && *endPtr == '\0')
-                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
-                else
-                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
-                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
-            }
-
-            auto a3 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
-            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
-            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
-            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
-
-            helpers.top().functionBuilder.emplace_back(TrgeometryEndSequenceLogicalFunction(a0, a1, a2, a3));
-        }
-        break;
-        /* END CODEGEN GLUE: TRGEOMETRY_END_SEQUENCE */
-#endif /* RGEO */
 
         #if RGEO
 /* BEGIN CODEGEN GLUE: NAD_TRGEOMETRY_GEO */
@@ -59535,6 +59470,76 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             break;
         /* END CODEGEN GLUE: TRGEOMETRY_SEQUENCES (case-switch) */
 #endif /* RGEO */
+        #if RGEO
+/* BEGIN CODEGEN GLUE: TRGEOMETRY_START_SEQUENCE (case-switch) */
+        case AntlrSQLLexer::TRGEOMETRY_START_SEQUENCE:
+            // trgeometry_start_sequence (TSequence *) - the first sequence of the windowed continuous trgeometry, as EWKB hex.
+            if (helpers.top().functionBuilder.size() != 4) {
+                throw InvalidQuerySyntax("TRGEOMETRY_START_SEQUENCE requires exactly four arguments (x, y, theta, timestamp), but got {}", helpers.top().functionBuilder.size());
+            }
+            {
+                const auto timestampFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto thetaFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto yFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto xFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+
+                if (!xFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !yFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !thetaFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
+                    throw InvalidQuerySyntax("TRGEOMETRY_START_SEQUENCE arguments must be field references");
+                }
+
+                helpers.top().windowAggs.push_back(
+                    TrgeometryStartSequenceAggregationLogicalFunction::create(xFunction.get<FieldAccessLogicalFunction>(),
+                                                                    yFunction.get<FieldAccessLogicalFunction>(),
+                                                                    thetaFunction.get<FieldAccessLogicalFunction>(),
+                                                                    timestampFunction.get<FieldAccessLogicalFunction>()));
+                helpers.top().functionBuilder.push_back(xFunction);
+            }
+            break;
+        /* END CODEGEN GLUE: TRGEOMETRY_START_SEQUENCE (case-switch) */
+#endif /* RGEO */
+
+        #if RGEO
+/* BEGIN CODEGEN GLUE: TRGEOMETRY_END_SEQUENCE (case-switch) */
+        case AntlrSQLLexer::TRGEOMETRY_END_SEQUENCE:
+            // trgeometry_end_sequence (TSequence *) - the last sequence of the windowed continuous trgeometry, as EWKB hex.
+            if (helpers.top().functionBuilder.size() != 4) {
+                throw InvalidQuerySyntax("TRGEOMETRY_END_SEQUENCE requires exactly four arguments (x, y, theta, timestamp), but got {}", helpers.top().functionBuilder.size());
+            }
+            {
+                const auto timestampFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto thetaFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto yFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto xFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+
+                if (!xFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !yFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !thetaFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
+                    throw InvalidQuerySyntax("TRGEOMETRY_END_SEQUENCE arguments must be field references");
+                }
+
+                helpers.top().windowAggs.push_back(
+                    TrgeometryEndSequenceAggregationLogicalFunction::create(xFunction.get<FieldAccessLogicalFunction>(),
+                                                                    yFunction.get<FieldAccessLogicalFunction>(),
+                                                                    thetaFunction.get<FieldAccessLogicalFunction>(),
+                                                                    timestampFunction.get<FieldAccessLogicalFunction>()));
+                helpers.top().functionBuilder.push_back(xFunction);
+            }
+            break;
+        /* END CODEGEN GLUE: TRGEOMETRY_END_SEQUENCE (case-switch) */
+#endif /* RGEO */
+
 
 
 
@@ -61478,6 +61483,48 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             }
             /* END CODEGEN GLUE: TRGEOMETRY_SEQUENCES (funcName chain) */
 #endif /* RGEO */
+            #if RGEO
+/* BEGIN CODEGEN GLUE: TRGEOMETRY_START_SEQUENCE (funcName chain) */
+            else if (funcName == "TRGEOMETRY_START_SEQUENCE")
+            {
+                if (helpers.top().functionBuilder.size() < 4)
+                {
+                    throw InvalidQuerySyntax("TRGEOMETRY_START_SEQUENCE requires four arguments at {}", context->getText());
+                }
+                const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto theta = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto y = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto x = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                helpers.top().windowAggs.push_back(TrgeometryStartSequenceAggregationLogicalFunction::create(x, y, theta, ts));
+            }
+            /* END CODEGEN GLUE: TRGEOMETRY_START_SEQUENCE (funcName chain) */
+#endif /* RGEO */
+
+            #if RGEO
+/* BEGIN CODEGEN GLUE: TRGEOMETRY_END_SEQUENCE (funcName chain) */
+            else if (funcName == "TRGEOMETRY_END_SEQUENCE")
+            {
+                if (helpers.top().functionBuilder.size() < 4)
+                {
+                    throw InvalidQuerySyntax("TRGEOMETRY_END_SEQUENCE requires four arguments at {}", context->getText());
+                }
+                const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto theta = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto y = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto x = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                helpers.top().windowAggs.push_back(TrgeometryEndSequenceAggregationLogicalFunction::create(x, y, theta, ts));
+            }
+            /* END CODEGEN GLUE: TRGEOMETRY_END_SEQUENCE (funcName chain) */
+#endif /* RGEO */
+
 
 
 

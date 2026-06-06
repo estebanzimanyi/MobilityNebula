@@ -2084,6 +2084,55 @@ PHYSICAL_CPP_TPOSE_SEQ_ARRAY = _swap_once(
     _FINALIZE_SCALAR_TGEO, _FINALIZE_SEQARRAY_TPOSE, "tpose-seqarray finalize tail")
 
 # ===========================================================================
+# tpose single-sequence accessor (fold "tposeseq1"): same windowed
+# trgeometry construction as the array form, but the accessor in
+# {seq_accessor_call} returns a SINGLE Temporal* (TSequence*) rather than a
+# T**+&_cnt array — e.g. trgeometry_start_sequence / trgeometry_end_sequence.
+# Serialize that one result directly to EWKB hex (no array loop, no braces).
+# Derived from _FINALIZE_SEQARRAY_TPOSE by swapping ONLY the array-loop block.
+# ===========================================================================
+_FINALIZE_SEQ1_TPOSE = _swap_once(
+    _FINALIZE_SEQARRAY_TPOSE,
+    """\
+            int _cnt = 0;
+            void** arr = (void**) {seq_accessor_call};
+            MEOS::Meos::freeTemporalObject(temp);
+            if (!arr || _cnt <= 0) {{
+                if (arr) free(arr);
+                return (char*)nullptr;
+            }}
+
+            std::string _s = "{{";
+            for (int _i = 0; _i < _cnt; _i++) {{
+                if (_i) _s += ", ";
+                size_t _z = 0;
+                char* _e = temporal_as_hexwkb((const Temporal*) arr[_i], 0x04 /* WKB_EXTENDED */, &_z);
+                if (_e) {{ _s += _e; free(_e); }}
+                free(arr[_i]);
+            }}
+            _s += "}}";
+            free(arr);
+            return strdup(_s.c_str());""",
+    """\
+            Temporal* _e = (Temporal*) {seq_accessor_call};
+            MEOS::Meos::freeTemporalObject(temp);
+            if (!_e) {{
+                return (char*)nullptr;
+            }}
+            size_t _z = 0;
+            char* _hex = temporal_as_hexwkb((const Temporal*) _e, 0x04 /* WKB_EXTENDED */, &_z);
+            free(_e);
+            if (!_hex) {{
+                return (char*)nullptr;
+            }}
+            return _hex;""",
+    "tpose single-sequence accessor (one Temporal* -> EWKB hex)")
+
+PHYSICAL_CPP_TPOSE_SEQ1 = _swap_once(
+    PHYSICAL_CPP_TPOSE_SEQ_ARRAY,
+    _FINALIZE_SEQARRAY_TPOSE, _FINALIZE_SEQ1_TPOSE, "tpose-seq1 finalize tail")
+
+# ===========================================================================
 # Expandable-Temporal* aggregate (return_mode "expand"): the MEOS-native
 # streaming model — the aggregate STATE is a live expandable `Temporal*` (a
 # mini-trip trajectory), grown in place per event via the public streaming
@@ -3718,6 +3767,8 @@ def physical_template_for(op):
     if op["input_shape"] == "tpose":
         if op.get("fold") == "tposeseqarray":
             return PHYSICAL_HPP_TPOSE, PHYSICAL_CPP_TPOSE_SEQ_ARRAY
+        if op.get("fold") == "tposeseq1":
+            return PHYSICAL_HPP_TPOSE, PHYSICAL_CPP_TPOSE_SEQ1
         return PHYSICAL_HPP_TPOSE, PHYSICAL_CPP_TPOSE
     if op["input_shape"] == "tnumber":
         # Scalar-fold reuses the tnumber (value, ts) HPP but folds the field

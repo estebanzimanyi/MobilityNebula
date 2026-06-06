@@ -1765,7 +1765,7 @@ trgeometry_delete_tstzset	proven
 trgeometry_delete_tstzspan	proven
 trgeometry_delete_tstzspanset	proven
 trgeometry_end_instant	proven
-trgeometry_end_sequence	wired
+trgeometry_end_sequence	proven
 trgeometry_end_value	proven
 trgeometry_geom	proven
 trgeometry_instant_n	proven
@@ -1780,7 +1780,7 @@ trgeometry_round	proven
 trgeometry_segments	proven
 trgeometry_sequences	proven
 trgeometry_start_instant	proven
-trgeometry_start_sequence	wired
+trgeometry_start_sequence	proven
 trgeometry_start_value	proven
 trgeometry_to_tinstant	proven
 trgeometry_to_tpoint	proven
