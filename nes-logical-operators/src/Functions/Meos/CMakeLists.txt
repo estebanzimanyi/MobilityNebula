@@ -1802,3 +1802,8 @@ add_plugin(DwithinCbufferCbuffer LogicalFunction nes-logical-operators DwithinCb
 add_plugin(CbufferSetSrid LogicalFunction nes-logical-operators CbufferSetSridLogicalFunction.cpp)
 add_plugin(PoseSetSrid LogicalFunction nes-logical-operators PoseSetSridLogicalFunction.cpp)
 add_plugin(PoseOrientation LogicalFunction nes-logical-operators PoseOrientationLogicalFunction.cpp)
+add_plugin(TgeometryToTcbuffer LogicalFunction nes-logical-operators TgeometryToTcbufferLogicalFunction.cpp)
+add_plugin(TdwithinGeoTgeo LogicalFunction nes-logical-operators TdwithinGeoTgeoLogicalFunction.cpp)
+add_plugin(TdwithinGeoTcbuffer LogicalFunction nes-logical-operators TdwithinGeoTcbufferLogicalFunction.cpp)
+add_plugin(TpointAtElevation LogicalFunction nes-logical-operators TpointAtElevationLogicalFunction.cpp)
+add_plugin(TpointMinusElevation LogicalFunction nes-logical-operators TpointMinusElevationLogicalFunction.cpp)

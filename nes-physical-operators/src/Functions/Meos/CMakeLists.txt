@@ -1409,3 +1409,6 @@ add_plugin(MinusDateInt PhysicalFunction nes-physical-operators MinusDateIntPhys
 add_plugin(SetSpans PhysicalFunction nes-physical-operators SetSpansPhysicalFunction.cpp)
 add_plugin(SpansetSpans PhysicalFunction nes-physical-operators SpansetSpansPhysicalFunction.cpp)
 add_plugin(SpansetSpanarr PhysicalFunction nes-physical-operators SpansetSpanarrPhysicalFunction.cpp)
+add_plugin(TdwithinGeoTgeo PhysicalFunction nes-physical-operators TdwithinGeoTgeoPhysicalFunction.cpp)
+add_plugin(TpointAtElevation PhysicalFunction nes-physical-operators TpointAtElevationPhysicalFunction.cpp)
+add_plugin(TpointMinusElevation PhysicalFunction nes-physical-operators TpointMinusElevationPhysicalFunction.cpp)

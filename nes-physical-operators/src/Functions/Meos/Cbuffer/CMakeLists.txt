@@ -157,3 +157,5 @@ add_plugin(TcbufferTraversedArea PhysicalFunction nes-physical-operators Tcbuffe
 add_plugin(TcbufferMake PhysicalFunction nes-physical-operators TcbufferMakePhysicalFunction.cpp)
 add_plugin(DwithinCbufferCbuffer PhysicalFunction nes-physical-operators DwithinCbufferCbufferPhysicalFunction.cpp)
 add_plugin(CbufferSetSrid PhysicalFunction nes-physical-operators CbufferSetSridPhysicalFunction.cpp)
+add_plugin(TgeometryToTcbuffer PhysicalFunction nes-physical-operators TgeometryToTcbufferPhysicalFunction.cpp)
+add_plugin(TdwithinGeoTcbuffer PhysicalFunction nes-physical-operators TdwithinGeoTcbufferPhysicalFunction.cpp)

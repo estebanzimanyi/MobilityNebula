@@ -103,7 +103,6 @@
 #include <Operators/Windows/Aggregations/Meos/TgeoCentroidAggregationLogicalFunction.hpp>
 #include <Operators/Windows/Aggregations/Meos/TpointAzimuthAggregationLogicalFunction.hpp>
 #include <Operators/Windows/Aggregations/Meos/TpointAngularDifferenceAggregationLogicalFunction.hpp>
-#include <Operators/Windows/Aggregations/Meos/TgeompointToTgeometryAggregationLogicalFunction.hpp>
 #include <Operators/Windows/Aggregations/Meos/TemporalCopyAggregationLogicalFunction.hpp>
 #include <Operators/Windows/Aggregations/Meos/TnumberAbsAggregationLogicalFunction.hpp>
 #include <Operators/Windows/Aggregations/Meos/TnumberDeltaValueAggregationLogicalFunction.hpp>
@@ -2811,6 +2810,15 @@
 #if POSE
 #include <Functions/Meos/PoseOrientationLogicalFunction.hpp>
 #endif /* POSE */
+#if CBUFFER
+#include <Functions/Meos/TgeometryToTcbufferLogicalFunction.hpp>
+#endif /* CBUFFER */
+#include <Functions/Meos/TdwithinGeoTgeoLogicalFunction.hpp>
+#if CBUFFER
+#include <Functions/Meos/TdwithinGeoTcbufferLogicalFunction.hpp>
+#endif /* CBUFFER */
+#include <Functions/Meos/TpointAtElevationLogicalFunction.hpp>
+#include <Functions/Meos/TpointMinusElevationLogicalFunction.hpp>
 #include <Plans/LogicalPlan.hpp>
 #include <Plans/LogicalPlanBuilder.hpp>
 #include <Util/Overloaded.hpp>
@@ -55941,6 +55949,186 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         break;
         /* END CODEGEN GLUE: POSE_ORIENTATION */
 #endif /* POSE */
+        #if CBUFFER
+/* BEGIN CODEGEN GLUE: TGEOMETRY_TO_TCBUFFER */
+        case AntlrSQLLexer::TGEOMETRY_TO_TCBUFFER:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 1)
+                throw InvalidQuerySyntax("TGEOMETRY_TO_TCBUFFER requires exactly 1 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(TgeometryToTcbufferLogicalFunction(a0));
+        }
+        break;
+        /* END CODEGEN GLUE: TGEOMETRY_TO_TCBUFFER */
+#endif /* CBUFFER */
+
+        /* BEGIN CODEGEN GLUE: TDWITHIN_GEO_TGEO */
+        case AntlrSQLLexer::TDWITHIN_GEO_TGEO:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("TDWITHIN_GEO_TGEO requires exactly 3 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(TdwithinGeoTgeoLogicalFunction(a0, a1, a2));
+        }
+        break;
+        /* END CODEGEN GLUE: TDWITHIN_GEO_TGEO */
+
+        #if CBUFFER
+/* BEGIN CODEGEN GLUE: TDWITHIN_GEO_TCBUFFER */
+        case AntlrSQLLexer::TDWITHIN_GEO_TCBUFFER:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("TDWITHIN_GEO_TCBUFFER requires exactly 3 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(TdwithinGeoTcbufferLogicalFunction(a0, a1, a2));
+        }
+        break;
+        /* END CODEGEN GLUE: TDWITHIN_GEO_TCBUFFER */
+#endif /* CBUFFER */
+
+        /* BEGIN CODEGEN GLUE: TPOINT_AT_ELEVATION */
+        case AntlrSQLLexer::TPOINT_AT_ELEVATION:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 2)
+                throw InvalidQuerySyntax("TPOINT_AT_ELEVATION requires exactly 2 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(TpointAtElevationLogicalFunction(a0, a1));
+        }
+        break;
+        /* END CODEGEN GLUE: TPOINT_AT_ELEVATION */
+
+        /* BEGIN CODEGEN GLUE: TPOINT_MINUS_ELEVATION */
+        case AntlrSQLLexer::TPOINT_MINUS_ELEVATION:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 2)
+                throw InvalidQuerySyntax("TPOINT_MINUS_ELEVATION requires exactly 2 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(TpointMinusElevationLogicalFunction(a0, a1));
+        }
+        break;
+        /* END CODEGEN GLUE: TPOINT_MINUS_ELEVATION */
+        /* BEGIN CODEGEN GLUE: TGEOMPOINT_TO_TGEOMETRY */
+        case AntlrSQLLexer::TGEOMPOINT_TO_TGEOMETRY:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("TGEOMPOINT_TO_TGEOMETRY requires exactly 3 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(TgeompointToTgeometryLogicalFunction(a0, a1, a2));
+        }
+        break;
+        /* END CODEGEN GLUE: TGEOMPOINT_TO_TGEOMETRY */
+
+
 
 
 
@@ -56967,35 +57155,6 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             }
             break;
         /* END CODEGEN GLUE: TPOINT_ANGULAR_DIFFERENCE (case-switch) */
-
-        /* BEGIN CODEGEN GLUE: TGEOMPOINT_TO_TGEOMETRY (case-switch) */
-        case AntlrSQLLexer::TGEOMPOINT_TO_TGEOMETRY:
-            // Windowed tgeompoint->tgeometry conversion over the expandable mini-trip, emitted as hex-WKB.
-            if (helpers.top().functionBuilder.size() != 3) {
-                throw InvalidQuerySyntax("TGEOMPOINT_TO_TGEOMETRY requires exactly three arguments (longitude, latitude, timestamp), but got {}", helpers.top().functionBuilder.size());
-            }
-            {
-                const auto timestampFunction = helpers.top().functionBuilder.back();
-                helpers.top().functionBuilder.pop_back();
-                const auto latitudeFunction = helpers.top().functionBuilder.back();
-                helpers.top().functionBuilder.pop_back();
-                const auto longitudeFunction = helpers.top().functionBuilder.back();
-                helpers.top().functionBuilder.pop_back();
-
-                if (!longitudeFunction.tryGet<FieldAccessLogicalFunction>() ||
-                    !latitudeFunction.tryGet<FieldAccessLogicalFunction>() ||
-                    !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
-                    throw InvalidQuerySyntax("TGEOMPOINT_TO_TGEOMETRY arguments must be field references");
-                }
-
-                helpers.top().windowAggs.push_back(
-                    TgeompointToTgeometryAggregationLogicalFunction::create(longitudeFunction.get<FieldAccessLogicalFunction>(),
-                                                                    latitudeFunction.get<FieldAccessLogicalFunction>(),
-                                                                    timestampFunction.get<FieldAccessLogicalFunction>()));
-                helpers.top().functionBuilder.push_back(longitudeFunction);
-            }
-            break;
-        /* END CODEGEN GLUE: TGEOMPOINT_TO_TGEOMETRY (case-switch) */
 
         /* BEGIN CODEGEN GLUE: TEMPORAL_COPY (case-switch) */
         case AntlrSQLLexer::TEMPORAL_COPY:
@@ -59627,23 +59786,6 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
                 helpers.top().windowAggs.push_back(TpointAngularDifferenceAggregationLogicalFunction::create(lon, lat, ts));
             }
             /* END CODEGEN GLUE: TPOINT_ANGULAR_DIFFERENCE (funcName chain) */
-
-            /* BEGIN CODEGEN GLUE: TGEOMPOINT_TO_TGEOMETRY (funcName chain) */
-            else if (funcName == "TGEOMPOINT_TO_TGEOMETRY")
-            {
-                if (helpers.top().functionBuilder.size() < 3)
-                {
-                    throw InvalidQuerySyntax("TGEOMPOINT_TO_TGEOMETRY requires three arguments at {}", context->getText());
-                }
-                const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
-                helpers.top().functionBuilder.pop_back();
-                const auto lat = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
-                helpers.top().functionBuilder.pop_back();
-                const auto lon = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
-                helpers.top().functionBuilder.pop_back();
-                helpers.top().windowAggs.push_back(TgeompointToTgeometryAggregationLogicalFunction::create(lon, lat, ts));
-            }
-            /* END CODEGEN GLUE: TGEOMPOINT_TO_TGEOMETRY (funcName chain) */
 
             /* BEGIN CODEGEN GLUE: TEMPORAL_COPY (funcName chain) */
             else if (funcName == "TEMPORAL_COPY")

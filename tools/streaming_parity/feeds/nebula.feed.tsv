@@ -1368,6 +1368,8 @@ tdistance_tpose_pose	proven
 tdistance_tpose_tpose	proven
 tdistance_trgeometry_geo	proven
 tdistance_trgeometry_trgeometry	proven
+tdwithin_geo_tcbuffer	proven
+tdwithin_geo_tgeo	proven
 tdwithin_tcbuffer_cbuffer	proven
 tdwithin_tcbuffer_geo	proven
 tdwithin_tcbuffer_tcbuffer	proven
@@ -1567,10 +1569,11 @@ tgeogpoint_to_tgeography	proven
 tgeography_to_tgeogpoint	proven
 tgeography_to_tgeometry	proven
 tgeoinst_make	proven
+tgeometry_to_tcbuffer	proven
 tgeometry_to_tgeography	proven
 tgeometry_to_tgeompoint	proven
 tgeometry_type	proven
-tgeompoint_to_tgeometry	wired
+tgeompoint_to_tgeometry	proven
 tgt_float_tfloat	proven
 tgt_int_tint	proven
 tgt_temporal_temporal	proven
@@ -1712,6 +1715,7 @@ tnumber_valuespans	proven
 tnumber_wavg_transfn	proven
 touches_cbuffer_cbuffer	proven
 tpoint_angular_difference	proven
+tpoint_at_elevation	proven
 tpoint_at_geom	proven
 tpoint_at_value	proven
 tpoint_azimuth	proven
@@ -1721,6 +1725,7 @@ tpoint_get_y	proven
 tpoint_get_z	proven
 tpoint_is_simple	proven
 tpoint_length	proven
+tpoint_minus_elevation	proven
 tpoint_minus_geom	proven
 tpoint_minus_value	proven
 tpoint_speed	proven

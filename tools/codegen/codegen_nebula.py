@@ -3498,6 +3498,16 @@ for _rk in VALUE_OUT_RETURNS:
 # the op supplies "self_out_fn" (and optional "self_out_maxdd").
 GENERIC_RETURNS.setdefault("self_out", ("VariableSizedData", "VARSIZED", "(char*) nullptr", None))
 
+# Single-temporal -> Temporal* operators serialized to hex-WKB (EWKB, SRID kept):
+# a Temporal* result from a conversion / restriction over a SINGLE temporal
+# primary (+ optional extras), emitted as a VARSIZED hex field. Unlike the "wkb"
+# return-kind (assemble_wkb_output, hardwired to two hex-temporal operands), this
+# routes through the flexible varsized assembler so the operand can be any
+# input_type (a per-event temporal, a hex temporal, or a geometry primary with a
+# wkb_temporal extra) — backs tgeompoint_to_tgeometry, tgeometry_to_tcbuffer,
+# tdwithin_geo_tgeo/tcbuffer, tpoint_at_elevation/minus_elevation.
+GENERIC_RETURNS.setdefault("temporal_wkb", ("VariableSizedData", "VARSIZED", "(char*) nullptr", None))
+
 
 def _generic_field_decl(name, cpp):
     """Lambda parameter declaration + the cast expression for one event field."""
@@ -3546,7 +3556,7 @@ def assemble_generic_varsized_output(op):
     array_out = op.get("array_out")
     array_in_round = op.get("array_in_round")
     if (array_out or array_in_round or op["return_kind"] in VALUE_OUT_RETURNS
-            or op["return_kind"] == "self_out"):
+            or op["return_kind"] in ("self_out", "temporal_wkb")):
         res_ctype, out_fn, out_maxdd = None, None, False
     else:
         _ret = VARSIZED_OUT_RETURNS[op["return_kind"]]
@@ -3618,6 +3628,19 @@ def assemble_generic_varsized_output(op):
                 f'                MEOS::Meos::StaticGeometry arg{i}G(arg{i}S);\n'
                 f'                if (!arg{i}G.getGeometry()) {{ {ff}return {zero}; }}\n')
             call_terms.append(f"arg{i}G.getGeometry()")
+        elif ex["kind"] == "wkb_temporal":
+            # a temporal operand carried as a VARSIZED hex-WKB field, parsed via
+            # temporal_from_hexwkb and freed after the call. Used when the primary
+            # is NOT the temporal (e.g. tdwithin_geo_tgeo's geometry-first
+            # signature: geom primary + this temporal extra + a scalar distance).
+            fields.append((f"arg{i}", "VariableSizedData"))
+            headers.add("meos_geo.h")
+            parse_lines.append(
+                f'                std::string arg{i}Hex(arg{i}Ptr, arg{i}Size);\n'
+                f'                Temporal* arg{i}T = temporal_from_hexwkb(arg{i}Hex.c_str());\n'
+                f'                if (!arg{i}T) {{ {ff}return {zero}; }}\n')
+            call_terms.append(f"arg{i}T")
+            box_frees.append(f"free(arg{i}T);")
         elif ex["kind"] == "temporal2":
             # a SECOND temporal operand built from its own per-event columns (not
             # hex): the extra-arg carries the field list and a build template.
@@ -3789,6 +3812,20 @@ def assemble_generic_varsized_output(op):
             f"{free_primary}"
             f"                if (!outStr) return (char*) nullptr;\n"
             f"                return outStr;")
+    elif op["return_kind"] == "temporal_wkb":
+        # A single-temporal -> Temporal* op: serialize the result to hex-WKB via
+        # temporal_as_hexwkb (WKB_EXTENDED keeps the SRID), then free it. Operands
+        # are freed first (free_primary + any extra box/wkb_temporal frees).
+        call_marshal = (
+            f"                Temporal* res = (Temporal*) {op['meos_call']}({callargs});\n"
+            f"{free_primary}"
+            f"{bf}"
+            f"                if (!res) return (char*) nullptr;\n"
+            f"                size_t _wsz = 0;\n"
+            f"                char* outStr = temporal_as_hexwkb(res, 0x04 /* WKB_EXTENDED */, &_wsz);\n"
+            f"                free(res);\n"
+            f"                if (!outStr) return (char*) nullptr;\n"
+            f"                return outStr;")
     elif op.get("out_param") is not None:
         # VARSIZED out-param accessor: bool f(operand…, T **result) writes a heap
         # object pointer into *result and returns a validity flag. Serialise it
@@ -3837,7 +3874,7 @@ def assemble_generic_physical(op):
     if op["return_kind"] == "wkb":
         return assemble_wkb_output(op)
     if (op["return_kind"] in VARSIZED_OUT_RETURNS or op["return_kind"] in VALUE_OUT_RETURNS
-            or op["return_kind"] == "self_out"
+            or op["return_kind"] in ("self_out", "temporal_wkb")
             or op.get("array_out") or op.get("array_in_round")):
         return assemble_generic_varsized_output(op)
     inp = GENERIC_INPUTS[op["input_type"]]
