@@ -3371,6 +3371,24 @@ GENERIC_INPUTS.setdefault("geom", dict(
         '                GSERIALIZED* {var} = geom_in({var}S.c_str(), -1);\n'
         '                if (!{var}) return {z};\n')))
 
+# Bare scalar-object literals as primary text inputs: parse via the type's *_in
+# (cbuffer_in / pose_in / npoint_in) into a heap object, freed after the call (a
+# normal MEOS allocation, unlike the StaticGeometry geom primary above). These
+# back the static-object operators whose operand is a single Cbuffer/Pose/Npoint
+# value rather than a temporal (e.g. dwithin_cbuffer_cbuffer, *_set_srid).
+for _k, _ctype, _parser, _hdr in [
+    ("cbuffer", "Cbuffer", "cbuffer_in", "meos_cbuffer.h"),
+    ("pose",    "Pose",    "pose_in",    "meos_pose.h"),
+    ("npoint",  "Npoint",  "npoint_in",  "meos_npoint.h"),
+]:
+    GENERIC_INPUTS.setdefault(_k, dict(
+        fields=[("lit", "VariableSizedData")], header=_hdr, build=(
+            '                std::string {var}S(litPtr, litSize);\n'
+            '                while (!{var}S.empty() && ({var}S.front()==\'\\\'\' || {var}S.front()==\'"\')) {var}S.erase({var}S.begin());\n'
+            '                while (!{var}S.empty() && ({var}S.back()==\'\\\'\' || {var}S.back()==\'"\')) {var}S.pop_back();\n'
+            '                ' + _ctype + '* {var} = ' + _parser + '({var}S.c_str());\n'
+            '                if (!{var}) return {z};\n')))
+
 # Base-scalar primary inputs: the operand is a single plain value (not a pointer),
 # read straight from a field — used by the base->container constructors
 # (int_to_span, float_to_set, timestamptz_to_spanset, …). `frees: False` tells the
@@ -3461,6 +3479,18 @@ for _rk, _ct, _of, _md in [
     GENERIC_RETURNS.setdefault(_rk, ("VariableSizedData", "VARSIZED", "(char*) nullptr", None))
     VARSIZED_OUT_RETURNS.setdefault(_rk, (_ct, _of, _md))
 
+# return_kind -> (result C VALUE type, serializer). Unlike VARSIZED_OUT_RETURNS,
+# the MEOS call returns the value DIRECTLY (not a heap pointer): a DateADT from
+# add_date_int / minus_date_int. The serializer (date_out) takes the value and
+# returns a heap cstring (copied to the arena, then freed); the value itself is
+# not heap-owned, so it is NEVER freed. Routed to the varsized assembler via a
+# dedicated value-return branch.
+VALUE_OUT_RETURNS = {
+    "date_out": ("DateADT", "date_out"),
+}
+for _rk in VALUE_OUT_RETURNS:
+    GENERIC_RETURNS.setdefault(_rk, ("VariableSizedData", "VARSIZED", "(char*) nullptr", None))
+
 
 def _generic_field_decl(name, cpp):
     """Lambda parameter declaration + the cast expression for one event field."""
@@ -3508,7 +3538,7 @@ def assemble_generic_varsized_output(op):
     inp = GENERIC_INPUTS[op["input_type"]]
     array_out = op.get("array_out")
     array_in_round = op.get("array_in_round")
-    if array_out or array_in_round:
+    if array_out or array_in_round or op["return_kind"] in VALUE_OUT_RETURNS:
         res_ctype, out_fn, out_maxdd = None, None, False
     else:
         _ret = VARSIZED_OUT_RETURNS[op["return_kind"]]
@@ -3727,6 +3757,18 @@ def assemble_generic_varsized_output(op):
                 f"                char* outStr = {array_in_round['out']}(_out[0], {dd});\n"
                 f"                free(_out[0]); free(_out);\n"
                 f"                return outStr;")
+    elif op["return_kind"] in VALUE_OUT_RETURNS:
+        # The MEOS call returns a plain VALUE (e.g. a DateADT from add_date_int),
+        # not a heap pointer: serialize it via the value serializer (date_out) and
+        # never free the value. The heap cstring is copied to the arena + freed.
+        vt, ser = VALUE_OUT_RETURNS[op["return_kind"]]
+        call_marshal = (
+            f"                {vt} res = {op['meos_call']}({callargs});\n"
+            f"{free_primary}"
+            f"{bf}"
+            f"                char* outStr = {ser}(res);\n"
+            f"                if (!outStr) return (char*) nullptr;\n"
+            f"                return outStr;")
     elif op.get("out_param") is not None:
         # VARSIZED out-param accessor: bool f(operand…, T **result) writes a heap
         # object pointer into *result and returns a validity flag. Serialise it
@@ -3774,7 +3816,8 @@ def assemble_generic_physical(op):
     name = op["nebula_name"]
     if op["return_kind"] == "wkb":
         return assemble_wkb_output(op)
-    if op["return_kind"] in VARSIZED_OUT_RETURNS or op.get("array_out") or op.get("array_in_round"):
+    if (op["return_kind"] in VARSIZED_OUT_RETURNS or op["return_kind"] in VALUE_OUT_RETURNS
+            or op.get("array_out") or op.get("array_in_round")):
         return assemble_generic_varsized_output(op)
     inp = GENERIC_INPUTS[op["input_type"]]
     ret_cpp, _, zero, extract_fn = GENERIC_RETURNS[op["return_kind"]]

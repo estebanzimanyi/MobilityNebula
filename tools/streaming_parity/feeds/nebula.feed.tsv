@@ -13,6 +13,7 @@ acovers_cbuffer_tcbuffer	proven
 acovers_geo_tcbuffer	proven
 acovers_tcbuffer_cbuffer	proven
 acovers_tcbuffer_geo	proven
+add_date_int	proven
 add_float_tfloat	proven
 add_int_tint	proven
 add_interval_interval	proven
@@ -416,6 +417,7 @@ div_int_tint	proven
 div_tfloat_float	proven
 div_tint_int	proven
 div_tnumber_tnumber	proven
+dwithin_cbuffer_cbuffer	proven
 econtains_cbuffer_tcbuffer	proven
 econtains_geo_tgeo	proven
 econtains_tcbuffer_cbuffer	proven
@@ -764,6 +766,7 @@ minus_bigint_span	proven
 minus_bigint_spanset	proven
 minus_cbuffer_set	proven
 minus_date_date	proven
+minus_date_int	proven
 minus_date_set	proven
 minus_date_span	proven
 minus_date_spanset	proven
@@ -1140,6 +1143,7 @@ set_lt	proven
 set_ne	proven
 set_num_values	proven
 set_round	proven
+set_spans	proven
 set_spantype	proven
 set_split_each_n_spans	proven
 set_split_n_spans	proven
@@ -1197,6 +1201,8 @@ spanset_lt	proven
 spanset_ne	proven
 spanset_num_spans	proven
 spanset_span	proven
+spanset_spanarr	proven
+spanset_spans	proven
 spanset_split_each_n_spans	proven
 spanset_split_n_spans	proven
 spanset_start_span	proven

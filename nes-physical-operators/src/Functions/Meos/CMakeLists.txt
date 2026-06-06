@@ -1404,3 +1404,8 @@ add_plugin(MinusDateDate PhysicalFunction nes-physical-operators MinusDateDatePh
 add_plugin(MinusTimestamptzTimestamptz PhysicalFunction nes-physical-operators MinusTimestamptzTimestamptzPhysicalFunction.cpp)
 add_plugin(Box3dMake PhysicalFunction nes-physical-operators Box3dMakePhysicalFunction.cpp)
 add_plugin(GboxMake PhysicalFunction nes-physical-operators GboxMakePhysicalFunction.cpp)
+add_plugin(AddDateInt PhysicalFunction nes-physical-operators AddDateIntPhysicalFunction.cpp)
+add_plugin(MinusDateInt PhysicalFunction nes-physical-operators MinusDateIntPhysicalFunction.cpp)
+add_plugin(SetSpans PhysicalFunction nes-physical-operators SetSpansPhysicalFunction.cpp)
+add_plugin(SpansetSpans PhysicalFunction nes-physical-operators SpansetSpansPhysicalFunction.cpp)
+add_plugin(SpansetSpanarr PhysicalFunction nes-physical-operators SpansetSpanarrPhysicalFunction.cpp)
