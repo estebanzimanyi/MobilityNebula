@@ -1400,3 +1400,7 @@ add_plugin(MeosoperName PhysicalFunction nes-physical-operators MeosoperNamePhys
 add_plugin(GeoTypename PhysicalFunction nes-physical-operators GeoTypenamePhysicalFunction.cpp)
 add_plugin(TempsubtypeName PhysicalFunction nes-physical-operators TempsubtypeNamePhysicalFunction.cpp)
 add_plugin(InterptypeName PhysicalFunction nes-physical-operators InterptypeNamePhysicalFunction.cpp)
+add_plugin(MinusDateDate PhysicalFunction nes-physical-operators MinusDateDatePhysicalFunction.cpp)
+add_plugin(MinusTimestamptzTimestamptz PhysicalFunction nes-physical-operators MinusTimestamptzTimestamptzPhysicalFunction.cpp)
+add_plugin(Box3dMake PhysicalFunction nes-physical-operators Box3dMakePhysicalFunction.cpp)
+add_plugin(GboxMake PhysicalFunction nes-physical-operators GboxMakePhysicalFunction.cpp)

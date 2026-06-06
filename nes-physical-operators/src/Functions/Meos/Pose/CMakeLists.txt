@@ -100,3 +100,4 @@ add_plugin(TposeValueAtTimestamptz PhysicalFunction nes-physical-operators Tpose
 add_plugin(PoseTransformPipeline PhysicalFunction nes-physical-operators PoseTransformPipelinePhysicalFunction.cpp)
 add_plugin(PosearrRound PhysicalFunction nes-physical-operators PosearrRoundPhysicalFunction.cpp)
 add_plugin(TdistanceTposeGeo PhysicalFunction nes-physical-operators TdistanceTposeGeoPhysicalFunction.cpp)
+add_plugin(TposeMake PhysicalFunction nes-physical-operators TposeMakePhysicalFunction.cpp)

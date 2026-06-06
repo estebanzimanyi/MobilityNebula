@@ -154,3 +154,4 @@ add_plugin(CbufferarrRound PhysicalFunction nes-physical-operators CbufferarrRou
 add_plugin(TcbufferRadius PhysicalFunction nes-physical-operators TcbufferRadiusPhysicalFunction.cpp)
 add_plugin(TcbufferExpand PhysicalFunction nes-physical-operators TcbufferExpandPhysicalFunction.cpp)
 add_plugin(TcbufferTraversedArea PhysicalFunction nes-physical-operators TcbufferTraversedAreaPhysicalFunction.cpp)
+add_plugin(TcbufferMake PhysicalFunction nes-physical-operators TcbufferMakePhysicalFunction.cpp)

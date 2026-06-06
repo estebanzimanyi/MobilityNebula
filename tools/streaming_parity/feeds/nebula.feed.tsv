@@ -226,6 +226,7 @@ bigintspanset_lower	proven
 bigintspanset_shift_scale	proven
 bigintspanset_upper	proven
 bigintspanset_width	proven
+box3d_make	proven
 box3d_to_stbox	proven
 cbuffer_cmp	proven
 cbuffer_copy	proven
@@ -578,6 +579,7 @@ front_stbox_stbox	proven
 front_stbox_tspatial	proven
 front_tspatial_stbox	proven
 front_tspatial_tspatial	proven
+gbox_make	proven
 gbox_to_stbox	proven
 geo_basetype	proven
 geo_cluster_dbscan	proven
@@ -761,6 +763,7 @@ minus_bigint_set	proven
 minus_bigint_span	proven
 minus_bigint_spanset	proven
 minus_cbuffer_set	proven
+minus_date_date	proven
 minus_date_set	proven
 minus_date_span	proven
 minus_date_spanset	proven
@@ -803,6 +806,7 @@ minus_timestamptz_interval	proven
 minus_timestamptz_set	proven
 minus_timestamptz_span	proven
 minus_timestamptz_spanset	proven
+minus_timestamptz_timestamptz	proven
 mul_interval_double	proven
 nad_cbuffer_stbox	proven
 nad_stbox_geo	proven
@@ -1306,6 +1310,7 @@ tcbuffer_at_cbuffer	proven
 tcbuffer_at_geom	proven
 tcbuffer_at_stbox	proven
 tcbuffer_expand	proven
+tcbuffer_make	proven
 tcbuffer_minus_cbuffer	proven
 tcbuffer_minus_geom	proven
 tcbuffer_minus_stbox	proven
@@ -1719,6 +1724,7 @@ tpose_at_geom	proven
 tpose_at_pose	proven
 tpose_at_stbox	proven
 tpose_end_value	proven
+tpose_make	proven
 tpose_minus_geom	proven
 tpose_minus_pose	proven
 tpose_minus_stbox	proven
