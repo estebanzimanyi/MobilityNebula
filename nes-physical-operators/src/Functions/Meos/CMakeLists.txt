@@ -1412,3 +1412,8 @@ add_plugin(SpansetSpanarr PhysicalFunction nes-physical-operators SpansetSpanarr
 add_plugin(TdwithinGeoTgeo PhysicalFunction nes-physical-operators TdwithinGeoTgeoPhysicalFunction.cpp)
 add_plugin(TpointAtElevation PhysicalFunction nes-physical-operators TpointAtElevationPhysicalFunction.cpp)
 add_plugin(TpointMinusElevation PhysicalFunction nes-physical-operators TpointMinusElevationPhysicalFunction.cpp)
+add_plugin(TpointFromBaseTemp PhysicalFunction nes-physical-operators TpointFromBaseTempPhysicalFunction.cpp)
+add_plugin(TgeoFromBaseTemp PhysicalFunction nes-physical-operators TgeoFromBaseTempPhysicalFunction.cpp)
+add_plugin(GeoPointarr PhysicalFunction nes-physical-operators GeoPointarrPhysicalFunction.cpp)
+add_plugin(GeoStboxes PhysicalFunction nes-physical-operators GeoStboxesPhysicalFunction.cpp)
+add_plugin(SpansetSpanN PhysicalFunction nes-physical-operators SpansetSpanNPhysicalFunction.cpp)

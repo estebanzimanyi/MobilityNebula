@@ -598,6 +598,7 @@ geo_is_unitary	proven
 geo_makeline_garray	proven
 geo_num_geos	proven
 geo_num_points	proven
+geo_pointarr	proven
 geo_points	proven
 geo_reverse	proven
 geo_round	proven
@@ -606,6 +607,7 @@ geo_set_srid	proven
 geo_split_each_n_stboxes	proven
 geo_split_n_stboxes	proven
 geo_srid	proven
+geo_stboxes	proven
 geo_timestamptz_to_stbox	proven
 geo_to_set	proven
 geo_to_stbox	proven
@@ -1204,6 +1206,7 @@ spanset_lt	proven
 spanset_ne	proven
 spanset_num_spans	proven
 spanset_span	proven
+spanset_span_n	proven
 spanset_spanarr	proven
 spanset_spans	proven
 spanset_split_each_n_spans	proven
@@ -1547,6 +1550,7 @@ tgeo_at_value	proven
 tgeo_centroid	proven
 tgeo_convex_hull	proven
 tgeo_end_value	proven
+tgeo_from_base_temp	proven
 tgeo_minus_geom	proven
 tgeo_minus_stbox	proven
 tgeo_minus_value	proven
@@ -1720,6 +1724,7 @@ tpoint_at_geom	proven
 tpoint_at_value	proven
 tpoint_azimuth	proven
 tpoint_cumulative_length	proven
+tpoint_from_base_temp	proven
 tpoint_get_x	proven
 tpoint_get_y	proven
 tpoint_get_z	proven

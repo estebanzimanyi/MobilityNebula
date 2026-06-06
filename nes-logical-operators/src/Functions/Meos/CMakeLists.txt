@@ -1807,3 +1807,8 @@ add_plugin(TdwithinGeoTgeo LogicalFunction nes-logical-operators TdwithinGeoTgeo
 add_plugin(TdwithinGeoTcbuffer LogicalFunction nes-logical-operators TdwithinGeoTcbufferLogicalFunction.cpp)
 add_plugin(TpointAtElevation LogicalFunction nes-logical-operators TpointAtElevationLogicalFunction.cpp)
 add_plugin(TpointMinusElevation LogicalFunction nes-logical-operators TpointMinusElevationLogicalFunction.cpp)
+add_plugin(TpointFromBaseTemp LogicalFunction nes-logical-operators TpointFromBaseTempLogicalFunction.cpp)
+add_plugin(TgeoFromBaseTemp LogicalFunction nes-logical-operators TgeoFromBaseTempLogicalFunction.cpp)
+add_plugin(GeoPointarr LogicalFunction nes-logical-operators GeoPointarrLogicalFunction.cpp)
+add_plugin(GeoStboxes LogicalFunction nes-logical-operators GeoStboxesLogicalFunction.cpp)
+add_plugin(SpansetSpanN LogicalFunction nes-logical-operators SpansetSpanNLogicalFunction.cpp)
