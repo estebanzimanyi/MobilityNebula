@@ -1726,6 +1726,7 @@ tpoint_at_geom	proven
 tpoint_at_value	proven
 tpoint_azimuth	proven
 tpoint_cumulative_length	proven
+tpoint_direction	proven
 tpoint_from_base_temp	proven
 tpoint_get_x	proven
 tpoint_get_y	proven

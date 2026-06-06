@@ -133,3 +133,4 @@ add_plugin(TemporalSequences AggregationPhysicalFunction nes-physical-operators 
 if(RGEO)
     add_subdirectory(Rgeo)
 endif()
+add_plugin(TpointDirection AggregationPhysicalFunction nes-physical-operators TpointDirectionAggregationPhysicalFunction.cpp)

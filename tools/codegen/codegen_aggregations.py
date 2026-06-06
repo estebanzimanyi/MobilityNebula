@@ -3903,6 +3903,13 @@ def emit_operator(op, output_root: Path):
     box_build = op.get("extent_box_build_fn")
     if op.get("return_mode") in ("box", "wkb"):
         fmt["value_compute"] = ""
+    elif op.get("out_param_scalar"):
+        # bool f(Temporal*, T* out): the useful result is the out-param scalar,
+        # gated by the bool validity flag (e.g. tpoint_direction's azimuth). Seed
+        # the value to 0 and let the call fill it; a false return leaves it 0.
+        fmt["value_compute"] = (
+            f'{op["return_cpp_type"]} value = ({op["return_cpp_type"]})0;\n'
+            f'            {op["meos_scalar_fn"]}(static_cast<Temporal*>(temp), &value);')
     elif box_build:
         box_t = op.get("extent_box_type", "STBox")
         fmt["value_compute"] = (

@@ -205,6 +205,8 @@
 #endif
 #if RGEO
 #include <Aggregation/Function/Meos/Rgeo/TrgeometryEndSequenceAggregationPhysicalFunction.hpp>
+#include <Aggregation/Function/Meos/TpointDirectionAggregationPhysicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TpointDirectionAggregationLogicalFunction.hpp>
 #endif
 #include <Operators/Windows/Aggregations/Meos/TrgeometryStartSequenceAggregationLogicalFunction.hpp>
 #include <Operators/Windows/Aggregations/Meos/TrgeometryEndSequenceAggregationLogicalFunction.hpp>
@@ -3716,6 +3718,35 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             continue;
         }
         /* END CODEGEN GLUE: TrgeometryEndSequence (optimizer lowering) */
+        /* BEGIN CODEGEN GLUE: TpointDirection (optimizer lowering) */
+        if (name == std::string_view("TpointDirection"))
+        {
+            auto specificDescriptor = std::dynamic_pointer_cast<TpointDirectionAggregationLogicalFunction>(descriptor);
+            INVARIANT(specificDescriptor != nullptr, "Expected TpointDirectionAggregationLogicalFunction for TpointDirection");
+
+            auto lonPF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getLonField());
+            auto latPF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getLatField());
+            auto tsPF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getTimestampField());
+
+            Schema stateSchema;
+            stateSchema.addField("lon", specificDescriptor->getLonField().getDataType());
+            stateSchema.addField("lat", specificDescriptor->getLatField().getDataType());
+            stateSchema.addField("timestamp", specificDescriptor->getTimestampField().getDataType());
+            auto tupleBufferRef = Interface::BufferRef::TupleBufferRef::create(configuration.pageSize.getValue(), stateSchema);
+
+            auto phys = std::make_shared<TpointDirectionAggregationPhysicalFunction>(
+                std::move(physicalInputType),
+                std::move(physicalFinalType),
+                lonPF,
+                latPF,
+                tsPF,
+                resultFieldIdentifier,
+                tupleBufferRef);
+            aggregationPhysicalFunctions.push_back(std::move(phys));
+            continue;
+        }
+        /* END CODEGEN GLUE: TpointDirection (optimizer lowering) */
+
 
 #endif
 

@@ -220,6 +220,7 @@
 #if RGEO
 #include <Operators/Windows/Aggregations/Meos/TrgeometryEndSequenceAggregationLogicalFunction.hpp>
 #endif /* RGEO */
+#include <Operators/Windows/Aggregations/Meos/TpointDirectionAggregationLogicalFunction.hpp>
 #include <Functions/Meos/TemporalIntersectsGeometryLogicalFunction.hpp>
 #include <Functions/Meos/AintersectsTgeoGeoLogicalFunction.hpp>
 #include <Functions/Meos/EdwithinTgeoGeoLogicalFunction.hpp>
@@ -59539,6 +59540,35 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             break;
         /* END CODEGEN GLUE: TRGEOMETRY_END_SEQUENCE (case-switch) */
 #endif /* RGEO */
+        /* BEGIN CODEGEN GLUE: TPOINT_DIRECTION (case-switch) */
+        case AntlrSQLLexer::TPOINT_DIRECTION:
+            // tpoint_direction (double via out-param) - the azimuth/direction of the windowed temporal point.
+            if (helpers.top().functionBuilder.size() != 3) {
+                throw InvalidQuerySyntax("TPOINT_DIRECTION requires exactly three arguments (longitude, latitude, timestamp), but got {}", helpers.top().functionBuilder.size());
+            }
+            {
+                const auto timestampFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto latitudeFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto longitudeFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+
+                if (!longitudeFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !latitudeFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
+                    throw InvalidQuerySyntax("TPOINT_DIRECTION arguments must be field references");
+                }
+
+                helpers.top().windowAggs.push_back(
+                    TpointDirectionAggregationLogicalFunction::create(longitudeFunction.get<FieldAccessLogicalFunction>(),
+                                                                    latitudeFunction.get<FieldAccessLogicalFunction>(),
+                                                                    timestampFunction.get<FieldAccessLogicalFunction>()));
+                helpers.top().functionBuilder.push_back(longitudeFunction);
+            }
+            break;
+        /* END CODEGEN GLUE: TPOINT_DIRECTION (case-switch) */
+
 
 
 
@@ -61524,6 +61554,23 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             }
             /* END CODEGEN GLUE: TRGEOMETRY_END_SEQUENCE (funcName chain) */
 #endif /* RGEO */
+            /* BEGIN CODEGEN GLUE: TPOINT_DIRECTION (funcName chain) */
+            else if (funcName == "TPOINT_DIRECTION")
+            {
+                if (helpers.top().functionBuilder.size() < 3)
+                {
+                    throw InvalidQuerySyntax("TPOINT_DIRECTION requires three arguments at {}", context->getText());
+                }
+                const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto lat = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto lon = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                helpers.top().windowAggs.push_back(TpointDirectionAggregationLogicalFunction::create(lon, lat, ts));
+            }
+            /* END CODEGEN GLUE: TPOINT_DIRECTION (funcName chain) */
+
 
 
 
