@@ -191,6 +191,8 @@
 #include <Aggregation/Function/Meos/Cbuffer/CbufferarrToGeomAggregationPhysicalFunction.hpp>
 #include <Aggregation/Function/Meos/TemporalSegmentsAggregationPhysicalFunction.hpp>
 #include <Aggregation/Function/Meos/TpointMakeSimpleAggregationPhysicalFunction.hpp>
+#include <Aggregation/Function/Meos/TemporalSequencesAggregationPhysicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TemporalSequencesAggregationLogicalFunction.hpp>
 #include <Operators/Windows/Aggregations/Meos/TemporalSegmentsAggregationLogicalFunction.hpp>
 #include <Operators/Windows/Aggregations/Meos/TpointMakeSimpleAggregationLogicalFunction.hpp>
 #endif
@@ -3500,6 +3502,35 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             continue;
         }
         /* END CODEGEN GLUE: TpointMakeSimple (optimizer lowering) */
+        /* BEGIN CODEGEN GLUE: TemporalSequences (optimizer lowering) */
+        if (name == std::string_view("TemporalSequences"))
+        {
+            auto specificDescriptor = std::dynamic_pointer_cast<TemporalSequencesAggregationLogicalFunction>(descriptor);
+            INVARIANT(specificDescriptor != nullptr, "Expected TemporalSequencesAggregationLogicalFunction for TemporalSequences");
+
+            auto lonPF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getLonField());
+            auto latPF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getLatField());
+            auto tsPF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getTimestampField());
+
+            Schema stateSchema;
+            stateSchema.addField("lon", specificDescriptor->getLonField().getDataType());
+            stateSchema.addField("lat", specificDescriptor->getLatField().getDataType());
+            stateSchema.addField("timestamp", specificDescriptor->getTimestampField().getDataType());
+            auto tupleBufferRef = Interface::BufferRef::TupleBufferRef::create(configuration.pageSize.getValue(), stateSchema);
+
+            auto phys = std::make_shared<TemporalSequencesAggregationPhysicalFunction>(
+                std::move(physicalInputType),
+                std::move(physicalFinalType),
+                lonPF,
+                latPF,
+                tsPF,
+                resultFieldIdentifier,
+                tupleBufferRef);
+            aggregationPhysicalFunctions.push_back(std::move(phys));
+            continue;
+        }
+        /* END CODEGEN GLUE: TemporalSequences (optimizer lowering) */
+
 
 
 #endif

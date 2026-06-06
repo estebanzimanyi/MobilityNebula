@@ -204,6 +204,7 @@
 #endif /* CBUFFER */
 #include <Operators/Windows/Aggregations/Meos/TemporalSegmentsAggregationLogicalFunction.hpp>
 #include <Operators/Windows/Aggregations/Meos/TpointMakeSimpleAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TemporalSequencesAggregationLogicalFunction.hpp>
 #include <Functions/Meos/TemporalIntersectsGeometryLogicalFunction.hpp>
 #include <Functions/Meos/AintersectsTgeoGeoLogicalFunction.hpp>
 #include <Functions/Meos/EdwithinTgeoGeoLogicalFunction.hpp>
@@ -2303,7 +2304,6 @@
 #include <Functions/Meos/StboxTimeTilesLogicalFunction.hpp>
 #include <Functions/Meos/StboxSpaceTimeTilesLogicalFunction.hpp>
 #include <Functions/Meos/TgeoSpaceBoxesLogicalFunction.hpp>
-#include <Functions/Meos/TemporalSequencesLogicalFunction.hpp>
 #include <Functions/Meos/GeomToGeogLogicalFunction.hpp>
 #include <Functions/Meos/TgeompointToTgeometryLogicalFunction.hpp>
 #include <Functions/Meos/GeogDwithinLogicalFunction.hpp>
@@ -46289,34 +46289,6 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN GLUE: TGEO_SPACE_BOXES */
-        /* BEGIN CODEGEN GLUE: TEMPORAL_SEQUENCES */
-        case AntlrSQLLexer::TEMPORAL_SEQUENCES:
-        {
-            const auto argCount = context->expression().size();
-            if (argCount != 2)
-                throw InvalidQuerySyntax("TEMPORAL_SEQUENCES requires exactly 2 arguments, but got {}", argCount);
-
-            while (!helpers.top().constantBuilder.empty())
-            {
-                auto constantValue = std::move(helpers.top().constantBuilder.back());
-                helpers.top().constantBuilder.pop_back();
-                DataType dataType;
-                char* endPtr = nullptr;
-                std::strtod(constantValue.c_str(), &endPtr);
-                if (endPtr != nullptr && *endPtr == '\0')
-                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
-                else
-                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
-                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
-            }
-
-            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
-            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
-
-            helpers.top().functionBuilder.emplace_back(TemporalSequencesLogicalFunction(a0, a1));
-        }
-        break;
-        /* END CODEGEN GLUE: TEMPORAL_SEQUENCES */
         /* BEGIN CODEGEN GLUE: GEOM_TO_GEOG */
         case AntlrSQLLexer::GEOM_TO_GEOG:
         {
@@ -59422,6 +59394,35 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             }
             break;
         /* END CODEGEN GLUE: TPOINT_MAKE_SIMPLE (case-switch) */
+        /* BEGIN CODEGEN GLUE: TEMPORAL_SEQUENCES (case-switch) */
+        case AntlrSQLLexer::TEMPORAL_SEQUENCES:
+            // temporal_sequences (TSequence **) - the array of sequences of the windowed continuous trajectory, each as EWKB hex.
+            if (helpers.top().functionBuilder.size() != 3) {
+                throw InvalidQuerySyntax("TEMPORAL_SEQUENCES requires exactly three arguments (longitude, latitude, timestamp), but got {}", helpers.top().functionBuilder.size());
+            }
+            {
+                const auto timestampFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto latitudeFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto longitudeFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+
+                if (!longitudeFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !latitudeFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
+                    throw InvalidQuerySyntax("TEMPORAL_SEQUENCES arguments must be field references");
+                }
+
+                helpers.top().windowAggs.push_back(
+                    TemporalSequencesAggregationLogicalFunction::create(longitudeFunction.get<FieldAccessLogicalFunction>(),
+                                                                    latitudeFunction.get<FieldAccessLogicalFunction>(),
+                                                                    timestampFunction.get<FieldAccessLogicalFunction>()));
+                helpers.top().functionBuilder.push_back(longitudeFunction);
+            }
+            break;
+        /* END CODEGEN GLUE: TEMPORAL_SEQUENCES (case-switch) */
+
 
 
 
@@ -61285,6 +61286,23 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
                 helpers.top().windowAggs.push_back(TpointMakeSimpleAggregationLogicalFunction::create(lon, lat, ts));
             }
             /* END CODEGEN GLUE: TPOINT_MAKE_SIMPLE (funcName chain) */
+            /* BEGIN CODEGEN GLUE: TEMPORAL_SEQUENCES (funcName chain) */
+            else if (funcName == "TEMPORAL_SEQUENCES")
+            {
+                if (helpers.top().functionBuilder.size() < 3)
+                {
+                    throw InvalidQuerySyntax("TEMPORAL_SEQUENCES requires three arguments at {}", context->getText());
+                }
+                const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto lat = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto lon = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                helpers.top().windowAggs.push_back(TemporalSequencesAggregationLogicalFunction::create(lon, lat, ts));
+            }
+            /* END CODEGEN GLUE: TEMPORAL_SEQUENCES (funcName chain) */
+
 
 
 

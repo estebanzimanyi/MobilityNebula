@@ -1195,7 +1195,6 @@ add_plugin(StboxSpaceTiles PhysicalFunction nes-physical-operators StboxSpaceTil
 add_plugin(StboxTimeTiles PhysicalFunction nes-physical-operators StboxTimeTilesPhysicalFunction.cpp)
 add_plugin(StboxSpaceTimeTiles PhysicalFunction nes-physical-operators StboxSpaceTimeTilesPhysicalFunction.cpp)
 add_plugin(TgeoSpaceBoxes PhysicalFunction nes-physical-operators TgeoSpaceBoxesPhysicalFunction.cpp)
-add_plugin(TemporalSequences PhysicalFunction nes-physical-operators TemporalSequencesPhysicalFunction.cpp)
 add_plugin(GeomToGeog PhysicalFunction nes-physical-operators GeomToGeogPhysicalFunction.cpp)
 add_plugin(TgeompointToTgeometry PhysicalFunction nes-physical-operators TgeompointToTgeometryPhysicalFunction.cpp)
 add_plugin(GeogDwithin PhysicalFunction nes-physical-operators GeogDwithinPhysicalFunction.cpp)

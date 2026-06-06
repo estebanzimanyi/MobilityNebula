@@ -1434,7 +1434,7 @@ temporal_round	proven
 temporal_scale_time	proven
 temporal_segments	proven
 temporal_sequence_n	proven
-temporal_sequences	wired
+temporal_sequences	proven
 temporal_set_interp	proven
 temporal_shift_scale_time	proven
 temporal_shift_time	proven
