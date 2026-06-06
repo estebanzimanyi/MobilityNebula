@@ -1780,10 +1780,13 @@ trgeometry_restrict_timestamptz	proven
 trgeometry_restrict_tstzset	proven
 trgeometry_restrict_tstzspan	proven
 trgeometry_restrict_tstzspanset	proven
+trgeometry_restrict_values	wired
 trgeometry_rotation	proven
 trgeometry_round	proven
 trgeometry_segments	proven
+trgeometry_sequence_n	proven
 trgeometry_sequences	proven
+trgeometry_set_interp	proven
 trgeometry_start_instant	proven
 trgeometry_start_sequence	proven
 trgeometry_start_value	proven

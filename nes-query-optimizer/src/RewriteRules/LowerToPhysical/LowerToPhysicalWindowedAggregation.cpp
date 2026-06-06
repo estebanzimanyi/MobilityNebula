@@ -210,6 +210,18 @@
 #include <Aggregation/Function/Meos/TemporalTsampleAggregationPhysicalFunction.hpp>
 #include <Aggregation/Function/Meos/TemporalStopsAggregationPhysicalFunction.hpp>
 #include <Aggregation/Function/Meos/TemporalSegmDurationAggregationPhysicalFunction.hpp>
+#if RGEO
+#include <Aggregation/Function/Meos/Rgeo/TrgeometrySequenceNAggregationPhysicalFunction.hpp>
+#endif
+#if RGEO
+#include <Aggregation/Function/Meos/Rgeo/TrgeometryRestrictValuesAggregationPhysicalFunction.hpp>
+#endif
+#if RGEO
+#include <Aggregation/Function/Meos/Rgeo/TrgeometrySetInterpAggregationPhysicalFunction.hpp>
+#endif
+#include <Operators/Windows/Aggregations/Meos/TrgeometrySequenceNAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TrgeometryRestrictValuesAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TrgeometrySetInterpAggregationLogicalFunction.hpp>
 #include <Operators/Windows/Aggregations/Meos/TemporalTsampleAggregationLogicalFunction.hpp>
 #include <Operators/Windows/Aggregations/Meos/TemporalStopsAggregationLogicalFunction.hpp>
 #include <Operators/Windows/Aggregations/Meos/TemporalSegmDurationAggregationLogicalFunction.hpp>
@@ -3872,6 +3884,111 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             continue;
         }
         /* END CODEGEN GLUE: TemporalSegmDuration (optimizer lowering) */
+#if RGEO
+        /* BEGIN CODEGEN GLUE: TrgeometrySequenceN (optimizer lowering) */
+        if (name == std::string_view("TrgeometrySequenceN"))
+        {
+            auto specificDescriptor = std::dynamic_pointer_cast<TrgeometrySequenceNAggregationLogicalFunction>(descriptor);
+            INVARIANT(specificDescriptor != nullptr, "Expected TrgeometrySequenceNAggregationLogicalFunction for TrgeometrySequenceN");
+
+            auto xPF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getXField());
+            auto yPF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getYField());
+            auto thetaPF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getThetaField());
+            auto tsPF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getTimestampField());
+
+            Schema stateSchema;
+            stateSchema.addField("x", specificDescriptor->getXField().getDataType());
+            stateSchema.addField("y", specificDescriptor->getYField().getDataType());
+            stateSchema.addField("theta", specificDescriptor->getThetaField().getDataType());
+            stateSchema.addField("timestamp", specificDescriptor->getTimestampField().getDataType());
+            auto tupleBufferRef = Interface::BufferRef::TupleBufferRef::create(configuration.pageSize.getValue(), stateSchema);
+
+            auto phys = std::make_shared<TrgeometrySequenceNAggregationPhysicalFunction>(
+                std::move(physicalInputType),
+                std::move(physicalFinalType),
+                xPF,
+                yPF,
+                thetaPF,
+                tsPF,
+                resultFieldIdentifier,
+                tupleBufferRef,
+                specificDescriptor->getConstArgs());
+            aggregationPhysicalFunctions.push_back(std::move(phys));
+            continue;
+        }
+        /* END CODEGEN GLUE: TrgeometrySequenceN (optimizer lowering) */
+
+#endif
+#if RGEO
+        /* BEGIN CODEGEN GLUE: TrgeometryRestrictValues (optimizer lowering) */
+        if (name == std::string_view("TrgeometryRestrictValues"))
+        {
+            auto specificDescriptor = std::dynamic_pointer_cast<TrgeometryRestrictValuesAggregationLogicalFunction>(descriptor);
+            INVARIANT(specificDescriptor != nullptr, "Expected TrgeometryRestrictValuesAggregationLogicalFunction for TrgeometryRestrictValues");
+
+            auto xPF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getXField());
+            auto yPF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getYField());
+            auto thetaPF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getThetaField());
+            auto tsPF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getTimestampField());
+
+            Schema stateSchema;
+            stateSchema.addField("x", specificDescriptor->getXField().getDataType());
+            stateSchema.addField("y", specificDescriptor->getYField().getDataType());
+            stateSchema.addField("theta", specificDescriptor->getThetaField().getDataType());
+            stateSchema.addField("timestamp", specificDescriptor->getTimestampField().getDataType());
+            auto tupleBufferRef = Interface::BufferRef::TupleBufferRef::create(configuration.pageSize.getValue(), stateSchema);
+
+            auto phys = std::make_shared<TrgeometryRestrictValuesAggregationPhysicalFunction>(
+                std::move(physicalInputType),
+                std::move(physicalFinalType),
+                xPF,
+                yPF,
+                thetaPF,
+                tsPF,
+                resultFieldIdentifier,
+                tupleBufferRef,
+                specificDescriptor->getConstArgs());
+            aggregationPhysicalFunctions.push_back(std::move(phys));
+            continue;
+        }
+        /* END CODEGEN GLUE: TrgeometryRestrictValues (optimizer lowering) */
+
+#endif
+#if RGEO
+        /* BEGIN CODEGEN GLUE: TrgeometrySetInterp (optimizer lowering) */
+        if (name == std::string_view("TrgeometrySetInterp"))
+        {
+            auto specificDescriptor = std::dynamic_pointer_cast<TrgeometrySetInterpAggregationLogicalFunction>(descriptor);
+            INVARIANT(specificDescriptor != nullptr, "Expected TrgeometrySetInterpAggregationLogicalFunction for TrgeometrySetInterp");
+
+            auto xPF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getXField());
+            auto yPF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getYField());
+            auto thetaPF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getThetaField());
+            auto tsPF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getTimestampField());
+
+            Schema stateSchema;
+            stateSchema.addField("x", specificDescriptor->getXField().getDataType());
+            stateSchema.addField("y", specificDescriptor->getYField().getDataType());
+            stateSchema.addField("theta", specificDescriptor->getThetaField().getDataType());
+            stateSchema.addField("timestamp", specificDescriptor->getTimestampField().getDataType());
+            auto tupleBufferRef = Interface::BufferRef::TupleBufferRef::create(configuration.pageSize.getValue(), stateSchema);
+
+            auto phys = std::make_shared<TrgeometrySetInterpAggregationPhysicalFunction>(
+                std::move(physicalInputType),
+                std::move(physicalFinalType),
+                xPF,
+                yPF,
+                thetaPF,
+                tsPF,
+                resultFieldIdentifier,
+                tupleBufferRef,
+                specificDescriptor->getConstArgs());
+            aggregationPhysicalFunctions.push_back(std::move(phys));
+            continue;
+        }
+        /* END CODEGEN GLUE: TrgeometrySetInterp (optimizer lowering) */
+
+#endif
 
 
 

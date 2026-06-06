@@ -225,6 +225,15 @@
 #include <Operators/Windows/Aggregations/Meos/TemporalTsampleAggregationLogicalFunction.hpp>
 #include <Operators/Windows/Aggregations/Meos/TemporalStopsAggregationLogicalFunction.hpp>
 #include <Operators/Windows/Aggregations/Meos/TemporalSegmDurationAggregationLogicalFunction.hpp>
+#if RGEO
+#include <Operators/Windows/Aggregations/Meos/TrgeometrySequenceNAggregationLogicalFunction.hpp>
+#endif /* RGEO */
+#if RGEO
+#include <Operators/Windows/Aggregations/Meos/TrgeometryRestrictValuesAggregationLogicalFunction.hpp>
+#endif /* RGEO */
+#if RGEO
+#include <Operators/Windows/Aggregations/Meos/TrgeometrySetInterpAggregationLogicalFunction.hpp>
+#endif /* RGEO */
 #include <Functions/Meos/TemporalIntersectsGeometryLogicalFunction.hpp>
 #include <Functions/Meos/AintersectsTgeoGeoLogicalFunction.hpp>
 #include <Functions/Meos/EdwithinTgeoGeoLogicalFunction.hpp>
@@ -59726,6 +59735,141 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             }
             break;
         /* END CODEGEN GLUE: TEMPORAL_SEGM_DURATION (case-switch) */
+        #if RGEO
+/* BEGIN CODEGEN GLUE: TRGEOMETRY_SEQUENCE_N (case-switch) */
+        case AntlrSQLLexer::TRGEOMETRY_SEQUENCE_N:
+            // Windowed tpose -> trgeometry, then the n-th sequence (trgeometry_sequence_n) as hex-WKB.
+            {
+                if (helpers.top().constantBuilder.size() < 1) {
+                    throw InvalidQuerySyntax("TRGEOMETRY_SEQUENCE_N requires 1 constant argument(s) after x, y, theta, timestamp, but got {}", helpers.top().constantBuilder.size());
+                }
+                std::vector<std::string> constArgs(1);
+                for (size_t i = 0; i < static_cast<size_t>(1); ++i) {
+                    constArgs[static_cast<size_t>(1) - 1 - i] = std::move(helpers.top().constantBuilder.back());
+                    helpers.top().constantBuilder.pop_back();
+                }
+
+                if (helpers.top().functionBuilder.size() != 4) {
+                    throw InvalidQuerySyntax("TRGEOMETRY_SEQUENCE_N requires exactly four field arguments (x, y, theta, timestamp), but got {}", helpers.top().functionBuilder.size());
+                }
+                const auto timestampFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto thetaFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto yFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto xFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+
+                if (!xFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !yFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !thetaFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
+                    throw InvalidQuerySyntax("TRGEOMETRY_SEQUENCE_N field arguments must be field references");
+                }
+
+                helpers.top().windowAggs.push_back(
+                    TrgeometrySequenceNAggregationLogicalFunction::create(xFunction.get<FieldAccessLogicalFunction>(),
+                                                                    yFunction.get<FieldAccessLogicalFunction>(),
+                                                                    thetaFunction.get<FieldAccessLogicalFunction>(),
+                                                                    timestampFunction.get<FieldAccessLogicalFunction>(),
+                                                                    std::move(constArgs)));
+                helpers.top().functionBuilder.push_back(xFunction);
+            }
+            break;
+        /* END CODEGEN GLUE: TRGEOMETRY_SEQUENCE_N (case-switch) */
+#endif /* RGEO */
+
+        #if RGEO
+/* BEGIN CODEGEN GLUE: TRGEOMETRY_RESTRICT_VALUES (case-switch) */
+        case AntlrSQLLexer::TRGEOMETRY_RESTRICT_VALUES:
+            // Windowed tpose -> trgeometry, restricted to/minus a geometry value set (trgeometry_restrict_values) as hex-WKB.
+            {
+                if (helpers.top().constantBuilder.size() < 2) {
+                    throw InvalidQuerySyntax("TRGEOMETRY_RESTRICT_VALUES requires 2 constant argument(s) after x, y, theta, timestamp, but got {}", helpers.top().constantBuilder.size());
+                }
+                std::vector<std::string> constArgs(2);
+                for (size_t i = 0; i < static_cast<size_t>(2); ++i) {
+                    constArgs[static_cast<size_t>(2) - 1 - i] = std::move(helpers.top().constantBuilder.back());
+                    helpers.top().constantBuilder.pop_back();
+                }
+
+                if (helpers.top().functionBuilder.size() != 4) {
+                    throw InvalidQuerySyntax("TRGEOMETRY_RESTRICT_VALUES requires exactly four field arguments (x, y, theta, timestamp), but got {}", helpers.top().functionBuilder.size());
+                }
+                const auto timestampFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto thetaFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto yFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto xFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+
+                if (!xFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !yFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !thetaFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
+                    throw InvalidQuerySyntax("TRGEOMETRY_RESTRICT_VALUES field arguments must be field references");
+                }
+
+                helpers.top().windowAggs.push_back(
+                    TrgeometryRestrictValuesAggregationLogicalFunction::create(xFunction.get<FieldAccessLogicalFunction>(),
+                                                                    yFunction.get<FieldAccessLogicalFunction>(),
+                                                                    thetaFunction.get<FieldAccessLogicalFunction>(),
+                                                                    timestampFunction.get<FieldAccessLogicalFunction>(),
+                                                                    std::move(constArgs)));
+                helpers.top().functionBuilder.push_back(xFunction);
+            }
+            break;
+        /* END CODEGEN GLUE: TRGEOMETRY_RESTRICT_VALUES (case-switch) */
+#endif /* RGEO */
+
+        #if RGEO
+/* BEGIN CODEGEN GLUE: TRGEOMETRY_SET_INTERP (case-switch) */
+        case AntlrSQLLexer::TRGEOMETRY_SET_INTERP:
+            // Windowed tpose -> trgeometry, with its interpolation set (trgeometry_set_interp) as hex-WKB.
+            {
+                if (helpers.top().constantBuilder.size() < 1) {
+                    throw InvalidQuerySyntax("TRGEOMETRY_SET_INTERP requires 1 constant argument(s) after x, y, theta, timestamp, but got {}", helpers.top().constantBuilder.size());
+                }
+                std::vector<std::string> constArgs(1);
+                for (size_t i = 0; i < static_cast<size_t>(1); ++i) {
+                    constArgs[static_cast<size_t>(1) - 1 - i] = std::move(helpers.top().constantBuilder.back());
+                    helpers.top().constantBuilder.pop_back();
+                }
+
+                if (helpers.top().functionBuilder.size() != 4) {
+                    throw InvalidQuerySyntax("TRGEOMETRY_SET_INTERP requires exactly four field arguments (x, y, theta, timestamp), but got {}", helpers.top().functionBuilder.size());
+                }
+                const auto timestampFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto thetaFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto yFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto xFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+
+                if (!xFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !yFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !thetaFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
+                    throw InvalidQuerySyntax("TRGEOMETRY_SET_INTERP field arguments must be field references");
+                }
+
+                helpers.top().windowAggs.push_back(
+                    TrgeometrySetInterpAggregationLogicalFunction::create(xFunction.get<FieldAccessLogicalFunction>(),
+                                                                    yFunction.get<FieldAccessLogicalFunction>(),
+                                                                    thetaFunction.get<FieldAccessLogicalFunction>(),
+                                                                    timestampFunction.get<FieldAccessLogicalFunction>(),
+                                                                    std::move(constArgs)));
+                helpers.top().functionBuilder.push_back(xFunction);
+            }
+            break;
+        /* END CODEGEN GLUE: TRGEOMETRY_SET_INTERP (case-switch) */
+#endif /* RGEO */
+
 
 
 
@@ -61832,6 +61976,96 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
                 helpers.top().windowAggs.push_back(TemporalSegmDurationAggregationLogicalFunction::create(lon, lat, ts, std::move(constArgs)));
             }
             /* END CODEGEN GLUE: TEMPORAL_SEGM_DURATION (funcName chain) */
+            #if RGEO
+/* BEGIN CODEGEN GLUE: TRGEOMETRY_SEQUENCE_N (funcName chain) */
+            else if (funcName == "TRGEOMETRY_SEQUENCE_N")
+            {
+                if (helpers.top().constantBuilder.size() < 1)
+                {
+                    throw InvalidQuerySyntax("TRGEOMETRY_SEQUENCE_N requires 1 constant argument(s) at {}", context->getText());
+                }
+                std::vector<std::string> constArgs(1);
+                for (size_t i = 0; i < static_cast<size_t>(1); ++i) {
+                    constArgs[static_cast<size_t>(1) - 1 - i] = std::move(helpers.top().constantBuilder.back());
+                    helpers.top().constantBuilder.pop_back();
+                }
+                if (helpers.top().functionBuilder.size() < 4)
+                {
+                    throw InvalidQuerySyntax("TRGEOMETRY_SEQUENCE_N requires four field arguments at {}", context->getText());
+                }
+                const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto theta = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto y = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto x = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                helpers.top().windowAggs.push_back(TrgeometrySequenceNAggregationLogicalFunction::create(x, y, theta, ts, std::move(constArgs)));
+            }
+            /* END CODEGEN GLUE: TRGEOMETRY_SEQUENCE_N (funcName chain) */
+#endif /* RGEO */
+
+            #if RGEO
+/* BEGIN CODEGEN GLUE: TRGEOMETRY_RESTRICT_VALUES (funcName chain) */
+            else if (funcName == "TRGEOMETRY_RESTRICT_VALUES")
+            {
+                if (helpers.top().constantBuilder.size() < 2)
+                {
+                    throw InvalidQuerySyntax("TRGEOMETRY_RESTRICT_VALUES requires 2 constant argument(s) at {}", context->getText());
+                }
+                std::vector<std::string> constArgs(2);
+                for (size_t i = 0; i < static_cast<size_t>(2); ++i) {
+                    constArgs[static_cast<size_t>(2) - 1 - i] = std::move(helpers.top().constantBuilder.back());
+                    helpers.top().constantBuilder.pop_back();
+                }
+                if (helpers.top().functionBuilder.size() < 4)
+                {
+                    throw InvalidQuerySyntax("TRGEOMETRY_RESTRICT_VALUES requires four field arguments at {}", context->getText());
+                }
+                const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto theta = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto y = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto x = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                helpers.top().windowAggs.push_back(TrgeometryRestrictValuesAggregationLogicalFunction::create(x, y, theta, ts, std::move(constArgs)));
+            }
+            /* END CODEGEN GLUE: TRGEOMETRY_RESTRICT_VALUES (funcName chain) */
+#endif /* RGEO */
+
+            #if RGEO
+/* BEGIN CODEGEN GLUE: TRGEOMETRY_SET_INTERP (funcName chain) */
+            else if (funcName == "TRGEOMETRY_SET_INTERP")
+            {
+                if (helpers.top().constantBuilder.size() < 1)
+                {
+                    throw InvalidQuerySyntax("TRGEOMETRY_SET_INTERP requires 1 constant argument(s) at {}", context->getText());
+                }
+                std::vector<std::string> constArgs(1);
+                for (size_t i = 0; i < static_cast<size_t>(1); ++i) {
+                    constArgs[static_cast<size_t>(1) - 1 - i] = std::move(helpers.top().constantBuilder.back());
+                    helpers.top().constantBuilder.pop_back();
+                }
+                if (helpers.top().functionBuilder.size() < 4)
+                {
+                    throw InvalidQuerySyntax("TRGEOMETRY_SET_INTERP requires four field arguments at {}", context->getText());
+                }
+                const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto theta = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto y = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto x = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                helpers.top().windowAggs.push_back(TrgeometrySetInterpAggregationLogicalFunction::create(x, y, theta, ts, std::move(constArgs)));
+            }
+            /* END CODEGEN GLUE: TRGEOMETRY_SET_INTERP (funcName chain) */
+#endif /* RGEO */
+
 
 
 

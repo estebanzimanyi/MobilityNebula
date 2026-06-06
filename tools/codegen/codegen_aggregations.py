@@ -2479,6 +2479,279 @@ PHYSICAL_CPP_TPOSE_SEQ1 = _swap_once(
     _FINALIZE_SEQARRAY_TPOSE, _FINALIZE_SEQ1_TPOSE, "tpose-seq1 finalize tail")
 
 # ===========================================================================
+# tpose parameterized transform (fold "tposetransform"): combine the 4-data-field
+# tpose windowed builder with the constant-arg mechanism. The window is collected
+# as a "[Pose(Point(x y),theta)@ts, ...]" continuous sequence, parsed via tpose_in
+# and converted to a trgeometry via geo_tpose_to_trgeometry(unit-square refGeom,
+# poseSeq) (same path as the tpose seqarray form), then a MEOS transform that takes
+# the resulting Temporal* PLUS one or more CONSTANT (non-field) args is applied and
+# the single Temporal* result is emitted as hex-WKB. Constants travel as literal
+# strings (parser constantBuilder -> logical constArgs -> serde literals -> physical
+# ctor) exactly as the tgeotransform fold; they are parsed to their C value/object
+# only inside the finalize lambda. Derived by combining _FINALIZE_SEQARRAY_TPOSE's
+# temp-construction with _FINALIZE_WKB_TGEO_CONST's const-parse + single-hex tail.
+#
+# The (Temporal*) cast on the MEOS-fn result is kept on purpose: trgeometry_sequence_n
+# returns a TSequence* (a subtype of Temporal*), so the cast normalizes the result to
+# the Temporal* the hex serializer + freeTemporalObject path expects.
+# ===========================================================================
+
+# tpose construction block lifted from _FINALIZE_SEQARRAY_TPOSE (the parseTemporalPoint
+# block of _FINALIZE_WKB_TGEO_CONST swapped for tpose_in + geo_tpose_to_trgeometry).
+# Note: _FINALIZE_WKB_TGEO_CONST frees trajStr BEFORE building temp; tpose construction
+# also frees trajStr before building temp, so the post-free `if (!temp)` returns nullptr.
+_FINALIZE_WKB_TPOSE_CONST = _swap_once(
+    _FINALIZE_WKB_TGEO_CONST,
+    """\
+            std::string trajString(trajStr);
+            void* temp = MEOS::Meos::parseTemporalPoint(trajString);
+            free((void*)trajStr);
+            if (!temp) {{
+                return (char*)nullptr;
+            }}""",
+    """\
+            std::string trajString(trajStr);
+            Temporal* _poseSeq = tpose_in(trajString.c_str());
+            free((void*)trajStr);
+            if (!_poseSeq) {{
+                return (char*)nullptr;
+            }}
+            GSERIALIZED* _refGeom = geom_in("Polygon((0 0,1 0,1 1,0 1,0 0))", -1);
+            if (!_refGeom) {{
+                free(_poseSeq);
+                return (char*)nullptr;
+            }}
+            void* temp = geo_tpose_to_trgeometry(_refGeom, _poseSeq);
+            free(_refGeom);
+            free(_poseSeq);
+            if (!temp) {{
+                return (char*)nullptr;
+            }}""",
+    "tpose-const temp construction (tpose_in + geo_tpose_to_trgeometry)")
+
+# Physical .cpp: from the base tpose template — empty-window scalar -> box (VARSIZED),
+# instant-set braces -> sequence brackets, ctor gains the constArgs param + init, and
+# the scalar finalize tail is replaced by _FINALIZE_WKB_TPOSE_CONST. Mirrors the
+# PHYSICAL_CPP_TGEO_CONST derivation. The base tpose ctor's tail param/init differ from
+# the tgeo one (4 PhysicalFunctions), so use tpose-specific anchors.
+_CTOR_PARAM_TPOSE = """\
+    PhysicalFunction timestampFunctionParam,
+    Nautilus::Record::RecordFieldIdentifier resultFieldIdentifier,
+    std::shared_ptr<Nautilus::Interface::BufferRef::TupleBufferRef> bufferRef)"""
+_CTOR_PARAM_TPOSE_CONST = """\
+    PhysicalFunction timestampFunctionParam,
+    Nautilus::Record::RecordFieldIdentifier resultFieldIdentifier,
+    std::shared_ptr<Nautilus::Interface::BufferRef::TupleBufferRef> bufferRef,
+    std::vector<std::string> constArgsParam)"""
+
+_CTOR_INIT_TPOSE = """\
+    , timestampFunction(std::move(timestampFunctionParam))
+{{
+}}"""
+_CTOR_INIT_TPOSE_CONST = """\
+    , timestampFunction(std::move(timestampFunctionParam))
+    , constArgs(std::move(constArgsParam))
+{{
+}}"""
+
+PHYSICAL_CPP_TPOSE_CONST = _swap_once(
+    _swap_once(
+        _swap_once(
+            _swap_once(
+                _swap_once(
+                    _swap_once(PHYSICAL_CPP_TPOSE, _EMPTY_SCALAR, _EMPTY_BOX, "tpose-const empty-window block"),
+                    '            strcpy(buffer, "{{");', '            strcpy(buffer, "[");', "tpose-const open bracket -> sequence"),
+                '            strcat(buffer, "}}");', '            strcat(buffer, "]");', "tpose-const close bracket -> sequence"),
+            _CTOR_PARAM_TPOSE, _CTOR_PARAM_TPOSE_CONST, "tpose-const ctor param"),
+        _CTOR_INIT_TPOSE, _CTOR_INIT_TPOSE_CONST, "tpose-const ctor init"),
+    _FINALIZE_SCALAR_TGEO, _FINALIZE_WKB_TPOSE_CONST, "tpose-const finalize tail")
+
+# Physical .hpp — append the constArgs ctor param + member to the base tpose .hpp.
+_HPP_CTOR_TPOSE = """\
+        PhysicalFunction timestampFunctionParam,
+        Nautilus::Record::RecordFieldIdentifier resultFieldIdentifier,
+        std::shared_ptr<Nautilus::Interface::BufferRef::TupleBufferRef> bufferRef);"""
+_HPP_CTOR_TPOSE_CONST = """\
+        PhysicalFunction timestampFunctionParam,
+        Nautilus::Record::RecordFieldIdentifier resultFieldIdentifier,
+        std::shared_ptr<Nautilus::Interface::BufferRef::TupleBufferRef> bufferRef,
+        std::vector<std::string> constArgsParam);"""
+_HPP_MEMBER_TPOSE = """\
+    PhysicalFunction timestampFunction;
+}};"""
+_HPP_MEMBER_TPOSE_CONST = """\
+    PhysicalFunction timestampFunction;
+    std::vector<std::string> constArgs;
+}};"""
+
+PHYSICAL_HPP_TPOSE_CONST = _swap_once(
+    _swap_once(
+        _swap_once(PHYSICAL_HPP_TPOSE, "#include <cstddef>", "#include <cstddef>\n#include <string>\n#include <vector>",
+                   "tpose-const hpp includes"),
+        _HPP_CTOR_TPOSE, _HPP_CTOR_TPOSE_CONST, "tpose-const hpp ctor param"),
+    _HPP_MEMBER_TPOSE, _HPP_MEMBER_TPOSE_CONST, "tpose-const hpp member")
+
+# ===========================================================================
+# Logical const variant for tpose (fold "tposetransform"): the 4-field tpose
+# logical op additionally stores the constant literal strings, packs them via
+# serializeConstArgs(), and the registrar reconstructs them from arguments.literals.
+# Derived from the base tpose logical templates by surgical swaps.
+# ===========================================================================
+
+# --- HPP swaps ---
+_LHPP_CREATE_TPOSE = """\
+    static std::shared_ptr<WindowAggregationLogicalFunction>
+    create(const FieldAccessLogicalFunction& xField, const FieldAccessLogicalFunction& yField, const FieldAccessLogicalFunction& thetaField, const FieldAccessLogicalFunction& timestampField);
+
+    {nebula_name}AggregationLogicalFunction(
+        const FieldAccessLogicalFunction& xField,
+        const FieldAccessLogicalFunction& yField,
+        const FieldAccessLogicalFunction& thetaField,
+        const FieldAccessLogicalFunction& timestampField,
+        const FieldAccessLogicalFunction& asField);"""
+_LHPP_CREATE_TPOSE_CONST = """\
+    static std::shared_ptr<WindowAggregationLogicalFunction>
+    create(const FieldAccessLogicalFunction& xField, const FieldAccessLogicalFunction& yField, const FieldAccessLogicalFunction& thetaField, const FieldAccessLogicalFunction& timestampField, std::vector<std::string> constArgs);
+
+    {nebula_name}AggregationLogicalFunction(
+        const FieldAccessLogicalFunction& xField,
+        const FieldAccessLogicalFunction& yField,
+        const FieldAccessLogicalFunction& thetaField,
+        const FieldAccessLogicalFunction& timestampField,
+        const FieldAccessLogicalFunction& asField,
+        std::vector<std::string> constArgs);
+
+    [[nodiscard]] const std::vector<std::string>& getConstArgs() const noexcept {{ return constArgs; }}"""
+_LHPP_MEMBER_TPOSE = """\
+    FieldAccessLogicalFunction xField;
+    FieldAccessLogicalFunction yField;
+    FieldAccessLogicalFunction thetaField;
+    FieldAccessLogicalFunction timestampField;
+}};"""
+_LHPP_MEMBER_TPOSE_CONST = """\
+    FieldAccessLogicalFunction xField;
+    FieldAccessLogicalFunction yField;
+    FieldAccessLogicalFunction thetaField;
+    FieldAccessLogicalFunction timestampField;
+    std::vector<std::string> constArgs;
+}};"""
+
+LOGICAL_HPP_TPOSE_CONST = _swap_once(
+    _swap_once(
+        _swap_once(LOGICAL_HPP_TPOSE,
+                   "#include <Operators/Windows/Aggregations/WindowAggregationLogicalFunction.hpp>",
+                   "#include <string>\n#include <vector>\n#include <Operators/Windows/Aggregations/WindowAggregationLogicalFunction.hpp>",
+                   "tpose-const lhpp includes"),
+        _LHPP_CREATE_TPOSE, _LHPP_CREATE_TPOSE_CONST, "tpose-const lhpp create/ctor"),
+    _LHPP_MEMBER_TPOSE, _LHPP_MEMBER_TPOSE_CONST, "tpose-const lhpp member")
+
+# --- CPP swaps ---
+_LCPP_INCLUDES_TPOSE = "#include <memory>\n#include <string>\n#include <string_view>"
+_LCPP_INCLUDES_TPOSE_CONST = "#include <memory>\n#include <string>\n#include <string_view>\n#include <utility>\n#include <vector>"
+
+_LCPP_CTOR_TPOSE = """\
+{nebula_name}AggregationLogicalFunction::{nebula_name}AggregationLogicalFunction(
+    const FieldAccessLogicalFunction& xField,
+    const FieldAccessLogicalFunction& yField,
+    const FieldAccessLogicalFunction& thetaField,
+    const FieldAccessLogicalFunction& timestampField,
+    const FieldAccessLogicalFunction& asField)
+    : WindowAggregationLogicalFunction(
+          xField.getDataType(),
+          DataTypeProvider::provideDataType(partialAggregateStampType),
+          DataTypeProvider::provideDataType(finalAggregateStampType),
+          xField,
+          asField)
+    , xField(xField)
+    , yField(yField)
+    , thetaField(thetaField)
+    , timestampField(timestampField)
+{{
+}}
+
+std::shared_ptr<WindowAggregationLogicalFunction>
+{nebula_name}AggregationLogicalFunction::create(
+    const FieldAccessLogicalFunction& xField,
+    const FieldAccessLogicalFunction& yField,
+    const FieldAccessLogicalFunction& thetaField,
+    const FieldAccessLogicalFunction& timestampField)
+{{
+    return std::make_shared<{nebula_name}AggregationLogicalFunction>(xField, yField, thetaField, timestampField, xField);
+}}"""
+_LCPP_CTOR_TPOSE_CONST = """\
+{nebula_name}AggregationLogicalFunction::{nebula_name}AggregationLogicalFunction(
+    const FieldAccessLogicalFunction& xField,
+    const FieldAccessLogicalFunction& yField,
+    const FieldAccessLogicalFunction& thetaField,
+    const FieldAccessLogicalFunction& timestampField,
+    const FieldAccessLogicalFunction& asField,
+    std::vector<std::string> constArgs)
+    : WindowAggregationLogicalFunction(
+          xField.getDataType(),
+          DataTypeProvider::provideDataType(partialAggregateStampType),
+          DataTypeProvider::provideDataType(finalAggregateStampType),
+          xField,
+          asField)
+    , xField(xField)
+    , yField(yField)
+    , thetaField(thetaField)
+    , timestampField(timestampField)
+    , constArgs(std::move(constArgs))
+{{
+}}
+
+std::shared_ptr<WindowAggregationLogicalFunction>
+{nebula_name}AggregationLogicalFunction::create(
+    const FieldAccessLogicalFunction& xField,
+    const FieldAccessLogicalFunction& yField,
+    const FieldAccessLogicalFunction& thetaField,
+    const FieldAccessLogicalFunction& timestampField,
+    std::vector<std::string> constArgs)
+{{
+    return std::make_shared<{nebula_name}AggregationLogicalFunction>(xField, yField, thetaField, timestampField, xField, std::move(constArgs));
+}}"""
+
+_LCPP_SERIALIZE_TPOSE = """\
+    auto saf = TemporalAggregationSerde::serializeTemporalSequence(xField, yField, thetaField, timestampField, asField);
+    saf.set_type(std::string(NAME));
+    return saf;"""
+_LCPP_SERIALIZE_TPOSE_CONST = """\
+    auto saf = TemporalAggregationSerde::serializeTemporalSequence(xField, yField, thetaField, timestampField, asField);
+    TemporalAggregationSerde::serializeConstArgs(saf, constArgs);
+    saf.set_type(std::string(NAME));
+    return saf;"""
+
+_LCPP_REGISTRAR_TPOSE = """\
+    if (arguments.fields.size() == 5)
+    {{
+        auto ptr = std::make_shared<{nebula_name}AggregationLogicalFunction>(
+            arguments.fields[0], arguments.fields[1], arguments.fields[2], arguments.fields[3], arguments.fields[4]);
+        return ptr;
+    }}
+    throw CannotDeserialize(
+        "{nebula_name}AggregationLogicalFunction requires x, y, theta, timestamp, and alias fields but got {{}}",
+        arguments.fields.size());"""
+_LCPP_REGISTRAR_TPOSE_CONST = """\
+    if (arguments.fields.size() == 5)
+    {{
+        auto ptr = std::make_shared<{nebula_name}AggregationLogicalFunction>(
+            arguments.fields[0], arguments.fields[1], arguments.fields[2], arguments.fields[3], arguments.fields[4],
+            arguments.literals);
+        return ptr;
+    }}
+    throw CannotDeserialize(
+        "{nebula_name}AggregationLogicalFunction requires x, y, theta, timestamp, and alias fields but got {{}}",
+        arguments.fields.size());"""
+
+LOGICAL_CPP_TPOSE_CONST = _swap_once(
+    _swap_once(
+        _swap_once(
+            _swap_once(LOGICAL_CPP_TPOSE, _LCPP_INCLUDES_TPOSE, _LCPP_INCLUDES_TPOSE_CONST, "tpose-const lcpp includes"),
+            _LCPP_CTOR_TPOSE, _LCPP_CTOR_TPOSE_CONST, "tpose-const lcpp ctor+create"),
+        _LCPP_SERIALIZE_TPOSE, _LCPP_SERIALIZE_TPOSE_CONST, "tpose-const lcpp serialize"),
+    _LCPP_REGISTRAR_TPOSE, _LCPP_REGISTRAR_TPOSE_CONST, "tpose-const lcpp registrar")
+
+# ===========================================================================
 # Expandable-Temporal* aggregate (return_mode "expand"): the MEOS-native
 # streaming model — the aggregate STATE is a live expandable `Temporal*` (a
 # mini-trip trajectory), grown in place per event via the public streaming
@@ -3938,6 +4211,125 @@ OPTIMIZER_LOWERING_TGEO_CONST = """\
 """
 
 # ===========================================================================
+# Parameterized tpose transform glue (fold "tposetransform"): the SQL call is
+# {sql_token}(x, y, theta, ts, <const0>, <const1>, ...). The 4 field args land in
+# functionBuilder; the trailing {num_const_args} literal constants land in
+# constantBuilder. Pop the constants (reverse order -> source order), then the 4
+# fields (ts, theta, y, x order — like CASE_SWITCH_TPOSE), and pass the const
+# literal STRINGS straight to create(x, y, theta, ts, constArgs). Combines
+# CASE_SWITCH_TGEO_CONST's constant-pop with CASE_SWITCH_TPOSE's 4-field pop.
+# ===========================================================================
+CASE_SWITCH_TPOSE_CONST = """\
+        /* BEGIN CODEGEN GLUE: {sql_token} (case-switch) */
+        case AntlrSQLLexer::{sql_token}:
+            // {comment_one_liner}
+            {{
+                if (helpers.top().constantBuilder.size() < {num_const_args}) {{
+                    throw InvalidQuerySyntax("{sql_token} requires {num_const_args} constant argument(s) after x, y, theta, timestamp, but got {{}}", helpers.top().constantBuilder.size());
+                }}
+                std::vector<std::string> constArgs({num_const_args});
+                for (size_t i = 0; i < static_cast<size_t>({num_const_args}); ++i) {{
+                    constArgs[static_cast<size_t>({num_const_args}) - 1 - i] = std::move(helpers.top().constantBuilder.back());
+                    helpers.top().constantBuilder.pop_back();
+                }}
+
+                if (helpers.top().functionBuilder.size() != 4) {{
+                    throw InvalidQuerySyntax("{sql_token} requires exactly four field arguments (x, y, theta, timestamp), but got {{}}", helpers.top().functionBuilder.size());
+                }}
+                const auto timestampFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto thetaFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto yFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto xFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+
+                if (!xFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !yFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !thetaFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {{
+                    throw InvalidQuerySyntax("{sql_token} field arguments must be field references");
+                }}
+
+                helpers.top().windowAggs.push_back(
+                    {nebula_name}AggregationLogicalFunction::create(xFunction.get<FieldAccessLogicalFunction>(),
+                                                                    yFunction.get<FieldAccessLogicalFunction>(),
+                                                                    thetaFunction.get<FieldAccessLogicalFunction>(),
+                                                                    timestampFunction.get<FieldAccessLogicalFunction>(),
+                                                                    std::move(constArgs)));
+                helpers.top().functionBuilder.push_back(xFunction);
+            }}
+            break;
+        /* END CODEGEN GLUE: {sql_token} (case-switch) */
+"""
+
+FUNCNAME_CHAIN_TPOSE_CONST = """\
+            /* BEGIN CODEGEN GLUE: {sql_token} (funcName chain) */
+            else if (funcName == "{sql_token}")
+            {{
+                if (helpers.top().constantBuilder.size() < {num_const_args})
+                {{
+                    throw InvalidQuerySyntax("{sql_token} requires {num_const_args} constant argument(s) at {{}}", context->getText());
+                }}
+                std::vector<std::string> constArgs({num_const_args});
+                for (size_t i = 0; i < static_cast<size_t>({num_const_args}); ++i) {{
+                    constArgs[static_cast<size_t>({num_const_args}) - 1 - i] = std::move(helpers.top().constantBuilder.back());
+                    helpers.top().constantBuilder.pop_back();
+                }}
+                if (helpers.top().functionBuilder.size() < 4)
+                {{
+                    throw InvalidQuerySyntax("{sql_token} requires four field arguments at {{}}", context->getText());
+                }}
+                const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto theta = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto y = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto x = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                helpers.top().windowAggs.push_back({nebula_name}AggregationLogicalFunction::create(x, y, theta, ts, std::move(constArgs)));
+            }}
+            /* END CODEGEN GLUE: {sql_token} (funcName chain) */
+"""
+
+OPTIMIZER_LOWERING_TPOSE_CONST = """\
+        /* BEGIN CODEGEN GLUE: {class_name_token} (optimizer lowering) */
+        if (name == std::string_view("{class_name_token}"))
+        {{
+            auto specificDescriptor = std::dynamic_pointer_cast<{nebula_name}AggregationLogicalFunction>(descriptor);
+            INVARIANT(specificDescriptor != nullptr, "Expected {nebula_name}AggregationLogicalFunction for {class_name_token}");
+
+            auto xPF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getXField());
+            auto yPF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getYField());
+            auto thetaPF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getThetaField());
+            auto tsPF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getTimestampField());
+
+            Schema stateSchema;
+            stateSchema.addField("x", specificDescriptor->getXField().getDataType());
+            stateSchema.addField("y", specificDescriptor->getYField().getDataType());
+            stateSchema.addField("theta", specificDescriptor->getThetaField().getDataType());
+            stateSchema.addField("timestamp", specificDescriptor->getTimestampField().getDataType());
+            auto tupleBufferRef = Interface::BufferRef::TupleBufferRef::create(configuration.pageSize.getValue(), stateSchema);
+
+            auto phys = std::make_shared<{nebula_name}AggregationPhysicalFunction>(
+                std::move(physicalInputType),
+                std::move(physicalFinalType),
+                xPF,
+                yPF,
+                thetaPF,
+                tsPF,
+                resultFieldIdentifier,
+                tupleBufferRef,
+                specificDescriptor->getConstArgs());
+            aggregationPhysicalFunctions.push_back(std::move(phys));
+            continue;
+        }}
+        /* END CODEGEN GLUE: {class_name_token} (optimizer lowering) */
+"""
+
+# ===========================================================================
 # Expandable-Temporal* VALUE-OUTPUT: f(live mini-trip) -> Temporal* result,
 # serialized to hex-WKB as VARSIZED (the proven box-output VARSIZED tail).
 # Derived from PHYSICAL_CPP_TGEO_EXPAND by swapping only the scalar lower() for
@@ -4222,6 +4614,8 @@ def physical_template_for(op):
             return PHYSICAL_HPP_TGEO, PHYSICAL_CPP_TGEO_SEQ_ARRAY
         return PHYSICAL_HPP_TGEO, (PHYSICAL_CPP_TGEO_BOX if box else PHYSICAL_CPP_TGEO)
     if op["input_shape"] == "tpose":
+        if op.get("fold") == "tposetransform":
+            return PHYSICAL_HPP_TPOSE_CONST, PHYSICAL_CPP_TPOSE_CONST
         if op.get("fold") == "tposeseqarray":
             return PHYSICAL_HPP_TPOSE, PHYSICAL_CPP_TPOSE_SEQ_ARRAY
         if op.get("fold") == "tposeseq1":
@@ -4257,6 +4651,8 @@ def logical_template_for(op):
             return LOGICAL_HPP_TGEO_CONST, LOGICAL_CPP_TGEO_CONST
         return LOGICAL_HPP_TGEO, LOGICAL_CPP_TGEO
     if op["input_shape"] == "tpose":
+        if op.get("fold") == "tposetransform":
+            return LOGICAL_HPP_TPOSE_CONST, LOGICAL_CPP_TPOSE_CONST
         return LOGICAL_HPP_TPOSE, LOGICAL_CPP_TPOSE
     if op["input_shape"] == "tnumber":
         return LOGICAL_HPP_TNUMBER, LOGICAL_CPP_TNUMBER
@@ -4269,6 +4665,8 @@ def case_switch_template_for(op):
             return CASE_SWITCH_TGEO_CONST
         return CASE_SWITCH_TGEO
     if op["input_shape"] == "tpose":
+        if op.get("fold") == "tposetransform":
+            return CASE_SWITCH_TPOSE_CONST
         return CASE_SWITCH_TPOSE
     return CASE_SWITCH_TNUMBER
 
@@ -4279,6 +4677,8 @@ def funcname_chain_template_for(op):
             return FUNCNAME_CHAIN_TGEO_CONST
         return FUNCNAME_CHAIN_TGEO
     if op["input_shape"] == "tpose":
+        if op.get("fold") == "tposetransform":
+            return FUNCNAME_CHAIN_TPOSE_CONST
         return FUNCNAME_CHAIN_TPOSE
     return FUNCNAME_CHAIN_TNUMBER
 
@@ -4289,6 +4689,8 @@ def optimizer_lowering_template_for(op):
             return OPTIMIZER_LOWERING_TGEO_CONST
         return OPTIMIZER_LOWERING_TGEO
     if op["input_shape"] == "tpose":
+        if op.get("fold") == "tposetransform":
+            return OPTIMIZER_LOWERING_TPOSE_CONST
         return OPTIMIZER_LOWERING_TPOSE
     return OPTIMIZER_LOWERING_TNUMBER
 
