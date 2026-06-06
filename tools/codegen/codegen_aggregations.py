@@ -1345,7 +1345,7 @@ _FINALIZE_WKB_TGEO = """\
             }}
 
             size_t hexSize = 0;
-            char* hexOut = temporal_as_hexwkb(static_cast<Temporal*>(temp), 0, &hexSize);
+            char* hexOut = temporal_as_hexwkb(static_cast<Temporal*>(temp), 0x04 /* WKB_EXTENDED */, &hexSize);
             MEOS::Meos::freeTemporalObject(temp);
             return hexOut;
         }},
@@ -2211,7 +2211,7 @@ _TAGG_LOWER_FOLD = """\
                 return (char*)nullptr;
             }}
             size_t hexSize = 0;
-            char* hexOut = temporal_as_hexwkb(res, 0, &hexSize);
+            char* hexOut = temporal_as_hexwkb(res, 0x04 /* WKB_EXTENDED */, &hexSize);
             free(res);
             return hexOut;
         }},
@@ -2481,7 +2481,7 @@ _TGEO_TAGG_LOWER = '''\
             Temporal* res = {tagg_finalfn}(static_cast<SkipList*>(state));
             if (!res) {{ return (char*)nullptr; }}
             size_t hexSize = 0;
-            char* hexOut = temporal_as_hexwkb(res, 0, &hexSize);
+            char* hexOut = temporal_as_hexwkb(res, 0x04 /* WKB_EXTENDED */, &hexSize);
             free(res);
             return hexOut;
         }},
@@ -2736,7 +2736,7 @@ _EXPAND_LOWER_WKB = """\
                 return (char*)nullptr;
             }}
             size_t hexSize = 0;
-            char* hexOut = temporal_as_hexwkb(res, 0, &hexSize);
+            char* hexOut = temporal_as_hexwkb(res, 0x04 /* WKB_EXTENDED */, &hexSize);
             free(res);
             return hexOut;
         }},
@@ -2778,7 +2778,7 @@ _EXPAND_LOWER_GEO_WKB = _swap_once(
                "Temporal* res = {meos_scalar_fn}(*slot);",
                "GSERIALIZED* res = {meos_scalar_fn}(*slot);",
                "value-output res type Temporal -> GSERIALIZED"),
-    "size_t hexSize = 0;\n            char* hexOut = temporal_as_hexwkb(res, 0, &hexSize);",
+    "size_t hexSize = 0;\n            char* hexOut = temporal_as_hexwkb(res, 0x04 /* WKB_EXTENDED */, &hexSize);",
     "char* hexOut = geo_out(res);",
     "temporal hex-WKB -> geometry hex-EWKB (geo_out)")
 

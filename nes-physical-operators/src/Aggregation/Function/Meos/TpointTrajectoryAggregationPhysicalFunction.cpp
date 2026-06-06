@@ -212,7 +212,7 @@ Nautilus::Record TpointTrajectoryAggregationPhysicalFunction::lower(
             }
 
             size_t hexSize = 0;
-            char* hexOut = temporal_as_hexwkb(static_cast<Temporal*>(temp), 0, &hexSize);
+            char* hexOut = temporal_as_hexwkb(static_cast<Temporal*>(temp), 0x04 /* WKB_EXTENDED */, &hexSize);
             MEOS::Meos::freeTemporalObject(temp);
             return hexOut;
         },

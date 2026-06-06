@@ -159,7 +159,7 @@ Nautilus::Record TstzsetTcountTransfnAggregationPhysicalFunction::lower(
             if (!state) { return (char*)nullptr; }
             MEOS::Meos::ensureMeosInitialized();
             std::lock_guard<std::mutex> lock(meos_tstzsettcounttransfn_mutex);
-            Temporal* res = temporal_tagg_finalfn(static_cast<SkipList*>(state)); if (!res) return (char*)nullptr; size_t sz = 0; char* h = temporal_as_hexwkb(res, 0, &sz); free(res); return h;
+            Temporal* res = temporal_tagg_finalfn(static_cast<SkipList*>(state)); if (!res) return (char*)nullptr; size_t sz = 0; char* h = temporal_as_hexwkb(res, 0x04 /* WKB_EXTENDED */, &sz); free(res); return h;
         },
         cstate);
 

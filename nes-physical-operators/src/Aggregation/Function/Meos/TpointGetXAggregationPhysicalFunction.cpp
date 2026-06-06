@@ -160,7 +160,7 @@ Nautilus::Record TpointGetXAggregationPhysicalFunction::lower(
                 return (char*)nullptr;
             }
             size_t hexSize = 0;
-            char* hexOut = temporal_as_hexwkb(res, 0, &hexSize);
+            char* hexOut = temporal_as_hexwkb(res, 0x04 /* WKB_EXTENDED */, &hexSize);
             free(res);
             return hexOut;
         },
