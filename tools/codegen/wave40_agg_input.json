@@ -1,0 +1,36 @@
+{
+  "_comment": "wave 40 (windowed array constructors batch 4: whole-temporal merge, by-value span array, and gap-aware sequence-set build). Three array-make folds extending the wave 16/23/24 family. (1) temporal_merge_array collects a window of temporal VALUES fed as hex-WKB literals, parses each via temporal_from_hexwkb into a Temporal* pointer array, merges, and emits the result as hex-WKB (fold=tempmergearray). (2) spanset_make collects a window of span literals into a CONTIGUOUS Span value array (parse via intspan_in, memcpy into arr[i], free the parsed heap span), builds the SpanSet, and serializes via intspanset_out (fold=spansetmake, by-value variant). (3) tsequenceset_make_gaps collects a window of temporal-instant literals (parse via tgeompoint_in cast to TInstant*), builds a TSequenceSet* with FIXED interp/maxt/maxdist baked into the finalize, and emits hex-WKB (fold=tseqsetmakegaps). All input_shape=tnumber with the VARSIZED value field, value_type_guard relaxed.",
+  "operators": [
+    {
+      "nebula_name": "TemporalMergeArray", "sql_token": "TEMPORAL_MERGE_ARRAY",
+      "comment_one_liner": "temporal_merge_array (Temporal *) - the temporal merged from a window of temporal values (hex-WKB).",
+      "final_stamp_type": "VARSIZED", "input_shape": "tnumber", "fold": "tempmergearray",
+      "meos_scalar_fn": "", "return_cpp_type": "double",
+      "value_type_guard": "", "value_type_msg": "value must be a temporal hex-WKB literal; timestamp must be numeric",
+      "elem_cpp": "Temporal", "elem_in": "temporal_from_hexwkb", "elem_in_extra": "",
+      "make_fn": "temporal_merge_array", "make_ret_type": "Temporal", "make_arg_type": "Temporal **",
+      "set_out_call": ""
+    },
+    {
+      "nebula_name": "SpansetMake", "sql_token": "SPANSET_MAKE",
+      "comment_one_liner": "spanset_make (SpanSet *) - the span set built from a window of span values.",
+      "final_stamp_type": "VARSIZED", "input_shape": "tnumber", "fold": "spansetmake",
+      "meos_scalar_fn": "", "return_cpp_type": "double",
+      "value_type_guard": "", "value_type_msg": "value must be a span literal; timestamp must be numeric",
+      "elem_cpp": "Span", "elem_in": "intspan_in", "elem_in_extra": "",
+      "make_fn": "spanset_make", "make_ret_type": "SpanSet", "make_arg_type": "Span *",
+      "set_out_call": "intspanset_out(s)"
+    },
+    {
+      "nebula_name": "TsequencesetMakeGaps", "sql_token": "TSEQUENCESET_MAKE_GAPS",
+      "comment_one_liner": "tsequenceset_make_gaps (TSequenceSet *) - the gap-aware sequence set built from a window of temporal-instant values (hex-WKB).",
+      "final_stamp_type": "VARSIZED", "input_shape": "tnumber", "fold": "tseqsetmakegaps",
+      "meos_scalar_fn": "", "return_cpp_type": "double",
+      "value_type_guard": "", "value_type_msg": "value must be a temporal-instant literal; timestamp must be numeric",
+      "elem_cpp": "Temporal", "elem_in": "tgeompoint_in", "elem_in_extra": "",
+      "make_fn": "tsequenceset_make_gaps", "make_ret_type": "TSequenceSet", "make_arg_type": "TInstant **",
+      "gaps_interp": "LINEAR", "gaps_maxt": "1 hour", "gaps_maxdist": "5.0",
+      "set_out_call": ""
+    }
+  ]
+}

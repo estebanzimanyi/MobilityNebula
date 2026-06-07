@@ -1,0 +1,32 @@
+{
+  "_comment": "wave 22 (sequence accessors, tgeompoint windowed aggregations). The window's point stream is built as a CONTINUOUS sequence ([...], linear) so the MEOS sequence accessors apply (they reject the discrete {...} instant set the other tgeo aggregates build). TemporalNumSequences is a REGEN of the existing op fixed to build continuous (fold=tgeoseq, scalar int); start/end/sequence_n return a TSequence* serialized via tspatial_out (fold=tgeoseqtext).",
+  "operators": [
+    {
+      "nebula_name": "TemporalNumSequences", "sql_token": "TEMPORAL_NUM_SEQUENCES",
+      "comment_one_liner": "temporal_num_sequences (int) - the number of sequences in the windowed continuous trajectory.",
+      "final_stamp_type": "INT32", "input_shape": "tgeo",
+      "meos_scalar_fn": "temporal_num_sequences", "return_cpp_type": "int", "fold": "tgeoseq"
+    },
+    {
+      "nebula_name": "TemporalStartSequence", "sql_token": "TEMPORAL_START_SEQUENCE",
+      "comment_one_liner": "temporal_start_sequence (Temporal *) - the first sequence of the windowed continuous trajectory.",
+      "final_stamp_type": "VARSIZED", "input_shape": "tgeo",
+      "meos_scalar_fn": "", "return_cpp_type": "char", "fold": "tgeoseqtext",
+      "seq_accessor_call": "temporal_start_sequence(static_cast<Temporal*>(temp))"
+    },
+    {
+      "nebula_name": "TemporalEndSequence", "sql_token": "TEMPORAL_END_SEQUENCE",
+      "comment_one_liner": "temporal_end_sequence (Temporal *) - the last sequence of the windowed continuous trajectory.",
+      "final_stamp_type": "VARSIZED", "input_shape": "tgeo",
+      "meos_scalar_fn": "", "return_cpp_type": "char", "fold": "tgeoseqtext",
+      "seq_accessor_call": "temporal_end_sequence(static_cast<Temporal*>(temp))"
+    },
+    {
+      "nebula_name": "TemporalSequenceN", "sql_token": "TEMPORAL_SEQUENCE_N",
+      "comment_one_liner": "temporal_sequence_n (Temporal *) - the first sequence (n=1) of the windowed continuous trajectory.",
+      "final_stamp_type": "VARSIZED", "input_shape": "tgeo",
+      "meos_scalar_fn": "", "return_cpp_type": "char", "fold": "tgeoseqtext",
+      "seq_accessor_call": "temporal_sequence_n(static_cast<Temporal*>(temp), 1)"
+    }
+  ]
+}

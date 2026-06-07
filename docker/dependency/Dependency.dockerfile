@@ -1,3 +1,4 @@
+# syntax=docker/dockerfile:1
 # The dependency image contains a prebuilt sdk of all vcpkg depedencies used in the NebulaStream manifest
 # This image is intended to be built as a multi-platform image where the ARCH is injected into the docker build.
 # We do not use the builtin TARGETPLATFORM because it would not match the archtiecture names expected by VCPKG.
@@ -26,8 +27,11 @@ ADD vcpkg /vcpkg_input
 ARG SANITIZER="none"
 ARG ARCH
 ENV VCPKG_FORCE_SYSTEM_BINARIES=1
+# Cap build parallelism so folly/grpc/etc. do not OOM the 15 GB host during the
+# vcpkg dependency build (default would be nproc=22 concurrent compiles).
+ENV VCPKG_MAX_CONCURRENCY=6
 
-RUN \
+RUN --mount=type=cache,target=/root/.cache/vcpkg,sharing=locked \
     if [ "$STDLIB" = "libcxx" ]; then \
       export VCPKG_STDLIB="libcxx"; \
     else \

@@ -1,0 +1,55 @@
+{
+  "_comment": "wave 23 (array constructors batch 2: object-element sets). Windowed aggregations that collect a window of VARSIZED object literals, parse each via *_in into a heap pointer, build the set via *set_make, and serialize via *set_out. fold=objarraymake, input_shape=tnumber (value field is VARSIZED text, so value_type_guard is relaxed).",
+  "operators": [
+    {
+      "nebula_name": "TextsetMake", "sql_token": "TEXTSET_MAKE",
+      "comment_one_liner": "textset_make (Set *) - the text set collected from a window of text values.",
+      "final_stamp_type": "VARSIZED", "input_shape": "tnumber", "fold": "objarraymake",
+      "meos_scalar_fn": "", "return_cpp_type": "double",
+      "value_type_guard": "", "value_type_msg": "value must be a text literal; timestamp must be numeric",
+      "elem_cpp": "text", "elem_in": "text_in", "elem_in_extra": "",
+      "make_fn": "textset_make", "make_ret_type": "Set", "make_arg_type": "text **",
+      "set_out_call": "textset_out(s)"
+    },
+    {
+      "nebula_name": "CbuffersetMake", "sql_token": "CBUFFERSET_MAKE",
+      "comment_one_liner": "cbufferset_make (Set *) - the circular-buffer set collected from a window of cbuffer values.",
+      "final_stamp_type": "VARSIZED", "input_shape": "tnumber", "fold": "objarraymake",
+      "meos_scalar_fn": "", "return_cpp_type": "double",
+      "value_type_guard": "", "value_type_msg": "value must be a cbuffer literal; timestamp must be numeric",
+      "elem_cpp": "Cbuffer", "elem_in": "cbuffer_in", "elem_in_extra": "",
+      "make_fn": "cbufferset_make", "make_ret_type": "Set", "make_arg_type": "Cbuffer **",
+      "set_out_call": "cbufferset_out(s, 6)"
+    },
+    {
+      "nebula_name": "NpointsetMake", "sql_token": "NPOINTSET_MAKE",
+      "comment_one_liner": "npointset_make (Set *) - the network-point set collected from a window of npoint values.",
+      "final_stamp_type": "VARSIZED", "input_shape": "tnumber", "fold": "objarraymake",
+      "meos_scalar_fn": "", "return_cpp_type": "double",
+      "value_type_guard": "", "value_type_msg": "value must be an npoint literal; timestamp must be numeric",
+      "elem_cpp": "Npoint", "elem_in": "npoint_in", "elem_in_extra": "",
+      "make_fn": "npointset_make", "make_ret_type": "Set", "make_arg_type": "Npoint **",
+      "set_out_call": "npointset_out(s, 6)"
+    },
+    {
+      "nebula_name": "PosesetMake", "sql_token": "POSESET_MAKE",
+      "comment_one_liner": "poseset_make (Set *) - the pose set collected from a window of pose values.",
+      "final_stamp_type": "VARSIZED", "input_shape": "tnumber", "fold": "objarraymake",
+      "meos_scalar_fn": "", "return_cpp_type": "double",
+      "value_type_guard": "", "value_type_msg": "value must be a pose literal; timestamp must be numeric",
+      "elem_cpp": "Pose", "elem_in": "pose_in", "elem_in_extra": "",
+      "make_fn": "poseset_make", "make_ret_type": "Set", "make_arg_type": "const Pose **",
+      "set_out_call": "poseset_out(s, 6)"
+    },
+    {
+      "nebula_name": "GeosetMake", "sql_token": "GEOSET_MAKE",
+      "comment_one_liner": "geoset_make (Set *) - the geometry set collected from a window of geometry values.",
+      "final_stamp_type": "VARSIZED", "input_shape": "tnumber", "fold": "objarraymake",
+      "meos_scalar_fn": "", "return_cpp_type": "double",
+      "value_type_guard": "", "value_type_msg": "value must be a geometry literal; timestamp must be numeric",
+      "elem_cpp": "GSERIALIZED", "elem_in": "geom_in", "elem_in_extra": ", -1",
+      "make_fn": "geoset_make", "make_ret_type": "Set", "make_arg_type": "GSERIALIZED **",
+      "set_out_call": "spatialset_as_text(s, 6)"
+    }
+  ]
+}

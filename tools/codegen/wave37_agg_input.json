@@ -1,0 +1,18 @@
+{
+  "_comment": "wave 37: PROOF of the CONSTANT (non-field) argument capability for windowed aggregations. temporal_simplify_min_dist(const Temporal* temp, double dist) -> Temporal* takes the windowed continuous trajectory PLUS one double constant (the minimum-distance simplification tolerance) and returns the simplified Temporal*, emitted as hex-WKB (VARSIZED). Uses the new fold 'tgeotransform' which routes to the const-args tgeo logical/physical/glue variants: the constant travels as a literal STRING from the parser constantBuilder -> logical constArgs -> serde FunctionList(TEMPORAL_SEQUENCE_CONST_ARGS_KEY)+proto literals -> physical ctor, and is parsed to a C double (atof) only inside the plain-C finalize lambda, which then calls temporal_simplify_min_dist(temp, c0). SQL: TEMPORAL_SIMPLIFY_MIN_DIST(lon, lat, ts, 5.0). The const_args parse switch supports double/int/bool/interval/timestamptz/interptype/set for later waves; only double is exercised here.",
+  "operators": [
+    {
+      "nebula_name": "TemporalSimplifyMinDist",
+      "sql_token": "TEMPORAL_SIMPLIFY_MIN_DIST",
+      "comment_one_liner": "temporal_simplify_min_dist (Temporal* -> hex-WKB) - the windowed trajectory simplified to a minimum-distance tolerance (double constant arg).",
+      "final_stamp_type": "VARSIZED",
+      "input_shape": "tgeo",
+      "fold": "tgeotransform",
+      "meos_scalar_fn": "temporal_simplify_min_dist",
+      "return_cpp_type": "char*",
+      "const_args": [
+        { "kind": "double" }
+      ]
+    }
+  ]
+}

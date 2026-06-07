@@ -1,0 +1,81 @@
+{
+  "_comment": "wave 25 (gap-closing batch): four scalar constructors/arithmetic + two two-temporal makes, all via existing build_generic machinery. minus_date_date (date_base + scalar -> int) and minus_timestamptz_timestamptz (timestamptz_base + scalar -> Interval) close the date/time scalar-arithmetic gap; box3d_make / gbox_make (base scalar primary + scalar extras -> PostGIS box text) close the PostGIS box constructors using the box3d_text_out / gbox_text_out return-kinds added in waves 17/18; tcbuffer_make / tpose_make (two hex-WKB temporal operands -> hex-WKB temporal, the add_tnumber_tnumber cross-stream shape) close the temporal constructors. All six probed green against the v15 libmeos before generation (tools/codegen/wave25_probe.c).",
+  "operators": [
+    {
+      "nebula_name": "MinusDateDate",
+      "sql_token": "MINUS_DATE_DATE",
+      "meos_call": "minus_date_date",
+      "build_generic": true,
+      "input_type": "date_base",
+      "return_kind": "int",
+      "extra_args": [{ "kind": "scalar", "cpp": "int32_t" }],
+      "comment_one_liner": "minus_date_date (int) - the number of days between two dates."
+    },
+    {
+      "nebula_name": "MinusTimestamptzTimestamptz",
+      "sql_token": "MINUS_TIMESTAMPTZ_TIMESTAMPTZ",
+      "meos_call": "minus_timestamptz_timestamptz",
+      "build_generic": true,
+      "input_type": "timestamptz_base",
+      "return_kind": "interval_out",
+      "extra_args": [{ "kind": "scalar", "cpp": "int64_t" }],
+      "comment_one_liner": "minus_timestamptz_timestamptz (Interval *) - the interval between two timestamps."
+    },
+    {
+      "nebula_name": "Box3dMake",
+      "sql_token": "BOX3D_MAKE",
+      "meos_call": "box3d_make",
+      "build_generic": true,
+      "input_type": "float_base",
+      "return_kind": "box3d_text_out",
+      "extra_args": [
+        { "kind": "scalar", "cpp": "double" },
+        { "kind": "scalar", "cpp": "double" },
+        { "kind": "scalar", "cpp": "double" },
+        { "kind": "scalar", "cpp": "double" },
+        { "kind": "scalar", "cpp": "double" },
+        { "kind": "scalar", "cpp": "int32_t" }
+      ],
+      "comment_one_liner": "box3d_make (BOX3D *) - a PostGIS BOX3D from its bounds (xmin,xmax,ymin,ymax,zmin,zmax,srid)."
+    },
+    {
+      "nebula_name": "GboxMake",
+      "sql_token": "GBOX_MAKE",
+      "meos_call": "gbox_make",
+      "build_generic": true,
+      "input_type": "bool_base",
+      "return_kind": "gbox_text_out",
+      "extra_args": [
+        { "kind": "scalar", "cpp": "double" },
+        { "kind": "scalar", "cpp": "double" },
+        { "kind": "scalar", "cpp": "double" },
+        { "kind": "scalar", "cpp": "double" },
+        { "kind": "scalar", "cpp": "double" },
+        { "kind": "scalar", "cpp": "double" }
+      ],
+      "comment_one_liner": "gbox_make (GBOX *) - a PostGIS GBOX from hasz and its bounds (xmin,xmax,ymin,ymax,zmin,zmax)."
+    },
+    {
+      "nebula_name": "TcbufferMake",
+      "sql_token": "TCBUFFER_MAKE",
+      "meos_call": "tcbuffer_make",
+      "build_generic": true,
+      "input_type": "wkb_temporal",
+      "return_kind": "wkb",
+      "extra_args": [{ "kind": "wkb_temporal" }],
+      "extra_headers": ["meos_cbuffer.h"],
+      "comment_one_liner": "tcbuffer_make (Temporal *) - a temporal circular buffer from a temporal point and a temporal float radius."
+    },
+    {
+      "nebula_name": "TposeMake",
+      "sql_token": "TPOSE_MAKE",
+      "meos_call": "tpose_make",
+      "build_generic": true,
+      "input_type": "wkb_temporal",
+      "return_kind": "wkb",
+      "extra_args": [{ "kind": "wkb_temporal" }],
+      "extra_headers": ["meos_pose.h"],
+      "comment_one_liner": "tpose_make (Temporal *) - a temporal pose from a temporal point and a temporal float orientation."
+    }
+  ]
+}

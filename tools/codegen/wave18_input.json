@@ -1,0 +1,25 @@
+{
+  "_comment": "wave 18 (box conversions, reverse half): box3d_to_stbox / gbox_to_stbox. PostGIS box text literal in (box3d_in / gbox_in, new in MEOS pin b0742efeed / ecosystem-pin-2026-06-05b), STBox out (stbox_out via stbox_text_out). Completes the box-conversion family started by the forward stbox_to_box3d / stbox_to_gbox of wave 17.",
+  "operators": [
+    {
+      "nebula_name": "Box3dToStbox",
+      "sql_token": "BOX3D_TO_STBOX",
+      "meos_call": "box3d_to_stbox",
+      "build_generic": true,
+      "input_type": "box3d_text",
+      "return_kind": "stbox_text_out",
+      "extra_args": [],
+      "comment_one_liner": "box3d_to_stbox (STBox *) - the spatiotemporal box of a PostGIS BOX3D."
+    },
+    {
+      "nebula_name": "GboxToStbox",
+      "sql_token": "GBOX_TO_STBOX",
+      "meos_call": "gbox_to_stbox",
+      "build_generic": true,
+      "input_type": "gbox_text",
+      "return_kind": "stbox_text_out",
+      "extra_args": [],
+      "comment_one_liner": "gbox_to_stbox (STBox *) - the spatiotemporal box of a PostGIS GBOX."
+    }
+  ]
+}

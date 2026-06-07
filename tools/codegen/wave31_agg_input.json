@@ -1,0 +1,27 @@
+{
+  "_comment": "wave 31 (array-of-temporal serializer): the new tgeoseqarray fold (codegen_aggregations.py) accumulates the window as a CONTINUOUS sequence (parseTemporalPoint builder, like tgeoseqtext) then calls a T**-returning accessor f(temp,&_cnt) and brace-joins each element serialized via temporal_as_hexwkb(elem,0x04 EWKB). Two FRESH-token ops that reuse the proven tgeompoint windowed builder (no new builder needed): temporal_segments (generic, exercised on a point sequence) and tpoint_make_simple. Probed green on v15 (wave31_probe.c): a 3-instant continuous sequence yields temporal_segments cnt=1, tpoint_make_simple cnt=1, both valid EWKB hex. The wired per-event temporal_sequences (token conflict) + the 6 trgeometry windowed accessors (need an x/y/theta pose-sequence builder + geo_tpose_to_trgeometry) are the dedicated follow-up.",
+  "operators": [
+    {
+      "nebula_name": "TemporalSegments",
+      "sql_token": "TEMPORAL_SEGMENTS",
+      "comment_one_liner": "temporal_segments (TSequence **) - the array of maximal segments of the windowed continuous trajectory, each as EWKB hex.",
+      "final_stamp_type": "VARSIZED",
+      "input_shape": "tgeo",
+      "meos_scalar_fn": "",
+      "return_cpp_type": "char",
+      "fold": "tgeoseqarray",
+      "seq_accessor_call": "temporal_segments(static_cast<Temporal*>(temp), &_cnt)"
+    },
+    {
+      "nebula_name": "TpointMakeSimple",
+      "sql_token": "TPOINT_MAKE_SIMPLE",
+      "comment_one_liner": "tpoint_make_simple (Temporal **) - the array of simple (non-self-intersecting) fragments of the windowed point trajectory, each as EWKB hex.",
+      "final_stamp_type": "VARSIZED",
+      "input_shape": "tgeo",
+      "meos_scalar_fn": "",
+      "return_cpp_type": "char",
+      "fold": "tgeoseqarray",
+      "seq_accessor_call": "tpoint_make_simple(static_cast<Temporal*>(temp), &_cnt)"
+    }
+  ]
+}

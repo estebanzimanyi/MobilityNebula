@@ -1,0 +1,38 @@
+{
+  "_comment": "wave 34 (tpose input_shape -> windowed trgeometry sequence accessors): a new FOUR-data-field aggregation shape that collects a window of (x, y, theta, ts) into a CONTINUOUS tpose sequence '[Pose(Point(x y),theta)@ts, ...]', parses it via tpose_in, converts it to a trgeometry via geo_tpose_to_trgeometry(refGeom, poseSeq) (the proven Nebula per-event path: a unit-square reference geometry), then applies a T**-returning trgeometry accessor f(temp, &_cnt) and brace-joins each element serialized via temporal_as_hexwkb(elem, 0x04 EWKB) — identical element loop to the tgeo seqarray fold (waves 31/32). Mirrors input_shape 'tgeo' but with 4 data fields and a 5-arg serde overload. Only the THREE T**-returning array accessors are emitted here. The three single-element accessors (trgeometry_sequence_n -> TSequence* with a scalar int arg, trgeometry_start_sequence / trgeometry_end_sequence -> TSequence*) return a SINGLE temporal, NOT a T** array with a &count out-param, so they cannot reuse the tposeseqarray &_cnt array form (which dereferences arr[_i] and reads _cnt); they need a dedicated 1-element finalize variant and are deferred.",
+  "operators": [
+    {
+      "nebula_name": "TrgeometryInstants",
+      "sql_token": "TRGEOMETRY_INSTANTS",
+      "comment_one_liner": "trgeometry_instants (TInstant **) - the array of instants of the windowed continuous trgeometry, each as EWKB hex.",
+      "final_stamp_type": "VARSIZED",
+      "input_shape": "tpose",
+      "meos_scalar_fn": "",
+      "return_cpp_type": "char",
+      "fold": "tposeseqarray",
+      "seq_accessor_call": "trgeometry_instants(static_cast<Temporal*>(temp), &_cnt)"
+    },
+    {
+      "nebula_name": "TrgeometrySegments",
+      "sql_token": "TRGEOMETRY_SEGMENTS",
+      "comment_one_liner": "trgeometry_segments (TSequence **) - the array of maximal segments of the windowed continuous trgeometry, each as EWKB hex.",
+      "final_stamp_type": "VARSIZED",
+      "input_shape": "tpose",
+      "meos_scalar_fn": "",
+      "return_cpp_type": "char",
+      "fold": "tposeseqarray",
+      "seq_accessor_call": "trgeometry_segments(static_cast<Temporal*>(temp), &_cnt)"
+    },
+    {
+      "nebula_name": "TrgeometrySequences",
+      "sql_token": "TRGEOMETRY_SEQUENCES",
+      "comment_one_liner": "trgeometry_sequences (TSequence **) - the array of sequences of the windowed continuous trgeometry, each as EWKB hex.",
+      "final_stamp_type": "VARSIZED",
+      "input_shape": "tpose",
+      "meos_scalar_fn": "",
+      "return_cpp_type": "char",
+      "fold": "tposeseqarray",
+      "seq_accessor_call": "trgeometry_sequences(static_cast<Temporal*>(temp), &_cnt)"
+    }
+  ]
+}

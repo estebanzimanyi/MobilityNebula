@@ -1,0 +1,15 @@
+{
+  "_comment": "wave 36: tpoint_direction via the tgeo scalar fold + a NEW bool-gated out-param-double finalize (out_param_scalar). The windowed tgeompoint sequence's overall azimuth: tpoint_direction(Temporal*, double* out) returns a validity bool and writes the direction to the out-param; the out-param double is the result (0 when the flag is false). Reuses the proven tgeo windowed builder; only the value_compute differs (no new template). Probe in v17: collinear NE points -> 0.785398 rad (pi/4), ok=1, on both continuous and discrete sequences.",
+  "operators": [
+    {
+      "nebula_name": "TpointDirection",
+      "sql_token": "TPOINT_DIRECTION",
+      "comment_one_liner": "tpoint_direction (double via out-param) - the azimuth/direction of the windowed temporal point.",
+      "final_stamp_type": "FLOAT64",
+      "input_shape": "tgeo",
+      "meos_scalar_fn": "tpoint_direction",
+      "return_cpp_type": "double",
+      "out_param_scalar": true
+    }
+  ]
+}

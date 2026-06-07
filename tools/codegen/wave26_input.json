@@ -1,0 +1,71 @@
+{
+  "_comment": "wave 26 (gap-closing batch 2): completes the date arithmetic family + span-array accessors + the first static-object-literal operator. add_date_int/minus_date_int return a DateADT VALUE serialized via the new date_out value-return kind (VALUE_OUT_RETURNS in codegen_nebula.py). set_spans/spanset_spans (contiguous Span array, span_val) and spanset_spanarr (Span* pointer array, ptr) use the existing array_out machinery over an int set/spanset primary (intspan_out serializer; the function is subtype-agnostic, int chosen to prove it). dwithin_cbuffer_cbuffer is the first operator over the new cbuffer object-literal primary (cbuffer_in) with a second Cbuffer via a box-kind extra and a scalar distance. All symbols probed present in v15 libmeos (CBUFFER/POSE/NPOINT gates on); the gap was a missing generator input-shape, not a compile gate.",
+  "operators": [
+    {
+      "nebula_name": "AddDateInt",
+      "sql_token": "ADD_DATE_INT",
+      "meos_call": "add_date_int",
+      "build_generic": true,
+      "input_type": "date_base",
+      "return_kind": "date_out",
+      "extra_args": [{ "kind": "scalar", "cpp": "int32_t" }],
+      "comment_one_liner": "add_date_int (DateADT) - the date shifted forward by a number of days."
+    },
+    {
+      "nebula_name": "MinusDateInt",
+      "sql_token": "MINUS_DATE_INT",
+      "meos_call": "minus_date_int",
+      "build_generic": true,
+      "input_type": "date_base",
+      "return_kind": "date_out",
+      "extra_args": [{ "kind": "scalar", "cpp": "int32_t" }],
+      "comment_one_liner": "minus_date_int (DateADT) - the date shifted back by a number of days."
+    },
+    {
+      "nebula_name": "SetSpans",
+      "sql_token": "SET_SPANS",
+      "meos_call": "set_spans",
+      "build_generic": true,
+      "input_type": "intset",
+      "return_kind": "array_out",
+      "array_out": { "elem": "Span", "kind": "span_val", "out": "intspan_out" },
+      "extra_args": [],
+      "comment_one_liner": "set_spans (Span *) - the array of singleton spans of a set."
+    },
+    {
+      "nebula_name": "SpansetSpans",
+      "sql_token": "SPANSET_SPANS",
+      "meos_call": "spanset_spans",
+      "build_generic": true,
+      "input_type": "intspanset",
+      "return_kind": "array_out",
+      "array_out": { "elem": "Span", "kind": "span_val", "out": "intspan_out" },
+      "extra_args": [],
+      "comment_one_liner": "spanset_spans (Span *) - the array of spans of a span set."
+    },
+    {
+      "nebula_name": "SpansetSpanarr",
+      "sql_token": "SPANSET_SPANARR",
+      "meos_call": "spanset_spanarr",
+      "build_generic": true,
+      "input_type": "intspanset",
+      "return_kind": "array_out",
+      "array_out": { "elem": "Span *", "kind": "ptr", "out": "intspan_out" },
+      "extra_args": [],
+      "comment_one_liner": "spanset_spanarr (Span **) - the array of span pointers of a span set."
+    },
+    {
+      "nebula_name": "DwithinCbufferCbuffer",
+      "sql_token": "DWITHIN_CBUFFER_CBUFFER",
+      "meos_call": "dwithin_cbuffer_cbuffer",
+      "build_generic": true,
+      "input_type": "cbuffer",
+      "return_kind": "int",
+      "extra_args": [
+        { "kind": "box", "parser": "cbuffer_in", "box_type": "Cbuffer", "header": "meos_cbuffer.h" },
+        { "kind": "scalar", "cpp": "double" }
+      ],
+      "comment_one_liner": "dwithin_cbuffer_cbuffer (int) - whether two circular buffers are within a distance."
+    }
+  ]
+}

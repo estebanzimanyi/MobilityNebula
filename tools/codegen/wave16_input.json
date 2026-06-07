@@ -1,0 +1,50 @@
+{
+  "_comment": "wave 16 (array constructors, batch 1: numeric value-sets). Windowed aggregations that collect the window's scalar values into a C array and call *_make(arr,count) at finalize. fold=arraymake, input_shape=tnumber.",
+  "operators": [
+    {
+      "nebula_name": "FloatsetMake", "sql_token": "FLOATSET_MAKE",
+      "comment_one_liner": "floatset_make (Set *) - the float set collected from a window of float values.",
+      "final_stamp_type": "VARSIZED", "input_shape": "tnumber", "meos_scalar_fn": "",
+      "return_cpp_type": "double", "fold": "arraymake",
+      "fold_field_cpp_type": "double", "elem_cpp": "double",
+      "make_fn": "floatset_make", "make_ret_type": "Set", "set_out_call": "floatset_out(s, 15)",
+      "lift_value_cpp_type": "double", "tnumber_in_fn": "tfloat_in"
+    },
+    {
+      "nebula_name": "IntsetMake", "sql_token": "INTSET_MAKE",
+      "comment_one_liner": "intset_make (Set *) - the integer set collected from a window of int values.",
+      "final_stamp_type": "VARSIZED", "input_shape": "tnumber", "meos_scalar_fn": "",
+      "return_cpp_type": "double", "fold": "arraymake",
+      "fold_field_cpp_type": "int32_t", "elem_cpp": "int",
+      "make_fn": "intset_make", "make_ret_type": "Set", "set_out_call": "intset_out(s)",
+      "lift_value_cpp_type": "int32_t", "tnumber_in_fn": "tint_in"
+    },
+    {
+      "nebula_name": "BigintsetMake", "sql_token": "BIGINTSET_MAKE",
+      "comment_one_liner": "bigintset_make (Set *) - the bigint set collected from a window of bigint values.",
+      "final_stamp_type": "VARSIZED", "input_shape": "tnumber", "meos_scalar_fn": "",
+      "return_cpp_type": "double", "fold": "arraymake",
+      "fold_field_cpp_type": "int64_t", "elem_cpp": "int64",
+      "make_fn": "bigintset_make", "make_ret_type": "Set", "set_out_call": "bigintset_out(s)",
+      "lift_value_cpp_type": "int64_t", "tnumber_in_fn": "tint_in"
+    },
+    {
+      "nebula_name": "DatesetMake", "sql_token": "DATESET_MAKE",
+      "comment_one_liner": "dateset_make (Set *) - the date set collected from a window of date values.",
+      "final_stamp_type": "VARSIZED", "input_shape": "tnumber", "meos_scalar_fn": "",
+      "return_cpp_type": "double", "fold": "arraymake",
+      "fold_field_cpp_type": "int32_t", "elem_cpp": "DateADT",
+      "make_fn": "dateset_make", "make_ret_type": "Set", "set_out_call": "dateset_out(s)",
+      "lift_value_cpp_type": "int32_t", "tnumber_in_fn": "tint_in"
+    },
+    {
+      "nebula_name": "TstzsetMake", "sql_token": "TSTZSET_MAKE",
+      "comment_one_liner": "tstzset_make (Set *) - the timestamptz set collected from a window of timestamp values.",
+      "final_stamp_type": "VARSIZED", "input_shape": "tnumber", "meos_scalar_fn": "",
+      "return_cpp_type": "double", "fold": "arraymake",
+      "fold_field_cpp_type": "int64_t", "elem_cpp": "TimestampTz",
+      "make_fn": "tstzset_make", "make_ret_type": "Set", "set_out_call": "tstzset_out(s)",
+      "lift_value_cpp_type": "int64_t", "tnumber_in_fn": "tint_in"
+    }
+  ]
+}

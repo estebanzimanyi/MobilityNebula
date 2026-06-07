@@ -1,0 +1,44 @@
+{
+  "operators": [
+    {
+      "nebula_name": "TrgeometrySequenceN",
+      "sql_token": "TRGEOMETRY_SEQUENCE_N",
+      "input_shape": "tpose",
+      "fold": "tposetransform",
+      "meos_scalar_fn": "trgeometry_sequence_n",
+      "return_cpp_type": "char*",
+      "final_stamp_type": "VARSIZED",
+      "comment_one_liner": "Windowed tpose -> trgeometry, then the n-th sequence (trgeometry_sequence_n) as hex-WKB.",
+      "const_args": [
+        {"kind": "int"}
+      ]
+    },
+    {
+      "nebula_name": "TrgeometryRestrictValues",
+      "sql_token": "TRGEOMETRY_RESTRICT_VALUES",
+      "input_shape": "tpose",
+      "fold": "tposetransform",
+      "meos_scalar_fn": "trgeometry_restrict_values",
+      "return_cpp_type": "char*",
+      "final_stamp_type": "VARSIZED",
+      "comment_one_liner": "Windowed tpose -> trgeometry, restricted to/minus a geometry value set (trgeometry_restrict_values) as hex-WKB.",
+      "const_args": [
+        {"kind": "set", "set_in_fn": "geomset_in"},
+        {"kind": "bool"}
+      ]
+    },
+    {
+      "nebula_name": "TrgeometrySetInterp",
+      "sql_token": "TRGEOMETRY_SET_INTERP",
+      "input_shape": "tpose",
+      "fold": "tposetransform",
+      "meos_scalar_fn": "trgeometry_set_interp",
+      "return_cpp_type": "char*",
+      "final_stamp_type": "VARSIZED",
+      "comment_one_liner": "Windowed tpose -> trgeometry, with its interpolation set (trgeometry_set_interp) as hex-WKB.",
+      "const_args": [
+        {"kind": "interptype"}
+      ]
+    }
+  ]
+}

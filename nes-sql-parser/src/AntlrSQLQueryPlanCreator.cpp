@@ -234,6 +234,9 @@
 #if RGEO
 #include <Operators/Windows/Aggregations/Meos/TrgeometrySetInterpAggregationLogicalFunction.hpp>
 #endif /* RGEO */
+#include <Operators/Windows/Aggregations/Meos/TemporalMergeArrayAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/SpansetMakeAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TsequencesetMakeGapsAggregationLogicalFunction.hpp>
 #include <Functions/Meos/TemporalIntersectsGeometryLogicalFunction.hpp>
 #include <Functions/Meos/AintersectsTgeoGeoLogicalFunction.hpp>
 #include <Functions/Meos/EdwithinTgeoGeoLogicalFunction.hpp>
@@ -59869,6 +59872,81 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             break;
         /* END CODEGEN GLUE: TRGEOMETRY_SET_INTERP (case-switch) */
 #endif /* RGEO */
+        /* BEGIN CODEGEN GLUE: TEMPORAL_MERGE_ARRAY (case-switch) */
+        case AntlrSQLLexer::TEMPORAL_MERGE_ARRAY:
+            // temporal_merge_array (Temporal *) - the temporal merged from a window of temporal values (hex-WKB).
+            if (helpers.top().functionBuilder.size() != 2) {
+                throw InvalidQuerySyntax("TEMPORAL_MERGE_ARRAY requires exactly two arguments (value, timestamp), but got {}", helpers.top().functionBuilder.size());
+            }
+            {
+                const auto timestampFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto valueFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+
+                if (!valueFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
+                    throw InvalidQuerySyntax("TEMPORAL_MERGE_ARRAY arguments must be field references");
+                }
+
+                helpers.top().windowAggs.push_back(
+                    TemporalMergeArrayAggregationLogicalFunction::create(valueFunction.get<FieldAccessLogicalFunction>(),
+                                                                    timestampFunction.get<FieldAccessLogicalFunction>()));
+                helpers.top().functionBuilder.push_back(valueFunction);
+            }
+            break;
+        /* END CODEGEN GLUE: TEMPORAL_MERGE_ARRAY (case-switch) */
+
+        /* BEGIN CODEGEN GLUE: SPANSET_MAKE (case-switch) */
+        case AntlrSQLLexer::SPANSET_MAKE:
+            // spanset_make (SpanSet *) - the span set built from a window of span values.
+            if (helpers.top().functionBuilder.size() != 2) {
+                throw InvalidQuerySyntax("SPANSET_MAKE requires exactly two arguments (value, timestamp), but got {}", helpers.top().functionBuilder.size());
+            }
+            {
+                const auto timestampFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto valueFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+
+                if (!valueFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
+                    throw InvalidQuerySyntax("SPANSET_MAKE arguments must be field references");
+                }
+
+                helpers.top().windowAggs.push_back(
+                    SpansetMakeAggregationLogicalFunction::create(valueFunction.get<FieldAccessLogicalFunction>(),
+                                                                    timestampFunction.get<FieldAccessLogicalFunction>()));
+                helpers.top().functionBuilder.push_back(valueFunction);
+            }
+            break;
+        /* END CODEGEN GLUE: SPANSET_MAKE (case-switch) */
+
+        /* BEGIN CODEGEN GLUE: TSEQUENCESET_MAKE_GAPS (case-switch) */
+        case AntlrSQLLexer::TSEQUENCESET_MAKE_GAPS:
+            // tsequenceset_make_gaps (TSequenceSet *) - the gap-aware sequence set built from a window of temporal-instant values (hex-WKB).
+            if (helpers.top().functionBuilder.size() != 2) {
+                throw InvalidQuerySyntax("TSEQUENCESET_MAKE_GAPS requires exactly two arguments (value, timestamp), but got {}", helpers.top().functionBuilder.size());
+            }
+            {
+                const auto timestampFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto valueFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+
+                if (!valueFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
+                    throw InvalidQuerySyntax("TSEQUENCESET_MAKE_GAPS arguments must be field references");
+                }
+
+                helpers.top().windowAggs.push_back(
+                    TsequencesetMakeGapsAggregationLogicalFunction::create(valueFunction.get<FieldAccessLogicalFunction>(),
+                                                                    timestampFunction.get<FieldAccessLogicalFunction>()));
+                helpers.top().functionBuilder.push_back(valueFunction);
+            }
+            break;
+        /* END CODEGEN GLUE: TSEQUENCESET_MAKE_GAPS (case-switch) */
+
 
 
 
@@ -62065,6 +62143,51 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             }
             /* END CODEGEN GLUE: TRGEOMETRY_SET_INTERP (funcName chain) */
 #endif /* RGEO */
+            /* BEGIN CODEGEN GLUE: TEMPORAL_MERGE_ARRAY (funcName chain) */
+            else if (funcName == "TEMPORAL_MERGE_ARRAY")
+            {
+                if (helpers.top().functionBuilder.size() < 2)
+                {
+                    throw InvalidQuerySyntax("TEMPORAL_MERGE_ARRAY requires two arguments at {}", context->getText());
+                }
+                const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto value = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                helpers.top().windowAggs.push_back(TemporalMergeArrayAggregationLogicalFunction::create(value, ts));
+            }
+            /* END CODEGEN GLUE: TEMPORAL_MERGE_ARRAY (funcName chain) */
+
+            /* BEGIN CODEGEN GLUE: SPANSET_MAKE (funcName chain) */
+            else if (funcName == "SPANSET_MAKE")
+            {
+                if (helpers.top().functionBuilder.size() < 2)
+                {
+                    throw InvalidQuerySyntax("SPANSET_MAKE requires two arguments at {}", context->getText());
+                }
+                const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto value = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                helpers.top().windowAggs.push_back(SpansetMakeAggregationLogicalFunction::create(value, ts));
+            }
+            /* END CODEGEN GLUE: SPANSET_MAKE (funcName chain) */
+
+            /* BEGIN CODEGEN GLUE: TSEQUENCESET_MAKE_GAPS (funcName chain) */
+            else if (funcName == "TSEQUENCESET_MAKE_GAPS")
+            {
+                if (helpers.top().functionBuilder.size() < 2)
+                {
+                    throw InvalidQuerySyntax("TSEQUENCESET_MAKE_GAPS requires two arguments at {}", context->getText());
+                }
+                const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto value = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                helpers.top().windowAggs.push_back(TsequencesetMakeGapsAggregationLogicalFunction::create(value, ts));
+            }
+            /* END CODEGEN GLUE: TSEQUENCESET_MAKE_GAPS (funcName chain) */
+
 
 
 

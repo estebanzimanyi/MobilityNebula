@@ -218,6 +218,12 @@
 #endif
 #if RGEO
 #include <Aggregation/Function/Meos/Rgeo/TrgeometrySetInterpAggregationPhysicalFunction.hpp>
+#include <Aggregation/Function/Meos/TemporalMergeArrayAggregationPhysicalFunction.hpp>
+#include <Aggregation/Function/Meos/SpansetMakeAggregationPhysicalFunction.hpp>
+#include <Aggregation/Function/Meos/TsequencesetMakeGapsAggregationPhysicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TemporalMergeArrayAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/SpansetMakeAggregationLogicalFunction.hpp>
+#include <Operators/Windows/Aggregations/Meos/TsequencesetMakeGapsAggregationLogicalFunction.hpp>
 #endif
 #include <Operators/Windows/Aggregations/Meos/TrgeometrySequenceNAggregationLogicalFunction.hpp>
 #include <Operators/Windows/Aggregations/Meos/TrgeometryRestrictValuesAggregationLogicalFunction.hpp>
@@ -3987,6 +3993,84 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
             continue;
         }
         /* END CODEGEN GLUE: TrgeometrySetInterp (optimizer lowering) */
+        /* BEGIN CODEGEN GLUE: TemporalMergeArray (optimizer lowering) */
+        if (name == std::string_view("TemporalMergeArray"))
+        {
+            auto specificDescriptor = std::dynamic_pointer_cast<TemporalMergeArrayAggregationLogicalFunction>(descriptor);
+            INVARIANT(specificDescriptor != nullptr, "Expected TemporalMergeArrayAggregationLogicalFunction for TemporalMergeArray");
+
+            auto valuePF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getValueField());
+            auto tsPF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getTimestampField());
+
+            Schema stateSchema;
+            stateSchema.addField("value", specificDescriptor->getValueField().getDataType());
+            stateSchema.addField("timestamp", specificDescriptor->getTimestampField().getDataType());
+            auto tupleBufferRef = Interface::BufferRef::TupleBufferRef::create(configuration.pageSize.getValue(), stateSchema);
+
+            auto phys = std::make_shared<TemporalMergeArrayAggregationPhysicalFunction>(
+                std::move(physicalInputType),
+                std::move(physicalFinalType),
+                valuePF,
+                tsPF,
+                resultFieldIdentifier,
+                tupleBufferRef);
+            aggregationPhysicalFunctions.push_back(std::move(phys));
+            continue;
+        }
+        /* END CODEGEN GLUE: TemporalMergeArray (optimizer lowering) */
+
+        /* BEGIN CODEGEN GLUE: SpansetMake (optimizer lowering) */
+        if (name == std::string_view("SpansetMake"))
+        {
+            auto specificDescriptor = std::dynamic_pointer_cast<SpansetMakeAggregationLogicalFunction>(descriptor);
+            INVARIANT(specificDescriptor != nullptr, "Expected SpansetMakeAggregationLogicalFunction for SpansetMake");
+
+            auto valuePF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getValueField());
+            auto tsPF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getTimestampField());
+
+            Schema stateSchema;
+            stateSchema.addField("value", specificDescriptor->getValueField().getDataType());
+            stateSchema.addField("timestamp", specificDescriptor->getTimestampField().getDataType());
+            auto tupleBufferRef = Interface::BufferRef::TupleBufferRef::create(configuration.pageSize.getValue(), stateSchema);
+
+            auto phys = std::make_shared<SpansetMakeAggregationPhysicalFunction>(
+                std::move(physicalInputType),
+                std::move(physicalFinalType),
+                valuePF,
+                tsPF,
+                resultFieldIdentifier,
+                tupleBufferRef);
+            aggregationPhysicalFunctions.push_back(std::move(phys));
+            continue;
+        }
+        /* END CODEGEN GLUE: SpansetMake (optimizer lowering) */
+
+        /* BEGIN CODEGEN GLUE: TsequencesetMakeGaps (optimizer lowering) */
+        if (name == std::string_view("TsequencesetMakeGaps"))
+        {
+            auto specificDescriptor = std::dynamic_pointer_cast<TsequencesetMakeGapsAggregationLogicalFunction>(descriptor);
+            INVARIANT(specificDescriptor != nullptr, "Expected TsequencesetMakeGapsAggregationLogicalFunction for TsequencesetMakeGaps");
+
+            auto valuePF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getValueField());
+            auto tsPF = QueryCompilation::FunctionProvider::lowerFunction(specificDescriptor->getTimestampField());
+
+            Schema stateSchema;
+            stateSchema.addField("value", specificDescriptor->getValueField().getDataType());
+            stateSchema.addField("timestamp", specificDescriptor->getTimestampField().getDataType());
+            auto tupleBufferRef = Interface::BufferRef::TupleBufferRef::create(configuration.pageSize.getValue(), stateSchema);
+
+            auto phys = std::make_shared<TsequencesetMakeGapsAggregationPhysicalFunction>(
+                std::move(physicalInputType),
+                std::move(physicalFinalType),
+                valuePF,
+                tsPF,
+                resultFieldIdentifier,
+                tupleBufferRef);
+            aggregationPhysicalFunctions.push_back(std::move(phys));
+            continue;
+        }
+        /* END CODEGEN GLUE: TsequencesetMakeGaps (optimizer lowering) */
+
 
 #endif
 

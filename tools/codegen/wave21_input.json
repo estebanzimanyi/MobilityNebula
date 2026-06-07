@@ -1,0 +1,33 @@
+{
+  "_comment": "wave 21 (catalog type-reflection, batch 2): the now-public meos_catalog.h enum-argument reflection functions the Spark binding requested. Five MeosType->bool predicates and four enum->name accessors (const_char_out). Enum operand = an INT32 cast to the catalog enum (meostype_base/meosoper_base/tempsubtype_base/interptype_base); geo_typename takes a plain int.",
+  "operators": [
+    { "nebula_name": "GeoBasetype", "sql_token": "GEO_BASETYPE", "meos_call": "geo_basetype",
+      "build_generic": true, "input_type": "meostype_base", "return_kind": "bool", "extra_args": [],
+      "comment_one_liner": "geo_basetype (bool) - whether a MEOS base type is a geo type." },
+    { "nebula_name": "BasetypeByvalue", "sql_token": "BASETYPE_BYVALUE", "meos_call": "basetype_byvalue",
+      "build_generic": true, "input_type": "meostype_base", "return_kind": "bool", "extra_args": [],
+      "comment_one_liner": "basetype_byvalue (bool) - whether a MEOS base type is passed by value." },
+    { "nebula_name": "BasetypeVarlength", "sql_token": "BASETYPE_VARLENGTH", "meos_call": "basetype_varlength",
+      "build_generic": true, "input_type": "meostype_base", "return_kind": "bool", "extra_args": [],
+      "comment_one_liner": "basetype_varlength (bool) - whether a MEOS base type is variable-length." },
+    { "nebula_name": "SpatialBasetype", "sql_token": "SPATIAL_BASETYPE", "meos_call": "spatial_basetype",
+      "build_generic": true, "input_type": "meostype_base", "return_kind": "bool", "extra_args": [],
+      "comment_one_liner": "spatial_basetype (bool) - whether a MEOS base type is a spatial type." },
+    { "nebula_name": "TypeSpanBbox", "sql_token": "TYPE_SPAN_BBOX", "meos_call": "type_span_bbox",
+      "build_generic": true, "input_type": "meostype_base", "return_kind": "bool", "extra_args": [],
+      "comment_one_liner": "type_span_bbox (bool) - whether a MEOS type has a span bounding box." },
+    { "nebula_name": "MeosoperName", "sql_token": "MEOSOPER_NAME", "meos_call": "meosoper_name",
+      "build_generic": true, "input_type": "meosoper_base", "return_kind": "const_char_out", "extra_args": [],
+      "comment_one_liner": "meosoper_name (const char *) - the name of a MEOS operator." },
+    { "nebula_name": "GeoTypename", "sql_token": "GEO_TYPENAME", "meos_call": "geo_typename",
+      "build_generic": true, "input_type": "int_base", "return_kind": "const_char_out", "extra_args": [],
+      "extra_headers": ["meos_geo.h"],
+      "comment_one_liner": "geo_typename (const char *) - the name of a geo type tag." },
+    { "nebula_name": "TempsubtypeName", "sql_token": "TEMPSUBTYPE_NAME", "meos_call": "tempsubtype_name",
+      "build_generic": true, "input_type": "tempsubtype_base", "return_kind": "const_char_out", "extra_args": [],
+      "comment_one_liner": "tempsubtype_name (const char *) - the name of a temporal subtype." },
+    { "nebula_name": "InterptypeName", "sql_token": "INTERPTYPE_NAME", "meos_call": "interptype_name",
+      "build_generic": true, "input_type": "interptype_base", "return_kind": "const_char_out", "extra_args": [],
+      "comment_one_liner": "interptype_name (const char *) - the name of an interpolation type." }
+  ]
+}

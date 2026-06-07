@@ -3423,6 +3423,119 @@ PHYSICAL_CPP_OBJ_ARRAYMAKE = _swap_once(
     PHYSICAL_CPP_ARRAYMAKE, _ARRAYMAKE_FOLD_AND_SERIALIZE, _OBJ_ARRAYMAKE_FOLD_AND_SERIALIZE,
     "arraymake numeric collect -> object-pointer collect (*_in parse + *set_make)")
 
+# ---------------------------------------------------------------------------
+# objarraymake variants that build a *Temporal* (not a Set) and serialize it as
+# hex-WKB. Two flavours share the same collect loop (a {elem_cpp}*[] pointer
+# array parsed via {elem_in}) and differ only in the make call:
+#   * "tempmergearray": make takes (arr, count) only        (temporal_merge_array)
+#   * "tseqsetmakegaps": make takes (arr, count) + the FIXED trailing args baked
+#     into the finalize via {make_extra_args} (interp, maxt interval, maxdist)
+# The serialize tail is the proven temporal_as_hexwkb(res, 0x04, &sz) form, not a
+# *_out, because the result is a Temporal*/TSequenceSet* (a temporal value).
+# Only the make+serialize lambda is swapped; the collect loop is reused verbatim.
+_OBJ_ARRAYMAKE_MAKE_LINE = """\
+            {make_ret_type}* s = {make_fn}(({make_arg_type}) a, (int) n);
+            for (int64_t i = 0; i < n; i++) {{ free((({elem_cpp}**) a)[i]); }}
+            free(a);
+            if (!s) {{ return (char*)nullptr; }}
+            char* out = {set_out_call};
+            free(s);
+            return out;"""
+
+_TEMPMERGEARRAY_MAKE_LINE = """\
+            Temporal* s = {make_fn}(({make_arg_type}) a, (int) n);
+            for (int64_t i = 0; i < n; i++) {{ free((({elem_cpp}**) a)[i]); }}
+            free(a);
+            if (!s) {{ return (char*)nullptr; }}
+            size_t hexSize = 0;
+            char* out = temporal_as_hexwkb(s, 0x04 /* WKB_EXTENDED */, &hexSize);
+            free(s);
+            return out;"""
+
+_TSEQSETMAKEGAPS_MAKE_LINE = """\
+            Interval* maxt = interval_in("{gaps_maxt}", -1);
+            Temporal* s = (Temporal*) {make_fn}(({make_arg_type}) a, (int) n, {gaps_interp}, maxt, {gaps_maxdist});
+            for (int64_t i = 0; i < n; i++) {{ free((({elem_cpp}**) a)[i]); }}
+            free(a);
+            free(maxt);
+            if (!s) {{ return (char*)nullptr; }}
+            size_t hexSize = 0;
+            char* out = temporal_as_hexwkb(s, 0x04 /* WKB_EXTENDED */, &hexSize);
+            free(s);
+            return out;"""
+
+PHYSICAL_CPP_TEMPMERGEARRAY = _swap_once(
+    PHYSICAL_CPP_OBJ_ARRAYMAKE, _OBJ_ARRAYMAKE_MAKE_LINE, _TEMPMERGEARRAY_MAKE_LINE,
+    "objarraymake set tail -> temporal_merge_array hex tail")
+
+PHYSICAL_CPP_TSEQSETMAKEGAPS = _swap_once(
+    PHYSICAL_CPP_OBJ_ARRAYMAKE, _OBJ_ARRAYMAKE_MAKE_LINE, _TSEQSETMAKEGAPS_MAKE_LINE,
+    "objarraymake set tail -> tsequenceset_make_gaps hex tail (fixed trailing args)")
+
+# ---------------------------------------------------------------------------
+# By-value array constructor (fold "spansetmake"): unlike objarraymake (a pointer
+# array), {make_fn} expects a CONTIGUOUS {elem_cpp} value array. Parse each
+# event's VARSIZED span literal via {elem_in} into a heap {elem_cpp}*, memcpy the
+# value into arr[i], and free the parsed heap span immediately (the array owns a
+# copy). At finalize call {make_fn}((({elem_cpp}*) a), count) and serialize via
+# {set_out_call}; there is NO per-element free loop (values are inline) — only the
+# array and the result are freed. Derived from objarraymake by swapping the array
+# allocation, the per-event store, and the make+serialize lambda.
+_SPANSETMAKE_FOLD_AND_SERIALIZE = """\
+    // Collect the windowed span literals into a CONTIGUOUS {elem_cpp} value array:
+    // parse each via {elem_in} into a heap {elem_cpp}*, memcpy it into arr[i], and
+    // free the parsed heap span. At finalize build the result via {make_fn} over
+    // the value array, serialize via {set_out_call}, then free the array + result.
+    auto arrState = nautilus::invoke(
+        +[](size_t n) -> void* {{ return malloc(sizeof({elem_cpp}) * (n > 0 ? n : 1)); }},
+        numberOfEntries);
+
+    auto arrIdx = nautilus::val<int64_t>(0);
+    const auto endIt = pagedVectorRef.end(allFieldNames);
+    for (auto candidateIt = pagedVectorRef.begin(allFieldNames); candidateIt != endIt; ++candidateIt)
+    {{
+        const auto itemRecord = *candidateIt;
+        const auto valueRaw = itemRecord.read(std::string(ValueFieldName));
+        auto valVar = valueRaw.cast<VariableSizedData>();
+
+        arrIdx = nautilus::invoke(
+            +[](void* a, int64_t i, const char* vp, uint32_t vs) -> int64_t
+            {{
+                MEOS::Meos::ensureMeosInitialized();
+                std::lock_guard<std::mutex> lock({mutex_name});
+                std::string s(vp, vs);
+                while (!s.empty() && (s.front()=='\\'' || s.front()=='"')) s.erase(s.begin());
+                while (!s.empty() && (s.back()=='\\'' || s.back()=='"')) s.pop_back();
+                {elem_cpp}* e = {elem_in}(s.c_str(){elem_in_extra});
+                if (e) {{ (({elem_cpp}*) a)[i] = *e; free(e); return i + 1; }}
+                return i;
+            }},
+            arrState,
+            arrIdx,
+            valVar.getContent(),
+            valVar.getContentSize());
+    }}
+
+    auto boxStr = nautilus::invoke(
+        +[](void* a, int64_t n) -> char*
+        {{
+            MEOS::Meos::ensureMeosInitialized();
+            std::lock_guard<std::mutex> lock({mutex_name});
+            if (n <= 0) {{ free(a); return (char*)nullptr; }}
+            {make_ret_type}* s = {make_fn}(({elem_cpp}*) a, (int) n);
+            free(a);
+            if (!s) {{ return (char*)nullptr; }}
+            char* out = {set_out_call};
+            free(s);
+            return out;
+        }},
+        arrState,
+        arrIdx);"""
+
+PHYSICAL_CPP_SPANSETMAKE = _swap_once(
+    PHYSICAL_CPP_OBJ_ARRAYMAKE, _OBJ_ARRAYMAKE_FOLD_AND_SERIALIZE, _SPANSETMAKE_FOLD_AND_SERIALIZE,
+    "objarraymake pointer-array collect -> contiguous value-array collect (spanset_make)")
+
 # ===========================================================================
 # Temporal-aggregate template (windowed tMin/tMax/tSum/tAnd/tOr/tAvg -> Temporal,
 # serialized as hex-WKB). Reuses the scalar-fold PagedVector scaffold (lift =
@@ -4635,6 +4748,12 @@ def physical_template_for(op):
             return PHYSICAL_HPP_TNUMBER, PHYSICAL_CPP_ARRAYMAKE
         if op.get("fold") == "objarraymake":
             return PHYSICAL_HPP_TNUMBER, PHYSICAL_CPP_OBJ_ARRAYMAKE
+        if op.get("fold") == "tempmergearray":
+            return PHYSICAL_HPP_TNUMBER, PHYSICAL_CPP_TEMPMERGEARRAY
+        if op.get("fold") == "tseqsetmakegaps":
+            return PHYSICAL_HPP_TNUMBER, PHYSICAL_CPP_TSEQSETMAKEGAPS
+        if op.get("fold") == "spansetmake":
+            return PHYSICAL_HPP_TNUMBER, PHYSICAL_CPP_SPANSETMAKE
         if op.get("fold") == "container":
             return PHYSICAL_HPP_TNUMBER, PHYSICAL_CPP_CONTAINER_FOLD
         if op.get("fold") == "tagg":
@@ -4760,6 +4879,13 @@ def emit_operator(op, output_root: Path):
         "elem_in":                  op.get("elem_in", ""),
         "elem_in_extra":            op.get("elem_in_extra", ""),
         "make_arg_type":            op.get("make_arg_type", op.get("elem_cpp", "void") + " **"),
+        # tseqsetmakegaps (fold=tseqsetmakegaps) extras: the FIXED trailing make
+        # args baked into the finalize — gap interpolation, the max-time interval
+        # literal (parsed via interval_in), and the max spatial distance. These are
+        # constants for the op, not user arguments.
+        "gaps_interp":              op.get("gaps_interp", "LINEAR"),
+        "gaps_maxt":                op.get("gaps_maxt", "1 hour"),
+        "gaps_maxdist":             op.get("gaps_maxdist", "0.0"),
     }
 
     # Parameterized-transform (fold=tgeotransform) const-arg fragments: the per-const

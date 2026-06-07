@@ -1,0 +1,80 @@
+{
+  "_comment": "wave 29 (gap-closing batch 5): base+temporal constructors, geometry array accessors, a spanset accessor, and the tcbuffer radius set. tpoint_from_base_temp / tgeo_from_base_temp take a geometry primary and a temporal extra (wkb_temporal), returning a Temporal* via temporal_wkb. geo_pointarr / geo_stboxes return heap arrays over the existing array_out machinery (ptr for GSERIALIZED**, span_val for the contiguous STBox*). spanset_span_n returns the i-th span (intspan_text). tcbuffer_radius returns the radius Set (floatset_text) \u2014 on the v15 pin it returns a Set (the earlier v11-lineage tfloat drift is gone). All probed green against v15.",
+  "operators": [
+    {
+      "nebula_name": "TpointFromBaseTemp",
+      "sql_token": "TPOINT_FROM_BASE_TEMP",
+      "meos_call": "tpoint_from_base_temp",
+      "build_generic": true,
+      "input_type": "geom",
+      "return_kind": "temporal_wkb",
+      "extra_args": [
+        {
+          "kind": "wkb_temporal"
+        }
+      ],
+      "comment_one_liner": "tpoint_from_base_temp (Temporal *) - a temporal point from a geometry and a temporal's time frame."
+    },
+    {
+      "nebula_name": "TgeoFromBaseTemp",
+      "sql_token": "TGEO_FROM_BASE_TEMP",
+      "meos_call": "tgeo_from_base_temp",
+      "build_generic": true,
+      "input_type": "geom",
+      "return_kind": "temporal_wkb",
+      "extra_args": [
+        {
+          "kind": "wkb_temporal"
+        }
+      ],
+      "comment_one_liner": "tgeo_from_base_temp (Temporal *) - a temporal geo from a geometry and a temporal's time frame."
+    },
+    {
+      "nebula_name": "GeoPointarr",
+      "sql_token": "GEO_POINTARR",
+      "meos_call": "geo_pointarr",
+      "build_generic": true,
+      "input_type": "geom",
+      "return_kind": "array_out",
+      "array_out": {
+        "elem": "GSERIALIZED *",
+        "kind": "ptr",
+        "out": "geo_out",
+        "header": "meos_geo.h"
+      },
+      "extra_args": [],
+      "comment_one_liner": "geo_pointarr (GSERIALIZED **) - the array of points of a geometry."
+    },
+    {
+      "nebula_name": "GeoStboxes",
+      "sql_token": "GEO_STBOXES",
+      "meos_call": "geo_stboxes",
+      "build_generic": true,
+      "input_type": "geom",
+      "return_kind": "array_out",
+      "array_out": {
+        "elem": "STBox",
+        "kind": "span_val",
+        "out": "stbox_out",
+        "maxdd": true
+      },
+      "extra_args": [],
+      "comment_one_liner": "geo_stboxes (STBox *) - the array of spatiotemporal boxes of a (multi)line geometry."
+    },
+    {
+      "nebula_name": "SpansetSpanN",
+      "sql_token": "SPANSET_SPAN_N",
+      "meos_call": "spanset_span_n",
+      "build_generic": true,
+      "input_type": "intspanset",
+      "return_kind": "intspan_text",
+      "extra_args": [
+        {
+          "kind": "scalar",
+          "cpp": "int32_t"
+        }
+      ],
+      "comment_one_liner": "spanset_span_n (Span *) - the n-th span of a span set."
+    }
+  ]
+}

@@ -1,0 +1,68 @@
+{
+  "_comment": "wave 14b: codegen-supported per-event ops over text/textset/tbool/tcbuffer/stbox/tbox primaries. All use build_generic with registered input_types + supported return_kinds + scalar/text extra-args.",
+  "operators": [
+    {
+      "nebula_name": "TextcatTextText", "sql_token": "TEXTCAT_TEXT_TEXT",
+      "meos_call": "textcat_text_text", "build_generic": true,
+      "input_type": "text", "return_kind": "text_value_out",
+      "extra_args": [{ "kind": "text" }],
+      "comment_one_liner": "textcat_text_text (text *) - concatenation of two text values."
+    },
+    {
+      "nebula_name": "TextcatTextsetText", "sql_token": "TEXTCAT_TEXTSET_TEXT",
+      "meos_call": "textcat_textset_text", "build_generic": true,
+      "input_type": "textset", "return_kind": "textset_text",
+      "extra_args": [{ "kind": "text" }],
+      "comment_one_liner": "textcat_textset_text (Set *) - concatenate a text value onto every element of a text set."
+    },
+    {
+      "nebula_name": "TextToSet", "sql_token": "TEXT_TO_SET",
+      "meos_call": "text_to_set", "build_generic": true,
+      "input_type": "text", "return_kind": "textset_text",
+      "extra_args": [],
+      "comment_one_liner": "text_to_set (Set *) - singleton text set from a text value."
+    },
+    {
+      "nebula_name": "TboolWhenTrue", "sql_token": "TBOOL_WHEN_TRUE",
+      "meos_call": "tbool_when_true", "build_generic": true,
+      "input_type": "tbool", "return_kind": "tstzspanset_text",
+      "extra_args": [],
+      "comment_one_liner": "tbool_when_true (SpanSet *) - the time spans when a temporal boolean is true."
+    },
+    {
+      "nebula_name": "TcbufferRadius", "sql_token": "TCBUFFER_RADIUS",
+      "meos_call": "tcbuffer_radius", "build_generic": true,
+      "input_type": "tcbuffer", "return_kind": "floatset_text",
+      "extra_args": [],
+      "comment_one_liner": "tcbuffer_radius (Set *) - the set of radius values of a temporal circular buffer."
+    },
+    {
+      "nebula_name": "TcbufferExpand", "sql_token": "TCBUFFER_EXPAND",
+      "meos_call": "tcbuffer_expand", "build_generic": true,
+      "input_type": "tcbuffer", "return_kind": "tspatial_text",
+      "extra_args": [{ "kind": "scalar", "cpp": "double" }],
+      "comment_one_liner": "tcbuffer_expand (Temporal *) - expand a temporal circular buffer by a distance."
+    },
+    {
+      "nebula_name": "StboxExpandSpace", "sql_token": "STBOX_EXPAND_SPACE",
+      "meos_call": "stbox_expand_space", "build_generic": true,
+      "input_type": "stbox_text", "return_kind": "stbox_text_out",
+      "extra_args": [{ "kind": "scalar", "cpp": "double" }],
+      "comment_one_liner": "stbox_expand_space (STBox *) - expand an STBox by a distance in the spatial dimensions."
+    },
+    {
+      "nebula_name": "TfloatboxExpand", "sql_token": "TFLOATBOX_EXPAND",
+      "meos_call": "tfloatbox_expand", "build_generic": true,
+      "input_type": "tbox_text", "return_kind": "tbox_text_out",
+      "extra_args": [{ "kind": "scalar", "cpp": "double" }],
+      "comment_one_liner": "tfloatbox_expand (TBox *) - expand a TBox by a value in the float dimension."
+    },
+    {
+      "nebula_name": "TintboxExpand", "sql_token": "TINTBOX_EXPAND",
+      "meos_call": "tintbox_expand", "build_generic": true,
+      "input_type": "tbox_text", "return_kind": "tbox_text_out",
+      "extra_args": [{ "kind": "scalar", "cpp": "int32_t" }],
+      "comment_one_liner": "tintbox_expand (TBox *) - expand a TBox by a value in the integer dimension."
+    }
+  ]
+}

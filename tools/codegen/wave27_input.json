@@ -1,0 +1,40 @@
+{
+  "_comment": "wave 27 (gap-closing batch 3): static-object setters + accessor over the cbuffer/pose object-literal primaries added in wave 26. cbuffer_set_srid / pose_set_srid are VOID in-place mutators serialized via the new self_out return-kind (call f(obj, srid); then obj_out(obj); then free obj). pose_orientation returns the orientation quaternion as a double array (array_out num) over a 3D pose literal. All probed green against v15 libmeos.",
+  "operators": [
+    {
+      "nebula_name": "CbufferSetSrid",
+      "sql_token": "CBUFFER_SET_SRID",
+      "meos_call": "cbuffer_set_srid",
+      "build_generic": true,
+      "input_type": "cbuffer",
+      "return_kind": "self_out",
+      "self_out_fn": "cbuffer_out",
+      "self_out_maxdd": true,
+      "extra_args": [{ "kind": "scalar", "cpp": "int32_t" }],
+      "comment_one_liner": "cbuffer_set_srid (Cbuffer *) - the circular buffer with its SRID set."
+    },
+    {
+      "nebula_name": "PoseSetSrid",
+      "sql_token": "POSE_SET_SRID",
+      "meos_call": "pose_set_srid",
+      "build_generic": true,
+      "input_type": "pose",
+      "return_kind": "self_out",
+      "self_out_fn": "pose_out",
+      "self_out_maxdd": true,
+      "extra_args": [{ "kind": "scalar", "cpp": "int32_t" }],
+      "comment_one_liner": "pose_set_srid (Pose *) - the pose with its SRID set."
+    },
+    {
+      "nebula_name": "PoseOrientation",
+      "sql_token": "POSE_ORIENTATION",
+      "meos_call": "pose_orientation",
+      "build_generic": true,
+      "input_type": "pose",
+      "return_kind": "array_out",
+      "array_out": { "elem": "double", "kind": "num" },
+      "extra_args": [],
+      "comment_one_liner": "pose_orientation (double *) - the orientation quaternion of a 3D pose."
+    }
+  ]
+}

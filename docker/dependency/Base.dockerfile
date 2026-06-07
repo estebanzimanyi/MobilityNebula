@@ -40,14 +40,14 @@ RUN curl -fsSL https://apt.llvm.org/llvm-snapshot.gpg.key | gpg --dearmor -o /et
 
 # install recent version of the mold linker
 RUN wget https://github.com/rui314/mold/releases/download/v${MOLD_VERSION}/mold-${MOLD_VERSION}-$(uname -m)-linux.tar.gz \
-    && tar -xf mold-${MOLD_VERSION}-$(uname -m)-linux.tar.gz \
+    && (tar --no-same-permissions --no-same-owner -xf mold-${MOLD_VERSION}-$(uname -m)-linux.tar.gz || true) \
     && cp -r mold-${MOLD_VERSION}-$(uname -m)-linux/* /usr \
     && rm -rf mold-${MOLD_VERSION}-$(uname -m)-linux mold-${MOLD_VERSION}-$(uname -m)-linux.tar.gz \
     && mold --version
 
 # install recent version of cmake
 RUN wget https://github.com/Kitware/CMake/releases/download/v${CMAKE_VERSION}/cmake-${CMAKE_VERSION}.tar.gz \
-    && tar -xf cmake-${CMAKE_VERSION}.tar.gz \
+    && tar --no-same-permissions --no-same-owner -xf cmake-${CMAKE_VERSION}.tar.gz \
     && cd cmake-${CMAKE_VERSION} \
     && ./configure --parallel=$(nproc) --prefix=/usr \
     && make install -j $(nproc)\

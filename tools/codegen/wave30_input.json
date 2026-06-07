@@ -1,0 +1,27 @@
+{
+  "_comment": "wave 30 (gap-closing batch 6): trgeometry_instant_n (per-event trgeometry instant + n -> the instant, via temporal_wkb) and textcat_text_textset (a text prepended to each element of a text set). textcat uses the new text object-literal primary (text_in) with the text set as a box-kind extra (textset_in -> Set*). Both probed green on v15.",
+  "operators": [
+    {
+      "nebula_name": "TrgeometryInstantN",
+      "sql_token": "TRGEOMETRY_INSTANT_N",
+      "meos_call": "trgeometry_instant_n",
+      "build_generic": true,
+      "input_type": "trgeometry",
+      "return_kind": "temporal_wkb",
+      "extra_args": [{ "kind": "scalar", "cpp": "int32_t" }],
+      "comment_one_liner": "trgeometry_instant_n (TInstant *) - the n-th instant of a temporal rigid geometry."
+    },
+    {
+      "nebula_name": "TextcatTextTextset",
+      "sql_token": "TEXTCAT_TEXT_TEXTSET",
+      "meos_call": "textcat_text_textset",
+      "build_generic": true,
+      "input_type": "text",
+      "return_kind": "textset_text",
+      "extra_args": [
+        { "kind": "box", "parser": "textset_in", "box_type": "Set", "header": "meos.h" }
+      ],
+      "comment_one_liner": "textcat_text_textset (Set *) - a text concatenated before each element of a text set."
+    }
+  ]
+}

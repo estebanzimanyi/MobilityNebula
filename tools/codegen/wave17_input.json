@@ -1,0 +1,25 @@
+{
+  "_comment": "wave 17 (box conversions, forward half): stbox_to_box3d / stbox_to_gbox. STBox literal in (stbox_in via the stbox_text primary input), PostGIS box out (box3d_out/gbox_out). The reverse box3d/gbox_to_stbox are deferred: MEOS exposes no box3d_in/gbox_in parser to read the operand literal.",
+  "operators": [
+    {
+      "nebula_name": "StboxToBox3d",
+      "sql_token": "STBOX_TO_BOX3D",
+      "meos_call": "stbox_to_box3d",
+      "build_generic": true,
+      "input_type": "stbox_text",
+      "return_kind": "box3d_text_out",
+      "extra_args": [],
+      "comment_one_liner": "stbox_to_box3d (BOX3D *) - the PostGIS BOX3D of a spatiotemporal box."
+    },
+    {
+      "nebula_name": "StboxToGbox",
+      "sql_token": "STBOX_TO_GBOX",
+      "meos_call": "stbox_to_gbox",
+      "build_generic": true,
+      "input_type": "stbox_text",
+      "return_kind": "gbox_text_out",
+      "extra_args": [],
+      "comment_one_liner": "stbox_to_gbox (GBOX *) - the PostGIS GBOX of a spatiotemporal box."
+    }
+  ]
+}

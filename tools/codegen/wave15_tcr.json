@@ -1,0 +1,15 @@
+{
+  "_comment": "wave15 tcbuffer_radius regen with tfloat_out \u2014 token/registrar already injected in 14b, use --no-parser-glue --no-cmake-entries",
+  "operators": [
+    {
+      "nebula_name": "TcbufferRadius",
+      "sql_token": "TCBUFFER_RADIUS",
+      "meos_call": "tcbuffer_radius",
+      "build_generic": true,
+      "input_type": "tcbuffer",
+      "return_kind": "tfloat_out",
+      "extra_args": [],
+      "comment_one_liner": "tcbuffer_radius (Temporal *) - the temporal radius of a temporal circular buffer."
+    }
+  ]
+}

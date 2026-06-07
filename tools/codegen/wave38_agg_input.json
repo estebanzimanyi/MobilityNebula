@@ -1,0 +1,49 @@
+{
+  "_comment": "wave 38: the 3 tgeo-family windowed transforms with CONSTANT args, on the wave-37 tgeotransform fold. Const literals travel as strings from the parser constantBuilder (string literals have quotes stripped, line 3603) and are parsed in the plain-C finalize: interval_in / timestamptz_in / (interpType)atoi / atof / bool. interptype enum (probed v17): DISCRETE=1, STEP=2, LINEAR=3. All return a Temporal* (TSequenceSet* is a Temporal subtype) serialized as EWKB hex. Const args listed in MEOS signature order.",
+  "operators": [
+    {
+      "nebula_name": "TemporalTsample",
+      "sql_token": "TEMPORAL_TSAMPLE",
+      "comment_one_liner": "temporal_tsample (Temporal* -> hex-WKB) - the windowed trajectory resampled at a fixed interval from an origin, with the given interpolation.",
+      "final_stamp_type": "VARSIZED",
+      "input_shape": "tgeo",
+      "fold": "tgeotransform",
+      "meos_scalar_fn": "temporal_tsample",
+      "return_cpp_type": "char*",
+      "const_args": [
+        { "kind": "interval" },
+        { "kind": "timestamptz" },
+        { "kind": "interptype" }
+      ]
+    },
+    {
+      "nebula_name": "TemporalStops",
+      "sql_token": "TEMPORAL_STOPS",
+      "comment_one_liner": "temporal_stops (Temporal* -> hex-WKB) - the windowed trajectory's stop subsequences (within maxdist for at least minduration).",
+      "final_stamp_type": "VARSIZED",
+      "input_shape": "tgeo",
+      "fold": "tgeotransform",
+      "meos_scalar_fn": "temporal_stops",
+      "return_cpp_type": "char*",
+      "const_args": [
+        { "kind": "double" },
+        { "kind": "interval" }
+      ]
+    },
+    {
+      "nebula_name": "TemporalSegmDuration",
+      "sql_token": "TEMPORAL_SEGM_DURATION",
+      "comment_one_liner": "temporal_segm_duration (Temporal* -> hex-WKB) - the windowed trajectory split into segments of the given duration.",
+      "final_stamp_type": "VARSIZED",
+      "input_shape": "tgeo",
+      "fold": "tgeotransform",
+      "meos_scalar_fn": "temporal_segm_duration",
+      "return_cpp_type": "char*",
+      "const_args": [
+        { "kind": "interval" },
+        { "kind": "bool" },
+        { "kind": "bool" }
+      ]
+    }
+  ]
+}

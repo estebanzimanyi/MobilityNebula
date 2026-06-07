@@ -20,10 +20,14 @@
 #         JOBS=8 tools/codegen/build_fast.sh
 set -euo pipefail
 ROOT="$(git -C "$(dirname "$0")" rev-parse --show-toplevel)"
-IMAGE="${NES_DEV_IMAGE:-localhost/nes-development:mobilitynebula-v6}"
+IMAGE="${NES_DEV_IMAGE:-localhost/nes-development:mobilitynebula-v17}"
 BUILD_DIR="${BUILD_DIR:-build-w15}"
 TARGET="${1:-systest}"
-JOBS="${JOBS:-6}"
+# 22 cores available but RAM-limited (~13 GB usable; cold clang++ peaks ~1.5 GB/file).
+# 8 jobs (~12 GB) is the safe ceiling for a COLD recompile (e.g. after a meos.h /
+# libmeos change invalidates ccache). WARM per-wave builds are ccache-bound (hits
+# cost ~no RAM), so they finish in ~1-2 min regardless. Override with JOBS=N.
+JOBS="${JOBS:-8}"
 HOST_CCACHE="${HOST_CCACHE:-$HOME/.nebula-ccache}"
 mkdir -p "$HOST_CCACHE"
 
@@ -41,12 +45,17 @@ mkdir -p "$HOST_CCACHE"
     if [ -z "$(ls -A /ccache 2>/dev/null)" ] && [ -d /root/.cache/ccache ]; then
       cp -a /root/.cache/ccache/. /ccache/ 2>/dev/null || true
     fi
-    # One-time: switch the linker to mold (only rewrites link steps).
-    if ! grep -q "CMAKE_LINKER_TYPE:STRING=MOLD" '"$BUILD_DIR"'/CMakeCache.txt 2>/dev/null; then
-      cmake -S . -B '"$BUILD_DIR"' -DCMAKE_LINKER_TYPE=MOLD >/dev/null
-    fi
     ccache -z >/dev/null 2>&1 || true
-    ninja -j '"$JOBS"' -C '"$BUILD_DIR"' '"$TARGET"'
+    # Always reconfigure (cheap): forces ANTLR to regenerate when AntlrSQL.g4
+    # changed (ninja mtime tracking can miss it after a g4 revert/re-inject), and
+    # surfaces a stale per-family subdir CMakeLists reference (e.g. a reverted wave
+    # leaving a dangling *.cpp in Meos/Rgeo/CMakeLists.txt) immediately rather than
+    # only on a future from-scratch configure. safe.directory: the host-mounted
+    # repo is owned by the host user, not container root, so git steps need it.
+    git config --global --add safe.directory /workspace 2>/dev/null || true
+    cmake -S . -B '"$BUILD_DIR"' -DCMAKE_LINKER_TYPE=MOLD >/dev/null
+    ninja -j '"$JOBS"' -C '"$BUILD_DIR"' '"$TARGET"'; rc=$?
     echo "=== ccache stats (this build) ==="
     ccache -s | grep -iE "hits|miss|cacheable" | head
+    exit $rc
   '

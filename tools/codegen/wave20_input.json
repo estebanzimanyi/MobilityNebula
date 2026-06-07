@@ -1,0 +1,25 @@
+{
+  "_comment": "wave 20 (catalog type-reflection, batch 1): temporal_subtype / temporal_interp return a temporal value's subtype (Instant/Sequence/...) and interpolation name as a STATIC catalog string via the new const_char_out return-kind (copied out, never freed).",
+  "operators": [
+    {
+      "nebula_name": "TemporalSubtype",
+      "sql_token": "TEMPORAL_SUBTYPE",
+      "meos_call": "temporal_subtype",
+      "build_generic": true,
+      "input_type": "tfloat",
+      "return_kind": "const_char_out",
+      "extra_args": [],
+      "comment_one_liner": "temporal_subtype (const char *) - the subtype name of a temporal value."
+    },
+    {
+      "nebula_name": "TemporalInterp",
+      "sql_token": "TEMPORAL_INTERP",
+      "meos_call": "temporal_interp",
+      "build_generic": true,
+      "input_type": "tfloat",
+      "return_kind": "const_char_out",
+      "extra_args": [],
+      "comment_one_liner": "temporal_interp (const char *) - the interpolation name of a temporal value."
+    }
+  ]
+}

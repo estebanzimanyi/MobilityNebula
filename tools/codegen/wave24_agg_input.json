@@ -1,0 +1,45 @@
+{
+  "_comment": "wave 24 (array constructors batch 3: geometry-returning array aggregations). Windowed aggregations that collect a window of VARSIZED object literals, parse each via *_in into a heap pointer, build a single GSERIALIZED via the *_garray / *arr_to_geom constructor over the pointer array, and serialize via geo_as_text. Reuses the objarraymake fold unchanged (make_ret_type=GSERIALIZED, set_out_call=geo_as_text); the template already parameterizes the make return type, arg type, and serializer.",
+  "operators": [
+    {
+      "nebula_name": "GeoCollectGarray", "sql_token": "GEO_COLLECT_GARRAY",
+      "comment_one_liner": "geo_collect_garray (GSERIALIZED *) - the geometry collection built from a window of geometry values.",
+      "final_stamp_type": "VARSIZED", "input_shape": "tnumber", "fold": "objarraymake",
+      "meos_scalar_fn": "", "return_cpp_type": "double",
+      "value_type_guard": "", "value_type_msg": "value must be a geometry literal; timestamp must be numeric",
+      "elem_cpp": "GSERIALIZED", "elem_in": "geom_in", "elem_in_extra": ", -1",
+      "make_fn": "geo_collect_garray", "make_ret_type": "GSERIALIZED", "make_arg_type": "GSERIALIZED **",
+      "set_out_call": "geo_as_text(s, 6)"
+    },
+    {
+      "nebula_name": "GeoMakelineGarray", "sql_token": "GEO_MAKELINE_GARRAY",
+      "comment_one_liner": "geo_makeline_garray (GSERIALIZED *) - the line built from a window of point values.",
+      "final_stamp_type": "VARSIZED", "input_shape": "tnumber", "fold": "objarraymake",
+      "meos_scalar_fn": "", "return_cpp_type": "double",
+      "value_type_guard": "", "value_type_msg": "value must be a geometry literal; timestamp must be numeric",
+      "elem_cpp": "GSERIALIZED", "elem_in": "geom_in", "elem_in_extra": ", -1",
+      "make_fn": "geo_makeline_garray", "make_ret_type": "GSERIALIZED", "make_arg_type": "GSERIALIZED **",
+      "set_out_call": "geo_as_text(s, 6)"
+    },
+    {
+      "nebula_name": "GeomArrayUnion", "sql_token": "GEOM_ARRAY_UNION",
+      "comment_one_liner": "geom_array_union (GSERIALIZED *) - the union built from a window of geometry values.",
+      "final_stamp_type": "VARSIZED", "input_shape": "tnumber", "fold": "objarraymake",
+      "meos_scalar_fn": "", "return_cpp_type": "double",
+      "value_type_guard": "", "value_type_msg": "value must be a geometry literal; timestamp must be numeric",
+      "elem_cpp": "GSERIALIZED", "elem_in": "geom_in", "elem_in_extra": ", -1",
+      "make_fn": "geom_array_union", "make_ret_type": "GSERIALIZED", "make_arg_type": "GSERIALIZED **",
+      "set_out_call": "geo_as_text(s, 6)"
+    },
+    {
+      "nebula_name": "CbufferarrToGeom", "sql_token": "CBUFFERARR_TO_GEOM",
+      "comment_one_liner": "cbufferarr_to_geom (GSERIALIZED *) - the geometry built from a window of cbuffer values.",
+      "final_stamp_type": "VARSIZED", "input_shape": "tnumber", "fold": "objarraymake",
+      "meos_scalar_fn": "", "return_cpp_type": "double",
+      "value_type_guard": "", "value_type_msg": "value must be a cbuffer literal; timestamp must be numeric",
+      "elem_cpp": "Cbuffer", "elem_in": "cbuffer_in", "elem_in_extra": "",
+      "make_fn": "cbufferarr_to_geom", "make_ret_type": "GSERIALIZED", "make_arg_type": "const Cbuffer **",
+      "set_out_call": "geo_as_text(s, 6)"
+    }
+  ]
+}

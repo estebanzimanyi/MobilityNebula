@@ -1,0 +1,16 @@
+{
+  "_comment": "wave 32 (reroute temporal_sequences from per-event to windowed aggregation): the per-event Functions/Meos/TemporalSequences op was wired-only and could never pass (a sequence accessor on a single instant errors 'must be of subtype sequence'). It is the SAME array-of-temporal shape as wave-31's temporal_segments, so it reroutes to the tgeoseqarray fold. The per-event op (4 files + 2 CMakeLists entries + parser case-switch + include) has been removed; the shared g4 TEMPORAL_SEQUENCES token is kept (inject_g4 skips it as present). Removes a wired-only irregularity. Probed green on v15 (wave31_probe.c: temporal_sequences on a windowed continuous sequence -> cnt=1 valid EWKB).",
+  "operators": [
+    {
+      "nebula_name": "TemporalSequences",
+      "sql_token": "TEMPORAL_SEQUENCES",
+      "comment_one_liner": "temporal_sequences (TSequence **) - the array of sequences of the windowed continuous trajectory, each as EWKB hex.",
+      "final_stamp_type": "VARSIZED",
+      "input_shape": "tgeo",
+      "meos_scalar_fn": "",
+      "return_cpp_type": "char",
+      "fold": "tgeoseqarray",
+      "seq_accessor_call": "temporal_sequences(static_cast<Temporal*>(temp), &_cnt)"
+    }
+  ]
+}

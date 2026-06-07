@@ -642,6 +642,31 @@ TWO_TEMPORAL["trgeometry"] = dict(
               '                Temporal* {var} = geo_tpose_to_trgeometry({var}g, {var}tp);\n'
               '                free({var}g); free({var}tp);\n'
               '                if (!{var}) {{ free(temp); return {z}; }}\n'))
+# For a MIXED two-temporal op (op_<primary>_<second> where the second subtype
+# differs from the primary, e.g. nad_trgeometry_TPOINT), the temporal2 builder
+# must be chosen by the SECOND operand's type, not the primary's. Map the trailing
+# name token to its TWO_TEMPORAL key. SRID-0/unknown primaries (the trgeometry
+# unit-square) accept any operand SRID via ensure_same_srid's unknown-match.
+_SECOND_OPERAND_T2 = {
+    "tpoint": "tgeompoint", "tgeo": "tgeompoint", "trgeometry": "trgeometry",
+    "tcbuffer": "tcbuffer", "tnpoint": "tnpoint", "tpose": "tpose", "tint": "tint",
+}
+# A SRID-0 tpoint operand, for pairing with a SRID-0 primary (the trgeometry
+# unit-square is built via geom_in(polygon, -1) = SRID 0). PostGIS rejects an
+# operation on mixed SRID even when ensure_same_srid passes on unknown(0), so the
+# operand must share the primary's SRID rather than the 4326 default.
+TWO_TEMPORAL["tgeompoint_srid0"] = dict(
+    input_type="tgeompoint",
+    make_cols=[("lon", "FLOAT64"), ("lat", "FLOAT64"), ("ts", "UINT64"),
+               ("lon2", "FLOAT64"), ("lat2", "FLOAT64"), ("ts2", "UINT64")],
+    rows=[("1.0", "1.0", "1609459200", "2.0", "2.0", "1609459200"),
+          ("3.0", "3.0", "1609545600", "4.0", "4.0", "1609545600")],
+    t2_fields=[("lon2", "double"), ("lat2", "double"), ("ts2", "uint64_t")],
+    header="meos_geo.h",
+    t2_build=('                std::string {var}W = fmt::format("Point({{}} {{}})@{{}}", lon2, lat2, MEOS::Meos::convertEpochToTimestamp(ts2));\n'
+              '                Temporal* {var} = tgeompoint_in({var}W.c_str());\n'
+              '                if (!{var}) {{ free(temp); return {z}; }}\n'))
+
 # base operand -> (extra-arg builder tag, column SQL, sample a, sample b). The tag
 # is "scalar" (bool source field), "text" (text* via text_in), or a *_in parser.
 ALWAYS_BASE = {
@@ -1796,8 +1821,8 @@ def classify(name, ret, plist):
         elif secb == "Set" and tsub == "tnpoint":
             # tnpoint restricted by a network-point Set (npointset). Network
             # points compare by (rid, frac), so no ways-network geometry is
-            # resolved: the at-set carries each row's Npoint(1,0.5)/(1,0.7) to
-            # keep both instants; the minus-set carries far Npoints so nothing
+            # resolved: the at-set carries each row's NPoint(1, 0.5)/(1, 0.7) to
+            # keep both instants; the minus-set carries far NPoints so nothing
             # is removed. Both leave a non-empty restricted tnpoint.
             extra = dict(kind="box", box_type="Set", parser="npointset_in",
                          header="meos_npoint.h")
@@ -1995,13 +2020,32 @@ def classify(name, ret, plist):
         if (secb, secp) == ("Temporal", True):          # second temporal via temporal2
             if in_type not in TWO_TEMPORAL:
                 return None, f"{toks[0]} two-temporal {in_type} unsupported"
-            spec = TWO_TEMPORAL[in_type]
+            # The second operand's subtype is the trailing name token (op_<prim>_<sec>)
+            # and may differ from the primary (e.g. nad_trgeometry_TPOINT) — pick the
+            # temporal2 builder by the SECOND operand's type, keep input_type as the
+            # primary's. Compose the test row from the primary's own columns (the non-*2
+            # fields) plus the second operand's *2 fields. Same-type ops reconstruct the
+            # original spec exactly (no regression).
+            sec_key = _SECOND_OPERAND_T2.get(toks[-1])
+            # The trgeometry primary is SRID-0; its tpoint operand must share that
+            # SRID (PostGIS rejects mixed SRID even past ensure_same_srid).
+            if in_type == "trgeometry" and sec_key == "tgeompoint":
+                sec_key = "tgeompoint_srid0"
+            if sec_key is None or sec_key not in TWO_TEMPORAL:
+                return None, f"{toks[0]} second temporal {toks[-1]} unsupported"
+            prim, sec = TWO_TEMPORAL[in_type], TWO_TEMPORAL[sec_key]
+            prim_cols = [c for c in prim["make_cols"] if not c[0].endswith("2")]
+            sec_cols = [c for c in sec["make_cols"] if c[0].endswith("2")]
+            pn = len(prim_cols)
+            sn = len([c for c in sec["make_cols"] if not c[0].endswith("2")])
+            mixed_rows = [tuple(list(rp[:pn]) + list(rs[sn:]))
+                          for rp, rs in zip(prim["rows"], sec["rows"])]
             entry = dict(nebula_name=camel(name), sql_token=name.upper(), meos_call=name,
-                         build_generic=True, input_type=spec["input_type"], return_kind=rkind,
-                         extra_args=[dict(kind="temporal2", t2_fields=spec["t2_fields"],
-                                          t2_build=spec["t2_build"], header=spec["header"])],
-                         comment_one_liner=f"{name} ({ret.strip()}) — two {in_type} instants nearest-approach.")
-            tmeta = dict(cols=spec["make_cols"], rows=spec["rows"], token=name.upper(), sink=sink)
+                         build_generic=True, input_type=prim["input_type"], return_kind=rkind,
+                         extra_args=[dict(kind="temporal2", t2_fields=sec["t2_fields"],
+                                          t2_build=sec["t2_build"], header=sec["header"])],
+                         comment_one_liner=f"{name} ({ret.strip()}) — {tsub} ⊗ {toks[-1]} nearest-approach.")
+            tmeta = dict(cols=prim_cols + sec_cols, rows=mixed_rows, token=name.upper(), sink=sink)
             return entry, tmeta
         return None, f"{toks[0]} second operand {secb} unsupported"
     # ---- scalar distance / nad between an object/box/geo pair -> double:

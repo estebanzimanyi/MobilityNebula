@@ -1,0 +1,27 @@
+{
+  "_comment": "wave 35: the single-sequence trgeometry accessors trgeometry_start_sequence / trgeometry_end_sequence. They reuse the wave-34 tpose windowed builder (collect (x,y,theta,ts) -> [Pose(Point(x y),theta)@ts,...] -> tpose_in -> geo_tpose_to_trgeometry(unit-square ref) -> accessor) but the accessor returns a SINGLE Temporal* (TSequence*), not a T**+&_cnt array, so they use the new fold tposeseq1 (one result -> EWKB hex, no array loop). trgeometry_sequence_n is deferred: it needs a scalar int index threaded into the aggregation descriptor (no field), which the windowed-aggregation framework does not yet carry.",
+  "operators": [
+    {
+      "nebula_name": "TrgeometryStartSequence",
+      "sql_token": "TRGEOMETRY_START_SEQUENCE",
+      "comment_one_liner": "trgeometry_start_sequence (TSequence *) - the first sequence of the windowed continuous trgeometry, as EWKB hex.",
+      "final_stamp_type": "VARSIZED",
+      "input_shape": "tpose",
+      "meos_scalar_fn": "",
+      "return_cpp_type": "char",
+      "fold": "tposeseq1",
+      "seq_accessor_call": "trgeometry_start_sequence(static_cast<Temporal*>(temp))"
+    },
+    {
+      "nebula_name": "TrgeometryEndSequence",
+      "sql_token": "TRGEOMETRY_END_SEQUENCE",
+      "comment_one_liner": "trgeometry_end_sequence (TSequence *) - the last sequence of the windowed continuous trgeometry, as EWKB hex.",
+      "final_stamp_type": "VARSIZED",
+      "input_shape": "tpose",
+      "meos_scalar_fn": "",
+      "return_cpp_type": "char",
+      "fold": "tposeseq1",
+      "seq_accessor_call": "trgeometry_end_sequence(static_cast<Temporal*>(temp))"
+    }
+  ]
+}

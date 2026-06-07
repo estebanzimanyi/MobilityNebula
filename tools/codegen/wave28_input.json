@@ -1,0 +1,91 @@
+{
+  "_comment": "wave 28 (gap-closing batch 4): single-temporal -> Temporal* conversions and restrictions, via the new temporal_wkb return-kind (varsized assembler serializes the Temporal* result through temporal_as_hexwkb WKB_EXTENDED, keeping the SRID) plus the wkb_temporal extra-arg now supported in the varsized path. tgeompoint_to_tgeometry uses a per-event tgeompoint instant primary; the rest carry the temporal operand as a hex literal (wkb_temporal) so the geometry-first dwithin signatures and the 3D-point elevation restrictions marshal cleanly. All probed green against v15 (instant forms; linear-sequence tgeompoint_to_tgeometry is a MEOS constraint, not exercised).",
+  "operators": [
+    {
+      "nebula_name": "TgeometryToTcbuffer",
+      "sql_token": "TGEOMETRY_TO_TCBUFFER",
+      "meos_call": "tgeometry_to_tcbuffer",
+      "build_generic": true,
+      "input_type": "wkb_temporal",
+      "return_kind": "temporal_wkb",
+      "extra_args": [],
+      "extra_headers": [
+        "meos_cbuffer.h"
+      ],
+      "comment_one_liner": "tgeometry_to_tcbuffer (Temporal *) - the temporal circular buffer of a temporal geometry."
+    },
+    {
+      "nebula_name": "TdwithinGeoTgeo",
+      "sql_token": "TDWITHIN_GEO_TGEO",
+      "meos_call": "tdwithin_geo_tgeo",
+      "build_generic": true,
+      "input_type": "geom",
+      "return_kind": "temporal_wkb",
+      "extra_args": [
+        {
+          "kind": "wkb_temporal"
+        },
+        {
+          "kind": "scalar",
+          "cpp": "double"
+        }
+      ],
+      "comment_one_liner": "tdwithin_geo_tgeo (Temporal *) - whether a geometry is within a distance of a temporal geo, over time."
+    },
+    {
+      "nebula_name": "TdwithinGeoTcbuffer",
+      "sql_token": "TDWITHIN_GEO_TCBUFFER",
+      "meos_call": "tdwithin_geo_tcbuffer",
+      "build_generic": true,
+      "input_type": "geom",
+      "return_kind": "temporal_wkb",
+      "extra_args": [
+        {
+          "kind": "wkb_temporal"
+        },
+        {
+          "kind": "scalar",
+          "cpp": "double"
+        }
+      ],
+      "extra_headers": [
+        "meos_cbuffer.h"
+      ],
+      "comment_one_liner": "tdwithin_geo_tcbuffer (Temporal *) - whether a geometry is within a distance of a temporal buffer, over time."
+    },
+    {
+      "nebula_name": "TpointAtElevation",
+      "sql_token": "TPOINT_AT_ELEVATION",
+      "meos_call": "tpoint_at_elevation",
+      "build_generic": true,
+      "input_type": "wkb_temporal",
+      "return_kind": "temporal_wkb",
+      "extra_args": [
+        {
+          "kind": "box",
+          "parser": "floatspan_in",
+          "box_type": "Span",
+          "header": "meos.h"
+        }
+      ],
+      "comment_one_liner": "tpoint_at_elevation (Temporal *) - the temporal point restricted to an elevation span."
+    },
+    {
+      "nebula_name": "TpointMinusElevation",
+      "sql_token": "TPOINT_MINUS_ELEVATION",
+      "meos_call": "tpoint_minus_elevation",
+      "build_generic": true,
+      "input_type": "wkb_temporal",
+      "return_kind": "temporal_wkb",
+      "extra_args": [
+        {
+          "kind": "box",
+          "parser": "floatspan_in",
+          "box_type": "Span",
+          "header": "meos.h"
+        }
+      ],
+      "comment_one_liner": "tpoint_minus_elevation (Temporal *) - the temporal point minus an elevation span."
+    }
+  ]
+}

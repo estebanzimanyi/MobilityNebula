@@ -1,0 +1,112 @@
+{
+  "_comment": "wave15 new ops",
+  "operators": [
+    {
+      "nebula_name": "NadTrgeometryStbox",
+      "sql_token": "NAD_TRGEOMETRY_STBOX",
+      "meos_call": "nad_trgeometry_stbox",
+      "build_generic": true,
+      "input_type": "trgeometry",
+      "return_kind": "double",
+      "extra_args": [
+        {
+          "kind": "box",
+          "box_type": "STBox",
+          "parser": "stbox_in",
+          "header": "meos.h"
+        }
+      ],
+      "comment_one_liner": "nad_trgeometry_stbox (double) - nearest-approach distance between a temporal rigid geometry and an STBox."
+    },
+    {
+      "nebula_name": "TspatialToStbox",
+      "sql_token": "TSPATIAL_TO_STBOX",
+      "meos_call": "tspatial_to_stbox",
+      "build_generic": true,
+      "input_type": "tgeompoint",
+      "return_kind": "stbox_text_out",
+      "extra_args": [],
+      "comment_one_liner": "tspatial_to_stbox (STBox *) - the spatiotemporal bounding box of a temporal geometry point."
+    },
+    {
+      "nebula_name": "TgeometryToTcbuffer",
+      "sql_token": "TGEOMETRY_TO_TCBUFFER",
+      "meos_call": "tgeometry_to_tcbuffer",
+      "build_generic": true,
+      "input_type": "tgeometry",
+      "return_kind": "tspatial_text",
+      "extra_args": [],
+      "comment_one_liner": "tgeometry_to_tcbuffer (Temporal *) - convert a temporal geometry to a temporal circular buffer."
+    },
+    {
+      "nebula_name": "SpatialsetSrid",
+      "sql_token": "SPATIALSET_SRID",
+      "meos_call": "spatialset_srid",
+      "build_generic": true,
+      "input_type": "geoset",
+      "return_kind": "int",
+      "extra_args": [],
+      "comment_one_liner": "spatialset_srid (int) - the SRID of a geo set."
+    },
+    {
+      "nebula_name": "TpointTrajectory",
+      "sql_token": "TPOINT_TRAJECTORY",
+      "meos_call": "tpoint_trajectory",
+      "build_generic": true,
+      "input_type": "tgeompoint",
+      "return_kind": "geo_value_out",
+      "extra_args": [
+        {
+          "kind": "scalar",
+          "cpp": "bool"
+        }
+      ],
+      "comment_one_liner": "tpoint_trajectory (GSERIALIZED *) - the trajectory of a temporal geometry point."
+    },
+    {
+      "nebula_name": "TgeoTraversedArea",
+      "sql_token": "TGEO_TRAVERSED_AREA",
+      "meos_call": "tgeo_traversed_area",
+      "build_generic": true,
+      "input_type": "tgeompoint",
+      "return_kind": "geo_value_out",
+      "extra_args": [
+        {
+          "kind": "scalar",
+          "cpp": "bool"
+        }
+      ],
+      "comment_one_liner": "tgeo_traversed_area (GSERIALIZED *) - the area traversed by a temporal geometry."
+    },
+    {
+      "nebula_name": "TrgeometryTraversedArea",
+      "sql_token": "TRGEOMETRY_TRAVERSED_AREA",
+      "meos_call": "trgeometry_traversed_area",
+      "build_generic": true,
+      "input_type": "trgeometry",
+      "return_kind": "geo_value_out",
+      "extra_args": [
+        {
+          "kind": "scalar",
+          "cpp": "bool"
+        }
+      ],
+      "comment_one_liner": "trgeometry_traversed_area (GSERIALIZED *) - the area traversed by a temporal rigid geometry."
+    },
+    {
+      "nebula_name": "TcbufferTraversedArea",
+      "sql_token": "TCBUFFER_TRAVERSED_AREA",
+      "meos_call": "tcbuffer_traversed_area",
+      "build_generic": true,
+      "input_type": "tcbuffer",
+      "return_kind": "geo_value_out",
+      "extra_args": [
+        {
+          "kind": "scalar",
+          "cpp": "bool"
+        }
+      ],
+      "comment_one_liner": "tcbuffer_traversed_area (GSERIALIZED *) - the area traversed by a temporal circular buffer."
+    }
+  ]
+}
