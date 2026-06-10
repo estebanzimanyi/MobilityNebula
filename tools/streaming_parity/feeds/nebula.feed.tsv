@@ -1203,6 +1203,7 @@ spanset_hash_extended	proven
 spanset_le	proven
 spanset_lower_inc	proven
 spanset_lt	proven
+spanset_make	proven
 spanset_ne	proven
 spanset_num_spans	proven
 spanset_span	proven
@@ -1417,6 +1418,7 @@ temporal_lower_inc	proven
 temporal_lt	proven
 temporal_max_instant	proven
 temporal_merge	proven
+temporal_merge_array	proven
 temporal_merge_transfn	proven
 temporal_min_instant	proven
 temporal_minus_max	proven
@@ -1795,6 +1797,7 @@ trgeometry_to_tpoint	proven
 trgeometry_to_tpose	proven
 trgeometry_traversed_area	proven
 trgeometry_value_n	proven
+tsequenceset_make_gaps	proven
 tspatial_extent_transfn	proven
 tspatial_set_srid	proven
 tspatial_srid	proven
