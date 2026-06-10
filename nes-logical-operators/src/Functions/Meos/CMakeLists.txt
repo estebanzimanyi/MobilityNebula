@@ -1811,3 +1811,4 @@ add_plugin(GeoStboxes LogicalFunction nes-logical-operators GeoStboxesLogicalFun
 add_plugin(SpansetSpanN LogicalFunction nes-logical-operators SpansetSpanNLogicalFunction.cpp)
 add_plugin(TrgeometryInstantN LogicalFunction nes-logical-operators TrgeometryInstantNLogicalFunction.cpp)
 add_plugin(TextcatTextTextset LogicalFunction nes-logical-operators TextcatTextTextsetLogicalFunction.cpp)
+add_plugin(StboxMake LogicalFunction nes-logical-operators StboxMakeLogicalFunction.cpp)

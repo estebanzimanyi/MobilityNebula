@@ -1241,6 +1241,7 @@ stbox_hasz	proven
 stbox_isgeodetic	proven
 stbox_le	proven
 stbox_lt	proven
+stbox_make	proven
 stbox_ne	proven
 stbox_perimeter	proven
 stbox_quad_split	proven
