@@ -17,4 +17,7 @@ add_plugin(TemporalAIntersectsGeometry PhysicalFunction nes-physical-operators T
 add_plugin(TemporalEContainsGeometry PhysicalFunction nes-physical-operators TemporalEContainsGeometryPhysicalFunction.cpp)
 add_plugin(TemporalEDWithinGeometry PhysicalFunction nes-physical-operators TemporalEDWithinGeometryPhysicalFunction.cpp)
 add_plugin(TemporalAtStBox PhysicalFunction nes-physical-operators TemporalAtStBoxPhysicalFunction.cpp)
+add_plugin(TfloatCos PhysicalFunction nes-physical-operators TfloatCosPhysicalFunction.cpp)
+add_plugin(TfloatSin PhysicalFunction nes-physical-operators TfloatSinPhysicalFunction.cpp)
+add_plugin(TfloatTan PhysicalFunction nes-physical-operators TfloatTanPhysicalFunction.cpp)
 endif()
