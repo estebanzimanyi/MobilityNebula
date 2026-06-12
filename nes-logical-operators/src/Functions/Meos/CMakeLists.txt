@@ -24,6 +24,8 @@ add_plugin(TfloatDegrees LogicalFunction nes-logical-operators TfloatDegreesLogi
 add_plugin(TfloatFloor LogicalFunction nes-logical-operators TfloatFloorLogicalFunction.cpp)
 add_plugin(TfloatRadians LogicalFunction nes-logical-operators TfloatRadiansLogicalFunction.cpp)
 add_plugin(TfloatScaleValue LogicalFunction nes-logical-operators TfloatScaleValueLogicalFunction.cpp)
+add_plugin(TfloatShiftScaleValue LogicalFunction nes-logical-operators TfloatShiftScaleValueLogicalFunction.cpp)
 add_plugin(TfloatShiftValue LogicalFunction nes-logical-operators TfloatShiftValueLogicalFunction.cpp)
 add_plugin(TfloatSin LogicalFunction nes-logical-operators TfloatSinLogicalFunction.cpp)
 add_plugin(TfloatTan LogicalFunction nes-logical-operators TfloatTanLogicalFunction.cpp)
+add_plugin(TnumberAbs LogicalFunction nes-logical-operators TnumberAbsLogicalFunction.cpp)
