@@ -28,11 +28,11 @@ namespace NES {
  * `ever_ge_tint_tfloat`. Takes (value1:FLOAT64, value2:FLOAT64, ts:UINT64),
  * constructs two single-instant temporals, applies the comparison, and returns FLOAT64 (0.0/1.0).
  */
-class EverGeTintTfloatLogicalFunction : public LogicalFunctionConcept {
+class EverGeTintTintLogicalFunction : public LogicalFunctionConcept {
 public:
-    static constexpr std::string_view NAME = "EverGeTintTfloat";
+    static constexpr std::string_view NAME = "EverGeTintTint";
 
-    EverGeTintTfloatLogicalFunction(LogicalFunction value1,
+    EverGeTintTintLogicalFunction(LogicalFunction value1,
                                       LogicalFunction value2,
                                       LogicalFunction ts);
 
