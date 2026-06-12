@@ -245,3 +245,4 @@ add_plugin(TltFloatTfloat LogicalFunction nes-logical-operators TltFloatTfloatLo
 add_plugin(TltTintInt LogicalFunction nes-logical-operators TltTintIntLogicalFunction.cpp)
 add_plugin(TltIntTint LogicalFunction nes-logical-operators TltIntTintLogicalFunction.cpp)
 add_plugin(TltTemporalTemporal LogicalFunction nes-logical-operators TltTemporalTemporalLogicalFunction.cpp)
+add_plugin(TboolToTint LogicalFunction nes-logical-operators TboolToTintLogicalFunction.cpp)
