@@ -230,3 +230,8 @@ add_plugin(TgeFloatTfloat LogicalFunction nes-logical-operators TgeFloatTfloatLo
 add_plugin(TgeTintInt LogicalFunction nes-logical-operators TgeTintIntLogicalFunction.cpp)
 add_plugin(TgeIntTint LogicalFunction nes-logical-operators TgeIntTintLogicalFunction.cpp)
 add_plugin(TgeTemporalTemporal LogicalFunction nes-logical-operators TgeTemporalTemporalLogicalFunction.cpp)
+add_plugin(TgtTfloatFloat LogicalFunction nes-logical-operators TgtTfloatFloatLogicalFunction.cpp)
+add_plugin(TgtFloatTfloat LogicalFunction nes-logical-operators TgtFloatTfloatLogicalFunction.cpp)
+add_plugin(TgtTintInt LogicalFunction nes-logical-operators TgtTintIntLogicalFunction.cpp)
+add_plugin(TgtIntTint LogicalFunction nes-logical-operators TgtIntTintLogicalFunction.cpp)
+add_plugin(TgtTemporalTemporal LogicalFunction nes-logical-operators TgtTemporalTemporalLogicalFunction.cpp)
