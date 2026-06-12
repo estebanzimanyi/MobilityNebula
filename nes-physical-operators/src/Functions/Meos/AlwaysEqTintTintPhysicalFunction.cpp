@@ -67,7 +67,7 @@ VarVal AlwaysEqTintTintPhysicalFunction::execute(const Record& record, ArenaRef&
                 if (!temp1) return 0.0;
                 Temporal* temp2 = tint_in(wkt2.c_str());
                 if (!temp2) { free(temp1); return 0.0; }
-                int r = always_eq_tint_tint(temp1, temp2);
+                int r = always_eq_temporal_temporal(temp1, temp2);
                 free(temp1);
                 free(temp2);
                 return static_cast<double>(r);
