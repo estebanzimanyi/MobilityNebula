@@ -70,9 +70,13 @@
 #include <Functions/Meos/TemporalEDWithinGeometryLogicalFunction.hpp>
 #include <Functions/Meos/TemporalAtStBoxLogicalFunction.hpp>
 #include <Functions/Meos/AddTfloatFloatLogicalFunction.hpp>
+#include <Functions/Meos/AddTnumberTnumberLogicalFunction.hpp>
 #include <Functions/Meos/DivTfloatFloatLogicalFunction.hpp>
+#include <Functions/Meos/DivTnumberTnumberLogicalFunction.hpp>
 #include <Functions/Meos/MulTfloatFloatLogicalFunction.hpp>
+#include <Functions/Meos/MulTnumberTnumberLogicalFunction.hpp>
 #include <Functions/Meos/SubTfloatFloatLogicalFunction.hpp>
+#include <Functions/Meos/SubTnumberTnumberLogicalFunction.hpp>
 #include <Functions/Meos/TfloatCeilLogicalFunction.hpp>
 #include <Functions/Meos/TfloatCosLogicalFunction.hpp>
 #include <Functions/Meos/TfloatDegreesLogicalFunction.hpp>
@@ -1630,6 +1634,122 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: SUB_TFLOAT_FLOAT */
+        /* BEGIN CODEGEN PARSER GLUE: ADD_TNUMBER_TNUMBER */
+        case AntlrSQLLexer::ADD_TNUMBER_TNUMBER:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("ADD_TNUMBER_TNUMBER requires exactly 3 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(AddTnumberTnumberLogicalFunction(a0, a1, a2));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: ADD_TNUMBER_TNUMBER */
+        /* BEGIN CODEGEN PARSER GLUE: DIV_TNUMBER_TNUMBER */
+        case AntlrSQLLexer::DIV_TNUMBER_TNUMBER:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("DIV_TNUMBER_TNUMBER requires exactly 3 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(DivTnumberTnumberLogicalFunction(a0, a1, a2));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: DIV_TNUMBER_TNUMBER */
+        /* BEGIN CODEGEN PARSER GLUE: MUL_TNUMBER_TNUMBER */
+        case AntlrSQLLexer::MUL_TNUMBER_TNUMBER:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("MUL_TNUMBER_TNUMBER requires exactly 3 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(MulTnumberTnumberLogicalFunction(a0, a1, a2));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: MUL_TNUMBER_TNUMBER */
+        /* BEGIN CODEGEN PARSER GLUE: SUB_TNUMBER_TNUMBER */
+        case AntlrSQLLexer::SUB_TNUMBER_TNUMBER:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("SUB_TNUMBER_TNUMBER requires exactly 3 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(SubTnumberTnumberLogicalFunction(a0, a1, a2));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: SUB_TNUMBER_TNUMBER */
 
         default:
             /// Check if the function is a constructor for a datatype
