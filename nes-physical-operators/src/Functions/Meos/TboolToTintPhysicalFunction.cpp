@@ -12,7 +12,7 @@
     limitations under the License.
 */
 
-#include <Functions/Meos/AlwaysGtTbigintTbigintPhysicalFunction.hpp>
+#include <Functions/Meos/TboolToTintPhysicalFunction.hpp>
 
 #include <Functions/PhysicalFunction.hpp>
 #include <MEOSWrapper.hpp>
@@ -35,59 +35,54 @@ extern "C" {
 
 namespace NES {
 
-AlwaysGtTbigintTbigintPhysicalFunction::AlwaysGtTbigintTbigintPhysicalFunction(PhysicalFunction value1Function,
-                                                                             PhysicalFunction value2Function,
-                                                                             PhysicalFunction tsFunction)
+TboolToTintPhysicalFunction::TboolToTintPhysicalFunction(PhysicalFunction valueFunction,
+                                                         PhysicalFunction tsFunction)
 {
-    parameterFunctions.reserve(3);
-    parameterFunctions.push_back(std::move(value1Function));
-    parameterFunctions.push_back(std::move(value2Function));
+    parameterFunctions.reserve(2);
+    parameterFunctions.push_back(std::move(valueFunction));
     parameterFunctions.push_back(std::move(tsFunction));
 }
 
-VarVal AlwaysGtTbigintTbigintPhysicalFunction::execute(const Record& record, ArenaRef& arena) const
+VarVal TboolToTintPhysicalFunction::execute(const Record& record, ArenaRef& arena) const
 {
     std::vector<VarVal> parameterValues;
     parameterValues.reserve(parameterFunctions.size());
     for (const auto& function : parameterFunctions)
         parameterValues.emplace_back(function.execute(record, arena));
 
-    auto value1 = parameterValues[0].cast<nautilus::val<double>>();
-    auto value2 = parameterValues[1].cast<nautilus::val<double>>();
-    auto ts     = parameterValues[2].cast<nautilus::val<uint64_t>>();
+    auto value = parameterValues[0].cast<nautilus::val<double>>();
+    auto ts    = parameterValues[1].cast<nautilus::val<uint64_t>>();
 
     const auto result = nautilus::invoke(
-        +[](double v1, double v2, uint64_t t) -> double {
+        +[](double v, uint64_t t) -> double {
             try {
                 MEOS::Meos::ensureMeosInitialized();
                 std::string ts_str = MEOS::Meos::convertEpochToTimestamp(t);
-                std::string wkt1 = fmt::format("{}@{}", static_cast<int64_t>(v1), ts_str);
-                std::string wkt2 = fmt::format("{}@{}", static_cast<int64_t>(v2), ts_str);
-                Temporal* temp1 = tbigint_in(wkt1.c_str());
-                if (!temp1) return 0.0;
-                Temporal* temp2 = tbigint_in(wkt2.c_str());
-                if (!temp2) { free(temp1); return 0.0; }
-                int r = always_gt_temporal_temporal(temp1, temp2);
-                free(temp1);
-                free(temp2);
+                std::string wkt = fmt::format("{}@{}", (v != 0.0 ? "t" : "f"), ts_str);
+                Temporal* temp = tbool_in(wkt.c_str());
+                if (!temp) return 0.0;
+                Temporal* res = tbool_to_tint(temp);
+                free(temp);
+                if (!res) return 0.0;
+                int r = tint_start_value(res);
+                free(res);
                 return static_cast<double>(r);
             } catch (const std::exception&) { return 0.0; }
         },
-        value1, value2, ts);
+        value, ts);
 
     return VarVal(result);
 }
 
-PhysicalFunctionRegistryReturnType PhysicalFunctionGeneratedRegistrar::RegisterAlwaysGtTbigintTbigintPhysicalFunction(
+PhysicalFunctionRegistryReturnType PhysicalFunctionGeneratedRegistrar::RegisterTboolToTintPhysicalFunction(
     PhysicalFunctionRegistryArguments arguments)
 {
-    PRECONDITION(arguments.childFunctions.size() == 3,
-                 "AlwaysGtTbigintTbigintPhysicalFunction requires 3 children but got {}",
+    PRECONDITION(arguments.childFunctions.size() == 2,
+                 "TboolToTintPhysicalFunction requires 2 children but got {}",
                  arguments.childFunctions.size());
     auto arg0 = std::move(arguments.childFunctions[0]);
     auto arg1 = std::move(arguments.childFunctions[1]);
-    auto arg2 = std::move(arguments.childFunctions[2]);
-    return AlwaysGtTbigintTbigintPhysicalFunction(std::move(arg0), std::move(arg1), std::move(arg2));
+    return TboolToTintPhysicalFunction(std::move(arg0), std::move(arg1));
 }
 
 } // namespace NES
