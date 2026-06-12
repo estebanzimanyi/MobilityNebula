@@ -12,7 +12,7 @@
     limitations under the License.
 */
 
-#include <Functions/Meos/AlwaysLeTbigintTfloatLogicalFunction.hpp>
+#include <Functions/Meos/AlwaysLeTbigintTbigintLogicalFunction.hpp>
 
 #include <DataTypes/DataType.hpp>
 #include <DataTypes/DataTypeProvider.hpp>
@@ -26,7 +26,7 @@
 namespace NES
 {
 
-AlwaysLeTbigintTfloatLogicalFunction::AlwaysLeTbigintTfloatLogicalFunction(LogicalFunction value1,
+AlwaysLeTbigintTbigintLogicalFunction::AlwaysLeTbigintTbigintLogicalFunction(LogicalFunction value1,
                                                                      LogicalFunction value2,
                                                                      LogicalFunction ts)
     : dataType(DataTypeProvider::provideDataType(DataType::Type::FLOAT64))
@@ -37,31 +37,31 @@ AlwaysLeTbigintTfloatLogicalFunction::AlwaysLeTbigintTfloatLogicalFunction(Logic
     parameters.push_back(std::move(ts));
 }
 
-DataType AlwaysLeTbigintTfloatLogicalFunction::getDataType() const { return dataType; }
+DataType AlwaysLeTbigintTbigintLogicalFunction::getDataType() const { return dataType; }
 
-LogicalFunction AlwaysLeTbigintTfloatLogicalFunction::withDataType(const DataType& newDataType) const
+LogicalFunction AlwaysLeTbigintTbigintLogicalFunction::withDataType(const DataType& newDataType) const
 {
     auto copy = *this; copy.dataType = newDataType; return copy;
 }
 
-std::vector<LogicalFunction> AlwaysLeTbigintTfloatLogicalFunction::getChildren() const { return parameters; }
+std::vector<LogicalFunction> AlwaysLeTbigintTbigintLogicalFunction::getChildren() const { return parameters; }
 
-LogicalFunction AlwaysLeTbigintTfloatLogicalFunction::withChildren(const std::vector<LogicalFunction>& children) const
+LogicalFunction AlwaysLeTbigintTbigintLogicalFunction::withChildren(const std::vector<LogicalFunction>& children) const
 {
-    PRECONDITION(children.size() == 3, "AlwaysLeTbigintTfloatLogicalFunction requires 3 children, but got {}", children.size());
+    PRECONDITION(children.size() == 3, "AlwaysLeTbigintTbigintLogicalFunction requires 3 children, but got {}", children.size());
     auto copy = *this; copy.parameters = children; return copy;
 }
 
-std::string_view AlwaysLeTbigintTfloatLogicalFunction::getType() const { return NAME; }
+std::string_view AlwaysLeTbigintTbigintLogicalFunction::getType() const { return NAME; }
 
-bool AlwaysLeTbigintTfloatLogicalFunction::operator==(const LogicalFunctionConcept& rhs) const
+bool AlwaysLeTbigintTbigintLogicalFunction::operator==(const LogicalFunctionConcept& rhs) const
 {
-    if (const auto* other = dynamic_cast<const AlwaysLeTbigintTfloatLogicalFunction*>(&rhs))
+    if (const auto* other = dynamic_cast<const AlwaysLeTbigintTbigintLogicalFunction*>(&rhs))
         return parameters == other->parameters;
     return false;
 }
 
-std::string AlwaysLeTbigintTfloatLogicalFunction::explain(ExplainVerbosity verbosity) const
+std::string AlwaysLeTbigintTbigintLogicalFunction::explain(ExplainVerbosity verbosity) const
 {
     std::string args;
     for (size_t index = 0; index < parameters.size(); ++index) {
@@ -71,7 +71,7 @@ std::string AlwaysLeTbigintTfloatLogicalFunction::explain(ExplainVerbosity verbo
     return fmt::format("{}({})", NAME, args);
 }
 
-LogicalFunction AlwaysLeTbigintTfloatLogicalFunction::withInferredDataType(const Schema& schema) const
+LogicalFunction AlwaysLeTbigintTbigintLogicalFunction::withInferredDataType(const Schema& schema) const
 {
     std::vector<LogicalFunction> newChildren;
     newChildren.reserve(parameters.size());
@@ -80,7 +80,7 @@ LogicalFunction AlwaysLeTbigintTfloatLogicalFunction::withInferredDataType(const
     return withChildren(newChildren);
 }
 
-SerializableFunction AlwaysLeTbigintTfloatLogicalFunction::serialize() const
+SerializableFunction AlwaysLeTbigintTbigintLogicalFunction::serialize() const
 {
     SerializableFunction proto;
     proto.set_function_type(std::string(NAME));
@@ -90,16 +90,16 @@ SerializableFunction AlwaysLeTbigintTfloatLogicalFunction::serialize() const
     return proto;
 }
 
-LogicalFunctionRegistryReturnType LogicalFunctionGeneratedRegistrar::RegisterAlwaysLeTbigintTfloatLogicalFunction(
+LogicalFunctionRegistryReturnType LogicalFunctionGeneratedRegistrar::RegisterAlwaysLeTbigintTbigintLogicalFunction(
     LogicalFunctionRegistryArguments arguments)
 {
     PRECONDITION(arguments.children.size() == 3,
-                 "AlwaysLeTbigintTfloatLogicalFunction requires 3 children but got {}",
+                 "AlwaysLeTbigintTbigintLogicalFunction requires 3 children but got {}",
                  arguments.children.size());
     auto arg0 = std::move(arguments.children[0]);
     auto arg1 = std::move(arguments.children[1]);
     auto arg2 = std::move(arguments.children[2]);
-    return AlwaysLeTbigintTfloatLogicalFunction(std::move(arg0), std::move(arg1), std::move(arg2));
+    return AlwaysLeTbigintTbigintLogicalFunction(std::move(arg0), std::move(arg1), std::move(arg2));
 }
 
 } // namespace NES
