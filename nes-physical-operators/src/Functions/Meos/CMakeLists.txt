@@ -22,6 +22,8 @@ add_plugin(TfloatCos PhysicalFunction nes-physical-operators TfloatCosPhysicalFu
 add_plugin(TfloatDegrees PhysicalFunction nes-physical-operators TfloatDegreesPhysicalFunction.cpp)
 add_plugin(TfloatFloor PhysicalFunction nes-physical-operators TfloatFloorPhysicalFunction.cpp)
 add_plugin(TfloatRadians PhysicalFunction nes-physical-operators TfloatRadiansPhysicalFunction.cpp)
+add_plugin(TfloatScaleValue PhysicalFunction nes-physical-operators TfloatScaleValuePhysicalFunction.cpp)
+add_plugin(TfloatShiftValue PhysicalFunction nes-physical-operators TfloatShiftValuePhysicalFunction.cpp)
 add_plugin(TfloatSin PhysicalFunction nes-physical-operators TfloatSinPhysicalFunction.cpp)
 add_plugin(TfloatTan PhysicalFunction nes-physical-operators TfloatTanPhysicalFunction.cpp)
 endif()

@@ -74,6 +74,8 @@
 #include <Functions/Meos/TfloatDegreesLogicalFunction.hpp>
 #include <Functions/Meos/TfloatFloorLogicalFunction.hpp>
 #include <Functions/Meos/TfloatRadiansLogicalFunction.hpp>
+#include <Functions/Meos/TfloatScaleValueLogicalFunction.hpp>
+#include <Functions/Meos/TfloatShiftValueLogicalFunction.hpp>
 #include <Functions/Meos/TfloatSinLogicalFunction.hpp>
 #include <Functions/Meos/TfloatTanLogicalFunction.hpp>
 #include <Plans/LogicalPlan.hpp>
@@ -1390,6 +1392,64 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TFLOAT_RADIANS */
+        /* BEGIN CODEGEN PARSER GLUE: TFLOAT_SCALE_VALUE */
+        case AntlrSQLLexer::TFLOAT_SCALE_VALUE:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("TFLOAT_SCALE_VALUE requires exactly 3 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(TfloatScaleValueLogicalFunction(a0, a1, a2));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: TFLOAT_SCALE_VALUE */
+        /* BEGIN CODEGEN PARSER GLUE: TFLOAT_SHIFT_VALUE */
+        case AntlrSQLLexer::TFLOAT_SHIFT_VALUE:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("TFLOAT_SHIFT_VALUE requires exactly 3 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(TfloatShiftValueLogicalFunction(a0, a1, a2));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: TFLOAT_SHIFT_VALUE */
 
         default:
             /// Check if the function is a constructor for a datatype
