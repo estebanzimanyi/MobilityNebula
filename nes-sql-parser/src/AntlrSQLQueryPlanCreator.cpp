@@ -69,18 +69,22 @@
 #include <Functions/Meos/TemporalAIntersectsGeometryLogicalFunction.hpp>
 #include <Functions/Meos/TemporalEDWithinGeometryLogicalFunction.hpp>
 #include <Functions/Meos/TemporalAtStBoxLogicalFunction.hpp>
+#include <Functions/Meos/AddFloatTfloatLogicalFunction.hpp>
 #include <Functions/Meos/AddTbigintBigintLogicalFunction.hpp>
 #include <Functions/Meos/AddTfloatFloatLogicalFunction.hpp>
 #include <Functions/Meos/AddTintIntLogicalFunction.hpp>
 #include <Functions/Meos/AddTnumberTnumberLogicalFunction.hpp>
+#include <Functions/Meos/DivFloatTfloatLogicalFunction.hpp>
 #include <Functions/Meos/DivTbigintBigintLogicalFunction.hpp>
 #include <Functions/Meos/DivTfloatFloatLogicalFunction.hpp>
 #include <Functions/Meos/DivTintIntLogicalFunction.hpp>
 #include <Functions/Meos/DivTnumberTnumberLogicalFunction.hpp>
+#include <Functions/Meos/MulFloatTfloatLogicalFunction.hpp>
 #include <Functions/Meos/MulTbigintBigintLogicalFunction.hpp>
 #include <Functions/Meos/MulTfloatFloatLogicalFunction.hpp>
 #include <Functions/Meos/MulTintIntLogicalFunction.hpp>
 #include <Functions/Meos/MulTnumberTnumberLogicalFunction.hpp>
+#include <Functions/Meos/SubFloatTfloatLogicalFunction.hpp>
 #include <Functions/Meos/SubTbigintBigintLogicalFunction.hpp>
 #include <Functions/Meos/SubTfloatFloatLogicalFunction.hpp>
 #include <Functions/Meos/SubTintIntLogicalFunction.hpp>
@@ -1598,6 +1602,35 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TNUMBER_ABS */
+        /* BEGIN CODEGEN PARSER GLUE: ADD_FLOAT_TFLOAT */
+        case AntlrSQLLexer::ADD_FLOAT_TFLOAT:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("ADD_FLOAT_TFLOAT requires exactly 3 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(AddFloatTfloatLogicalFunction(a0, a1, a2));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: ADD_FLOAT_TFLOAT */
         /* BEGIN CODEGEN PARSER GLUE: ADD_TFLOAT_FLOAT */
         case AntlrSQLLexer::ADD_TFLOAT_FLOAT:
         {
@@ -1627,6 +1660,35 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: ADD_TFLOAT_FLOAT */
+        /* BEGIN CODEGEN PARSER GLUE: DIV_FLOAT_TFLOAT */
+        case AntlrSQLLexer::DIV_FLOAT_TFLOAT:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("DIV_FLOAT_TFLOAT requires exactly 3 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(DivFloatTfloatLogicalFunction(a0, a1, a2));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: DIV_FLOAT_TFLOAT */
         /* BEGIN CODEGEN PARSER GLUE: DIV_TFLOAT_FLOAT */
         case AntlrSQLLexer::DIV_TFLOAT_FLOAT:
         {
@@ -1656,6 +1718,35 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: DIV_TFLOAT_FLOAT */
+        /* BEGIN CODEGEN PARSER GLUE: MUL_FLOAT_TFLOAT */
+        case AntlrSQLLexer::MUL_FLOAT_TFLOAT:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("MUL_FLOAT_TFLOAT requires exactly 3 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(MulFloatTfloatLogicalFunction(a0, a1, a2));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: MUL_FLOAT_TFLOAT */
         /* BEGIN CODEGEN PARSER GLUE: MUL_TFLOAT_FLOAT */
         case AntlrSQLLexer::MUL_TFLOAT_FLOAT:
         {
@@ -1685,6 +1776,35 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: MUL_TFLOAT_FLOAT */
+        /* BEGIN CODEGEN PARSER GLUE: SUB_FLOAT_TFLOAT */
+        case AntlrSQLLexer::SUB_FLOAT_TFLOAT:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("SUB_FLOAT_TFLOAT requires exactly 3 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(SubFloatTfloatLogicalFunction(a0, a1, a2));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: SUB_FLOAT_TFLOAT */
         /* BEGIN CODEGEN PARSER GLUE: SUB_TFLOAT_FLOAT */
         case AntlrSQLLexer::SUB_TFLOAT_FLOAT:
         {
