@@ -199,6 +199,42 @@
 #include <Functions/Meos/AlwaysLeTfloatTfloatLogicalFunction.hpp>
 #include <Functions/Meos/AlwaysLtTfloatTfloatLogicalFunction.hpp>
 #include <Functions/Meos/AlwaysNeTfloatTfloatLogicalFunction.hpp>
+#include <Functions/Meos/EverEqFloatTfloatLogicalFunction.hpp>
+#include <Functions/Meos/EverGeFloatTfloatLogicalFunction.hpp>
+#include <Functions/Meos/EverGtFloatTfloatLogicalFunction.hpp>
+#include <Functions/Meos/EverLeFloatTfloatLogicalFunction.hpp>
+#include <Functions/Meos/EverLtFloatTfloatLogicalFunction.hpp>
+#include <Functions/Meos/EverNeFloatTfloatLogicalFunction.hpp>
+#include <Functions/Meos/EverEqIntTintLogicalFunction.hpp>
+#include <Functions/Meos/EverGeIntTintLogicalFunction.hpp>
+#include <Functions/Meos/EverGtIntTintLogicalFunction.hpp>
+#include <Functions/Meos/EverLeIntTintLogicalFunction.hpp>
+#include <Functions/Meos/EverLtIntTintLogicalFunction.hpp>
+#include <Functions/Meos/EverNeIntTintLogicalFunction.hpp>
+#include <Functions/Meos/EverEqBigintTbigintLogicalFunction.hpp>
+#include <Functions/Meos/EverGeBigintTbigintLogicalFunction.hpp>
+#include <Functions/Meos/EverGtBigintTbigintLogicalFunction.hpp>
+#include <Functions/Meos/EverLeBigintTbigintLogicalFunction.hpp>
+#include <Functions/Meos/EverLtBigintTbigintLogicalFunction.hpp>
+#include <Functions/Meos/EverNeBigintTbigintLogicalFunction.hpp>
+#include <Functions/Meos/AlwaysEqFloatTfloatLogicalFunction.hpp>
+#include <Functions/Meos/AlwaysGeFloatTfloatLogicalFunction.hpp>
+#include <Functions/Meos/AlwaysGtFloatTfloatLogicalFunction.hpp>
+#include <Functions/Meos/AlwaysLeFloatTfloatLogicalFunction.hpp>
+#include <Functions/Meos/AlwaysLtFloatTfloatLogicalFunction.hpp>
+#include <Functions/Meos/AlwaysNeFloatTfloatLogicalFunction.hpp>
+#include <Functions/Meos/AlwaysEqIntTintLogicalFunction.hpp>
+#include <Functions/Meos/AlwaysGeIntTintLogicalFunction.hpp>
+#include <Functions/Meos/AlwaysGtIntTintLogicalFunction.hpp>
+#include <Functions/Meos/AlwaysLeIntTintLogicalFunction.hpp>
+#include <Functions/Meos/AlwaysLtIntTintLogicalFunction.hpp>
+#include <Functions/Meos/AlwaysNeIntTintLogicalFunction.hpp>
+#include <Functions/Meos/AlwaysEqBigintTbigintLogicalFunction.hpp>
+#include <Functions/Meos/AlwaysGeBigintTbigintLogicalFunction.hpp>
+#include <Functions/Meos/AlwaysGtBigintTbigintLogicalFunction.hpp>
+#include <Functions/Meos/AlwaysLeBigintTbigintLogicalFunction.hpp>
+#include <Functions/Meos/AlwaysLtBigintTbigintLogicalFunction.hpp>
+#include <Functions/Meos/AlwaysNeBigintTbigintLogicalFunction.hpp>
 #include <Plans/LogicalPlan.hpp>
 #include <Plans/LogicalPlanBuilder.hpp>
 #include <Util/Overloaded.hpp>
@@ -2986,6 +3022,180 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TINT_TO_TFLOAT */
+        /* BEGIN CODEGEN PARSER GLUE: EVER_EQ_BIGINT_TBIGINT */
+        case AntlrSQLLexer::EVER_EQ_BIGINT_TBIGINT:
+        {{
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("EVER_EQ_BIGINT_TBIGINT requires exactly 3 arguments, but got {{}}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {{
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }}
+
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(EverEqBigintTbigintLogicalFunction(a0, a1, a2));
+        }}
+        break;
+        /* END CODEGEN PARSER GLUE: EVER_EQ_BIGINT_TBIGINT */
+        /* BEGIN CODEGEN PARSER GLUE: EVER_GE_BIGINT_TBIGINT */
+        case AntlrSQLLexer::EVER_GE_BIGINT_TBIGINT:
+        {{
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("EVER_GE_BIGINT_TBIGINT requires exactly 3 arguments, but got {{}}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {{
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }}
+
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(EverGeBigintTbigintLogicalFunction(a0, a1, a2));
+        }}
+        break;
+        /* END CODEGEN PARSER GLUE: EVER_GE_BIGINT_TBIGINT */
+        /* BEGIN CODEGEN PARSER GLUE: EVER_GT_BIGINT_TBIGINT */
+        case AntlrSQLLexer::EVER_GT_BIGINT_TBIGINT:
+        {{
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("EVER_GT_BIGINT_TBIGINT requires exactly 3 arguments, but got {{}}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {{
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }}
+
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(EverGtBigintTbigintLogicalFunction(a0, a1, a2));
+        }}
+        break;
+        /* END CODEGEN PARSER GLUE: EVER_GT_BIGINT_TBIGINT */
+        /* BEGIN CODEGEN PARSER GLUE: EVER_LE_BIGINT_TBIGINT */
+        case AntlrSQLLexer::EVER_LE_BIGINT_TBIGINT:
+        {{
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("EVER_LE_BIGINT_TBIGINT requires exactly 3 arguments, but got {{}}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {{
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }}
+
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(EverLeBigintTbigintLogicalFunction(a0, a1, a2));
+        }}
+        break;
+        /* END CODEGEN PARSER GLUE: EVER_LE_BIGINT_TBIGINT */
+        /* BEGIN CODEGEN PARSER GLUE: EVER_LT_BIGINT_TBIGINT */
+        case AntlrSQLLexer::EVER_LT_BIGINT_TBIGINT:
+        {{
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("EVER_LT_BIGINT_TBIGINT requires exactly 3 arguments, but got {{}}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {{
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }}
+
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(EverLtBigintTbigintLogicalFunction(a0, a1, a2));
+        }}
+        break;
+        /* END CODEGEN PARSER GLUE: EVER_LT_BIGINT_TBIGINT */
+        /* BEGIN CODEGEN PARSER GLUE: EVER_NE_BIGINT_TBIGINT */
+        case AntlrSQLLexer::EVER_NE_BIGINT_TBIGINT:
+        {{
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("EVER_NE_BIGINT_TBIGINT requires exactly 3 arguments, but got {{}}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {{
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }}
+
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(EverNeBigintTbigintLogicalFunction(a0, a1, a2));
+        }}
+        break;
+        /* END CODEGEN PARSER GLUE: EVER_NE_BIGINT_TBIGINT */
         /* BEGIN CODEGEN PARSER GLUE: EVER_EQ_TBIGINT_BIGINT */
         case AntlrSQLLexer::EVER_EQ_TBIGINT_BIGINT:
         {
@@ -3334,6 +3544,180 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: EVER_NE_TBIGINT_TBIGINT */
+        /* BEGIN CODEGEN PARSER GLUE: EVER_EQ_FLOAT_TFLOAT */
+        case AntlrSQLLexer::EVER_EQ_FLOAT_TFLOAT:
+        {{
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("EVER_EQ_FLOAT_TFLOAT requires exactly 3 arguments, but got {{}}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {{
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }}
+
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(EverEqFloatTfloatLogicalFunction(a0, a1, a2));
+        }}
+        break;
+        /* END CODEGEN PARSER GLUE: EVER_EQ_FLOAT_TFLOAT */
+        /* BEGIN CODEGEN PARSER GLUE: EVER_GE_FLOAT_TFLOAT */
+        case AntlrSQLLexer::EVER_GE_FLOAT_TFLOAT:
+        {{
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("EVER_GE_FLOAT_TFLOAT requires exactly 3 arguments, but got {{}}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {{
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }}
+
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(EverGeFloatTfloatLogicalFunction(a0, a1, a2));
+        }}
+        break;
+        /* END CODEGEN PARSER GLUE: EVER_GE_FLOAT_TFLOAT */
+        /* BEGIN CODEGEN PARSER GLUE: EVER_GT_FLOAT_TFLOAT */
+        case AntlrSQLLexer::EVER_GT_FLOAT_TFLOAT:
+        {{
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("EVER_GT_FLOAT_TFLOAT requires exactly 3 arguments, but got {{}}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {{
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }}
+
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(EverGtFloatTfloatLogicalFunction(a0, a1, a2));
+        }}
+        break;
+        /* END CODEGEN PARSER GLUE: EVER_GT_FLOAT_TFLOAT */
+        /* BEGIN CODEGEN PARSER GLUE: EVER_LE_FLOAT_TFLOAT */
+        case AntlrSQLLexer::EVER_LE_FLOAT_TFLOAT:
+        {{
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("EVER_LE_FLOAT_TFLOAT requires exactly 3 arguments, but got {{}}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {{
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }}
+
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(EverLeFloatTfloatLogicalFunction(a0, a1, a2));
+        }}
+        break;
+        /* END CODEGEN PARSER GLUE: EVER_LE_FLOAT_TFLOAT */
+        /* BEGIN CODEGEN PARSER GLUE: EVER_LT_FLOAT_TFLOAT */
+        case AntlrSQLLexer::EVER_LT_FLOAT_TFLOAT:
+        {{
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("EVER_LT_FLOAT_TFLOAT requires exactly 3 arguments, but got {{}}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {{
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }}
+
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(EverLtFloatTfloatLogicalFunction(a0, a1, a2));
+        }}
+        break;
+        /* END CODEGEN PARSER GLUE: EVER_LT_FLOAT_TFLOAT */
+        /* BEGIN CODEGEN PARSER GLUE: EVER_NE_FLOAT_TFLOAT */
+        case AntlrSQLLexer::EVER_NE_FLOAT_TFLOAT:
+        {{
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("EVER_NE_FLOAT_TFLOAT requires exactly 3 arguments, but got {{}}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {{
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }}
+
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(EverNeFloatTfloatLogicalFunction(a0, a1, a2));
+        }}
+        break;
+        /* END CODEGEN PARSER GLUE: EVER_NE_FLOAT_TFLOAT */
         /* BEGIN CODEGEN PARSER GLUE: EVER_EQ_TFLOAT_FLOAT */
         case AntlrSQLLexer::EVER_EQ_TFLOAT_FLOAT:
         {
@@ -3682,6 +4066,180 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: EVER_NE_TFLOAT_TFLOAT */
+        /* BEGIN CODEGEN PARSER GLUE: EVER_EQ_INT_TINT */
+        case AntlrSQLLexer::EVER_EQ_INT_TINT:
+        {{
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("EVER_EQ_INT_TINT requires exactly 3 arguments, but got {{}}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {{
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }}
+
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(EverEqIntTintLogicalFunction(a0, a1, a2));
+        }}
+        break;
+        /* END CODEGEN PARSER GLUE: EVER_EQ_INT_TINT */
+        /* BEGIN CODEGEN PARSER GLUE: EVER_GE_INT_TINT */
+        case AntlrSQLLexer::EVER_GE_INT_TINT:
+        {{
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("EVER_GE_INT_TINT requires exactly 3 arguments, but got {{}}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {{
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }}
+
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(EverGeIntTintLogicalFunction(a0, a1, a2));
+        }}
+        break;
+        /* END CODEGEN PARSER GLUE: EVER_GE_INT_TINT */
+        /* BEGIN CODEGEN PARSER GLUE: EVER_GT_INT_TINT */
+        case AntlrSQLLexer::EVER_GT_INT_TINT:
+        {{
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("EVER_GT_INT_TINT requires exactly 3 arguments, but got {{}}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {{
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }}
+
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(EverGtIntTintLogicalFunction(a0, a1, a2));
+        }}
+        break;
+        /* END CODEGEN PARSER GLUE: EVER_GT_INT_TINT */
+        /* BEGIN CODEGEN PARSER GLUE: EVER_LE_INT_TINT */
+        case AntlrSQLLexer::EVER_LE_INT_TINT:
+        {{
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("EVER_LE_INT_TINT requires exactly 3 arguments, but got {{}}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {{
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }}
+
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(EverLeIntTintLogicalFunction(a0, a1, a2));
+        }}
+        break;
+        /* END CODEGEN PARSER GLUE: EVER_LE_INT_TINT */
+        /* BEGIN CODEGEN PARSER GLUE: EVER_LT_INT_TINT */
+        case AntlrSQLLexer::EVER_LT_INT_TINT:
+        {{
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("EVER_LT_INT_TINT requires exactly 3 arguments, but got {{}}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {{
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }}
+
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(EverLtIntTintLogicalFunction(a0, a1, a2));
+        }}
+        break;
+        /* END CODEGEN PARSER GLUE: EVER_LT_INT_TINT */
+        /* BEGIN CODEGEN PARSER GLUE: EVER_NE_INT_TINT */
+        case AntlrSQLLexer::EVER_NE_INT_TINT:
+        {{
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("EVER_NE_INT_TINT requires exactly 3 arguments, but got {{}}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {{
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }}
+
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(EverNeIntTintLogicalFunction(a0, a1, a2));
+        }}
+        break;
+        /* END CODEGEN PARSER GLUE: EVER_NE_INT_TINT */
         /* BEGIN CODEGEN PARSER GLUE: EVER_EQ_TINT_INT */
         case AntlrSQLLexer::EVER_EQ_TINT_INT:
         {
@@ -4030,6 +4588,180 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: EVER_NE_TINT_TINT */
+        /* BEGIN CODEGEN PARSER GLUE: ALWAYS_EQ_INT_TINT */
+        case AntlrSQLLexer::ALWAYS_EQ_INT_TINT:
+        {{
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("ALWAYS_EQ_INT_TINT requires exactly 3 arguments, but got {{}}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {{
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }}
+
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(AlwaysEqIntTintLogicalFunction(a0, a1, a2));
+        }}
+        break;
+        /* END CODEGEN PARSER GLUE: ALWAYS_EQ_INT_TINT */
+        /* BEGIN CODEGEN PARSER GLUE: ALWAYS_GE_INT_TINT */
+        case AntlrSQLLexer::ALWAYS_GE_INT_TINT:
+        {{
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("ALWAYS_GE_INT_TINT requires exactly 3 arguments, but got {{}}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {{
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }}
+
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(AlwaysGeIntTintLogicalFunction(a0, a1, a2));
+        }}
+        break;
+        /* END CODEGEN PARSER GLUE: ALWAYS_GE_INT_TINT */
+        /* BEGIN CODEGEN PARSER GLUE: ALWAYS_GT_INT_TINT */
+        case AntlrSQLLexer::ALWAYS_GT_INT_TINT:
+        {{
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("ALWAYS_GT_INT_TINT requires exactly 3 arguments, but got {{}}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {{
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }}
+
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(AlwaysGtIntTintLogicalFunction(a0, a1, a2));
+        }}
+        break;
+        /* END CODEGEN PARSER GLUE: ALWAYS_GT_INT_TINT */
+        /* BEGIN CODEGEN PARSER GLUE: ALWAYS_LE_INT_TINT */
+        case AntlrSQLLexer::ALWAYS_LE_INT_TINT:
+        {{
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("ALWAYS_LE_INT_TINT requires exactly 3 arguments, but got {{}}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {{
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }}
+
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(AlwaysLeIntTintLogicalFunction(a0, a1, a2));
+        }}
+        break;
+        /* END CODEGEN PARSER GLUE: ALWAYS_LE_INT_TINT */
+        /* BEGIN CODEGEN PARSER GLUE: ALWAYS_LT_INT_TINT */
+        case AntlrSQLLexer::ALWAYS_LT_INT_TINT:
+        {{
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("ALWAYS_LT_INT_TINT requires exactly 3 arguments, but got {{}}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {{
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }}
+
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(AlwaysLtIntTintLogicalFunction(a0, a1, a2));
+        }}
+        break;
+        /* END CODEGEN PARSER GLUE: ALWAYS_LT_INT_TINT */
+        /* BEGIN CODEGEN PARSER GLUE: ALWAYS_NE_INT_TINT */
+        case AntlrSQLLexer::ALWAYS_NE_INT_TINT:
+        {{
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("ALWAYS_NE_INT_TINT requires exactly 3 arguments, but got {{}}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {{
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }}
+
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(AlwaysNeIntTintLogicalFunction(a0, a1, a2));
+        }}
+        break;
+        /* END CODEGEN PARSER GLUE: ALWAYS_NE_INT_TINT */
         /* BEGIN CODEGEN PARSER GLUE: ALWAYS_EQ_TINT_INT */
         case AntlrSQLLexer::ALWAYS_EQ_TINT_INT:
         {
@@ -4378,6 +5110,180 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: ALWAYS_NE_TINT_TINT */
+        /* BEGIN CODEGEN PARSER GLUE: ALWAYS_EQ_BIGINT_TBIGINT */
+        case AntlrSQLLexer::ALWAYS_EQ_BIGINT_TBIGINT:
+        {{
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("ALWAYS_EQ_BIGINT_TBIGINT requires exactly 3 arguments, but got {{}}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {{
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }}
+
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(AlwaysEqBigintTbigintLogicalFunction(a0, a1, a2));
+        }}
+        break;
+        /* END CODEGEN PARSER GLUE: ALWAYS_EQ_BIGINT_TBIGINT */
+        /* BEGIN CODEGEN PARSER GLUE: ALWAYS_GE_BIGINT_TBIGINT */
+        case AntlrSQLLexer::ALWAYS_GE_BIGINT_TBIGINT:
+        {{
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("ALWAYS_GE_BIGINT_TBIGINT requires exactly 3 arguments, but got {{}}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {{
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }}
+
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(AlwaysGeBigintTbigintLogicalFunction(a0, a1, a2));
+        }}
+        break;
+        /* END CODEGEN PARSER GLUE: ALWAYS_GE_BIGINT_TBIGINT */
+        /* BEGIN CODEGEN PARSER GLUE: ALWAYS_GT_BIGINT_TBIGINT */
+        case AntlrSQLLexer::ALWAYS_GT_BIGINT_TBIGINT:
+        {{
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("ALWAYS_GT_BIGINT_TBIGINT requires exactly 3 arguments, but got {{}}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {{
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }}
+
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(AlwaysGtBigintTbigintLogicalFunction(a0, a1, a2));
+        }}
+        break;
+        /* END CODEGEN PARSER GLUE: ALWAYS_GT_BIGINT_TBIGINT */
+        /* BEGIN CODEGEN PARSER GLUE: ALWAYS_LE_BIGINT_TBIGINT */
+        case AntlrSQLLexer::ALWAYS_LE_BIGINT_TBIGINT:
+        {{
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("ALWAYS_LE_BIGINT_TBIGINT requires exactly 3 arguments, but got {{}}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {{
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }}
+
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(AlwaysLeBigintTbigintLogicalFunction(a0, a1, a2));
+        }}
+        break;
+        /* END CODEGEN PARSER GLUE: ALWAYS_LE_BIGINT_TBIGINT */
+        /* BEGIN CODEGEN PARSER GLUE: ALWAYS_LT_BIGINT_TBIGINT */
+        case AntlrSQLLexer::ALWAYS_LT_BIGINT_TBIGINT:
+        {{
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("ALWAYS_LT_BIGINT_TBIGINT requires exactly 3 arguments, but got {{}}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {{
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }}
+
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(AlwaysLtBigintTbigintLogicalFunction(a0, a1, a2));
+        }}
+        break;
+        /* END CODEGEN PARSER GLUE: ALWAYS_LT_BIGINT_TBIGINT */
+        /* BEGIN CODEGEN PARSER GLUE: ALWAYS_NE_BIGINT_TBIGINT */
+        case AntlrSQLLexer::ALWAYS_NE_BIGINT_TBIGINT:
+        {{
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("ALWAYS_NE_BIGINT_TBIGINT requires exactly 3 arguments, but got {{}}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {{
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }}
+
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(AlwaysNeBigintTbigintLogicalFunction(a0, a1, a2));
+        }}
+        break;
+        /* END CODEGEN PARSER GLUE: ALWAYS_NE_BIGINT_TBIGINT */
         /* BEGIN CODEGEN PARSER GLUE: ALWAYS_EQ_TBIGINT_BIGINT */
         case AntlrSQLLexer::ALWAYS_EQ_TBIGINT_BIGINT:
         {
@@ -4726,6 +5632,180 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: ALWAYS_NE_TBIGINT_TBIGINT */
+        /* BEGIN CODEGEN PARSER GLUE: ALWAYS_EQ_FLOAT_TFLOAT */
+        case AntlrSQLLexer::ALWAYS_EQ_FLOAT_TFLOAT:
+        {{
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("ALWAYS_EQ_FLOAT_TFLOAT requires exactly 3 arguments, but got {{}}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {{
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }}
+
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(AlwaysEqFloatTfloatLogicalFunction(a0, a1, a2));
+        }}
+        break;
+        /* END CODEGEN PARSER GLUE: ALWAYS_EQ_FLOAT_TFLOAT */
+        /* BEGIN CODEGEN PARSER GLUE: ALWAYS_GE_FLOAT_TFLOAT */
+        case AntlrSQLLexer::ALWAYS_GE_FLOAT_TFLOAT:
+        {{
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("ALWAYS_GE_FLOAT_TFLOAT requires exactly 3 arguments, but got {{}}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {{
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }}
+
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(AlwaysGeFloatTfloatLogicalFunction(a0, a1, a2));
+        }}
+        break;
+        /* END CODEGEN PARSER GLUE: ALWAYS_GE_FLOAT_TFLOAT */
+        /* BEGIN CODEGEN PARSER GLUE: ALWAYS_GT_FLOAT_TFLOAT */
+        case AntlrSQLLexer::ALWAYS_GT_FLOAT_TFLOAT:
+        {{
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("ALWAYS_GT_FLOAT_TFLOAT requires exactly 3 arguments, but got {{}}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {{
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }}
+
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(AlwaysGtFloatTfloatLogicalFunction(a0, a1, a2));
+        }}
+        break;
+        /* END CODEGEN PARSER GLUE: ALWAYS_GT_FLOAT_TFLOAT */
+        /* BEGIN CODEGEN PARSER GLUE: ALWAYS_LE_FLOAT_TFLOAT */
+        case AntlrSQLLexer::ALWAYS_LE_FLOAT_TFLOAT:
+        {{
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("ALWAYS_LE_FLOAT_TFLOAT requires exactly 3 arguments, but got {{}}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {{
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }}
+
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(AlwaysLeFloatTfloatLogicalFunction(a0, a1, a2));
+        }}
+        break;
+        /* END CODEGEN PARSER GLUE: ALWAYS_LE_FLOAT_TFLOAT */
+        /* BEGIN CODEGEN PARSER GLUE: ALWAYS_LT_FLOAT_TFLOAT */
+        case AntlrSQLLexer::ALWAYS_LT_FLOAT_TFLOAT:
+        {{
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("ALWAYS_LT_FLOAT_TFLOAT requires exactly 3 arguments, but got {{}}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {{
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }}
+
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(AlwaysLtFloatTfloatLogicalFunction(a0, a1, a2));
+        }}
+        break;
+        /* END CODEGEN PARSER GLUE: ALWAYS_LT_FLOAT_TFLOAT */
+        /* BEGIN CODEGEN PARSER GLUE: ALWAYS_NE_FLOAT_TFLOAT */
+        case AntlrSQLLexer::ALWAYS_NE_FLOAT_TFLOAT:
+        {{
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("ALWAYS_NE_FLOAT_TFLOAT requires exactly 3 arguments, but got {{}}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {{
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }}
+
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(AlwaysNeFloatTfloatLogicalFunction(a0, a1, a2));
+        }}
+        break;
+        /* END CODEGEN PARSER GLUE: ALWAYS_NE_FLOAT_TFLOAT */
         /* BEGIN CODEGEN PARSER GLUE: ALWAYS_EQ_TFLOAT_FLOAT */
         case AntlrSQLLexer::ALWAYS_EQ_TFLOAT_FLOAT:
         {
