@@ -67,7 +67,7 @@ VarVal AlwaysGeTbigintTbigintPhysicalFunction::execute(const Record& record, Are
                 if (!temp1) return 0.0;
                 Temporal* temp2 = tbigint_in(wkt2.c_str());
                 if (!temp2) { free(temp1); return 0.0; }
-                int r = always_ge_tbigint_tbigint(temp1, temp2);
+                int r = always_ge_temporal_temporal(temp1, temp2);
                 free(temp1);
                 free(temp2);
                 return static_cast<double>(r);
