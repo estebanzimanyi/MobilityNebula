@@ -109,7 +109,10 @@
 #include <Functions/Meos/TfloatCeilLogicalFunction.hpp>
 #include <Functions/Meos/TfloatCosLogicalFunction.hpp>
 #include <Functions/Meos/TfloatDegreesLogicalFunction.hpp>
+#include <Functions/Meos/TfloatExpLogicalFunction.hpp>
 #include <Functions/Meos/TfloatFloorLogicalFunction.hpp>
+#include <Functions/Meos/TfloatLnLogicalFunction.hpp>
+#include <Functions/Meos/TfloatLog10LogicalFunction.hpp>
 #include <Functions/Meos/TfloatRadiansLogicalFunction.hpp>
 #include <Functions/Meos/TfloatScaleValueLogicalFunction.hpp>
 #include <Functions/Meos/TfloatShiftScaleValueLogicalFunction.hpp>
@@ -1438,6 +1441,34 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TFLOAT_DEGREES */
+        /* BEGIN CODEGEN PARSER GLUE: TFLOAT_EXP */
+        case AntlrSQLLexer::TFLOAT_EXP:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 2)
+                throw InvalidQuerySyntax("TFLOAT_EXP requires exactly 2 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(TfloatExpLogicalFunction(a0, a1));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: TFLOAT_EXP */
         /* BEGIN CODEGEN PARSER GLUE: TFLOAT_FLOOR */
         case AntlrSQLLexer::TFLOAT_FLOOR:
         {
@@ -1466,6 +1497,62 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TFLOAT_FLOOR */
+        /* BEGIN CODEGEN PARSER GLUE: TFLOAT_LN */
+        case AntlrSQLLexer::TFLOAT_LN:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 2)
+                throw InvalidQuerySyntax("TFLOAT_LN requires exactly 2 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(TfloatLnLogicalFunction(a0, a1));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: TFLOAT_LN */
+        /* BEGIN CODEGEN PARSER GLUE: TFLOAT_LOG10 */
+        case AntlrSQLLexer::TFLOAT_LOG10:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 2)
+                throw InvalidQuerySyntax("TFLOAT_LOG10 requires exactly 2 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(TfloatLog10LogicalFunction(a0, a1));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: TFLOAT_LOG10 */
         /* BEGIN CODEGEN PARSER GLUE: TFLOAT_RADIANS */
         case AntlrSQLLexer::TFLOAT_RADIANS:
         {
