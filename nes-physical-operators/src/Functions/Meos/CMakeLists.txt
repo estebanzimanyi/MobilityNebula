@@ -46,5 +46,7 @@ add_plugin(TfloatShiftScaleValue PhysicalFunction nes-physical-operators TfloatS
 add_plugin(TfloatShiftValue PhysicalFunction nes-physical-operators TfloatShiftValuePhysicalFunction.cpp)
 add_plugin(TfloatSin PhysicalFunction nes-physical-operators TfloatSinPhysicalFunction.cpp)
 add_plugin(TfloatTan PhysicalFunction nes-physical-operators TfloatTanPhysicalFunction.cpp)
+add_plugin(TfloatToTint PhysicalFunction nes-physical-operators TfloatToTintPhysicalFunction.cpp)
+add_plugin(TintToTfloat PhysicalFunction nes-physical-operators TintToTfloatPhysicalFunction.cpp)
 add_plugin(TnumberAbs PhysicalFunction nes-physical-operators TnumberAbsPhysicalFunction.cpp)
 endif()

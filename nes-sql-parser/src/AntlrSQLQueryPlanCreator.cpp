@@ -95,9 +95,11 @@
 #include <Functions/Meos/TfloatShiftValueLogicalFunction.hpp>
 #include <Functions/Meos/TfloatSinLogicalFunction.hpp>
 #include <Functions/Meos/TfloatTanLogicalFunction.hpp>
+#include <Functions/Meos/TfloatToTintLogicalFunction.hpp>
 #include <Functions/Meos/TintScaleValueLogicalFunction.hpp>
 #include <Functions/Meos/TintShiftScaleValueLogicalFunction.hpp>
 #include <Functions/Meos/TintShiftValueLogicalFunction.hpp>
+#include <Functions/Meos/TintToTfloatLogicalFunction.hpp>
 #include <Functions/Meos/TnumberAbsLogicalFunction.hpp>
 #include <Plans/LogicalPlan.hpp>
 #include <Plans/LogicalPlanBuilder.hpp>
@@ -1301,6 +1303,34 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TFLOAT_TAN */
+        /* BEGIN CODEGEN PARSER GLUE: TFLOAT_TO_TINT */
+        case AntlrSQLLexer::TFLOAT_TO_TINT:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 2)
+                throw InvalidQuerySyntax("TFLOAT_TO_TINT requires exactly 2 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(TfloatToTintLogicalFunction(a0, a1));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: TFLOAT_TO_TINT */
         /* BEGIN CODEGEN PARSER GLUE: TFLOAT_CEIL */
         case AntlrSQLLexer::TFLOAT_CEIL:
         {
@@ -2082,6 +2112,34 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TINT_SHIFT_VALUE */
+        /* BEGIN CODEGEN PARSER GLUE: TINT_TO_TFLOAT */
+        case AntlrSQLLexer::TINT_TO_TFLOAT:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 2)
+                throw InvalidQuerySyntax("TINT_TO_TFLOAT requires exactly 2 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(TintToTfloatLogicalFunction(a0, a1));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: TINT_TO_TFLOAT */
 
         default:
             /// Check if the function is a constructor for a datatype

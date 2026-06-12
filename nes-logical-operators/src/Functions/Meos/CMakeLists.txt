@@ -47,4 +47,6 @@ add_plugin(TfloatShiftScaleValue LogicalFunction nes-logical-operators TfloatShi
 add_plugin(TfloatShiftValue LogicalFunction nes-logical-operators TfloatShiftValueLogicalFunction.cpp)
 add_plugin(TfloatSin LogicalFunction nes-logical-operators TfloatSinLogicalFunction.cpp)
 add_plugin(TfloatTan LogicalFunction nes-logical-operators TfloatTanLogicalFunction.cpp)
+add_plugin(TfloatToTint LogicalFunction nes-logical-operators TfloatToTintLogicalFunction.cpp)
+add_plugin(TintToTfloat LogicalFunction nes-logical-operators TintToTfloatLogicalFunction.cpp)
 add_plugin(TnumberAbs LogicalFunction nes-logical-operators TnumberAbsLogicalFunction.cpp)
