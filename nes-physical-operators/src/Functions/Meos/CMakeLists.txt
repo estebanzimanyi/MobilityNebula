@@ -244,4 +244,5 @@ add_plugin(TltFloatTfloat PhysicalFunction nes-physical-operators TltFloatTfloat
 add_plugin(TltTintInt PhysicalFunction nes-physical-operators TltTintIntPhysicalFunction.cpp)
 add_plugin(TltIntTint PhysicalFunction nes-physical-operators TltIntTintPhysicalFunction.cpp)
 add_plugin(TltTemporalTemporal PhysicalFunction nes-physical-operators TltTemporalTemporalPhysicalFunction.cpp)
+add_plugin(TboolToTint PhysicalFunction nes-physical-operators TboolToTintPhysicalFunction.cpp)
 endif()
