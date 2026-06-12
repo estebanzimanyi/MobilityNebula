@@ -28,11 +28,11 @@ namespace NES {
  * `ever_lt_tbigint_tfloat`. Takes (value1:FLOAT64, value2:FLOAT64, ts:UINT64),
  * constructs two single-instant temporals, applies the comparison, and returns FLOAT64 (0.0/1.0).
  */
-class EverLtTbigintTfloatLogicalFunction : public LogicalFunctionConcept {
+class EverLtTbigintTbigintLogicalFunction : public LogicalFunctionConcept {
 public:
-    static constexpr std::string_view NAME = "EverLtTbigintTfloat";
+    static constexpr std::string_view NAME = "EverLtTbigintTbigint";
 
-    EverLtTbigintTfloatLogicalFunction(LogicalFunction value1,
+    EverLtTbigintTbigintLogicalFunction(LogicalFunction value1,
                                       LogicalFunction value2,
                                       LogicalFunction ts);
 
