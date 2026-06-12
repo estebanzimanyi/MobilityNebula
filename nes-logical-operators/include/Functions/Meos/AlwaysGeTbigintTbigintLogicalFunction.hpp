@@ -28,11 +28,11 @@ namespace NES {
  * `always_ge_tbigint_tfloat`. Takes (value1:FLOAT64, value2:FLOAT64, ts:UINT64),
  * constructs two single-instant temporals, applies the comparison, and returns FLOAT64 (0.0/1.0).
  */
-class AlwaysGeTbigintTfloatLogicalFunction : public LogicalFunctionConcept {
+class AlwaysGeTbigintTbigintLogicalFunction : public LogicalFunctionConcept {
 public:
-    static constexpr std::string_view NAME = "AlwaysGeTbigintTfloat";
+    static constexpr std::string_view NAME = "AlwaysGeTbigintTbigint";
 
-    AlwaysGeTbigintTfloatLogicalFunction(LogicalFunction value1,
+    AlwaysGeTbigintTbigintLogicalFunction(LogicalFunction value1,
                                       LogicalFunction value2,
                                       LogicalFunction ts);
 
