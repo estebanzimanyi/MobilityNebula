@@ -67,7 +67,7 @@ VarVal EverLeTintTintPhysicalFunction::execute(const Record& record, ArenaRef& a
                 if (!temp1) return 0.0;
                 Temporal* temp2 = tint_in(wkt2.c_str());
                 if (!temp2) { free(temp1); return 0.0; }
-                int r = ever_le_tint_tint(temp1, temp2);
+                int r = ever_le_temporal_temporal(temp1, temp2);
                 free(temp1);
                 free(temp2);
                 return static_cast<double>(r);
