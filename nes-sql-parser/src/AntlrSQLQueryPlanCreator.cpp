@@ -269,6 +269,13 @@
 #include <Functions/Meos/TeqTemporalTemporalLogicalFunction.hpp>
 #include <Functions/Meos/TeqTfloatFloatLogicalFunction.hpp>
 #include <Functions/Meos/TeqTintIntLogicalFunction.hpp>
+#include <Functions/Meos/TneTboolBoolLogicalFunction.hpp>
+#include <Functions/Meos/TneBoolTboolLogicalFunction.hpp>
+#include <Functions/Meos/TneTfloatFloatLogicalFunction.hpp>
+#include <Functions/Meos/TneFloatTfloatLogicalFunction.hpp>
+#include <Functions/Meos/TneTintIntLogicalFunction.hpp>
+#include <Functions/Meos/TneIntTintLogicalFunction.hpp>
+#include <Functions/Meos/TneTemporalTemporalLogicalFunction.hpp>
 #include <Plans/LogicalPlan.hpp>
 #include <Plans/LogicalPlanBuilder.hpp>
 #include <Util/Overloaded.hpp>
@@ -6825,6 +6832,209 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }}
         break;
         /* END CODEGEN PARSER GLUE: TEQ_TINT_INT */
+        /* BEGIN CODEGEN PARSER GLUE: TNE_TBOOL_BOOL */
+        case AntlrSQLLexer::TNE_TBOOL_BOOL:
+        {{
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("TNE_TBOOL_BOOL requires exactly 3 arguments, but got {{}}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {{
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }}
+
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(TneTboolBoolLogicalFunction(a0, a1, a2));
+        }}
+        break;
+        /* END CODEGEN PARSER GLUE: TNE_TBOOL_BOOL */
+        /* BEGIN CODEGEN PARSER GLUE: TNE_BOOL_TBOOL */
+        case AntlrSQLLexer::TNE_BOOL_TBOOL:
+        {{
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("TNE_BOOL_TBOOL requires exactly 3 arguments, but got {{}}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {{
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }}
+
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(TneBoolTboolLogicalFunction(a0, a1, a2));
+        }}
+        break;
+        /* END CODEGEN PARSER GLUE: TNE_BOOL_TBOOL */
+        /* BEGIN CODEGEN PARSER GLUE: TNE_TFLOAT_FLOAT */
+        case AntlrSQLLexer::TNE_TFLOAT_FLOAT:
+        {{
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("TNE_TFLOAT_FLOAT requires exactly 3 arguments, but got {{}}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {{
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }}
+
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(TneTfloatFloatLogicalFunction(a0, a1, a2));
+        }}
+        break;
+        /* END CODEGEN PARSER GLUE: TNE_TFLOAT_FLOAT */
+        /* BEGIN CODEGEN PARSER GLUE: TNE_FLOAT_TFLOAT */
+        case AntlrSQLLexer::TNE_FLOAT_TFLOAT:
+        {{
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("TNE_FLOAT_TFLOAT requires exactly 3 arguments, but got {{}}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {{
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }}
+
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(TneFloatTfloatLogicalFunction(a0, a1, a2));
+        }}
+        break;
+        /* END CODEGEN PARSER GLUE: TNE_FLOAT_TFLOAT */
+        /* BEGIN CODEGEN PARSER GLUE: TNE_TINT_INT */
+        case AntlrSQLLexer::TNE_TINT_INT:
+        {{
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("TNE_TINT_INT requires exactly 3 arguments, but got {{}}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {{
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }}
+
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(TneTintIntLogicalFunction(a0, a1, a2));
+        }}
+        break;
+        /* END CODEGEN PARSER GLUE: TNE_TINT_INT */
+        /* BEGIN CODEGEN PARSER GLUE: TNE_INT_TINT */
+        case AntlrSQLLexer::TNE_INT_TINT:
+        {{
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("TNE_INT_TINT requires exactly 3 arguments, but got {{}}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {{
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }}
+
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(TneIntTintLogicalFunction(a0, a1, a2));
+        }}
+        break;
+        /* END CODEGEN PARSER GLUE: TNE_INT_TINT */
+        /* BEGIN CODEGEN PARSER GLUE: TNE_TEMPORAL_TEMPORAL */
+        case AntlrSQLLexer::TNE_TEMPORAL_TEMPORAL:
+        {{
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("TNE_TEMPORAL_TEMPORAL requires exactly 3 arguments, but got {{}}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {{
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }}
+
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(TneTemporalTemporalLogicalFunction(a0, a1, a2));
+        }}
+        break;
+        /* END CODEGEN PARSER GLUE: TNE_TEMPORAL_TEMPORAL */
         /* BEGIN CODEGEN PARSER GLUE: ALWAYS_EQ_TFLOAT_FLOAT */
         case AntlrSQLLexer::ALWAYS_EQ_TFLOAT_FLOAT:
         {
