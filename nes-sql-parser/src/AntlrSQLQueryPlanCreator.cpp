@@ -255,6 +255,13 @@
 #include <Functions/Meos/AlwaysLeTemporalTemporalLogicalFunction.hpp>
 #include <Functions/Meos/AlwaysLtTemporalTemporalLogicalFunction.hpp>
 #include <Functions/Meos/AlwaysNeTemporalTemporalLogicalFunction.hpp>
+#include <Functions/Meos/TandBoolTboolLogicalFunction.hpp>
+#include <Functions/Meos/TandTboolBoolLogicalFunction.hpp>
+#include <Functions/Meos/TandTboolTboolLogicalFunction.hpp>
+#include <Functions/Meos/TnotTboolLogicalFunction.hpp>
+#include <Functions/Meos/TorBoolTboolLogicalFunction.hpp>
+#include <Functions/Meos/TorTboolBoolLogicalFunction.hpp>
+#include <Functions/Meos/TorTboolTboolLogicalFunction.hpp>
 #include <Plans/LogicalPlan.hpp>
 #include <Plans/LogicalPlanBuilder.hpp>
 #include <Util/Overloaded.hpp>
@@ -6406,6 +6413,208 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }}
         break;
         /* END CODEGEN PARSER GLUE: ALWAYS_NE_TEMPORAL_TEMPORAL */
+        /* BEGIN CODEGEN PARSER GLUE: TNOT_TBOOL */
+        case AntlrSQLLexer::TNOT_TBOOL:
+        {
+            const auto argCount = context->expression().size();
+            if (argCount != 2)
+                throw InvalidQuerySyntax("TNOT_TBOOL requires exactly 2 arguments, but got {}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }
+
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(TnotTboolLogicalFunction(a0, a1));
+        }
+        break;
+        /* END CODEGEN PARSER GLUE: TNOT_TBOOL */
+        /* BEGIN CODEGEN PARSER GLUE: TAND_BOOL_TBOOL */
+        case AntlrSQLLexer::TAND_BOOL_TBOOL:
+        {{
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("TAND_BOOL_TBOOL requires exactly 3 arguments, but got {{}}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {{
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }}
+
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(TandBoolTboolLogicalFunction(a0, a1, a2));
+        }}
+        break;
+        /* END CODEGEN PARSER GLUE: TAND_BOOL_TBOOL */
+        /* BEGIN CODEGEN PARSER GLUE: TAND_TBOOL_BOOL */
+        case AntlrSQLLexer::TAND_TBOOL_BOOL:
+        {{
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("TAND_TBOOL_BOOL requires exactly 3 arguments, but got {{}}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {{
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }}
+
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(TandTboolBoolLogicalFunction(a0, a1, a2));
+        }}
+        break;
+        /* END CODEGEN PARSER GLUE: TAND_TBOOL_BOOL */
+        /* BEGIN CODEGEN PARSER GLUE: TAND_TBOOL_TBOOL */
+        case AntlrSQLLexer::TAND_TBOOL_TBOOL:
+        {{
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("TAND_TBOOL_TBOOL requires exactly 3 arguments, but got {{}}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {{
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }}
+
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(TandTboolTboolLogicalFunction(a0, a1, a2));
+        }}
+        break;
+        /* END CODEGEN PARSER GLUE: TAND_TBOOL_TBOOL */
+        /* BEGIN CODEGEN PARSER GLUE: TOR_BOOL_TBOOL */
+        case AntlrSQLLexer::TOR_BOOL_TBOOL:
+        {{
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("TOR_BOOL_TBOOL requires exactly 3 arguments, but got {{}}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {{
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }}
+
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(TorBoolTboolLogicalFunction(a0, a1, a2));
+        }}
+        break;
+        /* END CODEGEN PARSER GLUE: TOR_BOOL_TBOOL */
+        /* BEGIN CODEGEN PARSER GLUE: TOR_TBOOL_BOOL */
+        case AntlrSQLLexer::TOR_TBOOL_BOOL:
+        {{
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("TOR_TBOOL_BOOL requires exactly 3 arguments, but got {{}}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {{
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }}
+
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(TorTboolBoolLogicalFunction(a0, a1, a2));
+        }}
+        break;
+        /* END CODEGEN PARSER GLUE: TOR_TBOOL_BOOL */
+        /* BEGIN CODEGEN PARSER GLUE: TOR_TBOOL_TBOOL */
+        case AntlrSQLLexer::TOR_TBOOL_TBOOL:
+        {{
+            const auto argCount = context->expression().size();
+            if (argCount != 3)
+                throw InvalidQuerySyntax("TOR_TBOOL_TBOOL requires exactly 3 arguments, but got {{}}", argCount);
+
+            while (!helpers.top().constantBuilder.empty())
+            {{
+                auto constantValue = std::move(helpers.top().constantBuilder.back());
+                helpers.top().constantBuilder.pop_back();
+                DataType dataType;
+                char* endPtr = nullptr;
+                std::strtod(constantValue.c_str(), &endPtr);
+                if (endPtr != nullptr && *endPtr == '\0')
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::FLOAT64);
+                else
+                    dataType = DataTypeProvider::provideDataType(DataType::Type::VARSIZED);
+                helpers.top().functionBuilder.emplace_back(ConstantValueLogicalFunction(dataType, std::move(constantValue)));
+            }}
+
+            auto a2 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a1 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+            auto a0 = helpers.top().functionBuilder.back(); helpers.top().functionBuilder.pop_back();
+
+            helpers.top().functionBuilder.emplace_back(TorTboolTboolLogicalFunction(a0, a1, a2));
+        }}
+        break;
+        /* END CODEGEN PARSER GLUE: TOR_TBOOL_TBOOL */
         /* BEGIN CODEGEN PARSER GLUE: ALWAYS_EQ_TFLOAT_FLOAT */
         case AntlrSQLLexer::ALWAYS_EQ_TFLOAT_FLOAT:
         {
