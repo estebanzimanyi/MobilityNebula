@@ -287,4 +287,8 @@ add_plugin(TtextInitcap PhysicalFunction nes-physical-operators TtextInitcapPhys
 add_plugin(TextcatTtextText PhysicalFunction nes-physical-operators TextcatTtextTextPhysicalFunction.cpp)
 add_plugin(TextcatTextTtext PhysicalFunction nes-physical-operators TextcatTextTtextPhysicalFunction.cpp)
 add_plugin(TextcatTtextTtext PhysicalFunction nes-physical-operators TextcatTtextTtextPhysicalFunction.cpp)
+add_plugin(GeomIntersects2d PhysicalFunction nes-physical-operators GeomIntersects2dPhysicalFunction.cpp)
+add_plugin(GeomDwithin2d PhysicalFunction nes-physical-operators GeomDwithin2dPhysicalFunction.cpp)
+add_plugin(GeomContains PhysicalFunction nes-physical-operators GeomContainsPhysicalFunction.cpp)
+add_plugin(GeomDisjoint2d PhysicalFunction nes-physical-operators GeomDisjoint2dPhysicalFunction.cpp)
 endif()
