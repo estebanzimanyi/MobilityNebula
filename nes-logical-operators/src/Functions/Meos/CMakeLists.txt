@@ -288,3 +288,7 @@ add_plugin(TtextInitcap LogicalFunction nes-logical-operators TtextInitcapLogica
 add_plugin(TextcatTtextText LogicalFunction nes-logical-operators TextcatTtextTextLogicalFunction.cpp)
 add_plugin(TextcatTextTtext LogicalFunction nes-logical-operators TextcatTextTtextLogicalFunction.cpp)
 add_plugin(TextcatTtextTtext LogicalFunction nes-logical-operators TextcatTtextTtextLogicalFunction.cpp)
+add_plugin(GeomIntersects2d LogicalFunction nes-logical-operators GeomIntersects2dLogicalFunction.cpp)
+add_plugin(GeomDwithin2d LogicalFunction nes-logical-operators GeomDwithin2dLogicalFunction.cpp)
+add_plugin(GeomContains LogicalFunction nes-logical-operators GeomContainsLogicalFunction.cpp)
+add_plugin(GeomDisjoint2d LogicalFunction nes-logical-operators GeomDisjoint2dLogicalFunction.cpp)

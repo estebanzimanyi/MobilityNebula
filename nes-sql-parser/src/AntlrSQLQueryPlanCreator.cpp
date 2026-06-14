@@ -339,6 +339,10 @@
 #include <Functions/Meos/TextcatTtextTextLogicalFunction.hpp>
 #include <Functions/Meos/TextcatTextTtextLogicalFunction.hpp>
 #include <Functions/Meos/TextcatTtextTtextLogicalFunction.hpp>
+#include <Functions/Meos/GeomIntersects2dLogicalFunction.hpp>
+#include <Functions/Meos/GeomDwithin2dLogicalFunction.hpp>
+#include <Functions/Meos/GeomContainsLogicalFunction.hpp>
+#include <Functions/Meos/GeomDisjoint2dLogicalFunction.hpp>
 #include <Plans/LogicalPlan.hpp>
 #include <Plans/LogicalPlanBuilder.hpp>
 #include <Util/Overloaded.hpp>
@@ -8746,6 +8750,43 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             return LogicalFunction(TextcatTtextTtextLogicalFunction(std::move(arg0), std::move(arg1), std::move(arg2), std::move(arg3)));
         }
         /* END CODEGEN PARSER GLUE: TEXTCAT_TTEXT_TTEXT */
+        case AntlrSQLParser::GEOM_INTERSECTS2D: {
+            PRECONDITION(ctx->functionParam().size() == 2,
+                         "GeomIntersects2d requires 2 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            return LogicalFunction(GeomIntersects2dLogicalFunction(std::move(arg0), std::move(arg1)));
+        }
+        /* END CODEGEN PARSER GLUE: GEOM_INTERSECTS2D */
+        case AntlrSQLParser::GEOM_DWITHIN2D: {
+            PRECONDITION(ctx->functionParam().size() == 3,
+                         "GeomDwithin2d requires 3 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            auto arg2 = visit(ctx->functionParam(2)).as<LogicalFunction>();
+            return LogicalFunction(GeomDwithin2dLogicalFunction(std::move(arg0), std::move(arg1), std::move(arg2)));
+        }
+        /* END CODEGEN PARSER GLUE: GEOM_DWITHIN2D */
+        case AntlrSQLParser::GEOM_CONTAINS: {
+            PRECONDITION(ctx->functionParam().size() == 2,
+                         "GeomContains requires 2 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            return LogicalFunction(GeomContainsLogicalFunction(std::move(arg0), std::move(arg1)));
+        }
+        /* END CODEGEN PARSER GLUE: GEOM_CONTAINS */
+        case AntlrSQLParser::GEOM_DISJOINT2D: {
+            PRECONDITION(ctx->functionParam().size() == 2,
+                         "GeomDisjoint2d requires 2 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            return LogicalFunction(GeomDisjoint2dLogicalFunction(std::move(arg0), std::move(arg1)));
+        }
+        /* END CODEGEN PARSER GLUE: GEOM_DISJOINT2D */
         /* BEGIN CODEGEN PARSER GLUE: ALWAYS_EQ_TFLOAT_FLOAT */
         case AntlrSQLLexer::ALWAYS_EQ_TFLOAT_FLOAT:
         {
