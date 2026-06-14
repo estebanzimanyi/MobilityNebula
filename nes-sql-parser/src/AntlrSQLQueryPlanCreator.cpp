@@ -369,6 +369,9 @@
 #include <Functions/Meos/AlwaysNeTgeoGeoLogicalFunction.hpp>
 #include <Functions/Meos/GeogIntersectsLogicalFunction.hpp>
 #include <Functions/Meos/GeogDwithinLogicalFunction.hpp>
+#include <Functions/Meos/GeomIntersectsLogicalFunction.hpp>
+#include <Functions/Meos/GeomDwithinLogicalFunction.hpp>
+#include <Functions/Meos/AcoversGeoTgeoLogicalFunction.hpp>
 #include <Functions/Meos/GeomIntersects2dLogicalFunction.hpp>
 #include <Functions/Meos/GeomDwithin2dLogicalFunction.hpp>
 #include <Functions/Meos/GeomContainsLogicalFunction.hpp>
@@ -9089,6 +9092,36 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             return LogicalFunction(GeogDwithinLogicalFunction(std::move(arg0), std::move(arg1), std::move(arg2)));
         }
         /* END CODEGEN PARSER GLUE: GEOG_DWITHIN */
+        case AntlrSQLParser::GEOM_INTERSECTS: {
+            PRECONDITION(ctx->functionParam().size() == 2,
+                         "GeomIntersects requires 2 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            return LogicalFunction(GeomIntersectsLogicalFunction(std::move(arg0), std::move(arg1)));
+        }
+        /* END CODEGEN PARSER GLUE: GEOM_INTERSECTS */
+        case AntlrSQLParser::GEOM_DWITHIN: {
+            PRECONDITION(ctx->functionParam().size() == 3,
+                         "GeomDwithin requires 3 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            auto arg2 = visit(ctx->functionParam(2)).as<LogicalFunction>();
+            return LogicalFunction(GeomDwithinLogicalFunction(std::move(arg0), std::move(arg1), std::move(arg2)));
+        }
+        /* END CODEGEN PARSER GLUE: GEOM_DWITHIN */
+        case AntlrSQLParser::ACOVERS_GEO_TGEO: {
+            PRECONDITION(ctx->functionParam().size() == 4,
+                         "AcoversGeoTgeo requires 4 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            auto arg2 = visit(ctx->functionParam(2)).as<LogicalFunction>();
+            auto arg3 = visit(ctx->functionParam(3)).as<LogicalFunction>();
+            return LogicalFunction(AcoversGeoTgeoLogicalFunction(std::move(arg0), std::move(arg1), std::move(arg2), std::move(arg3)));
+        }
+        /* END CODEGEN PARSER GLUE: ACOVERS_GEO_TGEO */
         /* END CODEGEN PARSER GLUE: GEOM_INTERSECTS2D */
         case AntlrSQLParser::GEOM_DWITHIN2D: {
             PRECONDITION(ctx->functionParam().size() == 3,
