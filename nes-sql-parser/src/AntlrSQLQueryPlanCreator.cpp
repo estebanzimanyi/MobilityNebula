@@ -346,6 +346,10 @@
 #include <Functions/Meos/GeogLengthLogicalFunction.hpp>
 #include <Functions/Meos/GeogPerimeterLogicalFunction.hpp>
 #include <Functions/Meos/GeomIsEmptyLogicalFunction.hpp>
+#include <Functions/Meos/AintersectsTgeoGeoLogicalFunction.hpp>
+#include <Functions/Meos/AcoversTgeoGeoLogicalFunction.hpp>
+#include <Functions/Meos/AdisjointTgeoGeoLogicalFunction.hpp>
+#include <Functions/Meos/AdwithinTgeoGeoLogicalFunction.hpp>
 #include <Functions/Meos/GeomIntersects2dLogicalFunction.hpp>
 #include <Functions/Meos/GeomDwithin2dLogicalFunction.hpp>
 #include <Functions/Meos/GeomContainsLogicalFunction.hpp>
@@ -8828,6 +8832,51 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             return LogicalFunction(GeomIsEmptyLogicalFunction(std::move(arg0)));
         }
         /* END CODEGEN PARSER GLUE: GEOM_IS_EMPTY */
+        case AntlrSQLParser::AINTERSECTS_TGEO_GEO: {
+            PRECONDITION(ctx->functionParam().size() == 4,
+                         "AintersectsTgeoGeo requires 4 args but got {}",
+                         ctx->functionParam().size());
+                        auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            auto arg2 = visit(ctx->functionParam(2)).as<LogicalFunction>();
+            auto arg3 = visit(ctx->functionParam(3)).as<LogicalFunction>();
+            return LogicalFunction(AintersectsTgeoGeoLogicalFunction(std::move(arg0), std::move(arg1), std::move(arg2), std::move(arg3)));
+        }
+        /* END CODEGEN PARSER GLUE: AINTERSECTS_TGEO_GEO */
+        case AntlrSQLParser::ACOVERS_TGEO_GEO: {
+            PRECONDITION(ctx->functionParam().size() == 4,
+                         "AcoversTgeoGeo requires 4 args but got {}",
+                         ctx->functionParam().size());
+                        auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            auto arg2 = visit(ctx->functionParam(2)).as<LogicalFunction>();
+            auto arg3 = visit(ctx->functionParam(3)).as<LogicalFunction>();
+            return LogicalFunction(AcoversTgeoGeoLogicalFunction(std::move(arg0), std::move(arg1), std::move(arg2), std::move(arg3)));
+        }
+        /* END CODEGEN PARSER GLUE: ACOVERS_TGEO_GEO */
+        case AntlrSQLParser::ADISJOINT_TGEO_GEO: {
+            PRECONDITION(ctx->functionParam().size() == 4,
+                         "AdisjointTgeoGeo requires 4 args but got {}",
+                         ctx->functionParam().size());
+                        auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            auto arg2 = visit(ctx->functionParam(2)).as<LogicalFunction>();
+            auto arg3 = visit(ctx->functionParam(3)).as<LogicalFunction>();
+            return LogicalFunction(AdisjointTgeoGeoLogicalFunction(std::move(arg0), std::move(arg1), std::move(arg2), std::move(arg3)));
+        }
+        /* END CODEGEN PARSER GLUE: ADISJOINT_TGEO_GEO */
+        case AntlrSQLParser::ADWITHIN_TGEO_GEO: {
+            PRECONDITION(ctx->functionParam().size() == 5,
+                         "AdwithinTgeoGeo requires 5 args but got {}",
+                         ctx->functionParam().size());
+                        auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            auto arg2 = visit(ctx->functionParam(2)).as<LogicalFunction>();
+            auto arg3 = visit(ctx->functionParam(3)).as<LogicalFunction>();
+            auto arg4 = visit(ctx->functionParam(4)).as<LogicalFunction>();
+            return LogicalFunction(AdwithinTgeoGeoLogicalFunction(std::move(arg0), std::move(arg1), std::move(arg2), std::move(arg3), std::move(arg4)));
+        }
+        /* END CODEGEN PARSER GLUE: ADWITHIN_TGEO_GEO */
         /* END CODEGEN PARSER GLUE: GEOM_INTERSECTS2D */
         case AntlrSQLParser::GEOM_DWITHIN2D: {
             PRECONDITION(ctx->functionParam().size() == 3,
