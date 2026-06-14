@@ -290,6 +290,7 @@ add_plugin(TextcatTextTtext LogicalFunction nes-logical-operators TextcatTextTte
 add_plugin(TextcatTtextTtext LogicalFunction nes-logical-operators TextcatTtextTtextLogicalFunction.cpp)
 add_plugin(GeomLength LogicalFunction nes-logical-operators GeomLengthLogicalFunction.cpp)
 add_plugin(GeomPerimeter LogicalFunction nes-logical-operators GeomPerimeterLogicalFunction.cpp)
+add_plugin(GeomAzimuth LogicalFunction nes-logical-operators GeomAzimuthLogicalFunction.cpp)
 add_plugin(GeomIntersects2d LogicalFunction nes-logical-operators GeomIntersects2dLogicalFunction.cpp)
 add_plugin(GeomDwithin2d LogicalFunction nes-logical-operators GeomDwithin2dLogicalFunction.cpp)
 add_plugin(GeomContains LogicalFunction nes-logical-operators GeomContainsLogicalFunction.cpp)
