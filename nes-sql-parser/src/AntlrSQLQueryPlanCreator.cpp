@@ -336,6 +336,9 @@
 #include <Functions/Meos/TtextUpperLogicalFunction.hpp>
 #include <Functions/Meos/TtextLowerLogicalFunction.hpp>
 #include <Functions/Meos/TtextInitcapLogicalFunction.hpp>
+#include <Functions/Meos/TextcatTtextTextLogicalFunction.hpp>
+#include <Functions/Meos/TextcatTextTtextLogicalFunction.hpp>
+#include <Functions/Meos/TextcatTtextTtextLogicalFunction.hpp>
 #include <Plans/LogicalPlan.hpp>
 #include <Plans/LogicalPlanBuilder.hpp>
 #include <Util/Overloaded.hpp>
@@ -8712,6 +8715,37 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             return LogicalFunction(TtextInitcapLogicalFunction(std::move(arg0), std::move(arg1)));
         }
         /* END CODEGEN PARSER GLUE: TTEXT_INITCAP */
+        case AntlrSQLParser::TEXTCAT_TTEXT_TEXT: {
+            PRECONDITION(ctx->functionParam().size() == 3,
+                         "TextcatTtextText requires 3 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            auto arg2 = visit(ctx->functionParam(2)).as<LogicalFunction>();
+            return LogicalFunction(TextcatTtextTextLogicalFunction(std::move(arg0), std::move(arg1), std::move(arg2)));
+        }
+        /* END CODEGEN PARSER GLUE: TEXTCAT_TTEXT_TEXT */
+        case AntlrSQLParser::TEXTCAT_TEXT_TTEXT: {
+            PRECONDITION(ctx->functionParam().size() == 3,
+                         "TextcatTextTtext requires 3 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            auto arg2 = visit(ctx->functionParam(2)).as<LogicalFunction>();
+            return LogicalFunction(TextcatTextTtextLogicalFunction(std::move(arg0), std::move(arg1), std::move(arg2)));
+        }
+        /* END CODEGEN PARSER GLUE: TEXTCAT_TEXT_TTEXT */
+        case AntlrSQLParser::TEXTCAT_TTEXT_TTEXT: {
+            PRECONDITION(ctx->functionParam().size() == 4,
+                         "TextcatTtextTtext requires 4 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            auto arg2 = visit(ctx->functionParam(2)).as<LogicalFunction>();
+            auto arg3 = visit(ctx->functionParam(3)).as<LogicalFunction>();
+            return LogicalFunction(TextcatTtextTtextLogicalFunction(std::move(arg0), std::move(arg1), std::move(arg2), std::move(arg3)));
+        }
+        /* END CODEGEN PARSER GLUE: TEXTCAT_TTEXT_TTEXT */
         /* BEGIN CODEGEN PARSER GLUE: ALWAYS_EQ_TFLOAT_FLOAT */
         case AntlrSQLLexer::ALWAYS_EQ_TFLOAT_FLOAT:
         {
