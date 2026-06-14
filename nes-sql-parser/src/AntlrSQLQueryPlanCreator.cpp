@@ -341,6 +341,8 @@
 #include <Functions/Meos/TextcatTtextTtextLogicalFunction.hpp>
 #include <Functions/Meos/GeomLengthLogicalFunction.hpp>
 #include <Functions/Meos/GeomPerimeterLogicalFunction.hpp>
+#include <Functions/Meos/EcoversTgeoGeoLogicalFunction.hpp>
+#include <Functions/Meos/EdisjointTgeoGeoLogicalFunction.hpp>
 #include <Functions/Meos/GeomIntersects2dLogicalFunction.hpp>
 #include <Functions/Meos/GeomDwithin2dLogicalFunction.hpp>
 #include <Functions/Meos/GeomContainsLogicalFunction.hpp>
@@ -8782,6 +8784,28 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             return LogicalFunction(GeomPerimeterLogicalFunction(std::move(arg0)));
         }
         /* END CODEGEN PARSER GLUE: GEOM_PERIMETER */
+        case AntlrSQLParser::ECOVERS_TGEO_GEO: {
+            PRECONDITION(ctx->functionParam().size() == 4,
+                         "EcoversTgeoGeo requires 4 args (lon, lat, ts, wkt) but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            auto arg2 = visit(ctx->functionParam(2)).as<LogicalFunction>();
+            auto arg3 = visit(ctx->functionParam(3)).as<LogicalFunction>();
+            return LogicalFunction(EcoversTgeoGeoLogicalFunction(std::move(arg0), std::move(arg1), std::move(arg2), std::move(arg3)));
+        }
+        /* END CODEGEN PARSER GLUE: ECOVERS_TGEO_GEO */
+        case AntlrSQLParser::EDISJOINT_TGEO_GEO: {
+            PRECONDITION(ctx->functionParam().size() == 4,
+                         "EdisjointTgeoGeo requires 4 args (lon, lat, ts, wkt) but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            auto arg2 = visit(ctx->functionParam(2)).as<LogicalFunction>();
+            auto arg3 = visit(ctx->functionParam(3)).as<LogicalFunction>();
+            return LogicalFunction(EdisjointTgeoGeoLogicalFunction(std::move(arg0), std::move(arg1), std::move(arg2), std::move(arg3)));
+        }
+        /* END CODEGEN PARSER GLUE: EDISJOINT_TGEO_GEO */
         /* END CODEGEN PARSER GLUE: GEOM_INTERSECTS2D */
         case AntlrSQLParser::GEOM_DWITHIN2D: {
             PRECONDITION(ctx->functionParam().size() == 3,
