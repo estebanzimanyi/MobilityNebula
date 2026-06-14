@@ -310,6 +310,7 @@ add_plugin(GeoIsUnitary PhysicalFunction nes-physical-operators GeoIsUnitaryPhys
 add_plugin(GeoEquals PhysicalFunction nes-physical-operators GeoEqualsPhysicalFunction.cpp)
 add_plugin(GeoSame PhysicalFunction nes-physical-operators GeoSamePhysicalFunction.cpp)
 add_plugin(GeogDistance PhysicalFunction nes-physical-operators GeogDistancePhysicalFunction.cpp)
+add_plugin(NadTgeoGeo PhysicalFunction nes-physical-operators NadTgeoGeoPhysicalFunction.cpp)
 add_plugin(GeomIntersects2d PhysicalFunction nes-physical-operators GeomIntersects2dPhysicalFunction.cpp)
 add_plugin(GeomDwithin2d PhysicalFunction nes-physical-operators GeomDwithin2dPhysicalFunction.cpp)
 add_plugin(GeomContains PhysicalFunction nes-physical-operators GeomContainsPhysicalFunction.cpp)
