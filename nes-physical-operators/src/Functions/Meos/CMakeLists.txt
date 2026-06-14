@@ -315,6 +315,8 @@ add_plugin(EverEqTgeoGeo PhysicalFunction nes-physical-operators EverEqTgeoGeoPh
 add_plugin(EverNeTgeoGeo PhysicalFunction nes-physical-operators EverNeTgeoGeoPhysicalFunction.cpp)
 add_plugin(AlwaysEqTgeoGeo PhysicalFunction nes-physical-operators AlwaysEqTgeoGeoPhysicalFunction.cpp)
 add_plugin(AlwaysNeTgeoGeo PhysicalFunction nes-physical-operators AlwaysNeTgeoGeoPhysicalFunction.cpp)
+add_plugin(GeogIntersects PhysicalFunction nes-physical-operators GeogIntersectsPhysicalFunction.cpp)
+add_plugin(GeogDwithin PhysicalFunction nes-physical-operators GeogDwithinPhysicalFunction.cpp)
 add_plugin(GeomIntersects2d PhysicalFunction nes-physical-operators GeomIntersects2dPhysicalFunction.cpp)
 add_plugin(GeomDwithin2d PhysicalFunction nes-physical-operators GeomDwithin2dPhysicalFunction.cpp)
 add_plugin(GeomContains PhysicalFunction nes-physical-operators GeomContainsPhysicalFunction.cpp)
