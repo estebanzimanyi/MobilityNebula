@@ -355,6 +355,13 @@
 #include <Functions/Meos/EcontainsTgeoGeoLogicalFunction.hpp>
 #include <Functions/Meos/AcontainsTgeoGeoLogicalFunction.hpp>
 #include <Functions/Meos/AtouchesTgeoGeoLogicalFunction.hpp>
+#include <Functions/Meos/GeoNumPointsLogicalFunction.hpp>
+#include <Functions/Meos/GeoNumGeosLogicalFunction.hpp>
+#include <Functions/Meos/GeoSridLogicalFunction.hpp>
+#include <Functions/Meos/GeoIsUnitaryLogicalFunction.hpp>
+#include <Functions/Meos/GeoEqualsLogicalFunction.hpp>
+#include <Functions/Meos/GeoSameLogicalFunction.hpp>
+#include <Functions/Meos/GeogDistanceLogicalFunction.hpp>
 #include <Functions/Meos/GeomIntersects2dLogicalFunction.hpp>
 #include <Functions/Meos/GeomDwithin2dLogicalFunction.hpp>
 #include <Functions/Meos/GeomContainsLogicalFunction.hpp>
@@ -8942,6 +8949,65 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
                                                         std::move(arg2), std::move(arg3)));
         }
         /* END CODEGEN PARSER GLUE: ATOUCHES_TGEO_GEO */
+        case AntlrSQLParser::GEO_NUM_POINTS: {
+            PRECONDITION(ctx->functionParam().size() == 1,
+                         "GeoNumPoints requires 1 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            return LogicalFunction(GeoNumPointsLogicalFunction(std::move(arg0)));
+        }
+        /* END CODEGEN PARSER GLUE: GEO_NUM_POINTS */
+        case AntlrSQLParser::GEO_NUM_GEOS: {
+            PRECONDITION(ctx->functionParam().size() == 1,
+                         "GeoNumGeos requires 1 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            return LogicalFunction(GeoNumGeosLogicalFunction(std::move(arg0)));
+        }
+        /* END CODEGEN PARSER GLUE: GEO_NUM_GEOS */
+        case AntlrSQLParser::GEO_SRID: {
+            PRECONDITION(ctx->functionParam().size() == 1,
+                         "GeoSrid requires 1 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            return LogicalFunction(GeoSridLogicalFunction(std::move(arg0)));
+        }
+        /* END CODEGEN PARSER GLUE: GEO_SRID */
+        case AntlrSQLParser::GEO_IS_UNITARY: {
+            PRECONDITION(ctx->functionParam().size() == 1,
+                         "GeoIsUnitary requires 1 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            return LogicalFunction(GeoIsUnitaryLogicalFunction(std::move(arg0)));
+        }
+        /* END CODEGEN PARSER GLUE: GEO_IS_UNITARY */
+        case AntlrSQLParser::GEO_EQUALS: {
+            PRECONDITION(ctx->functionParam().size() == 2,
+                         "GeoEquals requires 2 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            return LogicalFunction(GeoEqualsLogicalFunction(std::move(arg0), std::move(arg1)));
+        }
+        /* END CODEGEN PARSER GLUE: GEO_EQUALS */
+        case AntlrSQLParser::GEO_SAME: {
+            PRECONDITION(ctx->functionParam().size() == 2,
+                         "GeoSame requires 2 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            return LogicalFunction(GeoSameLogicalFunction(std::move(arg0), std::move(arg1)));
+        }
+        /* END CODEGEN PARSER GLUE: GEO_SAME */
+        case AntlrSQLParser::GEOG_DISTANCE: {
+            PRECONDITION(ctx->functionParam().size() == 2,
+                         "GeogDistance requires 2 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            return LogicalFunction(GeogDistanceLogicalFunction(std::move(arg0), std::move(arg1)));
+        }
+        /* END CODEGEN PARSER GLUE: GEOG_DISTANCE */
         /* END CODEGEN PARSER GLUE: GEOM_INTERSECTS2D */
         case AntlrSQLParser::GEOM_DWITHIN2D: {
             PRECONDITION(ctx->functionParam().size() == 3,
