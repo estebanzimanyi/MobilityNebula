@@ -341,6 +341,7 @@
 #include <Functions/Meos/TextcatTtextTtextLogicalFunction.hpp>
 #include <Functions/Meos/GeomLengthLogicalFunction.hpp>
 #include <Functions/Meos/GeomPerimeterLogicalFunction.hpp>
+#include <Functions/Meos/GeomAzimuthLogicalFunction.hpp>
 #include <Functions/Meos/GeomIntersects2dLogicalFunction.hpp>
 #include <Functions/Meos/GeomDwithin2dLogicalFunction.hpp>
 #include <Functions/Meos/GeomContainsLogicalFunction.hpp>
@@ -8782,6 +8783,15 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             return LogicalFunction(GeomPerimeterLogicalFunction(std::move(arg0)));
         }
         /* END CODEGEN PARSER GLUE: GEOM_PERIMETER */
+        case AntlrSQLParser::GEOM_AZIMUTH: {
+            PRECONDITION(ctx->functionParam().size() == 2,
+                         "GeomAzimuth requires 2 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            return LogicalFunction(GeomAzimuthLogicalFunction(std::move(arg0), std::move(arg1)));
+        }
+        /* END CODEGEN PARSER GLUE: GEOM_AZIMUTH */
         /* END CODEGEN PARSER GLUE: GEOM_INTERSECTS2D */
         case AntlrSQLParser::GEOM_DWITHIN2D: {
             PRECONDITION(ctx->functionParam().size() == 3,
