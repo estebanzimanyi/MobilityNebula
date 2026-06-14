@@ -333,6 +333,9 @@
 #include <Functions/Meos/TleTextTtextLogicalFunction.hpp>
 #include <Functions/Meos/TltTtextTextLogicalFunction.hpp>
 #include <Functions/Meos/TltTextTtextLogicalFunction.hpp>
+#include <Functions/Meos/TtextUpperLogicalFunction.hpp>
+#include <Functions/Meos/TtextLowerLogicalFunction.hpp>
+#include <Functions/Meos/TtextInitcapLogicalFunction.hpp>
 #include <Plans/LogicalPlan.hpp>
 #include <Plans/LogicalPlanBuilder.hpp>
 #include <Util/Overloaded.hpp>
@@ -8682,6 +8685,33 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
         }
         break;
         /* END CODEGEN PARSER GLUE: TLT_TEXT_TTEXT */
+        case AntlrSQLParser::TTEXT_UPPER: {
+            PRECONDITION(ctx->functionParam().size() == 2,
+                         "TtextUpper requires 2 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            return LogicalFunction(TtextUpperLogicalFunction(std::move(arg0), std::move(arg1)));
+        }
+        /* END CODEGEN PARSER GLUE: TTEXT_UPPER */
+        case AntlrSQLParser::TTEXT_LOWER: {
+            PRECONDITION(ctx->functionParam().size() == 2,
+                         "TtextLower requires 2 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            return LogicalFunction(TtextLowerLogicalFunction(std::move(arg0), std::move(arg1)));
+        }
+        /* END CODEGEN PARSER GLUE: TTEXT_LOWER */
+        case AntlrSQLParser::TTEXT_INITCAP: {
+            PRECONDITION(ctx->functionParam().size() == 2,
+                         "TtextInitcap requires 2 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            return LogicalFunction(TtextInitcapLogicalFunction(std::move(arg0), std::move(arg1)));
+        }
+        /* END CODEGEN PARSER GLUE: TTEXT_INITCAP */
         /* BEGIN CODEGEN PARSER GLUE: ALWAYS_EQ_TFLOAT_FLOAT */
         case AntlrSQLLexer::ALWAYS_EQ_TFLOAT_FLOAT:
         {
