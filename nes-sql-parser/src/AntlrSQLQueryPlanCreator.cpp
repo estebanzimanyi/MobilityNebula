@@ -343,6 +343,12 @@
 #include <Functions/Meos/GeomDwithin2dLogicalFunction.hpp>
 #include <Functions/Meos/GeomContainsLogicalFunction.hpp>
 #include <Functions/Meos/GeomDisjoint2dLogicalFunction.hpp>
+#include <Functions/Meos/GeomCoversLogicalFunction.hpp>
+#include <Functions/Meos/GeomTouchesLogicalFunction.hpp>
+#include <Functions/Meos/GeomIntersects3dLogicalFunction.hpp>
+#include <Functions/Meos/GeomDwithin3dLogicalFunction.hpp>
+#include <Functions/Meos/GeomDistance2dLogicalFunction.hpp>
+#include <Functions/Meos/GeomDistance3dLogicalFunction.hpp>
 #include <Plans/LogicalPlan.hpp>
 #include <Plans/LogicalPlanBuilder.hpp>
 #include <Util/Overloaded.hpp>
@@ -8787,6 +8793,61 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             return LogicalFunction(GeomDisjoint2dLogicalFunction(std::move(arg0), std::move(arg1)));
         }
         /* END CODEGEN PARSER GLUE: GEOM_DISJOINT2D */
+        case AntlrSQLParser::GEOM_COVERS: {
+            PRECONDITION(ctx->functionParam().size() == 2,
+                         "GeomCovers requires 2 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            return LogicalFunction(GeomCoversLogicalFunction(std::move(arg0), std::move(arg1)));
+        }
+        /* END CODEGEN PARSER GLUE: GEOM_COVERS */
+        case AntlrSQLParser::GEOM_TOUCHES: {
+            PRECONDITION(ctx->functionParam().size() == 2,
+                         "GeomTouches requires 2 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            return LogicalFunction(GeomTouchesLogicalFunction(std::move(arg0), std::move(arg1)));
+        }
+        /* END CODEGEN PARSER GLUE: GEOM_TOUCHES */
+        case AntlrSQLParser::GEOM_INTERSECTS3D: {
+            PRECONDITION(ctx->functionParam().size() == 2,
+                         "GeomIntersects3d requires 2 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            return LogicalFunction(GeomIntersects3dLogicalFunction(std::move(arg0), std::move(arg1)));
+        }
+        /* END CODEGEN PARSER GLUE: GEOM_INTERSECTS3D */
+        case AntlrSQLParser::GEOM_DWITHIN3D: {
+            PRECONDITION(ctx->functionParam().size() == 3,
+                         "GeomDwithin3d requires 3 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            auto arg2 = visit(ctx->functionParam(2)).as<LogicalFunction>();
+            return LogicalFunction(GeomDwithin3dLogicalFunction(std::move(arg0), std::move(arg1), std::move(arg2)));
+        }
+        /* END CODEGEN PARSER GLUE: GEOM_DWITHIN3D */
+        case AntlrSQLParser::GEOM_DISTANCE2D: {
+            PRECONDITION(ctx->functionParam().size() == 2,
+                         "GeomDistance2d requires 2 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            return LogicalFunction(GeomDistance2dLogicalFunction(std::move(arg0), std::move(arg1)));
+        }
+        /* END CODEGEN PARSER GLUE: GEOM_DISTANCE2D */
+        case AntlrSQLParser::GEOM_DISTANCE3D: {
+            PRECONDITION(ctx->functionParam().size() == 2,
+                         "GeomDistance3d requires 2 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            return LogicalFunction(GeomDistance3dLogicalFunction(std::move(arg0), std::move(arg1)));
+        }
+        /* END CODEGEN PARSER GLUE: GEOM_DISTANCE3D */
         /* BEGIN CODEGEN PARSER GLUE: ALWAYS_EQ_TFLOAT_FLOAT */
         case AntlrSQLLexer::ALWAYS_EQ_TFLOAT_FLOAT:
         {
