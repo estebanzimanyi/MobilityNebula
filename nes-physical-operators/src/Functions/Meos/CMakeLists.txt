@@ -289,6 +289,7 @@ add_plugin(TextcatTextTtext PhysicalFunction nes-physical-operators TextcatTextT
 add_plugin(TextcatTtextTtext PhysicalFunction nes-physical-operators TextcatTtextTtextPhysicalFunction.cpp)
 add_plugin(GeomLength PhysicalFunction nes-physical-operators GeomLengthPhysicalFunction.cpp)
 add_plugin(GeomPerimeter PhysicalFunction nes-physical-operators GeomPerimeterPhysicalFunction.cpp)
+add_plugin(GeomAzimuth PhysicalFunction nes-physical-operators GeomAzimuthPhysicalFunction.cpp)
 add_plugin(GeomIntersects2d PhysicalFunction nes-physical-operators GeomIntersects2dPhysicalFunction.cpp)
 add_plugin(GeomDwithin2d PhysicalFunction nes-physical-operators GeomDwithin2dPhysicalFunction.cpp)
 add_plugin(GeomContains PhysicalFunction nes-physical-operators GeomContainsPhysicalFunction.cpp)
