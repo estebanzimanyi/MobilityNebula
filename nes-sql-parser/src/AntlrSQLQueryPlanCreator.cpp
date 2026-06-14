@@ -377,6 +377,15 @@
 #include <Functions/Meos/EverNeTh3indexH3indexLogicalFunction.hpp>
 #include <Functions/Meos/AlwaysEqTh3indexH3indexLogicalFunction.hpp>
 #include <Functions/Meos/AlwaysNeTh3indexH3indexLogicalFunction.hpp>
+#include <Functions/Meos/Th3indexGetResolutionLogicalFunction.hpp>
+#include <Functions/Meos/Th3indexGetBaseCellNumberLogicalFunction.hpp>
+#include <Functions/Meos/Th3indexIsValidCellLogicalFunction.hpp>
+#include <Functions/Meos/Th3indexIsPentagonLogicalFunction.hpp>
+#include <Functions/Meos/Th3indexCellToParentNextLogicalFunction.hpp>
+#include <Functions/Meos/Th3indexCellToCenterChildNextLogicalFunction.hpp>
+#include <Functions/Meos/Th3indexCellToParentLogicalFunction.hpp>
+#include <Functions/Meos/Th3indexCellToCenterChildLogicalFunction.hpp>
+#include <Functions/Meos/Th3indexCellToChildPosLogicalFunction.hpp>
 #include <Functions/Meos/GeomIntersects2dLogicalFunction.hpp>
 #include <Functions/Meos/GeomDwithin2dLogicalFunction.hpp>
 #include <Functions/Meos/GeomContainsLogicalFunction.hpp>
@@ -9177,6 +9186,90 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             return LogicalFunction(AlwaysNeTh3indexH3indexLogicalFunction(std::move(arg0), std::move(arg1), std::move(arg2)));
         }
         /* END CODEGEN PARSER GLUE: ALWAYS_NE_TH3INDEX_H3INDEX */
+        case AntlrSQLParser::TH3INDEX_GET_RESOLUTION: {
+            PRECONDITION(ctx->functionParam().size() == 2,
+                         "Th3indexGetResolution requires 2 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            return LogicalFunction(Th3indexGetResolutionLogicalFunction(std::move(arg0), std::move(arg1)));
+        }
+        /* END CODEGEN PARSER GLUE: TH3INDEX_GET_RESOLUTION */
+        case AntlrSQLParser::TH3INDEX_GET_BASE_CELL_NUMBER: {
+            PRECONDITION(ctx->functionParam().size() == 2,
+                         "Th3indexGetBaseCellNumber requires 2 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            return LogicalFunction(Th3indexGetBaseCellNumberLogicalFunction(std::move(arg0), std::move(arg1)));
+        }
+        /* END CODEGEN PARSER GLUE: TH3INDEX_GET_BASE_CELL_NUMBER */
+        case AntlrSQLParser::TH3INDEX_IS_VALID_CELL: {
+            PRECONDITION(ctx->functionParam().size() == 2,
+                         "Th3indexIsValidCell requires 2 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            return LogicalFunction(Th3indexIsValidCellLogicalFunction(std::move(arg0), std::move(arg1)));
+        }
+        /* END CODEGEN PARSER GLUE: TH3INDEX_IS_VALID_CELL */
+        case AntlrSQLParser::TH3INDEX_IS_PENTAGON: {
+            PRECONDITION(ctx->functionParam().size() == 2,
+                         "Th3indexIsPentagon requires 2 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            return LogicalFunction(Th3indexIsPentagonLogicalFunction(std::move(arg0), std::move(arg1)));
+        }
+        /* END CODEGEN PARSER GLUE: TH3INDEX_IS_PENTAGON */
+        case AntlrSQLParser::TH3INDEX_CELL_TO_PARENT_NEXT: {
+            PRECONDITION(ctx->functionParam().size() == 2,
+                         "Th3indexCellToParentNext requires 2 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            return LogicalFunction(Th3indexCellToParentNextLogicalFunction(std::move(arg0), std::move(arg1)));
+        }
+        /* END CODEGEN PARSER GLUE: TH3INDEX_CELL_TO_PARENT_NEXT */
+        case AntlrSQLParser::TH3INDEX_CELL_TO_CENTER_CHILD_NEXT: {
+            PRECONDITION(ctx->functionParam().size() == 2,
+                         "Th3indexCellToCenterChildNext requires 2 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            return LogicalFunction(Th3indexCellToCenterChildNextLogicalFunction(std::move(arg0), std::move(arg1)));
+        }
+        /* END CODEGEN PARSER GLUE: TH3INDEX_CELL_TO_CENTER_CHILD_NEXT */
+        case AntlrSQLParser::TH3INDEX_CELL_TO_PARENT: {
+            PRECONDITION(ctx->functionParam().size() == 3,
+                         "Th3indexCellToParent requires 3 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            auto arg2 = visit(ctx->functionParam(2)).as<LogicalFunction>();
+            return LogicalFunction(Th3indexCellToParentLogicalFunction(std::move(arg0), std::move(arg1), std::move(arg2)));
+        }
+        /* END CODEGEN PARSER GLUE: TH3INDEX_CELL_TO_PARENT */
+        case AntlrSQLParser::TH3INDEX_CELL_TO_CENTER_CHILD: {
+            PRECONDITION(ctx->functionParam().size() == 3,
+                         "Th3indexCellToCenterChild requires 3 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            auto arg2 = visit(ctx->functionParam(2)).as<LogicalFunction>();
+            return LogicalFunction(Th3indexCellToCenterChildLogicalFunction(std::move(arg0), std::move(arg1), std::move(arg2)));
+        }
+        /* END CODEGEN PARSER GLUE: TH3INDEX_CELL_TO_CENTER_CHILD */
+        case AntlrSQLParser::TH3INDEX_CELL_TO_CHILD_POS: {
+            PRECONDITION(ctx->functionParam().size() == 3,
+                         "Th3indexCellToChildPos requires 3 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            auto arg2 = visit(ctx->functionParam(2)).as<LogicalFunction>();
+            return LogicalFunction(Th3indexCellToChildPosLogicalFunction(std::move(arg0), std::move(arg1), std::move(arg2)));
+        }
+        /* END CODEGEN PARSER GLUE: TH3INDEX_CELL_TO_CHILD_POS */
         /* END CODEGEN PARSER GLUE: GEOM_INTERSECTS2D */
         case AntlrSQLParser::GEOM_DWITHIN2D: {
             PRECONDITION(ctx->functionParam().size() == 3,
