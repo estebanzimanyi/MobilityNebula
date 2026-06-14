@@ -284,4 +284,7 @@ add_plugin(TltTextTtext PhysicalFunction nes-physical-operators TltTextTtextPhys
 add_plugin(TtextUpper PhysicalFunction nes-physical-operators TtextUpperPhysicalFunction.cpp)
 add_plugin(TtextLower PhysicalFunction nes-physical-operators TtextLowerPhysicalFunction.cpp)
 add_plugin(TtextInitcap PhysicalFunction nes-physical-operators TtextInitcapPhysicalFunction.cpp)
+add_plugin(TextcatTtextText PhysicalFunction nes-physical-operators TextcatTtextTextPhysicalFunction.cpp)
+add_plugin(TextcatTextTtext PhysicalFunction nes-physical-operators TextcatTextTtextPhysicalFunction.cpp)
+add_plugin(TextcatTtextTtext PhysicalFunction nes-physical-operators TextcatTtextTtextPhysicalFunction.cpp)
 endif()
