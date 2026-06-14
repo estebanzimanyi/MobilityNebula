@@ -311,6 +311,7 @@ add_plugin(GeoIsUnitary LogicalFunction nes-logical-operators GeoIsUnitaryLogica
 add_plugin(GeoEquals LogicalFunction nes-logical-operators GeoEqualsLogicalFunction.cpp)
 add_plugin(GeoSame LogicalFunction nes-logical-operators GeoSameLogicalFunction.cpp)
 add_plugin(GeogDistance LogicalFunction nes-logical-operators GeogDistanceLogicalFunction.cpp)
+add_plugin(NadTgeoGeo LogicalFunction nes-logical-operators NadTgeoGeoLogicalFunction.cpp)
 add_plugin(GeomIntersects2d LogicalFunction nes-logical-operators GeomIntersects2dLogicalFunction.cpp)
 add_plugin(GeomDwithin2d LogicalFunction nes-logical-operators GeomDwithin2dLogicalFunction.cpp)
 add_plugin(GeomContains LogicalFunction nes-logical-operators GeomContainsLogicalFunction.cpp)
