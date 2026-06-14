@@ -285,3 +285,6 @@ add_plugin(TltTextTtext LogicalFunction nes-logical-operators TltTextTtextLogica
 add_plugin(TtextUpper LogicalFunction nes-logical-operators TtextUpperLogicalFunction.cpp)
 add_plugin(TtextLower LogicalFunction nes-logical-operators TtextLowerLogicalFunction.cpp)
 add_plugin(TtextInitcap LogicalFunction nes-logical-operators TtextInitcapLogicalFunction.cpp)
+add_plugin(TextcatTtextText LogicalFunction nes-logical-operators TextcatTtextTextLogicalFunction.cpp)
+add_plugin(TextcatTextTtext LogicalFunction nes-logical-operators TextcatTextTtextLogicalFunction.cpp)
+add_plugin(TextcatTtextTtext LogicalFunction nes-logical-operators TextcatTtextTtextLogicalFunction.cpp)
