@@ -316,6 +316,8 @@ add_plugin(EverEqTgeoGeo LogicalFunction nes-logical-operators EverEqTgeoGeoLogi
 add_plugin(EverNeTgeoGeo LogicalFunction nes-logical-operators EverNeTgeoGeoLogicalFunction.cpp)
 add_plugin(AlwaysEqTgeoGeo LogicalFunction nes-logical-operators AlwaysEqTgeoGeoLogicalFunction.cpp)
 add_plugin(AlwaysNeTgeoGeo LogicalFunction nes-logical-operators AlwaysNeTgeoGeoLogicalFunction.cpp)
+add_plugin(GeogIntersects LogicalFunction nes-logical-operators GeogIntersectsLogicalFunction.cpp)
+add_plugin(GeogDwithin LogicalFunction nes-logical-operators GeogDwithinLogicalFunction.cpp)
 add_plugin(GeomIntersects2d LogicalFunction nes-logical-operators GeomIntersects2dLogicalFunction.cpp)
 add_plugin(GeomDwithin2d LogicalFunction nes-logical-operators GeomDwithin2dLogicalFunction.cpp)
 add_plugin(GeomContains LogicalFunction nes-logical-operators GeomContainsLogicalFunction.cpp)
