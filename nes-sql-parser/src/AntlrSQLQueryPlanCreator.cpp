@@ -339,6 +339,8 @@
 #include <Functions/Meos/TextcatTtextTextLogicalFunction.hpp>
 #include <Functions/Meos/TextcatTextTtextLogicalFunction.hpp>
 #include <Functions/Meos/TextcatTtextTtextLogicalFunction.hpp>
+#include <Functions/Meos/GeomLengthLogicalFunction.hpp>
+#include <Functions/Meos/GeomPerimeterLogicalFunction.hpp>
 #include <Functions/Meos/GeomIntersects2dLogicalFunction.hpp>
 #include <Functions/Meos/GeomDwithin2dLogicalFunction.hpp>
 #include <Functions/Meos/GeomContainsLogicalFunction.hpp>
@@ -8764,6 +8766,22 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
             return LogicalFunction(GeomIntersects2dLogicalFunction(std::move(arg0), std::move(arg1)));
         }
+        case AntlrSQLParser::GEOM_LENGTH: {
+            PRECONDITION(ctx->functionParam().size() == 1,
+                         "GeomLength requires 1 arg but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            return LogicalFunction(GeomLengthLogicalFunction(std::move(arg0)));
+        }
+        /* END CODEGEN PARSER GLUE: GEOM_LENGTH */
+        case AntlrSQLParser::GEOM_PERIMETER: {
+            PRECONDITION(ctx->functionParam().size() == 1,
+                         "GeomPerimeter requires 1 arg but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            return LogicalFunction(GeomPerimeterLogicalFunction(std::move(arg0)));
+        }
+        /* END CODEGEN PARSER GLUE: GEOM_PERIMETER */
         /* END CODEGEN PARSER GLUE: GEOM_INTERSECTS2D */
         case AntlrSQLParser::GEOM_DWITHIN2D: {
             PRECONDITION(ctx->functionParam().size() == 3,
