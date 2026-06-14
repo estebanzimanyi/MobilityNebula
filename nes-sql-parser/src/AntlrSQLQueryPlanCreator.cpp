@@ -342,6 +342,10 @@
 #include <Functions/Meos/GeomLengthLogicalFunction.hpp>
 #include <Functions/Meos/GeomPerimeterLogicalFunction.hpp>
 #include <Functions/Meos/GeomAzimuthLogicalFunction.hpp>
+#include <Functions/Meos/GeogAreaLogicalFunction.hpp>
+#include <Functions/Meos/GeogLengthLogicalFunction.hpp>
+#include <Functions/Meos/GeogPerimeterLogicalFunction.hpp>
+#include <Functions/Meos/GeomIsEmptyLogicalFunction.hpp>
 #include <Functions/Meos/GeomIntersects2dLogicalFunction.hpp>
 #include <Functions/Meos/GeomDwithin2dLogicalFunction.hpp>
 #include <Functions/Meos/GeomContainsLogicalFunction.hpp>
@@ -8792,6 +8796,38 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             return LogicalFunction(GeomAzimuthLogicalFunction(std::move(arg0), std::move(arg1)));
         }
         /* END CODEGEN PARSER GLUE: GEOM_AZIMUTH */
+        case AntlrSQLParser::GEOG_AREA: {
+            PRECONDITION(ctx->functionParam().size() == 1,
+                         "GeogArea requires 1 arg but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            return LogicalFunction(GeogAreaLogicalFunction(std::move(arg0)));
+        }
+        /* END CODEGEN PARSER GLUE: GEOG_AREA */
+        case AntlrSQLParser::GEOG_LENGTH: {
+            PRECONDITION(ctx->functionParam().size() == 1,
+                         "GeogLength requires 1 arg but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            return LogicalFunction(GeogLengthLogicalFunction(std::move(arg0)));
+        }
+        /* END CODEGEN PARSER GLUE: GEOG_LENGTH */
+        case AntlrSQLParser::GEOG_PERIMETER: {
+            PRECONDITION(ctx->functionParam().size() == 1,
+                         "GeogPerimeter requires 1 arg but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            return LogicalFunction(GeogPerimeterLogicalFunction(std::move(arg0)));
+        }
+        /* END CODEGEN PARSER GLUE: GEOG_PERIMETER */
+        case AntlrSQLParser::GEOM_IS_EMPTY: {
+            PRECONDITION(ctx->functionParam().size() == 1,
+                         "GeomIsEmpty requires 1 arg but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            return LogicalFunction(GeomIsEmptyLogicalFunction(std::move(arg0)));
+        }
+        /* END CODEGEN PARSER GLUE: GEOM_IS_EMPTY */
         /* END CODEGEN PARSER GLUE: GEOM_INTERSECTS2D */
         case AntlrSQLParser::GEOM_DWITHIN2D: {
             PRECONDITION(ctx->functionParam().size() == 3,
