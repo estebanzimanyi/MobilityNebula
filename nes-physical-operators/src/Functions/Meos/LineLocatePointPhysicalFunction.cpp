@@ -45,7 +45,7 @@ VarVal LineLocatePointPhysicalFunction::execute(const Record& record, ArenaRef& 
     auto wkt1 = paramFns[0].execute(record, arena).cast<VariableSizedData>();
     auto wkt2 = paramFns[1].execute(record, arena).cast<VariableSizedData>();
     const auto result = nautilus::invoke(
-        +[](const char* w1, uint32_t w1sz, const char* w2, uint32_t w2sz) -> double -> double {
+        +[](const char* w1, uint32_t w1sz, const char* w2, uint32_t w2sz) -> double {
             try {
                 MEOS::Meos::ensureMeosInitialized();
                 std::string s1(w1, w1sz), s2(w2, w2sz);
