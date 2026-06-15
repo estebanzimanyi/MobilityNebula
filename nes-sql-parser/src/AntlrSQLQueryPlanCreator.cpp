@@ -517,6 +517,9 @@
 #include <Functions/Meos/GeomToGeogLogicalFunction.hpp>
 #include <Functions/Meos/GeogToGeomLogicalFunction.hpp>
 #include <Functions/Meos/GeogCentroidLogicalFunction.hpp>
+#include <Functions/Meos/GeoGeoNLogicalFunction.hpp>
+#include <Functions/Meos/LinePointNLogicalFunction.hpp>
+#include <Functions/Meos/GeomIntersection2dCollLogicalFunction.hpp>
 #include <Functions/Meos/GeomIntersects2dLogicalFunction.hpp>
 #include <Functions/Meos/GeomDwithin2dLogicalFunction.hpp>
 #include <Functions/Meos/GeomContainsLogicalFunction.hpp>
@@ -11008,6 +11011,33 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             return LogicalFunction(GeogCentroidLogicalFunction(std::move(arg0), std::move(arg1)));
         }
         /* END CODEGEN PARSER GLUE: GEOG_CENTROID */
+        case AntlrSQLParser::GEO_GEO_N: {
+            PRECONDITION(ctx->functionParam().size() == 2,
+                         "GeoGeoN requires 2 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            return LogicalFunction(GeoGeoNLogicalFunction(std::move(arg0), std::move(arg1)));
+        }
+        /* END CODEGEN PARSER GLUE: GEO_GEO_N */
+        case AntlrSQLParser::LINE_POINT_N: {
+            PRECONDITION(ctx->functionParam().size() == 2,
+                         "LinePointN requires 2 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            return LogicalFunction(LinePointNLogicalFunction(std::move(arg0), std::move(arg1)));
+        }
+        /* END CODEGEN PARSER GLUE: LINE_POINT_N */
+        case AntlrSQLParser::GEOM_INTERSECTION2D_COLL: {
+            PRECONDITION(ctx->functionParam().size() == 2,
+                         "GeomIntersection2dColl requires 2 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            return LogicalFunction(GeomIntersection2dCollLogicalFunction(std::move(arg0), std::move(arg1)));
+        }
+        /* END CODEGEN PARSER GLUE: GEOM_INTERSECTION2D_COLL */
         /* END CODEGEN PARSER GLUE: GEOM_INTERSECTS2D */
         case AntlrSQLParser::GEOM_DWITHIN2D: {
             PRECONDITION(ctx->functionParam().size() == 3,
