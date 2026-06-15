@@ -484,6 +484,10 @@
 #include <Functions/Meos/QuadbinCellToQuadkeyLogicalFunction.hpp>
 #include <Functions/Meos/QuadbinCellToParentLogicalFunction.hpp>
 #include <Functions/Meos/QuadbinTileToCellLogicalFunction.hpp>
+#include <Functions/Meos/EverEqTjsonbJsonbLogicalFunction.hpp>
+#include <Functions/Meos/AlwaysEqTjsonbJsonbLogicalFunction.hpp>
+#include <Functions/Meos/EverNeTjsonbJsonbLogicalFunction.hpp>
+#include <Functions/Meos/AlwaysNeTjsonbJsonbLogicalFunction.hpp>
 #include <Functions/Meos/GeomIntersects2dLogicalFunction.hpp>
 #include <Functions/Meos/GeomDwithin2dLogicalFunction.hpp>
 #include <Functions/Meos/GeomContainsLogicalFunction.hpp>
@@ -10666,6 +10670,46 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             return LogicalFunction(QuadbinTileToCellLogicalFunction(std::move(arg0), std::move(arg1), std::move(arg2)));
         }
         /* END CODEGEN PARSER GLUE: QUADBIN_TILE_TO_CELL */
+        case AntlrSQLParser::EVER_EQ_TJSONB_JSONB: {
+            PRECONDITION(ctx->functionParam().size() == 3,
+                         "EverEqTjsonbJsonb requires 3 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            auto arg2 = visit(ctx->functionParam(2)).as<LogicalFunction>();
+            return LogicalFunction(EverEqTjsonbJsonbLogicalFunction(std::move(arg0), std::move(arg1), std::move(arg2)));
+        }
+        /* END CODEGEN PARSER GLUE: EVER_EQ_TJSONB_JSONB */
+        case AntlrSQLParser::ALWAYS_EQ_TJSONB_JSONB: {
+            PRECONDITION(ctx->functionParam().size() == 3,
+                         "AlwaysEqTjsonbJsonb requires 3 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            auto arg2 = visit(ctx->functionParam(2)).as<LogicalFunction>();
+            return LogicalFunction(AlwaysEqTjsonbJsonbLogicalFunction(std::move(arg0), std::move(arg1), std::move(arg2)));
+        }
+        /* END CODEGEN PARSER GLUE: ALWAYS_EQ_TJSONB_JSONB */
+        case AntlrSQLParser::EVER_NE_TJSONB_JSONB: {
+            PRECONDITION(ctx->functionParam().size() == 3,
+                         "EverNeTjsonbJsonb requires 3 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            auto arg2 = visit(ctx->functionParam(2)).as<LogicalFunction>();
+            return LogicalFunction(EverNeTjsonbJsonbLogicalFunction(std::move(arg0), std::move(arg1), std::move(arg2)));
+        }
+        /* END CODEGEN PARSER GLUE: EVER_NE_TJSONB_JSONB */
+        case AntlrSQLParser::ALWAYS_NE_TJSONB_JSONB: {
+            PRECONDITION(ctx->functionParam().size() == 3,
+                         "AlwaysNeTjsonbJsonb requires 3 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            auto arg2 = visit(ctx->functionParam(2)).as<LogicalFunction>();
+            return LogicalFunction(AlwaysNeTjsonbJsonbLogicalFunction(std::move(arg0), std::move(arg1), std::move(arg2)));
+        }
+        /* END CODEGEN PARSER GLUE: ALWAYS_NE_TJSONB_JSONB */
         /* END CODEGEN PARSER GLUE: GEOM_INTERSECTS2D */
         case AntlrSQLParser::GEOM_DWITHIN2D: {
             PRECONDITION(ctx->functionParam().size() == 3,
