@@ -488,6 +488,10 @@
 #include <Functions/Meos/AlwaysEqTjsonbJsonbLogicalFunction.hpp>
 #include <Functions/Meos/EverNeTjsonbJsonbLogicalFunction.hpp>
 #include <Functions/Meos/AlwaysNeTjsonbJsonbLogicalFunction.hpp>
+#include <Functions/Meos/EverEqTjsonbTjsonbLogicalFunction.hpp>
+#include <Functions/Meos/AlwaysEqTjsonbTjsonbLogicalFunction.hpp>
+#include <Functions/Meos/EverNeTjsonbTjsonbLogicalFunction.hpp>
+#include <Functions/Meos/AlwaysNeTjsonbTjsonbLogicalFunction.hpp>
 #include <Functions/Meos/GeomIntersects2dLogicalFunction.hpp>
 #include <Functions/Meos/GeomDwithin2dLogicalFunction.hpp>
 #include <Functions/Meos/GeomContainsLogicalFunction.hpp>
@@ -10710,6 +10714,50 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             return LogicalFunction(AlwaysNeTjsonbJsonbLogicalFunction(std::move(arg0), std::move(arg1), std::move(arg2)));
         }
         /* END CODEGEN PARSER GLUE: ALWAYS_NE_TJSONB_JSONB */
+        case AntlrSQLParser::EVER_EQ_TJSONB_TJSONB: {
+            PRECONDITION(ctx->functionParam().size() == 4,
+                         "EverEqTjsonbTjsonb requires 4 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            auto arg2 = visit(ctx->functionParam(2)).as<LogicalFunction>();
+            auto arg3 = visit(ctx->functionParam(3)).as<LogicalFunction>();
+            return LogicalFunction(EverEqTjsonbTjsonbLogicalFunction(std::move(arg0), std::move(arg1), std::move(arg2), std::move(arg3)));
+        }
+        /* END CODEGEN PARSER GLUE: EVER_EQ_TJSONB_TJSONB */
+        case AntlrSQLParser::ALWAYS_EQ_TJSONB_TJSONB: {
+            PRECONDITION(ctx->functionParam().size() == 4,
+                         "AlwaysEqTjsonbTjsonb requires 4 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            auto arg2 = visit(ctx->functionParam(2)).as<LogicalFunction>();
+            auto arg3 = visit(ctx->functionParam(3)).as<LogicalFunction>();
+            return LogicalFunction(AlwaysEqTjsonbTjsonbLogicalFunction(std::move(arg0), std::move(arg1), std::move(arg2), std::move(arg3)));
+        }
+        /* END CODEGEN PARSER GLUE: ALWAYS_EQ_TJSONB_TJSONB */
+        case AntlrSQLParser::EVER_NE_TJSONB_TJSONB: {
+            PRECONDITION(ctx->functionParam().size() == 4,
+                         "EverNeTjsonbTjsonb requires 4 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            auto arg2 = visit(ctx->functionParam(2)).as<LogicalFunction>();
+            auto arg3 = visit(ctx->functionParam(3)).as<LogicalFunction>();
+            return LogicalFunction(EverNeTjsonbTjsonbLogicalFunction(std::move(arg0), std::move(arg1), std::move(arg2), std::move(arg3)));
+        }
+        /* END CODEGEN PARSER GLUE: EVER_NE_TJSONB_TJSONB */
+        case AntlrSQLParser::ALWAYS_NE_TJSONB_TJSONB: {
+            PRECONDITION(ctx->functionParam().size() == 4,
+                         "AlwaysNeTjsonbTjsonb requires 4 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            auto arg2 = visit(ctx->functionParam(2)).as<LogicalFunction>();
+            auto arg3 = visit(ctx->functionParam(3)).as<LogicalFunction>();
+            return LogicalFunction(AlwaysNeTjsonbTjsonbLogicalFunction(std::move(arg0), std::move(arg1), std::move(arg2), std::move(arg3)));
+        }
+        /* END CODEGEN PARSER GLUE: ALWAYS_NE_TJSONB_TJSONB */
         /* END CODEGEN PARSER GLUE: GEOM_INTERSECTS2D */
         case AntlrSQLParser::GEOM_DWITHIN2D: {
             PRECONDITION(ctx->functionParam().size() == 3,
