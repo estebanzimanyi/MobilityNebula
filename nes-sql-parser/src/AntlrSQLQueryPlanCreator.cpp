@@ -456,6 +456,11 @@
 #include <Functions/Meos/AlwaysEqPoseTposeLogicalFunction.hpp>
 #include <Functions/Meos/EverNePoseTposeLogicalFunction.hpp>
 #include <Functions/Meos/AlwaysNePoseTposeLogicalFunction.hpp>
+#include <Functions/Meos/EverEqTposeTposeLogicalFunction.hpp>
+#include <Functions/Meos/AlwaysEqTposeTposeLogicalFunction.hpp>
+#include <Functions/Meos/EverNeTposeTposeLogicalFunction.hpp>
+#include <Functions/Meos/AlwaysNeTposeTposeLogicalFunction.hpp>
+#include <Functions/Meos/NadTposeTposeLogicalFunction.hpp>
 #include <Functions/Meos/GeomIntersects2dLogicalFunction.hpp>
 #include <Functions/Meos/GeomDwithin2dLogicalFunction.hpp>
 #include <Functions/Meos/GeomContainsLogicalFunction.hpp>
@@ -10280,6 +10285,81 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             return LogicalFunction(AlwaysNePoseTposeLogicalFunction(std::move(arg0), std::move(arg1), std::move(arg2), std::move(arg3), std::move(arg4), std::move(arg5), std::move(arg6)));
         }
         /* END CODEGEN PARSER GLUE: ALWAYS_NE_POSE_TPOSE */
+        case AntlrSQLParser::EVER_EQ_TPOSE_TPOSE: {
+            PRECONDITION(ctx->functionParam().size() == 8,
+                         "EverEqTposeTpose requires 8 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            auto arg2 = visit(ctx->functionParam(2)).as<LogicalFunction>();
+            auto arg3 = visit(ctx->functionParam(3)).as<LogicalFunction>();
+            auto arg4 = visit(ctx->functionParam(4)).as<LogicalFunction>();
+            auto arg5 = visit(ctx->functionParam(5)).as<LogicalFunction>();
+            auto arg6 = visit(ctx->functionParam(6)).as<LogicalFunction>();
+            auto arg7 = visit(ctx->functionParam(7)).as<LogicalFunction>();
+            return LogicalFunction(EverEqTposeTposeLogicalFunction(std::move(arg0), std::move(arg1), std::move(arg2), std::move(arg3), std::move(arg4), std::move(arg5), std::move(arg6), std::move(arg7)));
+        }
+        /* END CODEGEN PARSER GLUE: EVER_EQ_TPOSE_TPOSE */
+        case AntlrSQLParser::ALWAYS_EQ_TPOSE_TPOSE: {
+            PRECONDITION(ctx->functionParam().size() == 8,
+                         "AlwaysEqTposeTpose requires 8 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            auto arg2 = visit(ctx->functionParam(2)).as<LogicalFunction>();
+            auto arg3 = visit(ctx->functionParam(3)).as<LogicalFunction>();
+            auto arg4 = visit(ctx->functionParam(4)).as<LogicalFunction>();
+            auto arg5 = visit(ctx->functionParam(5)).as<LogicalFunction>();
+            auto arg6 = visit(ctx->functionParam(6)).as<LogicalFunction>();
+            auto arg7 = visit(ctx->functionParam(7)).as<LogicalFunction>();
+            return LogicalFunction(AlwaysEqTposeTposeLogicalFunction(std::move(arg0), std::move(arg1), std::move(arg2), std::move(arg3), std::move(arg4), std::move(arg5), std::move(arg6), std::move(arg7)));
+        }
+        /* END CODEGEN PARSER GLUE: ALWAYS_EQ_TPOSE_TPOSE */
+        case AntlrSQLParser::EVER_NE_TPOSE_TPOSE: {
+            PRECONDITION(ctx->functionParam().size() == 8,
+                         "EverNeTposeTpose requires 8 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            auto arg2 = visit(ctx->functionParam(2)).as<LogicalFunction>();
+            auto arg3 = visit(ctx->functionParam(3)).as<LogicalFunction>();
+            auto arg4 = visit(ctx->functionParam(4)).as<LogicalFunction>();
+            auto arg5 = visit(ctx->functionParam(5)).as<LogicalFunction>();
+            auto arg6 = visit(ctx->functionParam(6)).as<LogicalFunction>();
+            auto arg7 = visit(ctx->functionParam(7)).as<LogicalFunction>();
+            return LogicalFunction(EverNeTposeTposeLogicalFunction(std::move(arg0), std::move(arg1), std::move(arg2), std::move(arg3), std::move(arg4), std::move(arg5), std::move(arg6), std::move(arg7)));
+        }
+        /* END CODEGEN PARSER GLUE: EVER_NE_TPOSE_TPOSE */
+        case AntlrSQLParser::ALWAYS_NE_TPOSE_TPOSE: {
+            PRECONDITION(ctx->functionParam().size() == 8,
+                         "AlwaysNeTposeTpose requires 8 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            auto arg2 = visit(ctx->functionParam(2)).as<LogicalFunction>();
+            auto arg3 = visit(ctx->functionParam(3)).as<LogicalFunction>();
+            auto arg4 = visit(ctx->functionParam(4)).as<LogicalFunction>();
+            auto arg5 = visit(ctx->functionParam(5)).as<LogicalFunction>();
+            auto arg6 = visit(ctx->functionParam(6)).as<LogicalFunction>();
+            auto arg7 = visit(ctx->functionParam(7)).as<LogicalFunction>();
+            return LogicalFunction(AlwaysNeTposeTposeLogicalFunction(std::move(arg0), std::move(arg1), std::move(arg2), std::move(arg3), std::move(arg4), std::move(arg5), std::move(arg6), std::move(arg7)));
+        }
+        /* END CODEGEN PARSER GLUE: ALWAYS_NE_TPOSE_TPOSE */
+        case AntlrSQLParser::NAD_TPOSE_TPOSE: {
+            PRECONDITION(ctx->functionParam().size() == 8,
+                         "NadTposeTpose requires 8 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            auto arg2 = visit(ctx->functionParam(2)).as<LogicalFunction>();
+            auto arg3 = visit(ctx->functionParam(3)).as<LogicalFunction>();
+            auto arg4 = visit(ctx->functionParam(4)).as<LogicalFunction>();
+            auto arg5 = visit(ctx->functionParam(5)).as<LogicalFunction>();
+            auto arg6 = visit(ctx->functionParam(6)).as<LogicalFunction>();
+            auto arg7 = visit(ctx->functionParam(7)).as<LogicalFunction>();
+            return LogicalFunction(NadTposeTposeLogicalFunction(std::move(arg0), std::move(arg1), std::move(arg2), std::move(arg3), std::move(arg4), std::move(arg5), std::move(arg6), std::move(arg7)));
+        }
+        /* END CODEGEN PARSER GLUE: NAD_TPOSE_TPOSE */
         /* END CODEGEN PARSER GLUE: GEOM_INTERSECTS2D */
         case AntlrSQLParser::GEOM_DWITHIN2D: {
             PRECONDITION(ctx->functionParam().size() == 3,
