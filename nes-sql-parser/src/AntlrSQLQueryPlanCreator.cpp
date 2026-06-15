@@ -477,6 +477,13 @@
 #include <Functions/Meos/NadTrgeometryTrgeometryLogicalFunction.hpp>
 #include <Functions/Meos/EintersectsTpcpointGeoLogicalFunction.hpp>
 #include <Functions/Meos/NadTpcpointGeoLogicalFunction.hpp>
+#include <Functions/Meos/QuadbinPointToCellLogicalFunction.hpp>
+#include <Functions/Meos/QuadbinIsValidCellLogicalFunction.hpp>
+#include <Functions/Meos/QuadbinGetResolutionLogicalFunction.hpp>
+#include <Functions/Meos/QuadbinCellAreaLogicalFunction.hpp>
+#include <Functions/Meos/QuadbinCellToQuadkeyLogicalFunction.hpp>
+#include <Functions/Meos/QuadbinCellToParentLogicalFunction.hpp>
+#include <Functions/Meos/QuadbinTileToCellLogicalFunction.hpp>
 #include <Functions/Meos/GeomIntersects2dLogicalFunction.hpp>
 #include <Functions/Meos/GeomDwithin2dLogicalFunction.hpp>
 #include <Functions/Meos/GeomContainsLogicalFunction.hpp>
@@ -10598,6 +10605,67 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             return LogicalFunction(NadTpcpointGeoLogicalFunction(std::move(arg0), std::move(arg1), std::move(arg2)));
         }
         /* END CODEGEN PARSER GLUE: NAD_TPCPOINT_GEO */
+        case AntlrSQLParser::QUADBIN_POINT_TO_CELL: {
+            PRECONDITION(ctx->functionParam().size() == 3,
+                         "QuadbinPointToCell requires 3 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            auto arg2 = visit(ctx->functionParam(2)).as<LogicalFunction>();
+            return LogicalFunction(QuadbinPointToCellLogicalFunction(std::move(arg0), std::move(arg1), std::move(arg2)));
+        }
+        /* END CODEGEN PARSER GLUE: QUADBIN_POINT_TO_CELL */
+        case AntlrSQLParser::QUADBIN_IS_VALID_CELL: {
+            PRECONDITION(ctx->functionParam().size() == 1,
+                         "QuadbinIsValidCell requires 1 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            return LogicalFunction(QuadbinIsValidCellLogicalFunction(std::move(arg0)));
+        }
+        /* END CODEGEN PARSER GLUE: QUADBIN_IS_VALID_CELL */
+        case AntlrSQLParser::QUADBIN_GET_RESOLUTION: {
+            PRECONDITION(ctx->functionParam().size() == 1,
+                         "QuadbinGetResolution requires 1 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            return LogicalFunction(QuadbinGetResolutionLogicalFunction(std::move(arg0)));
+        }
+        /* END CODEGEN PARSER GLUE: QUADBIN_GET_RESOLUTION */
+        case AntlrSQLParser::QUADBIN_CELL_AREA: {
+            PRECONDITION(ctx->functionParam().size() == 1,
+                         "QuadbinCellArea requires 1 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            return LogicalFunction(QuadbinCellAreaLogicalFunction(std::move(arg0)));
+        }
+        /* END CODEGEN PARSER GLUE: QUADBIN_CELL_AREA */
+        case AntlrSQLParser::QUADBIN_CELL_TO_QUADKEY: {
+            PRECONDITION(ctx->functionParam().size() == 1,
+                         "QuadbinCellToQuadkey requires 1 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            return LogicalFunction(QuadbinCellToQuadkeyLogicalFunction(std::move(arg0)));
+        }
+        /* END CODEGEN PARSER GLUE: QUADBIN_CELL_TO_QUADKEY */
+        case AntlrSQLParser::QUADBIN_CELL_TO_PARENT: {
+            PRECONDITION(ctx->functionParam().size() == 2,
+                         "QuadbinCellToParent requires 2 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            return LogicalFunction(QuadbinCellToParentLogicalFunction(std::move(arg0), std::move(arg1)));
+        }
+        /* END CODEGEN PARSER GLUE: QUADBIN_CELL_TO_PARENT */
+        case AntlrSQLParser::QUADBIN_TILE_TO_CELL: {
+            PRECONDITION(ctx->functionParam().size() == 3,
+                         "QuadbinTileToCell requires 3 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            auto arg2 = visit(ctx->functionParam(2)).as<LogicalFunction>();
+            return LogicalFunction(QuadbinTileToCellLogicalFunction(std::move(arg0), std::move(arg1), std::move(arg2)));
+        }
+        /* END CODEGEN PARSER GLUE: QUADBIN_TILE_TO_CELL */
         /* END CODEGEN PARSER GLUE: GEOM_INTERSECTS2D */
         case AntlrSQLParser::GEOM_DWITHIN2D: {
             PRECONDITION(ctx->functionParam().size() == 3,
