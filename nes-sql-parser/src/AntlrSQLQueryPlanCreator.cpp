@@ -475,6 +475,8 @@
 #include <Functions/Meos/EverNeTrgeometryTrgeometryLogicalFunction.hpp>
 #include <Functions/Meos/AlwaysNeTrgeometryTrgeometryLogicalFunction.hpp>
 #include <Functions/Meos/NadTrgeometryTrgeometryLogicalFunction.hpp>
+#include <Functions/Meos/EintersectsTpcpointGeoLogicalFunction.hpp>
+#include <Functions/Meos/NadTpcpointGeoLogicalFunction.hpp>
 #include <Functions/Meos/GeomIntersects2dLogicalFunction.hpp>
 #include <Functions/Meos/GeomDwithin2dLogicalFunction.hpp>
 #include <Functions/Meos/GeomContainsLogicalFunction.hpp>
@@ -10576,6 +10578,26 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             return LogicalFunction(NadTrgeometryTrgeometryLogicalFunction(std::move(arg0), std::move(arg1), std::move(arg2), std::move(arg3), std::move(arg4), std::move(arg5), std::move(arg6), std::move(arg7), std::move(arg8), std::move(arg9)));
         }
         /* END CODEGEN PARSER GLUE: NAD_TRGEOMETRY_TRGEOMETRY */
+        case AntlrSQLParser::EINTERSECTS_TPCPOINT_GEO: {
+            PRECONDITION(ctx->functionParam().size() == 3,
+                         "EintersectsTpcpointGeo requires 3 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            auto arg2 = visit(ctx->functionParam(2)).as<LogicalFunction>();
+            return LogicalFunction(EintersectsTpcpointGeoLogicalFunction(std::move(arg0), std::move(arg1), std::move(arg2)));
+        }
+        /* END CODEGEN PARSER GLUE: EINTERSECTS_TPCPOINT_GEO */
+        case AntlrSQLParser::NAD_TPCPOINT_GEO: {
+            PRECONDITION(ctx->functionParam().size() == 3,
+                         "NadTpcpointGeo requires 3 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            auto arg2 = visit(ctx->functionParam(2)).as<LogicalFunction>();
+            return LogicalFunction(NadTpcpointGeoLogicalFunction(std::move(arg0), std::move(arg1), std::move(arg2)));
+        }
+        /* END CODEGEN PARSER GLUE: NAD_TPCPOINT_GEO */
         /* END CODEGEN PARSER GLUE: GEOM_INTERSECTS2D */
         case AntlrSQLParser::GEOM_DWITHIN2D: {
             PRECONDITION(ctx->functionParam().size() == 3,
