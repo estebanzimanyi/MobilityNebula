@@ -335,6 +335,8 @@ add_plugin(Th3indexCellToCenterChildNext LogicalFunction nes-logical-operators T
 add_plugin(Th3indexCellToParent LogicalFunction nes-logical-operators Th3indexCellToParentLogicalFunction.cpp)
 add_plugin(Th3indexCellToCenterChild LogicalFunction nes-logical-operators Th3indexCellToCenterChildLogicalFunction.cpp)
 add_plugin(Th3indexCellToChildPos LogicalFunction nes-logical-operators Th3indexCellToChildPosLogicalFunction.cpp)
+add_plugin(Th3indexAreNeighborCells LogicalFunction nes-logical-operators Th3indexAreNeighborCellsLogicalFunction.cpp)
+add_plugin(Th3indexGridDistance LogicalFunction nes-logical-operators Th3indexGridDistanceLogicalFunction.cpp)
 add_plugin(GeomIntersects2d LogicalFunction nes-logical-operators GeomIntersects2dLogicalFunction.cpp)
 add_plugin(GeomDwithin2d LogicalFunction nes-logical-operators GeomDwithin2dLogicalFunction.cpp)
 add_plugin(GeomContains LogicalFunction nes-logical-operators GeomContainsLogicalFunction.cpp)
