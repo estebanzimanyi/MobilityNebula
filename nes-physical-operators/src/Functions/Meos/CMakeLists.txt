@@ -347,6 +347,8 @@ add_plugin(AtouchesTcbufferGeo PhysicalFunction nes-physical-operators AtouchesT
 add_plugin(EcontainsTcbufferGeo PhysicalFunction nes-physical-operators EcontainsTcbufferGeoPhysicalFunction.cpp)
 add_plugin(AcontainsTcbufferGeo PhysicalFunction nes-physical-operators AcontainsTcbufferGeoPhysicalFunction.cpp)
 add_plugin(NadTcbufferGeo PhysicalFunction nes-physical-operators NadTcbufferGeoPhysicalFunction.cpp)
+add_plugin(EdwithinTcbufferGeo PhysicalFunction nes-physical-operators EdwithinTcbufferGeoPhysicalFunction.cpp)
+add_plugin(AdwithinTcbufferGeo PhysicalFunction nes-physical-operators AdwithinTcbufferGeoPhysicalFunction.cpp)
 add_plugin(GeomIntersects2d PhysicalFunction nes-physical-operators GeomIntersects2dPhysicalFunction.cpp)
 add_plugin(GeomDwithin2d PhysicalFunction nes-physical-operators GeomDwithin2dPhysicalFunction.cpp)
 add_plugin(GeomContains PhysicalFunction nes-physical-operators GeomContainsPhysicalFunction.cpp)
