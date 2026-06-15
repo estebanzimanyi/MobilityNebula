@@ -424,6 +424,8 @@ add_plugin(AlwaysEqTrgeometryTrgeometry LogicalFunction nes-logical-operators Al
 add_plugin(EverNeTrgeometryTrgeometry LogicalFunction nes-logical-operators EverNeTrgeometryTrgeometryLogicalFunction.cpp)
 add_plugin(AlwaysNeTrgeometryTrgeometry LogicalFunction nes-logical-operators AlwaysNeTrgeometryTrgeometryLogicalFunction.cpp)
 add_plugin(NadTrgeometryTrgeometry LogicalFunction nes-logical-operators NadTrgeometryTrgeometryLogicalFunction.cpp)
+add_plugin(EintersectsTpcpointGeo LogicalFunction nes-logical-operators EintersectsTpcpointGeoLogicalFunction.cpp)
+add_plugin(NadTpcpointGeo LogicalFunction nes-logical-operators NadTpcpointGeoLogicalFunction.cpp)
 add_plugin(GeomIntersects2d LogicalFunction nes-logical-operators GeomIntersects2dLogicalFunction.cpp)
 add_plugin(GeomDwithin2d LogicalFunction nes-logical-operators GeomDwithin2dLogicalFunction.cpp)
 add_plugin(GeomContains LogicalFunction nes-logical-operators GeomContainsLogicalFunction.cpp)
