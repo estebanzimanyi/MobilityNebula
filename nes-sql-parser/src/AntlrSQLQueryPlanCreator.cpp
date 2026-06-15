@@ -492,6 +492,12 @@
 #include <Functions/Meos/AlwaysEqTjsonbTjsonbLogicalFunction.hpp>
 #include <Functions/Meos/EverNeTjsonbTjsonbLogicalFunction.hpp>
 #include <Functions/Meos/AlwaysNeTjsonbTjsonbLogicalFunction.hpp>
+#include <Functions/Meos/GeomBoundaryLogicalFunction.hpp>
+#include <Functions/Meos/GeomCentroidLogicalFunction.hpp>
+#include <Functions/Meos/GeomConvexHullLogicalFunction.hpp>
+#include <Functions/Meos/GeoReverseLogicalFunction.hpp>
+#include <Functions/Meos/GeoPointsLogicalFunction.hpp>
+#include <Functions/Meos/GeomUnaryUnionLogicalFunction.hpp>
 #include <Functions/Meos/GeomIntersects2dLogicalFunction.hpp>
 #include <Functions/Meos/GeomDwithin2dLogicalFunction.hpp>
 #include <Functions/Meos/GeomContainsLogicalFunction.hpp>
@@ -10758,6 +10764,54 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             return LogicalFunction(AlwaysNeTjsonbTjsonbLogicalFunction(std::move(arg0), std::move(arg1), std::move(arg2), std::move(arg3)));
         }
         /* END CODEGEN PARSER GLUE: ALWAYS_NE_TJSONB_TJSONB */
+        case AntlrSQLParser::GEOM_BOUNDARY: {
+            PRECONDITION(ctx->functionParam().size() == 1,
+                         "GeomBoundary requires 1 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            return LogicalFunction(GeomBoundaryLogicalFunction(std::move(arg0)));
+        }
+        /* END CODEGEN PARSER GLUE: GEOM_BOUNDARY */
+        case AntlrSQLParser::GEOM_CENTROID: {
+            PRECONDITION(ctx->functionParam().size() == 1,
+                         "GeomCentroid requires 1 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            return LogicalFunction(GeomCentroidLogicalFunction(std::move(arg0)));
+        }
+        /* END CODEGEN PARSER GLUE: GEOM_CENTROID */
+        case AntlrSQLParser::GEOM_CONVEX_HULL: {
+            PRECONDITION(ctx->functionParam().size() == 1,
+                         "GeomConvexHull requires 1 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            return LogicalFunction(GeomConvexHullLogicalFunction(std::move(arg0)));
+        }
+        /* END CODEGEN PARSER GLUE: GEOM_CONVEX_HULL */
+        case AntlrSQLParser::GEO_REVERSE: {
+            PRECONDITION(ctx->functionParam().size() == 1,
+                         "GeoReverse requires 1 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            return LogicalFunction(GeoReverseLogicalFunction(std::move(arg0)));
+        }
+        /* END CODEGEN PARSER GLUE: GEO_REVERSE */
+        case AntlrSQLParser::GEO_POINTS: {
+            PRECONDITION(ctx->functionParam().size() == 1,
+                         "GeoPoints requires 1 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            return LogicalFunction(GeoPointsLogicalFunction(std::move(arg0)));
+        }
+        /* END CODEGEN PARSER GLUE: GEO_POINTS */
+        case AntlrSQLParser::GEOM_UNARY_UNION: {
+            PRECONDITION(ctx->functionParam().size() == 1,
+                         "GeomUnaryUnion requires 1 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            return LogicalFunction(GeomUnaryUnionLogicalFunction(std::move(arg0)));
+        }
+        /* END CODEGEN PARSER GLUE: GEOM_UNARY_UNION */
         /* END CODEGEN PARSER GLUE: GEOM_INTERSECTS2D */
         case AntlrSQLParser::GEOM_DWITHIN2D: {
             PRECONDITION(ctx->functionParam().size() == 3,
