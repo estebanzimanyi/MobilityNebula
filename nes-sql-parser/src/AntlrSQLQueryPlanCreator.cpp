@@ -498,6 +498,10 @@
 #include <Functions/Meos/GeoReverseLogicalFunction.hpp>
 #include <Functions/Meos/GeoPointsLogicalFunction.hpp>
 #include <Functions/Meos/GeomUnaryUnionLogicalFunction.hpp>
+#include <Functions/Meos/GeomDifference2dLogicalFunction.hpp>
+#include <Functions/Meos/GeomIntersection2dLogicalFunction.hpp>
+#include <Functions/Meos/GeomShortestline2dLogicalFunction.hpp>
+#include <Functions/Meos/GeomShortestline3dLogicalFunction.hpp>
 #include <Functions/Meos/GeomIntersects2dLogicalFunction.hpp>
 #include <Functions/Meos/GeomDwithin2dLogicalFunction.hpp>
 #include <Functions/Meos/GeomContainsLogicalFunction.hpp>
@@ -10812,6 +10816,42 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             return LogicalFunction(GeomUnaryUnionLogicalFunction(std::move(arg0)));
         }
         /* END CODEGEN PARSER GLUE: GEOM_UNARY_UNION */
+        case AntlrSQLParser::GEOM_DIFFERENCE2D: {
+            PRECONDITION(ctx->functionParam().size() == 2,
+                         "GeomDifference2d requires 2 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            return LogicalFunction(GeomDifference2dLogicalFunction(std::move(arg0), std::move(arg1)));
+        }
+        /* END CODEGEN PARSER GLUE: GEOM_DIFFERENCE2D */
+        case AntlrSQLParser::GEOM_INTERSECTION2D: {
+            PRECONDITION(ctx->functionParam().size() == 2,
+                         "GeomIntersection2d requires 2 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            return LogicalFunction(GeomIntersection2dLogicalFunction(std::move(arg0), std::move(arg1)));
+        }
+        /* END CODEGEN PARSER GLUE: GEOM_INTERSECTION2D */
+        case AntlrSQLParser::GEOM_SHORTESTLINE2D: {
+            PRECONDITION(ctx->functionParam().size() == 2,
+                         "GeomShortestline2d requires 2 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            return LogicalFunction(GeomShortestline2dLogicalFunction(std::move(arg0), std::move(arg1)));
+        }
+        /* END CODEGEN PARSER GLUE: GEOM_SHORTESTLINE2D */
+        case AntlrSQLParser::GEOM_SHORTESTLINE3D: {
+            PRECONDITION(ctx->functionParam().size() == 2,
+                         "GeomShortestline3d requires 2 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            return LogicalFunction(GeomShortestline3dLogicalFunction(std::move(arg0), std::move(arg1)));
+        }
+        /* END CODEGEN PARSER GLUE: GEOM_SHORTESTLINE3D */
         /* END CODEGEN PARSER GLUE: GEOM_INTERSECTS2D */
         case AntlrSQLParser::GEOM_DWITHIN2D: {
             PRECONDITION(ctx->functionParam().size() == 3,
