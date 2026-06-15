@@ -12,7 +12,7 @@
     limitations under the License.
 */
 
-#include <Functions/Meos/LineNumpointsPhysicalFunction.hpp>
+#include <Functions/Meos/GeomMinBoundingRadiusPhysicalFunction.hpp>
 #include <Functions/PhysicalFunction.hpp>
 #include <MEOSWrapper.hpp>
 #include <Nautilus/DataTypes/VarVal.hpp>
@@ -33,13 +33,13 @@ extern "C" {
 
 namespace NES {
 
-LineNumpointsPhysicalFunction::LineNumpointsPhysicalFunction(PhysicalFunction wkt)
+GeomMinBoundingRadiusPhysicalFunction::GeomMinBoundingRadiusPhysicalFunction(PhysicalFunction wkt)
 {
     paramFns.reserve(1);
     paramFns.push_back(std::move(wkt));
 }
 
-VarVal LineNumpointsPhysicalFunction::execute(const Record& record, ArenaRef& arena) const
+VarVal GeomMinBoundingRadiusPhysicalFunction::execute(const Record& record, ArenaRef& arena) const
 {
     auto wkt = paramFns[0].execute(record, arena).cast<VariableSizedData>();
     const auto result = nautilus::invoke(
@@ -49,22 +49,23 @@ VarVal LineNumpointsPhysicalFunction::execute(const Record& record, ArenaRef& ar
                 std::string s(w, wsz);
                 GSERIALIZED* gs = geom_in(s.c_str(), -1);
                 if (!gs) return 0.0;
-                int n = line_numpoints(gs);
+                MinBoundingCircle mbc = geom_min_bounding_radius(gs);
                 free(gs);
-                return (double)n;
+                if (mbc.center) free(mbc.center);
+                return mbc.radius;
             } catch (const std::exception&) { return 0.0; }
         },
         wkt);
     return VarVal(result);
 }
 
-PhysicalFunctionRegistryReturnType PhysicalFunctionGeneratedRegistrar::RegisterLineNumpointsPhysicalFunction(
+PhysicalFunctionRegistryReturnType PhysicalFunctionGeneratedRegistrar::RegisterGeomMinBoundingRadiusPhysicalFunction(
     PhysicalFunctionRegistryArguments arguments)
 {
     PRECONDITION(arguments.childFunctions.size() == 1,
-                 "LineNumpointsPhysicalFunction requires 1 children but got {}",
+                 "GeomMinBoundingRadiusPhysicalFunction requires 1 children but got {}",
                  arguments.childFunctions.size());
-    return LineNumpointsPhysicalFunction(
+    return GeomMinBoundingRadiusPhysicalFunction(
                                   std::move(arguments.childFunctions[0]));
 }
 

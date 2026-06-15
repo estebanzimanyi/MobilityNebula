@@ -520,6 +520,14 @@
 #include <Functions/Meos/GeoGeoNLogicalFunction.hpp>
 #include <Functions/Meos/LinePointNLogicalFunction.hpp>
 #include <Functions/Meos/GeomIntersection2dCollLogicalFunction.hpp>
+#include <Functions/Meos/GeoAsGeojsonLogicalFunction.hpp>
+#include <Functions/Meos/GeoAsHexewkbLogicalFunction.hpp>
+#include <Functions/Meos/GeoAsEwktLogicalFunction.hpp>
+#include <Functions/Meos/GeoFromGeojsonLogicalFunction.hpp>
+#include <Functions/Meos/GeomFromHexewkbLogicalFunction.hpp>
+#include <Functions/Meos/GeoTransformPipelineLogicalFunction.hpp>
+#include <Functions/Meos/GeomMinBoundingCenterLogicalFunction.hpp>
+#include <Functions/Meos/GeomMinBoundingRadiusLogicalFunction.hpp>
 #include <Functions/Meos/GeomIntersects2dLogicalFunction.hpp>
 #include <Functions/Meos/GeomDwithin2dLogicalFunction.hpp>
 #include <Functions/Meos/GeomContainsLogicalFunction.hpp>
@@ -11038,6 +11046,77 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             return LogicalFunction(GeomIntersection2dCollLogicalFunction(std::move(arg0), std::move(arg1)));
         }
         /* END CODEGEN PARSER GLUE: GEOM_INTERSECTION2D_COLL */
+        case AntlrSQLParser::GEO_AS_GEOJSON: {
+            PRECONDITION(ctx->functionParam().size() == 3,
+                         "GeoAsGeojson requires 3 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            auto arg2 = visit(ctx->functionParam(2)).as<LogicalFunction>();
+            return LogicalFunction(GeoAsGeojsonLogicalFunction(std::move(arg0), std::move(arg1), std::move(arg2)));
+        }
+        /* END CODEGEN PARSER GLUE: GEO_AS_GEOJSON */
+        case AntlrSQLParser::GEO_AS_HEXEWKB: {
+            PRECONDITION(ctx->functionParam().size() == 2,
+                         "GeoAsHexewkb requires 2 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            return LogicalFunction(GeoAsHexewkbLogicalFunction(std::move(arg0), std::move(arg1)));
+        }
+        /* END CODEGEN PARSER GLUE: GEO_AS_HEXEWKB */
+        case AntlrSQLParser::GEO_AS_EWKT: {
+            PRECONDITION(ctx->functionParam().size() == 2,
+                         "GeoAsEwkt requires 2 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            return LogicalFunction(GeoAsEwktLogicalFunction(std::move(arg0), std::move(arg1)));
+        }
+        /* END CODEGEN PARSER GLUE: GEO_AS_EWKT */
+        case AntlrSQLParser::GEO_FROM_GEOJSON: {
+            PRECONDITION(ctx->functionParam().size() == 1,
+                         "GeoFromGeojson requires 1 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            return LogicalFunction(GeoFromGeojsonLogicalFunction(std::move(arg0)));
+        }
+        /* END CODEGEN PARSER GLUE: GEO_FROM_GEOJSON */
+        case AntlrSQLParser::GEOM_FROM_HEXEWKB: {
+            PRECONDITION(ctx->functionParam().size() == 1,
+                         "GeomFromHexewkb requires 1 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            return LogicalFunction(GeomFromHexewkbLogicalFunction(std::move(arg0)));
+        }
+        /* END CODEGEN PARSER GLUE: GEOM_FROM_HEXEWKB */
+        case AntlrSQLParser::GEO_TRANSFORM_PIPELINE: {
+            PRECONDITION(ctx->functionParam().size() == 4,
+                         "GeoTransformPipeline requires 4 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            auto arg2 = visit(ctx->functionParam(2)).as<LogicalFunction>();
+            auto arg3 = visit(ctx->functionParam(3)).as<LogicalFunction>();
+            return LogicalFunction(GeoTransformPipelineLogicalFunction(std::move(arg0), std::move(arg1), std::move(arg2), std::move(arg3)));
+        }
+        /* END CODEGEN PARSER GLUE: GEO_TRANSFORM_PIPELINE */
+        case AntlrSQLParser::GEOM_MIN_BOUNDING_CENTER: {
+            PRECONDITION(ctx->functionParam().size() == 1,
+                         "GeomMinBoundingCenter requires 1 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            return LogicalFunction(GeomMinBoundingCenterLogicalFunction(std::move(arg0)));
+        }
+        /* END CODEGEN PARSER GLUE: GEOM_MIN_BOUNDING_CENTER */
+        case AntlrSQLParser::GEOM_MIN_BOUNDING_RADIUS: {
+            PRECONDITION(ctx->functionParam().size() == 1,
+                         "GeomMinBoundingRadius requires 1 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            return LogicalFunction(GeomMinBoundingRadiusLogicalFunction(std::move(arg0)));
+        }
+        /* END CODEGEN PARSER GLUE: GEOM_MIN_BOUNDING_RADIUS */
         /* END CODEGEN PARSER GLUE: GEOM_INTERSECTS2D */
         case AntlrSQLParser::GEOM_DWITHIN2D: {
             PRECONDITION(ctx->functionParam().size() == 3,
