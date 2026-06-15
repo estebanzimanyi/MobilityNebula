@@ -506,6 +506,10 @@
 #include <Functions/Meos/GeoTransformLogicalFunction.hpp>
 #include <Functions/Meos/GeoRoundLogicalFunction.hpp>
 #include <Functions/Meos/GeomBufferLogicalFunction.hpp>
+#include <Functions/Meos/LineNumpointsLogicalFunction.hpp>
+#include <Functions/Meos/LineLocatePointLogicalFunction.hpp>
+#include <Functions/Meos/LineInterpolatePointLogicalFunction.hpp>
+#include <Functions/Meos/LineSubstringLogicalFunction.hpp>
 #include <Functions/Meos/GeomIntersects2dLogicalFunction.hpp>
 #include <Functions/Meos/GeomDwithin2dLogicalFunction.hpp>
 #include <Functions/Meos/GeomContainsLogicalFunction.hpp>
@@ -10893,6 +10897,43 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             return LogicalFunction(GeomBufferLogicalFunction(std::move(arg0), std::move(arg1), std::move(arg2)));
         }
         /* END CODEGEN PARSER GLUE: GEOM_BUFFER */
+        case AntlrSQLParser::LINE_NUMPOINTS: {
+            PRECONDITION(ctx->functionParam().size() == 1,
+                         "LineNumpoints requires 1 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            return LogicalFunction(LineNumpointsLogicalFunction(std::move(arg0)));
+        }
+        /* END CODEGEN PARSER GLUE: LINE_NUMPOINTS */
+        case AntlrSQLParser::LINE_LOCATE_POINT: {
+            PRECONDITION(ctx->functionParam().size() == 2,
+                         "LineLocatePoint requires 2 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            return LogicalFunction(LineLocatePointLogicalFunction(std::move(arg0), std::move(arg1)));
+        }
+        /* END CODEGEN PARSER GLUE: LINE_LOCATE_POINT */
+        case AntlrSQLParser::LINE_INTERPOLATE_POINT: {
+            PRECONDITION(ctx->functionParam().size() == 3,
+                         "LineInterpolatePoint requires 3 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            auto arg2 = visit(ctx->functionParam(2)).as<LogicalFunction>();
+            return LogicalFunction(LineInterpolatePointLogicalFunction(std::move(arg0), std::move(arg1), std::move(arg2)));
+        }
+        /* END CODEGEN PARSER GLUE: LINE_INTERPOLATE_POINT */
+        case AntlrSQLParser::LINE_SUBSTRING: {
+            PRECONDITION(ctx->functionParam().size() == 3,
+                         "LineSubstring requires 3 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            auto arg2 = visit(ctx->functionParam(2)).as<LogicalFunction>();
+            return LogicalFunction(LineSubstringLogicalFunction(std::move(arg0), std::move(arg1), std::move(arg2)));
+        }
+        /* END CODEGEN PARSER GLUE: LINE_SUBSTRING */
         /* END CODEGEN PARSER GLUE: GEOM_INTERSECTS2D */
         case AntlrSQLParser::GEOM_DWITHIN2D: {
             PRECONDITION(ctx->functionParam().size() == 3,
