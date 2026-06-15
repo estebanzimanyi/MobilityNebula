@@ -502,6 +502,10 @@
 #include <Functions/Meos/GeomIntersection2dLogicalFunction.hpp>
 #include <Functions/Meos/GeomShortestline2dLogicalFunction.hpp>
 #include <Functions/Meos/GeomShortestline3dLogicalFunction.hpp>
+#include <Functions/Meos/GeoSetSridLogicalFunction.hpp>
+#include <Functions/Meos/GeoTransformLogicalFunction.hpp>
+#include <Functions/Meos/GeoRoundLogicalFunction.hpp>
+#include <Functions/Meos/GeomBufferLogicalFunction.hpp>
 #include <Functions/Meos/GeomIntersects2dLogicalFunction.hpp>
 #include <Functions/Meos/GeomDwithin2dLogicalFunction.hpp>
 #include <Functions/Meos/GeomContainsLogicalFunction.hpp>
@@ -10852,6 +10856,43 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             return LogicalFunction(GeomShortestline3dLogicalFunction(std::move(arg0), std::move(arg1)));
         }
         /* END CODEGEN PARSER GLUE: GEOM_SHORTESTLINE3D */
+        case AntlrSQLParser::GEO_SET_SRID: {
+            PRECONDITION(ctx->functionParam().size() == 2,
+                         "GeoSetSrid requires 2 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            return LogicalFunction(GeoSetSridLogicalFunction(std::move(arg0), std::move(arg1)));
+        }
+        /* END CODEGEN PARSER GLUE: GEO_SET_SRID */
+        case AntlrSQLParser::GEO_TRANSFORM: {
+            PRECONDITION(ctx->functionParam().size() == 2,
+                         "GeoTransform requires 2 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            return LogicalFunction(GeoTransformLogicalFunction(std::move(arg0), std::move(arg1)));
+        }
+        /* END CODEGEN PARSER GLUE: GEO_TRANSFORM */
+        case AntlrSQLParser::GEO_ROUND: {
+            PRECONDITION(ctx->functionParam().size() == 2,
+                         "GeoRound requires 2 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            return LogicalFunction(GeoRoundLogicalFunction(std::move(arg0), std::move(arg1)));
+        }
+        /* END CODEGEN PARSER GLUE: GEO_ROUND */
+        case AntlrSQLParser::GEOM_BUFFER: {
+            PRECONDITION(ctx->functionParam().size() == 3,
+                         "GeomBuffer requires 3 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            auto arg2 = visit(ctx->functionParam(2)).as<LogicalFunction>();
+            return LogicalFunction(GeomBufferLogicalFunction(std::move(arg0), std::move(arg1), std::move(arg2)));
+        }
+        /* END CODEGEN PARSER GLUE: GEOM_BUFFER */
         /* END CODEGEN PARSER GLUE: GEOM_INTERSECTS2D */
         case AntlrSQLParser::GEOM_DWITHIN2D: {
             PRECONDITION(ctx->functionParam().size() == 3,
