@@ -441,6 +441,11 @@
 #include <Functions/Meos/AlwaysEqNpointTnpointLogicalFunction.hpp>
 #include <Functions/Meos/EverNeNpointTnpointLogicalFunction.hpp>
 #include <Functions/Meos/AlwaysNeNpointTnpointLogicalFunction.hpp>
+#include <Functions/Meos/EverEqTnpointTnpointLogicalFunction.hpp>
+#include <Functions/Meos/AlwaysEqTnpointTnpointLogicalFunction.hpp>
+#include <Functions/Meos/EverNeTnpointTnpointLogicalFunction.hpp>
+#include <Functions/Meos/AlwaysNeTnpointTnpointLogicalFunction.hpp>
+#include <Functions/Meos/NadTnpointTnpointLogicalFunction.hpp>
 #include <Functions/Meos/GeomIntersects2dLogicalFunction.hpp>
 #include <Functions/Meos/GeomDwithin2dLogicalFunction.hpp>
 #include <Functions/Meos/GeomContainsLogicalFunction.hpp>
@@ -10062,6 +10067,71 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             return LogicalFunction(AlwaysNeNpointTnpointLogicalFunction(std::move(arg0), std::move(arg1), std::move(arg2), std::move(arg3), std::move(arg4)));
         }
         /* END CODEGEN PARSER GLUE: ALWAYS_NE_NPOINT_TNPOINT */
+        case AntlrSQLParser::EVER_EQ_TNPOINT_TNPOINT: {
+            PRECONDITION(ctx->functionParam().size() == 6,
+                         "EverEqTnpointTnpoint requires 6 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            auto arg2 = visit(ctx->functionParam(2)).as<LogicalFunction>();
+            auto arg3 = visit(ctx->functionParam(3)).as<LogicalFunction>();
+            auto arg4 = visit(ctx->functionParam(4)).as<LogicalFunction>();
+            auto arg5 = visit(ctx->functionParam(5)).as<LogicalFunction>();
+            return LogicalFunction(EverEqTnpointTnpointLogicalFunction(std::move(arg0), std::move(arg1), std::move(arg2), std::move(arg3), std::move(arg4), std::move(arg5)));
+        }
+        /* END CODEGEN PARSER GLUE: EVER_EQ_TNPOINT_TNPOINT */
+        case AntlrSQLParser::ALWAYS_EQ_TNPOINT_TNPOINT: {
+            PRECONDITION(ctx->functionParam().size() == 6,
+                         "AlwaysEqTnpointTnpoint requires 6 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            auto arg2 = visit(ctx->functionParam(2)).as<LogicalFunction>();
+            auto arg3 = visit(ctx->functionParam(3)).as<LogicalFunction>();
+            auto arg4 = visit(ctx->functionParam(4)).as<LogicalFunction>();
+            auto arg5 = visit(ctx->functionParam(5)).as<LogicalFunction>();
+            return LogicalFunction(AlwaysEqTnpointTnpointLogicalFunction(std::move(arg0), std::move(arg1), std::move(arg2), std::move(arg3), std::move(arg4), std::move(arg5)));
+        }
+        /* END CODEGEN PARSER GLUE: ALWAYS_EQ_TNPOINT_TNPOINT */
+        case AntlrSQLParser::EVER_NE_TNPOINT_TNPOINT: {
+            PRECONDITION(ctx->functionParam().size() == 6,
+                         "EverNeTnpointTnpoint requires 6 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            auto arg2 = visit(ctx->functionParam(2)).as<LogicalFunction>();
+            auto arg3 = visit(ctx->functionParam(3)).as<LogicalFunction>();
+            auto arg4 = visit(ctx->functionParam(4)).as<LogicalFunction>();
+            auto arg5 = visit(ctx->functionParam(5)).as<LogicalFunction>();
+            return LogicalFunction(EverNeTnpointTnpointLogicalFunction(std::move(arg0), std::move(arg1), std::move(arg2), std::move(arg3), std::move(arg4), std::move(arg5)));
+        }
+        /* END CODEGEN PARSER GLUE: EVER_NE_TNPOINT_TNPOINT */
+        case AntlrSQLParser::ALWAYS_NE_TNPOINT_TNPOINT: {
+            PRECONDITION(ctx->functionParam().size() == 6,
+                         "AlwaysNeTnpointTnpoint requires 6 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            auto arg2 = visit(ctx->functionParam(2)).as<LogicalFunction>();
+            auto arg3 = visit(ctx->functionParam(3)).as<LogicalFunction>();
+            auto arg4 = visit(ctx->functionParam(4)).as<LogicalFunction>();
+            auto arg5 = visit(ctx->functionParam(5)).as<LogicalFunction>();
+            return LogicalFunction(AlwaysNeTnpointTnpointLogicalFunction(std::move(arg0), std::move(arg1), std::move(arg2), std::move(arg3), std::move(arg4), std::move(arg5)));
+        }
+        /* END CODEGEN PARSER GLUE: ALWAYS_NE_TNPOINT_TNPOINT */
+        case AntlrSQLParser::NAD_TNPOINT_TNPOINT: {
+            PRECONDITION(ctx->functionParam().size() == 6,
+                         "NadTnpointTnpoint requires 6 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            auto arg2 = visit(ctx->functionParam(2)).as<LogicalFunction>();
+            auto arg3 = visit(ctx->functionParam(3)).as<LogicalFunction>();
+            auto arg4 = visit(ctx->functionParam(4)).as<LogicalFunction>();
+            auto arg5 = visit(ctx->functionParam(5)).as<LogicalFunction>();
+            return LogicalFunction(NadTnpointTnpointLogicalFunction(std::move(arg0), std::move(arg1), std::move(arg2), std::move(arg3), std::move(arg4), std::move(arg5)));
+        }
+        /* END CODEGEN PARSER GLUE: NAD_TNPOINT_TNPOINT */
         /* END CODEGEN PARSER GLUE: GEOM_INTERSECTS2D */
         case AntlrSQLParser::GEOM_DWITHIN2D: {
             PRECONDITION(ctx->functionParam().size() == 3,
