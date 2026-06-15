@@ -399,6 +399,8 @@
 #include <Functions/Meos/EcontainsTcbufferGeoLogicalFunction.hpp>
 #include <Functions/Meos/AcontainsTcbufferGeoLogicalFunction.hpp>
 #include <Functions/Meos/NadTcbufferGeoLogicalFunction.hpp>
+#include <Functions/Meos/EdwithinTcbufferGeoLogicalFunction.hpp>
+#include <Functions/Meos/AdwithinTcbufferGeoLogicalFunction.hpp>
 #include <Functions/Meos/GeomIntersects2dLogicalFunction.hpp>
 #include <Functions/Meos/GeomDwithin2dLogicalFunction.hpp>
 #include <Functions/Meos/GeomContainsLogicalFunction.hpp>
@@ -9437,6 +9439,32 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             return LogicalFunction(NadTcbufferGeoLogicalFunction(std::move(arg0), std::move(arg1), std::move(arg2), std::move(arg3), std::move(arg4)));
         }
         /* END CODEGEN PARSER GLUE: NAD_TCBUFFER_GEO */
+        case AntlrSQLParser::EDWITHIN_TCBUFFER_GEO: {
+            PRECONDITION(ctx->functionParam().size() == 6,
+                         "EdwithinTcbufferGeo requires 6 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            auto arg2 = visit(ctx->functionParam(2)).as<LogicalFunction>();
+            auto arg3 = visit(ctx->functionParam(3)).as<LogicalFunction>();
+            auto arg4 = visit(ctx->functionParam(4)).as<LogicalFunction>();
+            auto arg5 = visit(ctx->functionParam(5)).as<LogicalFunction>();
+            return LogicalFunction(EdwithinTcbufferGeoLogicalFunction(std::move(arg0), std::move(arg1), std::move(arg2), std::move(arg3), std::move(arg4), std::move(arg5)));
+        }
+        /* END CODEGEN PARSER GLUE: EDWITHIN_TCBUFFER_GEO */
+        case AntlrSQLParser::ADWITHIN_TCBUFFER_GEO: {
+            PRECONDITION(ctx->functionParam().size() == 6,
+                         "AdwithinTcbufferGeo requires 6 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            auto arg2 = visit(ctx->functionParam(2)).as<LogicalFunction>();
+            auto arg3 = visit(ctx->functionParam(3)).as<LogicalFunction>();
+            auto arg4 = visit(ctx->functionParam(4)).as<LogicalFunction>();
+            auto arg5 = visit(ctx->functionParam(5)).as<LogicalFunction>();
+            return LogicalFunction(AdwithinTcbufferGeoLogicalFunction(std::move(arg0), std::move(arg1), std::move(arg2), std::move(arg3), std::move(arg4), std::move(arg5)));
+        }
+        /* END CODEGEN PARSER GLUE: ADWITHIN_TCBUFFER_GEO */
         /* END CODEGEN PARSER GLUE: GEOM_INTERSECTS2D */
         case AntlrSQLParser::GEOM_DWITHIN2D: {
             PRECONDITION(ctx->functionParam().size() == 3,

@@ -348,6 +348,8 @@ add_plugin(AtouchesTcbufferGeo LogicalFunction nes-logical-operators AtouchesTcb
 add_plugin(EcontainsTcbufferGeo LogicalFunction nes-logical-operators EcontainsTcbufferGeoLogicalFunction.cpp)
 add_plugin(AcontainsTcbufferGeo LogicalFunction nes-logical-operators AcontainsTcbufferGeoLogicalFunction.cpp)
 add_plugin(NadTcbufferGeo LogicalFunction nes-logical-operators NadTcbufferGeoLogicalFunction.cpp)
+add_plugin(EdwithinTcbufferGeo LogicalFunction nes-logical-operators EdwithinTcbufferGeoLogicalFunction.cpp)
+add_plugin(AdwithinTcbufferGeo LogicalFunction nes-logical-operators AdwithinTcbufferGeoLogicalFunction.cpp)
 add_plugin(GeomIntersects2d LogicalFunction nes-logical-operators GeomIntersects2dLogicalFunction.cpp)
 add_plugin(GeomDwithin2d LogicalFunction nes-logical-operators GeomDwithin2dLogicalFunction.cpp)
 add_plugin(GeomContains LogicalFunction nes-logical-operators GeomContainsLogicalFunction.cpp)
