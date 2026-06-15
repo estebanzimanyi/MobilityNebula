@@ -416,6 +416,18 @@
 #include <Functions/Meos/EverNeTcbufferCbufferLogicalFunction.hpp>
 #include <Functions/Meos/AlwaysNeTcbufferCbufferLogicalFunction.hpp>
 #include <Functions/Meos/NadTcbufferCbufferLogicalFunction.hpp>
+#include <Functions/Meos/EverEqTcbufferTcbufferLogicalFunction.hpp>
+#include <Functions/Meos/AlwaysEqTcbufferTcbufferLogicalFunction.hpp>
+#include <Functions/Meos/EverNeTcbufferTcbufferLogicalFunction.hpp>
+#include <Functions/Meos/AlwaysNeTcbufferTcbufferLogicalFunction.hpp>
+#include <Functions/Meos/EintersectsTcbufferTcbufferLogicalFunction.hpp>
+#include <Functions/Meos/AintersectsTcbufferTcbufferLogicalFunction.hpp>
+#include <Functions/Meos/EcoversTcbufferTcbufferLogicalFunction.hpp>
+#include <Functions/Meos/AcoversTcbufferTcbufferLogicalFunction.hpp>
+#include <Functions/Meos/AdisjointTcbufferTcbufferLogicalFunction.hpp>
+#include <Functions/Meos/EtouchesTcbufferTcbufferLogicalFunction.hpp>
+#include <Functions/Meos/AtouchesTcbufferTcbufferLogicalFunction.hpp>
+#include <Functions/Meos/NadTcbufferTcbufferLogicalFunction.hpp>
 #include <Functions/Meos/GeomIntersects2dLogicalFunction.hpp>
 #include <Functions/Meos/GeomDwithin2dLogicalFunction.hpp>
 #include <Functions/Meos/GeomContainsLogicalFunction.hpp>
@@ -9690,6 +9702,186 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             return LogicalFunction(NadTcbufferCbufferLogicalFunction(std::move(arg0), std::move(arg1), std::move(arg2), std::move(arg3), std::move(arg4), std::move(arg5), std::move(arg6)));
         }
         /* END CODEGEN PARSER GLUE: NAD_TCBUFFER_CBUFFER */
+        case AntlrSQLParser::EVER_EQ_TCBUFFER_TCBUFFER: {
+            PRECONDITION(ctx->functionParam().size() == 8,
+                         "EverEqTcbufferTcbuffer requires 8 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            auto arg2 = visit(ctx->functionParam(2)).as<LogicalFunction>();
+            auto arg3 = visit(ctx->functionParam(3)).as<LogicalFunction>();
+            auto arg4 = visit(ctx->functionParam(4)).as<LogicalFunction>();
+            auto arg5 = visit(ctx->functionParam(5)).as<LogicalFunction>();
+            auto arg6 = visit(ctx->functionParam(6)).as<LogicalFunction>();
+            auto arg7 = visit(ctx->functionParam(7)).as<LogicalFunction>();
+            return LogicalFunction(EverEqTcbufferTcbufferLogicalFunction(std::move(arg0), std::move(arg1), std::move(arg2), std::move(arg3), std::move(arg4), std::move(arg5), std::move(arg6), std::move(arg7)));
+        }
+        /* END CODEGEN PARSER GLUE: EVER_EQ_TCBUFFER_TCBUFFER */
+        case AntlrSQLParser::ALWAYS_EQ_TCBUFFER_TCBUFFER: {
+            PRECONDITION(ctx->functionParam().size() == 8,
+                         "AlwaysEqTcbufferTcbuffer requires 8 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            auto arg2 = visit(ctx->functionParam(2)).as<LogicalFunction>();
+            auto arg3 = visit(ctx->functionParam(3)).as<LogicalFunction>();
+            auto arg4 = visit(ctx->functionParam(4)).as<LogicalFunction>();
+            auto arg5 = visit(ctx->functionParam(5)).as<LogicalFunction>();
+            auto arg6 = visit(ctx->functionParam(6)).as<LogicalFunction>();
+            auto arg7 = visit(ctx->functionParam(7)).as<LogicalFunction>();
+            return LogicalFunction(AlwaysEqTcbufferTcbufferLogicalFunction(std::move(arg0), std::move(arg1), std::move(arg2), std::move(arg3), std::move(arg4), std::move(arg5), std::move(arg6), std::move(arg7)));
+        }
+        /* END CODEGEN PARSER GLUE: ALWAYS_EQ_TCBUFFER_TCBUFFER */
+        case AntlrSQLParser::EVER_NE_TCBUFFER_TCBUFFER: {
+            PRECONDITION(ctx->functionParam().size() == 8,
+                         "EverNeTcbufferTcbuffer requires 8 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            auto arg2 = visit(ctx->functionParam(2)).as<LogicalFunction>();
+            auto arg3 = visit(ctx->functionParam(3)).as<LogicalFunction>();
+            auto arg4 = visit(ctx->functionParam(4)).as<LogicalFunction>();
+            auto arg5 = visit(ctx->functionParam(5)).as<LogicalFunction>();
+            auto arg6 = visit(ctx->functionParam(6)).as<LogicalFunction>();
+            auto arg7 = visit(ctx->functionParam(7)).as<LogicalFunction>();
+            return LogicalFunction(EverNeTcbufferTcbufferLogicalFunction(std::move(arg0), std::move(arg1), std::move(arg2), std::move(arg3), std::move(arg4), std::move(arg5), std::move(arg6), std::move(arg7)));
+        }
+        /* END CODEGEN PARSER GLUE: EVER_NE_TCBUFFER_TCBUFFER */
+        case AntlrSQLParser::ALWAYS_NE_TCBUFFER_TCBUFFER: {
+            PRECONDITION(ctx->functionParam().size() == 8,
+                         "AlwaysNeTcbufferTcbuffer requires 8 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            auto arg2 = visit(ctx->functionParam(2)).as<LogicalFunction>();
+            auto arg3 = visit(ctx->functionParam(3)).as<LogicalFunction>();
+            auto arg4 = visit(ctx->functionParam(4)).as<LogicalFunction>();
+            auto arg5 = visit(ctx->functionParam(5)).as<LogicalFunction>();
+            auto arg6 = visit(ctx->functionParam(6)).as<LogicalFunction>();
+            auto arg7 = visit(ctx->functionParam(7)).as<LogicalFunction>();
+            return LogicalFunction(AlwaysNeTcbufferTcbufferLogicalFunction(std::move(arg0), std::move(arg1), std::move(arg2), std::move(arg3), std::move(arg4), std::move(arg5), std::move(arg6), std::move(arg7)));
+        }
+        /* END CODEGEN PARSER GLUE: ALWAYS_NE_TCBUFFER_TCBUFFER */
+        case AntlrSQLParser::EINTERSECTS_TCBUFFER_TCBUFFER: {
+            PRECONDITION(ctx->functionParam().size() == 8,
+                         "EintersectsTcbufferTcbuffer requires 8 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            auto arg2 = visit(ctx->functionParam(2)).as<LogicalFunction>();
+            auto arg3 = visit(ctx->functionParam(3)).as<LogicalFunction>();
+            auto arg4 = visit(ctx->functionParam(4)).as<LogicalFunction>();
+            auto arg5 = visit(ctx->functionParam(5)).as<LogicalFunction>();
+            auto arg6 = visit(ctx->functionParam(6)).as<LogicalFunction>();
+            auto arg7 = visit(ctx->functionParam(7)).as<LogicalFunction>();
+            return LogicalFunction(EintersectsTcbufferTcbufferLogicalFunction(std::move(arg0), std::move(arg1), std::move(arg2), std::move(arg3), std::move(arg4), std::move(arg5), std::move(arg6), std::move(arg7)));
+        }
+        /* END CODEGEN PARSER GLUE: EINTERSECTS_TCBUFFER_TCBUFFER */
+        case AntlrSQLParser::AINTERSECTS_TCBUFFER_TCBUFFER: {
+            PRECONDITION(ctx->functionParam().size() == 8,
+                         "AintersectsTcbufferTcbuffer requires 8 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            auto arg2 = visit(ctx->functionParam(2)).as<LogicalFunction>();
+            auto arg3 = visit(ctx->functionParam(3)).as<LogicalFunction>();
+            auto arg4 = visit(ctx->functionParam(4)).as<LogicalFunction>();
+            auto arg5 = visit(ctx->functionParam(5)).as<LogicalFunction>();
+            auto arg6 = visit(ctx->functionParam(6)).as<LogicalFunction>();
+            auto arg7 = visit(ctx->functionParam(7)).as<LogicalFunction>();
+            return LogicalFunction(AintersectsTcbufferTcbufferLogicalFunction(std::move(arg0), std::move(arg1), std::move(arg2), std::move(arg3), std::move(arg4), std::move(arg5), std::move(arg6), std::move(arg7)));
+        }
+        /* END CODEGEN PARSER GLUE: AINTERSECTS_TCBUFFER_TCBUFFER */
+        case AntlrSQLParser::ECOVERS_TCBUFFER_TCBUFFER: {
+            PRECONDITION(ctx->functionParam().size() == 8,
+                         "EcoversTcbufferTcbuffer requires 8 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            auto arg2 = visit(ctx->functionParam(2)).as<LogicalFunction>();
+            auto arg3 = visit(ctx->functionParam(3)).as<LogicalFunction>();
+            auto arg4 = visit(ctx->functionParam(4)).as<LogicalFunction>();
+            auto arg5 = visit(ctx->functionParam(5)).as<LogicalFunction>();
+            auto arg6 = visit(ctx->functionParam(6)).as<LogicalFunction>();
+            auto arg7 = visit(ctx->functionParam(7)).as<LogicalFunction>();
+            return LogicalFunction(EcoversTcbufferTcbufferLogicalFunction(std::move(arg0), std::move(arg1), std::move(arg2), std::move(arg3), std::move(arg4), std::move(arg5), std::move(arg6), std::move(arg7)));
+        }
+        /* END CODEGEN PARSER GLUE: ECOVERS_TCBUFFER_TCBUFFER */
+        case AntlrSQLParser::ACOVERS_TCBUFFER_TCBUFFER: {
+            PRECONDITION(ctx->functionParam().size() == 8,
+                         "AcoversTcbufferTcbuffer requires 8 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            auto arg2 = visit(ctx->functionParam(2)).as<LogicalFunction>();
+            auto arg3 = visit(ctx->functionParam(3)).as<LogicalFunction>();
+            auto arg4 = visit(ctx->functionParam(4)).as<LogicalFunction>();
+            auto arg5 = visit(ctx->functionParam(5)).as<LogicalFunction>();
+            auto arg6 = visit(ctx->functionParam(6)).as<LogicalFunction>();
+            auto arg7 = visit(ctx->functionParam(7)).as<LogicalFunction>();
+            return LogicalFunction(AcoversTcbufferTcbufferLogicalFunction(std::move(arg0), std::move(arg1), std::move(arg2), std::move(arg3), std::move(arg4), std::move(arg5), std::move(arg6), std::move(arg7)));
+        }
+        /* END CODEGEN PARSER GLUE: ACOVERS_TCBUFFER_TCBUFFER */
+        case AntlrSQLParser::ADISJOINT_TCBUFFER_TCBUFFER: {
+            PRECONDITION(ctx->functionParam().size() == 8,
+                         "AdisjointTcbufferTcbuffer requires 8 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            auto arg2 = visit(ctx->functionParam(2)).as<LogicalFunction>();
+            auto arg3 = visit(ctx->functionParam(3)).as<LogicalFunction>();
+            auto arg4 = visit(ctx->functionParam(4)).as<LogicalFunction>();
+            auto arg5 = visit(ctx->functionParam(5)).as<LogicalFunction>();
+            auto arg6 = visit(ctx->functionParam(6)).as<LogicalFunction>();
+            auto arg7 = visit(ctx->functionParam(7)).as<LogicalFunction>();
+            return LogicalFunction(AdisjointTcbufferTcbufferLogicalFunction(std::move(arg0), std::move(arg1), std::move(arg2), std::move(arg3), std::move(arg4), std::move(arg5), std::move(arg6), std::move(arg7)));
+        }
+        /* END CODEGEN PARSER GLUE: ADISJOINT_TCBUFFER_TCBUFFER */
+        case AntlrSQLParser::ETOUCHES_TCBUFFER_TCBUFFER: {
+            PRECONDITION(ctx->functionParam().size() == 8,
+                         "EtouchesTcbufferTcbuffer requires 8 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            auto arg2 = visit(ctx->functionParam(2)).as<LogicalFunction>();
+            auto arg3 = visit(ctx->functionParam(3)).as<LogicalFunction>();
+            auto arg4 = visit(ctx->functionParam(4)).as<LogicalFunction>();
+            auto arg5 = visit(ctx->functionParam(5)).as<LogicalFunction>();
+            auto arg6 = visit(ctx->functionParam(6)).as<LogicalFunction>();
+            auto arg7 = visit(ctx->functionParam(7)).as<LogicalFunction>();
+            return LogicalFunction(EtouchesTcbufferTcbufferLogicalFunction(std::move(arg0), std::move(arg1), std::move(arg2), std::move(arg3), std::move(arg4), std::move(arg5), std::move(arg6), std::move(arg7)));
+        }
+        /* END CODEGEN PARSER GLUE: ETOUCHES_TCBUFFER_TCBUFFER */
+        case AntlrSQLParser::ATOUCHES_TCBUFFER_TCBUFFER: {
+            PRECONDITION(ctx->functionParam().size() == 8,
+                         "AtouchesTcbufferTcbuffer requires 8 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            auto arg2 = visit(ctx->functionParam(2)).as<LogicalFunction>();
+            auto arg3 = visit(ctx->functionParam(3)).as<LogicalFunction>();
+            auto arg4 = visit(ctx->functionParam(4)).as<LogicalFunction>();
+            auto arg5 = visit(ctx->functionParam(5)).as<LogicalFunction>();
+            auto arg6 = visit(ctx->functionParam(6)).as<LogicalFunction>();
+            auto arg7 = visit(ctx->functionParam(7)).as<LogicalFunction>();
+            return LogicalFunction(AtouchesTcbufferTcbufferLogicalFunction(std::move(arg0), std::move(arg1), std::move(arg2), std::move(arg3), std::move(arg4), std::move(arg5), std::move(arg6), std::move(arg7)));
+        }
+        /* END CODEGEN PARSER GLUE: ATOUCHES_TCBUFFER_TCBUFFER */
+        case AntlrSQLParser::NAD_TCBUFFER_TCBUFFER: {
+            PRECONDITION(ctx->functionParam().size() == 8,
+                         "NadTcbufferTcbuffer requires 8 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            auto arg2 = visit(ctx->functionParam(2)).as<LogicalFunction>();
+            auto arg3 = visit(ctx->functionParam(3)).as<LogicalFunction>();
+            auto arg4 = visit(ctx->functionParam(4)).as<LogicalFunction>();
+            auto arg5 = visit(ctx->functionParam(5)).as<LogicalFunction>();
+            auto arg6 = visit(ctx->functionParam(6)).as<LogicalFunction>();
+            auto arg7 = visit(ctx->functionParam(7)).as<LogicalFunction>();
+            return LogicalFunction(NadTcbufferTcbufferLogicalFunction(std::move(arg0), std::move(arg1), std::move(arg2), std::move(arg3), std::move(arg4), std::move(arg5), std::move(arg6), std::move(arg7)));
+        }
+        /* END CODEGEN PARSER GLUE: NAD_TCBUFFER_TCBUFFER */
         /* END CODEGEN PARSER GLUE: GEOM_INTERSECTS2D */
         case AntlrSQLParser::GEOM_DWITHIN2D: {
             PRECONDITION(ctx->functionParam().size() == 3,
