@@ -12,7 +12,7 @@
     limitations under the License.
 */
 
-#include <Functions/Meos/LineNumpointsPhysicalFunction.hpp>
+#include <Functions/Meos/GeomMinBoundingCenterPhysicalFunction.hpp>
 #include <Functions/PhysicalFunction.hpp>
 #include <MEOSWrapper.hpp>
 #include <Nautilus/DataTypes/VarVal.hpp>
@@ -33,38 +33,52 @@ extern "C" {
 
 namespace NES {
 
-LineNumpointsPhysicalFunction::LineNumpointsPhysicalFunction(PhysicalFunction wkt)
+GeomMinBoundingCenterPhysicalFunction::GeomMinBoundingCenterPhysicalFunction(PhysicalFunction wkt)
 {
     paramFns.reserve(1);
     paramFns.push_back(std::move(wkt));
 }
 
-VarVal LineNumpointsPhysicalFunction::execute(const Record& record, ArenaRef& arena) const
+VarVal GeomMinBoundingCenterPhysicalFunction::execute(const Record& record, ArenaRef& arena) const
 {
     auto wkt = paramFns[0].execute(record, arena).cast<VariableSizedData>();
-    const auto result = nautilus::invoke(
-        +[](const char* w, uint32_t wsz) -> double {
+    constexpr uint32_t MAX_LEN = 16384;
+    auto outBuf = arena.allocateVariableSizedData(nautilus::val<uint32_t>(MAX_LEN));
+
+    const auto actualLen = nautilus::invoke(
+        +[](const char* w, uint32_t wsz, char* buf, uint32_t bufMax) -> uint32_t {
             try {
                 MEOS::Meos::ensureMeosInitialized();
                 std::string s(w, wsz);
                 GSERIALIZED* gs = geom_in(s.c_str(), -1);
-                if (!gs) return 0.0;
-                int n = line_numpoints(gs);
+                if (!gs) return 0u;
+                MinBoundingCircle mbc = geom_min_bounding_radius(gs);
                 free(gs);
-                return (double)n;
-            } catch (const std::exception&) { return 0.0; }
+                GSERIALIZED* result = mbc.center;
+                if (!result) return 0u;
+                char* out = geo_as_text(result, -1);
+                free(result);
+                if (!out) return 0u;
+                uint32_t len = static_cast<uint32_t>(strlen(out));
+                if (len > bufMax) len = bufMax;
+                memcpy(buf, out, len);
+                free(out);
+                return len;
+            } catch (const std::exception&) { return 0u; }
         },
-        wkt);
-    return VarVal(result);
+        wkt, outBuf.getContent(), nautilus::val<uint32_t>(MAX_LEN));
+
+    VarVal(actualLen).writeToMemory(outBuf.getReference());
+    return outBuf;
 }
 
-PhysicalFunctionRegistryReturnType PhysicalFunctionGeneratedRegistrar::RegisterLineNumpointsPhysicalFunction(
+PhysicalFunctionRegistryReturnType PhysicalFunctionGeneratedRegistrar::RegisterGeomMinBoundingCenterPhysicalFunction(
     PhysicalFunctionRegistryArguments arguments)
 {
     PRECONDITION(arguments.childFunctions.size() == 1,
-                 "LineNumpointsPhysicalFunction requires 1 children but got {}",
+                 "GeomMinBoundingCenterPhysicalFunction requires 1 children but got {}",
                  arguments.childFunctions.size());
-    return LineNumpointsPhysicalFunction(
+    return GeomMinBoundingCenterPhysicalFunction(
                                   std::move(arguments.childFunctions[0]));
 }
 
