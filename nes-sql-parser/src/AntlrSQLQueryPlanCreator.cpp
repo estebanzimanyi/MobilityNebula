@@ -510,6 +510,13 @@
 #include <Functions/Meos/LineLocatePointLogicalFunction.hpp>
 #include <Functions/Meos/LineInterpolatePointLogicalFunction.hpp>
 #include <Functions/Meos/LineSubstringLogicalFunction.hpp>
+#include <Functions/Meos/GeomPointMake2dLogicalFunction.hpp>
+#include <Functions/Meos/GeomPointMake3dzLogicalFunction.hpp>
+#include <Functions/Meos/GeogPointMake2dLogicalFunction.hpp>
+#include <Functions/Meos/GeogPointMake3dzLogicalFunction.hpp>
+#include <Functions/Meos/GeomToGeogLogicalFunction.hpp>
+#include <Functions/Meos/GeogToGeomLogicalFunction.hpp>
+#include <Functions/Meos/GeogCentroidLogicalFunction.hpp>
 #include <Functions/Meos/GeomIntersects2dLogicalFunction.hpp>
 #include <Functions/Meos/GeomDwithin2dLogicalFunction.hpp>
 #include <Functions/Meos/GeomContainsLogicalFunction.hpp>
@@ -10934,6 +10941,73 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             return LogicalFunction(LineSubstringLogicalFunction(std::move(arg0), std::move(arg1), std::move(arg2)));
         }
         /* END CODEGEN PARSER GLUE: LINE_SUBSTRING */
+        case AntlrSQLParser::GEOM_POINT_MAKE2D: {
+            PRECONDITION(ctx->functionParam().size() == 3,
+                         "GeomPointMake2d requires 3 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            auto arg2 = visit(ctx->functionParam(2)).as<LogicalFunction>();
+            return LogicalFunction(GeomPointMake2dLogicalFunction(std::move(arg0), std::move(arg1), std::move(arg2)));
+        }
+        /* END CODEGEN PARSER GLUE: GEOM_POINT_MAKE2D */
+        case AntlrSQLParser::GEOM_POINT_MAKE3DZ: {
+            PRECONDITION(ctx->functionParam().size() == 4,
+                         "GeomPointMake3dz requires 4 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            auto arg2 = visit(ctx->functionParam(2)).as<LogicalFunction>();
+            auto arg3 = visit(ctx->functionParam(3)).as<LogicalFunction>();
+            return LogicalFunction(GeomPointMake3dzLogicalFunction(std::move(arg0), std::move(arg1), std::move(arg2), std::move(arg3)));
+        }
+        /* END CODEGEN PARSER GLUE: GEOM_POINT_MAKE3DZ */
+        case AntlrSQLParser::GEOG_POINT_MAKE2D: {
+            PRECONDITION(ctx->functionParam().size() == 3,
+                         "GeogPointMake2d requires 3 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            auto arg2 = visit(ctx->functionParam(2)).as<LogicalFunction>();
+            return LogicalFunction(GeogPointMake2dLogicalFunction(std::move(arg0), std::move(arg1), std::move(arg2)));
+        }
+        /* END CODEGEN PARSER GLUE: GEOG_POINT_MAKE2D */
+        case AntlrSQLParser::GEOG_POINT_MAKE3DZ: {
+            PRECONDITION(ctx->functionParam().size() == 4,
+                         "GeogPointMake3dz requires 4 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            auto arg2 = visit(ctx->functionParam(2)).as<LogicalFunction>();
+            auto arg3 = visit(ctx->functionParam(3)).as<LogicalFunction>();
+            return LogicalFunction(GeogPointMake3dzLogicalFunction(std::move(arg0), std::move(arg1), std::move(arg2), std::move(arg3)));
+        }
+        /* END CODEGEN PARSER GLUE: GEOG_POINT_MAKE3DZ */
+        case AntlrSQLParser::GEOM_TO_GEOG: {
+            PRECONDITION(ctx->functionParam().size() == 1,
+                         "GeomToGeog requires 1 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            return LogicalFunction(GeomToGeogLogicalFunction(std::move(arg0)));
+        }
+        /* END CODEGEN PARSER GLUE: GEOM_TO_GEOG */
+        case AntlrSQLParser::GEOG_TO_GEOM: {
+            PRECONDITION(ctx->functionParam().size() == 1,
+                         "GeogToGeom requires 1 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            return LogicalFunction(GeogToGeomLogicalFunction(std::move(arg0)));
+        }
+        /* END CODEGEN PARSER GLUE: GEOG_TO_GEOM */
+        case AntlrSQLParser::GEOG_CENTROID: {
+            PRECONDITION(ctx->functionParam().size() == 2,
+                         "GeogCentroid requires 2 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            return LogicalFunction(GeogCentroidLogicalFunction(std::move(arg0), std::move(arg1)));
+        }
+        /* END CODEGEN PARSER GLUE: GEOG_CENTROID */
         /* END CODEGEN PARSER GLUE: GEOM_INTERSECTS2D */
         case AntlrSQLParser::GEOM_DWITHIN2D: {
             PRECONDITION(ctx->functionParam().size() == 3,
