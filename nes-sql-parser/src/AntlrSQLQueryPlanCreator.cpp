@@ -542,6 +542,8 @@
 #include <Functions/Meos/AdisjointTgeoTgeoLogicalFunction.hpp>
 #include <Functions/Meos/AcontainsTgeoTgeoLogicalFunction.hpp>
 #include <Functions/Meos/AtouchesTgeoTgeoLogicalFunction.hpp>
+#include <Functions/Meos/EdwithinTgeoTgeoLogicalFunction.hpp>
+#include <Functions/Meos/AdwithinTgeoTgeoLogicalFunction.hpp>
 #include <Functions/Meos/GeomRelatePatternLogicalFunction.hpp>
 #include <Functions/Meos/GeomIntersects2dLogicalFunction.hpp>
 #include <Functions/Meos/GeomDwithin2dLogicalFunction.hpp>
@@ -11323,6 +11325,34 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             return LogicalFunction(AtouchesTgeoTgeoLogicalFunction(std::move(arg0), std::move(arg1), std::move(arg2), std::move(arg3), std::move(arg4), std::move(arg5)));
         }
         /* END CODEGEN PARSER GLUE: ATOUCHES_TGEO_TGEO */
+        case AntlrSQLParser::EDWITHIN_TGEO_TGEO: {
+            PRECONDITION(ctx->functionParam().size() == 7,
+                         "EdwithinTgeoTgeo requires 7 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            auto arg2 = visit(ctx->functionParam(2)).as<LogicalFunction>();
+            auto arg3 = visit(ctx->functionParam(3)).as<LogicalFunction>();
+            auto arg4 = visit(ctx->functionParam(4)).as<LogicalFunction>();
+            auto arg5 = visit(ctx->functionParam(5)).as<LogicalFunction>();
+            auto arg6 = visit(ctx->functionParam(6)).as<LogicalFunction>();
+            return LogicalFunction(EdwithinTgeoTgeoLogicalFunction(std::move(arg0), std::move(arg1), std::move(arg2), std::move(arg3), std::move(arg4), std::move(arg5), std::move(arg6)));
+        }
+        /* END CODEGEN PARSER GLUE: EDWITHIN_TGEO_TGEO */
+        case AntlrSQLParser::ADWITHIN_TGEO_TGEO: {
+            PRECONDITION(ctx->functionParam().size() == 7,
+                         "AdwithinTgeoTgeo requires 7 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            auto arg2 = visit(ctx->functionParam(2)).as<LogicalFunction>();
+            auto arg3 = visit(ctx->functionParam(3)).as<LogicalFunction>();
+            auto arg4 = visit(ctx->functionParam(4)).as<LogicalFunction>();
+            auto arg5 = visit(ctx->functionParam(5)).as<LogicalFunction>();
+            auto arg6 = visit(ctx->functionParam(6)).as<LogicalFunction>();
+            return LogicalFunction(AdwithinTgeoTgeoLogicalFunction(std::move(arg0), std::move(arg1), std::move(arg2), std::move(arg3), std::move(arg4), std::move(arg5), std::move(arg6)));
+        }
+        /* END CODEGEN PARSER GLUE: ADWITHIN_TGEO_TGEO */
         /* END CODEGEN PARSER GLUE: GEOM_RELATE_PATTERN */
         /* END CODEGEN PARSER GLUE: GEOM_INTERSECTS2D */
         case AntlrSQLParser::GEOM_DWITHIN2D: {
