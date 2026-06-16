@@ -476,6 +476,7 @@ add_plugin(GeomFromHexewkb PhysicalFunction nes-physical-operators GeomFromHexew
 add_plugin(GeoTransformPipeline PhysicalFunction nes-physical-operators GeoTransformPipelinePhysicalFunction.cpp)
 add_plugin(GeomMinBoundingCenter PhysicalFunction nes-physical-operators GeomMinBoundingCenterPhysicalFunction.cpp)
 add_plugin(GeomMinBoundingRadius PhysicalFunction nes-physical-operators GeomMinBoundingRadiusPhysicalFunction.cpp)
+add_plugin(GeomRelatePattern PhysicalFunction nes-physical-operators GeomRelatePatternPhysicalFunction.cpp)
 add_plugin(GeomIntersects2d PhysicalFunction nes-physical-operators GeomIntersects2dPhysicalFunction.cpp)
 add_plugin(GeomDwithin2d PhysicalFunction nes-physical-operators GeomDwithin2dPhysicalFunction.cpp)
 add_plugin(GeomContains PhysicalFunction nes-physical-operators GeomContainsPhysicalFunction.cpp)

@@ -528,6 +528,7 @@
 #include <Functions/Meos/GeoTransformPipelineLogicalFunction.hpp>
 #include <Functions/Meos/GeomMinBoundingCenterLogicalFunction.hpp>
 #include <Functions/Meos/GeomMinBoundingRadiusLogicalFunction.hpp>
+#include <Functions/Meos/GeomRelatePatternLogicalFunction.hpp>
 #include <Functions/Meos/GeomIntersects2dLogicalFunction.hpp>
 #include <Functions/Meos/GeomDwithin2dLogicalFunction.hpp>
 #include <Functions/Meos/GeomContainsLogicalFunction.hpp>
@@ -11117,6 +11118,16 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             return LogicalFunction(GeomMinBoundingRadiusLogicalFunction(std::move(arg0)));
         }
         /* END CODEGEN PARSER GLUE: GEOM_MIN_BOUNDING_RADIUS */
+        case AntlrSQLParser::GEOM_RELATE_PATTERN: {
+            PRECONDITION(ctx->functionParam().size() == 3,
+                         "GeomRelatePattern requires 3 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            auto arg2 = visit(ctx->functionParam(2)).as<LogicalFunction>();
+            return LogicalFunction(GeomRelatePatternLogicalFunction(std::move(arg0), std::move(arg1), std::move(arg2)));
+        }
+        /* END CODEGEN PARSER GLUE: GEOM_RELATE_PATTERN */
         /* END CODEGEN PARSER GLUE: GEOM_INTERSECTS2D */
         case AntlrSQLParser::GEOM_DWITHIN2D: {
             PRECONDITION(ctx->functionParam().size() == 3,
