@@ -477,6 +477,7 @@ add_plugin(GeomFromHexewkb LogicalFunction nes-logical-operators GeomFromHexewkb
 add_plugin(GeoTransformPipeline LogicalFunction nes-logical-operators GeoTransformPipelineLogicalFunction.cpp)
 add_plugin(GeomMinBoundingCenter LogicalFunction nes-logical-operators GeomMinBoundingCenterLogicalFunction.cpp)
 add_plugin(GeomMinBoundingRadius LogicalFunction nes-logical-operators GeomMinBoundingRadiusLogicalFunction.cpp)
+add_plugin(GeomRelatePattern LogicalFunction nes-logical-operators GeomRelatePatternLogicalFunction.cpp)
 add_plugin(GeomIntersects2d LogicalFunction nes-logical-operators GeomIntersects2dLogicalFunction.cpp)
 add_plugin(GeomDwithin2d LogicalFunction nes-logical-operators GeomDwithin2dLogicalFunction.cpp)
 add_plugin(GeomContains LogicalFunction nes-logical-operators GeomContainsLogicalFunction.cpp)
