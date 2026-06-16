@@ -490,6 +490,8 @@ add_plugin(AcoversTgeoTgeo PhysicalFunction nes-physical-operators AcoversTgeoTg
 add_plugin(AdisjointTgeoTgeo PhysicalFunction nes-physical-operators AdisjointTgeoTgeoPhysicalFunction.cpp)
 add_plugin(AcontainsTgeoTgeo PhysicalFunction nes-physical-operators AcontainsTgeoTgeoPhysicalFunction.cpp)
 add_plugin(AtouchesTgeoTgeo PhysicalFunction nes-physical-operators AtouchesTgeoTgeoPhysicalFunction.cpp)
+add_plugin(EdwithinTgeoTgeo PhysicalFunction nes-physical-operators EdwithinTgeoTgeoPhysicalFunction.cpp)
+add_plugin(AdwithinTgeoTgeo PhysicalFunction nes-physical-operators AdwithinTgeoTgeoPhysicalFunction.cpp)
 add_plugin(GeomRelatePattern PhysicalFunction nes-physical-operators GeomRelatePatternPhysicalFunction.cpp)
 add_plugin(GeomIntersects2d PhysicalFunction nes-physical-operators GeomIntersects2dPhysicalFunction.cpp)
 add_plugin(GeomDwithin2d PhysicalFunction nes-physical-operators GeomDwithin2dPhysicalFunction.cpp)
