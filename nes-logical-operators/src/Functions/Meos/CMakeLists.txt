@@ -491,6 +491,8 @@ add_plugin(AcoversTgeoTgeo LogicalFunction nes-logical-operators AcoversTgeoTgeo
 add_plugin(AdisjointTgeoTgeo LogicalFunction nes-logical-operators AdisjointTgeoTgeoLogicalFunction.cpp)
 add_plugin(AcontainsTgeoTgeo LogicalFunction nes-logical-operators AcontainsTgeoTgeoLogicalFunction.cpp)
 add_plugin(AtouchesTgeoTgeo LogicalFunction nes-logical-operators AtouchesTgeoTgeoLogicalFunction.cpp)
+add_plugin(EdwithinTgeoTgeo LogicalFunction nes-logical-operators EdwithinTgeoTgeoLogicalFunction.cpp)
+add_plugin(AdwithinTgeoTgeo LogicalFunction nes-logical-operators AdwithinTgeoTgeoLogicalFunction.cpp)
 add_plugin(GeomRelatePattern LogicalFunction nes-logical-operators GeomRelatePatternLogicalFunction.cpp)
 add_plugin(GeomIntersects2d LogicalFunction nes-logical-operators GeomIntersects2dLogicalFunction.cpp)
 add_plugin(GeomDwithin2d LogicalFunction nes-logical-operators GeomDwithin2dLogicalFunction.cpp)
