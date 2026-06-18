@@ -592,6 +592,9 @@
 #include <Functions/Meos/ContainsSpanSpanLogicalFunction.hpp>
 #include <Functions/Meos/ContainedFloatspanSpanLogicalFunction.hpp>
 #include <Functions/Meos/ContainsFloatspanSpanLogicalFunction.hpp>
+#include <Functions/Meos/TextUpperLogicalFunction.hpp>
+#include <Functions/Meos/TextLowerLogicalFunction.hpp>
+#include <Functions/Meos/TextInitcapLogicalFunction.hpp>
 #include <Functions/Meos/GeomRelatePatternLogicalFunction.hpp>
 #include <Functions/Meos/GeomIntersects2dLogicalFunction.hpp>
 #include <Functions/Meos/GeomDwithin2dLogicalFunction.hpp>
@@ -11820,6 +11823,30 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             return LogicalFunction(ContainsFloatspanSpanLogicalFunction(std::move(arg0), std::move(arg1)));
         }
         /* END CODEGEN PARSER GLUE: CONTAINS_FLOATSPAN_SPAN */
+        case AntlrSQLParser::TEXT_UPPER: {
+            PRECONDITION(ctx->functionParam().size() == 1,
+                         "TextUpper requires 1 arg but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            return LogicalFunction(TextUpperLogicalFunction(std::move(arg0)));
+        }
+        /* END CODEGEN PARSER GLUE: TEXT_UPPER */
+        case AntlrSQLParser::TEXT_LOWER: {
+            PRECONDITION(ctx->functionParam().size() == 1,
+                         "TextLower requires 1 arg but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            return LogicalFunction(TextLowerLogicalFunction(std::move(arg0)));
+        }
+        /* END CODEGEN PARSER GLUE: TEXT_LOWER */
+        case AntlrSQLParser::TEXT_INITCAP: {
+            PRECONDITION(ctx->functionParam().size() == 1,
+                         "TextInitcap requires 1 arg but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            return LogicalFunction(TextInitcapLogicalFunction(std::move(arg0)));
+        }
+        /* END CODEGEN PARSER GLUE: TEXT_INITCAP */
         /* END CODEGEN PARSER GLUE: GEOM_RELATE_PATTERN */
         /* END CODEGEN PARSER GLUE: GEOM_INTERSECTS2D */
         case AntlrSQLParser::GEOM_DWITHIN2D: {
