@@ -584,6 +584,14 @@
 #include <Functions/Meos/FloatspanWidthLogicalFunction.hpp>
 #include <Functions/Meos/FloatspanLowerIncLogicalFunction.hpp>
 #include <Functions/Meos/FloatspanUpperIncLogicalFunction.hpp>
+#include <Functions/Meos/ContainedIntSpanLogicalFunction.hpp>
+#include <Functions/Meos/ContainedFloatSpanLogicalFunction.hpp>
+#include <Functions/Meos/ContainsSpanIntLogicalFunction.hpp>
+#include <Functions/Meos/ContainsSpanFloatLogicalFunction.hpp>
+#include <Functions/Meos/ContainedSpanSpanLogicalFunction.hpp>
+#include <Functions/Meos/ContainsSpanSpanLogicalFunction.hpp>
+#include <Functions/Meos/ContainedFloatspanSpanLogicalFunction.hpp>
+#include <Functions/Meos/ContainsFloatspanSpanLogicalFunction.hpp>
 #include <Functions/Meos/GeomRelatePatternLogicalFunction.hpp>
 #include <Functions/Meos/GeomIntersects2dLogicalFunction.hpp>
 #include <Functions/Meos/GeomDwithin2dLogicalFunction.hpp>
@@ -11740,6 +11748,78 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             return LogicalFunction(FloatspanUpperIncLogicalFunction(std::move(arg0)));
         }
         /* END CODEGEN PARSER GLUE: FLOATSPAN_UPPER_INC */
+        case AntlrSQLParser::CONTAINED_INT_SPAN: {
+            PRECONDITION(ctx->functionParam().size() == 2,
+                         "ContainedIntSpan requires 2 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            return LogicalFunction(ContainedIntSpanLogicalFunction(std::move(arg0), std::move(arg1)));
+        }
+        /* END CODEGEN PARSER GLUE: CONTAINED_INT_SPAN */
+        case AntlrSQLParser::CONTAINED_FLOAT_SPAN: {
+            PRECONDITION(ctx->functionParam().size() == 2,
+                         "ContainedFloatSpan requires 2 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            return LogicalFunction(ContainedFloatSpanLogicalFunction(std::move(arg0), std::move(arg1)));
+        }
+        /* END CODEGEN PARSER GLUE: CONTAINED_FLOAT_SPAN */
+        case AntlrSQLParser::CONTAINS_SPAN_INT: {
+            PRECONDITION(ctx->functionParam().size() == 2,
+                         "ContainsSpanInt requires 2 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            return LogicalFunction(ContainsSpanIntLogicalFunction(std::move(arg0), std::move(arg1)));
+        }
+        /* END CODEGEN PARSER GLUE: CONTAINS_SPAN_INT */
+        case AntlrSQLParser::CONTAINS_SPAN_FLOAT: {
+            PRECONDITION(ctx->functionParam().size() == 2,
+                         "ContainsSpanFloat requires 2 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            return LogicalFunction(ContainsSpanFloatLogicalFunction(std::move(arg0), std::move(arg1)));
+        }
+        /* END CODEGEN PARSER GLUE: CONTAINS_SPAN_FLOAT */
+        case AntlrSQLParser::CONTAINED_SPAN_SPAN: {
+            PRECONDITION(ctx->functionParam().size() == 2,
+                         "ContainedSpanSpan requires 2 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            return LogicalFunction(ContainedSpanSpanLogicalFunction(std::move(arg0), std::move(arg1)));
+        }
+        /* END CODEGEN PARSER GLUE: CONTAINED_SPAN_SPAN */
+        case AntlrSQLParser::CONTAINS_SPAN_SPAN: {
+            PRECONDITION(ctx->functionParam().size() == 2,
+                         "ContainsSpanSpan requires 2 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            return LogicalFunction(ContainsSpanSpanLogicalFunction(std::move(arg0), std::move(arg1)));
+        }
+        /* END CODEGEN PARSER GLUE: CONTAINS_SPAN_SPAN */
+        case AntlrSQLParser::CONTAINED_FLOATSPAN_SPAN: {
+            PRECONDITION(ctx->functionParam().size() == 2,
+                         "ContainedFloatspanSpan requires 2 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            return LogicalFunction(ContainedFloatspanSpanLogicalFunction(std::move(arg0), std::move(arg1)));
+        }
+        /* END CODEGEN PARSER GLUE: CONTAINED_FLOATSPAN_SPAN */
+        case AntlrSQLParser::CONTAINS_FLOATSPAN_SPAN: {
+            PRECONDITION(ctx->functionParam().size() == 2,
+                         "ContainsFloatspanSpan requires 2 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            return LogicalFunction(ContainsFloatspanSpanLogicalFunction(std::move(arg0), std::move(arg1)));
+        }
+        /* END CODEGEN PARSER GLUE: CONTAINS_FLOATSPAN_SPAN */
         /* END CODEGEN PARSER GLUE: GEOM_RELATE_PATTERN */
         /* END CODEGEN PARSER GLUE: GEOM_INTERSECTS2D */
         case AntlrSQLParser::GEOM_DWITHIN2D: {
