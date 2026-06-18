@@ -557,6 +557,21 @@
 #include <Functions/Meos/JsonTypeofLogicalFunction.hpp>
 #include <Functions/Meos/JsonObjectFieldTextLogicalFunction.hpp>
 #include <Functions/Meos/JsonArrayElementTextLogicalFunction.hpp>
+#include <Functions/Meos/JsonbArrayLengthLogicalFunction.hpp>
+#include <Functions/Meos/JsonbEqLogicalFunction.hpp>
+#include <Functions/Meos/JsonbNeLogicalFunction.hpp>
+#include <Functions/Meos/JsonbLtLogicalFunction.hpp>
+#include <Functions/Meos/JsonbLeLogicalFunction.hpp>
+#include <Functions/Meos/JsonbGtLogicalFunction.hpp>
+#include <Functions/Meos/JsonbGeLogicalFunction.hpp>
+#include <Functions/Meos/JsonbCmpLogicalFunction.hpp>
+#include <Functions/Meos/JsonbContainsLogicalFunction.hpp>
+#include <Functions/Meos/JsonbContainedLogicalFunction.hpp>
+#include <Functions/Meos/JsonbExistsLogicalFunction.hpp>
+#include <Functions/Meos/JsonbToCstringLogicalFunction.hpp>
+#include <Functions/Meos/JsonbPrettyLogicalFunction.hpp>
+#include <Functions/Meos/JsonbObjectFieldTextLogicalFunction.hpp>
+#include <Functions/Meos/JsonbArrayElementTextLogicalFunction.hpp>
 #include <Functions/Meos/GeomRelatePatternLogicalFunction.hpp>
 #include <Functions/Meos/GeomIntersects2dLogicalFunction.hpp>
 #include <Functions/Meos/GeomDwithin2dLogicalFunction.hpp>
@@ -11479,6 +11494,138 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             return LogicalFunction(JsonArrayElementTextLogicalFunction(std::move(arg0), std::move(arg1)));
         }
         /* END CODEGEN PARSER GLUE: JSON_ARRAY_ELEMENT_TEXT */
+        case AntlrSQLParser::JSONB_ARRAY_LENGTH: {
+            PRECONDITION(ctx->functionParam().size() == 1,
+                         "JsonbArrayLength requires 1 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            return LogicalFunction(JsonbArrayLengthLogicalFunction(std::move(arg0)));
+        }
+        /* END CODEGEN PARSER GLUE: JSONB_ARRAY_LENGTH */
+        case AntlrSQLParser::JSONB_EQ: {
+            PRECONDITION(ctx->functionParam().size() == 2,
+                         "JsonbEq requires 2 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            return LogicalFunction(JsonbEqLogicalFunction(std::move(arg0), std::move(arg1)));
+        }
+        /* END CODEGEN PARSER GLUE: JSONB_EQ */
+        case AntlrSQLParser::JSONB_NE: {
+            PRECONDITION(ctx->functionParam().size() == 2,
+                         "JsonbNe requires 2 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            return LogicalFunction(JsonbNeLogicalFunction(std::move(arg0), std::move(arg1)));
+        }
+        /* END CODEGEN PARSER GLUE: JSONB_NE */
+        case AntlrSQLParser::JSONB_LT: {
+            PRECONDITION(ctx->functionParam().size() == 2,
+                         "JsonbLt requires 2 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            return LogicalFunction(JsonbLtLogicalFunction(std::move(arg0), std::move(arg1)));
+        }
+        /* END CODEGEN PARSER GLUE: JSONB_LT */
+        case AntlrSQLParser::JSONB_LE: {
+            PRECONDITION(ctx->functionParam().size() == 2,
+                         "JsonbLe requires 2 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            return LogicalFunction(JsonbLeLogicalFunction(std::move(arg0), std::move(arg1)));
+        }
+        /* END CODEGEN PARSER GLUE: JSONB_LE */
+        case AntlrSQLParser::JSONB_GT: {
+            PRECONDITION(ctx->functionParam().size() == 2,
+                         "JsonbGt requires 2 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            return LogicalFunction(JsonbGtLogicalFunction(std::move(arg0), std::move(arg1)));
+        }
+        /* END CODEGEN PARSER GLUE: JSONB_GT */
+        case AntlrSQLParser::JSONB_GE: {
+            PRECONDITION(ctx->functionParam().size() == 2,
+                         "JsonbGe requires 2 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            return LogicalFunction(JsonbGeLogicalFunction(std::move(arg0), std::move(arg1)));
+        }
+        /* END CODEGEN PARSER GLUE: JSONB_GE */
+        case AntlrSQLParser::JSONB_CMP: {
+            PRECONDITION(ctx->functionParam().size() == 2,
+                         "JsonbCmp requires 2 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            return LogicalFunction(JsonbCmpLogicalFunction(std::move(arg0), std::move(arg1)));
+        }
+        /* END CODEGEN PARSER GLUE: JSONB_CMP */
+        case AntlrSQLParser::JSONB_CONTAINS: {
+            PRECONDITION(ctx->functionParam().size() == 2,
+                         "JsonbContains requires 2 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            return LogicalFunction(JsonbContainsLogicalFunction(std::move(arg0), std::move(arg1)));
+        }
+        /* END CODEGEN PARSER GLUE: JSONB_CONTAINS */
+        case AntlrSQLParser::JSONB_CONTAINED: {
+            PRECONDITION(ctx->functionParam().size() == 2,
+                         "JsonbContained requires 2 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            return LogicalFunction(JsonbContainedLogicalFunction(std::move(arg0), std::move(arg1)));
+        }
+        /* END CODEGEN PARSER GLUE: JSONB_CONTAINED */
+        case AntlrSQLParser::JSONB_EXISTS: {
+            PRECONDITION(ctx->functionParam().size() == 2,
+                         "JsonbExists requires 2 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            return LogicalFunction(JsonbExistsLogicalFunction(std::move(arg0), std::move(arg1)));
+        }
+        /* END CODEGEN PARSER GLUE: JSONB_EXISTS */
+        case AntlrSQLParser::JSONB_TO_CSTRING: {
+            PRECONDITION(ctx->functionParam().size() == 1,
+                         "JsonbToCstring requires 1 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            return LogicalFunction(JsonbToCstringLogicalFunction(std::move(arg0)));
+        }
+        /* END CODEGEN PARSER GLUE: JSONB_TO_CSTRING */
+        case AntlrSQLParser::JSONB_PRETTY: {
+            PRECONDITION(ctx->functionParam().size() == 1,
+                         "JsonbPretty requires 1 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            return LogicalFunction(JsonbPrettyLogicalFunction(std::move(arg0)));
+        }
+        /* END CODEGEN PARSER GLUE: JSONB_PRETTY */
+        case AntlrSQLParser::JSONB_OBJECT_FIELD_TEXT: {
+            PRECONDITION(ctx->functionParam().size() == 2,
+                         "JsonbObjectFieldText requires 2 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            return LogicalFunction(JsonbObjectFieldTextLogicalFunction(std::move(arg0), std::move(arg1)));
+        }
+        /* END CODEGEN PARSER GLUE: JSONB_OBJECT_FIELD_TEXT */
+        case AntlrSQLParser::JSONB_ARRAY_ELEMENT_TEXT: {
+            PRECONDITION(ctx->functionParam().size() == 2,
+                         "JsonbArrayElementText requires 2 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            return LogicalFunction(JsonbArrayElementTextLogicalFunction(std::move(arg0), std::move(arg1)));
+        }
+        /* END CODEGEN PARSER GLUE: JSONB_ARRAY_ELEMENT_TEXT */
         /* END CODEGEN PARSER GLUE: GEOM_RELATE_PATTERN */
         /* END CODEGEN PARSER GLUE: GEOM_INTERSECTS2D */
         case AntlrSQLParser::GEOM_DWITHIN2D: {
