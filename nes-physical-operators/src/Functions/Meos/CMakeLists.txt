@@ -500,6 +500,7 @@ add_plugin(H3indexGt PhysicalFunction nes-physical-operators H3indexGtPhysicalFu
 add_plugin(H3indexGe PhysicalFunction nes-physical-operators H3indexGePhysicalFunction.cpp)
 add_plugin(H3indexCmp PhysicalFunction nes-physical-operators H3indexCmpPhysicalFunction.cpp)
 add_plugin(H3indexOut PhysicalFunction nes-physical-operators H3indexOutPhysicalFunction.cpp)
+add_plugin(H3indexIn PhysicalFunction nes-physical-operators H3indexInPhysicalFunction.cpp)
 add_plugin(GeomRelatePattern PhysicalFunction nes-physical-operators GeomRelatePatternPhysicalFunction.cpp)
 add_plugin(GeomIntersects2d PhysicalFunction nes-physical-operators GeomIntersects2dPhysicalFunction.cpp)
 add_plugin(GeomDwithin2d PhysicalFunction nes-physical-operators GeomDwithin2dPhysicalFunction.cpp)
