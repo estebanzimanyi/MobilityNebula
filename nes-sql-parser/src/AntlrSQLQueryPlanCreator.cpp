@@ -544,6 +544,13 @@
 #include <Functions/Meos/AtouchesTgeoTgeoLogicalFunction.hpp>
 #include <Functions/Meos/EdwithinTgeoTgeoLogicalFunction.hpp>
 #include <Functions/Meos/AdwithinTgeoTgeoLogicalFunction.hpp>
+#include <Functions/Meos/H3indexEqLogicalFunction.hpp>
+#include <Functions/Meos/H3indexNeLogicalFunction.hpp>
+#include <Functions/Meos/H3indexLtLogicalFunction.hpp>
+#include <Functions/Meos/H3indexLeLogicalFunction.hpp>
+#include <Functions/Meos/H3indexGtLogicalFunction.hpp>
+#include <Functions/Meos/H3indexGeLogicalFunction.hpp>
+#include <Functions/Meos/H3indexCmpLogicalFunction.hpp>
 #include <Functions/Meos/GeomRelatePatternLogicalFunction.hpp>
 #include <Functions/Meos/GeomIntersects2dLogicalFunction.hpp>
 #include <Functions/Meos/GeomDwithin2dLogicalFunction.hpp>
@@ -11353,6 +11360,69 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             return LogicalFunction(AdwithinTgeoTgeoLogicalFunction(std::move(arg0), std::move(arg1), std::move(arg2), std::move(arg3), std::move(arg4), std::move(arg5), std::move(arg6)));
         }
         /* END CODEGEN PARSER GLUE: ADWITHIN_TGEO_TGEO */
+        case AntlrSQLParser::H3INDEX_EQ: {
+            PRECONDITION(ctx->functionParam().size() == 2,
+                         "H3indexEq requires 2 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            return LogicalFunction(H3indexEqLogicalFunction(std::move(arg0), std::move(arg1)));
+        }
+        /* END CODEGEN PARSER GLUE: H3INDEX_EQ */
+        case AntlrSQLParser::H3INDEX_NE: {
+            PRECONDITION(ctx->functionParam().size() == 2,
+                         "H3indexNe requires 2 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            return LogicalFunction(H3indexNeLogicalFunction(std::move(arg0), std::move(arg1)));
+        }
+        /* END CODEGEN PARSER GLUE: H3INDEX_NE */
+        case AntlrSQLParser::H3INDEX_LT: {
+            PRECONDITION(ctx->functionParam().size() == 2,
+                         "H3indexLt requires 2 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            return LogicalFunction(H3indexLtLogicalFunction(std::move(arg0), std::move(arg1)));
+        }
+        /* END CODEGEN PARSER GLUE: H3INDEX_LT */
+        case AntlrSQLParser::H3INDEX_LE: {
+            PRECONDITION(ctx->functionParam().size() == 2,
+                         "H3indexLe requires 2 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            return LogicalFunction(H3indexLeLogicalFunction(std::move(arg0), std::move(arg1)));
+        }
+        /* END CODEGEN PARSER GLUE: H3INDEX_LE */
+        case AntlrSQLParser::H3INDEX_GT: {
+            PRECONDITION(ctx->functionParam().size() == 2,
+                         "H3indexGt requires 2 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            return LogicalFunction(H3indexGtLogicalFunction(std::move(arg0), std::move(arg1)));
+        }
+        /* END CODEGEN PARSER GLUE: H3INDEX_GT */
+        case AntlrSQLParser::H3INDEX_GE: {
+            PRECONDITION(ctx->functionParam().size() == 2,
+                         "H3indexGe requires 2 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            return LogicalFunction(H3indexGeLogicalFunction(std::move(arg0), std::move(arg1)));
+        }
+        /* END CODEGEN PARSER GLUE: H3INDEX_GE */
+        case AntlrSQLParser::H3INDEX_CMP: {
+            PRECONDITION(ctx->functionParam().size() == 2,
+                         "H3indexCmp requires 2 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            return LogicalFunction(H3indexCmpLogicalFunction(std::move(arg0), std::move(arg1)));
+        }
+        /* END CODEGEN PARSER GLUE: H3INDEX_CMP */
         /* END CODEGEN PARSER GLUE: GEOM_RELATE_PATTERN */
         /* END CODEGEN PARSER GLUE: GEOM_INTERSECTS2D */
         case AntlrSQLParser::GEOM_DWITHIN2D: {
