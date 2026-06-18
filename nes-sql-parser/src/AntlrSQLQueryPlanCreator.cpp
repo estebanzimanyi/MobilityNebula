@@ -553,6 +553,10 @@
 #include <Functions/Meos/H3indexCmpLogicalFunction.hpp>
 #include <Functions/Meos/H3indexOutLogicalFunction.hpp>
 #include <Functions/Meos/H3indexInLogicalFunction.hpp>
+#include <Functions/Meos/JsonArrayLengthLogicalFunction.hpp>
+#include <Functions/Meos/JsonTypeofLogicalFunction.hpp>
+#include <Functions/Meos/JsonObjectFieldTextLogicalFunction.hpp>
+#include <Functions/Meos/JsonArrayElementTextLogicalFunction.hpp>
 #include <Functions/Meos/GeomRelatePatternLogicalFunction.hpp>
 #include <Functions/Meos/GeomIntersects2dLogicalFunction.hpp>
 #include <Functions/Meos/GeomDwithin2dLogicalFunction.hpp>
@@ -11441,6 +11445,40 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             return LogicalFunction(H3indexInLogicalFunction(std::move(arg0)));
         }
         /* END CODEGEN PARSER GLUE: H3INDEX_IN */
+        case AntlrSQLParser::JSON_ARRAY_LENGTH: {
+            PRECONDITION(ctx->functionParam().size() == 1,
+                         "JsonArrayLength requires 1 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            return LogicalFunction(JsonArrayLengthLogicalFunction(std::move(arg0)));
+        }
+        /* END CODEGEN PARSER GLUE: JSON_ARRAY_LENGTH */
+        case AntlrSQLParser::JSON_TYPEOF: {
+            PRECONDITION(ctx->functionParam().size() == 1,
+                         "JsonTypeof requires 1 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            return LogicalFunction(JsonTypeofLogicalFunction(std::move(arg0)));
+        }
+        /* END CODEGEN PARSER GLUE: JSON_TYPEOF */
+        case AntlrSQLParser::JSON_OBJECT_FIELD_TEXT: {
+            PRECONDITION(ctx->functionParam().size() == 2,
+                         "JsonObjectFieldText requires 2 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            return LogicalFunction(JsonObjectFieldTextLogicalFunction(std::move(arg0), std::move(arg1)));
+        }
+        /* END CODEGEN PARSER GLUE: JSON_OBJECT_FIELD_TEXT */
+        case AntlrSQLParser::JSON_ARRAY_ELEMENT_TEXT: {
+            PRECONDITION(ctx->functionParam().size() == 2,
+                         "JsonArrayElementText requires 2 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            return LogicalFunction(JsonArrayElementTextLogicalFunction(std::move(arg0), std::move(arg1)));
+        }
+        /* END CODEGEN PARSER GLUE: JSON_ARRAY_ELEMENT_TEXT */
         /* END CODEGEN PARSER GLUE: GEOM_RELATE_PATTERN */
         /* END CODEGEN PARSER GLUE: GEOM_INTERSECTS2D */
         case AntlrSQLParser::GEOM_DWITHIN2D: {
