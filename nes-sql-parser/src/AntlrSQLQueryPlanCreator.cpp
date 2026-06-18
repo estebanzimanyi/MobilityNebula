@@ -572,6 +572,18 @@
 #include <Functions/Meos/JsonbPrettyLogicalFunction.hpp>
 #include <Functions/Meos/JsonbObjectFieldTextLogicalFunction.hpp>
 #include <Functions/Meos/JsonbArrayElementTextLogicalFunction.hpp>
+#include <Functions/Meos/IntspanMakeLogicalFunction.hpp>
+#include <Functions/Meos/FloatspanMakeLogicalFunction.hpp>
+#include <Functions/Meos/IntspanLowerLogicalFunction.hpp>
+#include <Functions/Meos/IntspanUpperLogicalFunction.hpp>
+#include <Functions/Meos/IntspanWidthLogicalFunction.hpp>
+#include <Functions/Meos/IntspanLowerIncLogicalFunction.hpp>
+#include <Functions/Meos/IntspanUpperIncLogicalFunction.hpp>
+#include <Functions/Meos/FloatspanLowerLogicalFunction.hpp>
+#include <Functions/Meos/FloatspanUpperLogicalFunction.hpp>
+#include <Functions/Meos/FloatspanWidthLogicalFunction.hpp>
+#include <Functions/Meos/FloatspanLowerIncLogicalFunction.hpp>
+#include <Functions/Meos/FloatspanUpperIncLogicalFunction.hpp>
 #include <Functions/Meos/GeomRelatePatternLogicalFunction.hpp>
 #include <Functions/Meos/GeomIntersects2dLogicalFunction.hpp>
 #include <Functions/Meos/GeomDwithin2dLogicalFunction.hpp>
@@ -11626,6 +11638,108 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             return LogicalFunction(JsonbArrayElementTextLogicalFunction(std::move(arg0), std::move(arg1)));
         }
         /* END CODEGEN PARSER GLUE: JSONB_ARRAY_ELEMENT_TEXT */
+        case AntlrSQLParser::INTSPAN_MAKE: {
+            PRECONDITION(ctx->functionParam().size() == 4,
+                         "IntspanMake requires 4 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            auto arg2 = visit(ctx->functionParam(2)).as<LogicalFunction>();
+            auto arg3 = visit(ctx->functionParam(3)).as<LogicalFunction>();
+            return LogicalFunction(IntspanMakeLogicalFunction(std::move(arg0), std::move(arg1), std::move(arg2), std::move(arg3)));
+        }
+        /* END CODEGEN PARSER GLUE: INTSPAN_MAKE */
+        case AntlrSQLParser::FLOATSPAN_MAKE: {
+            PRECONDITION(ctx->functionParam().size() == 4,
+                         "FloatspanMake requires 4 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            auto arg2 = visit(ctx->functionParam(2)).as<LogicalFunction>();
+            auto arg3 = visit(ctx->functionParam(3)).as<LogicalFunction>();
+            return LogicalFunction(FloatspanMakeLogicalFunction(std::move(arg0), std::move(arg1), std::move(arg2), std::move(arg3)));
+        }
+        /* END CODEGEN PARSER GLUE: FLOATSPAN_MAKE */
+        case AntlrSQLParser::INTSPAN_LOWER: {
+            PRECONDITION(ctx->functionParam().size() == 1,
+                         "IntspanLower requires 1 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            return LogicalFunction(IntspanLowerLogicalFunction(std::move(arg0)));
+        }
+        /* END CODEGEN PARSER GLUE: INTSPAN_LOWER */
+        case AntlrSQLParser::INTSPAN_UPPER: {
+            PRECONDITION(ctx->functionParam().size() == 1,
+                         "IntspanUpper requires 1 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            return LogicalFunction(IntspanUpperLogicalFunction(std::move(arg0)));
+        }
+        /* END CODEGEN PARSER GLUE: INTSPAN_UPPER */
+        case AntlrSQLParser::INTSPAN_WIDTH: {
+            PRECONDITION(ctx->functionParam().size() == 1,
+                         "IntspanWidth requires 1 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            return LogicalFunction(IntspanWidthLogicalFunction(std::move(arg0)));
+        }
+        /* END CODEGEN PARSER GLUE: INTSPAN_WIDTH */
+        case AntlrSQLParser::INTSPAN_LOWER_INC: {
+            PRECONDITION(ctx->functionParam().size() == 1,
+                         "IntspanLowerInc requires 1 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            return LogicalFunction(IntspanLowerIncLogicalFunction(std::move(arg0)));
+        }
+        /* END CODEGEN PARSER GLUE: INTSPAN_LOWER_INC */
+        case AntlrSQLParser::INTSPAN_UPPER_INC: {
+            PRECONDITION(ctx->functionParam().size() == 1,
+                         "IntspanUpperInc requires 1 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            return LogicalFunction(IntspanUpperIncLogicalFunction(std::move(arg0)));
+        }
+        /* END CODEGEN PARSER GLUE: INTSPAN_UPPER_INC */
+        case AntlrSQLParser::FLOATSPAN_LOWER: {
+            PRECONDITION(ctx->functionParam().size() == 1,
+                         "FloatspanLower requires 1 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            return LogicalFunction(FloatspanLowerLogicalFunction(std::move(arg0)));
+        }
+        /* END CODEGEN PARSER GLUE: FLOATSPAN_LOWER */
+        case AntlrSQLParser::FLOATSPAN_UPPER: {
+            PRECONDITION(ctx->functionParam().size() == 1,
+                         "FloatspanUpper requires 1 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            return LogicalFunction(FloatspanUpperLogicalFunction(std::move(arg0)));
+        }
+        /* END CODEGEN PARSER GLUE: FLOATSPAN_UPPER */
+        case AntlrSQLParser::FLOATSPAN_WIDTH: {
+            PRECONDITION(ctx->functionParam().size() == 1,
+                         "FloatspanWidth requires 1 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            return LogicalFunction(FloatspanWidthLogicalFunction(std::move(arg0)));
+        }
+        /* END CODEGEN PARSER GLUE: FLOATSPAN_WIDTH */
+        case AntlrSQLParser::FLOATSPAN_LOWER_INC: {
+            PRECONDITION(ctx->functionParam().size() == 1,
+                         "FloatspanLowerInc requires 1 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            return LogicalFunction(FloatspanLowerIncLogicalFunction(std::move(arg0)));
+        }
+        /* END CODEGEN PARSER GLUE: FLOATSPAN_LOWER_INC */
+        case AntlrSQLParser::FLOATSPAN_UPPER_INC: {
+            PRECONDITION(ctx->functionParam().size() == 1,
+                         "FloatspanUpperInc requires 1 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            return LogicalFunction(FloatspanUpperIncLogicalFunction(std::move(arg0)));
+        }
+        /* END CODEGEN PARSER GLUE: FLOATSPAN_UPPER_INC */
         /* END CODEGEN PARSER GLUE: GEOM_RELATE_PATTERN */
         /* END CODEGEN PARSER GLUE: GEOM_INTERSECTS2D */
         case AntlrSQLParser::GEOM_DWITHIN2D: {
