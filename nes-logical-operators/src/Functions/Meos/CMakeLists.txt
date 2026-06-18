@@ -501,6 +501,7 @@ add_plugin(H3indexGt LogicalFunction nes-logical-operators H3indexGtLogicalFunct
 add_plugin(H3indexGe LogicalFunction nes-logical-operators H3indexGeLogicalFunction.cpp)
 add_plugin(H3indexCmp LogicalFunction nes-logical-operators H3indexCmpLogicalFunction.cpp)
 add_plugin(H3indexOut LogicalFunction nes-logical-operators H3indexOutLogicalFunction.cpp)
+add_plugin(H3indexIn LogicalFunction nes-logical-operators H3indexInLogicalFunction.cpp)
 add_plugin(GeomRelatePattern LogicalFunction nes-logical-operators GeomRelatePatternLogicalFunction.cpp)
 add_plugin(GeomIntersects2d LogicalFunction nes-logical-operators GeomIntersects2dLogicalFunction.cpp)
 add_plugin(GeomDwithin2d LogicalFunction nes-logical-operators GeomDwithin2dLogicalFunction.cpp)

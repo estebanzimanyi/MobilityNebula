@@ -552,6 +552,7 @@
 #include <Functions/Meos/H3indexGeLogicalFunction.hpp>
 #include <Functions/Meos/H3indexCmpLogicalFunction.hpp>
 #include <Functions/Meos/H3indexOutLogicalFunction.hpp>
+#include <Functions/Meos/H3indexInLogicalFunction.hpp>
 #include <Functions/Meos/GeomRelatePatternLogicalFunction.hpp>
 #include <Functions/Meos/GeomIntersects2dLogicalFunction.hpp>
 #include <Functions/Meos/GeomDwithin2dLogicalFunction.hpp>
@@ -11432,6 +11433,14 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             return LogicalFunction(H3indexOutLogicalFunction(std::move(arg0)));
         }
         /* END CODEGEN PARSER GLUE: H3INDEX_OUT */
+        case AntlrSQLParser::H3INDEX_IN: {
+            PRECONDITION(ctx->functionParam().size() == 1,
+                         "H3indexIn requires 1 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            return LogicalFunction(H3indexInLogicalFunction(std::move(arg0)));
+        }
+        /* END CODEGEN PARSER GLUE: H3INDEX_IN */
         /* END CODEGEN PARSER GLUE: GEOM_RELATE_PATTERN */
         /* END CODEGEN PARSER GLUE: GEOM_INTERSECTS2D */
         case AntlrSQLParser::GEOM_DWITHIN2D: {
