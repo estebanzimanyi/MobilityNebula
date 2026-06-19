@@ -602,6 +602,18 @@
 #include <Functions/Meos/QuadbinGtLogicalFunction.hpp>
 #include <Functions/Meos/QuadbinGeLogicalFunction.hpp>
 #include <Functions/Meos/QuadbinCmpLogicalFunction.hpp>
+#include <Functions/Meos/EverEqQuadbinTquadbinLogicalFunction.hpp>
+#include <Functions/Meos/EverNeQuadbinTquadbinLogicalFunction.hpp>
+#include <Functions/Meos/AlwaysEqQuadbinTquadbinLogicalFunction.hpp>
+#include <Functions/Meos/AlwaysNeQuadbinTquadbinLogicalFunction.hpp>
+#include <Functions/Meos/EverEqTquadbinQuadbinLogicalFunction.hpp>
+#include <Functions/Meos/EverNeTquadbinQuadbinLogicalFunction.hpp>
+#include <Functions/Meos/AlwaysEqTquadbinQuadbinLogicalFunction.hpp>
+#include <Functions/Meos/AlwaysNeTquadbinQuadbinLogicalFunction.hpp>
+#include <Functions/Meos/EverEqTquadbinTquadbinLogicalFunction.hpp>
+#include <Functions/Meos/EverNeTquadbinTquadbinLogicalFunction.hpp>
+#include <Functions/Meos/AlwaysEqTquadbinTquadbinLogicalFunction.hpp>
+#include <Functions/Meos/AlwaysNeTquadbinTquadbinLogicalFunction.hpp>
 #include <Functions/Meos/GeomRelatePatternLogicalFunction.hpp>
 #include <Functions/Meos/GeomIntersects2dLogicalFunction.hpp>
 #include <Functions/Meos/GeomDwithin2dLogicalFunction.hpp>
@@ -11917,6 +11929,130 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             return LogicalFunction(QuadbinCmpLogicalFunction(std::move(arg0), std::move(arg1)));
         }
         /* END CODEGEN PARSER GLUE: QUADBIN_CMP */
+        case AntlrSQLParser::EVER_EQ_QUADBIN_TQUADBIN: {
+            PRECONDITION(ctx->functionParam().size() == 3,
+                         "EverEqQuadbinTquadbin requires 3 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            auto arg2 = visit(ctx->functionParam(2)).as<LogicalFunction>();
+            return LogicalFunction(EverEqQuadbinTquadbinLogicalFunction(std::move(arg0), std::move(arg1), std::move(arg2)));
+        }
+        /* END CODEGEN PARSER GLUE: EVER_EQ_QUADBIN_TQUADBIN */
+        case AntlrSQLParser::EVER_NE_QUADBIN_TQUADBIN: {
+            PRECONDITION(ctx->functionParam().size() == 3,
+                         "EverNeQuadbinTquadbin requires 3 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            auto arg2 = visit(ctx->functionParam(2)).as<LogicalFunction>();
+            return LogicalFunction(EverNeQuadbinTquadbinLogicalFunction(std::move(arg0), std::move(arg1), std::move(arg2)));
+        }
+        /* END CODEGEN PARSER GLUE: EVER_NE_QUADBIN_TQUADBIN */
+        case AntlrSQLParser::ALWAYS_EQ_QUADBIN_TQUADBIN: {
+            PRECONDITION(ctx->functionParam().size() == 3,
+                         "AlwaysEqQuadbinTquadbin requires 3 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            auto arg2 = visit(ctx->functionParam(2)).as<LogicalFunction>();
+            return LogicalFunction(AlwaysEqQuadbinTquadbinLogicalFunction(std::move(arg0), std::move(arg1), std::move(arg2)));
+        }
+        /* END CODEGEN PARSER GLUE: ALWAYS_EQ_QUADBIN_TQUADBIN */
+        case AntlrSQLParser::ALWAYS_NE_QUADBIN_TQUADBIN: {
+            PRECONDITION(ctx->functionParam().size() == 3,
+                         "AlwaysNeQuadbinTquadbin requires 3 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            auto arg2 = visit(ctx->functionParam(2)).as<LogicalFunction>();
+            return LogicalFunction(AlwaysNeQuadbinTquadbinLogicalFunction(std::move(arg0), std::move(arg1), std::move(arg2)));
+        }
+        /* END CODEGEN PARSER GLUE: ALWAYS_NE_QUADBIN_TQUADBIN */
+        case AntlrSQLParser::EVER_EQ_TQUADBIN_QUADBIN: {
+            PRECONDITION(ctx->functionParam().size() == 3,
+                         "EverEqTquadbinQuadbin requires 3 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            auto arg2 = visit(ctx->functionParam(2)).as<LogicalFunction>();
+            return LogicalFunction(EverEqTquadbinQuadbinLogicalFunction(std::move(arg0), std::move(arg1), std::move(arg2)));
+        }
+        /* END CODEGEN PARSER GLUE: EVER_EQ_TQUADBIN_QUADBIN */
+        case AntlrSQLParser::EVER_NE_TQUADBIN_QUADBIN: {
+            PRECONDITION(ctx->functionParam().size() == 3,
+                         "EverNeTquadbinQuadbin requires 3 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            auto arg2 = visit(ctx->functionParam(2)).as<LogicalFunction>();
+            return LogicalFunction(EverNeTquadbinQuadbinLogicalFunction(std::move(arg0), std::move(arg1), std::move(arg2)));
+        }
+        /* END CODEGEN PARSER GLUE: EVER_NE_TQUADBIN_QUADBIN */
+        case AntlrSQLParser::ALWAYS_EQ_TQUADBIN_QUADBIN: {
+            PRECONDITION(ctx->functionParam().size() == 3,
+                         "AlwaysEqTquadbinQuadbin requires 3 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            auto arg2 = visit(ctx->functionParam(2)).as<LogicalFunction>();
+            return LogicalFunction(AlwaysEqTquadbinQuadbinLogicalFunction(std::move(arg0), std::move(arg1), std::move(arg2)));
+        }
+        /* END CODEGEN PARSER GLUE: ALWAYS_EQ_TQUADBIN_QUADBIN */
+        case AntlrSQLParser::ALWAYS_NE_TQUADBIN_QUADBIN: {
+            PRECONDITION(ctx->functionParam().size() == 3,
+                         "AlwaysNeTquadbinQuadbin requires 3 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            auto arg2 = visit(ctx->functionParam(2)).as<LogicalFunction>();
+            return LogicalFunction(AlwaysNeTquadbinQuadbinLogicalFunction(std::move(arg0), std::move(arg1), std::move(arg2)));
+        }
+        /* END CODEGEN PARSER GLUE: ALWAYS_NE_TQUADBIN_QUADBIN */
+        case AntlrSQLParser::EVER_EQ_TQUADBIN_TQUADBIN: {
+            PRECONDITION(ctx->functionParam().size() == 4,
+                         "EverEqTquadbinTquadbin requires 4 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            auto arg2 = visit(ctx->functionParam(2)).as<LogicalFunction>();
+            auto arg3 = visit(ctx->functionParam(3)).as<LogicalFunction>();
+            return LogicalFunction(EverEqTquadbinTquadbinLogicalFunction(std::move(arg0), std::move(arg1), std::move(arg2), std::move(arg3)));
+        }
+        /* END CODEGEN PARSER GLUE: EVER_EQ_TQUADBIN_TQUADBIN */
+        case AntlrSQLParser::EVER_NE_TQUADBIN_TQUADBIN: {
+            PRECONDITION(ctx->functionParam().size() == 4,
+                         "EverNeTquadbinTquadbin requires 4 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            auto arg2 = visit(ctx->functionParam(2)).as<LogicalFunction>();
+            auto arg3 = visit(ctx->functionParam(3)).as<LogicalFunction>();
+            return LogicalFunction(EverNeTquadbinTquadbinLogicalFunction(std::move(arg0), std::move(arg1), std::move(arg2), std::move(arg3)));
+        }
+        /* END CODEGEN PARSER GLUE: EVER_NE_TQUADBIN_TQUADBIN */
+        case AntlrSQLParser::ALWAYS_EQ_TQUADBIN_TQUADBIN: {
+            PRECONDITION(ctx->functionParam().size() == 4,
+                         "AlwaysEqTquadbinTquadbin requires 4 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            auto arg2 = visit(ctx->functionParam(2)).as<LogicalFunction>();
+            auto arg3 = visit(ctx->functionParam(3)).as<LogicalFunction>();
+            return LogicalFunction(AlwaysEqTquadbinTquadbinLogicalFunction(std::move(arg0), std::move(arg1), std::move(arg2), std::move(arg3)));
+        }
+        /* END CODEGEN PARSER GLUE: ALWAYS_EQ_TQUADBIN_TQUADBIN */
+        case AntlrSQLParser::ALWAYS_NE_TQUADBIN_TQUADBIN: {
+            PRECONDITION(ctx->functionParam().size() == 4,
+                         "AlwaysNeTquadbinTquadbin requires 4 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            auto arg2 = visit(ctx->functionParam(2)).as<LogicalFunction>();
+            auto arg3 = visit(ctx->functionParam(3)).as<LogicalFunction>();
+            return LogicalFunction(AlwaysNeTquadbinTquadbinLogicalFunction(std::move(arg0), std::move(arg1), std::move(arg2), std::move(arg3)));
+        }
+        /* END CODEGEN PARSER GLUE: ALWAYS_NE_TQUADBIN_TQUADBIN */
         /* END CODEGEN PARSER GLUE: GEOM_RELATE_PATTERN */
         /* END CODEGEN PARSER GLUE: GEOM_INTERSECTS2D */
         case AntlrSQLParser::GEOM_DWITHIN2D: {
