@@ -639,6 +639,12 @@
 #include <Functions/Meos/AcontainsGeoTrgeometryLogicalFunction.hpp>
 #include <Functions/Meos/EcoversGeoTrgeometryLogicalFunction.hpp>
 #include <Functions/Meos/AcoversGeoTrgeometryLogicalFunction.hpp>
+#include <Functions/Meos/EintersectsTrgeometryTrgeometryLogicalFunction.hpp>
+#include <Functions/Meos/AintersectsTrgeometryTrgeometryLogicalFunction.hpp>
+#include <Functions/Meos/EdisjointTrgeometryTrgeometryLogicalFunction.hpp>
+#include <Functions/Meos/AdisjointTrgeometryTrgeometryLogicalFunction.hpp>
+#include <Functions/Meos/EdwithinTrgeometryTrgeometryLogicalFunction.hpp>
+#include <Functions/Meos/AdwithinTrgeometryTrgeometryLogicalFunction.hpp>
 #include <Plans/LogicalPlan.hpp>
 #include <Plans/LogicalPlanBuilder.hpp>
 #include <Util/Overloaded.hpp>
@@ -12684,6 +12690,110 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             return LogicalFunction(AcoversGeoTrgeometryLogicalFunction(std::move(arg0), std::move(arg1), std::move(arg2), std::move(arg3), std::move(arg4), std::move(arg5)));
         }
         /* END CODEGEN PARSER GLUE: ACOVERS_GEO_TRGEOMETRY */
+        case AntlrSQLParser::EINTERSECTS_TRGEOMETRY_TRGEOMETRY: {
+            PRECONDITION(ctx->functionParam().size() == 10,
+                         "EintersectsTrgeometryTrgeometry requires 10 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            auto arg2 = visit(ctx->functionParam(2)).as<LogicalFunction>();
+            auto arg3 = visit(ctx->functionParam(3)).as<LogicalFunction>();
+            auto arg4 = visit(ctx->functionParam(4)).as<LogicalFunction>();
+            auto arg5 = visit(ctx->functionParam(5)).as<LogicalFunction>();
+            auto arg6 = visit(ctx->functionParam(6)).as<LogicalFunction>();
+            auto arg7 = visit(ctx->functionParam(7)).as<LogicalFunction>();
+            auto arg8 = visit(ctx->functionParam(8)).as<LogicalFunction>();
+            auto arg9 = visit(ctx->functionParam(9)).as<LogicalFunction>();
+            return LogicalFunction(EintersectsTrgeometryTrgeometryLogicalFunction(std::move(arg0), std::move(arg1), std::move(arg2), std::move(arg3), std::move(arg4), std::move(arg5), std::move(arg6), std::move(arg7), std::move(arg8), std::move(arg9)));
+        }
+        /* END CODEGEN PARSER GLUE: EINTERSECTS_TRGEOMETRY_TRGEOMETRY */
+        case AntlrSQLParser::AINTERSECTS_TRGEOMETRY_TRGEOMETRY: {
+            PRECONDITION(ctx->functionParam().size() == 10,
+                         "AintersectsTrgeometryTrgeometry requires 10 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            auto arg2 = visit(ctx->functionParam(2)).as<LogicalFunction>();
+            auto arg3 = visit(ctx->functionParam(3)).as<LogicalFunction>();
+            auto arg4 = visit(ctx->functionParam(4)).as<LogicalFunction>();
+            auto arg5 = visit(ctx->functionParam(5)).as<LogicalFunction>();
+            auto arg6 = visit(ctx->functionParam(6)).as<LogicalFunction>();
+            auto arg7 = visit(ctx->functionParam(7)).as<LogicalFunction>();
+            auto arg8 = visit(ctx->functionParam(8)).as<LogicalFunction>();
+            auto arg9 = visit(ctx->functionParam(9)).as<LogicalFunction>();
+            return LogicalFunction(AintersectsTrgeometryTrgeometryLogicalFunction(std::move(arg0), std::move(arg1), std::move(arg2), std::move(arg3), std::move(arg4), std::move(arg5), std::move(arg6), std::move(arg7), std::move(arg8), std::move(arg9)));
+        }
+        /* END CODEGEN PARSER GLUE: AINTERSECTS_TRGEOMETRY_TRGEOMETRY */
+        case AntlrSQLParser::EDISJOINT_TRGEOMETRY_TRGEOMETRY: {
+            PRECONDITION(ctx->functionParam().size() == 10,
+                         "EdisjointTrgeometryTrgeometry requires 10 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            auto arg2 = visit(ctx->functionParam(2)).as<LogicalFunction>();
+            auto arg3 = visit(ctx->functionParam(3)).as<LogicalFunction>();
+            auto arg4 = visit(ctx->functionParam(4)).as<LogicalFunction>();
+            auto arg5 = visit(ctx->functionParam(5)).as<LogicalFunction>();
+            auto arg6 = visit(ctx->functionParam(6)).as<LogicalFunction>();
+            auto arg7 = visit(ctx->functionParam(7)).as<LogicalFunction>();
+            auto arg8 = visit(ctx->functionParam(8)).as<LogicalFunction>();
+            auto arg9 = visit(ctx->functionParam(9)).as<LogicalFunction>();
+            return LogicalFunction(EdisjointTrgeometryTrgeometryLogicalFunction(std::move(arg0), std::move(arg1), std::move(arg2), std::move(arg3), std::move(arg4), std::move(arg5), std::move(arg6), std::move(arg7), std::move(arg8), std::move(arg9)));
+        }
+        /* END CODEGEN PARSER GLUE: EDISJOINT_TRGEOMETRY_TRGEOMETRY */
+        case AntlrSQLParser::ADISJOINT_TRGEOMETRY_TRGEOMETRY: {
+            PRECONDITION(ctx->functionParam().size() == 10,
+                         "AdisjointTrgeometryTrgeometry requires 10 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            auto arg2 = visit(ctx->functionParam(2)).as<LogicalFunction>();
+            auto arg3 = visit(ctx->functionParam(3)).as<LogicalFunction>();
+            auto arg4 = visit(ctx->functionParam(4)).as<LogicalFunction>();
+            auto arg5 = visit(ctx->functionParam(5)).as<LogicalFunction>();
+            auto arg6 = visit(ctx->functionParam(6)).as<LogicalFunction>();
+            auto arg7 = visit(ctx->functionParam(7)).as<LogicalFunction>();
+            auto arg8 = visit(ctx->functionParam(8)).as<LogicalFunction>();
+            auto arg9 = visit(ctx->functionParam(9)).as<LogicalFunction>();
+            return LogicalFunction(AdisjointTrgeometryTrgeometryLogicalFunction(std::move(arg0), std::move(arg1), std::move(arg2), std::move(arg3), std::move(arg4), std::move(arg5), std::move(arg6), std::move(arg7), std::move(arg8), std::move(arg9)));
+        }
+        /* END CODEGEN PARSER GLUE: ADISJOINT_TRGEOMETRY_TRGEOMETRY */
+        case AntlrSQLParser::EDWITHIN_TRGEOMETRY_TRGEOMETRY: {
+            PRECONDITION(ctx->functionParam().size() == 11,
+                         "EdwithinTrgeometryTrgeometry requires 11 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            auto arg2 = visit(ctx->functionParam(2)).as<LogicalFunction>();
+            auto arg3 = visit(ctx->functionParam(3)).as<LogicalFunction>();
+            auto arg4 = visit(ctx->functionParam(4)).as<LogicalFunction>();
+            auto arg5 = visit(ctx->functionParam(5)).as<LogicalFunction>();
+            auto arg6 = visit(ctx->functionParam(6)).as<LogicalFunction>();
+            auto arg7 = visit(ctx->functionParam(7)).as<LogicalFunction>();
+            auto arg8 = visit(ctx->functionParam(8)).as<LogicalFunction>();
+            auto arg9 = visit(ctx->functionParam(9)).as<LogicalFunction>();
+            auto arg10 = visit(ctx->functionParam(10)).as<LogicalFunction>();
+            return LogicalFunction(EdwithinTrgeometryTrgeometryLogicalFunction(std::move(arg0), std::move(arg1), std::move(arg2), std::move(arg3), std::move(arg4), std::move(arg5), std::move(arg6), std::move(arg7), std::move(arg8), std::move(arg9), std::move(arg10)));
+        }
+        /* END CODEGEN PARSER GLUE: EDWITHIN_TRGEOMETRY_TRGEOMETRY */
+        case AntlrSQLParser::ADWITHIN_TRGEOMETRY_TRGEOMETRY: {
+            PRECONDITION(ctx->functionParam().size() == 11,
+                         "AdwithinTrgeometryTrgeometry requires 11 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            auto arg2 = visit(ctx->functionParam(2)).as<LogicalFunction>();
+            auto arg3 = visit(ctx->functionParam(3)).as<LogicalFunction>();
+            auto arg4 = visit(ctx->functionParam(4)).as<LogicalFunction>();
+            auto arg5 = visit(ctx->functionParam(5)).as<LogicalFunction>();
+            auto arg6 = visit(ctx->functionParam(6)).as<LogicalFunction>();
+            auto arg7 = visit(ctx->functionParam(7)).as<LogicalFunction>();
+            auto arg8 = visit(ctx->functionParam(8)).as<LogicalFunction>();
+            auto arg9 = visit(ctx->functionParam(9)).as<LogicalFunction>();
+            auto arg10 = visit(ctx->functionParam(10)).as<LogicalFunction>();
+            return LogicalFunction(AdwithinTrgeometryTrgeometryLogicalFunction(std::move(arg0), std::move(arg1), std::move(arg2), std::move(arg3), std::move(arg4), std::move(arg5), std::move(arg6), std::move(arg7), std::move(arg8), std::move(arg9), std::move(arg10)));
+        }
+        /* END CODEGEN PARSER GLUE: ADWITHIN_TRGEOMETRY_TRGEOMETRY */
 
         default:
             /// Check if the function is a constructor for a datatype
