@@ -35,12 +35,12 @@ extern "C" {
 
 namespace NES {
 
-MulFloatTfloatPhysicalFunction::MulFloatTfloatPhysicalFunction(PhysicalFunction scalarFunction,
-                                                               PhysicalFunction valueFunction,
-                                                               PhysicalFunction tsFunction)
+MulFloatTfloatPhysicalFunction::MulFloatTfloatPhysicalFunction(PhysicalFunction arg0Function,
+                                                          PhysicalFunction valueFunction,
+                                                          PhysicalFunction tsFunction)
 {
     parameterFunctions.reserve(3);
-    parameterFunctions.push_back(std::move(scalarFunction));
+    parameterFunctions.push_back(std::move(arg0Function));
     parameterFunctions.push_back(std::move(valueFunction));
     parameterFunctions.push_back(std::move(tsFunction));
 }
@@ -50,28 +50,38 @@ VarVal MulFloatTfloatPhysicalFunction::execute(const Record& record, ArenaRef& a
     std::vector<VarVal> parameterValues;
     parameterValues.reserve(parameterFunctions.size());
     for (const auto& function : parameterFunctions)
+    {
         parameterValues.emplace_back(function.execute(record, arena));
+    }
 
-    auto scalar = parameterValues[0].cast<nautilus::val<double>>();
-    auto value  = parameterValues[1].cast<nautilus::val<double>>();
-    auto ts     = parameterValues[2].cast<nautilus::val<uint64_t>>();
+    auto arg0 = parameterValues[0].cast<nautilus::val<double>>();
+    auto value = parameterValues[1].cast<nautilus::val<double>>();
+    auto ts = parameterValues[2].cast<nautilus::val<uint64_t>>();
 
     const auto result = nautilus::invoke(
-        +[](double scalar, double value, uint64_t ts) -> double {
-            try {
+        +[](double arg0,
+            double value,
+            uint64_t ts) -> double {
+            try
+            {
                 MEOS::Meos::ensureMeosInitialized();
                 std::string tempWkt = fmt::format("{}@{}", value, MEOS::Meos::convertEpochToTimestamp(ts));
                 Temporal* temp = tfloat_in(tempWkt.c_str());
                 if (!temp) return 0.0;
-                Temporal* res = mul_float_tfloat(scalar, temp);
+
+                Temporal* res = mul_float_tfloat(arg0, temp);
                 free(temp);
                 if (!res) return 0.0;
                 double r = tfloat_start_value(res);
                 free(res);
                 return r;
-            } catch (const std::exception&) { return 0.0; }
+            }
+            catch (const std::exception&)
+            {
+                return 0.0;
+            }
         },
-        scalar, value, ts);
+        arg0, value, ts);
 
     return VarVal(result);
 }

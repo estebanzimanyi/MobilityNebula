@@ -27,45 +27,64 @@ namespace NES
 {
 
 TintShiftValueLogicalFunction::TintShiftValueLogicalFunction(LogicalFunction value,
-                                                             LogicalFunction ts,
-                                                             LogicalFunction shift)
-    : dataType(DataTypeProvider::provideDataType(DataType::Type::FLOAT64))
+                                          LogicalFunction ts,
+                                          LogicalFunction arg0)
+    : dataType(DataTypeProvider::provideDataType(DataType::Type::INT32))
 {
     parameters.reserve(3);
     parameters.push_back(std::move(value));
     parameters.push_back(std::move(ts));
-    parameters.push_back(std::move(shift));
+    parameters.push_back(std::move(arg0));
 }
 
-DataType TintShiftValueLogicalFunction::getDataType() const { return dataType; }
+DataType TintShiftValueLogicalFunction::getDataType() const
+{
+    return dataType;
+}
 
 LogicalFunction TintShiftValueLogicalFunction::withDataType(const DataType& newDataType) const
 {
-    auto copy = *this; copy.dataType = newDataType; return copy;
+    auto copy = *this;
+    copy.dataType = newDataType;
+    return copy;
 }
 
-std::vector<LogicalFunction> TintShiftValueLogicalFunction::getChildren() const { return parameters; }
+std::vector<LogicalFunction> TintShiftValueLogicalFunction::getChildren() const
+{
+    return parameters;
+}
 
 LogicalFunction TintShiftValueLogicalFunction::withChildren(const std::vector<LogicalFunction>& children) const
 {
     PRECONDITION(children.size() == 3, "TintShiftValueLogicalFunction requires 3 children, but got {}", children.size());
-    auto copy = *this; copy.parameters = children; return copy;
+    auto copy = *this;
+    copy.parameters = children;
+    return copy;
 }
 
-std::string_view TintShiftValueLogicalFunction::getType() const { return NAME; }
+std::string_view TintShiftValueLogicalFunction::getType() const
+{
+    return NAME;
+}
 
 bool TintShiftValueLogicalFunction::operator==(const LogicalFunctionConcept& rhs) const
 {
     if (const auto* other = dynamic_cast<const TintShiftValueLogicalFunction*>(&rhs))
+    {
         return parameters == other->parameters;
+    }
     return false;
 }
 
 std::string TintShiftValueLogicalFunction::explain(ExplainVerbosity verbosity) const
 {
     std::string args;
-    for (size_t index = 0; index < parameters.size(); ++index) {
-        if (index > 0) args += ", ";
+    for (size_t index = 0; index < parameters.size(); ++index)
+    {
+        if (index > 0)
+        {
+            args += ", ";
+        }
         args += parameters[index].explain(verbosity);
     }
     return fmt::format("{}({})", NAME, args);
@@ -76,7 +95,9 @@ LogicalFunction TintShiftValueLogicalFunction::withInferredDataType(const Schema
     std::vector<LogicalFunction> newChildren;
     newChildren.reserve(parameters.size());
     for (const auto& child : parameters)
+    {
         newChildren.emplace_back(child.withInferredDataType(schema));
+    }
     return withChildren(newChildren);
 }
 
@@ -86,7 +107,9 @@ SerializableFunction TintShiftValueLogicalFunction::serialize() const
     proto.set_function_type(std::string(NAME));
     DataTypeSerializationUtil::serializeDataType(dataType, proto.mutable_data_type());
     for (const auto& child : parameters)
+    {
         proto.add_children()->CopyFrom(child.serialize());
+    }
     return proto;
 }
 

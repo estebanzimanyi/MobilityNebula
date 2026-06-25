@@ -35,12 +35,12 @@ extern "C" {
 
 namespace NES {
 
-AlwaysEqBoolTboolPhysicalFunction::AlwaysEqBoolTboolPhysicalFunction(PhysicalFunction scalarFunction,
-                                                                  PhysicalFunction valueFunction,
-                                                                  PhysicalFunction tsFunction)
+AlwaysEqBoolTboolPhysicalFunction::AlwaysEqBoolTboolPhysicalFunction(PhysicalFunction arg0Function,
+                                                          PhysicalFunction valueFunction,
+                                                          PhysicalFunction tsFunction)
 {
     parameterFunctions.reserve(3);
-    parameterFunctions.push_back(std::move(scalarFunction));
+    parameterFunctions.push_back(std::move(arg0Function));
     parameterFunctions.push_back(std::move(valueFunction));
     parameterFunctions.push_back(std::move(tsFunction));
 }
@@ -50,26 +50,35 @@ VarVal AlwaysEqBoolTboolPhysicalFunction::execute(const Record& record, ArenaRef
     std::vector<VarVal> parameterValues;
     parameterValues.reserve(parameterFunctions.size());
     for (const auto& function : parameterFunctions)
+    {
         parameterValues.emplace_back(function.execute(record, arena));
+    }
 
-    auto scalar = parameterValues[0].cast<nautilus::val<double>>();
-    auto value  = parameterValues[1].cast<nautilus::val<double>>();
-    auto ts     = parameterValues[2].cast<nautilus::val<uint64_t>>();
+    auto arg0 = parameterValues[0].cast<nautilus::val<double>>();
+    auto value = parameterValues[1].cast<nautilus::val<double>>();
+    auto ts = parameterValues[2].cast<nautilus::val<uint64_t>>();
 
     const auto result = nautilus::invoke(
-        +[](double b, double v, uint64_t t) -> double {
-            try {
+        +[](double arg0,
+            double value,
+            uint64_t ts) -> int {
+            try
+            {
                 MEOS::Meos::ensureMeosInitialized();
-                std::string ts_str = MEOS::Meos::convertEpochToTimestamp(t);
-                std::string wkt = fmt::format("{}@{}", (v != 0.0 ? "t" : "f"), ts_str);
-                Temporal* temp = tbool_in(wkt.c_str());
-                if (!temp) return 0.0;
-                int r = always_eq_bool_tbool(static_cast<bool>(b != 0.0), temp);
+                std::string tempWkt = fmt::format("{}@{}", value != 0.0 ? "t" : "f", MEOS::Meos::convertEpochToTimestamp(ts));
+                Temporal* temp = tbool_in(tempWkt.c_str());
+                if (!temp) return 0;
+
+                int r = always_eq_bool_tbool(static_cast<bool>(arg0 != 0.0), temp);
                 free(temp);
-                return static_cast<double>(r);
-            } catch (const std::exception&) { return 0.0; }
+                return r;
+            }
+            catch (const std::exception&)
+            {
+                return 0;
+            }
         },
-        scalar, value, ts);
+        arg0, value, ts);
 
     return VarVal(result);
 }

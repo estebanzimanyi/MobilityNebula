@@ -22,7 +22,8 @@
 #include <PhysicalFunctionRegistry.hpp>
 #include <ErrorHandling.hpp>
 #include <ExecutionContext.hpp>
-#include <fmt/format.h>
+#include <cstdlib>
+#include <cstring>
 #include <function.hpp>
 #include <string>
 #include <utility>
@@ -35,14 +36,12 @@ extern "C" {
 
 namespace NES {
 
-TandTboolTboolPhysicalFunction::TandTboolTboolPhysicalFunction(PhysicalFunction value1Function,
-                                              PhysicalFunction value2Function,
-                                              PhysicalFunction tsFunction)
+TandTboolTboolPhysicalFunction::TandTboolTboolPhysicalFunction(PhysicalFunction trajFunction,
+                                                          PhysicalFunction arg0Function)
 {
-    parameterFunctions.reserve(3);
-    parameterFunctions.push_back(std::move(value1Function));
-    parameterFunctions.push_back(std::move(value2Function));
-    parameterFunctions.push_back(std::move(tsFunction));
+    parameterFunctions.reserve(2);
+    parameterFunctions.push_back(std::move(trajFunction));
+    parameterFunctions.push_back(std::move(arg0Function));
 }
 
 VarVal TandTboolTboolPhysicalFunction::execute(const Record& record, ArenaRef& arena) const
@@ -50,46 +49,74 @@ VarVal TandTboolTboolPhysicalFunction::execute(const Record& record, ArenaRef& a
     std::vector<VarVal> parameterValues;
     parameterValues.reserve(parameterFunctions.size());
     for (const auto& function : parameterFunctions)
+    {
         parameterValues.emplace_back(function.execute(record, arena));
+    }
 
-    auto value1 = parameterValues[0].cast<nautilus::val<double>>();
-    auto value2 = parameterValues[1].cast<nautilus::val<double>>();
-    auto ts     = parameterValues[2].cast<nautilus::val<uint64_t>>();
+    auto traj = parameterValues[0].cast<VariableSizedData>();
+    auto arg0 = parameterValues[1].cast<VariableSizedData>();
 
-    const auto result = nautilus::invoke(
-        +[](double v1, double v2, uint64_t t) -> double {
-            try {
+    // Call MEOS f(Temporal*, Temporal*) -> Temporal* over the two hex-WKB
+    // operands and serialize the result back to hex-WKB inside the invoke; the
+    // returned heap string is copied into the arena below. Both operands and the
+    // MEOS result are freed here.
+    auto hexStr = nautilus::invoke(
+        +[](const char* aPtr, uint32_t aSize, const char* bPtr, uint32_t bSize) -> char*
+        {
+            try
+            {
                 MEOS::Meos::ensureMeosInitialized();
-                std::string ts_str = MEOS::Meos::convertEpochToTimestamp(t);
-                std::string wkt1 = fmt::format("{}@{}", (v1 != 0.0 ? "t" : "f"), ts_str);
-                std::string wkt2 = fmt::format("{}@{}", (v2 != 0.0 ? "t" : "f"), ts_str);
-                Temporal* temp1 = tbool_in(wkt1.c_str());
-                if (!temp1) return 0.0;
-                Temporal* temp2 = tbool_in(wkt2.c_str());
-                if (!temp2) { free(temp1); return 0.0; }
-                Temporal* res = tand_tbool_tbool(temp1, temp2);
-                free(temp1); free(temp2);
-                if (!res) return 0.0;
-                bool r = tbool_start_value(res);
+                std::string aHex(aPtr, aSize);
+                std::string bHex(bPtr, bSize);
+                Temporal* a = temporal_from_hexwkb(aHex.c_str());
+                if (!a) return (char*) nullptr;
+                Temporal* b = temporal_from_hexwkb(bHex.c_str());
+                if (!b) { free(a); return (char*) nullptr; }
+                Temporal* res = tand_tbool_tbool(a, b);
+                free(a);
+                free(b);
+                if (!res) return (char*) nullptr;
+                size_t hexSize = 0;
+                char* hexOut = temporal_as_hexwkb(res, 0, &hexSize);
                 free(res);
-                return static_cast<double>(r ? 1.0 : 0.0);
-            } catch (const std::exception&) { return 0.0; }
+                return hexOut;
+            }
+            catch (const std::exception&)
+            {
+                return (char*) nullptr;
+            }
         },
-        value1, value2, ts);
+        traj.getContent(), traj.getContentSize(), arg0.getContent(), arg0.getContentSize());
 
-    return VarVal(result);
+    const auto hexLen = nautilus::invoke(
+        +[](const char* s) -> uint32_t { return s ? (uint32_t) strlen(s) : (uint32_t) 0; },
+        hexStr);
+
+    auto variableSized = arena.allocateVariableSizedData(hexLen);
+
+    nautilus::invoke(
+        +[](int8_t* dest, const char* s, uint32_t len) -> void
+        {
+            if (s)
+            {
+                memcpy(dest, s, len);
+                free((void*) s);
+            }
+        },
+        variableSized.getContent(), hexStr, hexLen);
+
+    return variableSized;
 }
 
 PhysicalFunctionRegistryReturnType PhysicalFunctionGeneratedRegistrar::RegisterTandTboolTboolPhysicalFunction(
     PhysicalFunctionRegistryArguments arguments)
 {
-    PRECONDITION(arguments.childFunctions.size() == 3,
-                 "TandTboolTboolPhysicalFunction requires 3 children but got {}",
+    PRECONDITION(arguments.childFunctions.size() == 2,
+                 "TandTboolTboolPhysicalFunction requires 2 children but got {}",
                  arguments.childFunctions.size());
     auto arg0 = std::move(arguments.childFunctions[0]);
     auto arg1 = std::move(arguments.childFunctions[1]);
-    auto arg2 = std::move(arguments.childFunctions[2]);
-    return TandTboolTboolPhysicalFunction(std::move(arg0), std::move(arg1), std::move(arg2));
+    return TandTboolTboolPhysicalFunction(std::move(arg0), std::move(arg1));
 }
 
 } // namespace NES

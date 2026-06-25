@@ -36,13 +36,13 @@ extern "C" {
 namespace NES {
 
 TneTboolBoolPhysicalFunction::TneTboolBoolPhysicalFunction(PhysicalFunction valueFunction,
-                                      PhysicalFunction thresholdFunction,
-                                      PhysicalFunction tsFunction)
+                                                          PhysicalFunction tsFunction,
+                                                          PhysicalFunction arg0Function)
 {
     parameterFunctions.reserve(3);
     parameterFunctions.push_back(std::move(valueFunction));
-    parameterFunctions.push_back(std::move(thresholdFunction));
     parameterFunctions.push_back(std::move(tsFunction));
+    parameterFunctions.push_back(std::move(arg0Function));
 }
 
 VarVal TneTboolBoolPhysicalFunction::execute(const Record& record, ArenaRef& arena) const
@@ -50,30 +50,38 @@ VarVal TneTboolBoolPhysicalFunction::execute(const Record& record, ArenaRef& are
     std::vector<VarVal> parameterValues;
     parameterValues.reserve(parameterFunctions.size());
     for (const auto& function : parameterFunctions)
+    {
         parameterValues.emplace_back(function.execute(record, arena));
+    }
 
     auto value = parameterValues[0].cast<nautilus::val<double>>();
-    auto thresh = parameterValues[1].cast<nautilus::val<double>>();
-    auto ts     = parameterValues[2].cast<nautilus::val<uint64_t>>();
+    auto ts = parameterValues[1].cast<nautilus::val<uint64_t>>();
+    auto arg0 = parameterValues[2].cast<nautilus::val<double>>();
 
     const auto result = nautilus::invoke(
-        +[](double v, double s, uint64_t t) -> double {
-            try {
+        +[](double value,
+            uint64_t ts,
+            double arg0) -> bool {
+            try
+            {
                 MEOS::Meos::ensureMeosInitialized();
-                std::string ts_str = MEOS::Meos::convertEpochToTimestamp(t);
-                std::string wkt = fmt::format("{}", (v != 0.0 ? "t" : "f")) + "@" + ts_str;
-                Temporal* temp = tbool_in(wkt.c_str());
-                if (!temp) return 0.0;
-                bool sv = (s != 0.0);
-                Temporal* res = tne_tbool_bool(temp, sv);
+                std::string tempWkt = fmt::format("{}@{}", value != 0.0 ? "t" : "f", MEOS::Meos::convertEpochToTimestamp(ts));
+                Temporal* temp = tbool_in(tempWkt.c_str());
+                if (!temp) return false;
+
+                Temporal* res = tne_tbool_bool(temp, static_cast<bool>(arg0 != 0.0));
                 free(temp);
-                if (!res) return 0.0;
+                if (!res) return false;
                 bool r = tbool_start_value(res);
                 free(res);
-                return static_cast<double>(r ? 1.0 : 0.0);
-            } catch (const std::exception&) { return 0.0; }
+                return r;
+            }
+            catch (const std::exception&)
+            {
+                return false;
+            }
         },
-        value, thresh, ts);
+        value, ts, arg0);
 
     return VarVal(result);
 }

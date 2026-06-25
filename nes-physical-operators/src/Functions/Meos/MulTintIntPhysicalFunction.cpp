@@ -36,13 +36,13 @@ extern "C" {
 namespace NES {
 
 MulTintIntPhysicalFunction::MulTintIntPhysicalFunction(PhysicalFunction valueFunction,
-                                                       PhysicalFunction tsFunction,
-                                                       PhysicalFunction multiplierFunction)
+                                                          PhysicalFunction tsFunction,
+                                                          PhysicalFunction arg0Function)
 {
     parameterFunctions.reserve(3);
     parameterFunctions.push_back(std::move(valueFunction));
     parameterFunctions.push_back(std::move(tsFunction));
-    parameterFunctions.push_back(std::move(multiplierFunction));
+    parameterFunctions.push_back(std::move(arg0Function));
 }
 
 VarVal MulTintIntPhysicalFunction::execute(const Record& record, ArenaRef& arena) const
@@ -50,28 +50,38 @@ VarVal MulTintIntPhysicalFunction::execute(const Record& record, ArenaRef& arena
     std::vector<VarVal> parameterValues;
     parameterValues.reserve(parameterFunctions.size());
     for (const auto& function : parameterFunctions)
+    {
         parameterValues.emplace_back(function.execute(record, arena));
+    }
 
-    auto value      = parameterValues[0].cast<nautilus::val<double>>();
-    auto ts         = parameterValues[1].cast<nautilus::val<uint64_t>>();
-    auto multiplier = parameterValues[2].cast<nautilus::val<double>>();
+    auto value = parameterValues[0].cast<nautilus::val<int32_t>>();
+    auto ts = parameterValues[1].cast<nautilus::val<uint64_t>>();
+    auto arg0 = parameterValues[2].cast<nautilus::val<int32_t>>();
 
     const auto result = nautilus::invoke(
-        +[](double value, uint64_t ts, double multiplier_d) -> double {
-            try {
+        +[](int32_t value,
+            uint64_t ts,
+            int32_t arg0) -> int {
+            try
+            {
                 MEOS::Meos::ensureMeosInitialized();
-                std::string tempWkt = fmt::format("{}@{}", static_cast<int>(value), MEOS::Meos::convertEpochToTimestamp(ts));
+                std::string tempWkt = fmt::format("{}@{}", value, MEOS::Meos::convertEpochToTimestamp(ts));
                 Temporal* temp = tint_in(tempWkt.c_str());
-                if (!temp) return 0.0;
-                Temporal* res = mul_tint_int(temp, static_cast<int>(multiplier_d));
+                if (!temp) return 0;
+
+                Temporal* res = mul_tint_int(temp, arg0);
                 free(temp);
-                if (!res) return 0.0;
-                double r = static_cast<double>(tint_start_value(res));
+                if (!res) return 0;
+                int r = tint_start_value(res);
                 free(res);
                 return r;
-            } catch (const std::exception&) { return 0.0; }
+            }
+            catch (const std::exception&)
+            {
+                return 0;
+            }
         },
-        value, ts, multiplier);
+        value, ts, arg0);
 
     return VarVal(result);
 }

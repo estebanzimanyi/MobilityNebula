@@ -36,13 +36,13 @@ extern "C" {
 namespace NES {
 
 EverLtTbigintBigintPhysicalFunction::EverLtTbigintBigintPhysicalFunction(PhysicalFunction valueFunction,
-                                                         PhysicalFunction thresholdFunction,
-                                                         PhysicalFunction tsFunction)
+                                                          PhysicalFunction tsFunction,
+                                                          PhysicalFunction arg0Function)
 {
     parameterFunctions.reserve(3);
     parameterFunctions.push_back(std::move(valueFunction));
-    parameterFunctions.push_back(std::move(thresholdFunction));
     parameterFunctions.push_back(std::move(tsFunction));
+    parameterFunctions.push_back(std::move(arg0Function));
 }
 
 VarVal EverLtTbigintBigintPhysicalFunction::execute(const Record& record, ArenaRef& arena) const
@@ -50,25 +50,35 @@ VarVal EverLtTbigintBigintPhysicalFunction::execute(const Record& record, ArenaR
     std::vector<VarVal> parameterValues;
     parameterValues.reserve(parameterFunctions.size());
     for (const auto& function : parameterFunctions)
+    {
         parameterValues.emplace_back(function.execute(record, arena));
+    }
 
-    auto value     = parameterValues[0].cast<nautilus::val<double>>();
-    auto threshold = parameterValues[1].cast<nautilus::val<double>>();
-    auto ts        = parameterValues[2].cast<nautilus::val<uint64_t>>();
+    auto value = parameterValues[0].cast<nautilus::val<double>>();
+    auto ts = parameterValues[1].cast<nautilus::val<uint64_t>>();
+    auto arg0 = parameterValues[2].cast<nautilus::val<double>>();
 
     const auto result = nautilus::invoke(
-        +[](double value, double threshold, uint64_t ts) -> double {
-            try {
+        +[](double value,
+            uint64_t ts,
+            double arg0) -> int {
+            try
+            {
                 MEOS::Meos::ensureMeosInitialized();
                 std::string tempWkt = fmt::format("{}@{}", static_cast<int64_t>(value), MEOS::Meos::convertEpochToTimestamp(ts));
                 Temporal* temp = tbigint_in(tempWkt.c_str());
-                if (!temp) return 0.0;
-                int r = ever_lt_tbigint_bigint(temp, static_cast<int64_t>(threshold));
+                if (!temp) return 0;
+
+                int r = ever_lt_tbigint_bigint(temp, static_cast<int64_t>(arg0));
                 free(temp);
-                return static_cast<double>(r);
-            } catch (const std::exception&) { return 0.0; }
+                return r;
+            }
+            catch (const std::exception&)
+            {
+                return 0;
+            }
         },
-        value, threshold, ts);
+        value, ts, arg0);
 
     return VarVal(result);
 }
