@@ -553,6 +553,10 @@
 #include <Functions/Meos/H3indexCmpLogicalFunction.hpp>
 #include <Functions/Meos/H3indexOutLogicalFunction.hpp>
 #include <Functions/Meos/H3indexInLogicalFunction.hpp>
+#include <Functions/Meos/H3indexFromHexwkbLogicalFunction.hpp>
+#include <Functions/Meos/H3indexFromWkbLogicalFunction.hpp>
+#include <Functions/Meos/H3indexAsHexwkbLogicalFunction.hpp>
+#include <Functions/Meos/H3indexAsWkbLogicalFunction.hpp>
 #include <Functions/Meos/JsonArrayLengthLogicalFunction.hpp>
 #include <Functions/Meos/JsonTypeofLogicalFunction.hpp>
 #include <Functions/Meos/JsonObjectFieldTextLogicalFunction.hpp>
@@ -11502,6 +11506,44 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             return LogicalFunction(H3indexInLogicalFunction(std::move(arg0)));
         }
         /* END CODEGEN PARSER GLUE: H3INDEX_IN */
+        /* BEGIN CODEGEN PARSER GLUE: H3INDEX_FROM_HEXWKB */
+        case AntlrSQLParser::H3INDEX_FROM_HEXWKB: {
+            PRECONDITION(ctx->functionParam().size() == 1,
+                         "H3indexFromHexwkb requires 1 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            return LogicalFunction(H3indexFromHexwkbLogicalFunction(std::move(arg0)));
+        }
+        /* END CODEGEN PARSER GLUE: H3INDEX_FROM_HEXWKB */
+        /* BEGIN CODEGEN PARSER GLUE: H3INDEX_FROM_WKB */
+        case AntlrSQLParser::H3INDEX_FROM_WKB: {
+            PRECONDITION(ctx->functionParam().size() == 1,
+                         "H3indexFromWkb requires 1 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            return LogicalFunction(H3indexFromWkbLogicalFunction(std::move(arg0)));
+        }
+        /* END CODEGEN PARSER GLUE: H3INDEX_FROM_WKB */
+        /* BEGIN CODEGEN PARSER GLUE: H3INDEX_AS_HEXWKB */
+        case AntlrSQLParser::H3INDEX_AS_HEXWKB: {
+            PRECONDITION(ctx->functionParam().size() == 2,
+                         "H3indexAsHexwkb requires 2 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            return LogicalFunction(H3indexAsHexwkbLogicalFunction(std::move(arg0), std::move(arg1)));
+        }
+        /* END CODEGEN PARSER GLUE: H3INDEX_AS_HEXWKB */
+        /* BEGIN CODEGEN PARSER GLUE: H3INDEX_AS_WKB */
+        case AntlrSQLParser::H3INDEX_AS_WKB: {
+            PRECONDITION(ctx->functionParam().size() == 2,
+                         "H3indexAsWkb requires 2 args but got {}",
+                         ctx->functionParam().size());
+            auto arg0 = visit(ctx->functionParam(0)).as<LogicalFunction>();
+            auto arg1 = visit(ctx->functionParam(1)).as<LogicalFunction>();
+            return LogicalFunction(H3indexAsWkbLogicalFunction(std::move(arg0), std::move(arg1)));
+        }
+        /* END CODEGEN PARSER GLUE: H3INDEX_AS_WKB */
         case AntlrSQLParser::JSON_ARRAY_LENGTH: {
             PRECONDITION(ctx->functionParam().size() == 1,
                          "JsonArrayLength requires 1 args but got {}",
