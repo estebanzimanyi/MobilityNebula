@@ -13,6 +13,7 @@
 */
 
 #include <Functions/Meos/GeoAsGeojsonPhysicalFunction.hpp>
+
 #include <Functions/PhysicalFunction.hpp>
 #include <MEOSWrapper.hpp>
 #include <Nautilus/DataTypes/VarVal.hpp>
@@ -21,8 +22,10 @@
 #include <PhysicalFunctionRegistry.hpp>
 #include <ErrorHandling.hpp>
 #include <ExecutionContext.hpp>
+#include <fmt/format.h>
 #include <function.hpp>
 #include <string>
+#include <string.h>
 #include <utility>
 #include <val.hpp>
 
@@ -33,40 +36,60 @@ extern "C" {
 
 namespace NES {
 
-GeoAsGeojsonPhysicalFunction::GeoAsGeojsonPhysicalFunction(PhysicalFunction wkt, PhysicalFunction option, PhysicalFunction precision)
+GeoAsGeojsonPhysicalFunction::GeoAsGeojsonPhysicalFunction(PhysicalFunction wktFunction,
+                                                          PhysicalFunction arg0Function,
+                                                          PhysicalFunction arg1Function)
 {
-    paramFns.reserve(3);
-    paramFns.push_back(std::move(wkt));
-    paramFns.push_back(std::move(option));
-    paramFns.push_back(std::move(precision));
+    parameterFunctions.reserve(3);
+    parameterFunctions.push_back(std::move(wktFunction));
+    parameterFunctions.push_back(std::move(arg0Function));
+    parameterFunctions.push_back(std::move(arg1Function));
 }
 
 VarVal GeoAsGeojsonPhysicalFunction::execute(const Record& record, ArenaRef& arena) const
 {
-    auto wkt = paramFns[0].execute(record, arena).cast<VariableSizedData>();
-    auto option = paramFns[1].execute(record, arena).cast<nautilus::val<uint64_t>>();
-    auto precision = paramFns[2].execute(record, arena).cast<nautilus::val<uint64_t>>();
-    constexpr uint32_t MAX_LEN = 16384;
+    std::vector<VarVal> parameterValues;
+    parameterValues.reserve(parameterFunctions.size());
+    for (const auto& function : parameterFunctions)
+    {
+        parameterValues.emplace_back(function.execute(record, arena));
+    }
+
+    auto wkt = parameterValues[0].cast<VariableSizedData>();
+    auto arg0 = parameterValues[1].cast<nautilus::val<double>>();
+    auto arg1 = parameterValues[2].cast<nautilus::val<double>>();
+
+    constexpr uint32_t MAX_LEN = 4096;
     auto outBuf = arena.allocateVariableSizedData(nautilus::val<uint32_t>(MAX_LEN));
 
     const auto actualLen = nautilus::invoke(
-        +[](const char* w, uint32_t wsz, uint64_t option, uint64_t precision, char* buf, uint32_t bufMax) -> uint32_t {
-            try {
+        +[](const char* wktPtr, uint32_t wktSize,
+            double arg0,
+            double arg1,
+            char* buf,
+            uint32_t bufMax) -> uint32_t {
+            try
+            {
                 MEOS::Meos::ensureMeosInitialized();
-                std::string s(w, wsz);
-                GSERIALIZED* gs = geom_in(s.c_str(), -1);
-                if (!gs) return 0u;
-                char* out = geo_as_geojson(gs, (int)option, (int)precision, nullptr);
-                free(gs);
+                std::string tempS(wktPtr, wktSize);
+                GSERIALIZED* temp = geom_in(tempS.c_str(), -1);
+                if (!temp) return 0u;
+
+                char* out = geo_as_geojson(temp, (int)arg0, (int)arg1, nullptr);
+                free(temp);
                 if (!out) return 0u;
                 uint32_t len = static_cast<uint32_t>(strlen(out));
                 if (len > bufMax) len = bufMax;
                 memcpy(buf, out, len);
                 free(out);
                 return len;
-            } catch (const std::exception&) { return 0u; }
+            }
+            catch (const std::exception&)
+            {
+                return 0u;
+            }
         },
-        wkt, option, precision, outBuf.getContent(), nautilus::val<uint32_t>(MAX_LEN));
+        wkt.getContent(), wkt.getContentSize(), arg0, arg1, outBuf.getContent(), nautilus::val<uint32_t>(MAX_LEN));
 
     VarVal(actualLen).writeToMemory(outBuf.getReference());
     return outBuf;
@@ -78,10 +101,10 @@ PhysicalFunctionRegistryReturnType PhysicalFunctionGeneratedRegistrar::RegisterG
     PRECONDITION(arguments.childFunctions.size() == 3,
                  "GeoAsGeojsonPhysicalFunction requires 3 children but got {}",
                  arguments.childFunctions.size());
-    return GeoAsGeojsonPhysicalFunction(
-                                  std::move(arguments.childFunctions[0]),
-                                  std::move(arguments.childFunctions[1]),
-                                  std::move(arguments.childFunctions[2]));
+    auto arg0 = std::move(arguments.childFunctions[0]);
+    auto arg1 = std::move(arguments.childFunctions[1]);
+    auto arg2 = std::move(arguments.childFunctions[2]);
+    return GeoAsGeojsonPhysicalFunction(std::move(arg0), std::move(arg1), std::move(arg2));
 }
 
 } // namespace NES

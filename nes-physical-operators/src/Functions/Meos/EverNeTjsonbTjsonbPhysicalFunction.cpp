@@ -13,18 +13,20 @@
 */
 
 #include <Functions/Meos/EverNeTjsonbTjsonbPhysicalFunction.hpp>
+
 #include <Functions/PhysicalFunction.hpp>
 #include <MEOSWrapper.hpp>
 #include <Nautilus/DataTypes/VarVal.hpp>
+#include <Nautilus/DataTypes/VariableSizedData.hpp>
 #include <Nautilus/Interface/Record.hpp>
 #include <PhysicalFunctionRegistry.hpp>
 #include <ErrorHandling.hpp>
 #include <ExecutionContext.hpp>
+#include <fmt/format.h>
 #include <function.hpp>
+#include <string>
 #include <utility>
 #include <val.hpp>
-#include <stdlib.h>
-#include <string.h>
 
 extern "C" {
 #include <meos.h>
@@ -33,45 +35,65 @@ extern "C" {
 
 namespace NES {
 
-EverNeTjsonbTjsonbPhysicalFunction::EverNeTjsonbTjsonbPhysicalFunction(PhysicalFunction json1, PhysicalFunction ts1, PhysicalFunction json2, PhysicalFunction ts2)
+EverNeTjsonbTjsonbPhysicalFunction::EverNeTjsonbTjsonbPhysicalFunction(PhysicalFunction json_strFunction,
+                                                          PhysicalFunction tsFunction,
+                                                          PhysicalFunction json0Function,
+                                                          PhysicalFunction ts0Function)
 {
-    paramFns.reserve(4);
-    paramFns.push_back(std::move(json1));
-    paramFns.push_back(std::move(ts1));
-    paramFns.push_back(std::move(json2));
-    paramFns.push_back(std::move(ts2));
+    parameterFunctions.reserve(4);
+    parameterFunctions.push_back(std::move(json_strFunction));
+    parameterFunctions.push_back(std::move(tsFunction));
+    parameterFunctions.push_back(std::move(json0Function));
+    parameterFunctions.push_back(std::move(ts0Function));
 }
 
 VarVal EverNeTjsonbTjsonbPhysicalFunction::execute(const Record& record, ArenaRef& arena) const
 {
-    auto json1 = paramFns[0].execute(record, arena);
-    auto ts1 = paramFns[1].execute(record, arena).cast<uint64_t>();
-    auto json2 = paramFns[2].execute(record, arena);
-    auto ts2 = paramFns[3].execute(record, arena).cast<uint64_t>();
+    std::vector<VarVal> parameterValues;
+    parameterValues.reserve(parameterFunctions.size());
+    for (const auto& function : parameterFunctions)
+    {
+        parameterValues.emplace_back(function.execute(record, arena));
+    }
+
+    auto json_str = parameterValues[0].cast<VariableSizedData>();
+    auto ts = parameterValues[1].cast<nautilus::val<uint64_t>>();
+    auto json0 = parameterValues[2].cast<VariableSizedData>();
+    auto ts0 = parameterValues[3].cast<nautilus::val<uint64_t>>();
+
     const auto result = nautilus::invoke(
-        +[](const char* json1, uint32_t json1_len, uint64_t ts1, const char* json2, uint32_t json2_len, uint64_t ts2) -> double {
-            try {
+        +[](const char* json_strPtr, uint32_t json_strSize,
+            uint64_t ts,
+            const char* json0Ptr, uint32_t json0Size,
+            uint64_t ts0) -> double {
+            try
+            {
                 MEOS::Meos::ensureMeosInitialized();
-                char* s1 = (char*)malloc(json1_len + 1);
-                memcpy(s1, json1, json1_len); s1[json1_len] = '\0';
-                Jsonb* jb1 = jsonb_in(s1); free(s1);
-                if (!jb1) return 0.0;
-                TInstant* inst1 = tjsonbinst_make(jb1, (TimestampTz)ts1);
-                free(jb1);
-                if (!inst1) return 0.0;
-                char* s2 = (char*)malloc(json2_len + 1);
-                memcpy(s2, json2, json2_len); s2[json2_len] = '\0';
-                Jsonb* jb2 = jsonb_in(s2); free(s2);
-                if (!jb2) { free(inst1); return 0.0; }
-                TInstant* inst2 = tjsonbinst_make(jb2, (TimestampTz)ts2);
-                free(jb2);
-                if (!inst2) { free(inst1); return 0.0; }
-                int r = ever_ne_tjsonb_tjsonb((Temporal*)inst1, (Temporal*)inst2);
-                free(inst1); free(inst2);
-                return r > 0 ? 1.0 : 0.0;
-            } catch (const std::exception&) { return 0.0; }
+                std::string tempS(json_strPtr, json_strSize);
+                Jsonb* tempJb = jsonb_in(tempS.c_str());
+                if (!tempJb) return 0.0;
+                Temporal* temp = (Temporal*)tjsonbinst_make(tempJb, (TimestampTz)ts);
+                free(tempJb);
+                if (!temp) return 0.0;
+                std::string json0S(json0Ptr, json0Size);
+                Jsonb* jb0 = jsonb_in(json0S.c_str());
+                if (!jb0) { free(temp); return 0.0; }
+                Temporal* inst0 = (Temporal*)tjsonbinst_make(jb0, (TimestampTz)ts0);
+                free(jb0);
+                if (!inst0) { free(temp); return 0.0; }
+
+                double r = ever_ne_tjsonb_tjsonb(temp, inst0);
+                free(temp);
+                free(inst0);
+                return r;
+            }
+            catch (const std::exception&)
+            {
+                return 0.0;
+            }
         },
-        json1, ts1, json2, ts2);
+        json_str.getContent(), json_str.getContentSize(), ts, json0.getContent(), json0.getContentSize(), ts0);
+
     return VarVal(result);
 }
 
@@ -81,11 +103,11 @@ PhysicalFunctionRegistryReturnType PhysicalFunctionGeneratedRegistrar::RegisterE
     PRECONDITION(arguments.childFunctions.size() == 4,
                  "EverNeTjsonbTjsonbPhysicalFunction requires 4 children but got {}",
                  arguments.childFunctions.size());
-    return EverNeTjsonbTjsonbPhysicalFunction(
-                                  std::move(arguments.childFunctions[0]),
-                                  std::move(arguments.childFunctions[1]),
-                                  std::move(arguments.childFunctions[2]),
-                                  std::move(arguments.childFunctions[3]));
+    auto arg0 = std::move(arguments.childFunctions[0]);
+    auto arg1 = std::move(arguments.childFunctions[1]);
+    auto arg2 = std::move(arguments.childFunctions[2]);
+    auto arg3 = std::move(arguments.childFunctions[3]);
+    return EverNeTjsonbTjsonbPhysicalFunction(std::move(arg0), std::move(arg1), std::move(arg2), std::move(arg3));
 }
 
 } // namespace NES

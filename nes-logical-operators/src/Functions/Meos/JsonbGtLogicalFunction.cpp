@@ -13,6 +13,7 @@
 */
 
 #include <Functions/Meos/JsonbGtLogicalFunction.hpp>
+
 #include <DataTypes/DataType.hpp>
 #include <DataTypes/DataTypeProvider.hpp>
 #include <DataTypes/Schema.hpp>
@@ -25,51 +26,100 @@
 namespace NES
 {
 
-JsonbGtLogicalFunction::JsonbGtLogicalFunction(LogicalFunction jb1, LogicalFunction jb2)
+JsonbGtLogicalFunction::JsonbGtLogicalFunction(LogicalFunction jb,
+                                          LogicalFunction arg0)
     : dataType(DataTypeProvider::provideDataType(DataType::Type::FLOAT64))
 {
     parameters.reserve(2);
-    parameters.push_back(std::move(jb1));
-    parameters.push_back(std::move(jb2));
+    parameters.push_back(std::move(jb));
+    parameters.push_back(std::move(arg0));
 }
-DataType JsonbGtLogicalFunction::getDataType() const { return dataType; }
-LogicalFunction JsonbGtLogicalFunction::withDataType(const DataType& d) const { auto c=*this; c.dataType=d; return c; }
-std::vector<LogicalFunction> JsonbGtLogicalFunction::getChildren() const { return parameters; }
-LogicalFunction JsonbGtLogicalFunction::withChildren(const std::vector<LogicalFunction>& children) const {
-    PRECONDITION(children.size()==2,"JsonbGtLogicalFunction requires 2 children, but got {}",children.size());
-    auto c=*this; c.parameters=children; return c;
+
+DataType JsonbGtLogicalFunction::getDataType() const
+{
+    return dataType;
 }
-std::string_view JsonbGtLogicalFunction::getType() const { return NAME; }
-bool JsonbGtLogicalFunction::operator==(const LogicalFunctionConcept& rhs) const {
-    if (const auto* o=dynamic_cast<const JsonbGtLogicalFunction*>(&rhs)) return parameters==o->parameters;
+
+LogicalFunction JsonbGtLogicalFunction::withDataType(const DataType& newDataType) const
+{
+    auto copy = *this;
+    copy.dataType = newDataType;
+    return copy;
+}
+
+std::vector<LogicalFunction> JsonbGtLogicalFunction::getChildren() const
+{
+    return parameters;
+}
+
+LogicalFunction JsonbGtLogicalFunction::withChildren(const std::vector<LogicalFunction>& children) const
+{
+    PRECONDITION(children.size() == 2, "JsonbGtLogicalFunction requires 2 children, but got {}", children.size());
+    auto copy = *this;
+    copy.parameters = children;
+    return copy;
+}
+
+std::string_view JsonbGtLogicalFunction::getType() const
+{
+    return NAME;
+}
+
+bool JsonbGtLogicalFunction::operator==(const LogicalFunctionConcept& rhs) const
+{
+    if (const auto* other = dynamic_cast<const JsonbGtLogicalFunction*>(&rhs))
+    {
+        return parameters == other->parameters;
+    }
     return false;
 }
-std::string JsonbGtLogicalFunction::explain(ExplainVerbosity v) const {
-    return fmt::format("{}({})",NAME,parameters[0].explain(v));
+
+std::string JsonbGtLogicalFunction::explain(ExplainVerbosity verbosity) const
+{
+    std::string args;
+    for (size_t index = 0; index < parameters.size(); ++index)
+    {
+        if (index > 0)
+        {
+            args += ", ";
+        }
+        args += parameters[index].explain(verbosity);
+    }
+    return fmt::format("{}({})", NAME, args);
 }
-LogicalFunction JsonbGtLogicalFunction::withInferredDataType(const Schema& schema) const {
-    std::vector<LogicalFunction> c; c.reserve(2);
-    for (const auto& p : parameters) c.emplace_back(p.withInferredDataType(schema));
-    INVARIANT(c[0].getDataType().isType(DataType::Type::VARSIZED), "jb1 must be VARSIZED");
-    INVARIANT(c[1].getDataType().isType(DataType::Type::VARSIZED), "jb2 must be VARSIZED");
-    return withChildren(c);
+
+LogicalFunction JsonbGtLogicalFunction::withInferredDataType(const Schema& schema) const
+{
+    std::vector<LogicalFunction> newChildren;
+    newChildren.reserve(parameters.size());
+    for (const auto& child : parameters)
+    {
+        newChildren.emplace_back(child.withInferredDataType(schema));
+    }
+    return withChildren(newChildren);
 }
-SerializableFunction JsonbGtLogicalFunction::serialize() const {
+
+SerializableFunction JsonbGtLogicalFunction::serialize() const
+{
     SerializableFunction proto;
     proto.set_function_type(std::string(NAME));
     DataTypeSerializationUtil::serializeDataType(dataType, proto.mutable_data_type());
-    for (const auto& ch : parameters) proto.add_children()->CopyFrom(ch.serialize());
+    for (const auto& child : parameters)
+    {
+        proto.add_children()->CopyFrom(child.serialize());
+    }
     return proto;
 }
+
 LogicalFunctionRegistryReturnType LogicalFunctionGeneratedRegistrar::RegisterJsonbGtLogicalFunction(
     LogicalFunctionRegistryArguments arguments)
 {
-    PRECONDITION(arguments.children.size()==2,
+    PRECONDITION(arguments.children.size() == 2,
                  "JsonbGtLogicalFunction requires 2 children but got {}",
                  arguments.children.size());
-    return JsonbGtLogicalFunction(
-                                 std::move(arguments.children[0]),
-                                 std::move(arguments.children[1]));
+    auto arg0 = std::move(arguments.children[0]);
+    auto arg1 = std::move(arguments.children[1]);
+    return JsonbGtLogicalFunction(std::move(arg0), std::move(arg1));
 }
 
 } // namespace NES

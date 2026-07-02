@@ -26,51 +26,75 @@
 namespace NES
 {
 
-GeoFromGeojsonLogicalFunction::GeoFromGeojsonLogicalFunction(LogicalFunction json)
+GeoFromGeojsonLogicalFunction::GeoFromGeojsonLogicalFunction()
     : dataType(DataTypeProvider::provideDataType(DataType::Type::VARSIZED))
 {
-    parameters.reserve(1);
-    parameters.push_back(std::move(json));
+    parameters.reserve(0);
+
 }
 
-DataType GeoFromGeojsonLogicalFunction::getDataType() const { return dataType; }
+DataType GeoFromGeojsonLogicalFunction::getDataType() const
+{
+    return dataType;
+}
 
 LogicalFunction GeoFromGeojsonLogicalFunction::withDataType(const DataType& newDataType) const
 {
-    auto copy = *this; copy.dataType = newDataType; return copy;
+    auto copy = *this;
+    copy.dataType = newDataType;
+    return copy;
 }
 
-std::vector<LogicalFunction> GeoFromGeojsonLogicalFunction::getChildren() const { return parameters; }
+std::vector<LogicalFunction> GeoFromGeojsonLogicalFunction::getChildren() const
+{
+    return parameters;
+}
 
 LogicalFunction GeoFromGeojsonLogicalFunction::withChildren(const std::vector<LogicalFunction>& children) const
 {
-    PRECONDITION(children.size() == 1,
-                 "GeoFromGeojsonLogicalFunction requires 1 children, but got {}", children.size());
-    auto copy = *this; copy.parameters = children; return copy;
+    PRECONDITION(children.size() == 0, "GeoFromGeojsonLogicalFunction requires 0 children, but got {}", children.size());
+    auto copy = *this;
+    copy.parameters = children;
+    return copy;
 }
 
-std::string_view GeoFromGeojsonLogicalFunction::getType() const { return NAME; }
+std::string_view GeoFromGeojsonLogicalFunction::getType() const
+{
+    return NAME;
+}
 
 bool GeoFromGeojsonLogicalFunction::operator==(const LogicalFunctionConcept& rhs) const
 {
     if (const auto* other = dynamic_cast<const GeoFromGeojsonLogicalFunction*>(&rhs))
+    {
         return parameters == other->parameters;
+    }
     return false;
 }
 
 std::string GeoFromGeojsonLogicalFunction::explain(ExplainVerbosity verbosity) const
 {
-    return fmt::format("{}({})", NAME, parameters[0].explain(verbosity));
+    std::string args;
+    for (size_t index = 0; index < parameters.size(); ++index)
+    {
+        if (index > 0)
+        {
+            args += ", ";
+        }
+        args += parameters[index].explain(verbosity);
+    }
+    return fmt::format("{}({})", NAME, args);
 }
 
 LogicalFunction GeoFromGeojsonLogicalFunction::withInferredDataType(const Schema& schema) const
 {
-    std::vector<LogicalFunction> c;
-    c.reserve(1);
-    for (const auto& p : parameters)
-        c.emplace_back(p.withInferredDataType(schema));
-    INVARIANT(c[0].getDataType().isType(DataType::Type::VARSIZED), "json must be VARSIZED");
-    return withChildren(c);
+    std::vector<LogicalFunction> newChildren;
+    newChildren.reserve(parameters.size());
+    for (const auto& child : parameters)
+    {
+        newChildren.emplace_back(child.withInferredDataType(schema));
+    }
+    return withChildren(newChildren);
 }
 
 SerializableFunction GeoFromGeojsonLogicalFunction::serialize() const
@@ -79,18 +103,19 @@ SerializableFunction GeoFromGeojsonLogicalFunction::serialize() const
     proto.set_function_type(std::string(NAME));
     DataTypeSerializationUtil::serializeDataType(dataType, proto.mutable_data_type());
     for (const auto& child : parameters)
+    {
         proto.add_children()->CopyFrom(child.serialize());
+    }
     return proto;
 }
 
 LogicalFunctionRegistryReturnType LogicalFunctionGeneratedRegistrar::RegisterGeoFromGeojsonLogicalFunction(
     LogicalFunctionRegistryArguments arguments)
 {
-    PRECONDITION(arguments.children.size() == 1,
-                 "GeoFromGeojsonLogicalFunction requires 1 children but got {}",
+    PRECONDITION(arguments.children.size() == 0,
+                 "GeoFromGeojsonLogicalFunction requires 0 children but got {}",
                  arguments.children.size());
-    return GeoFromGeojsonLogicalFunction(
-                                 std::move(arguments.children[0]));
+    return GeoFromGeojsonLogicalFunction();
 }
 
 } // namespace NES

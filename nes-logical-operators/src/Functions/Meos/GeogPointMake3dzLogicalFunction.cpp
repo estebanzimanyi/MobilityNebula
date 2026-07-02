@@ -26,7 +26,10 @@
 namespace NES
 {
 
-GeogPointMake3dzLogicalFunction::GeogPointMake3dzLogicalFunction(LogicalFunction srid, LogicalFunction x, LogicalFunction y, LogicalFunction z)
+GeogPointMake3dzLogicalFunction::GeogPointMake3dzLogicalFunction(LogicalFunction srid,
+                                          LogicalFunction x,
+                                          LogicalFunction y,
+                                          LogicalFunction z)
     : dataType(DataTypeProvider::provideDataType(DataType::Type::VARSIZED))
 {
     parameters.reserve(4);
@@ -36,47 +39,68 @@ GeogPointMake3dzLogicalFunction::GeogPointMake3dzLogicalFunction(LogicalFunction
     parameters.push_back(std::move(z));
 }
 
-DataType GeogPointMake3dzLogicalFunction::getDataType() const { return dataType; }
+DataType GeogPointMake3dzLogicalFunction::getDataType() const
+{
+    return dataType;
+}
 
 LogicalFunction GeogPointMake3dzLogicalFunction::withDataType(const DataType& newDataType) const
 {
-    auto copy = *this; copy.dataType = newDataType; return copy;
+    auto copy = *this;
+    copy.dataType = newDataType;
+    return copy;
 }
 
-std::vector<LogicalFunction> GeogPointMake3dzLogicalFunction::getChildren() const { return parameters; }
+std::vector<LogicalFunction> GeogPointMake3dzLogicalFunction::getChildren() const
+{
+    return parameters;
+}
 
 LogicalFunction GeogPointMake3dzLogicalFunction::withChildren(const std::vector<LogicalFunction>& children) const
 {
-    PRECONDITION(children.size() == 4,
-                 "GeogPointMake3dzLogicalFunction requires 4 children, but got {}", children.size());
-    auto copy = *this; copy.parameters = children; return copy;
+    PRECONDITION(children.size() == 4, "GeogPointMake3dzLogicalFunction requires 4 children, but got {}", children.size());
+    auto copy = *this;
+    copy.parameters = children;
+    return copy;
 }
 
-std::string_view GeogPointMake3dzLogicalFunction::getType() const { return NAME; }
+std::string_view GeogPointMake3dzLogicalFunction::getType() const
+{
+    return NAME;
+}
 
 bool GeogPointMake3dzLogicalFunction::operator==(const LogicalFunctionConcept& rhs) const
 {
     if (const auto* other = dynamic_cast<const GeogPointMake3dzLogicalFunction*>(&rhs))
+    {
         return parameters == other->parameters;
+    }
     return false;
 }
 
 std::string GeogPointMake3dzLogicalFunction::explain(ExplainVerbosity verbosity) const
 {
-    return fmt::format("{}({})", NAME, parameters[0].explain(verbosity));
+    std::string args;
+    for (size_t index = 0; index < parameters.size(); ++index)
+    {
+        if (index > 0)
+        {
+            args += ", ";
+        }
+        args += parameters[index].explain(verbosity);
+    }
+    return fmt::format("{}({})", NAME, args);
 }
 
 LogicalFunction GeogPointMake3dzLogicalFunction::withInferredDataType(const Schema& schema) const
 {
-    std::vector<LogicalFunction> c;
-    c.reserve(4);
-    for (const auto& p : parameters)
-        c.emplace_back(p.withInferredDataType(schema));
-    INVARIANT(c[0].getDataType().isType(DataType::Type::UINT64), "srid must be UINT64");
-    INVARIANT(c[1].getDataType().isType(DataType::Type::FLOAT64), "x must be FLOAT64");
-    INVARIANT(c[2].getDataType().isType(DataType::Type::FLOAT64), "y must be FLOAT64");
-    INVARIANT(c[3].getDataType().isType(DataType::Type::FLOAT64), "z must be FLOAT64");
-    return withChildren(c);
+    std::vector<LogicalFunction> newChildren;
+    newChildren.reserve(parameters.size());
+    for (const auto& child : parameters)
+    {
+        newChildren.emplace_back(child.withInferredDataType(schema));
+    }
+    return withChildren(newChildren);
 }
 
 SerializableFunction GeogPointMake3dzLogicalFunction::serialize() const
@@ -85,7 +109,9 @@ SerializableFunction GeogPointMake3dzLogicalFunction::serialize() const
     proto.set_function_type(std::string(NAME));
     DataTypeSerializationUtil::serializeDataType(dataType, proto.mutable_data_type());
     for (const auto& child : parameters)
+    {
         proto.add_children()->CopyFrom(child.serialize());
+    }
     return proto;
 }
 
@@ -95,11 +121,11 @@ LogicalFunctionRegistryReturnType LogicalFunctionGeneratedRegistrar::RegisterGeo
     PRECONDITION(arguments.children.size() == 4,
                  "GeogPointMake3dzLogicalFunction requires 4 children but got {}",
                  arguments.children.size());
-    return GeogPointMake3dzLogicalFunction(
-                                 std::move(arguments.children[0]),
-                                 std::move(arguments.children[1]),
-                                 std::move(arguments.children[2]),
-                                 std::move(arguments.children[3]));
+    auto arg0 = std::move(arguments.children[0]);
+    auto arg1 = std::move(arguments.children[1]);
+    auto arg2 = std::move(arguments.children[2]);
+    auto arg3 = std::move(arguments.children[3]);
+    return GeogPointMake3dzLogicalFunction(std::move(arg0), std::move(arg1), std::move(arg2), std::move(arg3));
 }
 
 } // namespace NES

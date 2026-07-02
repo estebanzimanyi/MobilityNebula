@@ -13,6 +13,7 @@
 */
 
 #include <Functions/Meos/IntspanLowerIncLogicalFunction.hpp>
+
 #include <DataTypes/DataType.hpp>
 #include <DataTypes/DataTypeProvider.hpp>
 #include <DataTypes/Schema.hpp>
@@ -31,42 +32,91 @@ IntspanLowerIncLogicalFunction::IntspanLowerIncLogicalFunction(LogicalFunction s
     parameters.reserve(1);
     parameters.push_back(std::move(sp));
 }
-DataType IntspanLowerIncLogicalFunction::getDataType() const { return dataType; }
-LogicalFunction IntspanLowerIncLogicalFunction::withDataType(const DataType& d) const { auto c=*this; c.dataType=d; return c; }
-std::vector<LogicalFunction> IntspanLowerIncLogicalFunction::getChildren() const { return parameters; }
-LogicalFunction IntspanLowerIncLogicalFunction::withChildren(const std::vector<LogicalFunction>& children) const {
-    PRECONDITION(children.size()==1,"IntspanLowerIncLogicalFunction requires 1 children, but got {}",children.size());
-    auto c=*this; c.parameters=children; return c;
+
+DataType IntspanLowerIncLogicalFunction::getDataType() const
+{
+    return dataType;
 }
-std::string_view IntspanLowerIncLogicalFunction::getType() const { return NAME; }
-bool IntspanLowerIncLogicalFunction::operator==(const LogicalFunctionConcept& rhs) const {
-    if (const auto* o=dynamic_cast<const IntspanLowerIncLogicalFunction*>(&rhs)) return parameters==o->parameters;
+
+LogicalFunction IntspanLowerIncLogicalFunction::withDataType(const DataType& newDataType) const
+{
+    auto copy = *this;
+    copy.dataType = newDataType;
+    return copy;
+}
+
+std::vector<LogicalFunction> IntspanLowerIncLogicalFunction::getChildren() const
+{
+    return parameters;
+}
+
+LogicalFunction IntspanLowerIncLogicalFunction::withChildren(const std::vector<LogicalFunction>& children) const
+{
+    PRECONDITION(children.size() == 1, "IntspanLowerIncLogicalFunction requires 1 children, but got {}", children.size());
+    auto copy = *this;
+    copy.parameters = children;
+    return copy;
+}
+
+std::string_view IntspanLowerIncLogicalFunction::getType() const
+{
+    return NAME;
+}
+
+bool IntspanLowerIncLogicalFunction::operator==(const LogicalFunctionConcept& rhs) const
+{
+    if (const auto* other = dynamic_cast<const IntspanLowerIncLogicalFunction*>(&rhs))
+    {
+        return parameters == other->parameters;
+    }
     return false;
 }
-std::string IntspanLowerIncLogicalFunction::explain(ExplainVerbosity v) const {
-    return fmt::format("{}({})",NAME,parameters[0].explain(v));
+
+std::string IntspanLowerIncLogicalFunction::explain(ExplainVerbosity verbosity) const
+{
+    std::string args;
+    for (size_t index = 0; index < parameters.size(); ++index)
+    {
+        if (index > 0)
+        {
+            args += ", ";
+        }
+        args += parameters[index].explain(verbosity);
+    }
+    return fmt::format("{}({})", NAME, args);
 }
-LogicalFunction IntspanLowerIncLogicalFunction::withInferredDataType(const Schema& schema) const {
-    std::vector<LogicalFunction> c; c.reserve(1);
-    for (const auto& p : parameters) c.emplace_back(p.withInferredDataType(schema));
-    INVARIANT(c[0].getDataType().isType(DataType::Type::VARSIZED), "sp must be VARSIZED");
-    return withChildren(c);
+
+LogicalFunction IntspanLowerIncLogicalFunction::withInferredDataType(const Schema& schema) const
+{
+    std::vector<LogicalFunction> newChildren;
+    newChildren.reserve(parameters.size());
+    for (const auto& child : parameters)
+    {
+        newChildren.emplace_back(child.withInferredDataType(schema));
+    }
+    return withChildren(newChildren);
 }
-SerializableFunction IntspanLowerIncLogicalFunction::serialize() const {
+
+SerializableFunction IntspanLowerIncLogicalFunction::serialize() const
+{
     SerializableFunction proto;
     proto.set_function_type(std::string(NAME));
     DataTypeSerializationUtil::serializeDataType(dataType, proto.mutable_data_type());
-    for (const auto& ch : parameters) proto.add_children()->CopyFrom(ch.serialize());
+    for (const auto& child : parameters)
+    {
+        proto.add_children()->CopyFrom(child.serialize());
+    }
     return proto;
 }
+
 LogicalFunctionRegistryReturnType LogicalFunctionGeneratedRegistrar::RegisterIntspanLowerIncLogicalFunction(
     LogicalFunctionRegistryArguments arguments)
 {
-    PRECONDITION(arguments.children.size()==1,
+    PRECONDITION(arguments.children.size() == 1,
                  "IntspanLowerIncLogicalFunction requires 1 children but got {}",
                  arguments.children.size());
-    return IntspanLowerIncLogicalFunction(
-                                 std::move(arguments.children[0]));
+    auto arg0 = std::move(arguments.children[0]);
+    return IntspanLowerIncLogicalFunction(std::move(arg0));
 }
 
 } // namespace NES

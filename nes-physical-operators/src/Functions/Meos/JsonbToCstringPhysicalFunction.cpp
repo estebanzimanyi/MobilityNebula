@@ -13,6 +13,7 @@
 */
 
 #include <Functions/Meos/JsonbToCstringPhysicalFunction.hpp>
+
 #include <Functions/PhysicalFunction.hpp>
 #include <MEOSWrapper.hpp>
 #include <Nautilus/DataTypes/VarVal.hpp>
@@ -21,7 +22,10 @@
 #include <PhysicalFunctionRegistry.hpp>
 #include <ErrorHandling.hpp>
 #include <ExecutionContext.hpp>
+#include <fmt/format.h>
 #include <function.hpp>
+#include <string>
+#include <string.h>
 #include <utility>
 #include <val.hpp>
 
@@ -29,38 +33,56 @@ extern "C" {
 #include <meos.h>
 #include <meos_json.h>
 }
-#include <string>
-#include <string.h>
 
 namespace NES {
 
-JsonbToCstringPhysicalFunction::JsonbToCstringPhysicalFunction(PhysicalFunction jb) {
-    paramFns.reserve(1);
-    paramFns.push_back(std::move(jb));
+JsonbToCstringPhysicalFunction::JsonbToCstringPhysicalFunction(PhysicalFunction jbFunction)
+{
+    parameterFunctions.reserve(1);
+    parameterFunctions.push_back(std::move(jbFunction));
 }
 
-VarVal JsonbToCstringPhysicalFunction::execute(const Record& record, ArenaRef& arena) const {
-    auto jb = paramFns[0].execute(record, arena).cast<VariableSizedData>();
+VarVal JsonbToCstringPhysicalFunction::execute(const Record& record, ArenaRef& arena) const
+{
+    std::vector<VarVal> parameterValues;
+    parameterValues.reserve(parameterFunctions.size());
+    for (const auto& function : parameterFunctions)
+    {
+        parameterValues.emplace_back(function.execute(record, arena));
+    }
+
+    auto jb = parameterValues[0].cast<VariableSizedData>();
+
     constexpr uint32_t MAX_LEN = 4096;
     auto outBuf = arena.allocateVariableSizedData(nautilus::val<uint32_t>(MAX_LEN));
+
     const auto actualLen = nautilus::invoke(
-        +[](const char* w, uint32_t wsz, char* buf, uint32_t bufMax) -> uint32_t {
-            try {
+        +[](const char* jbPtr, uint32_t jbSize,
+            char* buf,
+            uint32_t bufMax) -> uint32_t {
+            try
+            {
                 MEOS::Meos::ensureMeosInitialized();
-                                std::string s(w, wsz);
-                Jsonb* jb = jsonb_in(s.c_str());
-                if (!jb) return 0u;
-                char* out = jsonb_to_cstring(jb);
-                free(jb);
+                std::string tempS(jbPtr, jbSize);
+                Jsonb* temp = jsonb_in(tempS.c_str());
+                if (!temp) return 0u;
+
+                char* out = jsonb_to_cstring(temp);
+                free(temp);
                 if (!out) return 0u;
                 uint32_t len = static_cast<uint32_t>(strlen(out));
                 if (len > bufMax) len = bufMax;
                 memcpy(buf, out, len);
                 free(out);
                 return len;
-            } catch (const std::exception&) { return 0u; }
+            }
+            catch (const std::exception&)
+            {
+                return 0u;
+            }
         },
-        jb, outBuf.getContent(), nautilus::val<uint32_t>(MAX_LEN));
+        jb.getContent(), jb.getContentSize(), outBuf.getContent(), nautilus::val<uint32_t>(MAX_LEN));
+
     VarVal(actualLen).writeToMemory(outBuf.getReference());
     return outBuf;
 }
@@ -68,11 +90,11 @@ VarVal JsonbToCstringPhysicalFunction::execute(const Record& record, ArenaRef& a
 PhysicalFunctionRegistryReturnType PhysicalFunctionGeneratedRegistrar::RegisterJsonbToCstringPhysicalFunction(
     PhysicalFunctionRegistryArguments arguments)
 {
-    PRECONDITION(arguments.childFunctions.size()==1,
+    PRECONDITION(arguments.childFunctions.size() == 1,
                  "JsonbToCstringPhysicalFunction requires 1 children but got {}",
                  arguments.childFunctions.size());
-    return JsonbToCstringPhysicalFunction(
-                                  std::move(arguments.childFunctions[0]));
+    auto arg0 = std::move(arguments.childFunctions[0]);
+    return JsonbToCstringPhysicalFunction(std::move(arg0));
 }
 
 } // namespace NES

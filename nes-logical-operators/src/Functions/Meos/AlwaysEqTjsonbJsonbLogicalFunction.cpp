@@ -26,55 +26,79 @@
 namespace NES
 {
 
-AlwaysEqTjsonbJsonbLogicalFunction::AlwaysEqTjsonbJsonbLogicalFunction(LogicalFunction json_str, LogicalFunction ts, LogicalFunction target_json)
+AlwaysEqTjsonbJsonbLogicalFunction::AlwaysEqTjsonbJsonbLogicalFunction(LogicalFunction json_str,
+                                          LogicalFunction ts,
+                                          LogicalFunction arg0)
     : dataType(DataTypeProvider::provideDataType(DataType::Type::FLOAT64))
 {
     parameters.reserve(3);
     parameters.push_back(std::move(json_str));
     parameters.push_back(std::move(ts));
-    parameters.push_back(std::move(target_json));
+    parameters.push_back(std::move(arg0));
 }
 
-DataType AlwaysEqTjsonbJsonbLogicalFunction::getDataType() const { return dataType; }
+DataType AlwaysEqTjsonbJsonbLogicalFunction::getDataType() const
+{
+    return dataType;
+}
 
 LogicalFunction AlwaysEqTjsonbJsonbLogicalFunction::withDataType(const DataType& newDataType) const
 {
-    auto copy = *this; copy.dataType = newDataType; return copy;
+    auto copy = *this;
+    copy.dataType = newDataType;
+    return copy;
 }
 
-std::vector<LogicalFunction> AlwaysEqTjsonbJsonbLogicalFunction::getChildren() const { return parameters; }
+std::vector<LogicalFunction> AlwaysEqTjsonbJsonbLogicalFunction::getChildren() const
+{
+    return parameters;
+}
 
 LogicalFunction AlwaysEqTjsonbJsonbLogicalFunction::withChildren(const std::vector<LogicalFunction>& children) const
 {
-    PRECONDITION(children.size() == 3,
-                 "AlwaysEqTjsonbJsonbLogicalFunction requires 3 children, but got {}", children.size());
-    auto copy = *this; copy.parameters = children; return copy;
+    PRECONDITION(children.size() == 3, "AlwaysEqTjsonbJsonbLogicalFunction requires 3 children, but got {}", children.size());
+    auto copy = *this;
+    copy.parameters = children;
+    return copy;
 }
 
-std::string_view AlwaysEqTjsonbJsonbLogicalFunction::getType() const { return NAME; }
+std::string_view AlwaysEqTjsonbJsonbLogicalFunction::getType() const
+{
+    return NAME;
+}
 
 bool AlwaysEqTjsonbJsonbLogicalFunction::operator==(const LogicalFunctionConcept& rhs) const
 {
     if (const auto* other = dynamic_cast<const AlwaysEqTjsonbJsonbLogicalFunction*>(&rhs))
+    {
         return parameters == other->parameters;
+    }
     return false;
 }
 
 std::string AlwaysEqTjsonbJsonbLogicalFunction::explain(ExplainVerbosity verbosity) const
 {
-    return fmt::format("{}({})", NAME, parameters[0].explain(verbosity));
+    std::string args;
+    for (size_t index = 0; index < parameters.size(); ++index)
+    {
+        if (index > 0)
+        {
+            args += ", ";
+        }
+        args += parameters[index].explain(verbosity);
+    }
+    return fmt::format("{}({})", NAME, args);
 }
 
 LogicalFunction AlwaysEqTjsonbJsonbLogicalFunction::withInferredDataType(const Schema& schema) const
 {
-    std::vector<LogicalFunction> c;
-    c.reserve(3);
-    for (const auto& p : parameters)
-        c.emplace_back(p.withInferredDataType(schema));
-    INVARIANT(c[0].getDataType().isType(DataType::Type::VARSIZED), "json_str must be VARSIZED");
-    INVARIANT(c[1].getDataType().isType(DataType::Type::UINT64), "ts must be UINT64");
-    INVARIANT(c[2].getDataType().isType(DataType::Type::VARSIZED), "target_json must be VARSIZED");
-    return withChildren(c);
+    std::vector<LogicalFunction> newChildren;
+    newChildren.reserve(parameters.size());
+    for (const auto& child : parameters)
+    {
+        newChildren.emplace_back(child.withInferredDataType(schema));
+    }
+    return withChildren(newChildren);
 }
 
 SerializableFunction AlwaysEqTjsonbJsonbLogicalFunction::serialize() const
@@ -83,7 +107,9 @@ SerializableFunction AlwaysEqTjsonbJsonbLogicalFunction::serialize() const
     proto.set_function_type(std::string(NAME));
     DataTypeSerializationUtil::serializeDataType(dataType, proto.mutable_data_type());
     for (const auto& child : parameters)
+    {
         proto.add_children()->CopyFrom(child.serialize());
+    }
     return proto;
 }
 
@@ -93,10 +119,10 @@ LogicalFunctionRegistryReturnType LogicalFunctionGeneratedRegistrar::RegisterAlw
     PRECONDITION(arguments.children.size() == 3,
                  "AlwaysEqTjsonbJsonbLogicalFunction requires 3 children but got {}",
                  arguments.children.size());
-    return AlwaysEqTjsonbJsonbLogicalFunction(
-                                 std::move(arguments.children[0]),
-                                 std::move(arguments.children[1]),
-                                 std::move(arguments.children[2]));
+    auto arg0 = std::move(arguments.children[0]);
+    auto arg1 = std::move(arguments.children[1]);
+    auto arg2 = std::move(arguments.children[2]);
+    return AlwaysEqTjsonbJsonbLogicalFunction(std::move(arg0), std::move(arg1), std::move(arg2));
 }
 
 } // namespace NES

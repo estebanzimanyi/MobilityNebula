@@ -13,61 +13,85 @@
 */
 
 #include <Functions/Meos/NadTnpointNpointPhysicalFunction.hpp>
+
 #include <Functions/PhysicalFunction.hpp>
 #include <MEOSWrapper.hpp>
 #include <Nautilus/DataTypes/VarVal.hpp>
+#include <Nautilus/DataTypes/VariableSizedData.hpp>
 #include <Nautilus/Interface/Record.hpp>
 #include <PhysicalFunctionRegistry.hpp>
 #include <ErrorHandling.hpp>
 #include <ExecutionContext.hpp>
+#include <fmt/format.h>
 #include <function.hpp>
+#include <string>
 #include <utility>
 #include <val.hpp>
-#include <stdlib.h>
-#include <string.h>
 
 extern "C" {
 #include <meos.h>
-#include <meos_geo.h>
 #include <meos_npoint.h>
 }
 
 namespace NES {
 
-NadTnpointNpointPhysicalFunction::NadTnpointNpointPhysicalFunction(PhysicalFunction rid1, PhysicalFunction pos1, PhysicalFunction ts, PhysicalFunction rid2, PhysicalFunction pos2)
+NadTnpointNpointPhysicalFunction::NadTnpointNpointPhysicalFunction(PhysicalFunction ridFunction,
+                                                          PhysicalFunction fracFunction,
+                                                          PhysicalFunction tsFunction,
+                                                          PhysicalFunction rid0Function,
+                                                          PhysicalFunction frac0Function)
 {
-    paramFns.reserve(5);
-    paramFns.push_back(std::move(rid1));
-    paramFns.push_back(std::move(pos1));
-    paramFns.push_back(std::move(ts));
-    paramFns.push_back(std::move(rid2));
-    paramFns.push_back(std::move(pos2));
+    parameterFunctions.reserve(5);
+    parameterFunctions.push_back(std::move(ridFunction));
+    parameterFunctions.push_back(std::move(fracFunction));
+    parameterFunctions.push_back(std::move(tsFunction));
+    parameterFunctions.push_back(std::move(rid0Function));
+    parameterFunctions.push_back(std::move(frac0Function));
 }
 
 VarVal NadTnpointNpointPhysicalFunction::execute(const Record& record, ArenaRef& arena) const
 {
-    auto rid1 = paramFns[0].execute(record, arena).cast<uint64_t>();
-    auto pos1 = paramFns[1].execute(record, arena).cast<double>();
-    auto ts = paramFns[2].execute(record, arena).cast<uint64_t>();
-    auto rid2 = paramFns[3].execute(record, arena).cast<uint64_t>();
-    auto pos2 = paramFns[4].execute(record, arena).cast<double>();
+    std::vector<VarVal> parameterValues;
+    parameterValues.reserve(parameterFunctions.size());
+    for (const auto& function : parameterFunctions)
+    {
+        parameterValues.emplace_back(function.execute(record, arena));
+    }
+
+    auto rid = parameterValues[0].cast<nautilus::val<int64_t>>();
+    auto frac = parameterValues[1].cast<nautilus::val<double>>();
+    auto ts = parameterValues[2].cast<nautilus::val<uint64_t>>();
+    auto rid0 = parameterValues[3].cast<nautilus::val<uint64_t>>();
+    auto frac0 = parameterValues[4].cast<nautilus::val<double>>();
+
     const auto result = nautilus::invoke(
-        +[](uint64_t rid1, double pos1, uint64_t ts, uint64_t rid2, double pos2) -> double {
-            try {
+        +[](int64_t rid,
+            double frac,
+            uint64_t ts,
+            uint64_t rid0,
+            double frac0) -> double {
+            try
+            {
                 MEOS::Meos::ensureMeosInitialized();
-                Npoint* np1 = npoint_make((int64_t)rid1, pos1);
-                if (!np1) return 0.0;
-                Temporal* inst = (Temporal*)tnpointinst_make(np1, (TimestampTz)ts);
-                free(np1);
-                if (!inst) return 0.0;
-                Npoint* np2 = npoint_make((int64_t)rid2, pos2);
-                if (!np2) { free(inst); return 0.0; }
-                double r = nad_tnpoint_npoint(inst, np2);
-                free(inst); free(np2);
+                if (frac < 0.0 || frac > 1.0) return 0.0;
+                std::string tempWkt = fmt::format("NPoint({},{})@{}", rid, frac, MEOS::Meos::convertEpochToTimestamp(ts));
+                Temporal* temp = tnpoint_in(tempWkt.c_str());
+                if (!temp) return 0.0;
+                Npoint* np0 = npoint_make((int64_t)rid0, frac0);
+                if (!np0) { free(temp); return 0.0; }
+
+                double r = nad_tnpoint_npoint(temp, np0);
+                free(temp);
+                free(np0);
                 return r;
-            } catch (const std::exception&) { return 0.0; }
+            }
+            catch (const std::exception&)
+            {
+                return 0.0;
+            }
         },
-        rid1, pos1, ts, rid2, pos2);
+        rid, frac, ts, rid0, frac0);
+
     return VarVal(result);
 }
 
@@ -77,12 +101,12 @@ PhysicalFunctionRegistryReturnType PhysicalFunctionGeneratedRegistrar::RegisterN
     PRECONDITION(arguments.childFunctions.size() == 5,
                  "NadTnpointNpointPhysicalFunction requires 5 children but got {}",
                  arguments.childFunctions.size());
-    return NadTnpointNpointPhysicalFunction(
-                                  std::move(arguments.childFunctions[0]),
-                                  std::move(arguments.childFunctions[1]),
-                                  std::move(arguments.childFunctions[2]),
-                                  std::move(arguments.childFunctions[3]),
-                                  std::move(arguments.childFunctions[4]));
+    auto arg0 = std::move(arguments.childFunctions[0]);
+    auto arg1 = std::move(arguments.childFunctions[1]);
+    auto arg2 = std::move(arguments.childFunctions[2]);
+    auto arg3 = std::move(arguments.childFunctions[3]);
+    auto arg4 = std::move(arguments.childFunctions[4]);
+    return NadTnpointNpointPhysicalFunction(std::move(arg0), std::move(arg1), std::move(arg2), std::move(arg3), std::move(arg4));
 }
 
 } // namespace NES

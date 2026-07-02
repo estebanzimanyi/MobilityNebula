@@ -13,6 +13,7 @@
 */
 
 #include <Functions/Meos/AlwaysNeTquadbinQuadbinPhysicalFunction.hpp>
+
 #include <Functions/PhysicalFunction.hpp>
 #include <MEOSWrapper.hpp>
 #include <Nautilus/DataTypes/VarVal.hpp>
@@ -21,7 +22,9 @@
 #include <PhysicalFunctionRegistry.hpp>
 #include <ErrorHandling.hpp>
 #include <ExecutionContext.hpp>
+#include <fmt/format.h>
 #include <function.hpp>
+#include <string>
 #include <utility>
 #include <val.hpp>
 
@@ -32,40 +35,63 @@ extern "C" {
 
 namespace NES {
 
-AlwaysNeTquadbinQuadbinPhysicalFunction::AlwaysNeTquadbinQuadbinPhysicalFunction(PhysicalFunction inst_cell, PhysicalFunction ts, PhysicalFunction cell) {
-    paramFns.reserve(3);
-    paramFns.push_back(std::move(inst_cell));
-    paramFns.push_back(std::move(ts));
-    paramFns.push_back(std::move(cell));
+AlwaysNeTquadbinQuadbinPhysicalFunction::AlwaysNeTquadbinQuadbinPhysicalFunction(PhysicalFunction cellFunction,
+                                                          PhysicalFunction tsFunction,
+                                                          PhysicalFunction arg0Function)
+{
+    parameterFunctions.reserve(3);
+    parameterFunctions.push_back(std::move(cellFunction));
+    parameterFunctions.push_back(std::move(tsFunction));
+    parameterFunctions.push_back(std::move(arg0Function));
 }
 
-VarVal AlwaysNeTquadbinQuadbinPhysicalFunction::execute(const Record& record, ArenaRef& arena) const {
-    auto inst_cell = paramFns[0].execute(record, arena).cast<uint64_t>();
-    auto ts        = paramFns[1].execute(record, arena).cast<uint64_t>();
-    auto cell      = paramFns[2].execute(record, arena).cast<uint64_t>();
+VarVal AlwaysNeTquadbinQuadbinPhysicalFunction::execute(const Record& record, ArenaRef& arena) const
+{
+    std::vector<VarVal> parameterValues;
+    parameterValues.reserve(parameterFunctions.size());
+    for (const auto& function : parameterFunctions)
+    {
+        parameterValues.emplace_back(function.execute(record, arena));
+    }
+
+    auto cell = parameterValues[0].cast<nautilus::val<uint64_t>>();
+    auto ts = parameterValues[1].cast<nautilus::val<uint64_t>>();
+    auto arg0 = parameterValues[2].cast<nautilus::val<uint64_t>>();
+
     const auto result = nautilus::invoke(
-        +[](uint64_t ic, uint64_t ts, uint64_t cell) -> double {
-            MEOS::Meos::ensureMeosInitialized();
-            TInstant* inst = tquadbininst_make((Quadbin)ic, (TimestampTz)ts);
-            if (!inst) return 0.0;
-            int r = always_ne_tquadbin_quadbin((const Temporal*)inst, (Quadbin)cell);
-            free(inst);
-            return r > 0 ? 1.0 : 0.0;
+        +[](uint64_t cell,
+            uint64_t ts,
+            uint64_t arg0) -> double {
+            try
+            {
+                MEOS::Meos::ensureMeosInitialized();
+                Temporal* temp = (Temporal*)tquadbininst_make((Quadbin)cell, (TimestampTz)ts);
+                if (!temp) return 0.0;
+
+                double r = always_ne_tquadbin_quadbin(temp, (Quadbin)arg0);
+                free(temp);
+                return r;
+            }
+            catch (const std::exception&)
+            {
+                return 0.0;
+            }
         },
-        inst_cell, ts, cell);
+        cell, ts, arg0);
+
     return VarVal(result);
 }
 
 PhysicalFunctionRegistryReturnType PhysicalFunctionGeneratedRegistrar::RegisterAlwaysNeTquadbinQuadbinPhysicalFunction(
     PhysicalFunctionRegistryArguments arguments)
 {
-    PRECONDITION(arguments.childFunctions.size()==3,
+    PRECONDITION(arguments.childFunctions.size() == 3,
                  "AlwaysNeTquadbinQuadbinPhysicalFunction requires 3 children but got {}",
                  arguments.childFunctions.size());
-    return AlwaysNeTquadbinQuadbinPhysicalFunction(
-                                  std::move(arguments.childFunctions[0]),
-                                  std::move(arguments.childFunctions[1]),
-                                  std::move(arguments.childFunctions[2]));
+    auto arg0 = std::move(arguments.childFunctions[0]);
+    auto arg1 = std::move(arguments.childFunctions[1]);
+    auto arg2 = std::move(arguments.childFunctions[2]);
+    return AlwaysNeTquadbinQuadbinPhysicalFunction(std::move(arg0), std::move(arg1), std::move(arg2));
 }
 
 } // namespace NES

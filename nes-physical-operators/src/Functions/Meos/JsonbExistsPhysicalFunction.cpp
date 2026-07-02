@@ -13,6 +13,7 @@
 */
 
 #include <Functions/Meos/JsonbExistsPhysicalFunction.hpp>
+
 #include <Functions/PhysicalFunction.hpp>
 #include <MEOSWrapper.hpp>
 #include <Nautilus/DataTypes/VarVal.hpp>
@@ -21,7 +22,9 @@
 #include <PhysicalFunctionRegistry.hpp>
 #include <ErrorHandling.hpp>
 #include <ExecutionContext.hpp>
+#include <fmt/format.h>
 #include <function.hpp>
+#include <string>
 #include <utility>
 #include <val.hpp>
 
@@ -29,46 +32,68 @@ extern "C" {
 #include <meos.h>
 #include <meos_json.h>
 }
-#include <string>
-#include <string.h>
 
 namespace NES {
 
-JsonbExistsPhysicalFunction::JsonbExistsPhysicalFunction(PhysicalFunction jb, PhysicalFunction key) {
-    paramFns.reserve(2);
-    paramFns.push_back(std::move(jb));
-    paramFns.push_back(std::move(key));
+JsonbExistsPhysicalFunction::JsonbExistsPhysicalFunction(PhysicalFunction jbFunction,
+                                                          PhysicalFunction arg0Function)
+{
+    parameterFunctions.reserve(2);
+    parameterFunctions.push_back(std::move(jbFunction));
+    parameterFunctions.push_back(std::move(arg0Function));
 }
 
-VarVal JsonbExistsPhysicalFunction::execute(const Record& record, ArenaRef& arena) const {
-    auto jb  = paramFns[0].execute(record, arena).cast<VariableSizedData>();
-    auto key = paramFns[1].execute(record, arena).cast<VariableSizedData>();
+VarVal JsonbExistsPhysicalFunction::execute(const Record& record, ArenaRef& arena) const
+{
+    std::vector<VarVal> parameterValues;
+    parameterValues.reserve(parameterFunctions.size());
+    for (const auto& function : parameterFunctions)
+    {
+        parameterValues.emplace_back(function.execute(record, arena));
+    }
+
+    auto jb = parameterValues[0].cast<VariableSizedData>();
+    auto arg0 = parameterValues[1].cast<VariableSizedData>();
+
     const auto result = nautilus::invoke(
-        +[](const char* wj, uint32_t wjsz, const char* wk, uint32_t wksz) -> double {
-            try {
+        +[](const char* jbPtr, uint32_t jbSize,
+            const char* arg0Ptr, uint32_t arg0Size) -> double {
+            try
+            {
                 MEOS::Meos::ensureMeosInitialized();
-                std::string sj(wj,wjsz), sk(wk,wksz);
-                Jsonb* jb  = jsonb_in(sj.c_str());
-                if (!jb) return 0.0;
-                text* key  = cstring_to_text(sk.c_str());
-                bool r = jsonb_exists(jb, key);
-                free(jb); free(key);
-                return r ? 1.0 : 0.0;
-            } catch (const std::exception&) { return 0.0; }
+                std::string tempS(jbPtr, jbSize);
+                Jsonb* temp = jsonb_in(tempS.c_str());
+                if (!temp) return 0.0;
+                std::string arg0S(arg0Ptr, arg0Size);
+                while (!arg0S.empty() && (arg0S.front() == '\'' || arg0S.front() == '"')) arg0S.erase(arg0S.begin());
+                while (!arg0S.empty() && (arg0S.back()  == '\'' || arg0S.back()  == '"')) arg0S.pop_back();
+                text* txt0 = cstring_to_text(arg0S.c_str());
+                if (!txt0) { free(temp); return 0.0; }
+
+                double r = jsonb_exists(temp, txt0);
+                free(temp);
+                free(txt0);
+                return r;
+            }
+            catch (const std::exception&)
+            {
+                return 0.0;
+            }
         },
-        jb, key);
+        jb.getContent(), jb.getContentSize(), arg0.getContent(), arg0.getContentSize());
+
     return VarVal(result);
 }
 
 PhysicalFunctionRegistryReturnType PhysicalFunctionGeneratedRegistrar::RegisterJsonbExistsPhysicalFunction(
     PhysicalFunctionRegistryArguments arguments)
 {
-    PRECONDITION(arguments.childFunctions.size()==2,
+    PRECONDITION(arguments.childFunctions.size() == 2,
                  "JsonbExistsPhysicalFunction requires 2 children but got {}",
                  arguments.childFunctions.size());
-    return JsonbExistsPhysicalFunction(
-                                  std::move(arguments.childFunctions[0]),
-                                  std::move(arguments.childFunctions[1]));
+    auto arg0 = std::move(arguments.childFunctions[0]);
+    auto arg1 = std::move(arguments.childFunctions[1]);
+    return JsonbExistsPhysicalFunction(std::move(arg0), std::move(arg1));
 }
 
 } // namespace NES

@@ -13,6 +13,7 @@
 */
 
 #include <Functions/Meos/GeoSridPhysicalFunction.hpp>
+
 #include <Functions/PhysicalFunction.hpp>
 #include <MEOSWrapper.hpp>
 #include <Nautilus/DataTypes/VarVal.hpp>
@@ -21,6 +22,7 @@
 #include <PhysicalFunctionRegistry.hpp>
 #include <ErrorHandling.hpp>
 #include <ExecutionContext.hpp>
+#include <fmt/format.h>
 #include <function.hpp>
 #include <string>
 #include <utility>
@@ -33,29 +35,42 @@ extern "C" {
 
 namespace NES {
 
-GeoSridPhysicalFunction::GeoSridPhysicalFunction(PhysicalFunction wkt)
+GeoSridPhysicalFunction::GeoSridPhysicalFunction(PhysicalFunction wktFunction)
 {
-    paramFns.reserve(1);
-    paramFns.push_back(std::move(wkt));
+    parameterFunctions.reserve(1);
+    parameterFunctions.push_back(std::move(wktFunction));
 }
 
 VarVal GeoSridPhysicalFunction::execute(const Record& record, ArenaRef& arena) const
 {
-    auto s1 = paramFns[0].execute(record, arena).cast<VariableSizedData>();
+    std::vector<VarVal> parameterValues;
+    parameterValues.reserve(parameterFunctions.size());
+    for (const auto& function : parameterFunctions)
+    {
+        parameterValues.emplace_back(function.execute(record, arena));
+    }
+
+    auto wkt = parameterValues[0].cast<VariableSizedData>();
 
     const auto result = nautilus::invoke(
-        +[](const char* w1, uint32_t w1sz) -> double {
-            try {
+        +[](const char* wktPtr, uint32_t wktSize) -> double {
+            try
+            {
                 MEOS::Meos::ensureMeosInitialized();
-                std::string s1(w1, w1sz);
-                GSERIALIZED* gs1 = geom_in(s1.c_str(), -1);
-                if (!gs1) return 0.0;
-                double r = (double)geo_srid(gs1);
-                free(gs1);
+                std::string tempS(wktPtr, wktSize);
+                GSERIALIZED* temp = geom_in(tempS.c_str(), -1);
+                if (!temp) return 0.0;
+
+                double r = geo_srid(temp);
+                free(temp);
                 return r;
-            } catch (const std::exception&) { return 0.0; }
+            }
+            catch (const std::exception&)
+            {
+                return 0.0;
+            }
         },
-        s1);
+        wkt.getContent(), wkt.getContentSize());
 
     return VarVal(result);
 }
@@ -64,9 +79,10 @@ PhysicalFunctionRegistryReturnType PhysicalFunctionGeneratedRegistrar::RegisterG
     PhysicalFunctionRegistryArguments arguments)
 {
     PRECONDITION(arguments.childFunctions.size() == 1,
-                 "GeoSridPhysicalFunction requires 1 child but got {}",
+                 "GeoSridPhysicalFunction requires 1 children but got {}",
                  arguments.childFunctions.size());
-    return GeoSridPhysicalFunction(std::move(arguments.childFunctions[0]));
+    auto arg0 = std::move(arguments.childFunctions[0]);
+    return GeoSridPhysicalFunction(std::move(arg0));
 }
 
 } // namespace NES

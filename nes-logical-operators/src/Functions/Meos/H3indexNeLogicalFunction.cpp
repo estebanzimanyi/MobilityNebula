@@ -26,7 +26,8 @@
 namespace NES
 {
 
-H3indexNeLogicalFunction::H3indexNeLogicalFunction(LogicalFunction a, LogicalFunction b)
+H3indexNeLogicalFunction::H3indexNeLogicalFunction(LogicalFunction a,
+                                          LogicalFunction b)
     : dataType(DataTypeProvider::provideDataType(DataType::Type::FLOAT64))
 {
     parameters.reserve(2);
@@ -34,45 +35,68 @@ H3indexNeLogicalFunction::H3indexNeLogicalFunction(LogicalFunction a, LogicalFun
     parameters.push_back(std::move(b));
 }
 
-DataType H3indexNeLogicalFunction::getDataType() const { return dataType; }
+DataType H3indexNeLogicalFunction::getDataType() const
+{
+    return dataType;
+}
 
 LogicalFunction H3indexNeLogicalFunction::withDataType(const DataType& newDataType) const
 {
-    auto copy = *this; copy.dataType = newDataType; return copy;
+    auto copy = *this;
+    copy.dataType = newDataType;
+    return copy;
 }
 
-std::vector<LogicalFunction> H3indexNeLogicalFunction::getChildren() const { return parameters; }
+std::vector<LogicalFunction> H3indexNeLogicalFunction::getChildren() const
+{
+    return parameters;
+}
 
 LogicalFunction H3indexNeLogicalFunction::withChildren(const std::vector<LogicalFunction>& children) const
 {
-    PRECONDITION(children.size() == 2,
-                 "H3indexNeLogicalFunction requires 2 children, but got {}", children.size());
-    auto copy = *this; copy.parameters = children; return copy;
+    PRECONDITION(children.size() == 2, "H3indexNeLogicalFunction requires 2 children, but got {}", children.size());
+    auto copy = *this;
+    copy.parameters = children;
+    return copy;
 }
 
-std::string_view H3indexNeLogicalFunction::getType() const { return NAME; }
+std::string_view H3indexNeLogicalFunction::getType() const
+{
+    return NAME;
+}
 
 bool H3indexNeLogicalFunction::operator==(const LogicalFunctionConcept& rhs) const
 {
     if (const auto* other = dynamic_cast<const H3indexNeLogicalFunction*>(&rhs))
+    {
         return parameters == other->parameters;
+    }
     return false;
 }
 
 std::string H3indexNeLogicalFunction::explain(ExplainVerbosity verbosity) const
 {
-    return fmt::format("{}({})", NAME, parameters[0].explain(verbosity));
+    std::string args;
+    for (size_t index = 0; index < parameters.size(); ++index)
+    {
+        if (index > 0)
+        {
+            args += ", ";
+        }
+        args += parameters[index].explain(verbosity);
+    }
+    return fmt::format("{}({})", NAME, args);
 }
 
 LogicalFunction H3indexNeLogicalFunction::withInferredDataType(const Schema& schema) const
 {
-    std::vector<LogicalFunction> c;
-    c.reserve(2);
-    for (const auto& p : parameters)
-        c.emplace_back(p.withInferredDataType(schema));
-    INVARIANT(c[0].getDataType().isType(DataType::Type::UINT64), "a must be UINT64");
-    INVARIANT(c[1].getDataType().isType(DataType::Type::UINT64), "b must be UINT64");
-    return withChildren(c);
+    std::vector<LogicalFunction> newChildren;
+    newChildren.reserve(parameters.size());
+    for (const auto& child : parameters)
+    {
+        newChildren.emplace_back(child.withInferredDataType(schema));
+    }
+    return withChildren(newChildren);
 }
 
 SerializableFunction H3indexNeLogicalFunction::serialize() const
@@ -81,7 +105,9 @@ SerializableFunction H3indexNeLogicalFunction::serialize() const
     proto.set_function_type(std::string(NAME));
     DataTypeSerializationUtil::serializeDataType(dataType, proto.mutable_data_type());
     for (const auto& child : parameters)
+    {
         proto.add_children()->CopyFrom(child.serialize());
+    }
     return proto;
 }
 
@@ -91,9 +117,9 @@ LogicalFunctionRegistryReturnType LogicalFunctionGeneratedRegistrar::RegisterH3i
     PRECONDITION(arguments.children.size() == 2,
                  "H3indexNeLogicalFunction requires 2 children but got {}",
                  arguments.children.size());
-    return H3indexNeLogicalFunction(
-                                 std::move(arguments.children[0]),
-                                 std::move(arguments.children[1]));
+    auto arg0 = std::move(arguments.children[0]);
+    auto arg1 = std::move(arguments.children[1]);
+    return H3indexNeLogicalFunction(std::move(arg0), std::move(arg1));
 }
 
 } // namespace NES

@@ -13,61 +13,85 @@
 */
 
 #include <Functions/Meos/EverNeNpointTnpointPhysicalFunction.hpp>
+
 #include <Functions/PhysicalFunction.hpp>
 #include <MEOSWrapper.hpp>
 #include <Nautilus/DataTypes/VarVal.hpp>
+#include <Nautilus/DataTypes/VariableSizedData.hpp>
 #include <Nautilus/Interface/Record.hpp>
 #include <PhysicalFunctionRegistry.hpp>
 #include <ErrorHandling.hpp>
 #include <ExecutionContext.hpp>
+#include <fmt/format.h>
 #include <function.hpp>
+#include <string>
 #include <utility>
 #include <val.hpp>
-#include <stdlib.h>
-#include <string.h>
 
 extern "C" {
 #include <meos.h>
-#include <meos_geo.h>
 #include <meos_npoint.h>
 }
 
 namespace NES {
 
-EverNeNpointTnpointPhysicalFunction::EverNeNpointTnpointPhysicalFunction(PhysicalFunction rid_np, PhysicalFunction pos_np, PhysicalFunction rid_tp, PhysicalFunction pos_tp, PhysicalFunction ts)
+EverNeNpointTnpointPhysicalFunction::EverNeNpointTnpointPhysicalFunction(PhysicalFunction rid0Function,
+                                                          PhysicalFunction frac0Function,
+                                                          PhysicalFunction ridFunction,
+                                                          PhysicalFunction fracFunction,
+                                                          PhysicalFunction tsFunction)
 {
-    paramFns.reserve(5);
-    paramFns.push_back(std::move(rid_np));
-    paramFns.push_back(std::move(pos_np));
-    paramFns.push_back(std::move(rid_tp));
-    paramFns.push_back(std::move(pos_tp));
-    paramFns.push_back(std::move(ts));
+    parameterFunctions.reserve(5);
+    parameterFunctions.push_back(std::move(rid0Function));
+    parameterFunctions.push_back(std::move(frac0Function));
+    parameterFunctions.push_back(std::move(ridFunction));
+    parameterFunctions.push_back(std::move(fracFunction));
+    parameterFunctions.push_back(std::move(tsFunction));
 }
 
 VarVal EverNeNpointTnpointPhysicalFunction::execute(const Record& record, ArenaRef& arena) const
 {
-    auto rid_np = paramFns[0].execute(record, arena).cast<uint64_t>();
-    auto pos_np = paramFns[1].execute(record, arena).cast<double>();
-    auto rid_tp = paramFns[2].execute(record, arena).cast<uint64_t>();
-    auto pos_tp = paramFns[3].execute(record, arena).cast<double>();
-    auto ts = paramFns[4].execute(record, arena).cast<uint64_t>();
+    std::vector<VarVal> parameterValues;
+    parameterValues.reserve(parameterFunctions.size());
+    for (const auto& function : parameterFunctions)
+    {
+        parameterValues.emplace_back(function.execute(record, arena));
+    }
+
+    auto rid0 = parameterValues[0].cast<nautilus::val<uint64_t>>();
+    auto frac0 = parameterValues[1].cast<nautilus::val<double>>();
+    auto rid = parameterValues[2].cast<nautilus::val<int64_t>>();
+    auto frac = parameterValues[3].cast<nautilus::val<double>>();
+    auto ts = parameterValues[4].cast<nautilus::val<uint64_t>>();
+
     const auto result = nautilus::invoke(
-        +[](uint64_t rid_np, double pos_np, uint64_t rid_tp, double pos_tp, uint64_t ts) -> double {
-            try {
+        +[](uint64_t rid0,
+            double frac0,
+            int64_t rid,
+            double frac,
+            uint64_t ts) -> double {
+            try
+            {
                 MEOS::Meos::ensureMeosInitialized();
-                Npoint* np_s = npoint_make((int64_t)rid_np, pos_np);
-                if (!np_s) return 0.0;
-                Npoint* np_t = npoint_make((int64_t)rid_tp, pos_tp);
-                if (!np_t) { free(np_s); return 0.0; }
-                Temporal* inst = (Temporal*)tnpointinst_make(np_t, (TimestampTz)ts);
-                free(np_t);
-                if (!inst) { free(np_s); return 0.0; }
-                int r = ever_ne_npoint_tnpoint(np_s, inst);
-                free(np_s); free(inst);
-                return r > 0 ? 1.0 : 0.0;
-            } catch (const std::exception&) { return 0.0; }
+                if (frac < 0.0 || frac > 1.0) return 0.0;
+                std::string tempWkt = fmt::format("NPoint({},{})@{}", rid, frac, MEOS::Meos::convertEpochToTimestamp(ts));
+                Temporal* temp = tnpoint_in(tempWkt.c_str());
+                if (!temp) return 0.0;
+                Npoint* np0 = npoint_make((int64_t)rid0, frac0);
+                if (!np0) { free(temp); return 0.0; }
+
+                double r = ever_ne_npoint_tnpoint(np0, temp);
+                free(temp);
+                free(np0);
+                return r;
+            }
+            catch (const std::exception&)
+            {
+                return 0.0;
+            }
         },
-        rid_np, pos_np, rid_tp, pos_tp, ts);
+        rid0, frac0, rid, frac, ts);
+
     return VarVal(result);
 }
 
@@ -77,12 +101,12 @@ PhysicalFunctionRegistryReturnType PhysicalFunctionGeneratedRegistrar::RegisterE
     PRECONDITION(arguments.childFunctions.size() == 5,
                  "EverNeNpointTnpointPhysicalFunction requires 5 children but got {}",
                  arguments.childFunctions.size());
-    return EverNeNpointTnpointPhysicalFunction(
-                                  std::move(arguments.childFunctions[0]),
-                                  std::move(arguments.childFunctions[1]),
-                                  std::move(arguments.childFunctions[2]),
-                                  std::move(arguments.childFunctions[3]),
-                                  std::move(arguments.childFunctions[4]));
+    auto arg0 = std::move(arguments.childFunctions[0]);
+    auto arg1 = std::move(arguments.childFunctions[1]);
+    auto arg2 = std::move(arguments.childFunctions[2]);
+    auto arg3 = std::move(arguments.childFunctions[3]);
+    auto arg4 = std::move(arguments.childFunctions[4]);
+    return EverNeNpointTnpointPhysicalFunction(std::move(arg0), std::move(arg1), std::move(arg2), std::move(arg3), std::move(arg4));
 }
 
 } // namespace NES

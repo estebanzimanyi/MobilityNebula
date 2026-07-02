@@ -26,63 +26,85 @@
 namespace NES
 {
 
-EverNeTnpointTnpointLogicalFunction::EverNeTnpointTnpointLogicalFunction(
-    LogicalFunction rid1, LogicalFunction pos1, LogicalFunction ts1,
-    LogicalFunction rid2, LogicalFunction pos2, LogicalFunction ts2)
+EverNeTnpointTnpointLogicalFunction::EverNeTnpointTnpointLogicalFunction(LogicalFunction rid,
+                                          LogicalFunction frac,
+                                          LogicalFunction ts,
+                                          LogicalFunction rid0,
+                                          LogicalFunction frac0,
+                                          LogicalFunction ts0)
     : dataType(DataTypeProvider::provideDataType(DataType::Type::FLOAT64))
 {
     parameters.reserve(6);
-    parameters.push_back(std::move(rid1));
-    parameters.push_back(std::move(pos1));
-    parameters.push_back(std::move(ts1));
-    parameters.push_back(std::move(rid2));
-    parameters.push_back(std::move(pos2));
-    parameters.push_back(std::move(ts2));
+    parameters.push_back(std::move(rid));
+    parameters.push_back(std::move(frac));
+    parameters.push_back(std::move(ts));
+    parameters.push_back(std::move(rid0));
+    parameters.push_back(std::move(frac0));
+    parameters.push_back(std::move(ts0));
 }
 
-DataType EverNeTnpointTnpointLogicalFunction::getDataType() const { return dataType; }
+DataType EverNeTnpointTnpointLogicalFunction::getDataType() const
+{
+    return dataType;
+}
 
 LogicalFunction EverNeTnpointTnpointLogicalFunction::withDataType(const DataType& newDataType) const
 {
-    auto copy = *this; copy.dataType = newDataType; return copy;
+    auto copy = *this;
+    copy.dataType = newDataType;
+    return copy;
 }
 
-std::vector<LogicalFunction> EverNeTnpointTnpointLogicalFunction::getChildren() const { return parameters; }
+std::vector<LogicalFunction> EverNeTnpointTnpointLogicalFunction::getChildren() const
+{
+    return parameters;
+}
 
 LogicalFunction EverNeTnpointTnpointLogicalFunction::withChildren(const std::vector<LogicalFunction>& children) const
 {
-    PRECONDITION(children.size() == 6,
-                 "EverNeTnpointTnpointLogicalFunction requires 6 children, but got {}", children.size());
-    auto copy = *this; copy.parameters = children; return copy;
+    PRECONDITION(children.size() == 6, "EverNeTnpointTnpointLogicalFunction requires 6 children, but got {}", children.size());
+    auto copy = *this;
+    copy.parameters = children;
+    return copy;
 }
 
-std::string_view EverNeTnpointTnpointLogicalFunction::getType() const { return NAME; }
+std::string_view EverNeTnpointTnpointLogicalFunction::getType() const
+{
+    return NAME;
+}
 
 bool EverNeTnpointTnpointLogicalFunction::operator==(const LogicalFunctionConcept& rhs) const
 {
     if (const auto* other = dynamic_cast<const EverNeTnpointTnpointLogicalFunction*>(&rhs))
+    {
         return parameters == other->parameters;
+    }
     return false;
 }
 
 std::string EverNeTnpointTnpointLogicalFunction::explain(ExplainVerbosity verbosity) const
 {
-    return fmt::format("{}({})", NAME, parameters[0].explain(verbosity));
+    std::string args;
+    for (size_t index = 0; index < parameters.size(); ++index)
+    {
+        if (index > 0)
+        {
+            args += ", ";
+        }
+        args += parameters[index].explain(verbosity);
+    }
+    return fmt::format("{}({})", NAME, args);
 }
 
 LogicalFunction EverNeTnpointTnpointLogicalFunction::withInferredDataType(const Schema& schema) const
 {
-    std::vector<LogicalFunction> c;
-    c.reserve(6);
-    for (const auto& p : parameters)
-        c.emplace_back(p.withInferredDataType(schema));
-    INVARIANT(c[0].getDataType().isType(DataType::Type::UINT64),  "rid1 must be UINT64");
-    INVARIANT(c[1].getDataType().isType(DataType::Type::FLOAT64), "pos1 must be FLOAT64");
-    INVARIANT(c[2].getDataType().isType(DataType::Type::UINT64),  "ts1 must be UINT64");
-    INVARIANT(c[3].getDataType().isType(DataType::Type::UINT64),  "rid2 must be UINT64");
-    INVARIANT(c[4].getDataType().isType(DataType::Type::FLOAT64), "pos2 must be FLOAT64");
-    INVARIANT(c[5].getDataType().isType(DataType::Type::UINT64),  "ts2 must be UINT64");
-    return withChildren(c);
+    std::vector<LogicalFunction> newChildren;
+    newChildren.reserve(parameters.size());
+    for (const auto& child : parameters)
+    {
+        newChildren.emplace_back(child.withInferredDataType(schema));
+    }
+    return withChildren(newChildren);
 }
 
 SerializableFunction EverNeTnpointTnpointLogicalFunction::serialize() const
@@ -91,7 +113,9 @@ SerializableFunction EverNeTnpointTnpointLogicalFunction::serialize() const
     proto.set_function_type(std::string(NAME));
     DataTypeSerializationUtil::serializeDataType(dataType, proto.mutable_data_type());
     for (const auto& child : parameters)
+    {
         proto.add_children()->CopyFrom(child.serialize());
+    }
     return proto;
 }
 
@@ -101,12 +125,13 @@ LogicalFunctionRegistryReturnType LogicalFunctionGeneratedRegistrar::RegisterEve
     PRECONDITION(arguments.children.size() == 6,
                  "EverNeTnpointTnpointLogicalFunction requires 6 children but got {}",
                  arguments.children.size());
-    return EverNeTnpointTnpointLogicalFunction(std::move(arguments.children[0]),
-                                 std::move(arguments.children[1]),
-                                 std::move(arguments.children[2]),
-                                 std::move(arguments.children[3]),
-                                 std::move(arguments.children[4]),
-                                 std::move(arguments.children[5]));
+    auto arg0 = std::move(arguments.children[0]);
+    auto arg1 = std::move(arguments.children[1]);
+    auto arg2 = std::move(arguments.children[2]);
+    auto arg3 = std::move(arguments.children[3]);
+    auto arg4 = std::move(arguments.children[4]);
+    auto arg5 = std::move(arguments.children[5]);
+    return EverNeTnpointTnpointLogicalFunction(std::move(arg0), std::move(arg1), std::move(arg2), std::move(arg3), std::move(arg4), std::move(arg5));
 }
 
 } // namespace NES

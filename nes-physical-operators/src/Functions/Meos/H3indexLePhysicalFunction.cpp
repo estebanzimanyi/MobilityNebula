@@ -13,14 +13,18 @@
 */
 
 #include <Functions/Meos/H3indexLePhysicalFunction.hpp>
+
 #include <Functions/PhysicalFunction.hpp>
 #include <MEOSWrapper.hpp>
 #include <Nautilus/DataTypes/VarVal.hpp>
+#include <Nautilus/DataTypes/VariableSizedData.hpp>
 #include <Nautilus/Interface/Record.hpp>
 #include <PhysicalFunctionRegistry.hpp>
 #include <ErrorHandling.hpp>
 #include <ExecutionContext.hpp>
+#include <fmt/format.h>
 #include <function.hpp>
+#include <string>
 #include <utility>
 #include <val.hpp>
 
@@ -31,26 +35,43 @@ extern "C" {
 
 namespace NES {
 
-H3indexLePhysicalFunction::H3indexLePhysicalFunction(PhysicalFunction a, PhysicalFunction b)
+H3indexLePhysicalFunction::H3indexLePhysicalFunction(PhysicalFunction aFunction,
+                                                          PhysicalFunction bFunction)
 {
-    paramFns.reserve(2);
-    paramFns.push_back(std::move(a));
-    paramFns.push_back(std::move(b));
+    parameterFunctions.reserve(2);
+    parameterFunctions.push_back(std::move(aFunction));
+    parameterFunctions.push_back(std::move(bFunction));
 }
 
 VarVal H3indexLePhysicalFunction::execute(const Record& record, ArenaRef& arena) const
 {
-    auto a = paramFns[0].execute(record, arena).cast<uint64_t>();
-    auto b = paramFns[1].execute(record, arena).cast<uint64_t>();
+    std::vector<VarVal> parameterValues;
+    parameterValues.reserve(parameterFunctions.size());
+    for (const auto& function : parameterFunctions)
+    {
+        parameterValues.emplace_back(function.execute(record, arena));
+    }
+
+    auto a = parameterValues[0].cast<nautilus::val<uint64_t>>();
+    auto b = parameterValues[1].cast<nautilus::val<uint64_t>>();
+
     const auto result = nautilus::invoke(
-        +[](uint64_t a, uint64_t b) -> double {
-            try {
+        +[](uint64_t a,
+            uint64_t b) -> double {
+            try
+            {
                 MEOS::Meos::ensureMeosInitialized();
-                bool r = h3index_le((H3Index)a, (H3Index)b);
-                return r ? 1.0 : 0.0;
-            } catch (const std::exception&) { return 0.0; }
+
+                double r = h3index_le((H3Index)a, (H3Index)b);
+                return r;
+            }
+            catch (const std::exception&)
+            {
+                return 0.0;
+            }
         },
         a, b);
+
     return VarVal(result);
 }
 
@@ -60,9 +81,9 @@ PhysicalFunctionRegistryReturnType PhysicalFunctionGeneratedRegistrar::RegisterH
     PRECONDITION(arguments.childFunctions.size() == 2,
                  "H3indexLePhysicalFunction requires 2 children but got {}",
                  arguments.childFunctions.size());
-    return H3indexLePhysicalFunction(
-                                  std::move(arguments.childFunctions[0]),
-                                  std::move(arguments.childFunctions[1]));
+    auto arg0 = std::move(arguments.childFunctions[0]);
+    auto arg1 = std::move(arguments.childFunctions[1]);
+    return H3indexLePhysicalFunction(std::move(arg0), std::move(arg1));
 }
 
 } // namespace NES

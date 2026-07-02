@@ -26,57 +26,79 @@
 namespace NES
 {
 
-AlwaysNeTh3indexH3indexLogicalFunction::AlwaysNeTh3indexH3indexLogicalFunction(LogicalFunction cell, LogicalFunction ts,
-                                            LogicalFunction target)
+AlwaysNeTh3indexH3indexLogicalFunction::AlwaysNeTh3indexH3indexLogicalFunction(LogicalFunction cell,
+                                          LogicalFunction ts,
+                                          LogicalFunction arg0)
     : dataType(DataTypeProvider::provideDataType(DataType::Type::FLOAT64))
 {
     parameters.reserve(3);
     parameters.push_back(std::move(cell));
     parameters.push_back(std::move(ts));
-    parameters.push_back(std::move(target));
+    parameters.push_back(std::move(arg0));
 }
 
-DataType AlwaysNeTh3indexH3indexLogicalFunction::getDataType() const { return dataType; }
+DataType AlwaysNeTh3indexH3indexLogicalFunction::getDataType() const
+{
+    return dataType;
+}
 
 LogicalFunction AlwaysNeTh3indexH3indexLogicalFunction::withDataType(const DataType& newDataType) const
 {
-    auto copy = *this; copy.dataType = newDataType; return copy;
+    auto copy = *this;
+    copy.dataType = newDataType;
+    return copy;
 }
 
-std::vector<LogicalFunction> AlwaysNeTh3indexH3indexLogicalFunction::getChildren() const { return parameters; }
+std::vector<LogicalFunction> AlwaysNeTh3indexH3indexLogicalFunction::getChildren() const
+{
+    return parameters;
+}
 
 LogicalFunction AlwaysNeTh3indexH3indexLogicalFunction::withChildren(const std::vector<LogicalFunction>& children) const
 {
-    PRECONDITION(children.size() == 3,
-                 "AlwaysNeTh3indexH3indexLogicalFunction requires 3 children, but got {}", children.size());
-    auto copy = *this; copy.parameters = children; return copy;
+    PRECONDITION(children.size() == 3, "AlwaysNeTh3indexH3indexLogicalFunction requires 3 children, but got {}", children.size());
+    auto copy = *this;
+    copy.parameters = children;
+    return copy;
 }
 
-std::string_view AlwaysNeTh3indexH3indexLogicalFunction::getType() const { return NAME; }
+std::string_view AlwaysNeTh3indexH3indexLogicalFunction::getType() const
+{
+    return NAME;
+}
 
 bool AlwaysNeTh3indexH3indexLogicalFunction::operator==(const LogicalFunctionConcept& rhs) const
 {
     if (const auto* other = dynamic_cast<const AlwaysNeTh3indexH3indexLogicalFunction*>(&rhs))
+    {
         return parameters == other->parameters;
+    }
     return false;
 }
 
 std::string AlwaysNeTh3indexH3indexLogicalFunction::explain(ExplainVerbosity verbosity) const
 {
-    return fmt::format("{}({})", NAME, parameters[0].explain(verbosity));
+    std::string args;
+    for (size_t index = 0; index < parameters.size(); ++index)
+    {
+        if (index > 0)
+        {
+            args += ", ";
+        }
+        args += parameters[index].explain(verbosity);
+    }
+    return fmt::format("{}({})", NAME, args);
 }
 
 LogicalFunction AlwaysNeTh3indexH3indexLogicalFunction::withInferredDataType(const Schema& schema) const
 {
-    std::vector<LogicalFunction> c;
-    c.reserve(3);
-    c.emplace_back(parameters[0].withInferredDataType(schema));
-    c.emplace_back(parameters[1].withInferredDataType(schema));
-    c.emplace_back(parameters[2].withInferredDataType(schema));
-    INVARIANT(c[0].getDataType().isType(DataType::Type::UINT64), "cell must be UINT64");
-    INVARIANT(c[1].getDataType().isType(DataType::Type::UINT64), "ts must be UINT64");
-    INVARIANT(c[2].getDataType().isType(DataType::Type::UINT64), "target must be UINT64");
-    return withChildren(c);
+    std::vector<LogicalFunction> newChildren;
+    newChildren.reserve(parameters.size());
+    for (const auto& child : parameters)
+    {
+        newChildren.emplace_back(child.withInferredDataType(schema));
+    }
+    return withChildren(newChildren);
 }
 
 SerializableFunction AlwaysNeTh3indexH3indexLogicalFunction::serialize() const
@@ -85,7 +107,9 @@ SerializableFunction AlwaysNeTh3indexH3indexLogicalFunction::serialize() const
     proto.set_function_type(std::string(NAME));
     DataTypeSerializationUtil::serializeDataType(dataType, proto.mutable_data_type());
     for (const auto& child : parameters)
+    {
         proto.add_children()->CopyFrom(child.serialize());
+    }
     return proto;
 }
 
@@ -95,9 +119,10 @@ LogicalFunctionRegistryReturnType LogicalFunctionGeneratedRegistrar::RegisterAlw
     PRECONDITION(arguments.children.size() == 3,
                  "AlwaysNeTh3indexH3indexLogicalFunction requires 3 children but got {}",
                  arguments.children.size());
-    return AlwaysNeTh3indexH3indexLogicalFunction(std::move(arguments.children[0]),
-                                 std::move(arguments.children[1]),
-                                 std::move(arguments.children[2]));
+    auto arg0 = std::move(arguments.children[0]);
+    auto arg1 = std::move(arguments.children[1]);
+    auto arg2 = std::move(arguments.children[2]);
+    return AlwaysNeTh3indexH3indexLogicalFunction(std::move(arg0), std::move(arg1), std::move(arg2));
 }
 
 } // namespace NES

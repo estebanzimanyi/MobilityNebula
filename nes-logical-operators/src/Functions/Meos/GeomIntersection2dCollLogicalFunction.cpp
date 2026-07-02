@@ -26,53 +26,77 @@
 namespace NES
 {
 
-GeomIntersection2dCollLogicalFunction::GeomIntersection2dCollLogicalFunction(LogicalFunction wkt1, LogicalFunction wkt2)
+GeomIntersection2dCollLogicalFunction::GeomIntersection2dCollLogicalFunction(LogicalFunction wkt,
+                                          LogicalFunction arg0)
     : dataType(DataTypeProvider::provideDataType(DataType::Type::VARSIZED))
 {
     parameters.reserve(2);
-    parameters.push_back(std::move(wkt1));
-    parameters.push_back(std::move(wkt2));
+    parameters.push_back(std::move(wkt));
+    parameters.push_back(std::move(arg0));
 }
 
-DataType GeomIntersection2dCollLogicalFunction::getDataType() const { return dataType; }
+DataType GeomIntersection2dCollLogicalFunction::getDataType() const
+{
+    return dataType;
+}
 
 LogicalFunction GeomIntersection2dCollLogicalFunction::withDataType(const DataType& newDataType) const
 {
-    auto copy = *this; copy.dataType = newDataType; return copy;
+    auto copy = *this;
+    copy.dataType = newDataType;
+    return copy;
 }
 
-std::vector<LogicalFunction> GeomIntersection2dCollLogicalFunction::getChildren() const { return parameters; }
+std::vector<LogicalFunction> GeomIntersection2dCollLogicalFunction::getChildren() const
+{
+    return parameters;
+}
 
 LogicalFunction GeomIntersection2dCollLogicalFunction::withChildren(const std::vector<LogicalFunction>& children) const
 {
-    PRECONDITION(children.size() == 2,
-                 "GeomIntersection2dCollLogicalFunction requires 2 children, but got {}", children.size());
-    auto copy = *this; copy.parameters = children; return copy;
+    PRECONDITION(children.size() == 2, "GeomIntersection2dCollLogicalFunction requires 2 children, but got {}", children.size());
+    auto copy = *this;
+    copy.parameters = children;
+    return copy;
 }
 
-std::string_view GeomIntersection2dCollLogicalFunction::getType() const { return NAME; }
+std::string_view GeomIntersection2dCollLogicalFunction::getType() const
+{
+    return NAME;
+}
 
 bool GeomIntersection2dCollLogicalFunction::operator==(const LogicalFunctionConcept& rhs) const
 {
     if (const auto* other = dynamic_cast<const GeomIntersection2dCollLogicalFunction*>(&rhs))
+    {
         return parameters == other->parameters;
+    }
     return false;
 }
 
 std::string GeomIntersection2dCollLogicalFunction::explain(ExplainVerbosity verbosity) const
 {
-    return fmt::format("{}({})", NAME, parameters[0].explain(verbosity));
+    std::string args;
+    for (size_t index = 0; index < parameters.size(); ++index)
+    {
+        if (index > 0)
+        {
+            args += ", ";
+        }
+        args += parameters[index].explain(verbosity);
+    }
+    return fmt::format("{}({})", NAME, args);
 }
 
 LogicalFunction GeomIntersection2dCollLogicalFunction::withInferredDataType(const Schema& schema) const
 {
-    std::vector<LogicalFunction> c;
-    c.reserve(2);
-    for (const auto& p : parameters)
-        c.emplace_back(p.withInferredDataType(schema));
-    INVARIANT(c[0].getDataType().isType(DataType::Type::VARSIZED), "wkt1 must be VARSIZED");
-    INVARIANT(c[1].getDataType().isType(DataType::Type::VARSIZED), "wkt2 must be VARSIZED");
-    return withChildren(c);
+    std::vector<LogicalFunction> newChildren;
+    newChildren.reserve(parameters.size());
+    for (const auto& child : parameters)
+    {
+        newChildren.emplace_back(child.withInferredDataType(schema));
+    }
+    return withChildren(newChildren);
 }
 
 SerializableFunction GeomIntersection2dCollLogicalFunction::serialize() const
@@ -81,7 +105,9 @@ SerializableFunction GeomIntersection2dCollLogicalFunction::serialize() const
     proto.set_function_type(std::string(NAME));
     DataTypeSerializationUtil::serializeDataType(dataType, proto.mutable_data_type());
     for (const auto& child : parameters)
+    {
         proto.add_children()->CopyFrom(child.serialize());
+    }
     return proto;
 }
 
@@ -91,9 +117,9 @@ LogicalFunctionRegistryReturnType LogicalFunctionGeneratedRegistrar::RegisterGeo
     PRECONDITION(arguments.children.size() == 2,
                  "GeomIntersection2dCollLogicalFunction requires 2 children but got {}",
                  arguments.children.size());
-    return GeomIntersection2dCollLogicalFunction(
-                                 std::move(arguments.children[0]),
-                                 std::move(arguments.children[1]));
+    auto arg0 = std::move(arguments.children[0]);
+    auto arg1 = std::move(arguments.children[1]);
+    return GeomIntersection2dCollLogicalFunction(std::move(arg0), std::move(arg1));
 }
 
 } // namespace NES

@@ -13,6 +13,7 @@
 */
 
 #include <Functions/Meos/GeoFromGeojsonPhysicalFunction.hpp>
+
 #include <Functions/PhysicalFunction.hpp>
 #include <MEOSWrapper.hpp>
 #include <Nautilus/DataTypes/VarVal.hpp>
@@ -21,8 +22,10 @@
 #include <PhysicalFunctionRegistry.hpp>
 #include <ErrorHandling.hpp>
 #include <ExecutionContext.hpp>
+#include <fmt/format.h>
 #include <function.hpp>
 #include <string>
+#include <string.h>
 #include <utility>
 #include <val.hpp>
 
@@ -33,36 +36,50 @@ extern "C" {
 
 namespace NES {
 
-GeoFromGeojsonPhysicalFunction::GeoFromGeojsonPhysicalFunction(PhysicalFunction json)
+GeoFromGeojsonPhysicalFunction::GeoFromGeojsonPhysicalFunction()
 {
-    paramFns.reserve(1);
-    paramFns.push_back(std::move(json));
+    parameterFunctions.reserve(0);
+
 }
 
 VarVal GeoFromGeojsonPhysicalFunction::execute(const Record& record, ArenaRef& arena) const
 {
-    auto json = paramFns[0].execute(record, arena).cast<VariableSizedData>();
-    constexpr uint32_t MAX_LEN = 16384;
+    std::vector<VarVal> parameterValues;
+    parameterValues.reserve(parameterFunctions.size());
+    for (const auto& function : parameterFunctions)
+    {
+        parameterValues.emplace_back(function.execute(record, arena));
+    }
+
+
+
+    constexpr uint32_t MAX_LEN = 4096;
     auto outBuf = arena.allocateVariableSizedData(nautilus::val<uint32_t>(MAX_LEN));
 
     const auto actualLen = nautilus::invoke(
-        +[](const char* j, uint32_t jsz, char* buf, uint32_t bufMax) -> uint32_t {
-            try {
+        +[](char* buf,
+            uint32_t bufMax) -> uint32_t {
+            try
+            {
                 MEOS::Meos::ensureMeosInitialized();
-                std::string js(j, jsz);
-                GSERIALIZED* result = geo_from_geojson(js.c_str());
-                if (!result) return 0u;
-                char* out = geo_as_text(result, -1);
-                free(result);
+
+                GSERIALIZED* gres = geo_from_geojson(js0)();
+                if (!gres) return 0u;
+                char* out = geo_as_text(gres, -1);
+                free(gres);
                 if (!out) return 0u;
                 uint32_t len = static_cast<uint32_t>(strlen(out));
                 if (len > bufMax) len = bufMax;
                 memcpy(buf, out, len);
                 free(out);
                 return len;
-            } catch (const std::exception&) { return 0u; }
+            }
+            catch (const std::exception&)
+            {
+                return 0u;
+            }
         },
-        json, outBuf.getContent(), nautilus::val<uint32_t>(MAX_LEN));
+        outBuf.getContent(), nautilus::val<uint32_t>(MAX_LEN));
 
     VarVal(actualLen).writeToMemory(outBuf.getReference());
     return outBuf;
@@ -71,11 +88,10 @@ VarVal GeoFromGeojsonPhysicalFunction::execute(const Record& record, ArenaRef& a
 PhysicalFunctionRegistryReturnType PhysicalFunctionGeneratedRegistrar::RegisterGeoFromGeojsonPhysicalFunction(
     PhysicalFunctionRegistryArguments arguments)
 {
-    PRECONDITION(arguments.childFunctions.size() == 1,
-                 "GeoFromGeojsonPhysicalFunction requires 1 children but got {}",
+    PRECONDITION(arguments.childFunctions.size() == 0,
+                 "GeoFromGeojsonPhysicalFunction requires 0 children but got {}",
                  arguments.childFunctions.size());
-    return GeoFromGeojsonPhysicalFunction(
-                                  std::move(arguments.childFunctions[0]));
+    return GeoFromGeojsonPhysicalFunction();
 }
 
 } // namespace NES

@@ -13,6 +13,7 @@
 */
 
 #include <Functions/Meos/IntspanUpperIncPhysicalFunction.hpp>
+
 #include <Functions/PhysicalFunction.hpp>
 #include <MEOSWrapper.hpp>
 #include <Nautilus/DataTypes/VarVal.hpp>
@@ -21,49 +22,66 @@
 #include <PhysicalFunctionRegistry.hpp>
 #include <ErrorHandling.hpp>
 #include <ExecutionContext.hpp>
+#include <fmt/format.h>
 #include <function.hpp>
+#include <string>
 #include <utility>
 #include <val.hpp>
 
 extern "C" {
 #include <meos.h>
 }
-#include <string>
-#include <string.h>
 
 namespace NES {
 
-IntspanUpperIncPhysicalFunction::IntspanUpperIncPhysicalFunction(PhysicalFunction sp) {
-    paramFns.reserve(1);
-    paramFns.push_back(std::move(sp));
+IntspanUpperIncPhysicalFunction::IntspanUpperIncPhysicalFunction(PhysicalFunction spFunction)
+{
+    parameterFunctions.reserve(1);
+    parameterFunctions.push_back(std::move(spFunction));
 }
 
-VarVal IntspanUpperIncPhysicalFunction::execute(const Record& record, ArenaRef& arena) const {
-    auto sp = paramFns[0].execute(record, arena).cast<VariableSizedData>();
+VarVal IntspanUpperIncPhysicalFunction::execute(const Record& record, ArenaRef& arena) const
+{
+    std::vector<VarVal> parameterValues;
+    parameterValues.reserve(parameterFunctions.size());
+    for (const auto& function : parameterFunctions)
+    {
+        parameterValues.emplace_back(function.execute(record, arena));
+    }
+
+    auto sp = parameterValues[0].cast<VariableSizedData>();
+
     const auto result = nautilus::invoke(
-        +[](const char* w, uint32_t wsz) -> double {
-            try {
+        +[](const char* spPtr, uint32_t spSize) -> double {
+            try
+            {
                 MEOS::Meos::ensureMeosInitialized();
-                std::string s(w, wsz);
-                Span* sp = intspan_in(s.c_str());
-                if (!sp) return 0.0;
-                bool r = span_upper_inc(sp);
-                free(sp);
-                return r ? 1.0 : 0.0;
-            } catch (const std::exception&) { return 0.0; }
+                std::string tempS(spPtr, spSize);
+                Span* temp = intspan_in(tempS.c_str());
+                if (!temp) return 0.0;
+
+                double r = span_upper_inc(temp);
+                free(temp);
+                return r;
+            }
+            catch (const std::exception&)
+            {
+                return 0.0;
+            }
         },
-        sp);
+        sp.getContent(), sp.getContentSize());
+
     return VarVal(result);
 }
 
 PhysicalFunctionRegistryReturnType PhysicalFunctionGeneratedRegistrar::RegisterIntspanUpperIncPhysicalFunction(
     PhysicalFunctionRegistryArguments arguments)
 {
-    PRECONDITION(arguments.childFunctions.size()==1,
+    PRECONDITION(arguments.childFunctions.size() == 1,
                  "IntspanUpperIncPhysicalFunction requires 1 children but got {}",
                  arguments.childFunctions.size());
-    return IntspanUpperIncPhysicalFunction(
-                                  std::move(arguments.childFunctions[0]));
+    auto arg0 = std::move(arguments.childFunctions[0]);
+    return IntspanUpperIncPhysicalFunction(std::move(arg0));
 }
 
 } // namespace NES

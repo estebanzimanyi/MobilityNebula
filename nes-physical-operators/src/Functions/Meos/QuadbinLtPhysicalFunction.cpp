@@ -13,6 +13,7 @@
 */
 
 #include <Functions/Meos/QuadbinLtPhysicalFunction.hpp>
+
 #include <Functions/PhysicalFunction.hpp>
 #include <MEOSWrapper.hpp>
 #include <Nautilus/DataTypes/VarVal.hpp>
@@ -21,7 +22,9 @@
 #include <PhysicalFunctionRegistry.hpp>
 #include <ErrorHandling.hpp>
 #include <ExecutionContext.hpp>
+#include <fmt/format.h>
 #include <function.hpp>
+#include <string>
 #include <utility>
 #include <val.hpp>
 
@@ -32,34 +35,55 @@ extern "C" {
 
 namespace NES {
 
-QuadbinLtPhysicalFunction::QuadbinLtPhysicalFunction(PhysicalFunction a, PhysicalFunction b)
+QuadbinLtPhysicalFunction::QuadbinLtPhysicalFunction(PhysicalFunction aFunction,
+                                                          PhysicalFunction bFunction)
 {
-    paramFns.reserve(2);
-    paramFns.push_back(std::move(a));
-    paramFns.push_back(std::move(b));
+    parameterFunctions.reserve(2);
+    parameterFunctions.push_back(std::move(aFunction));
+    parameterFunctions.push_back(std::move(bFunction));
 }
 
-VarVal QuadbinLtPhysicalFunction::execute(const Record& record, ArenaRef& arena) const {
-    auto a = paramFns[0].execute(record, arena).cast<uint64_t>();
-    auto b = paramFns[1].execute(record, arena).cast<uint64_t>();
+VarVal QuadbinLtPhysicalFunction::execute(const Record& record, ArenaRef& arena) const
+{
+    std::vector<VarVal> parameterValues;
+    parameterValues.reserve(parameterFunctions.size());
+    for (const auto& function : parameterFunctions)
+    {
+        parameterValues.emplace_back(function.execute(record, arena));
+    }
+
+    auto a = parameterValues[0].cast<nautilus::val<uint64_t>>();
+    auto b = parameterValues[1].cast<nautilus::val<uint64_t>>();
+
     const auto result = nautilus::invoke(
-        +[](uint64_t a, uint64_t b) -> double {
-            MEOS::Meos::ensureMeosInitialized();
-            bool r = quadbin_lt((Quadbin)a, (Quadbin)b);
-            return r ? 1.0 : 0.0;
+        +[](uint64_t a,
+            uint64_t b) -> double {
+            try
+            {
+                MEOS::Meos::ensureMeosInitialized();
+
+                double r = quadbin_lt((Quadbin)a, (Quadbin)b);
+                return r;
+            }
+            catch (const std::exception&)
+            {
+                return 0.0;
+            }
         },
         a, b);
+
     return VarVal(result);
 }
 
 PhysicalFunctionRegistryReturnType PhysicalFunctionGeneratedRegistrar::RegisterQuadbinLtPhysicalFunction(
     PhysicalFunctionRegistryArguments arguments)
 {
-    PRECONDITION(arguments.childFunctions.size()==2,
+    PRECONDITION(arguments.childFunctions.size() == 2,
                  "QuadbinLtPhysicalFunction requires 2 children but got {}",
                  arguments.childFunctions.size());
-    return QuadbinLtPhysicalFunction(std::move(arguments.childFunctions[0]),
-                                 std::move(arguments.childFunctions[1]));
+    auto arg0 = std::move(arguments.childFunctions[0]);
+    auto arg1 = std::move(arguments.childFunctions[1]);
+    return QuadbinLtPhysicalFunction(std::move(arg0), std::move(arg1));
 }
 
 } // namespace NES

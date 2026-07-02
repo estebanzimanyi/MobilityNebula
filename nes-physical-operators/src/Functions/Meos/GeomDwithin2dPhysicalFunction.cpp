@@ -13,6 +13,7 @@
 */
 
 #include <Functions/Meos/GeomDwithin2dPhysicalFunction.hpp>
+
 #include <Functions/PhysicalFunction.hpp>
 #include <MEOSWrapper.hpp>
 #include <Nautilus/DataTypes/VarVal.hpp>
@@ -34,37 +35,54 @@ extern "C" {
 
 namespace NES {
 
-GeomDwithin2dPhysicalFunction::GeomDwithin2dPhysicalFunction(PhysicalFunction wkt1Function,
-                                              PhysicalFunction wkt2Function,
-                                              PhysicalFunction distFunction)
+GeomDwithin2dPhysicalFunction::GeomDwithin2dPhysicalFunction(PhysicalFunction wktFunction,
+                                                          PhysicalFunction arg0Function,
+                                                          PhysicalFunction arg1Function)
 {
-    paramFns.reserve(3);
-    paramFns.push_back(std::move(wkt1Function));
-    paramFns.push_back(std::move(wkt2Function));
-    paramFns.push_back(std::move(distFunction));
+    parameterFunctions.reserve(3);
+    parameterFunctions.push_back(std::move(wktFunction));
+    parameterFunctions.push_back(std::move(arg0Function));
+    parameterFunctions.push_back(std::move(arg1Function));
 }
 
 VarVal GeomDwithin2dPhysicalFunction::execute(const Record& record, ArenaRef& arena) const
 {
-    auto wkt1 = paramFns[0].execute(record, arena).cast<VariableSizedData>();
-    auto wkt2 = paramFns[1].execute(record, arena).cast<VariableSizedData>();
-    auto dist = paramFns[2].execute(record, arena).cast<nautilus::val<double>>();
+    std::vector<VarVal> parameterValues;
+    parameterValues.reserve(parameterFunctions.size());
+    for (const auto& function : parameterFunctions)
+    {
+        parameterValues.emplace_back(function.execute(record, arena));
+    }
+
+    auto wkt = parameterValues[0].cast<VariableSizedData>();
+    auto arg0 = parameterValues[1].cast<VariableSizedData>();
+    auto arg1 = parameterValues[2].cast<nautilus::val<double>>();
 
     const auto result = nautilus::invoke(
-        +[](const char* w1, uint32_t w1sz, const char* w2, uint32_t w2sz, double d) -> double {
-            try {
+        +[](const char* wktPtr, uint32_t wktSize,
+            const char* arg0Ptr, uint32_t arg0Size,
+            double arg1) -> double {
+            try
+            {
                 MEOS::Meos::ensureMeosInitialized();
-                std::string s1(w1, w1sz), s2(w2, w2sz);
-                GSERIALIZED* gs1 = geom_in(s1.c_str(), -1);
-                if (!gs1) return 0.0;
-                GSERIALIZED* gs2 = geom_in(s2.c_str(), -1);
-                if (!gs2) { free(gs1); return 0.0; }
-                bool r = geom_dwithin2d(gs1, gs2, d);
-                free(gs1); free(gs2);
-                return r ? 1.0 : 0.0;
-            } catch (const std::exception&) { return 0.0; }
+                std::string tempS(wktPtr, wktSize);
+                GSERIALIZED* temp = geom_in(tempS.c_str(), -1);
+                if (!temp) return 0.0;
+                std::string arg0S(arg0Ptr, arg0Size);
+                GSERIALIZED* gs0 = geom_in(arg0S.c_str(), -1);
+                if (!gs0) { free(temp); return 0.0; }
+
+                double r = geom_dwithin2d(temp, gs0, arg1);
+                free(temp);
+                free(gs0);
+                return r;
+            }
+            catch (const std::exception&)
+            {
+                return 0.0;
+            }
         },
-        wkt1, wkt2, dist);
+        wkt.getContent(), wkt.getContentSize(), arg0.getContent(), arg0.getContentSize(), arg1);
 
     return VarVal(result);
 }
@@ -75,10 +93,10 @@ PhysicalFunctionRegistryReturnType PhysicalFunctionGeneratedRegistrar::RegisterG
     PRECONDITION(arguments.childFunctions.size() == 3,
                  "GeomDwithin2dPhysicalFunction requires 3 children but got {}",
                  arguments.childFunctions.size());
-    return GeomDwithin2dPhysicalFunction(
-        std::move(arguments.childFunctions[0]),
-        std::move(arguments.childFunctions[1]),
-        std::move(arguments.childFunctions[2]));
+    auto arg0 = std::move(arguments.childFunctions[0]);
+    auto arg1 = std::move(arguments.childFunctions[1]);
+    auto arg2 = std::move(arguments.childFunctions[2]);
+    return GeomDwithin2dPhysicalFunction(std::move(arg0), std::move(arg1), std::move(arg2));
 }
 
 } // namespace NES
