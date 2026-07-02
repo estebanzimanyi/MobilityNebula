@@ -36,13 +36,13 @@ extern "C" {
 namespace NES {
 
 TbigintScaleValuePhysicalFunction::TbigintScaleValuePhysicalFunction(PhysicalFunction valueFunction,
-                                                                     PhysicalFunction tsFunction,
-                                                                     PhysicalFunction widthFunction)
+                                                          PhysicalFunction tsFunction,
+                                                          PhysicalFunction arg0Function)
 {
     parameterFunctions.reserve(3);
     parameterFunctions.push_back(std::move(valueFunction));
     parameterFunctions.push_back(std::move(tsFunction));
-    parameterFunctions.push_back(std::move(widthFunction));
+    parameterFunctions.push_back(std::move(arg0Function));
 }
 
 VarVal TbigintScaleValuePhysicalFunction::execute(const Record& record, ArenaRef& arena) const
@@ -50,28 +50,38 @@ VarVal TbigintScaleValuePhysicalFunction::execute(const Record& record, ArenaRef
     std::vector<VarVal> parameterValues;
     parameterValues.reserve(parameterFunctions.size());
     for (const auto& function : parameterFunctions)
+    {
         parameterValues.emplace_back(function.execute(record, arena));
+    }
 
     auto value = parameterValues[0].cast<nautilus::val<double>>();
-    auto ts    = parameterValues[1].cast<nautilus::val<uint64_t>>();
-    auto width = parameterValues[2].cast<nautilus::val<double>>();
+    auto ts = parameterValues[1].cast<nautilus::val<uint64_t>>();
+    auto arg0 = parameterValues[2].cast<nautilus::val<double>>();
 
     const auto result = nautilus::invoke(
-        +[](double value, uint64_t ts, double width_d) -> double {
-            try {
+        +[](double value,
+            uint64_t ts,
+            double arg0) -> double {
+            try
+            {
                 MEOS::Meos::ensureMeosInitialized();
                 std::string tempWkt = fmt::format("{}@{}", static_cast<int64_t>(value), MEOS::Meos::convertEpochToTimestamp(ts));
                 Temporal* temp = tbigint_in(tempWkt.c_str());
                 if (!temp) return 0.0;
-                Temporal* res = tbigint_scale_value(temp, static_cast<int64_t>(width_d));
+
+                Temporal* res = tbigint_scale_value(temp, static_cast<int64_t>(arg0));
                 free(temp);
                 if (!res) return 0.0;
-                double r = static_cast<double>(tbigint_start_value(res));
+                double r = tbigint_start_value(res);
                 free(res);
                 return r;
-            } catch (const std::exception&) { return 0.0; }
+            }
+            catch (const std::exception&)
+            {
+                return 0.0;
+            }
         },
-        value, ts, width);
+        value, ts, arg0);
 
     return VarVal(result);
 }

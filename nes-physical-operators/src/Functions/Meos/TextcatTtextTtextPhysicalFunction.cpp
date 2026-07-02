@@ -13,6 +13,7 @@
 */
 
 #include <Functions/Meos/TextcatTtextTtextPhysicalFunction.hpp>
+
 #include <Functions/PhysicalFunction.hpp>
 #include <MEOSWrapper.hpp>
 #include <Nautilus/DataTypes/VarVal.hpp>
@@ -24,6 +25,7 @@
 #include <fmt/format.h>
 #include <function.hpp>
 #include <string>
+#include <string.h>
 #include <utility>
 #include <val.hpp>
 
@@ -33,64 +35,80 @@ extern "C" {
 
 namespace NES {
 
-TextcatTtextTtextPhysicalFunction::TextcatTtextTtextPhysicalFunction(PhysicalFunction value1Function,
-                                              PhysicalFunction ts1Function,
-                                              PhysicalFunction value2Function,
-                                              PhysicalFunction ts2Function)
+TextcatTtextTtextPhysicalFunction::TextcatTtextTtextPhysicalFunction(PhysicalFunction valueFunction,
+                                                          PhysicalFunction tsFunction,
+                                                          PhysicalFunction tval0Function,
+                                                          PhysicalFunction ts0Function)
 {
-    paramFns.reserve(4);
-    paramFns.push_back(std::move(value1Function));
-    paramFns.push_back(std::move(ts1Function));
-    paramFns.push_back(std::move(value2Function));
-    paramFns.push_back(std::move(ts2Function));
+    parameterFunctions.reserve(4);
+    parameterFunctions.push_back(std::move(valueFunction));
+    parameterFunctions.push_back(std::move(tsFunction));
+    parameterFunctions.push_back(std::move(tval0Function));
+    parameterFunctions.push_back(std::move(ts0Function));
 }
 
 VarVal TextcatTtextTtextPhysicalFunction::execute(const Record& record, ArenaRef& arena) const
 {
-    auto value1 = paramFns[0].execute(record, arena).cast<VariableSizedData>();
-    auto ts1    = paramFns[1].execute(record, arena).cast<nautilus::val<uint64_t>>();
-    auto value2 = paramFns[2].execute(record, arena).cast<VariableSizedData>();
-    auto ts2    = paramFns[3].execute(record, arena).cast<nautilus::val<uint64_t>>();
+    std::vector<VarVal> parameterValues;
+    parameterValues.reserve(parameterFunctions.size());
+    for (const auto& function : parameterFunctions)
+    {
+        parameterValues.emplace_back(function.execute(record, arena));
+    }
 
-    constexpr uint32_t MAX_LEN = 8192;
+    auto value = parameterValues[0].cast<VariableSizedData>();
+    auto ts = parameterValues[1].cast<nautilus::val<uint64_t>>();
+    auto tval0 = parameterValues[2].cast<VariableSizedData>();
+    auto ts0 = parameterValues[3].cast<nautilus::val<uint64_t>>();
+
+    constexpr uint32_t MAX_LEN = 4096;
     auto outBuf = arena.allocateVariableSizedData(nautilus::val<uint32_t>(MAX_LEN));
 
     const auto actualLen = nautilus::invoke(
-        +[](const char* v1, uint32_t v1sz, uint64_t t1,
-            const char* v2, uint32_t v2sz, uint64_t t2,
-            char* buf, uint32_t bufMax) -> uint32_t {
-            try {
+        +[](const char* valuePtr, uint32_t valueSize,
+            uint64_t ts,
+            const char* tval0Ptr, uint32_t tval0Size,
+            uint64_t ts0,
+            char* buf,
+            uint32_t bufMax) -> uint32_t {
+            try
+            {
                 MEOS::Meos::ensureMeosInitialized();
-                auto strip = [](std::string s) {
-                    while (!s.empty() && (s.front() == '\'' || s.front() == '"')) s = s.substr(1);
-                    while (!s.empty() && (s.back()  == '\'' || s.back()  == '"')) s = s.substr(0, s.size() - 1);
-                    return s;
-                };
-                std::string s1 = strip(std::string(v1, v1sz));
-                std::string s2 = strip(std::string(v2, v2sz));
-                std::string ts1_str = MEOS::Meos::convertEpochToTimestamp(t1);
-                std::string ts2_str = MEOS::Meos::convertEpochToTimestamp(t2);
-                Temporal* temp1 = ttext_in(("'" + s1 + "'@" + ts1_str).c_str());
-                if (!temp1) return 0u;
-                Temporal* temp2 = ttext_in(("'" + s2 + "'@" + ts2_str).c_str());
-                if (!temp2) { free(temp1); return 0u; }
-                Temporal* res = textcat_ttext_ttext(temp1, temp2);
-                free(temp1); free(temp2);
-                if (!res) return 0u;
-                text* out_txt = ttext_start_value(res);
-                free(res);
-                if (!out_txt) return 0u;
-                char* cstr = text_to_cstring(out_txt);
-                free(out_txt);
-                if (!cstr) return 0u;
-                uint32_t len = static_cast<uint32_t>(std::strlen(cstr));
+                std::string tempVal(valuePtr, valueSize);
+                while (!tempVal.empty() && (tempVal.front() == '\'' || tempVal.front() == '"')) tempVal.erase(tempVal.begin());
+                while (!tempVal.empty() && (tempVal.back()  == '\'' || tempVal.back()  == '"')) tempVal.pop_back();
+                std::string tempWkt = "'" + tempVal + "'@" + MEOS::Meos::convertEpochToTimestamp(ts);
+                Temporal* temp = ttext_in(tempWkt.c_str());
+                if (!temp) return 0u;
+                std::string tval0S(tval0Ptr, tval0Size);
+                while (!tval0S.empty() && (tval0S.front() == '\'' || tval0S.front() == '"')) tval0S.erase(tval0S.begin());
+                while (!tval0S.empty() && (tval0S.back()  == '\'' || tval0S.back()  == '"')) tval0S.pop_back();
+                std::string tval0Wkt = "'" + tval0S + "'@" + MEOS::Meos::convertEpochToTimestamp(ts0);
+                Temporal* inst0 = ttext_in(tval0Wkt.c_str());
+                if (!inst0) { free(temp); return 0u; }
+
+                Temporal* tres = textcat_ttext_ttext(temp, inst0);
+                free(temp);
+                free(inst0);
+                if (!tres) return 0u;
+                text* txt = ttext_start_value(tres);
+                free(tres);
+                if (!txt) return 0u;
+                char* out = text_to_cstring(txt);
+                free(txt);
+                if (!out) return 0u;
+                uint32_t len = static_cast<uint32_t>(strlen(out));
                 if (len > bufMax) len = bufMax;
-                std::memcpy(buf, cstr, len);
-                free(cstr);
+                memcpy(buf, out, len);
+                free(out);
                 return len;
-            } catch (const std::exception&) { return 0u; }
+            }
+            catch (const std::exception&)
+            {
+                return 0u;
+            }
         },
-        value1, ts1, value2, ts2, outBuf.getContent(), nautilus::val<uint32_t>(MAX_LEN));
+        value.getContent(), value.getContentSize(), ts, tval0.getContent(), tval0.getContentSize(), ts0, outBuf.getContent(), nautilus::val<uint32_t>(MAX_LEN));
 
     VarVal(actualLen).writeToMemory(outBuf.getReference());
     return outBuf;
@@ -102,11 +120,11 @@ PhysicalFunctionRegistryReturnType PhysicalFunctionGeneratedRegistrar::RegisterT
     PRECONDITION(arguments.childFunctions.size() == 4,
                  "TextcatTtextTtextPhysicalFunction requires 4 children but got {}",
                  arguments.childFunctions.size());
-    return TextcatTtextTtextPhysicalFunction(
-        std::move(arguments.childFunctions[0]),
-        std::move(arguments.childFunctions[1]),
-        std::move(arguments.childFunctions[2]),
-        std::move(arguments.childFunctions[3]));
+    auto arg0 = std::move(arguments.childFunctions[0]);
+    auto arg1 = std::move(arguments.childFunctions[1]);
+    auto arg2 = std::move(arguments.childFunctions[2]);
+    auto arg3 = std::move(arguments.childFunctions[3]);
+    return TextcatTtextTtextPhysicalFunction(std::move(arg0), std::move(arg1), std::move(arg2), std::move(arg3));
 }
 
 } // namespace NES

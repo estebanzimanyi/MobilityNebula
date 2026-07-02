@@ -35,35 +35,54 @@ TfloatLog10LogicalFunction::TfloatLog10LogicalFunction(LogicalFunction value,
     parameters.push_back(std::move(ts));
 }
 
-DataType TfloatLog10LogicalFunction::getDataType() const { return dataType; }
+DataType TfloatLog10LogicalFunction::getDataType() const
+{
+    return dataType;
+}
 
 LogicalFunction TfloatLog10LogicalFunction::withDataType(const DataType& newDataType) const
 {
-    auto copy = *this; copy.dataType = newDataType; return copy;
+    auto copy = *this;
+    copy.dataType = newDataType;
+    return copy;
 }
 
-std::vector<LogicalFunction> TfloatLog10LogicalFunction::getChildren() const { return parameters; }
+std::vector<LogicalFunction> TfloatLog10LogicalFunction::getChildren() const
+{
+    return parameters;
+}
 
 LogicalFunction TfloatLog10LogicalFunction::withChildren(const std::vector<LogicalFunction>& children) const
 {
     PRECONDITION(children.size() == 2, "TfloatLog10LogicalFunction requires 2 children, but got {}", children.size());
-    auto copy = *this; copy.parameters = children; return copy;
+    auto copy = *this;
+    copy.parameters = children;
+    return copy;
 }
 
-std::string_view TfloatLog10LogicalFunction::getType() const { return NAME; }
+std::string_view TfloatLog10LogicalFunction::getType() const
+{
+    return NAME;
+}
 
 bool TfloatLog10LogicalFunction::operator==(const LogicalFunctionConcept& rhs) const
 {
     if (const auto* other = dynamic_cast<const TfloatLog10LogicalFunction*>(&rhs))
+    {
         return parameters == other->parameters;
+    }
     return false;
 }
 
 std::string TfloatLog10LogicalFunction::explain(ExplainVerbosity verbosity) const
 {
     std::string args;
-    for (size_t index = 0; index < parameters.size(); ++index) {
-        if (index > 0) args += ", ";
+    for (size_t index = 0; index < parameters.size(); ++index)
+    {
+        if (index > 0)
+        {
+            args += ", ";
+        }
         args += parameters[index].explain(verbosity);
     }
     return fmt::format("{}({})", NAME, args);
@@ -74,7 +93,9 @@ LogicalFunction TfloatLog10LogicalFunction::withInferredDataType(const Schema& s
     std::vector<LogicalFunction> newChildren;
     newChildren.reserve(parameters.size());
     for (const auto& child : parameters)
+    {
         newChildren.emplace_back(child.withInferredDataType(schema));
+    }
     return withChildren(newChildren);
 }
 
@@ -84,7 +105,9 @@ SerializableFunction TfloatLog10LogicalFunction::serialize() const
     proto.set_function_type(std::string(NAME));
     DataTypeSerializationUtil::serializeDataType(dataType, proto.mutable_data_type());
     for (const auto& child : parameters)
+    {
         proto.add_children()->CopyFrom(child.serialize());
+    }
     return proto;
 }
 

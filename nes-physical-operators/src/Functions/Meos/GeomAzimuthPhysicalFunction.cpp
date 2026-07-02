@@ -13,6 +13,7 @@
 */
 
 #include <Functions/Meos/GeomAzimuthPhysicalFunction.hpp>
+
 #include <Functions/PhysicalFunction.hpp>
 #include <MEOSWrapper.hpp>
 #include <Nautilus/DataTypes/VarVal.hpp>
@@ -34,35 +35,42 @@ extern "C" {
 
 namespace NES {
 
-GeomAzimuthPhysicalFunction::GeomAzimuthPhysicalFunction(PhysicalFunction wkt1Function,
-                                              PhysicalFunction wkt2Function)
+GeomAzimuthPhysicalFunction::GeomAzimuthPhysicalFunction(PhysicalFunction wktFunction)
 {
-    paramFns.reserve(2);
-    paramFns.push_back(std::move(wkt1Function));
-    paramFns.push_back(std::move(wkt2Function));
+    parameterFunctions.reserve(1);
+    parameterFunctions.push_back(std::move(wktFunction));
 }
 
 VarVal GeomAzimuthPhysicalFunction::execute(const Record& record, ArenaRef& arena) const
 {
-    auto wkt1 = paramFns[0].execute(record, arena).cast<VariableSizedData>();
-    auto wkt2 = paramFns[1].execute(record, arena).cast<VariableSizedData>();
+    std::vector<VarVal> parameterValues;
+    parameterValues.reserve(parameterFunctions.size());
+    for (const auto& function : parameterFunctions)
+    {
+        parameterValues.emplace_back(function.execute(record, arena));
+    }
+
+    auto wkt = parameterValues[0].cast<VariableSizedData>();
 
     const auto result = nautilus::invoke(
-        +[](const char* w1, uint32_t w1sz, const char* w2, uint32_t w2sz) -> double {
-            try {
+        +[](const char* wktPtr, uint32_t wktSize) -> double {
+            try
+            {
                 MEOS::Meos::ensureMeosInitialized();
-                std::string s1(w1, w1sz), s2(w2, w2sz);
-                GSERIALIZED* gs1 = geom_in(s1.c_str(), -1);
-                if (!gs1) return 0.0;
-                GSERIALIZED* gs2 = geom_in(s2.c_str(), -1);
-                if (!gs2) { free(gs1); return 0.0; }
-                double azimuth = 0.0;
-                geom_azimuth(gs1, gs2, &azimuth);
-                free(gs1); free(gs2);
-                return azimuth;
-            } catch (const std::exception&) { return 0.0; }
+                std::string tempS(wktPtr, wktSize);
+                GSERIALIZED* temp = geom_in(tempS.c_str(), -1);
+                if (!temp) return 0.0;
+
+                double r = geom_azimuth(temp);
+                free(temp);
+                return r;
+            }
+            catch (const std::exception&)
+            {
+                return 0.0;
+            }
         },
-        wkt1, wkt2);
+        wkt.getContent(), wkt.getContentSize());
 
     return VarVal(result);
 }
@@ -70,11 +78,11 @@ VarVal GeomAzimuthPhysicalFunction::execute(const Record& record, ArenaRef& aren
 PhysicalFunctionRegistryReturnType PhysicalFunctionGeneratedRegistrar::RegisterGeomAzimuthPhysicalFunction(
     PhysicalFunctionRegistryArguments arguments)
 {
-    PRECONDITION(arguments.childFunctions.size() == 2,
-                 "GeomAzimuthPhysicalFunction requires 2 children but got {}",
+    PRECONDITION(arguments.childFunctions.size() == 1,
+                 "GeomAzimuthPhysicalFunction requires 1 children but got {}",
                  arguments.childFunctions.size());
-    return GeomAzimuthPhysicalFunction(std::move(arguments.childFunctions[0]),
-                                 std::move(arguments.childFunctions[1]));
+    auto arg0 = std::move(arguments.childFunctions[0]);
+    return GeomAzimuthPhysicalFunction(std::move(arg0));
 }
 
 } // namespace NES

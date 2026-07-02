@@ -13,6 +13,7 @@
 */
 
 #include <Functions/Meos/GeoPointsPhysicalFunction.hpp>
+
 #include <Functions/PhysicalFunction.hpp>
 #include <MEOSWrapper.hpp>
 #include <Nautilus/DataTypes/VarVal.hpp>
@@ -21,8 +22,10 @@
 #include <PhysicalFunctionRegistry.hpp>
 #include <ErrorHandling.hpp>
 #include <ExecutionContext.hpp>
+#include <fmt/format.h>
 #include <function.hpp>
 #include <string>
+#include <string.h>
 #include <utility>
 #include <val.hpp>
 
@@ -33,39 +36,55 @@ extern "C" {
 
 namespace NES {
 
-GeoPointsPhysicalFunction::GeoPointsPhysicalFunction(PhysicalFunction wkt)
+GeoPointsPhysicalFunction::GeoPointsPhysicalFunction(PhysicalFunction wktFunction)
 {
-    paramFns.reserve(1);
-    paramFns.push_back(std::move(wkt));
+    parameterFunctions.reserve(1);
+    parameterFunctions.push_back(std::move(wktFunction));
 }
 
 VarVal GeoPointsPhysicalFunction::execute(const Record& record, ArenaRef& arena) const
 {
-    auto wkt = paramFns[0].execute(record, arena).cast<VariableSizedData>();
-    constexpr uint32_t MAX_LEN = 8192;
+    std::vector<VarVal> parameterValues;
+    parameterValues.reserve(parameterFunctions.size());
+    for (const auto& function : parameterFunctions)
+    {
+        parameterValues.emplace_back(function.execute(record, arena));
+    }
+
+    auto wkt = parameterValues[0].cast<VariableSizedData>();
+
+    constexpr uint32_t MAX_LEN = 4096;
     auto outBuf = arena.allocateVariableSizedData(nautilus::val<uint32_t>(MAX_LEN));
 
     const auto actualLen = nautilus::invoke(
-        +[](const char* wkt, uint32_t wsz, char* buf, uint32_t bufMax) -> uint32_t {
-            try {
+        +[](const char* wktPtr, uint32_t wktSize,
+            char* buf,
+            uint32_t bufMax) -> uint32_t {
+            try
+            {
                 MEOS::Meos::ensureMeosInitialized();
-                std::string s(wkt, wsz);
-                GSERIALIZED* gs = geom_in(s.c_str(), -1);
-                if (!gs) return 0u;
-                GSERIALIZED* result = geo_points(gs);
-                free(gs);
-                if (!result) return 0u;
-                char* out = geo_as_text(result, -1);
-                free(result);
+                std::string tempS(wktPtr, wktSize);
+                GSERIALIZED* temp = geom_in(tempS.c_str(), -1);
+                if (!temp) return 0u;
+
+                GSERIALIZED* gres = geo_points(temp);
+                free(temp);
+                if (!gres) return 0u;
+                char* out = geo_as_text(gres, -1);
+                free(gres);
                 if (!out) return 0u;
                 uint32_t len = static_cast<uint32_t>(strlen(out));
                 if (len > bufMax) len = bufMax;
                 memcpy(buf, out, len);
                 free(out);
                 return len;
-            } catch (const std::exception&) { return 0u; }
+            }
+            catch (const std::exception&)
+            {
+                return 0u;
+            }
         },
-        wkt, outBuf.getContent(), nautilus::val<uint32_t>(8192));
+        wkt.getContent(), wkt.getContentSize(), outBuf.getContent(), nautilus::val<uint32_t>(MAX_LEN));
 
     VarVal(actualLen).writeToMemory(outBuf.getReference());
     return outBuf;
@@ -77,8 +96,8 @@ PhysicalFunctionRegistryReturnType PhysicalFunctionGeneratedRegistrar::RegisterG
     PRECONDITION(arguments.childFunctions.size() == 1,
                  "GeoPointsPhysicalFunction requires 1 children but got {}",
                  arguments.childFunctions.size());
-    return GeoPointsPhysicalFunction(
-                                  std::move(arguments.childFunctions[0]));
+    auto arg0 = std::move(arguments.childFunctions[0]);
+    return GeoPointsPhysicalFunction(std::move(arg0));
 }
 
 } // namespace NES

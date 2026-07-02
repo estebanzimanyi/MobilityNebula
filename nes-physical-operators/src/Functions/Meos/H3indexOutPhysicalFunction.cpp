@@ -13,6 +13,7 @@
 */
 
 #include <Functions/Meos/H3indexOutPhysicalFunction.hpp>
+
 #include <Functions/PhysicalFunction.hpp>
 #include <MEOSWrapper.hpp>
 #include <Nautilus/DataTypes/VarVal.hpp>
@@ -21,7 +22,10 @@
 #include <PhysicalFunctionRegistry.hpp>
 #include <ErrorHandling.hpp>
 #include <ExecutionContext.hpp>
+#include <fmt/format.h>
 #include <function.hpp>
+#include <string>
+#include <string.h>
 #include <utility>
 #include <val.hpp>
 
@@ -29,35 +33,51 @@ extern "C" {
 #include <meos.h>
 #include <meos_h3.h>
 }
-#include <string.h>
 
 namespace NES {
 
-H3indexOutPhysicalFunction::H3indexOutPhysicalFunction(PhysicalFunction cell)
+H3indexOutPhysicalFunction::H3indexOutPhysicalFunction(PhysicalFunction cellFunction)
 {
-    paramFns.reserve(1);
-    paramFns.push_back(std::move(cell));
+    parameterFunctions.reserve(1);
+    parameterFunctions.push_back(std::move(cellFunction));
 }
 
 VarVal H3indexOutPhysicalFunction::execute(const Record& record, ArenaRef& arena) const
 {
-    auto cell = paramFns[0].execute(record, arena).cast<uint64_t>();
+    std::vector<VarVal> parameterValues;
+    parameterValues.reserve(parameterFunctions.size());
+    for (const auto& function : parameterFunctions)
+    {
+        parameterValues.emplace_back(function.execute(record, arena));
+    }
 
-    constexpr uint32_t MAX_LEN = 32;
+    auto cell = parameterValues[0].cast<nautilus::val<uint64_t>>();
+
+    constexpr uint32_t MAX_LEN = 4096;
     auto outBuf = arena.allocateVariableSizedData(nautilus::val<uint32_t>(MAX_LEN));
 
     const auto actualLen = nautilus::invoke(
-        +[](uint64_t cell, char* buf, uint32_t bufMax) -> uint32_t {
-            try {
+        +[](uint64_t cell,
+            char* buf,
+            uint32_t bufMax) -> uint32_t {
+            try
+            {
                 MEOS::Meos::ensureMeosInitialized();
-                char* hex = h3index_out((H3Index)cell);
+
+                H3Index hcell = h3index_out((H3Index)cell);
+                if (hcell == 0) return 0u;
+                char* hex = h3index_out(hcell);
                 if (!hex) return 0u;
                 uint32_t len = static_cast<uint32_t>(strlen(hex));
                 if (len > bufMax) len = bufMax;
                 memcpy(buf, hex, len);
                 free(hex);
                 return len;
-            } catch (const std::exception&) { return 0u; }
+            }
+            catch (const std::exception&)
+            {
+                return 0u;
+            }
         },
         cell, outBuf.getContent(), nautilus::val<uint32_t>(MAX_LEN));
 
@@ -69,9 +89,10 @@ PhysicalFunctionRegistryReturnType PhysicalFunctionGeneratedRegistrar::RegisterH
     PhysicalFunctionRegistryArguments arguments)
 {
     PRECONDITION(arguments.childFunctions.size() == 1,
-                 "H3indexOutPhysicalFunction requires 1 child but got {}",
+                 "H3indexOutPhysicalFunction requires 1 children but got {}",
                  arguments.childFunctions.size());
-    return H3indexOutPhysicalFunction(std::move(arguments.childFunctions[0]));
+    auto arg0 = std::move(arguments.childFunctions[0]);
+    return H3indexOutPhysicalFunction(std::move(arg0));
 }
 
 } // namespace NES

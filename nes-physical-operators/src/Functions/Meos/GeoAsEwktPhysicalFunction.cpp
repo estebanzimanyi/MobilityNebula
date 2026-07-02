@@ -13,6 +13,7 @@
 */
 
 #include <Functions/Meos/GeoAsEwktPhysicalFunction.hpp>
+
 #include <Functions/PhysicalFunction.hpp>
 #include <MEOSWrapper.hpp>
 #include <Nautilus/DataTypes/VarVal.hpp>
@@ -21,8 +22,10 @@
 #include <PhysicalFunctionRegistry.hpp>
 #include <ErrorHandling.hpp>
 #include <ExecutionContext.hpp>
+#include <fmt/format.h>
 #include <function.hpp>
 #include <string>
+#include <string.h>
 #include <utility>
 #include <val.hpp>
 
@@ -33,38 +36,56 @@ extern "C" {
 
 namespace NES {
 
-GeoAsEwktPhysicalFunction::GeoAsEwktPhysicalFunction(PhysicalFunction wkt, PhysicalFunction precision)
+GeoAsEwktPhysicalFunction::GeoAsEwktPhysicalFunction(PhysicalFunction wktFunction,
+                                                          PhysicalFunction arg0Function)
 {
-    paramFns.reserve(2);
-    paramFns.push_back(std::move(wkt));
-    paramFns.push_back(std::move(precision));
+    parameterFunctions.reserve(2);
+    parameterFunctions.push_back(std::move(wktFunction));
+    parameterFunctions.push_back(std::move(arg0Function));
 }
 
 VarVal GeoAsEwktPhysicalFunction::execute(const Record& record, ArenaRef& arena) const
 {
-    auto wkt = paramFns[0].execute(record, arena).cast<VariableSizedData>();
-    auto precision = paramFns[1].execute(record, arena).cast<nautilus::val<uint64_t>>();
-    constexpr uint32_t MAX_LEN = 16384;
+    std::vector<VarVal> parameterValues;
+    parameterValues.reserve(parameterFunctions.size());
+    for (const auto& function : parameterFunctions)
+    {
+        parameterValues.emplace_back(function.execute(record, arena));
+    }
+
+    auto wkt = parameterValues[0].cast<VariableSizedData>();
+    auto arg0 = parameterValues[1].cast<nautilus::val<double>>();
+
+    constexpr uint32_t MAX_LEN = 4096;
     auto outBuf = arena.allocateVariableSizedData(nautilus::val<uint32_t>(MAX_LEN));
 
     const auto actualLen = nautilus::invoke(
-        +[](const char* w, uint32_t wsz, uint64_t precision, char* buf, uint32_t bufMax) -> uint32_t {
-            try {
+        +[](const char* wktPtr, uint32_t wktSize,
+            double arg0,
+            char* buf,
+            uint32_t bufMax) -> uint32_t {
+            try
+            {
                 MEOS::Meos::ensureMeosInitialized();
-                std::string s(w, wsz);
-                GSERIALIZED* gs = geom_in(s.c_str(), -1);
-                if (!gs) return 0u;
-                char* out = geo_as_ewkt(gs, (int)precision);
-                free(gs);
+                std::string tempS(wktPtr, wktSize);
+                GSERIALIZED* temp = geom_in(tempS.c_str(), -1);
+                if (!temp) return 0u;
+
+                char* out = geo_as_ewkt(temp, (int)arg0);
+                free(temp);
                 if (!out) return 0u;
                 uint32_t len = static_cast<uint32_t>(strlen(out));
                 if (len > bufMax) len = bufMax;
                 memcpy(buf, out, len);
                 free(out);
                 return len;
-            } catch (const std::exception&) { return 0u; }
+            }
+            catch (const std::exception&)
+            {
+                return 0u;
+            }
         },
-        wkt, precision, outBuf.getContent(), nautilus::val<uint32_t>(MAX_LEN));
+        wkt.getContent(), wkt.getContentSize(), arg0, outBuf.getContent(), nautilus::val<uint32_t>(MAX_LEN));
 
     VarVal(actualLen).writeToMemory(outBuf.getReference());
     return outBuf;
@@ -76,9 +97,9 @@ PhysicalFunctionRegistryReturnType PhysicalFunctionGeneratedRegistrar::RegisterG
     PRECONDITION(arguments.childFunctions.size() == 2,
                  "GeoAsEwktPhysicalFunction requires 2 children but got {}",
                  arguments.childFunctions.size());
-    return GeoAsEwktPhysicalFunction(
-                                  std::move(arguments.childFunctions[0]),
-                                  std::move(arguments.childFunctions[1]));
+    auto arg0 = std::move(arguments.childFunctions[0]);
+    auto arg1 = std::move(arguments.childFunctions[1]);
+    return GeoAsEwktPhysicalFunction(std::move(arg0), std::move(arg1));
 }
 
 } // namespace NES

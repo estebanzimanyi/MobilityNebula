@@ -26,45 +26,67 @@
 namespace NES
 {
 
-TextcatTtextTtextLogicalFunction::TextcatTtextTtextLogicalFunction(LogicalFunction value1, LogicalFunction ts1, LogicalFunction value2, LogicalFunction ts2)
+TextcatTtextTtextLogicalFunction::TextcatTtextTtextLogicalFunction(LogicalFunction value,
+                                          LogicalFunction ts,
+                                          LogicalFunction tval0,
+                                          LogicalFunction ts0)
     : dataType(DataTypeProvider::provideDataType(DataType::Type::VARSIZED))
 {
     parameters.reserve(4);
-    parameters.push_back(std::move(value1));
-    parameters.push_back(std::move(ts1));
-    parameters.push_back(std::move(value2));
-    parameters.push_back(std::move(ts2));
+    parameters.push_back(std::move(value));
+    parameters.push_back(std::move(ts));
+    parameters.push_back(std::move(tval0));
+    parameters.push_back(std::move(ts0));
 }
 
-DataType TextcatTtextTtextLogicalFunction::getDataType() const { return dataType; }
+DataType TextcatTtextTtextLogicalFunction::getDataType() const
+{
+    return dataType;
+}
 
 LogicalFunction TextcatTtextTtextLogicalFunction::withDataType(const DataType& newDataType) const
 {
-    auto copy = *this; copy.dataType = newDataType; return copy;
+    auto copy = *this;
+    copy.dataType = newDataType;
+    return copy;
 }
 
-std::vector<LogicalFunction> TextcatTtextTtextLogicalFunction::getChildren() const { return parameters; }
+std::vector<LogicalFunction> TextcatTtextTtextLogicalFunction::getChildren() const
+{
+    return parameters;
+}
 
 LogicalFunction TextcatTtextTtextLogicalFunction::withChildren(const std::vector<LogicalFunction>& children) const
 {
     PRECONDITION(children.size() == 4, "TextcatTtextTtextLogicalFunction requires 4 children, but got {}", children.size());
-    auto copy = *this; copy.parameters = children; return copy;
+    auto copy = *this;
+    copy.parameters = children;
+    return copy;
 }
 
-std::string_view TextcatTtextTtextLogicalFunction::getType() const { return NAME; }
+std::string_view TextcatTtextTtextLogicalFunction::getType() const
+{
+    return NAME;
+}
 
 bool TextcatTtextTtextLogicalFunction::operator==(const LogicalFunctionConcept& rhs) const
 {
     if (const auto* other = dynamic_cast<const TextcatTtextTtextLogicalFunction*>(&rhs))
+    {
         return parameters == other->parameters;
+    }
     return false;
 }
 
 std::string TextcatTtextTtextLogicalFunction::explain(ExplainVerbosity verbosity) const
 {
     std::string args;
-    for (size_t index = 0; index < parameters.size(); ++index) {
-        if (index > 0) args += ", ";
+    for (size_t index = 0; index < parameters.size(); ++index)
+    {
+        if (index > 0)
+        {
+            args += ", ";
+        }
         args += parameters[index].explain(verbosity);
     }
     return fmt::format("{}({})", NAME, args);
@@ -75,7 +97,9 @@ LogicalFunction TextcatTtextTtextLogicalFunction::withInferredDataType(const Sch
     std::vector<LogicalFunction> newChildren;
     newChildren.reserve(parameters.size());
     for (const auto& child : parameters)
+    {
         newChildren.emplace_back(child.withInferredDataType(schema));
+    }
     return withChildren(newChildren);
 }
 
@@ -85,7 +109,9 @@ SerializableFunction TextcatTtextTtextLogicalFunction::serialize() const
     proto.set_function_type(std::string(NAME));
     DataTypeSerializationUtil::serializeDataType(dataType, proto.mutable_data_type());
     for (const auto& child : parameters)
+    {
         proto.add_children()->CopyFrom(child.serialize());
+    }
     return proto;
 }
 

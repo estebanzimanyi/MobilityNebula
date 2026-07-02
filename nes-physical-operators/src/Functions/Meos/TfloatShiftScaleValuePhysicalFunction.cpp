@@ -36,15 +36,15 @@ extern "C" {
 namespace NES {
 
 TfloatShiftScaleValuePhysicalFunction::TfloatShiftScaleValuePhysicalFunction(PhysicalFunction valueFunction,
-                                                                              PhysicalFunction tsFunction,
-                                                                              PhysicalFunction shiftFunction,
-                                                                              PhysicalFunction widthFunction)
+                                                          PhysicalFunction tsFunction,
+                                                          PhysicalFunction arg0Function,
+                                                          PhysicalFunction arg1Function)
 {
     parameterFunctions.reserve(4);
     parameterFunctions.push_back(std::move(valueFunction));
     parameterFunctions.push_back(std::move(tsFunction));
-    parameterFunctions.push_back(std::move(shiftFunction));
-    parameterFunctions.push_back(std::move(widthFunction));
+    parameterFunctions.push_back(std::move(arg0Function));
+    parameterFunctions.push_back(std::move(arg1Function));
 }
 
 VarVal TfloatShiftScaleValuePhysicalFunction::execute(const Record& record, ArenaRef& arena) const
@@ -52,29 +52,40 @@ VarVal TfloatShiftScaleValuePhysicalFunction::execute(const Record& record, Aren
     std::vector<VarVal> parameterValues;
     parameterValues.reserve(parameterFunctions.size());
     for (const auto& function : parameterFunctions)
+    {
         parameterValues.emplace_back(function.execute(record, arena));
+    }
 
     auto value = parameterValues[0].cast<nautilus::val<double>>();
-    auto ts    = parameterValues[1].cast<nautilus::val<uint64_t>>();
-    auto shift = parameterValues[2].cast<nautilus::val<double>>();
-    auto width = parameterValues[3].cast<nautilus::val<double>>();
+    auto ts = parameterValues[1].cast<nautilus::val<uint64_t>>();
+    auto arg0 = parameterValues[2].cast<nautilus::val<double>>();
+    auto arg1 = parameterValues[3].cast<nautilus::val<double>>();
 
     const auto result = nautilus::invoke(
-        +[](double value, uint64_t ts, double shift, double width) -> double {
-            try {
+        +[](double value,
+            uint64_t ts,
+            double arg0,
+            double arg1) -> double {
+            try
+            {
                 MEOS::Meos::ensureMeosInitialized();
                 std::string tempWkt = fmt::format("{}@{}", value, MEOS::Meos::convertEpochToTimestamp(ts));
                 Temporal* temp = tfloat_in(tempWkt.c_str());
                 if (!temp) return 0.0;
-                Temporal* res = tfloat_shift_scale_value(temp, shift, width);
+
+                Temporal* res = tfloat_shift_scale_value(temp, arg0, arg1);
                 free(temp);
                 if (!res) return 0.0;
                 double r = tfloat_start_value(res);
                 free(res);
                 return r;
-            } catch (const std::exception&) { return 0.0; }
+            }
+            catch (const std::exception&)
+            {
+                return 0.0;
+            }
         },
-        value, ts, shift, width);
+        value, ts, arg0, arg1);
 
     return VarVal(result);
 }

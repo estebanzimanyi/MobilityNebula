@@ -35,12 +35,12 @@ extern "C" {
 
 namespace NES {
 
-AlwaysGtBigintTbigintPhysicalFunction::AlwaysGtBigintTbigintPhysicalFunction(PhysicalFunction scalarFunction,
-                                                                          PhysicalFunction valueFunction,
-                                                                          PhysicalFunction tsFunction)
+AlwaysGtBigintTbigintPhysicalFunction::AlwaysGtBigintTbigintPhysicalFunction(PhysicalFunction arg0Function,
+                                                          PhysicalFunction valueFunction,
+                                                          PhysicalFunction tsFunction)
 {
     parameterFunctions.reserve(3);
-    parameterFunctions.push_back(std::move(scalarFunction));
+    parameterFunctions.push_back(std::move(arg0Function));
     parameterFunctions.push_back(std::move(valueFunction));
     parameterFunctions.push_back(std::move(tsFunction));
 }
@@ -50,26 +50,35 @@ VarVal AlwaysGtBigintTbigintPhysicalFunction::execute(const Record& record, Aren
     std::vector<VarVal> parameterValues;
     parameterValues.reserve(parameterFunctions.size());
     for (const auto& function : parameterFunctions)
+    {
         parameterValues.emplace_back(function.execute(record, arena));
+    }
 
-    auto scalar = parameterValues[0].cast<nautilus::val<double>>();
-    auto value  = parameterValues[1].cast<nautilus::val<double>>();
-    auto ts     = parameterValues[2].cast<nautilus::val<uint64_t>>();
+    auto arg0 = parameterValues[0].cast<nautilus::val<double>>();
+    auto value = parameterValues[1].cast<nautilus::val<double>>();
+    auto ts = parameterValues[2].cast<nautilus::val<uint64_t>>();
 
     const auto result = nautilus::invoke(
-        +[](double d, double v, uint64_t t) -> double {
-            try {
+        +[](double arg0,
+            double value,
+            uint64_t ts) -> int {
+            try
+            {
                 MEOS::Meos::ensureMeosInitialized();
-                std::string ts_str = MEOS::Meos::convertEpochToTimestamp(t);
-                std::string wkt = fmt::format("{}@{}", static_cast<int64_t>(v), ts_str);
-                Temporal* temp = tbigint_in(wkt.c_str());
-                if (!temp) return 0.0;
-                int r = always_gt_bigint_tbigint(static_cast<int64_t>(d), temp);
+                std::string tempWkt = fmt::format("{}@{}", static_cast<int64_t>(value), MEOS::Meos::convertEpochToTimestamp(ts));
+                Temporal* temp = tbigint_in(tempWkt.c_str());
+                if (!temp) return 0;
+
+                int r = always_gt_bigint_tbigint(static_cast<int64_t>(arg0), temp);
                 free(temp);
-                return static_cast<double>(r);
-            } catch (const std::exception&) { return 0.0; }
+                return r;
+            }
+            catch (const std::exception&)
+            {
+                return 0;
+            }
         },
-        scalar, value, ts);
+        arg0, value, ts);
 
     return VarVal(result);
 }

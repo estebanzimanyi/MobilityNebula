@@ -13,14 +13,18 @@
 */
 
 #include <Functions/Meos/Th3indexCellToChildPosPhysicalFunction.hpp>
+
 #include <Functions/PhysicalFunction.hpp>
 #include <MEOSWrapper.hpp>
 #include <Nautilus/DataTypes/VarVal.hpp>
+#include <Nautilus/DataTypes/VariableSizedData.hpp>
 #include <Nautilus/Interface/Record.hpp>
 #include <PhysicalFunctionRegistry.hpp>
 #include <ErrorHandling.hpp>
 #include <ExecutionContext.hpp>
+#include <fmt/format.h>
 #include <function.hpp>
+#include <string>
 #include <utility>
 #include <val.hpp>
 
@@ -31,36 +35,49 @@ extern "C" {
 
 namespace NES {
 
-Th3indexCellToChildPosPhysicalFunction::Th3indexCellToChildPosPhysicalFunction(PhysicalFunction cell, PhysicalFunction ts,
-                                              PhysicalFunction parent_res)
+Th3indexCellToChildPosPhysicalFunction::Th3indexCellToChildPosPhysicalFunction(PhysicalFunction cellFunction,
+                                                          PhysicalFunction tsFunction,
+                                                          PhysicalFunction arg0Function)
 {
-    paramFns.reserve(3);
-    paramFns.push_back(std::move(cell));
-    paramFns.push_back(std::move(ts));
-    paramFns.push_back(std::move(parent_res));
+    parameterFunctions.reserve(3);
+    parameterFunctions.push_back(std::move(cellFunction));
+    parameterFunctions.push_back(std::move(tsFunction));
+    parameterFunctions.push_back(std::move(arg0Function));
 }
 
 VarVal Th3indexCellToChildPosPhysicalFunction::execute(const Record& record, ArenaRef& arena) const
 {
-    auto cell  = paramFns[0].execute(record, arena).cast<uint64_t>();
-    auto ts    = paramFns[1].execute(record, arena).cast<uint64_t>();
-    auto parent_res = paramFns[2].execute(record, arena).cast<uint64_t>();
+    std::vector<VarVal> parameterValues;
+    parameterValues.reserve(parameterFunctions.size());
+    for (const auto& function : parameterFunctions)
+    {
+        parameterValues.emplace_back(function.execute(record, arena));
+    }
+
+    auto cell = parameterValues[0].cast<nautilus::val<uint64_t>>();
+    auto ts = parameterValues[1].cast<nautilus::val<uint64_t>>();
+    auto arg0 = parameterValues[2].cast<nautilus::val<double>>();
 
     const auto result = nautilus::invoke(
-        +[](uint64_t cell, uint64_t ts, uint64_t parent_res) -> double {
-            try {
+        +[](uint64_t cell,
+            uint64_t ts,
+            double arg0) -> double {
+            try
+            {
                 MEOS::Meos::ensureMeosInitialized();
-                Temporal* inst = th3indexinst_make((H3Index)cell, (TimestampTz)ts);
-                if (!inst) return 0.0;
-                Temporal* res = th3index_cell_to_child_pos(inst, (int32_t)parent_res);
-                free(inst);
-                if (!res) return 0.0;
-                double r = (double)tint_start_value(res);
-                free(res);
+                Temporal* temp = th3indexinst_make((H3Index)cell, (TimestampTz)ts);
+                if (!temp) return 0.0;
+
+                double r = th3index_cell_to_child_pos(temp, (int32_t)arg0);
+                free(temp);
                 return r;
-            } catch (const std::exception&) { return 0.0; }
+            }
+            catch (const std::exception&)
+            {
+                return 0.0;
+            }
         },
-        cell, ts, parent_res);
+        cell, ts, arg0);
 
     return VarVal(result);
 }
@@ -71,9 +88,10 @@ PhysicalFunctionRegistryReturnType PhysicalFunctionGeneratedRegistrar::RegisterT
     PRECONDITION(arguments.childFunctions.size() == 3,
                  "Th3indexCellToChildPosPhysicalFunction requires 3 children but got {}",
                  arguments.childFunctions.size());
-    return Th3indexCellToChildPosPhysicalFunction(std::move(arguments.childFunctions[0]),
-                                  std::move(arguments.childFunctions[1]),
-                                  std::move(arguments.childFunctions[2]));
+    auto arg0 = std::move(arguments.childFunctions[0]);
+    auto arg1 = std::move(arguments.childFunctions[1]);
+    auto arg2 = std::move(arguments.childFunctions[2]);
+    return Th3indexCellToChildPosPhysicalFunction(std::move(arg0), std::move(arg1), std::move(arg2));
 }
 
 } // namespace NES

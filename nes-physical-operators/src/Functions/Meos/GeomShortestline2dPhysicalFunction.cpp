@@ -13,6 +13,7 @@
 */
 
 #include <Functions/Meos/GeomShortestline2dPhysicalFunction.hpp>
+
 #include <Functions/PhysicalFunction.hpp>
 #include <MEOSWrapper.hpp>
 #include <Nautilus/DataTypes/VarVal.hpp>
@@ -21,8 +22,10 @@
 #include <PhysicalFunctionRegistry.hpp>
 #include <ErrorHandling.hpp>
 #include <ExecutionContext.hpp>
+#include <fmt/format.h>
 #include <function.hpp>
 #include <string>
+#include <string.h>
 #include <utility>
 #include <val.hpp>
 
@@ -33,44 +36,63 @@ extern "C" {
 
 namespace NES {
 
-GeomShortestline2dPhysicalFunction::GeomShortestline2dPhysicalFunction(PhysicalFunction wkt1, PhysicalFunction wkt2)
+GeomShortestline2dPhysicalFunction::GeomShortestline2dPhysicalFunction(PhysicalFunction wktFunction,
+                                                          PhysicalFunction arg0Function)
 {
-    paramFns.reserve(2);
-    paramFns.push_back(std::move(wkt1));
-    paramFns.push_back(std::move(wkt2));
+    parameterFunctions.reserve(2);
+    parameterFunctions.push_back(std::move(wktFunction));
+    parameterFunctions.push_back(std::move(arg0Function));
 }
 
 VarVal GeomShortestline2dPhysicalFunction::execute(const Record& record, ArenaRef& arena) const
 {
-    auto wkt1 = paramFns[0].execute(record, arena).cast<VariableSizedData>();
-    auto wkt2 = paramFns[1].execute(record, arena).cast<VariableSizedData>();
+    std::vector<VarVal> parameterValues;
+    parameterValues.reserve(parameterFunctions.size());
+    for (const auto& function : parameterFunctions)
+    {
+        parameterValues.emplace_back(function.execute(record, arena));
+    }
 
-    constexpr uint32_t MAX_LEN = 8192;
+    auto wkt = parameterValues[0].cast<VariableSizedData>();
+    auto arg0 = parameterValues[1].cast<VariableSizedData>();
+
+    constexpr uint32_t MAX_LEN = 4096;
     auto outBuf = arena.allocateVariableSizedData(nautilus::val<uint32_t>(MAX_LEN));
 
     const auto actualLen = nautilus::invoke(
-        +[](const char* w1, uint32_t w1sz, const char* w2, uint32_t w2sz, char* buf, uint32_t bufMax) -> uint32_t {
-            try {
+        +[](const char* wktPtr, uint32_t wktSize,
+            const char* arg0Ptr, uint32_t arg0Size,
+            char* buf,
+            uint32_t bufMax) -> uint32_t {
+            try
+            {
                 MEOS::Meos::ensureMeosInitialized();
-                std::string s1(w1, w1sz), s2(w2, w2sz);
-                GSERIALIZED* gs1 = geom_in(s1.c_str(), -1);
-                if (!gs1) return 0u;
-                GSERIALIZED* gs2 = geom_in(s2.c_str(), -1);
-                if (!gs2) { free(gs1); return 0u; }
-                GSERIALIZED* result = geom_shortestline2d(gs1, gs2);
-                free(gs1); free(gs2);
-                if (!result) return 0u;
-                char* out = geo_as_text(result, -1);
-                free(result);
+                std::string tempS(wktPtr, wktSize);
+                GSERIALIZED* temp = geom_in(tempS.c_str(), -1);
+                if (!temp) return 0u;
+                std::string arg0S(arg0Ptr, arg0Size);
+                GSERIALIZED* gs0 = geom_in(arg0S.c_str(), -1);
+                if (!gs0) { free(temp); return 0u; }
+
+                GSERIALIZED* gres = geom_shortestline2d(temp, gs0);
+                free(temp);
+                free(gs0);
+                if (!gres) return 0u;
+                char* out = geo_as_text(gres, -1);
+                free(gres);
                 if (!out) return 0u;
                 uint32_t len = static_cast<uint32_t>(strlen(out));
                 if (len > bufMax) len = bufMax;
                 memcpy(buf, out, len);
                 free(out);
                 return len;
-            } catch (const std::exception&) { return 0u; }
+            }
+            catch (const std::exception&)
+            {
+                return 0u;
+            }
         },
-        wkt1, wkt2, outBuf.getContent(), nautilus::val<uint32_t>(MAX_LEN));
+        wkt.getContent(), wkt.getContentSize(), arg0.getContent(), arg0.getContentSize(), outBuf.getContent(), nautilus::val<uint32_t>(MAX_LEN));
 
     VarVal(actualLen).writeToMemory(outBuf.getReference());
     return outBuf;
@@ -82,9 +104,9 @@ PhysicalFunctionRegistryReturnType PhysicalFunctionGeneratedRegistrar::RegisterG
     PRECONDITION(arguments.childFunctions.size() == 2,
                  "GeomShortestline2dPhysicalFunction requires 2 children but got {}",
                  arguments.childFunctions.size());
-    return GeomShortestline2dPhysicalFunction(
-                                  std::move(arguments.childFunctions[0]),
-                                  std::move(arguments.childFunctions[1]));
+    auto arg0 = std::move(arguments.childFunctions[0]);
+    auto arg1 = std::move(arguments.childFunctions[1]);
+    return GeomShortestline2dPhysicalFunction(std::move(arg0), std::move(arg1));
 }
 
 } // namespace NES

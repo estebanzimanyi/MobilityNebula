@@ -13,6 +13,7 @@
 */
 
 #include <Functions/Meos/GeomPointMake2dPhysicalFunction.hpp>
+
 #include <Functions/PhysicalFunction.hpp>
 #include <MEOSWrapper.hpp>
 #include <Nautilus/DataTypes/VarVal.hpp>
@@ -21,8 +22,10 @@
 #include <PhysicalFunctionRegistry.hpp>
 #include <ErrorHandling.hpp>
 #include <ExecutionContext.hpp>
+#include <fmt/format.h>
 #include <function.hpp>
 #include <string>
+#include <string.h>
 #include <utility>
 #include <val.hpp>
 
@@ -33,37 +36,57 @@ extern "C" {
 
 namespace NES {
 
-GeomPointMake2dPhysicalFunction::GeomPointMake2dPhysicalFunction(PhysicalFunction srid, PhysicalFunction x, PhysicalFunction y)
+GeomPointMake2dPhysicalFunction::GeomPointMake2dPhysicalFunction(PhysicalFunction sridFunction,
+                                                          PhysicalFunction xFunction,
+                                                          PhysicalFunction yFunction)
 {
-    paramFns.reserve(3);
-    paramFns.push_back(std::move(srid));
-    paramFns.push_back(std::move(x));
-    paramFns.push_back(std::move(y));
+    parameterFunctions.reserve(3);
+    parameterFunctions.push_back(std::move(sridFunction));
+    parameterFunctions.push_back(std::move(xFunction));
+    parameterFunctions.push_back(std::move(yFunction));
 }
 
 VarVal GeomPointMake2dPhysicalFunction::execute(const Record& record, ArenaRef& arena) const
 {
-    auto srid = paramFns[0].execute(record, arena).cast<nautilus::val<uint64_t>>();
-    auto x = paramFns[1].execute(record, arena).cast<double>();
-    auto y = paramFns[2].execute(record, arena).cast<double>();
-    constexpr uint32_t MAX_LEN = 8192;
+    std::vector<VarVal> parameterValues;
+    parameterValues.reserve(parameterFunctions.size());
+    for (const auto& function : parameterFunctions)
+    {
+        parameterValues.emplace_back(function.execute(record, arena));
+    }
+
+    auto srid = parameterValues[0].cast<nautilus::val<uint64_t>>();
+    auto x = parameterValues[1].cast<nautilus::val<double>>();
+    auto y = parameterValues[2].cast<nautilus::val<double>>();
+
+    constexpr uint32_t MAX_LEN = 4096;
     auto outBuf = arena.allocateVariableSizedData(nautilus::val<uint32_t>(MAX_LEN));
 
     const auto actualLen = nautilus::invoke(
-        +[](uint64_t srid, double x, double y, char* buf, uint32_t bufMax) -> uint32_t {
-            try {
+        +[](uint64_t srid,
+            double x,
+            double y,
+            char* buf,
+            uint32_t bufMax) -> uint32_t {
+            try
+            {
                 MEOS::Meos::ensureMeosInitialized();
-                GSERIALIZED* result = geompoint_make2d((int32_t)srid, x, y);
-                if (!result) return 0u;
-                char* out = geo_as_text(result, -1);
-                free(result);
+
+                GSERIALIZED* gres = geompoint_make2d((int32_t)srid, x, y);
+                if (!gres) return 0u;
+                char* out = geo_as_text(gres, -1);
+                free(gres);
                 if (!out) return 0u;
                 uint32_t len = static_cast<uint32_t>(strlen(out));
                 if (len > bufMax) len = bufMax;
                 memcpy(buf, out, len);
                 free(out);
                 return len;
-            } catch (const std::exception&) { return 0u; }
+            }
+            catch (const std::exception&)
+            {
+                return 0u;
+            }
         },
         srid, x, y, outBuf.getContent(), nautilus::val<uint32_t>(MAX_LEN));
 
@@ -77,10 +100,10 @@ PhysicalFunctionRegistryReturnType PhysicalFunctionGeneratedRegistrar::RegisterG
     PRECONDITION(arguments.childFunctions.size() == 3,
                  "GeomPointMake2dPhysicalFunction requires 3 children but got {}",
                  arguments.childFunctions.size());
-    return GeomPointMake2dPhysicalFunction(
-                                  std::move(arguments.childFunctions[0]),
-                                  std::move(arguments.childFunctions[1]),
-                                  std::move(arguments.childFunctions[2]));
+    auto arg0 = std::move(arguments.childFunctions[0]);
+    auto arg1 = std::move(arguments.childFunctions[1]);
+    auto arg2 = std::move(arguments.childFunctions[2]);
+    return GeomPointMake2dPhysicalFunction(std::move(arg0), std::move(arg1), std::move(arg2));
 }
 
 } // namespace NES

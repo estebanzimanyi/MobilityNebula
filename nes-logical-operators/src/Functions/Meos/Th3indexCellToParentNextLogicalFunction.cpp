@@ -26,53 +26,79 @@
 namespace NES
 {
 
-Th3indexCellToParentNextLogicalFunction::Th3indexCellToParentNextLogicalFunction(LogicalFunction cell, LogicalFunction ts)
+Th3indexCellToParentNextLogicalFunction::Th3indexCellToParentNextLogicalFunction(LogicalFunction cell,
+                                          LogicalFunction ts,
+                                          LogicalFunction arg0)
     : dataType(DataTypeProvider::provideDataType(DataType::Type::VARSIZED))
 {
-    parameters.reserve(2);
+    parameters.reserve(3);
     parameters.push_back(std::move(cell));
     parameters.push_back(std::move(ts));
+    parameters.push_back(std::move(arg0));
 }
 
-DataType Th3indexCellToParentNextLogicalFunction::getDataType() const { return dataType; }
+DataType Th3indexCellToParentNextLogicalFunction::getDataType() const
+{
+    return dataType;
+}
 
 LogicalFunction Th3indexCellToParentNextLogicalFunction::withDataType(const DataType& newDataType) const
 {
-    auto copy = *this; copy.dataType = newDataType; return copy;
+    auto copy = *this;
+    copy.dataType = newDataType;
+    return copy;
 }
 
-std::vector<LogicalFunction> Th3indexCellToParentNextLogicalFunction::getChildren() const { return parameters; }
+std::vector<LogicalFunction> Th3indexCellToParentNextLogicalFunction::getChildren() const
+{
+    return parameters;
+}
 
 LogicalFunction Th3indexCellToParentNextLogicalFunction::withChildren(const std::vector<LogicalFunction>& children) const
 {
-    PRECONDITION(children.size() == 2,
-                 "Th3indexCellToParentNextLogicalFunction requires 2 children, but got {}", children.size());
-    auto copy = *this; copy.parameters = children; return copy;
+    PRECONDITION(children.size() == 3, "Th3indexCellToParentNextLogicalFunction requires 3 children, but got {}", children.size());
+    auto copy = *this;
+    copy.parameters = children;
+    return copy;
 }
 
-std::string_view Th3indexCellToParentNextLogicalFunction::getType() const { return NAME; }
+std::string_view Th3indexCellToParentNextLogicalFunction::getType() const
+{
+    return NAME;
+}
 
 bool Th3indexCellToParentNextLogicalFunction::operator==(const LogicalFunctionConcept& rhs) const
 {
     if (const auto* other = dynamic_cast<const Th3indexCellToParentNextLogicalFunction*>(&rhs))
+    {
         return parameters == other->parameters;
+    }
     return false;
 }
 
 std::string Th3indexCellToParentNextLogicalFunction::explain(ExplainVerbosity verbosity) const
 {
-    return fmt::format("{}({})", NAME, parameters[0].explain(verbosity));
+    std::string args;
+    for (size_t index = 0; index < parameters.size(); ++index)
+    {
+        if (index > 0)
+        {
+            args += ", ";
+        }
+        args += parameters[index].explain(verbosity);
+    }
+    return fmt::format("{}({})", NAME, args);
 }
 
 LogicalFunction Th3indexCellToParentNextLogicalFunction::withInferredDataType(const Schema& schema) const
 {
-    std::vector<LogicalFunction> c;
-    c.reserve(2);
-    c.emplace_back(parameters[0].withInferredDataType(schema));
-    c.emplace_back(parameters[1].withInferredDataType(schema));
-    INVARIANT(c[0].getDataType().isType(DataType::Type::UINT64), "cell must be UINT64");
-    INVARIANT(c[1].getDataType().isType(DataType::Type::UINT64), "ts must be UINT64");
-    return withChildren(c);
+    std::vector<LogicalFunction> newChildren;
+    newChildren.reserve(parameters.size());
+    for (const auto& child : parameters)
+    {
+        newChildren.emplace_back(child.withInferredDataType(schema));
+    }
+    return withChildren(newChildren);
 }
 
 SerializableFunction Th3indexCellToParentNextLogicalFunction::serialize() const
@@ -81,18 +107,22 @@ SerializableFunction Th3indexCellToParentNextLogicalFunction::serialize() const
     proto.set_function_type(std::string(NAME));
     DataTypeSerializationUtil::serializeDataType(dataType, proto.mutable_data_type());
     for (const auto& child : parameters)
+    {
         proto.add_children()->CopyFrom(child.serialize());
+    }
     return proto;
 }
 
 LogicalFunctionRegistryReturnType LogicalFunctionGeneratedRegistrar::RegisterTh3indexCellToParentNextLogicalFunction(
     LogicalFunctionRegistryArguments arguments)
 {
-    PRECONDITION(arguments.children.size() == 2,
-                 "Th3indexCellToParentNextLogicalFunction requires 2 children but got {}",
+    PRECONDITION(arguments.children.size() == 3,
+                 "Th3indexCellToParentNextLogicalFunction requires 3 children but got {}",
                  arguments.children.size());
-    return Th3indexCellToParentNextLogicalFunction(std::move(arguments.children[0]),
-                                 std::move(arguments.children[1]));
+    auto arg0 = std::move(arguments.children[0]);
+    auto arg1 = std::move(arguments.children[1]);
+    auto arg2 = std::move(arguments.children[2]);
+    return Th3indexCellToParentNextLogicalFunction(std::move(arg0), std::move(arg1), std::move(arg2));
 }
 
 } // namespace NES

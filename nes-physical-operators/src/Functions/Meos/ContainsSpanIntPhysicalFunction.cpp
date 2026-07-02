@@ -13,6 +13,7 @@
 */
 
 #include <Functions/Meos/ContainsSpanIntPhysicalFunction.hpp>
+
 #include <Functions/PhysicalFunction.hpp>
 #include <MEOSWrapper.hpp>
 #include <Nautilus/DataTypes/VarVal.hpp>
@@ -21,51 +22,71 @@
 #include <PhysicalFunctionRegistry.hpp>
 #include <ErrorHandling.hpp>
 #include <ExecutionContext.hpp>
+#include <fmt/format.h>
 #include <function.hpp>
+#include <string>
 #include <utility>
 #include <val.hpp>
 
 extern "C" {
 #include <meos.h>
 }
-#include <string>
 
 namespace NES {
 
-ContainsSpanIntPhysicalFunction::ContainsSpanIntPhysicalFunction(PhysicalFunction sp, PhysicalFunction val) {
-    paramFns.reserve(2);
-    paramFns.push_back(std::move(sp));
-    paramFns.push_back(std::move(val));
+ContainsSpanIntPhysicalFunction::ContainsSpanIntPhysicalFunction(PhysicalFunction spFunction,
+                                                          PhysicalFunction arg0Function)
+{
+    parameterFunctions.reserve(2);
+    parameterFunctions.push_back(std::move(spFunction));
+    parameterFunctions.push_back(std::move(arg0Function));
 }
 
-VarVal ContainsSpanIntPhysicalFunction::execute(const Record& record, ArenaRef& arena) const {
-    auto sp  = paramFns[0].execute(record, arena).cast<VariableSizedData>();
-    auto val = paramFns[1].execute(record, arena).cast<double>();
+VarVal ContainsSpanIntPhysicalFunction::execute(const Record& record, ArenaRef& arena) const
+{
+    std::vector<VarVal> parameterValues;
+    parameterValues.reserve(parameterFunctions.size());
+    for (const auto& function : parameterFunctions)
+    {
+        parameterValues.emplace_back(function.execute(record, arena));
+    }
+
+    auto sp = parameterValues[0].cast<VariableSizedData>();
+    auto arg0 = parameterValues[1].cast<nautilus::val<double>>();
+
     const auto result = nautilus::invoke(
-        +[](const char* w, uint32_t wsz, double val_d) -> double {
-            try {
+        +[](const char* spPtr, uint32_t spSize,
+            double arg0) -> double {
+            try
+            {
                 MEOS::Meos::ensureMeosInitialized();
-                std::string s(w, wsz);
-                Span* sp = intspan_in(s.c_str());
-                if (!sp) return 0.0;
-                bool r = contains_span_int(sp, (int)val_d);
-                free(sp);
-                return r ? 1.0 : 0.0;
-            } catch (const std::exception&) { return 0.0; }
+                std::string tempS(spPtr, spSize);
+                Span* temp = intspan_in(tempS.c_str());
+                if (!temp) return 0.0;
+
+                double r = contains_span_int(temp, (int)arg0);
+                free(temp);
+                return r;
+            }
+            catch (const std::exception&)
+            {
+                return 0.0;
+            }
         },
-        sp, val);
+        sp.getContent(), sp.getContentSize(), arg0);
+
     return VarVal(result);
 }
 
 PhysicalFunctionRegistryReturnType PhysicalFunctionGeneratedRegistrar::RegisterContainsSpanIntPhysicalFunction(
     PhysicalFunctionRegistryArguments arguments)
 {
-    PRECONDITION(arguments.childFunctions.size()==2,
+    PRECONDITION(arguments.childFunctions.size() == 2,
                  "ContainsSpanIntPhysicalFunction requires 2 children but got {}",
                  arguments.childFunctions.size());
-    return ContainsSpanIntPhysicalFunction(
-                                  std::move(arguments.childFunctions[0]),
-                                  std::move(arguments.childFunctions[1]));
+    auto arg0 = std::move(arguments.childFunctions[0]);
+    auto arg1 = std::move(arguments.childFunctions[1]);
+    return ContainsSpanIntPhysicalFunction(std::move(arg0), std::move(arg1));
 }
 
 } // namespace NES

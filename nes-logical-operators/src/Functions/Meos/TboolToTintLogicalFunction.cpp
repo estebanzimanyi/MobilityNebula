@@ -27,43 +27,62 @@ namespace NES
 {
 
 TboolToTintLogicalFunction::TboolToTintLogicalFunction(LogicalFunction value,
-                                                       LogicalFunction ts)
-    : dataType(DataTypeProvider::provideDataType(DataType::Type::FLOAT64))
+                                          LogicalFunction ts)
+    : dataType(DataTypeProvider::provideDataType(DataType::Type::INT32))
 {
     parameters.reserve(2);
     parameters.push_back(std::move(value));
     parameters.push_back(std::move(ts));
 }
 
-DataType TboolToTintLogicalFunction::getDataType() const { return dataType; }
+DataType TboolToTintLogicalFunction::getDataType() const
+{
+    return dataType;
+}
 
 LogicalFunction TboolToTintLogicalFunction::withDataType(const DataType& newDataType) const
 {
-    auto copy = *this; copy.dataType = newDataType; return copy;
+    auto copy = *this;
+    copy.dataType = newDataType;
+    return copy;
 }
 
-std::vector<LogicalFunction> TboolToTintLogicalFunction::getChildren() const { return parameters; }
+std::vector<LogicalFunction> TboolToTintLogicalFunction::getChildren() const
+{
+    return parameters;
+}
 
 LogicalFunction TboolToTintLogicalFunction::withChildren(const std::vector<LogicalFunction>& children) const
 {
     PRECONDITION(children.size() == 2, "TboolToTintLogicalFunction requires 2 children, but got {}", children.size());
-    auto copy = *this; copy.parameters = children; return copy;
+    auto copy = *this;
+    copy.parameters = children;
+    return copy;
 }
 
-std::string_view TboolToTintLogicalFunction::getType() const { return NAME; }
+std::string_view TboolToTintLogicalFunction::getType() const
+{
+    return NAME;
+}
 
 bool TboolToTintLogicalFunction::operator==(const LogicalFunctionConcept& rhs) const
 {
     if (const auto* other = dynamic_cast<const TboolToTintLogicalFunction*>(&rhs))
+    {
         return parameters == other->parameters;
+    }
     return false;
 }
 
 std::string TboolToTintLogicalFunction::explain(ExplainVerbosity verbosity) const
 {
     std::string args;
-    for (size_t index = 0; index < parameters.size(); ++index) {
-        if (index > 0) args += ", ";
+    for (size_t index = 0; index < parameters.size(); ++index)
+    {
+        if (index > 0)
+        {
+            args += ", ";
+        }
         args += parameters[index].explain(verbosity);
     }
     return fmt::format("{}({})", NAME, args);
@@ -74,7 +93,9 @@ LogicalFunction TboolToTintLogicalFunction::withInferredDataType(const Schema& s
     std::vector<LogicalFunction> newChildren;
     newChildren.reserve(parameters.size());
     for (const auto& child : parameters)
+    {
         newChildren.emplace_back(child.withInferredDataType(schema));
+    }
     return withChildren(newChildren);
 }
 
@@ -84,7 +105,9 @@ SerializableFunction TboolToTintLogicalFunction::serialize() const
     proto.set_function_type(std::string(NAME));
     DataTypeSerializationUtil::serializeDataType(dataType, proto.mutable_data_type());
     for (const auto& child : parameters)
+    {
         proto.add_children()->CopyFrom(child.serialize());
+    }
     return proto;
 }
 

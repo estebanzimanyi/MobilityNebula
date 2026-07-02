@@ -13,6 +13,7 @@
 */
 
 #include <Functions/Meos/EverLtTtextTextPhysicalFunction.hpp>
+
 #include <Functions/PhysicalFunction.hpp>
 #include <MEOSWrapper.hpp>
 #include <Nautilus/DataTypes/VarVal.hpp>
@@ -33,44 +34,59 @@ extern "C" {
 
 namespace NES {
 
-EverLtTtextTextPhysicalFunction::EverLtTtextTextPhysicalFunction(
-    PhysicalFunction valueFunction, PhysicalFunction refFunction, PhysicalFunction tsFunction)
+EverLtTtextTextPhysicalFunction::EverLtTtextTextPhysicalFunction(PhysicalFunction valueFunction,
+                                                          PhysicalFunction tsFunction,
+                                                          PhysicalFunction arg0Function)
 {
-    paramFns.reserve(3);
-    paramFns.push_back(std::move(valueFunction));
-    paramFns.push_back(std::move(refFunction));
-    paramFns.push_back(std::move(tsFunction));
+    parameterFunctions.reserve(3);
+    parameterFunctions.push_back(std::move(valueFunction));
+    parameterFunctions.push_back(std::move(tsFunction));
+    parameterFunctions.push_back(std::move(arg0Function));
 }
 
 VarVal EverLtTtextTextPhysicalFunction::execute(const Record& record, ArenaRef& arena) const
 {
-    auto value = paramFns[0].execute(record, arena).cast<VariableSizedData>();
-    auto ref   = paramFns[1].execute(record, arena).cast<VariableSizedData>();
-    auto ts    = paramFns[2].execute(record, arena).cast<nautilus::val<uint64_t>>();
+    std::vector<VarVal> parameterValues;
+    parameterValues.reserve(parameterFunctions.size());
+    for (const auto& function : parameterFunctions)
+    {
+        parameterValues.emplace_back(function.execute(record, arena));
+    }
+
+    auto value = parameterValues[0].cast<VariableSizedData>();
+    auto ts = parameterValues[1].cast<nautilus::val<uint64_t>>();
+    auto arg0 = parameterValues[2].cast<VariableSizedData>();
 
     const auto result = nautilus::invoke(
-        +[](const char* v, uint32_t vsz, const char* r, uint32_t rsz, uint64_t t) -> double {
-            try {
+        +[](const char* valuePtr, uint32_t valueSize,
+            uint64_t ts,
+            const char* arg0Ptr, uint32_t arg0Size) -> double {
+            try
+            {
                 MEOS::Meos::ensureMeosInitialized();
-                std::string val_str(v, vsz);
-                std::string ref_str(r, rsz);
-                while (!val_str.empty() && (val_str.front() == '\'' || val_str.front() == '"')) val_str = val_str.substr(1);
-                while (!val_str.empty() && (val_str.back()  == '\'' || val_str.back()  == '"')) val_str = val_str.substr(0, val_str.size()-1);
-                while (!ref_str.empty() && (ref_str.front() == '\'' || ref_str.front() == '"')) ref_str = ref_str.substr(1);
-                while (!ref_str.empty() && (ref_str.back()  == '\'' || ref_str.back()  == '"')) ref_str = ref_str.substr(0, ref_str.size()-1);
-                std::string ts_str = MEOS::Meos::convertEpochToTimestamp(t);
-                std::string wkt = "'" + val_str + "'@" + ts_str;
-                Temporal* temp = ttext_in(wkt.c_str());
+                std::string tempVal(valuePtr, valueSize);
+                while (!tempVal.empty() && (tempVal.front() == '\'' || tempVal.front() == '"')) tempVal.erase(tempVal.begin());
+                while (!tempVal.empty() && (tempVal.back()  == '\'' || tempVal.back()  == '"')) tempVal.pop_back();
+                std::string tempWkt = "'" + tempVal + "'@" + MEOS::Meos::convertEpochToTimestamp(ts);
+                Temporal* temp = ttext_in(tempWkt.c_str());
                 if (!temp) return 0.0;
-                text* txt = cstring_to_text(ref_str.c_str());
-                if (!txt) { free(temp); return 0.0; }
-                int result = ever_lt_ttext_text(temp, txt);
+                std::string arg0S(arg0Ptr, arg0Size);
+                while (!arg0S.empty() && (arg0S.front() == '\'' || arg0S.front() == '"')) arg0S.erase(arg0S.begin());
+                while (!arg0S.empty() && (arg0S.back()  == '\'' || arg0S.back()  == '"')) arg0S.pop_back();
+                text* txt0 = cstring_to_text(arg0S.c_str());
+                if (!txt0) { free(temp); return 0.0; }
+
+                double r = ever_lt_ttext_text(temp, txt0);
                 free(temp);
-                free(txt);
-                return static_cast<double>(result);
-            } catch (const std::exception&) { return 0.0; }
+                free(txt0);
+                return r;
+            }
+            catch (const std::exception&)
+            {
+                return 0.0;
+            }
         },
-        value, ref, ts);
+        value.getContent(), value.getContentSize(), ts, arg0.getContent(), arg0.getContentSize());
 
     return VarVal(result);
 }
@@ -81,10 +97,10 @@ PhysicalFunctionRegistryReturnType PhysicalFunctionGeneratedRegistrar::RegisterE
     PRECONDITION(arguments.childFunctions.size() == 3,
                  "EverLtTtextTextPhysicalFunction requires 3 children but got {}",
                  arguments.childFunctions.size());
-    return EverLtTtextTextPhysicalFunction(
-        std::move(arguments.childFunctions[0]),
-        std::move(arguments.childFunctions[1]),
-        std::move(arguments.childFunctions[2]));
+    auto arg0 = std::move(arguments.childFunctions[0]);
+    auto arg1 = std::move(arguments.childFunctions[1]);
+    auto arg2 = std::move(arguments.childFunctions[2]);
+    return EverLtTtextTextPhysicalFunction(std::move(arg0), std::move(arg1), std::move(arg2));
 }
 
 } // namespace NES

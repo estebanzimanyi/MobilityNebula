@@ -13,6 +13,7 @@
 */
 
 #include <Functions/Meos/LineNumpointsPhysicalFunction.hpp>
+
 #include <Functions/PhysicalFunction.hpp>
 #include <MEOSWrapper.hpp>
 #include <Nautilus/DataTypes/VarVal.hpp>
@@ -21,6 +22,7 @@
 #include <PhysicalFunctionRegistry.hpp>
 #include <ErrorHandling.hpp>
 #include <ExecutionContext.hpp>
+#include <fmt/format.h>
 #include <function.hpp>
 #include <string>
 #include <utility>
@@ -33,28 +35,43 @@ extern "C" {
 
 namespace NES {
 
-LineNumpointsPhysicalFunction::LineNumpointsPhysicalFunction(PhysicalFunction wkt)
+LineNumpointsPhysicalFunction::LineNumpointsPhysicalFunction(PhysicalFunction wktFunction)
 {
-    paramFns.reserve(1);
-    paramFns.push_back(std::move(wkt));
+    parameterFunctions.reserve(1);
+    parameterFunctions.push_back(std::move(wktFunction));
 }
 
 VarVal LineNumpointsPhysicalFunction::execute(const Record& record, ArenaRef& arena) const
 {
-    auto wkt = paramFns[0].execute(record, arena).cast<VariableSizedData>();
+    std::vector<VarVal> parameterValues;
+    parameterValues.reserve(parameterFunctions.size());
+    for (const auto& function : parameterFunctions)
+    {
+        parameterValues.emplace_back(function.execute(record, arena));
+    }
+
+    auto wkt = parameterValues[0].cast<VariableSizedData>();
+
     const auto result = nautilus::invoke(
-        +[](const char* w, uint32_t wsz) -> double {
-            try {
+        +[](const char* wktPtr, uint32_t wktSize) -> double {
+            try
+            {
                 MEOS::Meos::ensureMeosInitialized();
-                std::string s(w, wsz);
-                GSERIALIZED* gs = geom_in(s.c_str(), -1);
-                if (!gs) return 0.0;
-                int n = line_numpoints(gs);
-                free(gs);
-                return (double)n;
-            } catch (const std::exception&) { return 0.0; }
+                std::string tempS(wktPtr, wktSize);
+                GSERIALIZED* temp = geom_in(tempS.c_str(), -1);
+                if (!temp) return 0.0;
+
+                double r = line_numpoints(temp);
+                free(temp);
+                return r;
+            }
+            catch (const std::exception&)
+            {
+                return 0.0;
+            }
         },
-        wkt);
+        wkt.getContent(), wkt.getContentSize());
+
     return VarVal(result);
 }
 
@@ -64,8 +81,8 @@ PhysicalFunctionRegistryReturnType PhysicalFunctionGeneratedRegistrar::RegisterL
     PRECONDITION(arguments.childFunctions.size() == 1,
                  "LineNumpointsPhysicalFunction requires 1 children but got {}",
                  arguments.childFunctions.size());
-    return LineNumpointsPhysicalFunction(
-                                  std::move(arguments.childFunctions[0]));
+    auto arg0 = std::move(arguments.childFunctions[0]);
+    return LineNumpointsPhysicalFunction(std::move(arg0));
 }
 
 } // namespace NES

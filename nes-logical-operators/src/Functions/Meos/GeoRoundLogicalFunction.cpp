@@ -26,53 +26,77 @@
 namespace NES
 {
 
-GeoRoundLogicalFunction::GeoRoundLogicalFunction(LogicalFunction wkt, LogicalFunction maxdd)
+GeoRoundLogicalFunction::GeoRoundLogicalFunction(LogicalFunction wkt,
+                                          LogicalFunction arg0)
     : dataType(DataTypeProvider::provideDataType(DataType::Type::VARSIZED))
 {
     parameters.reserve(2);
     parameters.push_back(std::move(wkt));
-    parameters.push_back(std::move(maxdd));
+    parameters.push_back(std::move(arg0));
 }
 
-DataType GeoRoundLogicalFunction::getDataType() const { return dataType; }
+DataType GeoRoundLogicalFunction::getDataType() const
+{
+    return dataType;
+}
 
 LogicalFunction GeoRoundLogicalFunction::withDataType(const DataType& newDataType) const
 {
-    auto copy = *this; copy.dataType = newDataType; return copy;
+    auto copy = *this;
+    copy.dataType = newDataType;
+    return copy;
 }
 
-std::vector<LogicalFunction> GeoRoundLogicalFunction::getChildren() const { return parameters; }
+std::vector<LogicalFunction> GeoRoundLogicalFunction::getChildren() const
+{
+    return parameters;
+}
 
 LogicalFunction GeoRoundLogicalFunction::withChildren(const std::vector<LogicalFunction>& children) const
 {
-    PRECONDITION(children.size() == 2,
-                 "GeoRoundLogicalFunction requires 2 children, but got {}", children.size());
-    auto copy = *this; copy.parameters = children; return copy;
+    PRECONDITION(children.size() == 2, "GeoRoundLogicalFunction requires 2 children, but got {}", children.size());
+    auto copy = *this;
+    copy.parameters = children;
+    return copy;
 }
 
-std::string_view GeoRoundLogicalFunction::getType() const { return NAME; }
+std::string_view GeoRoundLogicalFunction::getType() const
+{
+    return NAME;
+}
 
 bool GeoRoundLogicalFunction::operator==(const LogicalFunctionConcept& rhs) const
 {
     if (const auto* other = dynamic_cast<const GeoRoundLogicalFunction*>(&rhs))
+    {
         return parameters == other->parameters;
+    }
     return false;
 }
 
 std::string GeoRoundLogicalFunction::explain(ExplainVerbosity verbosity) const
 {
-    return fmt::format("{}({})", NAME, parameters[0].explain(verbosity));
+    std::string args;
+    for (size_t index = 0; index < parameters.size(); ++index)
+    {
+        if (index > 0)
+        {
+            args += ", ";
+        }
+        args += parameters[index].explain(verbosity);
+    }
+    return fmt::format("{}({})", NAME, args);
 }
 
 LogicalFunction GeoRoundLogicalFunction::withInferredDataType(const Schema& schema) const
 {
-    std::vector<LogicalFunction> c;
-    c.reserve(2);
-    for (const auto& p : parameters)
-        c.emplace_back(p.withInferredDataType(schema));
-    INVARIANT(c[0].getDataType().isType(DataType::Type::VARSIZED), "wkt must be VARSIZED");
-    INVARIANT(c[1].getDataType().isType(DataType::Type::UINT64), "maxdd must be UINT64");
-    return withChildren(c);
+    std::vector<LogicalFunction> newChildren;
+    newChildren.reserve(parameters.size());
+    for (const auto& child : parameters)
+    {
+        newChildren.emplace_back(child.withInferredDataType(schema));
+    }
+    return withChildren(newChildren);
 }
 
 SerializableFunction GeoRoundLogicalFunction::serialize() const
@@ -81,7 +105,9 @@ SerializableFunction GeoRoundLogicalFunction::serialize() const
     proto.set_function_type(std::string(NAME));
     DataTypeSerializationUtil::serializeDataType(dataType, proto.mutable_data_type());
     for (const auto& child : parameters)
+    {
         proto.add_children()->CopyFrom(child.serialize());
+    }
     return proto;
 }
 
@@ -91,9 +117,9 @@ LogicalFunctionRegistryReturnType LogicalFunctionGeneratedRegistrar::RegisterGeo
     PRECONDITION(arguments.children.size() == 2,
                  "GeoRoundLogicalFunction requires 2 children but got {}",
                  arguments.children.size());
-    return GeoRoundLogicalFunction(
-                                 std::move(arguments.children[0]),
-                                 std::move(arguments.children[1]));
+    auto arg0 = std::move(arguments.children[0]);
+    auto arg1 = std::move(arguments.children[1]);
+    return GeoRoundLogicalFunction(std::move(arg0), std::move(arg1));
 }
 
 } // namespace NES

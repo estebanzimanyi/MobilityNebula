@@ -13,14 +13,19 @@
 */
 
 #include <Functions/Meos/QuadbinTileToCellPhysicalFunction.hpp>
+
 #include <Functions/PhysicalFunction.hpp>
 #include <MEOSWrapper.hpp>
 #include <Nautilus/DataTypes/VarVal.hpp>
+#include <Nautilus/DataTypes/VariableSizedData.hpp>
 #include <Nautilus/Interface/Record.hpp>
 #include <PhysicalFunctionRegistry.hpp>
 #include <ErrorHandling.hpp>
 #include <ExecutionContext.hpp>
+#include <fmt/format.h>
 #include <function.hpp>
+#include <string>
+#include <string.h>
 #include <utility>
 #include <val.hpp>
 
@@ -28,41 +33,58 @@ extern "C" {
 #include <meos.h>
 #include <meos_quadbin.h>
 }
-#include <Nautilus/DataTypes/VariableSizedData.hpp>
-#include <string.h>
 
 namespace NES {
 
-QuadbinTileToCellPhysicalFunction::QuadbinTileToCellPhysicalFunction(PhysicalFunction x, PhysicalFunction y, PhysicalFunction z)
+QuadbinTileToCellPhysicalFunction::QuadbinTileToCellPhysicalFunction(PhysicalFunction xFunction,
+                                                          PhysicalFunction yFunction,
+                                                          PhysicalFunction zFunction)
 {
-    paramFns.reserve(3);
-    paramFns.push_back(std::move(x));
-    paramFns.push_back(std::move(y));
-    paramFns.push_back(std::move(z));
+    parameterFunctions.reserve(3);
+    parameterFunctions.push_back(std::move(xFunction));
+    parameterFunctions.push_back(std::move(yFunction));
+    parameterFunctions.push_back(std::move(zFunction));
 }
 
 VarVal QuadbinTileToCellPhysicalFunction::execute(const Record& record, ArenaRef& arena) const
 {
-    auto x = paramFns[0].execute(record, arena).cast<uint64_t>();
-    auto y = paramFns[1].execute(record, arena).cast<uint64_t>();
-    auto z = paramFns[2].execute(record, arena).cast<uint64_t>();
-    constexpr uint32_t MAX_LEN = 32;
+    std::vector<VarVal> parameterValues;
+    parameterValues.reserve(parameterFunctions.size());
+    for (const auto& function : parameterFunctions)
+    {
+        parameterValues.emplace_back(function.execute(record, arena));
+    }
+
+    auto x = parameterValues[0].cast<nautilus::val<uint64_t>>();
+    auto y = parameterValues[1].cast<nautilus::val<uint64_t>>();
+    auto z = parameterValues[2].cast<nautilus::val<uint64_t>>();
+
+    constexpr uint32_t MAX_LEN = 4096;
     auto outBuf = arena.allocateVariableSizedData(nautilus::val<uint32_t>(MAX_LEN));
 
     const auto actualLen = nautilus::invoke(
-        +[](uint64_t x, uint64_t y, uint64_t z, char* buf, uint32_t bufMax) -> uint32_t {
-            try {
+        +[](uint64_t x,
+            uint64_t y,
+            uint64_t z,
+            char* buf,
+            uint32_t bufMax) -> uint32_t {
+            try
+            {
                 MEOS::Meos::ensureMeosInitialized();
-                Quadbin cell = quadbin_tile_to_cell((uint32_t)x, (uint32_t)y, (uint32_t)z);
-                if (cell == 0) return 0u;
-                char* s = quadbin_index_to_string(cell);
-                if (!s) return 0u;
-                uint32_t len = (uint32_t)strlen(s);
+
+                Quadbin qcell = quadbin_tile_to_cell((uint32_t)x, (uint32_t)y, (uint32_t)z);
+                char* qstr = quadbin_index_to_string(qcell);
+                if (!qstr) return 0u;
+                uint32_t len = static_cast<uint32_t>(strlen(qstr));
                 if (len > bufMax) len = bufMax;
-                memcpy(buf, s, len);
-                free(s);
+                memcpy(buf, qstr, len);
+                free(qstr);
                 return len;
-            } catch (const std::exception&) { return 0u; }
+            }
+            catch (const std::exception&)
+            {
+                return 0u;
+            }
         },
         x, y, z, outBuf.getContent(), nautilus::val<uint32_t>(MAX_LEN));
 
@@ -76,10 +98,10 @@ PhysicalFunctionRegistryReturnType PhysicalFunctionGeneratedRegistrar::RegisterQ
     PRECONDITION(arguments.childFunctions.size() == 3,
                  "QuadbinTileToCellPhysicalFunction requires 3 children but got {}",
                  arguments.childFunctions.size());
-    return QuadbinTileToCellPhysicalFunction(
-                                  std::move(arguments.childFunctions[0]),
-                                  std::move(arguments.childFunctions[1]),
-                                  std::move(arguments.childFunctions[2]));
+    auto arg0 = std::move(arguments.childFunctions[0]);
+    auto arg1 = std::move(arguments.childFunctions[1]);
+    auto arg2 = std::move(arguments.childFunctions[2]);
+    return QuadbinTileToCellPhysicalFunction(std::move(arg0), std::move(arg1), std::move(arg2));
 }
 
 } // namespace NES

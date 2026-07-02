@@ -36,13 +36,13 @@ extern "C" {
 namespace NES {
 
 TemporalRoundPhysicalFunction::TemporalRoundPhysicalFunction(PhysicalFunction valueFunction,
-                                                             PhysicalFunction tsFunction,
-                                                             PhysicalFunction maxddFunction)
+                                                          PhysicalFunction tsFunction,
+                                                          PhysicalFunction arg0Function)
 {
     parameterFunctions.reserve(3);
     parameterFunctions.push_back(std::move(valueFunction));
     parameterFunctions.push_back(std::move(tsFunction));
-    parameterFunctions.push_back(std::move(maxddFunction));
+    parameterFunctions.push_back(std::move(arg0Function));
 }
 
 VarVal TemporalRoundPhysicalFunction::execute(const Record& record, ArenaRef& arena) const
@@ -50,28 +50,38 @@ VarVal TemporalRoundPhysicalFunction::execute(const Record& record, ArenaRef& ar
     std::vector<VarVal> parameterValues;
     parameterValues.reserve(parameterFunctions.size());
     for (const auto& function : parameterFunctions)
+    {
         parameterValues.emplace_back(function.execute(record, arena));
+    }
 
     auto value = parameterValues[0].cast<nautilus::val<double>>();
-    auto ts    = parameterValues[1].cast<nautilus::val<uint64_t>>();
-    auto maxdd = parameterValues[2].cast<nautilus::val<double>>();
+    auto ts = parameterValues[1].cast<nautilus::val<uint64_t>>();
+    auto arg0 = parameterValues[2].cast<nautilus::val<double>>();
 
     const auto result = nautilus::invoke(
-        +[](double value, uint64_t ts, double maxdd_d) -> double {
-            try {
+        +[](double value,
+            uint64_t ts,
+            double arg0) -> double {
+            try
+            {
                 MEOS::Meos::ensureMeosInitialized();
                 std::string tempWkt = fmt::format("{}@{}", value, MEOS::Meos::convertEpochToTimestamp(ts));
                 Temporal* temp = tfloat_in(tempWkt.c_str());
                 if (!temp) return 0.0;
-                Temporal* res = temporal_round(temp, static_cast<int>(maxdd_d));
+
+                Temporal* res = temporal_round(temp, static_cast<int>(arg0));
                 free(temp);
                 if (!res) return 0.0;
                 double r = tfloat_start_value(res);
                 free(res);
                 return r;
-            } catch (const std::exception&) { return 0.0; }
+            }
+            catch (const std::exception&)
+            {
+                return 0.0;
+            }
         },
-        value, ts, maxdd);
+        value, ts, arg0);
 
     return VarVal(result);
 }

@@ -33,44 +33,68 @@ GeomBoundaryLogicalFunction::GeomBoundaryLogicalFunction(LogicalFunction wkt)
     parameters.push_back(std::move(wkt));
 }
 
-DataType GeomBoundaryLogicalFunction::getDataType() const { return dataType; }
+DataType GeomBoundaryLogicalFunction::getDataType() const
+{
+    return dataType;
+}
 
 LogicalFunction GeomBoundaryLogicalFunction::withDataType(const DataType& newDataType) const
 {
-    auto copy = *this; copy.dataType = newDataType; return copy;
+    auto copy = *this;
+    copy.dataType = newDataType;
+    return copy;
 }
 
-std::vector<LogicalFunction> GeomBoundaryLogicalFunction::getChildren() const { return parameters; }
+std::vector<LogicalFunction> GeomBoundaryLogicalFunction::getChildren() const
+{
+    return parameters;
+}
 
 LogicalFunction GeomBoundaryLogicalFunction::withChildren(const std::vector<LogicalFunction>& children) const
 {
-    PRECONDITION(children.size() == 1,
-                 "GeomBoundaryLogicalFunction requires 1 children, but got {}", children.size());
-    auto copy = *this; copy.parameters = children; return copy;
+    PRECONDITION(children.size() == 1, "GeomBoundaryLogicalFunction requires 1 children, but got {}", children.size());
+    auto copy = *this;
+    copy.parameters = children;
+    return copy;
 }
 
-std::string_view GeomBoundaryLogicalFunction::getType() const { return NAME; }
+std::string_view GeomBoundaryLogicalFunction::getType() const
+{
+    return NAME;
+}
 
 bool GeomBoundaryLogicalFunction::operator==(const LogicalFunctionConcept& rhs) const
 {
     if (const auto* other = dynamic_cast<const GeomBoundaryLogicalFunction*>(&rhs))
+    {
         return parameters == other->parameters;
+    }
     return false;
 }
 
 std::string GeomBoundaryLogicalFunction::explain(ExplainVerbosity verbosity) const
 {
-    return fmt::format("{}({})", NAME, parameters[0].explain(verbosity));
+    std::string args;
+    for (size_t index = 0; index < parameters.size(); ++index)
+    {
+        if (index > 0)
+        {
+            args += ", ";
+        }
+        args += parameters[index].explain(verbosity);
+    }
+    return fmt::format("{}({})", NAME, args);
 }
 
 LogicalFunction GeomBoundaryLogicalFunction::withInferredDataType(const Schema& schema) const
 {
-    std::vector<LogicalFunction> c;
-    c.reserve(1);
-    for (const auto& p : parameters)
-        c.emplace_back(p.withInferredDataType(schema));
-    INVARIANT(c[0].getDataType().isType(DataType::Type::VARSIZED), "wkt must be VARSIZED");
-    return withChildren(c);
+    std::vector<LogicalFunction> newChildren;
+    newChildren.reserve(parameters.size());
+    for (const auto& child : parameters)
+    {
+        newChildren.emplace_back(child.withInferredDataType(schema));
+    }
+    return withChildren(newChildren);
 }
 
 SerializableFunction GeomBoundaryLogicalFunction::serialize() const
@@ -79,7 +103,9 @@ SerializableFunction GeomBoundaryLogicalFunction::serialize() const
     proto.set_function_type(std::string(NAME));
     DataTypeSerializationUtil::serializeDataType(dataType, proto.mutable_data_type());
     for (const auto& child : parameters)
+    {
         proto.add_children()->CopyFrom(child.serialize());
+    }
     return proto;
 }
 
@@ -89,8 +115,8 @@ LogicalFunctionRegistryReturnType LogicalFunctionGeneratedRegistrar::RegisterGeo
     PRECONDITION(arguments.children.size() == 1,
                  "GeomBoundaryLogicalFunction requires 1 children but got {}",
                  arguments.children.size());
-    return GeomBoundaryLogicalFunction(
-                                 std::move(arguments.children[0]));
+    auto arg0 = std::move(arguments.children[0]);
+    return GeomBoundaryLogicalFunction(std::move(arg0));
 }
 
 } // namespace NES

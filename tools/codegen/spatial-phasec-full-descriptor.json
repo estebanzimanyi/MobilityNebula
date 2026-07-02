@@ -1,0 +1,2660 @@
+{
+  "_comment": "Phase C full spatial descriptor: tgeo_geo (14 ops, excl. AcoversGeoTgeo), tgeo_tgeo (18 ops), tcbuffer_geo (13 ops), tcbuffer_tcbuffer (18 ops). tcbuffer_cbuffer excluded (arity mismatch: 5-arg blob vs committed 7-arg coordinates).",
+  "operators": [
+    {
+      "nebula_name": "AcontainsTgeoGeo",
+      "sql_token": "ACONTAINS_TGEO_GEO",
+      "meos_call": "acontains_tgeo_geo",
+      "args": [
+        {
+          "name": "lon",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "lat",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "timestamp",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "geometry",
+          "nautilus_type": "VariableSizedData",
+          "cpp_type": "const char*"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_temporal_point": true,
+      "comment_one_liner": "Per-event acontains_tgeo_geo spatial predicate."
+    },
+    {
+      "nebula_name": "AcoversTgeoGeo",
+      "sql_token": "ACOVERS_TGEO_GEO",
+      "meos_call": "acovers_tgeo_geo",
+      "args": [
+        {
+          "name": "lon",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "lat",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "timestamp",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "geometry",
+          "nautilus_type": "VariableSizedData",
+          "cpp_type": "const char*"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_temporal_point": true,
+      "comment_one_liner": "Per-event acovers_tgeo_geo spatial predicate."
+    },
+    {
+      "nebula_name": "AdisjointTgeoGeo",
+      "sql_token": "ADISJOINT_TGEO_GEO",
+      "meos_call": "adisjoint_tgeo_geo",
+      "args": [
+        {
+          "name": "lon",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "lat",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "timestamp",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "geometry",
+          "nautilus_type": "VariableSizedData",
+          "cpp_type": "const char*"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_temporal_point": true,
+      "comment_one_liner": "Per-event adisjoint_tgeo_geo spatial predicate."
+    },
+    {
+      "nebula_name": "AintersectsTgeoGeo",
+      "sql_token": "AINTERSECTS_TGEO_GEO",
+      "meos_call": "aintersects_tgeo_geo",
+      "args": [
+        {
+          "name": "lon",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "lat",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "timestamp",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "geometry",
+          "nautilus_type": "VariableSizedData",
+          "cpp_type": "const char*"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_temporal_point": true,
+      "comment_one_liner": "Per-event aintersects_tgeo_geo spatial predicate."
+    },
+    {
+      "nebula_name": "AtouchesTgeoGeo",
+      "sql_token": "ATOUCHES_TGEO_GEO",
+      "meos_call": "atouches_tgeo_geo",
+      "args": [
+        {
+          "name": "lon",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "lat",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "timestamp",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "geometry",
+          "nautilus_type": "VariableSizedData",
+          "cpp_type": "const char*"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_temporal_point": true,
+      "comment_one_liner": "Per-event atouches_tgeo_geo spatial predicate."
+    },
+    {
+      "nebula_name": "EcontainsTgeoGeo",
+      "sql_token": "ECONTAINS_TGEO_GEO",
+      "meos_call": "econtains_tgeo_geo",
+      "args": [
+        {
+          "name": "lon",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "lat",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "timestamp",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "geometry",
+          "nautilus_type": "VariableSizedData",
+          "cpp_type": "const char*"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_temporal_point": true,
+      "comment_one_liner": "Per-event econtains_tgeo_geo spatial predicate."
+    },
+    {
+      "nebula_name": "EcoversTgeoGeo",
+      "sql_token": "ECOVERS_TGEO_GEO",
+      "meos_call": "ecovers_tgeo_geo",
+      "args": [
+        {
+          "name": "lon",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "lat",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "timestamp",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "geometry",
+          "nautilus_type": "VariableSizedData",
+          "cpp_type": "const char*"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_temporal_point": true,
+      "comment_one_liner": "Per-event ecovers_tgeo_geo spatial predicate."
+    },
+    {
+      "nebula_name": "EdisjointTgeoGeo",
+      "sql_token": "EDISJOINT_TGEO_GEO",
+      "meos_call": "edisjoint_tgeo_geo",
+      "args": [
+        {
+          "name": "lon",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "lat",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "timestamp",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "geometry",
+          "nautilus_type": "VariableSizedData",
+          "cpp_type": "const char*"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_temporal_point": true,
+      "comment_one_liner": "Per-event edisjoint_tgeo_geo spatial predicate."
+    },
+    {
+      "nebula_name": "EintersectsTgeoGeo",
+      "sql_token": "EINTERSECTS_TGEO_GEO",
+      "meos_call": "eintersects_tgeo_geo",
+      "args": [
+        {
+          "name": "lon",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "lat",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "timestamp",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "geometry",
+          "nautilus_type": "VariableSizedData",
+          "cpp_type": "const char*"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_temporal_point": true,
+      "comment_one_liner": "Per-event eintersects_tgeo_geo spatial predicate."
+    },
+    {
+      "nebula_name": "EtouchesTgeoGeo",
+      "sql_token": "ETOUCHES_TGEO_GEO",
+      "meos_call": "etouches_tgeo_geo",
+      "args": [
+        {
+          "name": "lon",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "lat",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "timestamp",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "geometry",
+          "nautilus_type": "VariableSizedData",
+          "cpp_type": "const char*"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_temporal_point": true,
+      "comment_one_liner": "Per-event etouches_tgeo_geo spatial predicate."
+    },
+    {
+      "nebula_name": "EverEqTgeoGeo",
+      "sql_token": "EVER_EQ_TGEO_GEO",
+      "meos_call": "ever_eq_tgeo_geo",
+      "args": [
+        {
+          "name": "lon",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "lat",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "timestamp",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "geometry",
+          "nautilus_type": "VariableSizedData",
+          "cpp_type": "const char*"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_temporal_point": true,
+      "comment_one_liner": "Per-event ever_eq_tgeo_geo spatial predicate."
+    },
+    {
+      "nebula_name": "EverNeTgeoGeo",
+      "sql_token": "EVER_NE_TGEO_GEO",
+      "meos_call": "ever_ne_tgeo_geo",
+      "args": [
+        {
+          "name": "lon",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "lat",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "timestamp",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "geometry",
+          "nautilus_type": "VariableSizedData",
+          "cpp_type": "const char*"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_temporal_point": true,
+      "comment_one_liner": "Per-event ever_ne_tgeo_geo spatial predicate."
+    },
+    {
+      "nebula_name": "AlwaysEqTgeoGeo",
+      "sql_token": "ALWAYS_EQ_TGEO_GEO",
+      "meos_call": "always_eq_tgeo_geo",
+      "args": [
+        {
+          "name": "lon",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "lat",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "timestamp",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "geometry",
+          "nautilus_type": "VariableSizedData",
+          "cpp_type": "const char*"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_temporal_point": true,
+      "comment_one_liner": "Per-event always_eq_tgeo_geo spatial predicate."
+    },
+    {
+      "nebula_name": "AlwaysNeTgeoGeo",
+      "sql_token": "ALWAYS_NE_TGEO_GEO",
+      "meos_call": "always_ne_tgeo_geo",
+      "args": [
+        {
+          "name": "lon",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "lat",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "timestamp",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "geometry",
+          "nautilus_type": "VariableSizedData",
+          "cpp_type": "const char*"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_temporal_point": true,
+      "comment_one_liner": "Per-event always_ne_tgeo_geo spatial predicate."
+    },
+    {
+      "nebula_name": "NadTgeoGeo",
+      "sql_token": "NAD_TGEO_GEO",
+      "meos_call": "nad_tgeo_geo",
+      "args": [
+        {
+          "name": "lon",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "lat",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "timestamp",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "geometry",
+          "nautilus_type": "VariableSizedData",
+          "cpp_type": "const char*"
+        }
+      ],
+      "return_type": "double",
+      "nautilus_return": "FLOAT64",
+      "build_temporal_point": true,
+      "comment_one_liner": "Per-event nearest approach distance between tgeo and static geometry."
+    },
+    {
+      "nebula_name": "EdwithinTgeoGeo",
+      "sql_token": "EDWITHIN_TGEO_GEO",
+      "meos_call": "edwithin_tgeo_geo",
+      "args": [
+        {
+          "name": "lon",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "lat",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "timestamp",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "geometry",
+          "nautilus_type": "VariableSizedData",
+          "cpp_type": "const char*"
+        },
+        {
+          "name": "dist",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_temporal_point_with_dist": true,
+      "comment_one_liner": "Per-event edwithin_tgeo_geo spatial predicate."
+    },
+    {
+      "nebula_name": "AdwithinTgeoGeo",
+      "sql_token": "ADWITHIN_TGEO_GEO",
+      "meos_call": "adwithin_tgeo_geo",
+      "args": [
+        {
+          "name": "lon",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "lat",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "timestamp",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "geometry",
+          "nautilus_type": "VariableSizedData",
+          "cpp_type": "const char*"
+        },
+        {
+          "name": "dist",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_temporal_point_with_dist": true,
+      "comment_one_liner": "Per-event adwithin_tgeo_geo spatial predicate."
+    },
+    {
+      "nebula_name": "AcontainsTgeoTgeo",
+      "sql_token": "ACONTAINS_TGEO_TGEO",
+      "meos_call": "acontains_tgeo_tgeo",
+      "args": [
+        {
+          "name": "lonA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "latA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsA",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "lonB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "latB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsB",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_two_temporal_points": true,
+      "comment_one_liner": "Per-event acontains_tgeo_tgeo spatial predicate."
+    },
+    {
+      "nebula_name": "AcoversTgeoTgeo",
+      "sql_token": "ACOVERS_TGEO_TGEO",
+      "meos_call": "acovers_tgeo_tgeo",
+      "args": [
+        {
+          "name": "lonA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "latA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsA",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "lonB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "latB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsB",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_two_temporal_points": true,
+      "comment_one_liner": "Per-event acovers_tgeo_tgeo spatial predicate."
+    },
+    {
+      "nebula_name": "AdisjointTgeoTgeo",
+      "sql_token": "ADISJOINT_TGEO_TGEO",
+      "meos_call": "adisjoint_tgeo_tgeo",
+      "args": [
+        {
+          "name": "lonA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "latA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsA",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "lonB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "latB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsB",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_two_temporal_points": true,
+      "comment_one_liner": "Per-event adisjoint_tgeo_tgeo spatial predicate."
+    },
+    {
+      "nebula_name": "AintersectsTgeoTgeo",
+      "sql_token": "AINTERSECTS_TGEO_TGEO",
+      "meos_call": "aintersects_tgeo_tgeo",
+      "args": [
+        {
+          "name": "lonA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "latA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsA",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "lonB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "latB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsB",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_two_temporal_points": true,
+      "comment_one_liner": "Per-event aintersects_tgeo_tgeo spatial predicate."
+    },
+    {
+      "nebula_name": "AtouchesTgeoTgeo",
+      "sql_token": "ATOUCHES_TGEO_TGEO",
+      "meos_call": "atouches_tgeo_tgeo",
+      "args": [
+        {
+          "name": "lonA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "latA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsA",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "lonB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "latB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsB",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_two_temporal_points": true,
+      "comment_one_liner": "Per-event atouches_tgeo_tgeo spatial predicate."
+    },
+    {
+      "nebula_name": "EcontainsTgeoTgeo",
+      "sql_token": "ECONTAINS_TGEO_TGEO",
+      "meos_call": "econtains_tgeo_tgeo",
+      "args": [
+        {
+          "name": "lonA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "latA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsA",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "lonB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "latB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsB",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_two_temporal_points": true,
+      "comment_one_liner": "Per-event econtains_tgeo_tgeo spatial predicate."
+    },
+    {
+      "nebula_name": "EcoversTgeoTgeo",
+      "sql_token": "ECOVERS_TGEO_TGEO",
+      "meos_call": "ecovers_tgeo_tgeo",
+      "args": [
+        {
+          "name": "lonA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "latA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsA",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "lonB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "latB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsB",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_two_temporal_points": true,
+      "comment_one_liner": "Per-event ecovers_tgeo_tgeo spatial predicate."
+    },
+    {
+      "nebula_name": "EdisjointTgeoTgeo",
+      "sql_token": "EDISJOINT_TGEO_TGEO",
+      "meos_call": "edisjoint_tgeo_tgeo",
+      "args": [
+        {
+          "name": "lonA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "latA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsA",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "lonB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "latB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsB",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_two_temporal_points": true,
+      "comment_one_liner": "Per-event edisjoint_tgeo_tgeo spatial predicate."
+    },
+    {
+      "nebula_name": "EintersectsTgeoTgeo",
+      "sql_token": "EINTERSECTS_TGEO_TGEO",
+      "meos_call": "eintersects_tgeo_tgeo",
+      "args": [
+        {
+          "name": "lonA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "latA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsA",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "lonB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "latB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsB",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_two_temporal_points": true,
+      "comment_one_liner": "Per-event eintersects_tgeo_tgeo spatial predicate."
+    },
+    {
+      "nebula_name": "EtouchesTgeoTgeo",
+      "sql_token": "ETOUCHES_TGEO_TGEO",
+      "meos_call": "etouches_tgeo_tgeo",
+      "args": [
+        {
+          "name": "lonA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "latA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsA",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "lonB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "latB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsB",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_two_temporal_points": true,
+      "comment_one_liner": "Per-event etouches_tgeo_tgeo spatial predicate."
+    },
+    {
+      "nebula_name": "EverEqTgeoTgeo",
+      "sql_token": "EVER_EQ_TGEO_TGEO",
+      "meos_call": "ever_eq_tgeo_tgeo",
+      "args": [
+        {
+          "name": "lonA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "latA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsA",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "lonB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "latB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsB",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_two_temporal_points": true,
+      "comment_one_liner": "Per-event ever_eq_tgeo_tgeo spatial predicate."
+    },
+    {
+      "nebula_name": "EverNeTgeoTgeo",
+      "sql_token": "EVER_NE_TGEO_TGEO",
+      "meos_call": "ever_ne_tgeo_tgeo",
+      "args": [
+        {
+          "name": "lonA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "latA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsA",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "lonB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "latB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsB",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_two_temporal_points": true,
+      "comment_one_liner": "Per-event ever_ne_tgeo_tgeo spatial predicate."
+    },
+    {
+      "nebula_name": "AlwaysEqTgeoTgeo",
+      "sql_token": "ALWAYS_EQ_TGEO_TGEO",
+      "meos_call": "always_eq_tgeo_tgeo",
+      "args": [
+        {
+          "name": "lonA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "latA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsA",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "lonB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "latB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsB",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_two_temporal_points": true,
+      "comment_one_liner": "Per-event always_eq_tgeo_tgeo spatial predicate."
+    },
+    {
+      "nebula_name": "AlwaysNeTgeoTgeo",
+      "sql_token": "ALWAYS_NE_TGEO_TGEO",
+      "meos_call": "always_ne_tgeo_tgeo",
+      "args": [
+        {
+          "name": "lonA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "latA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsA",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "lonB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "latB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsB",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_two_temporal_points": true,
+      "comment_one_liner": "Per-event always_ne_tgeo_tgeo spatial predicate."
+    },
+    {
+      "nebula_name": "NadTgeoTgeo",
+      "sql_token": "NAD_TGEO_TGEO",
+      "meos_call": "nad_tgeo_tgeo",
+      "args": [
+        {
+          "name": "lonA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "latA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsA",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "lonB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "latB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsB",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        }
+      ],
+      "return_type": "double",
+      "nautilus_return": "FLOAT64",
+      "build_two_temporal_points": true,
+      "comment_one_liner": "Per-event nearest approach distance between two tgeo instants."
+    },
+    {
+      "nebula_name": "EdwithinTgeoTgeo",
+      "sql_token": "EDWITHIN_TGEO_TGEO",
+      "meos_call": "edwithin_tgeo_tgeo",
+      "args": [
+        {
+          "name": "lonA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "latA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsA",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "lonB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "latB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsB",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "dist",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_two_temporal_points_with_dist": true,
+      "comment_one_liner": "Per-event edwithin_tgeo_tgeo spatial predicate."
+    },
+    {
+      "nebula_name": "AdwithinTgeoTgeo",
+      "sql_token": "ADWITHIN_TGEO_TGEO",
+      "meos_call": "adwithin_tgeo_tgeo",
+      "args": [
+        {
+          "name": "lonA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "latA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsA",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "lonB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "latB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsB",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "dist",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_two_temporal_points_with_dist": true,
+      "comment_one_liner": "Per-event adwithin_tgeo_tgeo spatial predicate."
+    },
+    {
+      "nebula_name": "AcontainsTcbufferGeo",
+      "sql_token": "ACONTAINS_TCBUFFER_GEO",
+      "meos_call": "acontains_tcbuffer_geo",
+      "args": [
+        {
+          "name": "lon",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "lat",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "radius",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "timestamp",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "geometry",
+          "nautilus_type": "VariableSizedData",
+          "cpp_type": "const char*"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_tcbuffer_point": true,
+      "comment_one_liner": "Per-event acontains_tcbuffer_geo spatial predicate."
+    },
+    {
+      "nebula_name": "AcoversTcbufferGeo",
+      "sql_token": "ACOVERS_TCBUFFER_GEO",
+      "meos_call": "acovers_tcbuffer_geo",
+      "args": [
+        {
+          "name": "lon",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "lat",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "radius",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "timestamp",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "geometry",
+          "nautilus_type": "VariableSizedData",
+          "cpp_type": "const char*"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_tcbuffer_point": true,
+      "comment_one_liner": "Per-event acovers_tcbuffer_geo spatial predicate."
+    },
+    {
+      "nebula_name": "AdisjointTcbufferGeo",
+      "sql_token": "ADISJOINT_TCBUFFER_GEO",
+      "meos_call": "adisjoint_tcbuffer_geo",
+      "args": [
+        {
+          "name": "lon",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "lat",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "radius",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "timestamp",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "geometry",
+          "nautilus_type": "VariableSizedData",
+          "cpp_type": "const char*"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_tcbuffer_point": true,
+      "comment_one_liner": "Per-event adisjoint_tcbuffer_geo spatial predicate."
+    },
+    {
+      "nebula_name": "AintersectsTcbufferGeo",
+      "sql_token": "AINTERSECTS_TCBUFFER_GEO",
+      "meos_call": "aintersects_tcbuffer_geo",
+      "args": [
+        {
+          "name": "lon",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "lat",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "radius",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "timestamp",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "geometry",
+          "nautilus_type": "VariableSizedData",
+          "cpp_type": "const char*"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_tcbuffer_point": true,
+      "comment_one_liner": "Per-event aintersects_tcbuffer_geo spatial predicate."
+    },
+    {
+      "nebula_name": "AtouchesTcbufferGeo",
+      "sql_token": "ATOUCHES_TCBUFFER_GEO",
+      "meos_call": "atouches_tcbuffer_geo",
+      "args": [
+        {
+          "name": "lon",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "lat",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "radius",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "timestamp",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "geometry",
+          "nautilus_type": "VariableSizedData",
+          "cpp_type": "const char*"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_tcbuffer_point": true,
+      "comment_one_liner": "Per-event atouches_tcbuffer_geo spatial predicate."
+    },
+    {
+      "nebula_name": "EcontainsTcbufferGeo",
+      "sql_token": "ECONTAINS_TCBUFFER_GEO",
+      "meos_call": "econtains_tcbuffer_geo",
+      "args": [
+        {
+          "name": "lon",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "lat",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "radius",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "timestamp",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "geometry",
+          "nautilus_type": "VariableSizedData",
+          "cpp_type": "const char*"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_tcbuffer_point": true,
+      "comment_one_liner": "Per-event econtains_tcbuffer_geo spatial predicate."
+    },
+    {
+      "nebula_name": "EcoversTcbufferGeo",
+      "sql_token": "ECOVERS_TCBUFFER_GEO",
+      "meos_call": "ecovers_tcbuffer_geo",
+      "args": [
+        {
+          "name": "lon",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "lat",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "radius",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "timestamp",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "geometry",
+          "nautilus_type": "VariableSizedData",
+          "cpp_type": "const char*"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_tcbuffer_point": true,
+      "comment_one_liner": "Per-event ecovers_tcbuffer_geo spatial predicate."
+    },
+    {
+      "nebula_name": "EdisjointTcbufferGeo",
+      "sql_token": "EDISJOINT_TCBUFFER_GEO",
+      "meos_call": "edisjoint_tcbuffer_geo",
+      "args": [
+        {
+          "name": "lon",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "lat",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "radius",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "timestamp",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "geometry",
+          "nautilus_type": "VariableSizedData",
+          "cpp_type": "const char*"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_tcbuffer_point": true,
+      "comment_one_liner": "Per-event edisjoint_tcbuffer_geo spatial predicate."
+    },
+    {
+      "nebula_name": "EintersectsTcbufferGeo",
+      "sql_token": "EINTERSECTS_TCBUFFER_GEO",
+      "meos_call": "eintersects_tcbuffer_geo",
+      "args": [
+        {
+          "name": "lon",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "lat",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "radius",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "timestamp",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "geometry",
+          "nautilus_type": "VariableSizedData",
+          "cpp_type": "const char*"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_tcbuffer_point": true,
+      "comment_one_liner": "Per-event eintersects_tcbuffer_geo spatial predicate."
+    },
+    {
+      "nebula_name": "EtouchesTcbufferGeo",
+      "sql_token": "ETOUCHES_TCBUFFER_GEO",
+      "meos_call": "etouches_tcbuffer_geo",
+      "args": [
+        {
+          "name": "lon",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "lat",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "radius",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "timestamp",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "geometry",
+          "nautilus_type": "VariableSizedData",
+          "cpp_type": "const char*"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_tcbuffer_point": true,
+      "comment_one_liner": "Per-event etouches_tcbuffer_geo spatial predicate."
+    },
+    {
+      "nebula_name": "NadTcbufferGeo",
+      "sql_token": "NAD_TCBUFFER_GEO",
+      "meos_call": "nad_tcbuffer_geo",
+      "args": [
+        {
+          "name": "lon",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "lat",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "radius",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "timestamp",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "geometry",
+          "nautilus_type": "VariableSizedData",
+          "cpp_type": "const char*"
+        }
+      ],
+      "return_type": "double",
+      "nautilus_return": "FLOAT64",
+      "build_tcbuffer_point": true,
+      "comment_one_liner": "Per-event nearest approach distance between tcbuffer and static geometry."
+    },
+    {
+      "nebula_name": "EdwithinTcbufferGeo",
+      "sql_token": "EDWITHIN_TCBUFFER_GEO",
+      "meos_call": "edwithin_tcbuffer_geo",
+      "args": [
+        {
+          "name": "lon",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "lat",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "radius",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "timestamp",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "geometry",
+          "nautilus_type": "VariableSizedData",
+          "cpp_type": "const char*"
+        },
+        {
+          "name": "dist",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_tcbuffer_point_with_dist": true,
+      "comment_one_liner": "Per-event edwithin_tcbuffer_geo spatial predicate."
+    },
+    {
+      "nebula_name": "AdwithinTcbufferGeo",
+      "sql_token": "ADWITHIN_TCBUFFER_GEO",
+      "meos_call": "adwithin_tcbuffer_geo",
+      "args": [
+        {
+          "name": "lon",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "lat",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "radius",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "timestamp",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "geometry",
+          "nautilus_type": "VariableSizedData",
+          "cpp_type": "const char*"
+        },
+        {
+          "name": "dist",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_tcbuffer_point_with_dist": true,
+      "comment_one_liner": "Per-event adwithin_tcbuffer_geo spatial predicate."
+    },
+    {
+      "nebula_name": "AcontainsTcbufferTcbuffer",
+      "sql_token": "ACONTAINS_TCBUFFER_TCBUFFER",
+      "meos_call": "acontains_tcbuffer_tcbuffer",
+      "args": [
+        {
+          "name": "lonA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "latA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "radiusA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsA",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "lonB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "latB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "radiusB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsB",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_two_tcbuffer_points": true,
+      "comment_one_liner": "Per-event acontains_tcbuffer_tcbuffer spatial predicate."
+    },
+    {
+      "nebula_name": "AcoversTcbufferTcbuffer",
+      "sql_token": "ACOVERS_TCBUFFER_TCBUFFER",
+      "meos_call": "acovers_tcbuffer_tcbuffer",
+      "args": [
+        {
+          "name": "lonA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "latA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "radiusA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsA",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "lonB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "latB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "radiusB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsB",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_two_tcbuffer_points": true,
+      "comment_one_liner": "Per-event acovers_tcbuffer_tcbuffer spatial predicate."
+    },
+    {
+      "nebula_name": "AdisjointTcbufferTcbuffer",
+      "sql_token": "ADISJOINT_TCBUFFER_TCBUFFER",
+      "meos_call": "adisjoint_tcbuffer_tcbuffer",
+      "args": [
+        {
+          "name": "lonA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "latA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "radiusA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsA",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "lonB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "latB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "radiusB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsB",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_two_tcbuffer_points": true,
+      "comment_one_liner": "Per-event adisjoint_tcbuffer_tcbuffer spatial predicate."
+    },
+    {
+      "nebula_name": "AintersectsTcbufferTcbuffer",
+      "sql_token": "AINTERSECTS_TCBUFFER_TCBUFFER",
+      "meos_call": "aintersects_tcbuffer_tcbuffer",
+      "args": [
+        {
+          "name": "lonA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "latA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "radiusA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsA",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "lonB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "latB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "radiusB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsB",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_two_tcbuffer_points": true,
+      "comment_one_liner": "Per-event aintersects_tcbuffer_tcbuffer spatial predicate."
+    },
+    {
+      "nebula_name": "AtouchesTcbufferTcbuffer",
+      "sql_token": "ATOUCHES_TCBUFFER_TCBUFFER",
+      "meos_call": "atouches_tcbuffer_tcbuffer",
+      "args": [
+        {
+          "name": "lonA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "latA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "radiusA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsA",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "lonB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "latB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "radiusB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsB",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_two_tcbuffer_points": true,
+      "comment_one_liner": "Per-event atouches_tcbuffer_tcbuffer spatial predicate."
+    },
+    {
+      "nebula_name": "EcontainsTcbufferTcbuffer",
+      "sql_token": "ECONTAINS_TCBUFFER_TCBUFFER",
+      "meos_call": "econtains_tcbuffer_tcbuffer",
+      "args": [
+        {
+          "name": "lonA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "latA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "radiusA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsA",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "lonB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "latB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "radiusB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsB",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_two_tcbuffer_points": true,
+      "comment_one_liner": "Per-event econtains_tcbuffer_tcbuffer spatial predicate."
+    },
+    {
+      "nebula_name": "EcoversTcbufferTcbuffer",
+      "sql_token": "ECOVERS_TCBUFFER_TCBUFFER",
+      "meos_call": "ecovers_tcbuffer_tcbuffer",
+      "args": [
+        {
+          "name": "lonA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "latA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "radiusA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsA",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "lonB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "latB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "radiusB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsB",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_two_tcbuffer_points": true,
+      "comment_one_liner": "Per-event ecovers_tcbuffer_tcbuffer spatial predicate."
+    },
+    {
+      "nebula_name": "EdisjointTcbufferTcbuffer",
+      "sql_token": "EDISJOINT_TCBUFFER_TCBUFFER",
+      "meos_call": "edisjoint_tcbuffer_tcbuffer",
+      "args": [
+        {
+          "name": "lonA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "latA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "radiusA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsA",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "lonB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "latB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "radiusB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsB",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_two_tcbuffer_points": true,
+      "comment_one_liner": "Per-event edisjoint_tcbuffer_tcbuffer spatial predicate."
+    },
+    {
+      "nebula_name": "EintersectsTcbufferTcbuffer",
+      "sql_token": "EINTERSECTS_TCBUFFER_TCBUFFER",
+      "meos_call": "eintersects_tcbuffer_tcbuffer",
+      "args": [
+        {
+          "name": "lonA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "latA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "radiusA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsA",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "lonB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "latB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "radiusB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsB",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_two_tcbuffer_points": true,
+      "comment_one_liner": "Per-event eintersects_tcbuffer_tcbuffer spatial predicate."
+    },
+    {
+      "nebula_name": "EtouchesTcbufferTcbuffer",
+      "sql_token": "ETOUCHES_TCBUFFER_TCBUFFER",
+      "meos_call": "etouches_tcbuffer_tcbuffer",
+      "args": [
+        {
+          "name": "lonA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "latA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "radiusA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsA",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "lonB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "latB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "radiusB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsB",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_two_tcbuffer_points": true,
+      "comment_one_liner": "Per-event etouches_tcbuffer_tcbuffer spatial predicate."
+    },
+    {
+      "nebula_name": "EverEqTcbufferTcbuffer",
+      "sql_token": "EVER_EQ_TCBUFFER_TCBUFFER",
+      "meos_call": "ever_eq_tcbuffer_tcbuffer",
+      "args": [
+        {
+          "name": "lonA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "latA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "radiusA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsA",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "lonB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "latB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "radiusB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsB",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_two_tcbuffer_points": true,
+      "comment_one_liner": "Per-event ever_eq_tcbuffer_tcbuffer spatial predicate."
+    },
+    {
+      "nebula_name": "EverNeTcbufferTcbuffer",
+      "sql_token": "EVER_NE_TCBUFFER_TCBUFFER",
+      "meos_call": "ever_ne_tcbuffer_tcbuffer",
+      "args": [
+        {
+          "name": "lonA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "latA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "radiusA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsA",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "lonB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "latB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "radiusB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsB",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_two_tcbuffer_points": true,
+      "comment_one_liner": "Per-event ever_ne_tcbuffer_tcbuffer spatial predicate."
+    },
+    {
+      "nebula_name": "AlwaysEqTcbufferTcbuffer",
+      "sql_token": "ALWAYS_EQ_TCBUFFER_TCBUFFER",
+      "meos_call": "always_eq_tcbuffer_tcbuffer",
+      "args": [
+        {
+          "name": "lonA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "latA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "radiusA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsA",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "lonB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "latB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "radiusB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsB",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_two_tcbuffer_points": true,
+      "comment_one_liner": "Per-event always_eq_tcbuffer_tcbuffer spatial predicate."
+    },
+    {
+      "nebula_name": "AlwaysNeTcbufferTcbuffer",
+      "sql_token": "ALWAYS_NE_TCBUFFER_TCBUFFER",
+      "meos_call": "always_ne_tcbuffer_tcbuffer",
+      "args": [
+        {
+          "name": "lonA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "latA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "radiusA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsA",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "lonB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "latB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "radiusB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsB",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_two_tcbuffer_points": true,
+      "comment_one_liner": "Per-event always_ne_tcbuffer_tcbuffer spatial predicate."
+    },
+    {
+      "nebula_name": "NadTcbufferTcbuffer",
+      "sql_token": "NAD_TCBUFFER_TCBUFFER",
+      "meos_call": "nad_tcbuffer_tcbuffer",
+      "args": [
+        {
+          "name": "lonA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "latA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "radiusA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsA",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "lonB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "latB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "radiusB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsB",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        }
+      ],
+      "return_type": "double",
+      "nautilus_return": "FLOAT64",
+      "build_two_tcbuffer_points": true,
+      "comment_one_liner": "Per-event nearest approach distance between two tcbuffer instants."
+    },
+    {
+      "nebula_name": "EdwithinTcbufferTcbuffer",
+      "sql_token": "EDWITHIN_TCBUFFER_TCBUFFER",
+      "meos_call": "edwithin_tcbuffer_tcbuffer",
+      "args": [
+        {
+          "name": "lonA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "latA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "radiusA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsA",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "lonB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "latB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "radiusB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsB",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "dist",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_two_tcbuffer_points_with_dist": true,
+      "comment_one_liner": "Per-event edwithin_tcbuffer_tcbuffer spatial predicate."
+    },
+    {
+      "nebula_name": "AdwithinTcbufferTcbuffer",
+      "sql_token": "ADWITHIN_TCBUFFER_TCBUFFER",
+      "meos_call": "adwithin_tcbuffer_tcbuffer",
+      "args": [
+        {
+          "name": "lonA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "latA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "radiusA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsA",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "lonB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "latB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "radiusB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsB",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "dist",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_two_tcbuffer_points_with_dist": true,
+      "comment_one_liner": "Per-event adwithin_tcbuffer_tcbuffer spatial predicate."
+    },
+    {
+      "nebula_name": "MindistanceTcbufferTcbuffer",
+      "sql_token": "MINDISTANCE_TCBUFFER_TCBUFFER",
+      "meos_call": "mindistance_tcbuffer_tcbuffer",
+      "args": [
+        {
+          "name": "lonA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "latA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "radiusA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsA",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "lonB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "latB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "radiusB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsB",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "dist",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        }
+      ],
+      "return_type": "double",
+      "nautilus_return": "FLOAT64",
+      "build_two_tcbuffer_points_with_dist": true,
+      "comment_one_liner": "Per-event minimum distance between two tcbuffer instants within threshold."
+    }
+  ]
+}

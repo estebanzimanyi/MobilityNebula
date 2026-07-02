@@ -36,7 +36,7 @@ extern "C" {
 namespace NES {
 
 TfloatToTintPhysicalFunction::TfloatToTintPhysicalFunction(PhysicalFunction valueFunction,
-                                                            PhysicalFunction tsFunction)
+                                                          PhysicalFunction tsFunction)
 {
     parameterFunctions.reserve(2);
     parameterFunctions.push_back(std::move(valueFunction));
@@ -48,25 +48,34 @@ VarVal TfloatToTintPhysicalFunction::execute(const Record& record, ArenaRef& are
     std::vector<VarVal> parameterValues;
     parameterValues.reserve(parameterFunctions.size());
     for (const auto& function : parameterFunctions)
+    {
         parameterValues.emplace_back(function.execute(record, arena));
+    }
 
     auto value = parameterValues[0].cast<nautilus::val<double>>();
-    auto ts    = parameterValues[1].cast<nautilus::val<uint64_t>>();
+    auto ts = parameterValues[1].cast<nautilus::val<uint64_t>>();
 
     const auto result = nautilus::invoke(
-        +[](double value, uint64_t ts) -> double {
-            try {
+        +[](double value,
+            uint64_t ts) -> int {
+            try
+            {
                 MEOS::Meos::ensureMeosInitialized();
                 std::string tempWkt = fmt::format("{}@{}", value, MEOS::Meos::convertEpochToTimestamp(ts));
                 Temporal* temp = tfloat_in(tempWkt.c_str());
-                if (!temp) return 0.0;
+                if (!temp) return 0;
+
                 Temporal* res = tfloat_to_tint(temp);
                 free(temp);
-                if (!res) return 0.0;
-                double r = static_cast<double>(tint_start_value(res));
+                if (!res) return 0;
+                int r = tint_start_value(res);
                 free(res);
                 return r;
-            } catch (const std::exception&) { return 0.0; }
+            }
+            catch (const std::exception&)
+            {
+                return 0;
+            }
         },
         value, ts);
 

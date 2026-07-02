@@ -13,6 +13,7 @@
 */
 
 #include <Functions/Meos/ContainedIntSpanLogicalFunction.hpp>
+
 #include <DataTypes/DataType.hpp>
 #include <DataTypes/DataTypeProvider.hpp>
 #include <DataTypes/Schema.hpp>
@@ -25,51 +26,100 @@
 namespace NES
 {
 
-ContainedIntSpanLogicalFunction::ContainedIntSpanLogicalFunction(LogicalFunction val, LogicalFunction sp)
+ContainedIntSpanLogicalFunction::ContainedIntSpanLogicalFunction(LogicalFunction arg0,
+                                          LogicalFunction sp)
     : dataType(DataTypeProvider::provideDataType(DataType::Type::FLOAT64))
 {
     parameters.reserve(2);
-    parameters.push_back(std::move(val));
+    parameters.push_back(std::move(arg0));
     parameters.push_back(std::move(sp));
 }
-DataType ContainedIntSpanLogicalFunction::getDataType() const { return dataType; }
-LogicalFunction ContainedIntSpanLogicalFunction::withDataType(const DataType& d) const { auto c=*this; c.dataType=d; return c; }
-std::vector<LogicalFunction> ContainedIntSpanLogicalFunction::getChildren() const { return parameters; }
-LogicalFunction ContainedIntSpanLogicalFunction::withChildren(const std::vector<LogicalFunction>& children) const {
-    PRECONDITION(children.size()==2,"ContainedIntSpanLogicalFunction requires 2 children, but got {}",children.size());
-    auto c=*this; c.parameters=children; return c;
+
+DataType ContainedIntSpanLogicalFunction::getDataType() const
+{
+    return dataType;
 }
-std::string_view ContainedIntSpanLogicalFunction::getType() const { return NAME; }
-bool ContainedIntSpanLogicalFunction::operator==(const LogicalFunctionConcept& rhs) const {
-    if (const auto* o=dynamic_cast<const ContainedIntSpanLogicalFunction*>(&rhs)) return parameters==o->parameters;
+
+LogicalFunction ContainedIntSpanLogicalFunction::withDataType(const DataType& newDataType) const
+{
+    auto copy = *this;
+    copy.dataType = newDataType;
+    return copy;
+}
+
+std::vector<LogicalFunction> ContainedIntSpanLogicalFunction::getChildren() const
+{
+    return parameters;
+}
+
+LogicalFunction ContainedIntSpanLogicalFunction::withChildren(const std::vector<LogicalFunction>& children) const
+{
+    PRECONDITION(children.size() == 2, "ContainedIntSpanLogicalFunction requires 2 children, but got {}", children.size());
+    auto copy = *this;
+    copy.parameters = children;
+    return copy;
+}
+
+std::string_view ContainedIntSpanLogicalFunction::getType() const
+{
+    return NAME;
+}
+
+bool ContainedIntSpanLogicalFunction::operator==(const LogicalFunctionConcept& rhs) const
+{
+    if (const auto* other = dynamic_cast<const ContainedIntSpanLogicalFunction*>(&rhs))
+    {
+        return parameters == other->parameters;
+    }
     return false;
 }
-std::string ContainedIntSpanLogicalFunction::explain(ExplainVerbosity v) const {
-    return fmt::format("{}({})",NAME,parameters[0].explain(v));
+
+std::string ContainedIntSpanLogicalFunction::explain(ExplainVerbosity verbosity) const
+{
+    std::string args;
+    for (size_t index = 0; index < parameters.size(); ++index)
+    {
+        if (index > 0)
+        {
+            args += ", ";
+        }
+        args += parameters[index].explain(verbosity);
+    }
+    return fmt::format("{}({})", NAME, args);
 }
-LogicalFunction ContainedIntSpanLogicalFunction::withInferredDataType(const Schema& schema) const {
-    std::vector<LogicalFunction> c; c.reserve(2);
-    for (const auto& p : parameters) c.emplace_back(p.withInferredDataType(schema));
-    INVARIANT(c[0].getDataType().isType(DataType::Type::FLOAT64), "val must be FLOAT64");
-    INVARIANT(c[1].getDataType().isType(DataType::Type::VARSIZED), "sp must be VARSIZED");
-    return withChildren(c);
+
+LogicalFunction ContainedIntSpanLogicalFunction::withInferredDataType(const Schema& schema) const
+{
+    std::vector<LogicalFunction> newChildren;
+    newChildren.reserve(parameters.size());
+    for (const auto& child : parameters)
+    {
+        newChildren.emplace_back(child.withInferredDataType(schema));
+    }
+    return withChildren(newChildren);
 }
-SerializableFunction ContainedIntSpanLogicalFunction::serialize() const {
+
+SerializableFunction ContainedIntSpanLogicalFunction::serialize() const
+{
     SerializableFunction proto;
     proto.set_function_type(std::string(NAME));
     DataTypeSerializationUtil::serializeDataType(dataType, proto.mutable_data_type());
-    for (const auto& ch : parameters) proto.add_children()->CopyFrom(ch.serialize());
+    for (const auto& child : parameters)
+    {
+        proto.add_children()->CopyFrom(child.serialize());
+    }
     return proto;
 }
+
 LogicalFunctionRegistryReturnType LogicalFunctionGeneratedRegistrar::RegisterContainedIntSpanLogicalFunction(
     LogicalFunctionRegistryArguments arguments)
 {
-    PRECONDITION(arguments.children.size()==2,
+    PRECONDITION(arguments.children.size() == 2,
                  "ContainedIntSpanLogicalFunction requires 2 children but got {}",
                  arguments.children.size());
-    return ContainedIntSpanLogicalFunction(
-                                 std::move(arguments.children[0]),
-                                 std::move(arguments.children[1]));
+    auto arg0 = std::move(arguments.children[0]);
+    auto arg1 = std::move(arguments.children[1]);
+    return ContainedIntSpanLogicalFunction(std::move(arg0), std::move(arg1));
 }
 
 } // namespace NES

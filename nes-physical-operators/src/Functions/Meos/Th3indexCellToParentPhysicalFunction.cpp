@@ -13,14 +13,19 @@
 */
 
 #include <Functions/Meos/Th3indexCellToParentPhysicalFunction.hpp>
+
 #include <Functions/PhysicalFunction.hpp>
 #include <MEOSWrapper.hpp>
 #include <Nautilus/DataTypes/VarVal.hpp>
+#include <Nautilus/DataTypes/VariableSizedData.hpp>
 #include <Nautilus/Interface/Record.hpp>
 #include <PhysicalFunctionRegistry.hpp>
 #include <ErrorHandling.hpp>
 #include <ExecutionContext.hpp>
+#include <fmt/format.h>
 #include <function.hpp>
+#include <string>
+#include <string.h>
 #include <utility>
 #include <val.hpp>
 
@@ -28,50 +33,66 @@ extern "C" {
 #include <meos.h>
 #include <meos_h3.h>
 }
-#include <Nautilus/DataTypes/VariableSizedData.hpp>
-#include <string.h>
 
 namespace NES {
 
-Th3indexCellToParentPhysicalFunction::Th3indexCellToParentPhysicalFunction(PhysicalFunction cell, PhysicalFunction ts,
-                                              PhysicalFunction resolution)
+Th3indexCellToParentPhysicalFunction::Th3indexCellToParentPhysicalFunction(PhysicalFunction cellFunction,
+                                                          PhysicalFunction tsFunction,
+                                                          PhysicalFunction arg0Function)
 {
-    paramFns.reserve(3);
-    paramFns.push_back(std::move(cell));
-    paramFns.push_back(std::move(ts));
-    paramFns.push_back(std::move(resolution));
+    parameterFunctions.reserve(3);
+    parameterFunctions.push_back(std::move(cellFunction));
+    parameterFunctions.push_back(std::move(tsFunction));
+    parameterFunctions.push_back(std::move(arg0Function));
 }
 
 VarVal Th3indexCellToParentPhysicalFunction::execute(const Record& record, ArenaRef& arena) const
 {
-    auto cell  = paramFns[0].execute(record, arena).cast<uint64_t>();
-    auto ts    = paramFns[1].execute(record, arena).cast<uint64_t>();
-    auto resolution = paramFns[2].execute(record, arena).cast<uint64_t>();
+    std::vector<VarVal> parameterValues;
+    parameterValues.reserve(parameterFunctions.size());
+    for (const auto& function : parameterFunctions)
+    {
+        parameterValues.emplace_back(function.execute(record, arena));
+    }
 
-    constexpr uint32_t MAX_LEN = 32;
+    auto cell = parameterValues[0].cast<nautilus::val<uint64_t>>();
+    auto ts = parameterValues[1].cast<nautilus::val<uint64_t>>();
+    auto arg0 = parameterValues[2].cast<nautilus::val<double>>();
+
+    constexpr uint32_t MAX_LEN = 4096;
     auto outBuf = arena.allocateVariableSizedData(nautilus::val<uint32_t>(MAX_LEN));
 
     const auto actualLen = nautilus::invoke(
-        +[](uint64_t cell, uint64_t ts, uint64_t resolution, char* buf, uint32_t bufMax) -> uint32_t {
-            try {
+        +[](uint64_t cell,
+            uint64_t ts,
+            double arg0,
+            char* buf,
+            uint32_t bufMax) -> uint32_t {
+            try
+            {
                 MEOS::Meos::ensureMeosInitialized();
-                Temporal* inst = th3indexinst_make((H3Index)cell, (TimestampTz)ts);
-                if (!inst) return 0u;
-                Temporal* res = th3index_cell_to_parent(inst, (int32_t)resolution);
-                free(inst);
-                if (!res) return 0u;
-                H3Index result_cell = th3index_start_value(res);
-                free(res);
-                char* hex = h3index_out(result_cell);
+                Temporal* temp = th3indexinst_make((H3Index)cell, (TimestampTz)ts);
+                if (!temp) return 0u;
+
+                Temporal* tres = th3index_cell_to_parent(temp, (int32_t)arg0);
+                free(temp);
+                if (!tres) return 0u;
+                H3Index hcell = th3index_start_value(tres);
+                free(tres);
+                char* hex = h3index_out(hcell);
                 if (!hex) return 0u;
                 uint32_t len = static_cast<uint32_t>(strlen(hex));
                 if (len > bufMax) len = bufMax;
                 memcpy(buf, hex, len);
                 free(hex);
                 return len;
-            } catch (const std::exception&) { return 0u; }
+            }
+            catch (const std::exception&)
+            {
+                return 0u;
+            }
         },
-        cell, ts, resolution, outBuf.getContent(), nautilus::val<uint32_t>(MAX_LEN));
+        cell, ts, arg0, outBuf.getContent(), nautilus::val<uint32_t>(MAX_LEN));
 
     VarVal(actualLen).writeToMemory(outBuf.getReference());
     return outBuf;
@@ -83,9 +104,10 @@ PhysicalFunctionRegistryReturnType PhysicalFunctionGeneratedRegistrar::RegisterT
     PRECONDITION(arguments.childFunctions.size() == 3,
                  "Th3indexCellToParentPhysicalFunction requires 3 children but got {}",
                  arguments.childFunctions.size());
-    return Th3indexCellToParentPhysicalFunction(std::move(arguments.childFunctions[0]),
-                                  std::move(arguments.childFunctions[1]),
-                                  std::move(arguments.childFunctions[2]));
+    auto arg0 = std::move(arguments.childFunctions[0]);
+    auto arg1 = std::move(arguments.childFunctions[1]);
+    auto arg2 = std::move(arguments.childFunctions[2]);
+    return Th3indexCellToParentPhysicalFunction(std::move(arg0), std::move(arg1), std::move(arg2));
 }
 
 } // namespace NES

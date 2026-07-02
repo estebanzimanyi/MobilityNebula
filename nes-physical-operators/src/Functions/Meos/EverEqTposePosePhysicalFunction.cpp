@@ -13,65 +13,92 @@
 */
 
 #include <Functions/Meos/EverEqTposePosePhysicalFunction.hpp>
+
 #include <Functions/PhysicalFunction.hpp>
 #include <MEOSWrapper.hpp>
 #include <Nautilus/DataTypes/VarVal.hpp>
+#include <Nautilus/DataTypes/VariableSizedData.hpp>
 #include <Nautilus/Interface/Record.hpp>
 #include <PhysicalFunctionRegistry.hpp>
 #include <ErrorHandling.hpp>
 #include <ExecutionContext.hpp>
+#include <fmt/format.h>
 #include <function.hpp>
+#include <string>
 #include <utility>
 #include <val.hpp>
-#include <stdlib.h>
-#include <string.h>
 
 extern "C" {
 #include <meos.h>
-#include <meos_geo.h>
 #include <meos_pose.h>
 }
 
 namespace NES {
 
-EverEqTposePosePhysicalFunction::EverEqTposePosePhysicalFunction(PhysicalFunction x, PhysicalFunction y, PhysicalFunction theta, PhysicalFunction ts, PhysicalFunction x2, PhysicalFunction y2, PhysicalFunction theta2)
+EverEqTposePosePhysicalFunction::EverEqTposePosePhysicalFunction(PhysicalFunction xFunction,
+                                                          PhysicalFunction yFunction,
+                                                          PhysicalFunction thetaFunction,
+                                                          PhysicalFunction tsFunction,
+                                                          PhysicalFunction px0Function,
+                                                          PhysicalFunction py0Function,
+                                                          PhysicalFunction ptheta0Function)
 {
-    paramFns.reserve(7);
-    paramFns.push_back(std::move(x));
-    paramFns.push_back(std::move(y));
-    paramFns.push_back(std::move(theta));
-    paramFns.push_back(std::move(ts));
-    paramFns.push_back(std::move(x2));
-    paramFns.push_back(std::move(y2));
-    paramFns.push_back(std::move(theta2));
+    parameterFunctions.reserve(7);
+    parameterFunctions.push_back(std::move(xFunction));
+    parameterFunctions.push_back(std::move(yFunction));
+    parameterFunctions.push_back(std::move(thetaFunction));
+    parameterFunctions.push_back(std::move(tsFunction));
+    parameterFunctions.push_back(std::move(px0Function));
+    parameterFunctions.push_back(std::move(py0Function));
+    parameterFunctions.push_back(std::move(ptheta0Function));
 }
 
 VarVal EverEqTposePosePhysicalFunction::execute(const Record& record, ArenaRef& arena) const
 {
-    auto x = paramFns[0].execute(record, arena).cast<double>();
-    auto y = paramFns[1].execute(record, arena).cast<double>();
-    auto theta = paramFns[2].execute(record, arena).cast<double>();
-    auto ts = paramFns[3].execute(record, arena).cast<uint64_t>();
-    auto x2 = paramFns[4].execute(record, arena).cast<double>();
-    auto y2 = paramFns[5].execute(record, arena).cast<double>();
-    auto theta2 = paramFns[6].execute(record, arena).cast<double>();
+    std::vector<VarVal> parameterValues;
+    parameterValues.reserve(parameterFunctions.size());
+    for (const auto& function : parameterFunctions)
+    {
+        parameterValues.emplace_back(function.execute(record, arena));
+    }
+
+    auto x = parameterValues[0].cast<nautilus::val<double>>();
+    auto y = parameterValues[1].cast<nautilus::val<double>>();
+    auto theta = parameterValues[2].cast<nautilus::val<double>>();
+    auto ts = parameterValues[3].cast<nautilus::val<uint64_t>>();
+    auto px0 = parameterValues[4].cast<nautilus::val<double>>();
+    auto py0 = parameterValues[5].cast<nautilus::val<double>>();
+    auto ptheta0 = parameterValues[6].cast<nautilus::val<double>>();
+
     const auto result = nautilus::invoke(
-        +[](double x, double y, double theta, uint64_t ts, double x2, double y2, double theta2) -> double {
-            try {
+        +[](double x,
+            double y,
+            double theta,
+            uint64_t ts,
+            double px0,
+            double py0,
+            double ptheta0) -> double {
+            try
+            {
                 MEOS::Meos::ensureMeosInitialized();
-                Pose* pose1 = pose_make_2d(x, y, theta, false, 0);
-                if (!pose1) return 0.0;
-                Temporal* inst = (Temporal*)tposeinst_make(pose1, (TimestampTz)ts);
-                free(pose1);
-                if (!inst) return 0.0;
-                Pose* pose2 = pose_make_2d(x2, y2, theta2, false, 0);
-                if (!pose2) { free(inst); return 0.0; }
-                int r = ever_eq_tpose_pose(inst, pose2);
-                free(inst); free(pose2);
-                return r > 0 ? 1.0 : 0.0;
-            } catch (const std::exception&) { return 0.0; }
+                std::string tempWkt = fmt::format("Pose(Point({} {}),{})@{}", x, y, theta, MEOS::Meos::convertEpochToTimestamp(ts));
+                Temporal* temp = tpose_in(tempWkt.c_str());
+                if (!temp) return 0.0;
+                Pose* pose0 = pose_make_2d(px0, py0, ptheta0, false, 0);
+                if (!pose0) { free(temp); return 0.0; }
+
+                double r = ever_eq_tpose_pose(temp, pose0);
+                free(temp);
+                free(pose0);
+                return r;
+            }
+            catch (const std::exception&)
+            {
+                return 0.0;
+            }
         },
-        x, y, theta, ts, x2, y2, theta2);
+        x, y, theta, ts, px0, py0, ptheta0);
+
     return VarVal(result);
 }
 
@@ -81,14 +108,14 @@ PhysicalFunctionRegistryReturnType PhysicalFunctionGeneratedRegistrar::RegisterE
     PRECONDITION(arguments.childFunctions.size() == 7,
                  "EverEqTposePosePhysicalFunction requires 7 children but got {}",
                  arguments.childFunctions.size());
-    return EverEqTposePosePhysicalFunction(
-                                  std::move(arguments.childFunctions[0]),
-                                  std::move(arguments.childFunctions[1]),
-                                  std::move(arguments.childFunctions[2]),
-                                  std::move(arguments.childFunctions[3]),
-                                  std::move(arguments.childFunctions[4]),
-                                  std::move(arguments.childFunctions[5]),
-                                  std::move(arguments.childFunctions[6]));
+    auto arg0 = std::move(arguments.childFunctions[0]);
+    auto arg1 = std::move(arguments.childFunctions[1]);
+    auto arg2 = std::move(arguments.childFunctions[2]);
+    auto arg3 = std::move(arguments.childFunctions[3]);
+    auto arg4 = std::move(arguments.childFunctions[4]);
+    auto arg5 = std::move(arguments.childFunctions[5]);
+    auto arg6 = std::move(arguments.childFunctions[6]);
+    return EverEqTposePosePhysicalFunction(std::move(arg0), std::move(arg1), std::move(arg2), std::move(arg3), std::move(arg4), std::move(arg5), std::move(arg6));
 }
 
 } // namespace NES

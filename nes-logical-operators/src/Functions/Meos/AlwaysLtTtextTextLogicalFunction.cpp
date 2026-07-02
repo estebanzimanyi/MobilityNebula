@@ -13,81 +13,116 @@
 */
 
 #include <Functions/Meos/AlwaysLtTtextTextLogicalFunction.hpp>
-#include <DataTypes/DataTypeProvider.hpp>
-#include <Serialization/DataTypeSerializationUtil.hpp>
-#include <Functions/LogicalFunctionProvider.hpp>
-#include <LogicalFunctionRegistry.hpp>
+
 #include <DataTypes/DataType.hpp>
+#include <DataTypes/DataTypeProvider.hpp>
 #include <DataTypes/Schema.hpp>
-#include <Functions/LogicalFunction.hpp>
-#include <Util/PlanRenderer.hpp>
-#include <fmt/format.h>
 #include <ErrorHandling.hpp>
+#include <LogicalFunctionRegistry.hpp>
+#include <Serialization/DataTypeSerializationUtil.hpp>
+#include <fmt/format.h>
 #include <SerializableVariantDescriptor.pb.h>
-#include <string>
-#include <string_view>
-#include <utility>
-#include <vector>
 
-namespace NES {
+namespace NES
+{
 
-AlwaysLtTtextTextLogicalFunction::AlwaysLtTtextTextLogicalFunction(
-    LogicalFunction value, LogicalFunction ref, LogicalFunction ts)
-    : dataType(DataTypeProvider::provideDataType(DataType::Type::FLOAT64)) {
-    parameters = {std::move(value), std::move(ref), std::move(ts)};
+AlwaysLtTtextTextLogicalFunction::AlwaysLtTtextTextLogicalFunction(LogicalFunction value,
+                                          LogicalFunction ts,
+                                          LogicalFunction arg0)
+    : dataType(DataTypeProvider::provideDataType(DataType::Type::FLOAT64))
+{
+    parameters.reserve(3);
+    parameters.push_back(std::move(value));
+    parameters.push_back(std::move(ts));
+    parameters.push_back(std::move(arg0));
 }
 
-DataType AlwaysLtTtextTextLogicalFunction::getDataType() const { return dataType; }
-
-LogicalFunction AlwaysLtTtextTextLogicalFunction::withDataType(const DataType& dt) const {
-    auto c = *this; c.dataType = dt; return c;
+DataType AlwaysLtTtextTextLogicalFunction::getDataType() const
+{
+    return dataType;
 }
 
-std::vector<LogicalFunction> AlwaysLtTtextTextLogicalFunction::getChildren() const { return parameters; }
-
-LogicalFunction AlwaysLtTtextTextLogicalFunction::withChildren(const std::vector<LogicalFunction>& ch) const {
-    PRECONDITION(ch.size() == 3, "AlwaysLtTtextText expects 3 params, got {}", ch.size());
-    auto c = *this; c.parameters = ch; return c;
+LogicalFunction AlwaysLtTtextTextLogicalFunction::withDataType(const DataType& newDataType) const
+{
+    auto copy = *this;
+    copy.dataType = newDataType;
+    return copy;
 }
 
-std::string_view AlwaysLtTtextTextLogicalFunction::getType() const { return NAME; }
-
-bool AlwaysLtTtextTextLogicalFunction::operator==(const LogicalFunctionConcept& rhs) const {
-    const auto* o = dynamic_cast<const AlwaysLtTtextTextLogicalFunction*>(&rhs);
-    return o && parameters == o->parameters;
+std::vector<LogicalFunction> AlwaysLtTtextTextLogicalFunction::getChildren() const
+{
+    return parameters;
 }
 
-std::string AlwaysLtTtextTextLogicalFunction::explain(ExplainVerbosity v) const {
-    return fmt::format("AlwaysLtTtextText({}, {}, {})",
-        parameters[0].explain(v), parameters[1].explain(v), parameters[2].explain(v));
+LogicalFunction AlwaysLtTtextTextLogicalFunction::withChildren(const std::vector<LogicalFunction>& children) const
+{
+    PRECONDITION(children.size() == 3, "AlwaysLtTtextTextLogicalFunction requires 3 children, but got {}", children.size());
+    auto copy = *this;
+    copy.parameters = children;
+    return copy;
 }
 
-LogicalFunction AlwaysLtTtextTextLogicalFunction::withInferredDataType(const Schema& s) const {
-    std::vector<LogicalFunction> ch;
-    ch.reserve(3);
-    for (auto& p : parameters) ch.push_back(p.withInferredDataType(s));
-    auto isStr  = [](const DataType& dt) { return dt.isType(DataType::Type::VARSIZED); };
-    auto isTime = [](const DataType& dt) { return dt.isType(DataType::Type::UINT64); };
-    INVARIANT(isStr(ch[0].getDataType()) && isStr(ch[1].getDataType()) && isTime(ch[2].getDataType()),
-              "AlwaysLtTtextText: expects (VARCHAR, VARCHAR, UINT64)");
-    return withChildren(ch);
+std::string_view AlwaysLtTtextTextLogicalFunction::getType() const
+{
+    return NAME;
 }
 
-SerializableFunction AlwaysLtTtextTextLogicalFunction::serialize() const {
-    SerializableFunction sf;
-    sf.set_function_type(std::string(NAME));
-    for (auto& p : parameters) *sf.add_children() = p.serialize();
-    DataTypeSerializationUtil::serializeDataType(dataType, sf.mutable_data_type());
-    return sf;
+bool AlwaysLtTtextTextLogicalFunction::operator==(const LogicalFunctionConcept& rhs) const
+{
+    if (const auto* other = dynamic_cast<const AlwaysLtTtextTextLogicalFunction*>(&rhs))
+    {
+        return parameters == other->parameters;
+    }
+    return false;
 }
 
-LogicalFunctionRegistryReturnType
-LogicalFunctionGeneratedRegistrar::RegisterAlwaysLtTtextTextLogicalFunction(
-    LogicalFunctionRegistryArguments arguments) {
+std::string AlwaysLtTtextTextLogicalFunction::explain(ExplainVerbosity verbosity) const
+{
+    std::string args;
+    for (size_t index = 0; index < parameters.size(); ++index)
+    {
+        if (index > 0)
+        {
+            args += ", ";
+        }
+        args += parameters[index].explain(verbosity);
+    }
+    return fmt::format("{}({})", NAME, args);
+}
+
+LogicalFunction AlwaysLtTtextTextLogicalFunction::withInferredDataType(const Schema& schema) const
+{
+    std::vector<LogicalFunction> newChildren;
+    newChildren.reserve(parameters.size());
+    for (const auto& child : parameters)
+    {
+        newChildren.emplace_back(child.withInferredDataType(schema));
+    }
+    return withChildren(newChildren);
+}
+
+SerializableFunction AlwaysLtTtextTextLogicalFunction::serialize() const
+{
+    SerializableFunction proto;
+    proto.set_function_type(std::string(NAME));
+    DataTypeSerializationUtil::serializeDataType(dataType, proto.mutable_data_type());
+    for (const auto& child : parameters)
+    {
+        proto.add_children()->CopyFrom(child.serialize());
+    }
+    return proto;
+}
+
+LogicalFunctionRegistryReturnType LogicalFunctionGeneratedRegistrar::RegisterAlwaysLtTtextTextLogicalFunction(
+    LogicalFunctionRegistryArguments arguments)
+{
     PRECONDITION(arguments.children.size() == 3,
-                 "AlwaysLtTtextText expects 3 params, got {}", arguments.children.size());
-    return AlwaysLtTtextTextLogicalFunction(
-        arguments.children[0], arguments.children[1], arguments.children[2]);
+                 "AlwaysLtTtextTextLogicalFunction requires 3 children but got {}",
+                 arguments.children.size());
+    auto arg0 = std::move(arguments.children[0]);
+    auto arg1 = std::move(arguments.children[1]);
+    auto arg2 = std::move(arguments.children[2]);
+    return AlwaysLtTtextTextLogicalFunction(std::move(arg0), std::move(arg1), std::move(arg2));
 }
 
 } // namespace NES

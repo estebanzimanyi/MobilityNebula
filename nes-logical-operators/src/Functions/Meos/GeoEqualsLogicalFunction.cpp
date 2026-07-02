@@ -26,53 +26,77 @@
 namespace NES
 {
 
-GeoEqualsLogicalFunction::GeoEqualsLogicalFunction(LogicalFunction wkt1, LogicalFunction wkt2)
+GeoEqualsLogicalFunction::GeoEqualsLogicalFunction(LogicalFunction wkt,
+                                          LogicalFunction arg0)
     : dataType(DataTypeProvider::provideDataType(DataType::Type::FLOAT64))
 {
     parameters.reserve(2);
-    parameters.push_back(std::move(wkt1));
-    parameters.push_back(std::move(wkt2));
+    parameters.push_back(std::move(wkt));
+    parameters.push_back(std::move(arg0));
 }
 
-DataType GeoEqualsLogicalFunction::getDataType() const { return dataType; }
+DataType GeoEqualsLogicalFunction::getDataType() const
+{
+    return dataType;
+}
 
 LogicalFunction GeoEqualsLogicalFunction::withDataType(const DataType& newDataType) const
 {
-    auto copy = *this; copy.dataType = newDataType; return copy;
+    auto copy = *this;
+    copy.dataType = newDataType;
+    return copy;
 }
 
-std::vector<LogicalFunction> GeoEqualsLogicalFunction::getChildren() const { return parameters; }
+std::vector<LogicalFunction> GeoEqualsLogicalFunction::getChildren() const
+{
+    return parameters;
+}
 
 LogicalFunction GeoEqualsLogicalFunction::withChildren(const std::vector<LogicalFunction>& children) const
 {
-    PRECONDITION(children.size() == 2,
-                 "GeoEqualsLogicalFunction requires 2 children, but got {}", children.size());
-    auto copy = *this; copy.parameters = children; return copy;
+    PRECONDITION(children.size() == 2, "GeoEqualsLogicalFunction requires 2 children, but got {}", children.size());
+    auto copy = *this;
+    copy.parameters = children;
+    return copy;
 }
 
-std::string_view GeoEqualsLogicalFunction::getType() const { return NAME; }
+std::string_view GeoEqualsLogicalFunction::getType() const
+{
+    return NAME;
+}
 
 bool GeoEqualsLogicalFunction::operator==(const LogicalFunctionConcept& rhs) const
 {
     if (const auto* other = dynamic_cast<const GeoEqualsLogicalFunction*>(&rhs))
+    {
         return parameters == other->parameters;
+    }
     return false;
 }
 
 std::string GeoEqualsLogicalFunction::explain(ExplainVerbosity verbosity) const
 {
-    return fmt::format("{}({})", NAME, parameters[0].explain(verbosity));
+    std::string args;
+    for (size_t index = 0; index < parameters.size(); ++index)
+    {
+        if (index > 0)
+        {
+            args += ", ";
+        }
+        args += parameters[index].explain(verbosity);
+    }
+    return fmt::format("{}({})", NAME, args);
 }
 
 LogicalFunction GeoEqualsLogicalFunction::withInferredDataType(const Schema& schema) const
 {
-    std::vector<LogicalFunction> c;
-    c.reserve(2);
-    c.emplace_back(parameters[0].withInferredDataType(schema));
-    c.emplace_back(parameters[1].withInferredDataType(schema));
-    INVARIANT(c[0].getDataType().isType(DataType::Type::VARSIZED), "wkt1 must be VARSIZED");
-    INVARIANT(c[1].getDataType().isType(DataType::Type::VARSIZED), "wkt2 must be VARSIZED");
-    return withChildren(c);
+    std::vector<LogicalFunction> newChildren;
+    newChildren.reserve(parameters.size());
+    for (const auto& child : parameters)
+    {
+        newChildren.emplace_back(child.withInferredDataType(schema));
+    }
+    return withChildren(newChildren);
 }
 
 SerializableFunction GeoEqualsLogicalFunction::serialize() const
@@ -81,7 +105,9 @@ SerializableFunction GeoEqualsLogicalFunction::serialize() const
     proto.set_function_type(std::string(NAME));
     DataTypeSerializationUtil::serializeDataType(dataType, proto.mutable_data_type());
     for (const auto& child : parameters)
+    {
         proto.add_children()->CopyFrom(child.serialize());
+    }
     return proto;
 }
 
@@ -91,8 +117,9 @@ LogicalFunctionRegistryReturnType LogicalFunctionGeneratedRegistrar::RegisterGeo
     PRECONDITION(arguments.children.size() == 2,
                  "GeoEqualsLogicalFunction requires 2 children but got {}",
                  arguments.children.size());
-    return GeoEqualsLogicalFunction(std::move(arguments.children[0]),
-                                 std::move(arguments.children[1]));
+    auto arg0 = std::move(arguments.children[0]);
+    auto arg1 = std::move(arguments.children[1]);
+    return GeoEqualsLogicalFunction(std::move(arg0), std::move(arg1));
 }
 
 } // namespace NES

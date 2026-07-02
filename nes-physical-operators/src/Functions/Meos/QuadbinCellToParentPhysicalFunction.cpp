@@ -13,14 +13,19 @@
 */
 
 #include <Functions/Meos/QuadbinCellToParentPhysicalFunction.hpp>
+
 #include <Functions/PhysicalFunction.hpp>
 #include <MEOSWrapper.hpp>
 #include <Nautilus/DataTypes/VarVal.hpp>
+#include <Nautilus/DataTypes/VariableSizedData.hpp>
 #include <Nautilus/Interface/Record.hpp>
 #include <PhysicalFunctionRegistry.hpp>
 #include <ErrorHandling.hpp>
 #include <ExecutionContext.hpp>
+#include <fmt/format.h>
 #include <function.hpp>
+#include <string>
+#include <string.h>
 #include <utility>
 #include <val.hpp>
 
@@ -28,39 +33,54 @@ extern "C" {
 #include <meos.h>
 #include <meos_quadbin.h>
 }
-#include <Nautilus/DataTypes/VariableSizedData.hpp>
-#include <string.h>
 
 namespace NES {
 
-QuadbinCellToParentPhysicalFunction::QuadbinCellToParentPhysicalFunction(PhysicalFunction cell, PhysicalFunction res)
+QuadbinCellToParentPhysicalFunction::QuadbinCellToParentPhysicalFunction(PhysicalFunction cellFunction,
+                                                          PhysicalFunction resFunction)
 {
-    paramFns.reserve(2);
-    paramFns.push_back(std::move(cell));
-    paramFns.push_back(std::move(res));
+    parameterFunctions.reserve(2);
+    parameterFunctions.push_back(std::move(cellFunction));
+    parameterFunctions.push_back(std::move(resFunction));
 }
 
 VarVal QuadbinCellToParentPhysicalFunction::execute(const Record& record, ArenaRef& arena) const
 {
-    auto cell = paramFns[0].execute(record, arena).cast<uint64_t>();
-    auto res = paramFns[1].execute(record, arena).cast<uint64_t>();
-    constexpr uint32_t MAX_LEN = 32;
+    std::vector<VarVal> parameterValues;
+    parameterValues.reserve(parameterFunctions.size());
+    for (const auto& function : parameterFunctions)
+    {
+        parameterValues.emplace_back(function.execute(record, arena));
+    }
+
+    auto cell = parameterValues[0].cast<nautilus::val<uint64_t>>();
+    auto res = parameterValues[1].cast<nautilus::val<uint64_t>>();
+
+    constexpr uint32_t MAX_LEN = 4096;
     auto outBuf = arena.allocateVariableSizedData(nautilus::val<uint32_t>(MAX_LEN));
 
     const auto actualLen = nautilus::invoke(
-        +[](uint64_t cell, uint64_t res, char* buf, uint32_t bufMax) -> uint32_t {
-            try {
+        +[](uint64_t cell,
+            uint64_t res,
+            char* buf,
+            uint32_t bufMax) -> uint32_t {
+            try
+            {
                 MEOS::Meos::ensureMeosInitialized();
-                Quadbin parent = quadbin_cell_to_parent((Quadbin)cell, (uint32_t)res);
-                if (parent == 0) return 0u;
-                char* s = quadbin_index_to_string(parent);
-                if (!s) return 0u;
-                uint32_t len = (uint32_t)strlen(s);
+
+                Quadbin qcell = quadbin_cell_to_parent((Quadbin)cell, (uint32_t)res);
+                char* qstr = quadbin_index_to_string(qcell);
+                if (!qstr) return 0u;
+                uint32_t len = static_cast<uint32_t>(strlen(qstr));
                 if (len > bufMax) len = bufMax;
-                memcpy(buf, s, len);
-                free(s);
+                memcpy(buf, qstr, len);
+                free(qstr);
                 return len;
-            } catch (const std::exception&) { return 0u; }
+            }
+            catch (const std::exception&)
+            {
+                return 0u;
+            }
         },
         cell, res, outBuf.getContent(), nautilus::val<uint32_t>(MAX_LEN));
 
@@ -74,9 +94,9 @@ PhysicalFunctionRegistryReturnType PhysicalFunctionGeneratedRegistrar::RegisterQ
     PRECONDITION(arguments.childFunctions.size() == 2,
                  "QuadbinCellToParentPhysicalFunction requires 2 children but got {}",
                  arguments.childFunctions.size());
-    return QuadbinCellToParentPhysicalFunction(
-                                  std::move(arguments.childFunctions[0]),
-                                  std::move(arguments.childFunctions[1]));
+    auto arg0 = std::move(arguments.childFunctions[0]);
+    auto arg1 = std::move(arguments.childFunctions[1]);
+    return QuadbinCellToParentPhysicalFunction(std::move(arg0), std::move(arg1));
 }
 
 } // namespace NES

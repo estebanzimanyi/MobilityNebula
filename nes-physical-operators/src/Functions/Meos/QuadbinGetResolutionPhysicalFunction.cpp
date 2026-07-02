@@ -13,14 +13,18 @@
 */
 
 #include <Functions/Meos/QuadbinGetResolutionPhysicalFunction.hpp>
+
 #include <Functions/PhysicalFunction.hpp>
 #include <MEOSWrapper.hpp>
 #include <Nautilus/DataTypes/VarVal.hpp>
+#include <Nautilus/DataTypes/VariableSizedData.hpp>
 #include <Nautilus/Interface/Record.hpp>
 #include <PhysicalFunctionRegistry.hpp>
 #include <ErrorHandling.hpp>
 #include <ExecutionContext.hpp>
+#include <fmt/format.h>
 #include <function.hpp>
+#include <string>
 #include <utility>
 #include <val.hpp>
 
@@ -28,28 +32,42 @@ extern "C" {
 #include <meos.h>
 #include <meos_quadbin.h>
 }
-#include <Nautilus/DataTypes/VariableSizedData.hpp>
-#include <string.h>
 
 namespace NES {
 
-QuadbinGetResolutionPhysicalFunction::QuadbinGetResolutionPhysicalFunction(PhysicalFunction cell)
+QuadbinGetResolutionPhysicalFunction::QuadbinGetResolutionPhysicalFunction(PhysicalFunction cellFunction)
 {
-    paramFns.reserve(1);
-    paramFns.push_back(std::move(cell));
+    parameterFunctions.reserve(1);
+    parameterFunctions.push_back(std::move(cellFunction));
 }
 
 VarVal QuadbinGetResolutionPhysicalFunction::execute(const Record& record, ArenaRef& arena) const
 {
-    auto cell = paramFns[0].execute(record, arena).cast<uint64_t>();
+    std::vector<VarVal> parameterValues;
+    parameterValues.reserve(parameterFunctions.size());
+    for (const auto& function : parameterFunctions)
+    {
+        parameterValues.emplace_back(function.execute(record, arena));
+    }
+
+    auto cell = parameterValues[0].cast<nautilus::val<uint64_t>>();
+
     const auto result = nautilus::invoke(
         +[](uint64_t cell) -> double {
-            try {
+            try
+            {
                 MEOS::Meos::ensureMeosInitialized();
-                return (double)quadbin_get_resolution((Quadbin)cell);
-            } catch (const std::exception&) { return 0.0; }
+
+                double r = quadbin_get_resolution((Quadbin)cell);
+                return r;
+            }
+            catch (const std::exception&)
+            {
+                return 0.0;
+            }
         },
         cell);
+
     return VarVal(result);
 }
 
@@ -59,8 +77,8 @@ PhysicalFunctionRegistryReturnType PhysicalFunctionGeneratedRegistrar::RegisterQ
     PRECONDITION(arguments.childFunctions.size() == 1,
                  "QuadbinGetResolutionPhysicalFunction requires 1 children but got {}",
                  arguments.childFunctions.size());
-    return QuadbinGetResolutionPhysicalFunction(
-                                  std::move(arguments.childFunctions[0]));
+    auto arg0 = std::move(arguments.childFunctions[0]);
+    return QuadbinGetResolutionPhysicalFunction(std::move(arg0));
 }
 
 } // namespace NES

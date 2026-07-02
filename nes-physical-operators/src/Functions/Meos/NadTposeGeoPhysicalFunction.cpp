@@ -13,18 +13,20 @@
 */
 
 #include <Functions/Meos/NadTposeGeoPhysicalFunction.hpp>
+
 #include <Functions/PhysicalFunction.hpp>
 #include <MEOSWrapper.hpp>
 #include <Nautilus/DataTypes/VarVal.hpp>
+#include <Nautilus/DataTypes/VariableSizedData.hpp>
 #include <Nautilus/Interface/Record.hpp>
 #include <PhysicalFunctionRegistry.hpp>
 #include <ErrorHandling.hpp>
 #include <ExecutionContext.hpp>
+#include <fmt/format.h>
 #include <function.hpp>
+#include <string>
 #include <utility>
 #include <val.hpp>
-#include <stdlib.h>
-#include <string.h>
 
 extern "C" {
 #include <meos.h>
@@ -34,44 +36,63 @@ extern "C" {
 
 namespace NES {
 
-NadTposeGeoPhysicalFunction::NadTposeGeoPhysicalFunction(PhysicalFunction x, PhysicalFunction y, PhysicalFunction theta, PhysicalFunction ts, PhysicalFunction wkt)
+NadTposeGeoPhysicalFunction::NadTposeGeoPhysicalFunction(PhysicalFunction xFunction,
+                                                          PhysicalFunction yFunction,
+                                                          PhysicalFunction thetaFunction,
+                                                          PhysicalFunction tsFunction,
+                                                          PhysicalFunction arg0Function)
 {
-    paramFns.reserve(5);
-    paramFns.push_back(std::move(x));
-    paramFns.push_back(std::move(y));
-    paramFns.push_back(std::move(theta));
-    paramFns.push_back(std::move(ts));
-    paramFns.push_back(std::move(wkt));
+    parameterFunctions.reserve(5);
+    parameterFunctions.push_back(std::move(xFunction));
+    parameterFunctions.push_back(std::move(yFunction));
+    parameterFunctions.push_back(std::move(thetaFunction));
+    parameterFunctions.push_back(std::move(tsFunction));
+    parameterFunctions.push_back(std::move(arg0Function));
 }
 
 VarVal NadTposeGeoPhysicalFunction::execute(const Record& record, ArenaRef& arena) const
 {
-    auto x = paramFns[0].execute(record, arena).cast<double>();
-    auto y = paramFns[1].execute(record, arena).cast<double>();
-    auto theta = paramFns[2].execute(record, arena).cast<double>();
-    auto ts = paramFns[3].execute(record, arena).cast<uint64_t>();
-    auto wkt = paramFns[4].execute(record, arena);
+    std::vector<VarVal> parameterValues;
+    parameterValues.reserve(parameterFunctions.size());
+    for (const auto& function : parameterFunctions)
+    {
+        parameterValues.emplace_back(function.execute(record, arena));
+    }
+
+    auto x = parameterValues[0].cast<nautilus::val<double>>();
+    auto y = parameterValues[1].cast<nautilus::val<double>>();
+    auto theta = parameterValues[2].cast<nautilus::val<double>>();
+    auto ts = parameterValues[3].cast<nautilus::val<uint64_t>>();
+    auto arg0 = parameterValues[4].cast<VariableSizedData>();
+
     const auto result = nautilus::invoke(
-        +[](double x, double y, double theta, uint64_t ts, const char* wkt, uint32_t wkt_len) -> double {
-            try {
+        +[](double x,
+            double y,
+            double theta,
+            uint64_t ts,
+            const char* arg0Ptr, uint32_t arg0Size) -> double {
+            try
+            {
                 MEOS::Meos::ensureMeosInitialized();
-                Pose* pose = pose_make_2d(x, y, theta, false, 0);
-                if (!pose) return 0.0;
-                Temporal* inst = (Temporal*)tposeinst_make(pose, (TimestampTz)ts);
-                free(pose);
-                if (!inst) return 0.0;
-                char* wkt_str = (char*)malloc(wkt_len + 1);
-                memcpy(wkt_str, wkt, wkt_len);
-                wkt_str[wkt_len] = '\0';
-                GSERIALIZED* gs = geom_in(wkt_str, -1);
-                free(wkt_str);
-                if (!gs) { free(inst); return 0.0; }
-                double r = nad_tpose_geo(inst, gs);
-                free(inst); free(gs);
+                std::string tempWkt = fmt::format("Pose(Point({} {}),{})@{}", x, y, theta, MEOS::Meos::convertEpochToTimestamp(ts));
+                Temporal* temp = tpose_in(tempWkt.c_str());
+                if (!temp) return 0.0;
+                std::string arg0S(arg0Ptr, arg0Size);
+                GSERIALIZED* gs0 = geom_in(arg0S.c_str(), -1);
+                if (!gs0) { free(temp); return 0.0; }
+
+                double r = nad_tpose_geo(temp, gs0);
+                free(temp);
+                free(gs0);
                 return r;
-            } catch (const std::exception&) { return 0.0; }
+            }
+            catch (const std::exception&)
+            {
+                return 0.0;
+            }
         },
-        x, y, theta, ts, wkt);
+        x, y, theta, ts, arg0.getContent(), arg0.getContentSize());
+
     return VarVal(result);
 }
 
@@ -81,12 +102,12 @@ PhysicalFunctionRegistryReturnType PhysicalFunctionGeneratedRegistrar::RegisterN
     PRECONDITION(arguments.childFunctions.size() == 5,
                  "NadTposeGeoPhysicalFunction requires 5 children but got {}",
                  arguments.childFunctions.size());
-    return NadTposeGeoPhysicalFunction(
-                                  std::move(arguments.childFunctions[0]),
-                                  std::move(arguments.childFunctions[1]),
-                                  std::move(arguments.childFunctions[2]),
-                                  std::move(arguments.childFunctions[3]),
-                                  std::move(arguments.childFunctions[4]));
+    auto arg0 = std::move(arguments.childFunctions[0]);
+    auto arg1 = std::move(arguments.childFunctions[1]);
+    auto arg2 = std::move(arguments.childFunctions[2]);
+    auto arg3 = std::move(arguments.childFunctions[3]);
+    auto arg4 = std::move(arguments.childFunctions[4]);
+    return NadTposeGeoPhysicalFunction(std::move(arg0), std::move(arg1), std::move(arg2), std::move(arg3), std::move(arg4));
 }
 
 } // namespace NES

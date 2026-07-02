@@ -26,43 +26,63 @@
 namespace NES
 {
 
-GeomDistance3dLogicalFunction::GeomDistance3dLogicalFunction(LogicalFunction wkt1, LogicalFunction wkt2)
+GeomDistance3dLogicalFunction::GeomDistance3dLogicalFunction(LogicalFunction wkt,
+                                          LogicalFunction arg0)
     : dataType(DataTypeProvider::provideDataType(DataType::Type::FLOAT64))
 {
     parameters.reserve(2);
-    parameters.push_back(std::move(wkt1));
-    parameters.push_back(std::move(wkt2));
+    parameters.push_back(std::move(wkt));
+    parameters.push_back(std::move(arg0));
 }
 
-DataType GeomDistance3dLogicalFunction::getDataType() const { return dataType; }
+DataType GeomDistance3dLogicalFunction::getDataType() const
+{
+    return dataType;
+}
 
 LogicalFunction GeomDistance3dLogicalFunction::withDataType(const DataType& newDataType) const
 {
-    auto copy = *this; copy.dataType = newDataType; return copy;
+    auto copy = *this;
+    copy.dataType = newDataType;
+    return copy;
 }
 
-std::vector<LogicalFunction> GeomDistance3dLogicalFunction::getChildren() const { return parameters; }
+std::vector<LogicalFunction> GeomDistance3dLogicalFunction::getChildren() const
+{
+    return parameters;
+}
 
 LogicalFunction GeomDistance3dLogicalFunction::withChildren(const std::vector<LogicalFunction>& children) const
 {
     PRECONDITION(children.size() == 2, "GeomDistance3dLogicalFunction requires 2 children, but got {}", children.size());
-    auto copy = *this; copy.parameters = children; return copy;
+    auto copy = *this;
+    copy.parameters = children;
+    return copy;
 }
 
-std::string_view GeomDistance3dLogicalFunction::getType() const { return NAME; }
+std::string_view GeomDistance3dLogicalFunction::getType() const
+{
+    return NAME;
+}
 
 bool GeomDistance3dLogicalFunction::operator==(const LogicalFunctionConcept& rhs) const
 {
     if (const auto* other = dynamic_cast<const GeomDistance3dLogicalFunction*>(&rhs))
+    {
         return parameters == other->parameters;
+    }
     return false;
 }
 
 std::string GeomDistance3dLogicalFunction::explain(ExplainVerbosity verbosity) const
 {
     std::string args;
-    for (size_t index = 0; index < parameters.size(); ++index) {
-        if (index > 0) args += ", ";
+    for (size_t index = 0; index < parameters.size(); ++index)
+    {
+        if (index > 0)
+        {
+            args += ", ";
+        }
         args += parameters[index].explain(verbosity);
     }
     return fmt::format("{}({})", NAME, args);
@@ -73,7 +93,9 @@ LogicalFunction GeomDistance3dLogicalFunction::withInferredDataType(const Schema
     std::vector<LogicalFunction> newChildren;
     newChildren.reserve(parameters.size());
     for (const auto& child : parameters)
+    {
         newChildren.emplace_back(child.withInferredDataType(schema));
+    }
     return withChildren(newChildren);
 }
 
@@ -83,7 +105,9 @@ SerializableFunction GeomDistance3dLogicalFunction::serialize() const
     proto.set_function_type(std::string(NAME));
     DataTypeSerializationUtil::serializeDataType(dataType, proto.mutable_data_type());
     for (const auto& child : parameters)
+    {
         proto.add_children()->CopyFrom(child.serialize());
+    }
     return proto;
 }
 
@@ -93,9 +117,9 @@ LogicalFunctionRegistryReturnType LogicalFunctionGeneratedRegistrar::RegisterGeo
     PRECONDITION(arguments.children.size() == 2,
                  "GeomDistance3dLogicalFunction requires 2 children but got {}",
                  arguments.children.size());
-        return GeomDistance3dLogicalFunction(
-        std::move(arguments.children[0]),
-        std::move(arguments.children[1]));
+    auto arg0 = std::move(arguments.children[0]);
+    auto arg1 = std::move(arguments.children[1]);
+    return GeomDistance3dLogicalFunction(std::move(arg0), std::move(arg1));
 }
 
 } // namespace NES

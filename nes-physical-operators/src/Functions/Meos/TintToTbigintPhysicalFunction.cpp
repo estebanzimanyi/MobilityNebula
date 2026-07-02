@@ -36,7 +36,7 @@ extern "C" {
 namespace NES {
 
 TintToTbigintPhysicalFunction::TintToTbigintPhysicalFunction(PhysicalFunction valueFunction,
-                                                              PhysicalFunction tsFunction)
+                                                          PhysicalFunction tsFunction)
 {
     parameterFunctions.reserve(2);
     parameterFunctions.push_back(std::move(valueFunction));
@@ -48,25 +48,34 @@ VarVal TintToTbigintPhysicalFunction::execute(const Record& record, ArenaRef& ar
     std::vector<VarVal> parameterValues;
     parameterValues.reserve(parameterFunctions.size());
     for (const auto& function : parameterFunctions)
+    {
         parameterValues.emplace_back(function.execute(record, arena));
+    }
 
-    auto value = parameterValues[0].cast<nautilus::val<double>>();
-    auto ts    = parameterValues[1].cast<nautilus::val<uint64_t>>();
+    auto value = parameterValues[0].cast<nautilus::val<int32_t>>();
+    auto ts = parameterValues[1].cast<nautilus::val<uint64_t>>();
 
     const auto result = nautilus::invoke(
-        +[](double value, uint64_t ts) -> double {
-            try {
+        +[](int32_t value,
+            uint64_t ts) -> double {
+            try
+            {
                 MEOS::Meos::ensureMeosInitialized();
-                std::string tempWkt = fmt::format("{}@{}", static_cast<int>(value), MEOS::Meos::convertEpochToTimestamp(ts));
+                std::string tempWkt = fmt::format("{}@{}", value, MEOS::Meos::convertEpochToTimestamp(ts));
                 Temporal* temp = tint_in(tempWkt.c_str());
                 if (!temp) return 0.0;
+
                 Temporal* res = tint_to_tbigint(temp);
                 free(temp);
                 if (!res) return 0.0;
-                double r = static_cast<double>(tbigint_start_value(res));
+                double r = tbigint_start_value(res);
                 free(res);
                 return r;
-            } catch (const std::exception&) { return 0.0; }
+            }
+            catch (const std::exception&)
+            {
+                return 0.0;
+            }
         },
         value, ts);
 

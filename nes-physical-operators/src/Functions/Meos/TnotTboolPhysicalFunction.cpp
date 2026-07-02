@@ -36,7 +36,7 @@ extern "C" {
 namespace NES {
 
 TnotTboolPhysicalFunction::TnotTboolPhysicalFunction(PhysicalFunction valueFunction,
-                                         PhysicalFunction tsFunction)
+                                                          PhysicalFunction tsFunction)
 {
     parameterFunctions.reserve(2);
     parameterFunctions.push_back(std::move(valueFunction));
@@ -48,26 +48,34 @@ VarVal TnotTboolPhysicalFunction::execute(const Record& record, ArenaRef& arena)
     std::vector<VarVal> parameterValues;
     parameterValues.reserve(parameterFunctions.size());
     for (const auto& function : parameterFunctions)
+    {
         parameterValues.emplace_back(function.execute(record, arena));
+    }
 
     auto value = parameterValues[0].cast<nautilus::val<double>>();
-    auto ts    = parameterValues[1].cast<nautilus::val<uint64_t>>();
+    auto ts = parameterValues[1].cast<nautilus::val<uint64_t>>();
 
     const auto result = nautilus::invoke(
-        +[](double v, uint64_t t) -> double {
-            try {
+        +[](double value,
+            uint64_t ts) -> bool {
+            try
+            {
                 MEOS::Meos::ensureMeosInitialized();
-                std::string ts_str = MEOS::Meos::convertEpochToTimestamp(t);
-                std::string wkt = fmt::format("{}@{}", (v != 0.0 ? "t" : "f"), ts_str);
-                Temporal* temp = tbool_in(wkt.c_str());
-                if (!temp) return 0.0;
+                std::string tempWkt = fmt::format("{}@{}", value != 0.0 ? "t" : "f", MEOS::Meos::convertEpochToTimestamp(ts));
+                Temporal* temp = tbool_in(tempWkt.c_str());
+                if (!temp) return false;
+
                 Temporal* res = tnot_tbool(temp);
                 free(temp);
-                if (!res) return 0.0;
+                if (!res) return false;
                 bool r = tbool_start_value(res);
                 free(res);
-                return static_cast<double>(r ? 1.0 : 0.0);
-            } catch (const std::exception&) { return 0.0; }
+                return r;
+            }
+            catch (const std::exception&)
+            {
+                return false;
+            }
         },
         value, ts);
 

@@ -13,6 +13,7 @@
 */
 
 #include <Functions/Meos/TextcatTtextTextPhysicalFunction.hpp>
+
 #include <Functions/PhysicalFunction.hpp>
 #include <MEOSWrapper.hpp>
 #include <Nautilus/DataTypes/VarVal.hpp>
@@ -24,6 +25,7 @@
 #include <fmt/format.h>
 #include <function.hpp>
 #include <string>
+#include <string.h>
 #include <utility>
 #include <val.hpp>
 
@@ -34,57 +36,74 @@ extern "C" {
 namespace NES {
 
 TextcatTtextTextPhysicalFunction::TextcatTtextTextPhysicalFunction(PhysicalFunction valueFunction,
-                                              PhysicalFunction tsFunction,
-                                              PhysicalFunction refFunction)
+                                                          PhysicalFunction tsFunction,
+                                                          PhysicalFunction arg0Function)
 {
-    paramFns.reserve(3);
-    paramFns.push_back(std::move(valueFunction));
-    paramFns.push_back(std::move(tsFunction));
-    paramFns.push_back(std::move(refFunction));
+    parameterFunctions.reserve(3);
+    parameterFunctions.push_back(std::move(valueFunction));
+    parameterFunctions.push_back(std::move(tsFunction));
+    parameterFunctions.push_back(std::move(arg0Function));
 }
 
 VarVal TextcatTtextTextPhysicalFunction::execute(const Record& record, ArenaRef& arena) const
 {
-    auto value = paramFns[0].execute(record, arena).cast<VariableSizedData>();
-    auto ts    = paramFns[1].execute(record, arena).cast<nautilus::val<uint64_t>>();
-    auto ref   = paramFns[2].execute(record, arena).cast<VariableSizedData>();
+    std::vector<VarVal> parameterValues;
+    parameterValues.reserve(parameterFunctions.size());
+    for (const auto& function : parameterFunctions)
+    {
+        parameterValues.emplace_back(function.execute(record, arena));
+    }
 
-    constexpr uint32_t MAX_LEN = 8192;
+    auto value = parameterValues[0].cast<VariableSizedData>();
+    auto ts = parameterValues[1].cast<nautilus::val<uint64_t>>();
+    auto arg0 = parameterValues[2].cast<VariableSizedData>();
+
+    constexpr uint32_t MAX_LEN = 4096;
     auto outBuf = arena.allocateVariableSizedData(nautilus::val<uint32_t>(MAX_LEN));
 
     const auto actualLen = nautilus::invoke(
-        +[](const char* v, uint32_t vsz, uint64_t t, const char* r, uint32_t rsz, char* buf, uint32_t bufMax) -> uint32_t {
-            try {
+        +[](const char* valuePtr, uint32_t valueSize,
+            uint64_t ts,
+            const char* arg0Ptr, uint32_t arg0Size,
+            char* buf,
+            uint32_t bufMax) -> uint32_t {
+            try
+            {
                 MEOS::Meos::ensureMeosInitialized();
-                std::string val_str(v, vsz);
-                while (!val_str.empty() && (val_str.front() == '\'' || val_str.front() == '"')) val_str = val_str.substr(1);
-                while (!val_str.empty() && (val_str.back()  == '\'' || val_str.back()  == '"')) val_str = val_str.substr(0, val_str.size() - 1);
-                std::string ref_str(r, rsz);
-                while (!ref_str.empty() && (ref_str.front() == '\'' || ref_str.front() == '"')) ref_str = ref_str.substr(1);
-                while (!ref_str.empty() && (ref_str.back()  == '\'' || ref_str.back()  == '"')) ref_str = ref_str.substr(0, ref_str.size() - 1);
-                std::string ts_str = MEOS::Meos::convertEpochToTimestamp(t);
-                std::string wkt = "'" + val_str + "'@" + ts_str;
-                Temporal* temp = ttext_in(wkt.c_str());
+                std::string tempVal(valuePtr, valueSize);
+                while (!tempVal.empty() && (tempVal.front() == '\'' || tempVal.front() == '"')) tempVal.erase(tempVal.begin());
+                while (!tempVal.empty() && (tempVal.back()  == '\'' || tempVal.back()  == '"')) tempVal.pop_back();
+                std::string tempWkt = "'" + tempVal + "'@" + MEOS::Meos::convertEpochToTimestamp(ts);
+                Temporal* temp = ttext_in(tempWkt.c_str());
                 if (!temp) return 0u;
-                text* txt = cstring_to_text(ref_str.c_str());
-                if (!txt) { free(temp); return 0u; }
-                Temporal* res = textcat_ttext_text(temp, txt);
-                free(temp); free(txt);
-                if (!res) return 0u;
-                text* out_txt = ttext_start_value(res);
-                free(res);
-                if (!out_txt) return 0u;
-                char* cstr = text_to_cstring(out_txt);
-                free(out_txt);
-                if (!cstr) return 0u;
-                uint32_t len = static_cast<uint32_t>(std::strlen(cstr));
+                std::string arg0S(arg0Ptr, arg0Size);
+                while (!arg0S.empty() && (arg0S.front() == '\'' || arg0S.front() == '"')) arg0S.erase(arg0S.begin());
+                while (!arg0S.empty() && (arg0S.back()  == '\'' || arg0S.back()  == '"')) arg0S.pop_back();
+                text* txt0 = cstring_to_text(arg0S.c_str());
+                if (!txt0) { free(temp); return 0u; }
+
+                Temporal* tres = textcat_ttext_text(temp, txt0);
+                free(temp);
+                free(txt0);
+                if (!tres) return 0u;
+                text* txt = ttext_start_value(tres);
+                free(tres);
+                if (!txt) return 0u;
+                char* out = text_to_cstring(txt);
+                free(txt);
+                if (!out) return 0u;
+                uint32_t len = static_cast<uint32_t>(strlen(out));
                 if (len > bufMax) len = bufMax;
-                std::memcpy(buf, cstr, len);
-                free(cstr);
+                memcpy(buf, out, len);
+                free(out);
                 return len;
-            } catch (const std::exception&) { return 0u; }
+            }
+            catch (const std::exception&)
+            {
+                return 0u;
+            }
         },
-        value, ts, ref, outBuf.getContent(), nautilus::val<uint32_t>(MAX_LEN));
+        value.getContent(), value.getContentSize(), ts, arg0.getContent(), arg0.getContentSize(), outBuf.getContent(), nautilus::val<uint32_t>(MAX_LEN));
 
     VarVal(actualLen).writeToMemory(outBuf.getReference());
     return outBuf;
@@ -96,10 +115,10 @@ PhysicalFunctionRegistryReturnType PhysicalFunctionGeneratedRegistrar::RegisterT
     PRECONDITION(arguments.childFunctions.size() == 3,
                  "TextcatTtextTextPhysicalFunction requires 3 children but got {}",
                  arguments.childFunctions.size());
-    return TextcatTtextTextPhysicalFunction(
-        std::move(arguments.childFunctions[0]),
-        std::move(arguments.childFunctions[1]),
-        std::move(arguments.childFunctions[2]));
+    auto arg0 = std::move(arguments.childFunctions[0]);
+    auto arg1 = std::move(arguments.childFunctions[1]);
+    auto arg2 = std::move(arguments.childFunctions[2]);
+    return TextcatTtextTextPhysicalFunction(std::move(arg0), std::move(arg1), std::move(arg2));
 }
 
 } // namespace NES

@@ -13,17 +13,20 @@
 */
 
 #include <Functions/Meos/EverNeTnpointTnpointPhysicalFunction.hpp>
+
 #include <Functions/PhysicalFunction.hpp>
 #include <MEOSWrapper.hpp>
 #include <Nautilus/DataTypes/VarVal.hpp>
+#include <Nautilus/DataTypes/VariableSizedData.hpp>
 #include <Nautilus/Interface/Record.hpp>
 #include <PhysicalFunctionRegistry.hpp>
 #include <ErrorHandling.hpp>
 #include <ExecutionContext.hpp>
+#include <fmt/format.h>
 #include <function.hpp>
+#include <string>
 #include <utility>
 #include <val.hpp>
-#include <stdlib.h>
 
 extern "C" {
 #include <meos.h>
@@ -32,49 +35,69 @@ extern "C" {
 
 namespace NES {
 
-EverNeTnpointTnpointPhysicalFunction::EverNeTnpointTnpointPhysicalFunction(
-    PhysicalFunction rid1, PhysicalFunction pos1, PhysicalFunction ts1,
-    PhysicalFunction rid2, PhysicalFunction pos2, PhysicalFunction ts2)
+EverNeTnpointTnpointPhysicalFunction::EverNeTnpointTnpointPhysicalFunction(PhysicalFunction ridFunction,
+                                                          PhysicalFunction fracFunction,
+                                                          PhysicalFunction tsFunction,
+                                                          PhysicalFunction rid0Function,
+                                                          PhysicalFunction frac0Function,
+                                                          PhysicalFunction ts0Function)
 {
-    paramFns.reserve(6);
-    paramFns.push_back(std::move(rid1));
-    paramFns.push_back(std::move(pos1));
-    paramFns.push_back(std::move(ts1));
-    paramFns.push_back(std::move(rid2));
-    paramFns.push_back(std::move(pos2));
-    paramFns.push_back(std::move(ts2));
+    parameterFunctions.reserve(6);
+    parameterFunctions.push_back(std::move(ridFunction));
+    parameterFunctions.push_back(std::move(fracFunction));
+    parameterFunctions.push_back(std::move(tsFunction));
+    parameterFunctions.push_back(std::move(rid0Function));
+    parameterFunctions.push_back(std::move(frac0Function));
+    parameterFunctions.push_back(std::move(ts0Function));
 }
 
 VarVal EverNeTnpointTnpointPhysicalFunction::execute(const Record& record, ArenaRef& arena) const
 {
-    auto rid1 = paramFns[0].execute(record, arena).cast<uint64_t>();
-    auto pos1 = paramFns[1].execute(record, arena).cast<double>();
-    auto ts1  = paramFns[2].execute(record, arena).cast<uint64_t>();
-    auto rid2 = paramFns[3].execute(record, arena).cast<uint64_t>();
-    auto pos2 = paramFns[4].execute(record, arena).cast<double>();
-    auto ts2  = paramFns[5].execute(record, arena).cast<uint64_t>();
+    std::vector<VarVal> parameterValues;
+    parameterValues.reserve(parameterFunctions.size());
+    for (const auto& function : parameterFunctions)
+    {
+        parameterValues.emplace_back(function.execute(record, arena));
+    }
+
+    auto rid = parameterValues[0].cast<nautilus::val<int64_t>>();
+    auto frac = parameterValues[1].cast<nautilus::val<double>>();
+    auto ts = parameterValues[2].cast<nautilus::val<uint64_t>>();
+    auto rid0 = parameterValues[3].cast<nautilus::val<uint64_t>>();
+    auto frac0 = parameterValues[4].cast<nautilus::val<double>>();
+    auto ts0 = parameterValues[5].cast<nautilus::val<uint64_t>>();
 
     const auto result = nautilus::invoke(
-        +[](uint64_t rid1, double pos1, uint64_t ts1,
-            uint64_t rid2, double pos2, uint64_t ts2) -> double {
-            try {
+        +[](int64_t rid,
+            double frac,
+            uint64_t ts,
+            uint64_t rid0,
+            double frac0,
+            uint64_t ts0) -> double {
+            try
+            {
                 MEOS::Meos::ensureMeosInitialized();
-                Npoint* np1 = npoint_make((int64_t)rid1, pos1);
-                if (!np1) return 0.0;
-                Temporal* inst1 = (Temporal*)tnpointinst_make(np1, (TimestampTz)ts1);
-                free(np1);
-                if (!inst1) return 0.0;
-                Npoint* np2 = npoint_make((int64_t)rid2, pos2);
-                if (!np2) { free(inst1); return 0.0; }
-                Temporal* inst2 = (Temporal*)tnpointinst_make(np2, (TimestampTz)ts2);
-                free(np2);
-                if (!inst2) { free(inst1); return 0.0; }
-                int r = ever_ne_tnpoint_tnpoint(inst1, inst2);
-                free(inst1); free(inst2);
-                return r > 0 ? 1.0 : 0.0;
-            } catch (const std::exception&) { return 0.0; }
+                if (frac < 0.0 || frac > 1.0) return 0.0;
+                std::string tempWkt = fmt::format("NPoint({},{})@{}", rid, frac, MEOS::Meos::convertEpochToTimestamp(ts));
+                Temporal* temp = tnpoint_in(tempWkt.c_str());
+                if (!temp) return 0.0;
+                Npoint* np0 = npoint_make((int64_t)rid0, frac0);
+                if (!np0) { free(temp); return 0.0; }
+                Temporal* inst0 = (Temporal*)tnpointinst_make(np0, (TimestampTz)ts0);
+                free(np0);
+                if (!inst0) { free(temp); return 0.0; }
+
+                double r = ever_ne_tnpoint_tnpoint(temp, inst0);
+                free(temp);
+                free(inst0);
+                return r;
+            }
+            catch (const std::exception&)
+            {
+                return 0.0;
+            }
         },
-        rid1, pos1, ts1, rid2, pos2, ts2);
+        rid, frac, ts, rid0, frac0, ts0);
 
     return VarVal(result);
 }
@@ -85,12 +108,13 @@ PhysicalFunctionRegistryReturnType PhysicalFunctionGeneratedRegistrar::RegisterE
     PRECONDITION(arguments.childFunctions.size() == 6,
                  "EverNeTnpointTnpointPhysicalFunction requires 6 children but got {}",
                  arguments.childFunctions.size());
-    return EverNeTnpointTnpointPhysicalFunction(std::move(arguments.childFunctions[0]),
-                                  std::move(arguments.childFunctions[1]),
-                                  std::move(arguments.childFunctions[2]),
-                                  std::move(arguments.childFunctions[3]),
-                                  std::move(arguments.childFunctions[4]),
-                                  std::move(arguments.childFunctions[5]));
+    auto arg0 = std::move(arguments.childFunctions[0]);
+    auto arg1 = std::move(arguments.childFunctions[1]);
+    auto arg2 = std::move(arguments.childFunctions[2]);
+    auto arg3 = std::move(arguments.childFunctions[3]);
+    auto arg4 = std::move(arguments.childFunctions[4]);
+    auto arg5 = std::move(arguments.childFunctions[5]);
+    return EverNeTnpointTnpointPhysicalFunction(std::move(arg0), std::move(arg1), std::move(arg2), std::move(arg3), std::move(arg4), std::move(arg5));
 }
 
 } // namespace NES
