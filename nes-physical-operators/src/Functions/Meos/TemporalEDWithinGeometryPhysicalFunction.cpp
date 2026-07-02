@@ -1,3 +1,17 @@
+/*
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        https://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+*/
+
 #include <Functions/Meos/TemporalEDWithinGeometryPhysicalFunction.hpp>
 
 #include <Functions/PhysicalFunction.hpp>
@@ -10,25 +24,29 @@
 #include <ExecutionContext.hpp>
 #include <fmt/format.h>
 #include <function.hpp>
-#include <iostream>
 #include <string>
 #include <utility>
 #include <val.hpp>
 
+extern "C" {
+#include <meos.h>
+#include <meos_geo.h>
+}
+
 namespace NES {
 
 TemporalEDWithinGeometryPhysicalFunction::TemporalEDWithinGeometryPhysicalFunction(PhysicalFunction lonFunction,
-                                                                                   PhysicalFunction latFunction,
-                                                                                   PhysicalFunction timestampFunction,
-                                                                                   PhysicalFunction geometryFunction,
-                                                                                   PhysicalFunction distanceFunction)
+                                                          PhysicalFunction latFunction,
+                                                          PhysicalFunction timestampFunction,
+                                                          PhysicalFunction geometryFunction,
+                                                          PhysicalFunction distFunction)
 {
     parameterFunctions.reserve(5);
     parameterFunctions.push_back(std::move(lonFunction));
     parameterFunctions.push_back(std::move(latFunction));
     parameterFunctions.push_back(std::move(timestampFunction));
     parameterFunctions.push_back(std::move(geometryFunction));
-    parameterFunctions.push_back(std::move(distanceFunction));
+    parameterFunctions.push_back(std::move(distFunction));
 }
 
 VarVal TemporalEDWithinGeometryPhysicalFunction::execute(const Record& record, ArenaRef& arena) const
@@ -40,11 +58,11 @@ VarVal TemporalEDWithinGeometryPhysicalFunction::execute(const Record& record, A
         parameterValues.emplace_back(function.execute(record, arena));
     }
 
-    auto lon = parameterValues[0].cast<nautilus::val<double>>();
-    auto lat = parameterValues[1].cast<nautilus::val<double>>();
+    auto lon       = parameterValues[0].cast<nautilus::val<double>>();
+    auto lat       = parameterValues[1].cast<nautilus::val<double>>();
     auto timestamp = parameterValues[2].cast<nautilus::val<uint64_t>>();
-    auto geometry = parameterValues[3].cast<VariableSizedData>();
-    auto distance = parameterValues[4].cast<nautilus::val<double>>();
+    auto geometry  = parameterValues[3].cast<VariableSizedData>();
+    auto dist      = parameterValues[4].cast<nautilus::val<double>>();
 
     const auto result = nautilus::invoke(
         +[](double lonValue,
@@ -52,14 +70,11 @@ VarVal TemporalEDWithinGeometryPhysicalFunction::execute(const Record& record, A
             uint64_t timestampValue,
             const char* geometryPtr,
             uint32_t geometrySize,
-            double distanceValue) -> int {
+            double distValue) -> int {
             try
             {
                 MEOS::Meos::ensureMeosInitialized();
-                if (!(lonValue >= -180.0 && lonValue <= 180.0 && latValue >= -90.0 && latValue <= 90.0)) {
-                    std::cout << "TemporalEDWithin: coordinates out of range" << std::endl;
-                    return 0;
-                }
+                if (!(lonValue >= -180.0 && lonValue <= 180.0 && latValue >= -90.0 && latValue <= 90.0)) return 0;
 
                 const std::string timestampString = MEOS::Meos::convertEpochToTimestamp(timestampValue);
                 std::string temporalGeometryWkt = fmt::format("SRID=4326;Point({} {})@{}", lonValue, latValue, timestampString);
@@ -70,36 +85,41 @@ VarVal TemporalEDWithinGeometryPhysicalFunction::execute(const Record& record, A
                 while (!staticGeometryWkt.empty() && (staticGeometryWkt.back() == '\'' || staticGeometryWkt.back() == '"'))
                     staticGeometryWkt.pop_back();
 
-                if (temporalGeometryWkt.empty() || staticGeometryWkt.empty())
-                    return 0;
+                if (temporalGeometryWkt.empty() || staticGeometryWkt.empty()) return 0;
 
                 MEOS::Meos::TemporalGeometry temporalGeometry(temporalGeometryWkt);
                 if (!temporalGeometry.getGeometry()) return 0;
                 MEOS::Meos::StaticGeometry staticGeometry(staticGeometryWkt);
                 if (!staticGeometry.getGeometry()) return 0;
 
-                return MEOS::Meos::safe_edwithin_tgeo_geo(static_cast<const Temporal*>(temporalGeometry.getGeometry()),
-                                                         static_cast<const GSERIALIZED*>(staticGeometry.getGeometry()),
-                                                         distanceValue);
+                // MEOS *_tgeo_geo with trailing distance arg
+                // — int fn(const Temporal*, const GSERIALIZED*, double).
+                return edwithin_tgeo_geo(temporalGeometry.getGeometry(),
+                                   staticGeometry.getGeometry(),
+                                   distValue);
             }
-            catch (...) { return -1; }
+            catch (const std::exception&)
+            {
+                return 0;
+            }
         },
-        lon, lat, timestamp, geometry.getContent(), geometry.getContentSize(), distance);
+        lon, lat, timestamp, geometry.getContent(), geometry.getContentSize(), dist);
 
     return VarVal(result);
 }
 
-PhysicalFunctionRegistryReturnType
-PhysicalFunctionGeneratedRegistrar::RegisterTemporalEDWithinGeometryPhysicalFunction(PhysicalFunctionRegistryArguments arguments)
+PhysicalFunctionRegistryReturnType PhysicalFunctionGeneratedRegistrar::RegisterTemporalEDWithinGeometryPhysicalFunction(
+    PhysicalFunctionRegistryArguments arguments)
 {
     PRECONDITION(arguments.childFunctions.size() == 5,
-                 "TemporalEDWithinGeometryPhysicalFunction requires 5 child functions, but got {}",
+                 "TemporalEDWithinGeometryPhysicalFunction requires 5 children but got {}",
                  arguments.childFunctions.size());
-    return TemporalEDWithinGeometryPhysicalFunction(arguments.childFunctions[0],
-                                                    arguments.childFunctions[1],
-                                                    arguments.childFunctions[2],
-                                                    arguments.childFunctions[3],
-                                                    arguments.childFunctions[4]);
+    auto arg0 = std::move(arguments.childFunctions[0]);
+    auto arg1 = std::move(arguments.childFunctions[1]);
+    auto arg2 = std::move(arguments.childFunctions[2]);
+    auto arg3 = std::move(arguments.childFunctions[3]);
+    auto arg4 = std::move(arguments.childFunctions[4]);
+    return TemporalEDWithinGeometryPhysicalFunction(std::move(arg0), std::move(arg1), std::move(arg2), std::move(arg3), std::move(arg4));
 }
 
 } // namespace NES

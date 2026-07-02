@@ -1,3 +1,17 @@
+/*
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        https://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+*/
+
 #include <Functions/Meos/TemporalEDWithinGeometryLogicalFunction.hpp>
 
 #include <DataTypes/DataType.hpp>
@@ -13,10 +27,10 @@ namespace NES
 {
 
 TemporalEDWithinGeometryLogicalFunction::TemporalEDWithinGeometryLogicalFunction(LogicalFunction lon,
-                                                                                 LogicalFunction lat,
-                                                                                 LogicalFunction timestamp,
-                                                                                 LogicalFunction geometry,
-                                                                                 LogicalFunction distance)
+                                          LogicalFunction lat,
+                                          LogicalFunction timestamp,
+                                          LogicalFunction geometry,
+                                          LogicalFunction dist)
     : dataType(DataTypeProvider::provideDataType(DataType::Type::INT32))
 {
     parameters.reserve(5);
@@ -24,7 +38,7 @@ TemporalEDWithinGeometryLogicalFunction::TemporalEDWithinGeometryLogicalFunction
     parameters.push_back(std::move(lat));
     parameters.push_back(std::move(timestamp));
     parameters.push_back(std::move(geometry));
-    parameters.push_back(std::move(distance));
+    parameters.push_back(std::move(dist));
 }
 
 DataType TemporalEDWithinGeometryLogicalFunction::getDataType() const
@@ -88,39 +102,33 @@ LogicalFunction TemporalEDWithinGeometryLogicalFunction::withInferredDataType(co
     {
         newChildren.emplace_back(child.withInferredDataType(schema));
     }
-
-    INVARIANT(newChildren[0].getDataType().isNumeric(), "Longitude must be numeric, but was: {}", newChildren[0].getDataType());
-    INVARIANT(newChildren[1].getDataType().isNumeric(), "Latitude must be numeric, but was: {}", newChildren[1].getDataType());
-    INVARIANT(newChildren[2].getDataType().isType(DataType::Type::UINT64), "Timestamp must be UINT64, but was: {}", newChildren[2].getDataType());
-    INVARIANT(newChildren[3].getDataType().isType(DataType::Type::VARSIZED), "Geometry literal must be VARSIZED, but was: {}", newChildren[3].getDataType());
-    INVARIANT(newChildren[4].getDataType().isNumeric(), "Distance must be numeric, but was: {}", newChildren[4].getDataType());
-
     return withChildren(newChildren);
 }
 
 SerializableFunction TemporalEDWithinGeometryLogicalFunction::serialize() const
 {
-    SerializableFunction serialized;
-    serialized.set_function_type(NAME);
+    SerializableFunction proto;
+    proto.set_function_type(std::string(NAME));
+    DataTypeSerializationUtil::serializeDataType(dataType, proto.mutable_data_type());
     for (const auto& child : parameters)
     {
-        serialized.add_children()->CopyFrom(child.serialize());
+        proto.add_children()->CopyFrom(child.serialize());
     }
-    DataTypeSerializationUtil::serializeDataType(getDataType(), serialized.mutable_data_type());
-    return serialized;
+    return proto;
 }
 
-LogicalFunctionRegistryReturnType
-LogicalFunctionGeneratedRegistrar::RegisterTemporalEDWithinGeometryLogicalFunction(LogicalFunctionRegistryArguments arguments)
+LogicalFunctionRegistryReturnType LogicalFunctionGeneratedRegistrar::RegisterTemporalEDWithinGeometryLogicalFunction(
+    LogicalFunctionRegistryArguments arguments)
 {
     PRECONDITION(arguments.children.size() == 5,
-                 "TemporalEDWithinGeometryLogicalFunction requires 5 children, but got {}",
+                 "TemporalEDWithinGeometryLogicalFunction requires 5 children but got {}",
                  arguments.children.size());
-    return TemporalEDWithinGeometryLogicalFunction(arguments.children[0],
-                                                   arguments.children[1],
-                                                   arguments.children[2],
-                                                   arguments.children[3],
-                                                   arguments.children[4]);
+    auto arg0 = std::move(arguments.children[0]);
+    auto arg1 = std::move(arguments.children[1]);
+    auto arg2 = std::move(arguments.children[2]);
+    auto arg3 = std::move(arguments.children[3]);
+    auto arg4 = std::move(arguments.children[4]);
+    return TemporalEDWithinGeometryLogicalFunction(std::move(arg0), std::move(arg1), std::move(arg2), std::move(arg3), std::move(arg4));
 }
 
 } // namespace NES
