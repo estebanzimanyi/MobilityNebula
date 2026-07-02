@@ -1,0 +1,2289 @@
+{
+  "_comment": "Gap-fill operators from the fullgen branch that are present in the canonical TARGET_SURFACE.txt (69 of 303 original entries).",
+  "operators": [
+    {
+      "nebula_name": "AlwaysEqTemporalTemporal",
+      "sql_token": "ALWAYSEQTEMPORALTEMPORAL",
+      "meos_call": "always_eq_temporal_temporal",
+      "args": [
+        {
+          "name": "lonA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "latA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsA",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "lonB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "latB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsB",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_two_temporal_points": true,
+      "comment_one_liner": "Per-event always_eq_temporal_temporal."
+    },
+    {
+      "nebula_name": "AlwaysGeTemporalTemporal",
+      "sql_token": "ALWAYSGETEMPORALTEMPORAL",
+      "meos_call": "always_ge_temporal_temporal",
+      "args": [
+        {
+          "name": "lonA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "latA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsA",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "lonB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "latB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsB",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_two_temporal_points": true,
+      "comment_one_liner": "Per-event always_ge_temporal_temporal."
+    },
+    {
+      "nebula_name": "AlwaysGtTemporalTemporal",
+      "sql_token": "ALWAYSGTTEMPORALTEMPORAL",
+      "meos_call": "always_gt_temporal_temporal",
+      "args": [
+        {
+          "name": "lonA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "latA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsA",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "lonB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "latB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsB",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_two_temporal_points": true,
+      "comment_one_liner": "Per-event always_gt_temporal_temporal."
+    },
+    {
+      "nebula_name": "AlwaysLeTemporalTemporal",
+      "sql_token": "ALWAYSLETEMPORALTEMPORAL",
+      "meos_call": "always_le_temporal_temporal",
+      "args": [
+        {
+          "name": "lonA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "latA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsA",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "lonB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "latB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsB",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_two_temporal_points": true,
+      "comment_one_liner": "Per-event always_le_temporal_temporal."
+    },
+    {
+      "nebula_name": "AlwaysLtTemporalTemporal",
+      "sql_token": "ALWAYSLTTEMPORALTEMPORAL",
+      "meos_call": "always_lt_temporal_temporal",
+      "args": [
+        {
+          "name": "lonA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "latA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsA",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "lonB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "latB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsB",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_two_temporal_points": true,
+      "comment_one_liner": "Per-event always_lt_temporal_temporal."
+    },
+    {
+      "nebula_name": "AlwaysNeTemporalTemporal",
+      "sql_token": "ALWAYSNETEMPORALTEMPORAL",
+      "meos_call": "always_ne_temporal_temporal",
+      "args": [
+        {
+          "name": "lonA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "latA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsA",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "lonB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "latB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsB",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_two_temporal_points": true,
+      "comment_one_liner": "Per-event always_ne_temporal_temporal."
+    },
+    {
+      "nebula_name": "EverEqTemporalTemporal",
+      "sql_token": "EVEREQTEMPORALTEMPORAL",
+      "meos_call": "ever_eq_temporal_temporal",
+      "args": [
+        {
+          "name": "lonA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "latA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsA",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "lonB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "latB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsB",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_two_temporal_points": true,
+      "comment_one_liner": "Per-event ever_eq_temporal_temporal."
+    },
+    {
+      "nebula_name": "EverGeTemporalTemporal",
+      "sql_token": "EVERGETEMPORALTEMPORAL",
+      "meos_call": "ever_ge_temporal_temporal",
+      "args": [
+        {
+          "name": "lonA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "latA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsA",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "lonB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "latB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsB",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_two_temporal_points": true,
+      "comment_one_liner": "Per-event ever_ge_temporal_temporal."
+    },
+    {
+      "nebula_name": "EverGtTemporalTemporal",
+      "sql_token": "EVERGTTEMPORALTEMPORAL",
+      "meos_call": "ever_gt_temporal_temporal",
+      "args": [
+        {
+          "name": "lonA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "latA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsA",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "lonB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "latB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsB",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_two_temporal_points": true,
+      "comment_one_liner": "Per-event ever_gt_temporal_temporal."
+    },
+    {
+      "nebula_name": "EverLeTemporalTemporal",
+      "sql_token": "EVERLETEMPORALTEMPORAL",
+      "meos_call": "ever_le_temporal_temporal",
+      "args": [
+        {
+          "name": "lonA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "latA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsA",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "lonB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "latB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsB",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_two_temporal_points": true,
+      "comment_one_liner": "Per-event ever_le_temporal_temporal."
+    },
+    {
+      "nebula_name": "EverLtTemporalTemporal",
+      "sql_token": "EVERLTTEMPORALTEMPORAL",
+      "meos_call": "ever_lt_temporal_temporal",
+      "args": [
+        {
+          "name": "lonA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "latA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsA",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "lonB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "latB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsB",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_two_temporal_points": true,
+      "comment_one_liner": "Per-event ever_lt_temporal_temporal."
+    },
+    {
+      "nebula_name": "EverNeTemporalTemporal",
+      "sql_token": "EVERNETEMPORALTEMPORAL",
+      "meos_call": "ever_ne_temporal_temporal",
+      "args": [
+        {
+          "name": "lonA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "latA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsA",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "lonB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "latB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsB",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_two_temporal_points": true,
+      "comment_one_liner": "Per-event ever_ne_temporal_temporal."
+    },
+    {
+      "nebula_name": "AlwaysEqTfloatFloat",
+      "sql_token": "ALWAYSEQTFLOATFLOAT",
+      "meos_call": "always_eq_tfloat_float",
+      "args": [
+        {
+          "name": "value",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "threshold",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "ts",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        }
+      ],
+      "return_type": "double",
+      "nautilus_return": "FLOAT64",
+      "build_tnumber_point_with_scalar": true,
+      "tnumber_in_fn": "tfloat_in",
+      "tnumber_value_cpp_type": "double",
+      "tnumber_wkt_format": "{}@{}",
+      "value_fmt_expr": "value",
+      "threshold_call_expr": "threshold",
+      "comment_one_liner": "Per-event always_eq_tfloat_float."
+    },
+    {
+      "nebula_name": "AlwaysGeTfloatFloat",
+      "sql_token": "ALWAYSGETFLOATFLOAT",
+      "meos_call": "always_ge_tfloat_float",
+      "args": [
+        {
+          "name": "value",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "threshold",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "ts",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        }
+      ],
+      "return_type": "double",
+      "nautilus_return": "FLOAT64",
+      "build_tnumber_point_with_scalar": true,
+      "tnumber_in_fn": "tfloat_in",
+      "tnumber_value_cpp_type": "double",
+      "tnumber_wkt_format": "{}@{}",
+      "value_fmt_expr": "value",
+      "threshold_call_expr": "threshold",
+      "comment_one_liner": "Per-event always_ge_tfloat_float."
+    },
+    {
+      "nebula_name": "AlwaysGtTfloatFloat",
+      "sql_token": "ALWAYSGTTFLOATFLOAT",
+      "meos_call": "always_gt_tfloat_float",
+      "args": [
+        {
+          "name": "value",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "threshold",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "ts",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        }
+      ],
+      "return_type": "double",
+      "nautilus_return": "FLOAT64",
+      "build_tnumber_point_with_scalar": true,
+      "tnumber_in_fn": "tfloat_in",
+      "tnumber_value_cpp_type": "double",
+      "tnumber_wkt_format": "{}@{}",
+      "value_fmt_expr": "value",
+      "threshold_call_expr": "threshold",
+      "comment_one_liner": "Per-event always_gt_tfloat_float."
+    },
+    {
+      "nebula_name": "AlwaysLeTfloatFloat",
+      "sql_token": "ALWAYSLETFLOATFLOAT",
+      "meos_call": "always_le_tfloat_float",
+      "args": [
+        {
+          "name": "value",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "threshold",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "ts",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        }
+      ],
+      "return_type": "double",
+      "nautilus_return": "FLOAT64",
+      "build_tnumber_point_with_scalar": true,
+      "tnumber_in_fn": "tfloat_in",
+      "tnumber_value_cpp_type": "double",
+      "tnumber_wkt_format": "{}@{}",
+      "value_fmt_expr": "value",
+      "threshold_call_expr": "threshold",
+      "comment_one_liner": "Per-event always_le_tfloat_float."
+    },
+    {
+      "nebula_name": "AlwaysLtTfloatFloat",
+      "sql_token": "ALWAYSLTTFLOATFLOAT",
+      "meos_call": "always_lt_tfloat_float",
+      "args": [
+        {
+          "name": "value",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "threshold",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "ts",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        }
+      ],
+      "return_type": "double",
+      "nautilus_return": "FLOAT64",
+      "build_tnumber_point_with_scalar": true,
+      "tnumber_in_fn": "tfloat_in",
+      "tnumber_value_cpp_type": "double",
+      "tnumber_wkt_format": "{}@{}",
+      "value_fmt_expr": "value",
+      "threshold_call_expr": "threshold",
+      "comment_one_liner": "Per-event always_lt_tfloat_float."
+    },
+    {
+      "nebula_name": "AlwaysNeTfloatFloat",
+      "sql_token": "ALWAYSNETFLOATFLOAT",
+      "meos_call": "always_ne_tfloat_float",
+      "args": [
+        {
+          "name": "value",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "threshold",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "ts",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        }
+      ],
+      "return_type": "double",
+      "nautilus_return": "FLOAT64",
+      "build_tnumber_point_with_scalar": true,
+      "tnumber_in_fn": "tfloat_in",
+      "tnumber_value_cpp_type": "double",
+      "tnumber_wkt_format": "{}@{}",
+      "value_fmt_expr": "value",
+      "threshold_call_expr": "threshold",
+      "comment_one_liner": "Per-event always_ne_tfloat_float."
+    },
+    {
+      "nebula_name": "EverEqTfloatFloat",
+      "sql_token": "EVEREQTFLOATFLOAT",
+      "meos_call": "ever_eq_tfloat_float",
+      "args": [
+        {
+          "name": "value",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "threshold",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "ts",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        }
+      ],
+      "return_type": "double",
+      "nautilus_return": "FLOAT64",
+      "build_tnumber_point_with_scalar": true,
+      "tnumber_in_fn": "tfloat_in",
+      "tnumber_value_cpp_type": "double",
+      "tnumber_wkt_format": "{}@{}",
+      "value_fmt_expr": "value",
+      "threshold_call_expr": "threshold",
+      "comment_one_liner": "Per-event ever_eq_tfloat_float."
+    },
+    {
+      "nebula_name": "EverGeTfloatFloat",
+      "sql_token": "EVERGETFLOATFLOAT",
+      "meos_call": "ever_ge_tfloat_float",
+      "args": [
+        {
+          "name": "value",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "threshold",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "ts",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        }
+      ],
+      "return_type": "double",
+      "nautilus_return": "FLOAT64",
+      "build_tnumber_point_with_scalar": true,
+      "tnumber_in_fn": "tfloat_in",
+      "tnumber_value_cpp_type": "double",
+      "tnumber_wkt_format": "{}@{}",
+      "value_fmt_expr": "value",
+      "threshold_call_expr": "threshold",
+      "comment_one_liner": "Per-event ever_ge_tfloat_float."
+    },
+    {
+      "nebula_name": "EverGtTfloatFloat",
+      "sql_token": "EVERGTTFLOATFLOAT",
+      "meos_call": "ever_gt_tfloat_float",
+      "args": [
+        {
+          "name": "value",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "threshold",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "ts",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        }
+      ],
+      "return_type": "double",
+      "nautilus_return": "FLOAT64",
+      "build_tnumber_point_with_scalar": true,
+      "tnumber_in_fn": "tfloat_in",
+      "tnumber_value_cpp_type": "double",
+      "tnumber_wkt_format": "{}@{}",
+      "value_fmt_expr": "value",
+      "threshold_call_expr": "threshold",
+      "comment_one_liner": "Per-event ever_gt_tfloat_float."
+    },
+    {
+      "nebula_name": "EverLeTfloatFloat",
+      "sql_token": "EVERLETFLOATFLOAT",
+      "meos_call": "ever_le_tfloat_float",
+      "args": [
+        {
+          "name": "value",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "threshold",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "ts",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        }
+      ],
+      "return_type": "double",
+      "nautilus_return": "FLOAT64",
+      "build_tnumber_point_with_scalar": true,
+      "tnumber_in_fn": "tfloat_in",
+      "tnumber_value_cpp_type": "double",
+      "tnumber_wkt_format": "{}@{}",
+      "value_fmt_expr": "value",
+      "threshold_call_expr": "threshold",
+      "comment_one_liner": "Per-event ever_le_tfloat_float."
+    },
+    {
+      "nebula_name": "EverLtTfloatFloat",
+      "sql_token": "EVERLTTFLOATFLOAT",
+      "meos_call": "ever_lt_tfloat_float",
+      "args": [
+        {
+          "name": "value",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "threshold",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "ts",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        }
+      ],
+      "return_type": "double",
+      "nautilus_return": "FLOAT64",
+      "build_tnumber_point_with_scalar": true,
+      "tnumber_in_fn": "tfloat_in",
+      "tnumber_value_cpp_type": "double",
+      "tnumber_wkt_format": "{}@{}",
+      "value_fmt_expr": "value",
+      "threshold_call_expr": "threshold",
+      "comment_one_liner": "Per-event ever_lt_tfloat_float."
+    },
+    {
+      "nebula_name": "EverNeTfloatFloat",
+      "sql_token": "EVERNETFLOATFLOAT",
+      "meos_call": "ever_ne_tfloat_float",
+      "args": [
+        {
+          "name": "value",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "threshold",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "ts",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        }
+      ],
+      "return_type": "double",
+      "nautilus_return": "FLOAT64",
+      "build_tnumber_point_with_scalar": true,
+      "tnumber_in_fn": "tfloat_in",
+      "tnumber_value_cpp_type": "double",
+      "tnumber_wkt_format": "{}@{}",
+      "value_fmt_expr": "value",
+      "threshold_call_expr": "threshold",
+      "comment_one_liner": "Per-event ever_ne_tfloat_float."
+    },
+    {
+      "nebula_name": "AlwaysEqTintInt",
+      "sql_token": "ALWAYSEQTINTINT",
+      "meos_call": "always_eq_tint_int",
+      "args": [
+        {
+          "name": "value",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "threshold",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "ts",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        }
+      ],
+      "return_type": "double",
+      "nautilus_return": "FLOAT64",
+      "build_tnumber_point_with_scalar": true,
+      "tnumber_in_fn": "tint_in",
+      "tnumber_value_cpp_type": "double",
+      "tnumber_wkt_format": "{}@{}",
+      "value_fmt_expr": "static_cast<int>(value)",
+      "threshold_call_expr": "static_cast<int>(threshold)",
+      "comment_one_liner": "Per-event always_eq_tint_int."
+    },
+    {
+      "nebula_name": "AlwaysGeTintInt",
+      "sql_token": "ALWAYSGETINTINT",
+      "meos_call": "always_ge_tint_int",
+      "args": [
+        {
+          "name": "value",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "threshold",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "ts",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        }
+      ],
+      "return_type": "double",
+      "nautilus_return": "FLOAT64",
+      "build_tnumber_point_with_scalar": true,
+      "tnumber_in_fn": "tint_in",
+      "tnumber_value_cpp_type": "double",
+      "tnumber_wkt_format": "{}@{}",
+      "value_fmt_expr": "static_cast<int>(value)",
+      "threshold_call_expr": "static_cast<int>(threshold)",
+      "comment_one_liner": "Per-event always_ge_tint_int."
+    },
+    {
+      "nebula_name": "AlwaysGtTintInt",
+      "sql_token": "ALWAYSGTTINTINT",
+      "meos_call": "always_gt_tint_int",
+      "args": [
+        {
+          "name": "value",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "threshold",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "ts",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        }
+      ],
+      "return_type": "double",
+      "nautilus_return": "FLOAT64",
+      "build_tnumber_point_with_scalar": true,
+      "tnumber_in_fn": "tint_in",
+      "tnumber_value_cpp_type": "double",
+      "tnumber_wkt_format": "{}@{}",
+      "value_fmt_expr": "static_cast<int>(value)",
+      "threshold_call_expr": "static_cast<int>(threshold)",
+      "comment_one_liner": "Per-event always_gt_tint_int."
+    },
+    {
+      "nebula_name": "AlwaysLeTintInt",
+      "sql_token": "ALWAYSLETINTINT",
+      "meos_call": "always_le_tint_int",
+      "args": [
+        {
+          "name": "value",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "threshold",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "ts",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        }
+      ],
+      "return_type": "double",
+      "nautilus_return": "FLOAT64",
+      "build_tnumber_point_with_scalar": true,
+      "tnumber_in_fn": "tint_in",
+      "tnumber_value_cpp_type": "double",
+      "tnumber_wkt_format": "{}@{}",
+      "value_fmt_expr": "static_cast<int>(value)",
+      "threshold_call_expr": "static_cast<int>(threshold)",
+      "comment_one_liner": "Per-event always_le_tint_int."
+    },
+    {
+      "nebula_name": "AlwaysLtTintInt",
+      "sql_token": "ALWAYSLTTINTINT",
+      "meos_call": "always_lt_tint_int",
+      "args": [
+        {
+          "name": "value",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "threshold",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "ts",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        }
+      ],
+      "return_type": "double",
+      "nautilus_return": "FLOAT64",
+      "build_tnumber_point_with_scalar": true,
+      "tnumber_in_fn": "tint_in",
+      "tnumber_value_cpp_type": "double",
+      "tnumber_wkt_format": "{}@{}",
+      "value_fmt_expr": "static_cast<int>(value)",
+      "threshold_call_expr": "static_cast<int>(threshold)",
+      "comment_one_liner": "Per-event always_lt_tint_int."
+    },
+    {
+      "nebula_name": "AlwaysNeTintInt",
+      "sql_token": "ALWAYSNETINTINT",
+      "meos_call": "always_ne_tint_int",
+      "args": [
+        {
+          "name": "value",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "threshold",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "ts",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        }
+      ],
+      "return_type": "double",
+      "nautilus_return": "FLOAT64",
+      "build_tnumber_point_with_scalar": true,
+      "tnumber_in_fn": "tint_in",
+      "tnumber_value_cpp_type": "double",
+      "tnumber_wkt_format": "{}@{}",
+      "value_fmt_expr": "static_cast<int>(value)",
+      "threshold_call_expr": "static_cast<int>(threshold)",
+      "comment_one_liner": "Per-event always_ne_tint_int."
+    },
+    {
+      "nebula_name": "EverEqTintInt",
+      "sql_token": "EVEREQTINTINT",
+      "meos_call": "ever_eq_tint_int",
+      "args": [
+        {
+          "name": "value",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "threshold",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "ts",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        }
+      ],
+      "return_type": "double",
+      "nautilus_return": "FLOAT64",
+      "build_tnumber_point_with_scalar": true,
+      "tnumber_in_fn": "tint_in",
+      "tnumber_value_cpp_type": "double",
+      "tnumber_wkt_format": "{}@{}",
+      "value_fmt_expr": "static_cast<int>(value)",
+      "threshold_call_expr": "static_cast<int>(threshold)",
+      "comment_one_liner": "Per-event ever_eq_tint_int."
+    },
+    {
+      "nebula_name": "EverGeTintInt",
+      "sql_token": "EVERGETINTINT",
+      "meos_call": "ever_ge_tint_int",
+      "args": [
+        {
+          "name": "value",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "threshold",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "ts",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        }
+      ],
+      "return_type": "double",
+      "nautilus_return": "FLOAT64",
+      "build_tnumber_point_with_scalar": true,
+      "tnumber_in_fn": "tint_in",
+      "tnumber_value_cpp_type": "double",
+      "tnumber_wkt_format": "{}@{}",
+      "value_fmt_expr": "static_cast<int>(value)",
+      "threshold_call_expr": "static_cast<int>(threshold)",
+      "comment_one_liner": "Per-event ever_ge_tint_int."
+    },
+    {
+      "nebula_name": "EverGtTintInt",
+      "sql_token": "EVERGTTINTINT",
+      "meos_call": "ever_gt_tint_int",
+      "args": [
+        {
+          "name": "value",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "threshold",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "ts",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        }
+      ],
+      "return_type": "double",
+      "nautilus_return": "FLOAT64",
+      "build_tnumber_point_with_scalar": true,
+      "tnumber_in_fn": "tint_in",
+      "tnumber_value_cpp_type": "double",
+      "tnumber_wkt_format": "{}@{}",
+      "value_fmt_expr": "static_cast<int>(value)",
+      "threshold_call_expr": "static_cast<int>(threshold)",
+      "comment_one_liner": "Per-event ever_gt_tint_int."
+    },
+    {
+      "nebula_name": "EverLeTintInt",
+      "sql_token": "EVERLETINTINT",
+      "meos_call": "ever_le_tint_int",
+      "args": [
+        {
+          "name": "value",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "threshold",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "ts",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        }
+      ],
+      "return_type": "double",
+      "nautilus_return": "FLOAT64",
+      "build_tnumber_point_with_scalar": true,
+      "tnumber_in_fn": "tint_in",
+      "tnumber_value_cpp_type": "double",
+      "tnumber_wkt_format": "{}@{}",
+      "value_fmt_expr": "static_cast<int>(value)",
+      "threshold_call_expr": "static_cast<int>(threshold)",
+      "comment_one_liner": "Per-event ever_le_tint_int."
+    },
+    {
+      "nebula_name": "EverLtTintInt",
+      "sql_token": "EVERLTTINTINT",
+      "meos_call": "ever_lt_tint_int",
+      "args": [
+        {
+          "name": "value",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "threshold",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "ts",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        }
+      ],
+      "return_type": "double",
+      "nautilus_return": "FLOAT64",
+      "build_tnumber_point_with_scalar": true,
+      "tnumber_in_fn": "tint_in",
+      "tnumber_value_cpp_type": "double",
+      "tnumber_wkt_format": "{}@{}",
+      "value_fmt_expr": "static_cast<int>(value)",
+      "threshold_call_expr": "static_cast<int>(threshold)",
+      "comment_one_liner": "Per-event ever_lt_tint_int."
+    },
+    {
+      "nebula_name": "EverNeTintInt",
+      "sql_token": "EVERNETINTINT",
+      "meos_call": "ever_ne_tint_int",
+      "args": [
+        {
+          "name": "value",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "threshold",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "ts",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        }
+      ],
+      "return_type": "double",
+      "nautilus_return": "FLOAT64",
+      "build_tnumber_point_with_scalar": true,
+      "tnumber_in_fn": "tint_in",
+      "tnumber_value_cpp_type": "double",
+      "tnumber_wkt_format": "{}@{}",
+      "value_fmt_expr": "static_cast<int>(value)",
+      "threshold_call_expr": "static_cast<int>(threshold)",
+      "comment_one_liner": "Per-event ever_ne_tint_int."
+    },
+    {
+      "nebula_name": "AlwaysEqFloatTfloat",
+      "sql_token": "ALWAYSEQFLOATTFLOAT",
+      "meos_call": "always_eq_float_tfloat",
+      "args": [
+        {
+          "name": "scalar",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "value",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "ts",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        }
+      ],
+      "return_type": "double",
+      "nautilus_return": "FLOAT64",
+      "build_tnumber_scalar_first": true,
+      "tnumber_in_fn": "tfloat_in",
+      "tnumber_value_cpp_type": "double",
+      "tnumber_wkt_format": "{}@{}",
+      "value_fmt_expr": "v",
+      "scalar_call_expr": "d",
+      "comment_one_liner": "Per-event always_eq_float_tfloat (scalar first)."
+    },
+    {
+      "nebula_name": "AlwaysGeFloatTfloat",
+      "sql_token": "ALWAYSGEFLOATTFLOAT",
+      "meos_call": "always_ge_float_tfloat",
+      "args": [
+        {
+          "name": "scalar",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "value",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "ts",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        }
+      ],
+      "return_type": "double",
+      "nautilus_return": "FLOAT64",
+      "build_tnumber_scalar_first": true,
+      "tnumber_in_fn": "tfloat_in",
+      "tnumber_value_cpp_type": "double",
+      "tnumber_wkt_format": "{}@{}",
+      "value_fmt_expr": "v",
+      "scalar_call_expr": "d",
+      "comment_one_liner": "Per-event always_ge_float_tfloat (scalar first)."
+    },
+    {
+      "nebula_name": "AlwaysGtFloatTfloat",
+      "sql_token": "ALWAYSGTFLOATTFLOAT",
+      "meos_call": "always_gt_float_tfloat",
+      "args": [
+        {
+          "name": "scalar",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "value",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "ts",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        }
+      ],
+      "return_type": "double",
+      "nautilus_return": "FLOAT64",
+      "build_tnumber_scalar_first": true,
+      "tnumber_in_fn": "tfloat_in",
+      "tnumber_value_cpp_type": "double",
+      "tnumber_wkt_format": "{}@{}",
+      "value_fmt_expr": "v",
+      "scalar_call_expr": "d",
+      "comment_one_liner": "Per-event always_gt_float_tfloat (scalar first)."
+    },
+    {
+      "nebula_name": "AlwaysLeFloatTfloat",
+      "sql_token": "ALWAYSLEFLOATTFLOAT",
+      "meos_call": "always_le_float_tfloat",
+      "args": [
+        {
+          "name": "scalar",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "value",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "ts",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        }
+      ],
+      "return_type": "double",
+      "nautilus_return": "FLOAT64",
+      "build_tnumber_scalar_first": true,
+      "tnumber_in_fn": "tfloat_in",
+      "tnumber_value_cpp_type": "double",
+      "tnumber_wkt_format": "{}@{}",
+      "value_fmt_expr": "v",
+      "scalar_call_expr": "d",
+      "comment_one_liner": "Per-event always_le_float_tfloat (scalar first)."
+    },
+    {
+      "nebula_name": "AlwaysLtFloatTfloat",
+      "sql_token": "ALWAYSLTFLOATTFLOAT",
+      "meos_call": "always_lt_float_tfloat",
+      "args": [
+        {
+          "name": "scalar",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "value",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "ts",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        }
+      ],
+      "return_type": "double",
+      "nautilus_return": "FLOAT64",
+      "build_tnumber_scalar_first": true,
+      "tnumber_in_fn": "tfloat_in",
+      "tnumber_value_cpp_type": "double",
+      "tnumber_wkt_format": "{}@{}",
+      "value_fmt_expr": "v",
+      "scalar_call_expr": "d",
+      "comment_one_liner": "Per-event always_lt_float_tfloat (scalar first)."
+    },
+    {
+      "nebula_name": "AlwaysNeFloatTfloat",
+      "sql_token": "ALWAYSNEFLOATTFLOAT",
+      "meos_call": "always_ne_float_tfloat",
+      "args": [
+        {
+          "name": "scalar",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "value",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "ts",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        }
+      ],
+      "return_type": "double",
+      "nautilus_return": "FLOAT64",
+      "build_tnumber_scalar_first": true,
+      "tnumber_in_fn": "tfloat_in",
+      "tnumber_value_cpp_type": "double",
+      "tnumber_wkt_format": "{}@{}",
+      "value_fmt_expr": "v",
+      "scalar_call_expr": "d",
+      "comment_one_liner": "Per-event always_ne_float_tfloat (scalar first)."
+    },
+    {
+      "nebula_name": "EverEqFloatTfloat",
+      "sql_token": "EVEREQFLOATTFLOAT",
+      "meos_call": "ever_eq_float_tfloat",
+      "args": [
+        {
+          "name": "scalar",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "value",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "ts",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        }
+      ],
+      "return_type": "double",
+      "nautilus_return": "FLOAT64",
+      "build_tnumber_scalar_first": true,
+      "tnumber_in_fn": "tfloat_in",
+      "tnumber_value_cpp_type": "double",
+      "tnumber_wkt_format": "{}@{}",
+      "value_fmt_expr": "v",
+      "scalar_call_expr": "d",
+      "comment_one_liner": "Per-event ever_eq_float_tfloat (scalar first)."
+    },
+    {
+      "nebula_name": "EverGeFloatTfloat",
+      "sql_token": "EVERGEFLOATTFLOAT",
+      "meos_call": "ever_ge_float_tfloat",
+      "args": [
+        {
+          "name": "scalar",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "value",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "ts",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        }
+      ],
+      "return_type": "double",
+      "nautilus_return": "FLOAT64",
+      "build_tnumber_scalar_first": true,
+      "tnumber_in_fn": "tfloat_in",
+      "tnumber_value_cpp_type": "double",
+      "tnumber_wkt_format": "{}@{}",
+      "value_fmt_expr": "v",
+      "scalar_call_expr": "d",
+      "comment_one_liner": "Per-event ever_ge_float_tfloat (scalar first)."
+    },
+    {
+      "nebula_name": "EverGtFloatTfloat",
+      "sql_token": "EVERGTFLOATTFLOAT",
+      "meos_call": "ever_gt_float_tfloat",
+      "args": [
+        {
+          "name": "scalar",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "value",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "ts",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        }
+      ],
+      "return_type": "double",
+      "nautilus_return": "FLOAT64",
+      "build_tnumber_scalar_first": true,
+      "tnumber_in_fn": "tfloat_in",
+      "tnumber_value_cpp_type": "double",
+      "tnumber_wkt_format": "{}@{}",
+      "value_fmt_expr": "v",
+      "scalar_call_expr": "d",
+      "comment_one_liner": "Per-event ever_gt_float_tfloat (scalar first)."
+    },
+    {
+      "nebula_name": "EverLeFloatTfloat",
+      "sql_token": "EVERLEFLOATTFLOAT",
+      "meos_call": "ever_le_float_tfloat",
+      "args": [
+        {
+          "name": "scalar",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "value",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "ts",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        }
+      ],
+      "return_type": "double",
+      "nautilus_return": "FLOAT64",
+      "build_tnumber_scalar_first": true,
+      "tnumber_in_fn": "tfloat_in",
+      "tnumber_value_cpp_type": "double",
+      "tnumber_wkt_format": "{}@{}",
+      "value_fmt_expr": "v",
+      "scalar_call_expr": "d",
+      "comment_one_liner": "Per-event ever_le_float_tfloat (scalar first)."
+    },
+    {
+      "nebula_name": "EverLtFloatTfloat",
+      "sql_token": "EVERLTFLOATTFLOAT",
+      "meos_call": "ever_lt_float_tfloat",
+      "args": [
+        {
+          "name": "scalar",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "value",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "ts",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        }
+      ],
+      "return_type": "double",
+      "nautilus_return": "FLOAT64",
+      "build_tnumber_scalar_first": true,
+      "tnumber_in_fn": "tfloat_in",
+      "tnumber_value_cpp_type": "double",
+      "tnumber_wkt_format": "{}@{}",
+      "value_fmt_expr": "v",
+      "scalar_call_expr": "d",
+      "comment_one_liner": "Per-event ever_lt_float_tfloat (scalar first)."
+    },
+    {
+      "nebula_name": "EverNeFloatTfloat",
+      "sql_token": "EVERNEFLOATTFLOAT",
+      "meos_call": "ever_ne_float_tfloat",
+      "args": [
+        {
+          "name": "scalar",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "value",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "ts",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        }
+      ],
+      "return_type": "double",
+      "nautilus_return": "FLOAT64",
+      "build_tnumber_scalar_first": true,
+      "tnumber_in_fn": "tfloat_in",
+      "tnumber_value_cpp_type": "double",
+      "tnumber_wkt_format": "{}@{}",
+      "value_fmt_expr": "v",
+      "scalar_call_expr": "d",
+      "comment_one_liner": "Per-event ever_ne_float_tfloat (scalar first)."
+    },
+    {
+      "nebula_name": "AlwaysEqIntTint",
+      "sql_token": "ALWAYSEQINTTINT",
+      "meos_call": "always_eq_int_tint",
+      "args": [
+        {
+          "name": "scalar",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "value",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "ts",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        }
+      ],
+      "return_type": "double",
+      "nautilus_return": "FLOAT64",
+      "build_tnumber_scalar_first": true,
+      "tnumber_in_fn": "tint_in",
+      "tnumber_value_cpp_type": "double",
+      "tnumber_wkt_format": "{}@{}",
+      "value_fmt_expr": "static_cast<int>(v)",
+      "scalar_call_expr": "static_cast<int>(d)",
+      "comment_one_liner": "Per-event always_eq_int_tint (scalar first)."
+    },
+    {
+      "nebula_name": "AlwaysGeIntTint",
+      "sql_token": "ALWAYSGEINTTINT",
+      "meos_call": "always_ge_int_tint",
+      "args": [
+        {
+          "name": "scalar",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "value",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "ts",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        }
+      ],
+      "return_type": "double",
+      "nautilus_return": "FLOAT64",
+      "build_tnumber_scalar_first": true,
+      "tnumber_in_fn": "tint_in",
+      "tnumber_value_cpp_type": "double",
+      "tnumber_wkt_format": "{}@{}",
+      "value_fmt_expr": "static_cast<int>(v)",
+      "scalar_call_expr": "static_cast<int>(d)",
+      "comment_one_liner": "Per-event always_ge_int_tint (scalar first)."
+    },
+    {
+      "nebula_name": "AlwaysGtIntTint",
+      "sql_token": "ALWAYSGTINTTINT",
+      "meos_call": "always_gt_int_tint",
+      "args": [
+        {
+          "name": "scalar",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "value",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "ts",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        }
+      ],
+      "return_type": "double",
+      "nautilus_return": "FLOAT64",
+      "build_tnumber_scalar_first": true,
+      "tnumber_in_fn": "tint_in",
+      "tnumber_value_cpp_type": "double",
+      "tnumber_wkt_format": "{}@{}",
+      "value_fmt_expr": "static_cast<int>(v)",
+      "scalar_call_expr": "static_cast<int>(d)",
+      "comment_one_liner": "Per-event always_gt_int_tint (scalar first)."
+    },
+    {
+      "nebula_name": "AlwaysLeIntTint",
+      "sql_token": "ALWAYSLEINTTINT",
+      "meos_call": "always_le_int_tint",
+      "args": [
+        {
+          "name": "scalar",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "value",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "ts",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        }
+      ],
+      "return_type": "double",
+      "nautilus_return": "FLOAT64",
+      "build_tnumber_scalar_first": true,
+      "tnumber_in_fn": "tint_in",
+      "tnumber_value_cpp_type": "double",
+      "tnumber_wkt_format": "{}@{}",
+      "value_fmt_expr": "static_cast<int>(v)",
+      "scalar_call_expr": "static_cast<int>(d)",
+      "comment_one_liner": "Per-event always_le_int_tint (scalar first)."
+    },
+    {
+      "nebula_name": "AlwaysLtIntTint",
+      "sql_token": "ALWAYSLTINTTINT",
+      "meos_call": "always_lt_int_tint",
+      "args": [
+        {
+          "name": "scalar",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "value",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "ts",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        }
+      ],
+      "return_type": "double",
+      "nautilus_return": "FLOAT64",
+      "build_tnumber_scalar_first": true,
+      "tnumber_in_fn": "tint_in",
+      "tnumber_value_cpp_type": "double",
+      "tnumber_wkt_format": "{}@{}",
+      "value_fmt_expr": "static_cast<int>(v)",
+      "scalar_call_expr": "static_cast<int>(d)",
+      "comment_one_liner": "Per-event always_lt_int_tint (scalar first)."
+    },
+    {
+      "nebula_name": "AlwaysNeIntTint",
+      "sql_token": "ALWAYSNEINTTINT",
+      "meos_call": "always_ne_int_tint",
+      "args": [
+        {
+          "name": "scalar",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "value",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "ts",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        }
+      ],
+      "return_type": "double",
+      "nautilus_return": "FLOAT64",
+      "build_tnumber_scalar_first": true,
+      "tnumber_in_fn": "tint_in",
+      "tnumber_value_cpp_type": "double",
+      "tnumber_wkt_format": "{}@{}",
+      "value_fmt_expr": "static_cast<int>(v)",
+      "scalar_call_expr": "static_cast<int>(d)",
+      "comment_one_liner": "Per-event always_ne_int_tint (scalar first)."
+    },
+    {
+      "nebula_name": "EverEqIntTint",
+      "sql_token": "EVEREQINTTINT",
+      "meos_call": "ever_eq_int_tint",
+      "args": [
+        {
+          "name": "scalar",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "value",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "ts",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        }
+      ],
+      "return_type": "double",
+      "nautilus_return": "FLOAT64",
+      "build_tnumber_scalar_first": true,
+      "tnumber_in_fn": "tint_in",
+      "tnumber_value_cpp_type": "double",
+      "tnumber_wkt_format": "{}@{}",
+      "value_fmt_expr": "static_cast<int>(v)",
+      "scalar_call_expr": "static_cast<int>(d)",
+      "comment_one_liner": "Per-event ever_eq_int_tint (scalar first)."
+    },
+    {
+      "nebula_name": "EverGeIntTint",
+      "sql_token": "EVERGEINTTINT",
+      "meos_call": "ever_ge_int_tint",
+      "args": [
+        {
+          "name": "scalar",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "value",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "ts",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        }
+      ],
+      "return_type": "double",
+      "nautilus_return": "FLOAT64",
+      "build_tnumber_scalar_first": true,
+      "tnumber_in_fn": "tint_in",
+      "tnumber_value_cpp_type": "double",
+      "tnumber_wkt_format": "{}@{}",
+      "value_fmt_expr": "static_cast<int>(v)",
+      "scalar_call_expr": "static_cast<int>(d)",
+      "comment_one_liner": "Per-event ever_ge_int_tint (scalar first)."
+    },
+    {
+      "nebula_name": "EverGtIntTint",
+      "sql_token": "EVERGTINTTINT",
+      "meos_call": "ever_gt_int_tint",
+      "args": [
+        {
+          "name": "scalar",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "value",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "ts",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        }
+      ],
+      "return_type": "double",
+      "nautilus_return": "FLOAT64",
+      "build_tnumber_scalar_first": true,
+      "tnumber_in_fn": "tint_in",
+      "tnumber_value_cpp_type": "double",
+      "tnumber_wkt_format": "{}@{}",
+      "value_fmt_expr": "static_cast<int>(v)",
+      "scalar_call_expr": "static_cast<int>(d)",
+      "comment_one_liner": "Per-event ever_gt_int_tint (scalar first)."
+    },
+    {
+      "nebula_name": "EverLeIntTint",
+      "sql_token": "EVERLEINTTINT",
+      "meos_call": "ever_le_int_tint",
+      "args": [
+        {
+          "name": "scalar",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "value",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "ts",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        }
+      ],
+      "return_type": "double",
+      "nautilus_return": "FLOAT64",
+      "build_tnumber_scalar_first": true,
+      "tnumber_in_fn": "tint_in",
+      "tnumber_value_cpp_type": "double",
+      "tnumber_wkt_format": "{}@{}",
+      "value_fmt_expr": "static_cast<int>(v)",
+      "scalar_call_expr": "static_cast<int>(d)",
+      "comment_one_liner": "Per-event ever_le_int_tint (scalar first)."
+    },
+    {
+      "nebula_name": "EverLtIntTint",
+      "sql_token": "EVERLTINTTINT",
+      "meos_call": "ever_lt_int_tint",
+      "args": [
+        {
+          "name": "scalar",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "value",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "ts",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        }
+      ],
+      "return_type": "double",
+      "nautilus_return": "FLOAT64",
+      "build_tnumber_scalar_first": true,
+      "tnumber_in_fn": "tint_in",
+      "tnumber_value_cpp_type": "double",
+      "tnumber_wkt_format": "{}@{}",
+      "value_fmt_expr": "static_cast<int>(v)",
+      "scalar_call_expr": "static_cast<int>(d)",
+      "comment_one_liner": "Per-event ever_lt_int_tint (scalar first)."
+    },
+    {
+      "nebula_name": "EverNeIntTint",
+      "sql_token": "EVERNEINTTINT",
+      "meos_call": "ever_ne_int_tint",
+      "args": [
+        {
+          "name": "scalar",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "value",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "ts",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        }
+      ],
+      "return_type": "double",
+      "nautilus_return": "FLOAT64",
+      "build_tnumber_scalar_first": true,
+      "tnumber_in_fn": "tint_in",
+      "tnumber_value_cpp_type": "double",
+      "tnumber_wkt_format": "{}@{}",
+      "value_fmt_expr": "static_cast<int>(v)",
+      "scalar_call_expr": "static_cast<int>(d)",
+      "comment_one_liner": "Per-event ever_ne_int_tint (scalar first)."
+    },
+    {
+      "nebula_name": "TemporalAIntersectsGeometry",
+      "sql_token": "TEMPORALAINTERSECTSGEOMETRY",
+      "meos_call": "aintersects_tgeo_geo",
+      "args": [
+        {
+          "name": "lon",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "lat",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "timestamp",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "geometry",
+          "nautilus_type": "VariableSizedData",
+          "cpp_type": "const char*"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_temporal_point": true,
+      "comment_one_liner": "Per-event aintersects_tgeo_geo spatial predicate."
+    },
+    {
+      "nebula_name": "TemporalEContainsGeometry",
+      "sql_token": "TEMPORALECONTAINSGEOMETRY",
+      "meos_call": "econtains_tgeo_geo",
+      "args": [
+        {
+          "name": "lon",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "lat",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "timestamp",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "geometry",
+          "nautilus_type": "VariableSizedData",
+          "cpp_type": "const char*"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_temporal_point": true,
+      "comment_one_liner": "Per-event econtains_tgeo_geo spatial predicate."
+    },
+    {
+      "nebula_name": "TemporalIntersectsGeometry",
+      "sql_token": "TEMPORALINTERSECTSGEOMETRY",
+      "meos_call": "intersects_tgeo_geo",
+      "args": [
+        {
+          "name": "lon",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "lat",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "timestamp",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "geometry",
+          "nautilus_type": "VariableSizedData",
+          "cpp_type": "const char*"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_temporal_point": true,
+      "comment_one_liner": "Per-event intersects_tgeo_geo spatial predicate."
+    },
+    {
+      "nebula_name": "TemporalEDWithinGeometry",
+      "sql_token": "TEMPORALEDWITHINGEOMETRY",
+      "meos_call": "edwithin_tgeo_geo",
+      "args": [
+        {
+          "name": "lon",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "lat",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "timestamp",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "geometry",
+          "nautilus_type": "VariableSizedData",
+          "cpp_type": "const char*"
+        },
+        {
+          "name": "dist",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_temporal_point_with_dist": true,
+      "comment_one_liner": "Per-event edwithin_tgeo_geo dwithin predicate."
+    },
+    {
+      "nebula_name": "AlwaysEqTcbufferCbuffer",
+      "sql_token": "ALWAYSEQTCBUFFERCBUFFER",
+      "meos_call": "always_eq_tcbuffer_cbuffer",
+      "args": [
+        {
+          "name": "lon",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "lat",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "radius",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "timestamp",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "cbufLit",
+          "nautilus_type": "VariableSizedData",
+          "cpp_type": "const char*"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_tcbuffer_point_cbuffer": true,
+      "comment_one_liner": "Per-event always_eq_tcbuffer_cbuffer."
+    },
+    {
+      "nebula_name": "AlwaysNeTcbufferCbuffer",
+      "sql_token": "ALWAYSNETCBUFFERCBUFFER",
+      "meos_call": "always_ne_tcbuffer_cbuffer",
+      "args": [
+        {
+          "name": "lon",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "lat",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "radius",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "timestamp",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "cbufLit",
+          "nautilus_type": "VariableSizedData",
+          "cpp_type": "const char*"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_tcbuffer_point_cbuffer": true,
+      "comment_one_liner": "Per-event always_ne_tcbuffer_cbuffer."
+    },
+    {
+      "nebula_name": "EverEqTcbufferCbuffer",
+      "sql_token": "EVEREQTCBUFFERCBUFFER",
+      "meos_call": "ever_eq_tcbuffer_cbuffer",
+      "args": [
+        {
+          "name": "lon",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "lat",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "radius",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "timestamp",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "cbufLit",
+          "nautilus_type": "VariableSizedData",
+          "cpp_type": "const char*"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_tcbuffer_point_cbuffer": true,
+      "comment_one_liner": "Per-event ever_eq_tcbuffer_cbuffer."
+    },
+    {
+      "nebula_name": "EverNeTcbufferCbuffer",
+      "sql_token": "EVERNETCBUFFERCBUFFER",
+      "meos_call": "ever_ne_tcbuffer_cbuffer",
+      "args": [
+        {
+          "name": "lon",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "lat",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "radius",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "timestamp",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "cbufLit",
+          "nautilus_type": "VariableSizedData",
+          "cpp_type": "const char*"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_tcbuffer_point_cbuffer": true,
+      "comment_one_liner": "Per-event ever_ne_tcbuffer_cbuffer."
+    },
+    {
+      "nebula_name": "TemporalAtStBox",
+      "sql_token": "TEMPORAL_AT_STBOX",
+      "meos_call": "tgeo_at_stbox",
+      "args": [
+        {
+          "name": "lon",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "lat",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "timestamp",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "geometry",
+          "nautilus_type": "VariableSizedData",
+          "cpp_type": "const char*"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_temporal_point_restriction": true,
+      "comment_one_liner": "Per-event tgeo_at_stbox restriction predicate."
+    }
+  ]
+}

@@ -1,0 +1,1953 @@
+{
+  "_comment": "Phase C composed spatial predicates: tpose/tnpoint composed via tpose_to_tpoint / tnpoint_to_tgeompoint then tgeo predicate. 48 ops: 12 tpose_geo + 12 tpose_tpose + 12 tnpoint_geo + 12 tnpoint_tnpoint (10 int-returning predicates + 2 dwithin per category). Plus 4 NAD (double-returning) ops.",
+  "operators": [
+    {
+      "nebula_name": "TemporalEIntersectsTPoseGeometry",
+      "sql_token": "TEMPORAL_EINTERSECTS_TPOSE_GEOMETRY",
+      "meos_call": "eintersects_tgeo_geo",
+      "args": [
+        {
+          "name": "x",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "y",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "theta",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "timestamp",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "geometry",
+          "nautilus_type": "VariableSizedData",
+          "cpp_type": "const char*"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_tpose_point_via_composition": true,
+      "comment_one_liner": "Per-event eintersects_tgeo_geo via tpose\u2192tgeompoint composition."
+    },
+    {
+      "nebula_name": "TemporalAIntersectsTPoseGeometry",
+      "sql_token": "TEMPORAL_AINTERSECTS_TPOSE_GEOMETRY",
+      "meos_call": "aintersects_tgeo_geo",
+      "args": [
+        {
+          "name": "x",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "y",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "theta",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "timestamp",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "geometry",
+          "nautilus_type": "VariableSizedData",
+          "cpp_type": "const char*"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_tpose_point_via_composition": true,
+      "comment_one_liner": "Per-event aintersects_tgeo_geo via tpose\u2192tgeompoint composition."
+    },
+    {
+      "nebula_name": "TemporalECoversTPoseGeometry",
+      "sql_token": "TEMPORAL_ECOVERS_TPOSE_GEOMETRY",
+      "meos_call": "ecovers_tgeo_geo",
+      "args": [
+        {
+          "name": "x",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "y",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "theta",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "timestamp",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "geometry",
+          "nautilus_type": "VariableSizedData",
+          "cpp_type": "const char*"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_tpose_point_via_composition": true,
+      "comment_one_liner": "Per-event ecovers_tgeo_geo via tpose\u2192tgeompoint composition."
+    },
+    {
+      "nebula_name": "TemporalEDisjointTPoseGeometry",
+      "sql_token": "TEMPORAL_EDISJOINT_TPOSE_GEOMETRY",
+      "meos_call": "edisjoint_tgeo_geo",
+      "args": [
+        {
+          "name": "x",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "y",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "theta",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "timestamp",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "geometry",
+          "nautilus_type": "VariableSizedData",
+          "cpp_type": "const char*"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_tpose_point_via_composition": true,
+      "comment_one_liner": "Per-event edisjoint_tgeo_geo via tpose\u2192tgeompoint composition."
+    },
+    {
+      "nebula_name": "TemporalADisjointTPoseGeometry",
+      "sql_token": "TEMPORAL_ADISJOINT_TPOSE_GEOMETRY",
+      "meos_call": "adisjoint_tgeo_geo",
+      "args": [
+        {
+          "name": "x",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "y",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "theta",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "timestamp",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "geometry",
+          "nautilus_type": "VariableSizedData",
+          "cpp_type": "const char*"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_tpose_point_via_composition": true,
+      "comment_one_liner": "Per-event adisjoint_tgeo_geo via tpose\u2192tgeompoint composition."
+    },
+    {
+      "nebula_name": "TemporalETouchesTPoseGeometry",
+      "sql_token": "TEMPORAL_ETOUCHES_TPOSE_GEOMETRY",
+      "meos_call": "etouches_tgeo_geo",
+      "args": [
+        {
+          "name": "x",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "y",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "theta",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "timestamp",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "geometry",
+          "nautilus_type": "VariableSizedData",
+          "cpp_type": "const char*"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_tpose_point_via_composition": true,
+      "comment_one_liner": "Per-event etouches_tgeo_geo via tpose\u2192tgeompoint composition."
+    },
+    {
+      "nebula_name": "TemporalATouchesTPoseGeometry",
+      "sql_token": "TEMPORAL_ATOUCHES_TPOSE_GEOMETRY",
+      "meos_call": "atouches_tgeo_geo",
+      "args": [
+        {
+          "name": "x",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "y",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "theta",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "timestamp",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "geometry",
+          "nautilus_type": "VariableSizedData",
+          "cpp_type": "const char*"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_tpose_point_via_composition": true,
+      "comment_one_liner": "Per-event atouches_tgeo_geo via tpose\u2192tgeompoint composition."
+    },
+    {
+      "nebula_name": "TemporalEContainsTPoseGeometry",
+      "sql_token": "TEMPORAL_ECONTAINS_TPOSE_GEOMETRY",
+      "meos_call": "econtains_tgeo_geo",
+      "args": [
+        {
+          "name": "x",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "y",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "theta",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "timestamp",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "geometry",
+          "nautilus_type": "VariableSizedData",
+          "cpp_type": "const char*"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_tpose_point_via_composition": true,
+      "comment_one_liner": "Per-event econtains_tgeo_geo via tpose\u2192tgeompoint composition."
+    },
+    {
+      "nebula_name": "TemporalAContainsTPoseGeometry",
+      "sql_token": "TEMPORAL_ACONTAINS_TPOSE_GEOMETRY",
+      "meos_call": "acontains_tgeo_geo",
+      "args": [
+        {
+          "name": "x",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "y",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "theta",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "timestamp",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "geometry",
+          "nautilus_type": "VariableSizedData",
+          "cpp_type": "const char*"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_tpose_point_via_composition": true,
+      "comment_one_liner": "Per-event acontains_tgeo_geo via tpose\u2192tgeompoint composition."
+    },
+    {
+      "nebula_name": "TemporalEDWithinTPoseGeometry",
+      "sql_token": "TEMPORAL_EDWITHIN_TPOSE_GEOMETRY",
+      "meos_call": "edwithin_tgeo_geo",
+      "args": [
+        {
+          "name": "x",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "y",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "theta",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "timestamp",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "geometry",
+          "nautilus_type": "VariableSizedData",
+          "cpp_type": "const char*"
+        },
+        {
+          "name": "dist",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_tpose_point_with_dist_via_composition": true,
+      "comment_one_liner": "Per-event edwithin_tgeo_geo via tpose\u2192tgeompoint composition."
+    },
+    {
+      "nebula_name": "TemporalADWithinTPoseGeometry",
+      "sql_token": "TEMPORAL_ADWITHIN_TPOSE_GEOMETRY",
+      "meos_call": "adwithin_tgeo_geo",
+      "args": [
+        {
+          "name": "x",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "y",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "theta",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "timestamp",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "geometry",
+          "nautilus_type": "VariableSizedData",
+          "cpp_type": "const char*"
+        },
+        {
+          "name": "dist",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_tpose_point_with_dist_via_composition": true,
+      "comment_one_liner": "Per-event adwithin_tgeo_geo via tpose\u2192tgeompoint composition."
+    },
+    {
+      "nebula_name": "TemporalEIntersectsTPoseTPose",
+      "sql_token": "TEMPORAL_EINTERSECTS_TPOSE_TPOSE",
+      "meos_call": "eintersects_tgeo_tgeo",
+      "args": [
+        {
+          "name": "xA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "yA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "thetaA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsA",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "xB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "yB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "thetaB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsB",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_two_tpose_points_via_composition": true,
+      "comment_one_liner": "Per-event eintersects_tgeo_tgeo via tpose\u00d7tpose\u2192tgeompoint composition."
+    },
+    {
+      "nebula_name": "TemporalAIntersectsTPoseTPose",
+      "sql_token": "TEMPORAL_AINTERSECTS_TPOSE_TPOSE",
+      "meos_call": "aintersects_tgeo_tgeo",
+      "args": [
+        {
+          "name": "xA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "yA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "thetaA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsA",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "xB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "yB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "thetaB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsB",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_two_tpose_points_via_composition": true,
+      "comment_one_liner": "Per-event aintersects_tgeo_tgeo via tpose\u00d7tpose\u2192tgeompoint composition."
+    },
+    {
+      "nebula_name": "TemporalECoversTPoseTPose",
+      "sql_token": "TEMPORAL_ECOVERS_TPOSE_TPOSE",
+      "meos_call": "ecovers_tgeo_tgeo",
+      "args": [
+        {
+          "name": "xA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "yA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "thetaA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsA",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "xB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "yB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "thetaB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsB",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_two_tpose_points_via_composition": true,
+      "comment_one_liner": "Per-event ecovers_tgeo_tgeo via tpose\u00d7tpose\u2192tgeompoint composition."
+    },
+    {
+      "nebula_name": "TemporalEDisjointTPoseTPose",
+      "sql_token": "TEMPORAL_EDISJOINT_TPOSE_TPOSE",
+      "meos_call": "edisjoint_tgeo_tgeo",
+      "args": [
+        {
+          "name": "xA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "yA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "thetaA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsA",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "xB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "yB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "thetaB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsB",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_two_tpose_points_via_composition": true,
+      "comment_one_liner": "Per-event edisjoint_tgeo_tgeo via tpose\u00d7tpose\u2192tgeompoint composition."
+    },
+    {
+      "nebula_name": "TemporalADisjointTPoseTPose",
+      "sql_token": "TEMPORAL_ADISJOINT_TPOSE_TPOSE",
+      "meos_call": "adisjoint_tgeo_tgeo",
+      "args": [
+        {
+          "name": "xA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "yA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "thetaA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsA",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "xB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "yB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "thetaB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsB",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_two_tpose_points_via_composition": true,
+      "comment_one_liner": "Per-event adisjoint_tgeo_tgeo via tpose\u00d7tpose\u2192tgeompoint composition."
+    },
+    {
+      "nebula_name": "TemporalETouchesTPoseTPose",
+      "sql_token": "TEMPORAL_ETOUCHES_TPOSE_TPOSE",
+      "meos_call": "etouches_tgeo_tgeo",
+      "args": [
+        {
+          "name": "xA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "yA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "thetaA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsA",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "xB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "yB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "thetaB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsB",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_two_tpose_points_via_composition": true,
+      "comment_one_liner": "Per-event etouches_tgeo_tgeo via tpose\u00d7tpose\u2192tgeompoint composition."
+    },
+    {
+      "nebula_name": "TemporalATouchesTPoseTPose",
+      "sql_token": "TEMPORAL_ATOUCHES_TPOSE_TPOSE",
+      "meos_call": "atouches_tgeo_tgeo",
+      "args": [
+        {
+          "name": "xA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "yA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "thetaA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsA",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "xB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "yB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "thetaB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsB",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_two_tpose_points_via_composition": true,
+      "comment_one_liner": "Per-event atouches_tgeo_tgeo via tpose\u00d7tpose\u2192tgeompoint composition."
+    },
+    {
+      "nebula_name": "TemporalEContainsTPoseTPose",
+      "sql_token": "TEMPORAL_ECONTAINS_TPOSE_TPOSE",
+      "meos_call": "econtains_tgeo_tgeo",
+      "args": [
+        {
+          "name": "xA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "yA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "thetaA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsA",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "xB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "yB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "thetaB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsB",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_two_tpose_points_via_composition": true,
+      "comment_one_liner": "Per-event econtains_tgeo_tgeo via tpose\u00d7tpose\u2192tgeompoint composition."
+    },
+    {
+      "nebula_name": "TemporalAContainsTPoseTPose",
+      "sql_token": "TEMPORAL_ACONTAINS_TPOSE_TPOSE",
+      "meos_call": "acontains_tgeo_tgeo",
+      "args": [
+        {
+          "name": "xA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "yA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "thetaA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsA",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "xB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "yB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "thetaB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsB",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_two_tpose_points_via_composition": true,
+      "comment_one_liner": "Per-event acontains_tgeo_tgeo via tpose\u00d7tpose\u2192tgeompoint composition."
+    },
+    {
+      "nebula_name": "TemporalEDWithinTPoseTPose",
+      "sql_token": "TEMPORAL_EDWITHIN_TPOSE_TPOSE",
+      "meos_call": "edwithin_tgeo_tgeo",
+      "args": [
+        {
+          "name": "xA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "yA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "thetaA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsA",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "xB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "yB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "thetaB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsB",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "dist",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_two_tpose_points_with_dist_via_composition": true,
+      "comment_one_liner": "Per-event edwithin_tgeo_tgeo via tpose\u00d7tpose\u2192tgeompoint composition."
+    },
+    {
+      "nebula_name": "TemporalADWithinTPoseTPose",
+      "sql_token": "TEMPORAL_ADWITHIN_TPOSE_TPOSE",
+      "meos_call": "adwithin_tgeo_tgeo",
+      "args": [
+        {
+          "name": "xA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "yA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "thetaA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsA",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "xB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "yB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "thetaB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsB",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "dist",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_two_tpose_points_with_dist_via_composition": true,
+      "comment_one_liner": "Per-event adwithin_tgeo_tgeo via tpose\u00d7tpose\u2192tgeompoint composition."
+    },
+    {
+      "nebula_name": "TemporalNADTPoseGeometry",
+      "sql_token": "TEMPORAL_NAD_TPOSE_GEOMETRY",
+      "meos_call": "nad_tgeo_geo",
+      "args": [
+        {
+          "name": "x",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "y",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "theta",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "timestamp",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "geometry",
+          "nautilus_type": "VariableSizedData",
+          "cpp_type": "const char*"
+        }
+      ],
+      "return_type": "double",
+      "nautilus_return": "FLOAT64",
+      "build_tpose_point_via_composition": true,
+      "comment_one_liner": "Per-event nad_tgeo_geo (nearest approach distance) via tpose\u2192tgeompoint composition."
+    },
+    {
+      "nebula_name": "TemporalNADTPoseTPose",
+      "sql_token": "TEMPORAL_NAD_TPOSE_TPOSE",
+      "meos_call": "nad_tgeo_tgeo",
+      "args": [
+        {
+          "name": "xA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "yA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "thetaA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsA",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "xB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "yB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "thetaB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsB",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        }
+      ],
+      "return_type": "double",
+      "nautilus_return": "FLOAT64",
+      "build_two_tpose_points_via_composition": true,
+      "comment_one_liner": "Per-event nad_tgeo_tgeo (nearest approach distance) via tpose\u00d7tpose\u2192tgeompoint composition."
+    },
+    {
+      "nebula_name": "TemporalEIntersectsTNpointGeometry",
+      "sql_token": "TEMPORAL_EINTERSECTS_TNPOINT_GEOMETRY",
+      "meos_call": "eintersects_tgeo_geo",
+      "args": [
+        {
+          "name": "rid",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "fraction",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "timestamp",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "geometry",
+          "nautilus_type": "VariableSizedData",
+          "cpp_type": "const char*"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_tnpoint_point_via_composition": true,
+      "comment_one_liner": "Per-event eintersects_tgeo_geo via tnpoint\u2192tgeompoint composition."
+    },
+    {
+      "nebula_name": "TemporalAIntersectsTNpointGeometry",
+      "sql_token": "TEMPORAL_AINTERSECTS_TNPOINT_GEOMETRY",
+      "meos_call": "aintersects_tgeo_geo",
+      "args": [
+        {
+          "name": "rid",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "fraction",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "timestamp",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "geometry",
+          "nautilus_type": "VariableSizedData",
+          "cpp_type": "const char*"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_tnpoint_point_via_composition": true,
+      "comment_one_liner": "Per-event aintersects_tgeo_geo via tnpoint\u2192tgeompoint composition."
+    },
+    {
+      "nebula_name": "TemporalECoversTNpointGeometry",
+      "sql_token": "TEMPORAL_ECOVERS_TNPOINT_GEOMETRY",
+      "meos_call": "ecovers_tgeo_geo",
+      "args": [
+        {
+          "name": "rid",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "fraction",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "timestamp",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "geometry",
+          "nautilus_type": "VariableSizedData",
+          "cpp_type": "const char*"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_tnpoint_point_via_composition": true,
+      "comment_one_liner": "Per-event ecovers_tgeo_geo via tnpoint\u2192tgeompoint composition."
+    },
+    {
+      "nebula_name": "TemporalEDisjointTNpointGeometry",
+      "sql_token": "TEMPORAL_EDISJOINT_TNPOINT_GEOMETRY",
+      "meos_call": "edisjoint_tgeo_geo",
+      "args": [
+        {
+          "name": "rid",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "fraction",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "timestamp",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "geometry",
+          "nautilus_type": "VariableSizedData",
+          "cpp_type": "const char*"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_tnpoint_point_via_composition": true,
+      "comment_one_liner": "Per-event edisjoint_tgeo_geo via tnpoint\u2192tgeompoint composition."
+    },
+    {
+      "nebula_name": "TemporalADisjointTNpointGeometry",
+      "sql_token": "TEMPORAL_ADISJOINT_TNPOINT_GEOMETRY",
+      "meos_call": "adisjoint_tgeo_geo",
+      "args": [
+        {
+          "name": "rid",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "fraction",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "timestamp",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "geometry",
+          "nautilus_type": "VariableSizedData",
+          "cpp_type": "const char*"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_tnpoint_point_via_composition": true,
+      "comment_one_liner": "Per-event adisjoint_tgeo_geo via tnpoint\u2192tgeompoint composition."
+    },
+    {
+      "nebula_name": "TemporalETouchesTNpointGeometry",
+      "sql_token": "TEMPORAL_ETOUCHES_TNPOINT_GEOMETRY",
+      "meos_call": "etouches_tgeo_geo",
+      "args": [
+        {
+          "name": "rid",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "fraction",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "timestamp",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "geometry",
+          "nautilus_type": "VariableSizedData",
+          "cpp_type": "const char*"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_tnpoint_point_via_composition": true,
+      "comment_one_liner": "Per-event etouches_tgeo_geo via tnpoint\u2192tgeompoint composition."
+    },
+    {
+      "nebula_name": "TemporalATouchesTNpointGeometry",
+      "sql_token": "TEMPORAL_ATOUCHES_TNPOINT_GEOMETRY",
+      "meos_call": "atouches_tgeo_geo",
+      "args": [
+        {
+          "name": "rid",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "fraction",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "timestamp",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "geometry",
+          "nautilus_type": "VariableSizedData",
+          "cpp_type": "const char*"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_tnpoint_point_via_composition": true,
+      "comment_one_liner": "Per-event atouches_tgeo_geo via tnpoint\u2192tgeompoint composition."
+    },
+    {
+      "nebula_name": "TemporalEContainsTNpointGeometry",
+      "sql_token": "TEMPORAL_ECONTAINS_TNPOINT_GEOMETRY",
+      "meos_call": "econtains_tgeo_geo",
+      "args": [
+        {
+          "name": "rid",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "fraction",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "timestamp",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "geometry",
+          "nautilus_type": "VariableSizedData",
+          "cpp_type": "const char*"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_tnpoint_point_via_composition": true,
+      "comment_one_liner": "Per-event econtains_tgeo_geo via tnpoint\u2192tgeompoint composition."
+    },
+    {
+      "nebula_name": "TemporalAContainsTNpointGeometry",
+      "sql_token": "TEMPORAL_ACONTAINS_TNPOINT_GEOMETRY",
+      "meos_call": "acontains_tgeo_geo",
+      "args": [
+        {
+          "name": "rid",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "fraction",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "timestamp",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "geometry",
+          "nautilus_type": "VariableSizedData",
+          "cpp_type": "const char*"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_tnpoint_point_via_composition": true,
+      "comment_one_liner": "Per-event acontains_tgeo_geo via tnpoint\u2192tgeompoint composition."
+    },
+    {
+      "nebula_name": "TemporalEDWithinTNpointGeometry",
+      "sql_token": "TEMPORAL_EDWITHIN_TNPOINT_GEOMETRY",
+      "meos_call": "edwithin_tgeo_geo",
+      "args": [
+        {
+          "name": "rid",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "fraction",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "timestamp",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "geometry",
+          "nautilus_type": "VariableSizedData",
+          "cpp_type": "const char*"
+        },
+        {
+          "name": "dist",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_tnpoint_point_with_dist_via_composition": true,
+      "comment_one_liner": "Per-event edwithin_tgeo_geo via tnpoint\u2192tgeompoint composition."
+    },
+    {
+      "nebula_name": "TemporalADWithinTNpointGeometry",
+      "sql_token": "TEMPORAL_ADWITHIN_TNPOINT_GEOMETRY",
+      "meos_call": "adwithin_tgeo_geo",
+      "args": [
+        {
+          "name": "rid",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "fraction",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "timestamp",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "geometry",
+          "nautilus_type": "VariableSizedData",
+          "cpp_type": "const char*"
+        },
+        {
+          "name": "dist",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_tnpoint_point_with_dist_via_composition": true,
+      "comment_one_liner": "Per-event adwithin_tgeo_geo via tnpoint\u2192tgeompoint composition."
+    },
+    {
+      "nebula_name": "TemporalEIntersectsTNpointTNpoint",
+      "sql_token": "TEMPORAL_EINTERSECTS_TNPOINT_TNPOINT",
+      "meos_call": "eintersects_tgeo_tgeo",
+      "args": [
+        {
+          "name": "ridA",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "fractionA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsA",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "ridB",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "fractionB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsB",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_two_tnpoint_points_via_composition": true,
+      "comment_one_liner": "Per-event eintersects_tgeo_tgeo via tnpoint\u00d7tnpoint\u2192tgeompoint composition."
+    },
+    {
+      "nebula_name": "TemporalAIntersectsTNpointTNpoint",
+      "sql_token": "TEMPORAL_AINTERSECTS_TNPOINT_TNPOINT",
+      "meos_call": "aintersects_tgeo_tgeo",
+      "args": [
+        {
+          "name": "ridA",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "fractionA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsA",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "ridB",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "fractionB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsB",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_two_tnpoint_points_via_composition": true,
+      "comment_one_liner": "Per-event aintersects_tgeo_tgeo via tnpoint\u00d7tnpoint\u2192tgeompoint composition."
+    },
+    {
+      "nebula_name": "TemporalECoversTNpointTNpoint",
+      "sql_token": "TEMPORAL_ECOVERS_TNPOINT_TNPOINT",
+      "meos_call": "ecovers_tgeo_tgeo",
+      "args": [
+        {
+          "name": "ridA",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "fractionA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsA",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "ridB",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "fractionB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsB",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_two_tnpoint_points_via_composition": true,
+      "comment_one_liner": "Per-event ecovers_tgeo_tgeo via tnpoint\u00d7tnpoint\u2192tgeompoint composition."
+    },
+    {
+      "nebula_name": "TemporalEDisjointTNpointTNpoint",
+      "sql_token": "TEMPORAL_EDISJOINT_TNPOINT_TNPOINT",
+      "meos_call": "edisjoint_tgeo_tgeo",
+      "args": [
+        {
+          "name": "ridA",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "fractionA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsA",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "ridB",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "fractionB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsB",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_two_tnpoint_points_via_composition": true,
+      "comment_one_liner": "Per-event edisjoint_tgeo_tgeo via tnpoint\u00d7tnpoint\u2192tgeompoint composition."
+    },
+    {
+      "nebula_name": "TemporalADisjointTNpointTNpoint",
+      "sql_token": "TEMPORAL_ADISJOINT_TNPOINT_TNPOINT",
+      "meos_call": "adisjoint_tgeo_tgeo",
+      "args": [
+        {
+          "name": "ridA",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "fractionA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsA",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "ridB",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "fractionB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsB",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_two_tnpoint_points_via_composition": true,
+      "comment_one_liner": "Per-event adisjoint_tgeo_tgeo via tnpoint\u00d7tnpoint\u2192tgeompoint composition."
+    },
+    {
+      "nebula_name": "TemporalETouchesTNpointTNpoint",
+      "sql_token": "TEMPORAL_ETOUCHES_TNPOINT_TNPOINT",
+      "meos_call": "etouches_tgeo_tgeo",
+      "args": [
+        {
+          "name": "ridA",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "fractionA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsA",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "ridB",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "fractionB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsB",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_two_tnpoint_points_via_composition": true,
+      "comment_one_liner": "Per-event etouches_tgeo_tgeo via tnpoint\u00d7tnpoint\u2192tgeompoint composition."
+    },
+    {
+      "nebula_name": "TemporalATouchesTNpointTNpoint",
+      "sql_token": "TEMPORAL_ATOUCHES_TNPOINT_TNPOINT",
+      "meos_call": "atouches_tgeo_tgeo",
+      "args": [
+        {
+          "name": "ridA",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "fractionA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsA",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "ridB",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "fractionB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsB",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_two_tnpoint_points_via_composition": true,
+      "comment_one_liner": "Per-event atouches_tgeo_tgeo via tnpoint\u00d7tnpoint\u2192tgeompoint composition."
+    },
+    {
+      "nebula_name": "TemporalEContainsTNpointTNpoint",
+      "sql_token": "TEMPORAL_ECONTAINS_TNPOINT_TNPOINT",
+      "meos_call": "econtains_tgeo_tgeo",
+      "args": [
+        {
+          "name": "ridA",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "fractionA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsA",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "ridB",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "fractionB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsB",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_two_tnpoint_points_via_composition": true,
+      "comment_one_liner": "Per-event econtains_tgeo_tgeo via tnpoint\u00d7tnpoint\u2192tgeompoint composition."
+    },
+    {
+      "nebula_name": "TemporalAContainsTNpointTNpoint",
+      "sql_token": "TEMPORAL_ACONTAINS_TNPOINT_TNPOINT",
+      "meos_call": "acontains_tgeo_tgeo",
+      "args": [
+        {
+          "name": "ridA",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "fractionA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsA",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "ridB",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "fractionB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsB",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_two_tnpoint_points_via_composition": true,
+      "comment_one_liner": "Per-event acontains_tgeo_tgeo via tnpoint\u00d7tnpoint\u2192tgeompoint composition."
+    },
+    {
+      "nebula_name": "TemporalEDWithinTNpointTNpoint",
+      "sql_token": "TEMPORAL_EDWITHIN_TNPOINT_TNPOINT",
+      "meos_call": "edwithin_tgeo_tgeo",
+      "args": [
+        {
+          "name": "ridA",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "fractionA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsA",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "ridB",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "fractionB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsB",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "dist",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_two_tnpoint_points_with_dist_via_composition": true,
+      "comment_one_liner": "Per-event edwithin_tgeo_tgeo via tnpoint\u00d7tnpoint\u2192tgeompoint composition."
+    },
+    {
+      "nebula_name": "TemporalADWithinTNpointTNpoint",
+      "sql_token": "TEMPORAL_ADWITHIN_TNPOINT_TNPOINT",
+      "meos_call": "adwithin_tgeo_tgeo",
+      "args": [
+        {
+          "name": "ridA",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "fractionA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsA",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "ridB",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "fractionB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsB",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "dist",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_two_tnpoint_points_with_dist_via_composition": true,
+      "comment_one_liner": "Per-event adwithin_tgeo_tgeo via tnpoint\u00d7tnpoint\u2192tgeompoint composition."
+    },
+    {
+      "nebula_name": "TemporalNADTNpointGeometry",
+      "sql_token": "TEMPORAL_NAD_TNPOINT_GEOMETRY",
+      "meos_call": "nad_tgeo_geo",
+      "args": [
+        {
+          "name": "rid",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "fraction",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "timestamp",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "geometry",
+          "nautilus_type": "VariableSizedData",
+          "cpp_type": "const char*"
+        }
+      ],
+      "return_type": "double",
+      "nautilus_return": "FLOAT64",
+      "build_tnpoint_point_via_composition": true,
+      "comment_one_liner": "Per-event nad_tgeo_geo (nearest approach distance) via tnpoint\u2192tgeompoint composition."
+    },
+    {
+      "nebula_name": "TemporalNADTNpointTNpoint",
+      "sql_token": "TEMPORAL_NAD_TNPOINT_TNPOINT",
+      "meos_call": "nad_tgeo_tgeo",
+      "args": [
+        {
+          "name": "ridA",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "fractionA",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsA",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "ridB",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "fractionB",
+          "nautilus_type": "double",
+          "cpp_type": "double"
+        },
+        {
+          "name": "tsB",
+          "nautilus_type": "uint64_t",
+          "cpp_type": "uint64_t"
+        }
+      ],
+      "return_type": "double",
+      "nautilus_return": "FLOAT64",
+      "build_two_tnpoint_points_via_composition": true,
+      "comment_one_liner": "Per-event nad_tgeo_tgeo (nearest approach distance) via tnpoint\u00d7tnpoint\u2192tgeompoint composition."
+    }
+  ]
+}
