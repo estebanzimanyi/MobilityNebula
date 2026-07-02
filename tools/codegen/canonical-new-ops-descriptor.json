@@ -1,0 +1,1714 @@
+{
+  "_comment": "Canonical-surface new ops: 85 operators covering tcbuffer/cbuffer, tquadbin, AcoversGeoTgeo, tfloat-trig, tnumber-abs, teq/tne/tlt/tle/tgt/tge comparisons, geom format/transform/buffer, H3/JSON/span constructors, tpcpoint predicates.",
+  "operators": [
+    {
+      "nebula_name": "AcontainsTcbufferCbuffer",
+      "sql_token": "ACONTAINS_TCBUFFER_CBUFFER",
+      "meos_call": "acontains_tcbuffer_cbuffer",
+      "args": [
+        {
+          "name": "lon",
+          "nautilus_type": "FLOAT64",
+          "cpp_type": "double"
+        },
+        {
+          "name": "lat",
+          "nautilus_type": "FLOAT64",
+          "cpp_type": "double"
+        },
+        {
+          "name": "radius",
+          "nautilus_type": "FLOAT64",
+          "cpp_type": "double"
+        },
+        {
+          "name": "timestamp",
+          "nautilus_type": "UINT64",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "cbufLit",
+          "nautilus_type": "VARSIZED",
+          "cpp_type": "VariableSizedData"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_tcbuffer_point_cbuffer": true,
+      "comment_one_liner": "Per-event acontains_tcbuffer_cbuffer."
+    },
+    {
+      "nebula_name": "AcoversTcbufferCbuffer",
+      "sql_token": "ACOVERS_TCBUFFER_CBUFFER",
+      "meos_call": "acovers_tcbuffer_cbuffer",
+      "args": [
+        {
+          "name": "lon",
+          "nautilus_type": "FLOAT64",
+          "cpp_type": "double"
+        },
+        {
+          "name": "lat",
+          "nautilus_type": "FLOAT64",
+          "cpp_type": "double"
+        },
+        {
+          "name": "radius",
+          "nautilus_type": "FLOAT64",
+          "cpp_type": "double"
+        },
+        {
+          "name": "timestamp",
+          "nautilus_type": "UINT64",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "cbufLit",
+          "nautilus_type": "VARSIZED",
+          "cpp_type": "VariableSizedData"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_tcbuffer_point_cbuffer": true,
+      "comment_one_liner": "Per-event acovers_tcbuffer_cbuffer."
+    },
+    {
+      "nebula_name": "AdisjointTcbufferCbuffer",
+      "sql_token": "ADISJOINT_TCBUFFER_CBUFFER",
+      "meos_call": "adisjoint_tcbuffer_cbuffer",
+      "args": [
+        {
+          "name": "lon",
+          "nautilus_type": "FLOAT64",
+          "cpp_type": "double"
+        },
+        {
+          "name": "lat",
+          "nautilus_type": "FLOAT64",
+          "cpp_type": "double"
+        },
+        {
+          "name": "radius",
+          "nautilus_type": "FLOAT64",
+          "cpp_type": "double"
+        },
+        {
+          "name": "timestamp",
+          "nautilus_type": "UINT64",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "cbufLit",
+          "nautilus_type": "VARSIZED",
+          "cpp_type": "VariableSizedData"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_tcbuffer_point_cbuffer": true,
+      "comment_one_liner": "Per-event adisjoint_tcbuffer_cbuffer."
+    },
+    {
+      "nebula_name": "AintersectsTcbufferCbuffer",
+      "sql_token": "AINTERSECTS_TCBUFFER_CBUFFER",
+      "meos_call": "aintersects_tcbuffer_cbuffer",
+      "args": [
+        {
+          "name": "lon",
+          "nautilus_type": "FLOAT64",
+          "cpp_type": "double"
+        },
+        {
+          "name": "lat",
+          "nautilus_type": "FLOAT64",
+          "cpp_type": "double"
+        },
+        {
+          "name": "radius",
+          "nautilus_type": "FLOAT64",
+          "cpp_type": "double"
+        },
+        {
+          "name": "timestamp",
+          "nautilus_type": "UINT64",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "cbufLit",
+          "nautilus_type": "VARSIZED",
+          "cpp_type": "VariableSizedData"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_tcbuffer_point_cbuffer": true,
+      "comment_one_liner": "Per-event aintersects_tcbuffer_cbuffer."
+    },
+    {
+      "nebula_name": "AtouchesTcbufferCbuffer",
+      "sql_token": "ATOUCHES_TCBUFFER_CBUFFER",
+      "meos_call": "atouches_tcbuffer_cbuffer",
+      "args": [
+        {
+          "name": "lon",
+          "nautilus_type": "FLOAT64",
+          "cpp_type": "double"
+        },
+        {
+          "name": "lat",
+          "nautilus_type": "FLOAT64",
+          "cpp_type": "double"
+        },
+        {
+          "name": "radius",
+          "nautilus_type": "FLOAT64",
+          "cpp_type": "double"
+        },
+        {
+          "name": "timestamp",
+          "nautilus_type": "UINT64",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "cbufLit",
+          "nautilus_type": "VARSIZED",
+          "cpp_type": "VariableSizedData"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_tcbuffer_point_cbuffer": true,
+      "comment_one_liner": "Per-event atouches_tcbuffer_cbuffer."
+    },
+    {
+      "nebula_name": "EcontainsTcbufferCbuffer",
+      "sql_token": "ECONTAINS_TCBUFFER_CBUFFER",
+      "meos_call": "econtains_tcbuffer_cbuffer",
+      "args": [
+        {
+          "name": "lon",
+          "nautilus_type": "FLOAT64",
+          "cpp_type": "double"
+        },
+        {
+          "name": "lat",
+          "nautilus_type": "FLOAT64",
+          "cpp_type": "double"
+        },
+        {
+          "name": "radius",
+          "nautilus_type": "FLOAT64",
+          "cpp_type": "double"
+        },
+        {
+          "name": "timestamp",
+          "nautilus_type": "UINT64",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "cbufLit",
+          "nautilus_type": "VARSIZED",
+          "cpp_type": "VariableSizedData"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_tcbuffer_point_cbuffer": true,
+      "comment_one_liner": "Per-event econtains_tcbuffer_cbuffer."
+    },
+    {
+      "nebula_name": "EcoversTcbufferCbuffer",
+      "sql_token": "ECOVERS_TCBUFFER_CBUFFER",
+      "meos_call": "ecovers_tcbuffer_cbuffer",
+      "args": [
+        {
+          "name": "lon",
+          "nautilus_type": "FLOAT64",
+          "cpp_type": "double"
+        },
+        {
+          "name": "lat",
+          "nautilus_type": "FLOAT64",
+          "cpp_type": "double"
+        },
+        {
+          "name": "radius",
+          "nautilus_type": "FLOAT64",
+          "cpp_type": "double"
+        },
+        {
+          "name": "timestamp",
+          "nautilus_type": "UINT64",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "cbufLit",
+          "nautilus_type": "VARSIZED",
+          "cpp_type": "VariableSizedData"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_tcbuffer_point_cbuffer": true,
+      "comment_one_liner": "Per-event ecovers_tcbuffer_cbuffer."
+    },
+    {
+      "nebula_name": "EdisjointTcbufferCbuffer",
+      "sql_token": "EDISJOINT_TCBUFFER_CBUFFER",
+      "meos_call": "edisjoint_tcbuffer_cbuffer",
+      "args": [
+        {
+          "name": "lon",
+          "nautilus_type": "FLOAT64",
+          "cpp_type": "double"
+        },
+        {
+          "name": "lat",
+          "nautilus_type": "FLOAT64",
+          "cpp_type": "double"
+        },
+        {
+          "name": "radius",
+          "nautilus_type": "FLOAT64",
+          "cpp_type": "double"
+        },
+        {
+          "name": "timestamp",
+          "nautilus_type": "UINT64",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "cbufLit",
+          "nautilus_type": "VARSIZED",
+          "cpp_type": "VariableSizedData"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_tcbuffer_point_cbuffer": true,
+      "comment_one_liner": "Per-event edisjoint_tcbuffer_cbuffer."
+    },
+    {
+      "nebula_name": "EintersectsTcbufferCbuffer",
+      "sql_token": "EINTERSECTS_TCBUFFER_CBUFFER",
+      "meos_call": "eintersects_tcbuffer_cbuffer",
+      "args": [
+        {
+          "name": "lon",
+          "nautilus_type": "FLOAT64",
+          "cpp_type": "double"
+        },
+        {
+          "name": "lat",
+          "nautilus_type": "FLOAT64",
+          "cpp_type": "double"
+        },
+        {
+          "name": "radius",
+          "nautilus_type": "FLOAT64",
+          "cpp_type": "double"
+        },
+        {
+          "name": "timestamp",
+          "nautilus_type": "UINT64",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "cbufLit",
+          "nautilus_type": "VARSIZED",
+          "cpp_type": "VariableSizedData"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_tcbuffer_point_cbuffer": true,
+      "comment_one_liner": "Per-event eintersects_tcbuffer_cbuffer."
+    },
+    {
+      "nebula_name": "EtouchesTcbufferCbuffer",
+      "sql_token": "ETOUCHES_TCBUFFER_CBUFFER",
+      "meos_call": "etouches_tcbuffer_cbuffer",
+      "args": [
+        {
+          "name": "lon",
+          "nautilus_type": "FLOAT64",
+          "cpp_type": "double"
+        },
+        {
+          "name": "lat",
+          "nautilus_type": "FLOAT64",
+          "cpp_type": "double"
+        },
+        {
+          "name": "radius",
+          "nautilus_type": "FLOAT64",
+          "cpp_type": "double"
+        },
+        {
+          "name": "timestamp",
+          "nautilus_type": "UINT64",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "cbufLit",
+          "nautilus_type": "VARSIZED",
+          "cpp_type": "VariableSizedData"
+        }
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_tcbuffer_point_cbuffer": true,
+      "comment_one_liner": "Per-event etouches_tcbuffer_cbuffer."
+    },
+    {
+      "nebula_name": "NadTcbufferCbuffer",
+      "sql_token": "NAD_TCBUFFER_CBUFFER",
+      "meos_call": "nad_tcbuffer_cbuffer",
+      "args": [
+        {
+          "name": "lon",
+          "nautilus_type": "FLOAT64",
+          "cpp_type": "double"
+        },
+        {
+          "name": "lat",
+          "nautilus_type": "FLOAT64",
+          "cpp_type": "double"
+        },
+        {
+          "name": "radius",
+          "nautilus_type": "FLOAT64",
+          "cpp_type": "double"
+        },
+        {
+          "name": "timestamp",
+          "nautilus_type": "UINT64",
+          "cpp_type": "uint64_t"
+        },
+        {
+          "name": "cbufLit",
+          "nautilus_type": "VARSIZED",
+          "cpp_type": "VariableSizedData"
+        }
+      ],
+      "return_type": "double",
+      "nautilus_return": "FLOAT64",
+      "build_tcbuffer_point_cbuffer": true,
+      "comment_one_liner": "Per-event nad_tcbuffer_cbuffer."
+    },
+    {
+      "nebula_name": "AlwaysEqTquadbinTquadbin",
+      "sql_token": "ALWAYSEQ_TQUADBIN_TQUADBIN",
+      "meos_call": "always_eq_tquadbin_tquadbin",
+      "input_type": "tquadbin",
+      "return_kind": "double",
+      "extra_headers": [
+        "meos_quadbin.h"
+      ],
+      "extra_args": [
+        {
+          "kind": "tquadbin"
+        }
+      ],
+      "build_generic": true,
+      "comment_one_liner": "Per-event always_eq_tquadbin_tquadbin."
+    },
+    {
+      "nebula_name": "AlwaysNeTquadbinTquadbin",
+      "sql_token": "ALWAYSNE_TQUADBIN_TQUADBIN",
+      "meos_call": "always_ne_tquadbin_tquadbin",
+      "input_type": "tquadbin",
+      "return_kind": "double",
+      "extra_headers": [
+        "meos_quadbin.h"
+      ],
+      "extra_args": [
+        {
+          "kind": "tquadbin"
+        }
+      ],
+      "build_generic": true,
+      "comment_one_liner": "Per-event always_ne_tquadbin_tquadbin."
+    },
+    {
+      "nebula_name": "EverEqTquadbinTquadbin",
+      "sql_token": "EVEREQ_TQUADBIN_TQUADBIN",
+      "meos_call": "ever_eq_tquadbin_tquadbin",
+      "input_type": "tquadbin",
+      "return_kind": "double",
+      "extra_headers": [
+        "meos_quadbin.h"
+      ],
+      "extra_args": [
+        {
+          "kind": "tquadbin"
+        }
+      ],
+      "build_generic": true,
+      "comment_one_liner": "Per-event ever_eq_tquadbin_tquadbin."
+    },
+    {
+      "nebula_name": "EverNeTquadbinTquadbin",
+      "sql_token": "EVERNE_TQUADBIN_TQUADBIN",
+      "meos_call": "ever_ne_tquadbin_tquadbin",
+      "input_type": "tquadbin",
+      "return_kind": "double",
+      "extra_headers": [
+        "meos_quadbin.h"
+      ],
+      "extra_args": [
+        {
+          "kind": "tquadbin"
+        }
+      ],
+      "build_generic": true,
+      "comment_one_liner": "Per-event ever_ne_tquadbin_tquadbin."
+    },
+    {
+      "nebula_name": "AlwaysEqQuadbinTquadbin",
+      "sql_token": "ALWAYSEQ_QUADBIN_TQUADBIN",
+      "meos_call": "always_eq_quadbin_tquadbin",
+      "input_type": "static_scalar",
+      "return_kind": "double",
+      "extra_headers": [
+        "meos_quadbin.h"
+      ],
+      "extra_args": [
+        {
+          "kind": "quadbin"
+        },
+        {
+          "kind": "tquadbin"
+        }
+      ],
+      "build_generic": true,
+      "comment_one_liner": "Per-event always_eq_quadbin_tquadbin."
+    },
+    {
+      "nebula_name": "AlwaysNeQuadbinTquadbin",
+      "sql_token": "ALWAYSNE_QUADBIN_TQUADBIN",
+      "meos_call": "always_ne_quadbin_tquadbin",
+      "input_type": "static_scalar",
+      "return_kind": "double",
+      "extra_headers": [
+        "meos_quadbin.h"
+      ],
+      "extra_args": [
+        {
+          "kind": "quadbin"
+        },
+        {
+          "kind": "tquadbin"
+        }
+      ],
+      "build_generic": true,
+      "comment_one_liner": "Per-event always_ne_quadbin_tquadbin."
+    },
+    {
+      "nebula_name": "EverEqQuadbinTquadbin",
+      "sql_token": "EVEREQ_QUADBIN_TQUADBIN",
+      "meos_call": "ever_eq_quadbin_tquadbin",
+      "input_type": "static_scalar",
+      "return_kind": "double",
+      "extra_headers": [
+        "meos_quadbin.h"
+      ],
+      "extra_args": [
+        {
+          "kind": "quadbin"
+        },
+        {
+          "kind": "tquadbin"
+        }
+      ],
+      "build_generic": true,
+      "comment_one_liner": "Per-event ever_eq_quadbin_tquadbin."
+    },
+    {
+      "nebula_name": "EverNeQuadbinTquadbin",
+      "sql_token": "EVERNE_QUADBIN_TQUADBIN",
+      "meos_call": "ever_ne_quadbin_tquadbin",
+      "input_type": "static_scalar",
+      "return_kind": "double",
+      "extra_headers": [
+        "meos_quadbin.h"
+      ],
+      "extra_args": [
+        {
+          "kind": "quadbin"
+        },
+        {
+          "kind": "tquadbin"
+        }
+      ],
+      "build_generic": true,
+      "comment_one_liner": "Per-event ever_ne_quadbin_tquadbin."
+    },
+    {
+      "nebula_name": "AcoversGeoTgeo",
+      "sql_token": "ACOVERS_GEO_TGEO",
+      "meos_call": "acovers_geo_tgeo",
+      "input_type": "geom_wkt",
+      "return_kind": "int",
+      "extra_headers": [
+        "meos_geo.h"
+      ],
+      "extra_args": [
+        {
+          "kind": "wkb_temporal"
+        }
+      ],
+      "build_generic": true,
+      "comment_one_liner": "Per-event acovers_geo_tgeo."
+    },
+    {
+      "nebula_name": "TfloatCos",
+      "sql_token": "TFLOAT_COS",
+      "meos_call": "tfloat_cos",
+      "input_type": "tfloat",
+      "return_kind": "extract_double",
+      "extra_headers": [],
+      "extra_args": [],
+      "build_generic": true,
+      "comment_one_liner": "Per-event tfloat_cos."
+    },
+    {
+      "nebula_name": "TfloatSin",
+      "sql_token": "TFLOAT_SIN",
+      "meos_call": "tfloat_sin",
+      "input_type": "tfloat",
+      "return_kind": "extract_double",
+      "extra_headers": [],
+      "extra_args": [],
+      "build_generic": true,
+      "comment_one_liner": "Per-event tfloat_sin."
+    },
+    {
+      "nebula_name": "TfloatTan",
+      "sql_token": "TFLOAT_TAN",
+      "meos_call": "tfloat_tan",
+      "input_type": "tfloat",
+      "return_kind": "extract_double",
+      "extra_headers": [],
+      "extra_args": [],
+      "build_generic": true,
+      "comment_one_liner": "Per-event tfloat_tan."
+    },
+    {
+      "nebula_name": "TfloatDegrees",
+      "sql_token": "TFLOAT_DEGREES",
+      "meos_call": "tfloat_degrees",
+      "input_type": "tfloat",
+      "return_kind": "extract_double",
+      "extra_headers": [],
+      "extra_args": [
+        {
+          "kind": "bool_scalar"
+        }
+      ],
+      "build_generic": true,
+      "comment_one_liner": "Per-event tfloat_degrees."
+    },
+    {
+      "nebula_name": "TnumberAbs",
+      "sql_token": "TNUMBER_ABS",
+      "meos_call": "tnumber_abs",
+      "input_type": "wkb_temporal",
+      "return_kind": "extract_double",
+      "extra_headers": [],
+      "extra_args": [],
+      "build_generic": true,
+      "comment_one_liner": "Per-event tnumber_abs."
+    },
+    {
+      "nebula_name": "TeqTfloatFloat",
+      "sql_token": "TEQ_TFLOAT_FLOAT",
+      "meos_call": "teq_tfloat_float",
+      "input_type": "tfloat",
+      "return_kind": "extract_bool",
+      "extra_headers": [],
+      "extra_args": [
+        {
+          "kind": "scalar",
+          "cpp": "double"
+        }
+      ],
+      "build_generic": true,
+      "comment_one_liner": "Per-event teq_tfloat_float."
+    },
+    {
+      "nebula_name": "TeqFloatTfloat",
+      "sql_token": "TEQ_FLOAT_TFLOAT",
+      "meos_call": "teq_float_tfloat",
+      "input_type": "tfloat",
+      "return_kind": "extract_bool",
+      "extra_headers": [],
+      "extra_args": [
+        {
+          "kind": "scalar",
+          "cpp": "double"
+        }
+      ],
+      "build_generic": true,
+      "comment_one_liner": "Per-event teq_float_tfloat.",
+      "scalar_first": true
+    },
+    {
+      "nebula_name": "TeqTintInt",
+      "sql_token": "TEQ_TINT_INT",
+      "meos_call": "teq_tint_int",
+      "input_type": "tint",
+      "return_kind": "extract_bool",
+      "extra_headers": [],
+      "extra_args": [
+        {
+          "kind": "int_scalar"
+        }
+      ],
+      "build_generic": true,
+      "comment_one_liner": "Per-event teq_tint_int."
+    },
+    {
+      "nebula_name": "TeqIntTint",
+      "sql_token": "TEQ_INT_TINT",
+      "meos_call": "teq_int_tint",
+      "input_type": "tint",
+      "return_kind": "extract_bool",
+      "extra_headers": [],
+      "extra_args": [
+        {
+          "kind": "int_scalar"
+        }
+      ],
+      "build_generic": true,
+      "comment_one_liner": "Per-event teq_int_tint.",
+      "scalar_first": true
+    },
+    {
+      "nebula_name": "TeqTtextText",
+      "sql_token": "TEQ_TTEXT_TEXT",
+      "meos_call": "teq_ttext_text",
+      "input_type": "ttext",
+      "return_kind": "extract_bool",
+      "extra_headers": [],
+      "extra_args": [
+        {
+          "kind": "text_varsized"
+        }
+      ],
+      "build_generic": true,
+      "comment_one_liner": "Per-event teq_ttext_text."
+    },
+    {
+      "nebula_name": "TeqTextTtext",
+      "sql_token": "TEQ_TEXT_TTEXT",
+      "meos_call": "teq_text_ttext",
+      "input_type": "ttext",
+      "return_kind": "extract_bool",
+      "extra_headers": [],
+      "extra_args": [
+        {
+          "kind": "text_varsized"
+        }
+      ],
+      "build_generic": true,
+      "comment_one_liner": "Per-event teq_text_ttext.",
+      "scalar_first": true
+    },
+    {
+      "nebula_name": "TeqTemporalTemporal",
+      "sql_token": "TEQ_TEMPORAL_TEMPORAL",
+      "meos_call": "teq_temporal_temporal",
+      "input_type": "wkb_temporal",
+      "return_kind": "bool",
+      "extra_headers": [],
+      "extra_args": [
+        {
+          "kind": "wkb_temporal"
+        }
+      ],
+      "build_generic": true,
+      "comment_one_liner": "Per-event teq_temporal_temporal."
+    },
+    {
+      "nebula_name": "TneTfloatFloat",
+      "sql_token": "TNE_TFLOAT_FLOAT",
+      "meos_call": "tne_tfloat_float",
+      "input_type": "tfloat",
+      "return_kind": "extract_bool",
+      "extra_headers": [],
+      "extra_args": [
+        {
+          "kind": "scalar",
+          "cpp": "double"
+        }
+      ],
+      "build_generic": true,
+      "comment_one_liner": "Per-event tne_tfloat_float."
+    },
+    {
+      "nebula_name": "TneFloatTfloat",
+      "sql_token": "TNE_FLOAT_TFLOAT",
+      "meos_call": "tne_float_tfloat",
+      "input_type": "tfloat",
+      "return_kind": "extract_bool",
+      "extra_headers": [],
+      "extra_args": [
+        {
+          "kind": "scalar",
+          "cpp": "double"
+        }
+      ],
+      "build_generic": true,
+      "comment_one_liner": "Per-event tne_float_tfloat.",
+      "scalar_first": true
+    },
+    {
+      "nebula_name": "TneTintInt",
+      "sql_token": "TNE_TINT_INT",
+      "meos_call": "tne_tint_int",
+      "input_type": "tint",
+      "return_kind": "extract_bool",
+      "extra_headers": [],
+      "extra_args": [
+        {
+          "kind": "int_scalar"
+        }
+      ],
+      "build_generic": true,
+      "comment_one_liner": "Per-event tne_tint_int."
+    },
+    {
+      "nebula_name": "TneIntTint",
+      "sql_token": "TNE_INT_TINT",
+      "meos_call": "tne_int_tint",
+      "input_type": "tint",
+      "return_kind": "extract_bool",
+      "extra_headers": [],
+      "extra_args": [
+        {
+          "kind": "int_scalar"
+        }
+      ],
+      "build_generic": true,
+      "comment_one_liner": "Per-event tne_int_tint.",
+      "scalar_first": true
+    },
+    {
+      "nebula_name": "TneTtextText",
+      "sql_token": "TNE_TTEXT_TEXT",
+      "meos_call": "tne_ttext_text",
+      "input_type": "ttext",
+      "return_kind": "extract_bool",
+      "extra_headers": [],
+      "extra_args": [
+        {
+          "kind": "text_varsized"
+        }
+      ],
+      "build_generic": true,
+      "comment_one_liner": "Per-event tne_ttext_text."
+    },
+    {
+      "nebula_name": "TneTextTtext",
+      "sql_token": "TNE_TEXT_TTEXT",
+      "meos_call": "tne_text_ttext",
+      "input_type": "ttext",
+      "return_kind": "extract_bool",
+      "extra_headers": [],
+      "extra_args": [
+        {
+          "kind": "text_varsized"
+        }
+      ],
+      "build_generic": true,
+      "comment_one_liner": "Per-event tne_text_ttext.",
+      "scalar_first": true
+    },
+    {
+      "nebula_name": "TneTemporalTemporal",
+      "sql_token": "TNE_TEMPORAL_TEMPORAL",
+      "meos_call": "tne_temporal_temporal",
+      "input_type": "wkb_temporal",
+      "return_kind": "bool",
+      "extra_headers": [],
+      "extra_args": [
+        {
+          "kind": "wkb_temporal"
+        }
+      ],
+      "build_generic": true,
+      "comment_one_liner": "Per-event tne_temporal_temporal."
+    },
+    {
+      "nebula_name": "TltTfloatFloat",
+      "sql_token": "TLT_TFLOAT_FLOAT",
+      "meos_call": "tlt_tfloat_float",
+      "input_type": "tfloat",
+      "return_kind": "extract_bool",
+      "extra_headers": [],
+      "extra_args": [
+        {
+          "kind": "scalar",
+          "cpp": "double"
+        }
+      ],
+      "build_generic": true,
+      "comment_one_liner": "Per-event tlt_tfloat_float."
+    },
+    {
+      "nebula_name": "TltFloatTfloat",
+      "sql_token": "TLT_FLOAT_TFLOAT",
+      "meos_call": "tlt_float_tfloat",
+      "input_type": "tfloat",
+      "return_kind": "extract_bool",
+      "extra_headers": [],
+      "extra_args": [
+        {
+          "kind": "scalar",
+          "cpp": "double"
+        }
+      ],
+      "build_generic": true,
+      "comment_one_liner": "Per-event tlt_float_tfloat.",
+      "scalar_first": true
+    },
+    {
+      "nebula_name": "TltTintInt",
+      "sql_token": "TLT_TINT_INT",
+      "meos_call": "tlt_tint_int",
+      "input_type": "tint",
+      "return_kind": "extract_bool",
+      "extra_headers": [],
+      "extra_args": [
+        {
+          "kind": "int_scalar"
+        }
+      ],
+      "build_generic": true,
+      "comment_one_liner": "Per-event tlt_tint_int."
+    },
+    {
+      "nebula_name": "TltIntTint",
+      "sql_token": "TLT_INT_TINT",
+      "meos_call": "tlt_int_tint",
+      "input_type": "tint",
+      "return_kind": "extract_bool",
+      "extra_headers": [],
+      "extra_args": [
+        {
+          "kind": "int_scalar"
+        }
+      ],
+      "build_generic": true,
+      "comment_one_liner": "Per-event tlt_int_tint.",
+      "scalar_first": true
+    },
+    {
+      "nebula_name": "TltTtextText",
+      "sql_token": "TLT_TTEXT_TEXT",
+      "meos_call": "tlt_ttext_text",
+      "input_type": "ttext",
+      "return_kind": "extract_bool",
+      "extra_headers": [],
+      "extra_args": [
+        {
+          "kind": "text_varsized"
+        }
+      ],
+      "build_generic": true,
+      "comment_one_liner": "Per-event tlt_ttext_text."
+    },
+    {
+      "nebula_name": "TltTextTtext",
+      "sql_token": "TLT_TEXT_TTEXT",
+      "meos_call": "tlt_text_ttext",
+      "input_type": "ttext",
+      "return_kind": "extract_bool",
+      "extra_headers": [],
+      "extra_args": [
+        {
+          "kind": "text_varsized"
+        }
+      ],
+      "build_generic": true,
+      "comment_one_liner": "Per-event tlt_text_ttext.",
+      "scalar_first": true
+    },
+    {
+      "nebula_name": "TltTemporalTemporal",
+      "sql_token": "TLT_TEMPORAL_TEMPORAL",
+      "meos_call": "tlt_temporal_temporal",
+      "input_type": "wkb_temporal",
+      "return_kind": "bool",
+      "extra_headers": [],
+      "extra_args": [
+        {
+          "kind": "wkb_temporal"
+        }
+      ],
+      "build_generic": true,
+      "comment_one_liner": "Per-event tlt_temporal_temporal."
+    },
+    {
+      "nebula_name": "TleTfloatFloat",
+      "sql_token": "TLE_TFLOAT_FLOAT",
+      "meos_call": "tle_tfloat_float",
+      "input_type": "tfloat",
+      "return_kind": "extract_bool",
+      "extra_headers": [],
+      "extra_args": [
+        {
+          "kind": "scalar",
+          "cpp": "double"
+        }
+      ],
+      "build_generic": true,
+      "comment_one_liner": "Per-event tle_tfloat_float."
+    },
+    {
+      "nebula_name": "TleFloatTfloat",
+      "sql_token": "TLE_FLOAT_TFLOAT",
+      "meos_call": "tle_float_tfloat",
+      "input_type": "tfloat",
+      "return_kind": "extract_bool",
+      "extra_headers": [],
+      "extra_args": [
+        {
+          "kind": "scalar",
+          "cpp": "double"
+        }
+      ],
+      "build_generic": true,
+      "comment_one_liner": "Per-event tle_float_tfloat.",
+      "scalar_first": true
+    },
+    {
+      "nebula_name": "TleTintInt",
+      "sql_token": "TLE_TINT_INT",
+      "meos_call": "tle_tint_int",
+      "input_type": "tint",
+      "return_kind": "extract_bool",
+      "extra_headers": [],
+      "extra_args": [
+        {
+          "kind": "int_scalar"
+        }
+      ],
+      "build_generic": true,
+      "comment_one_liner": "Per-event tle_tint_int."
+    },
+    {
+      "nebula_name": "TleIntTint",
+      "sql_token": "TLE_INT_TINT",
+      "meos_call": "tle_int_tint",
+      "input_type": "tint",
+      "return_kind": "extract_bool",
+      "extra_headers": [],
+      "extra_args": [
+        {
+          "kind": "int_scalar"
+        }
+      ],
+      "build_generic": true,
+      "comment_one_liner": "Per-event tle_int_tint.",
+      "scalar_first": true
+    },
+    {
+      "nebula_name": "TleTtextText",
+      "sql_token": "TLE_TTEXT_TEXT",
+      "meos_call": "tle_ttext_text",
+      "input_type": "ttext",
+      "return_kind": "extract_bool",
+      "extra_headers": [],
+      "extra_args": [
+        {
+          "kind": "text_varsized"
+        }
+      ],
+      "build_generic": true,
+      "comment_one_liner": "Per-event tle_ttext_text."
+    },
+    {
+      "nebula_name": "TleTextTtext",
+      "sql_token": "TLE_TEXT_TTEXT",
+      "meos_call": "tle_text_ttext",
+      "input_type": "ttext",
+      "return_kind": "extract_bool",
+      "extra_headers": [],
+      "extra_args": [
+        {
+          "kind": "text_varsized"
+        }
+      ],
+      "build_generic": true,
+      "comment_one_liner": "Per-event tle_text_ttext.",
+      "scalar_first": true
+    },
+    {
+      "nebula_name": "TleTemporalTemporal",
+      "sql_token": "TLE_TEMPORAL_TEMPORAL",
+      "meos_call": "tle_temporal_temporal",
+      "input_type": "wkb_temporal",
+      "return_kind": "bool",
+      "extra_headers": [],
+      "extra_args": [
+        {
+          "kind": "wkb_temporal"
+        }
+      ],
+      "build_generic": true,
+      "comment_one_liner": "Per-event tle_temporal_temporal."
+    },
+    {
+      "nebula_name": "TgtTfloatFloat",
+      "sql_token": "TGT_TFLOAT_FLOAT",
+      "meos_call": "tgt_tfloat_float",
+      "input_type": "tfloat",
+      "return_kind": "extract_bool",
+      "extra_headers": [],
+      "extra_args": [
+        {
+          "kind": "scalar",
+          "cpp": "double"
+        }
+      ],
+      "build_generic": true,
+      "comment_one_liner": "Per-event tgt_tfloat_float."
+    },
+    {
+      "nebula_name": "TgtFloatTfloat",
+      "sql_token": "TGT_FLOAT_TFLOAT",
+      "meos_call": "tgt_float_tfloat",
+      "input_type": "tfloat",
+      "return_kind": "extract_bool",
+      "extra_headers": [],
+      "extra_args": [
+        {
+          "kind": "scalar",
+          "cpp": "double"
+        }
+      ],
+      "build_generic": true,
+      "comment_one_liner": "Per-event tgt_float_tfloat.",
+      "scalar_first": true
+    },
+    {
+      "nebula_name": "TgtTintInt",
+      "sql_token": "TGT_TINT_INT",
+      "meos_call": "tgt_tint_int",
+      "input_type": "tint",
+      "return_kind": "extract_bool",
+      "extra_headers": [],
+      "extra_args": [
+        {
+          "kind": "int_scalar"
+        }
+      ],
+      "build_generic": true,
+      "comment_one_liner": "Per-event tgt_tint_int."
+    },
+    {
+      "nebula_name": "TgtIntTint",
+      "sql_token": "TGT_INT_TINT",
+      "meos_call": "tgt_int_tint",
+      "input_type": "tint",
+      "return_kind": "extract_bool",
+      "extra_headers": [],
+      "extra_args": [
+        {
+          "kind": "int_scalar"
+        }
+      ],
+      "build_generic": true,
+      "comment_one_liner": "Per-event tgt_int_tint.",
+      "scalar_first": true
+    },
+    {
+      "nebula_name": "TgtTtextText",
+      "sql_token": "TGT_TTEXT_TEXT",
+      "meos_call": "tgt_ttext_text",
+      "input_type": "ttext",
+      "return_kind": "extract_bool",
+      "extra_headers": [],
+      "extra_args": [
+        {
+          "kind": "text_varsized"
+        }
+      ],
+      "build_generic": true,
+      "comment_one_liner": "Per-event tgt_ttext_text."
+    },
+    {
+      "nebula_name": "TgtTextTtext",
+      "sql_token": "TGT_TEXT_TTEXT",
+      "meos_call": "tgt_text_ttext",
+      "input_type": "ttext",
+      "return_kind": "extract_bool",
+      "extra_headers": [],
+      "extra_args": [
+        {
+          "kind": "text_varsized"
+        }
+      ],
+      "build_generic": true,
+      "comment_one_liner": "Per-event tgt_text_ttext.",
+      "scalar_first": true
+    },
+    {
+      "nebula_name": "TgtTemporalTemporal",
+      "sql_token": "TGT_TEMPORAL_TEMPORAL",
+      "meos_call": "tgt_temporal_temporal",
+      "input_type": "wkb_temporal",
+      "return_kind": "bool",
+      "extra_headers": [],
+      "extra_args": [
+        {
+          "kind": "wkb_temporal"
+        }
+      ],
+      "build_generic": true,
+      "comment_one_liner": "Per-event tgt_temporal_temporal."
+    },
+    {
+      "nebula_name": "TgeTfloatFloat",
+      "sql_token": "TGE_TFLOAT_FLOAT",
+      "meos_call": "tge_tfloat_float",
+      "input_type": "tfloat",
+      "return_kind": "extract_bool",
+      "extra_headers": [],
+      "extra_args": [
+        {
+          "kind": "scalar",
+          "cpp": "double"
+        }
+      ],
+      "build_generic": true,
+      "comment_one_liner": "Per-event tge_tfloat_float."
+    },
+    {
+      "nebula_name": "TgeFloatTfloat",
+      "sql_token": "TGE_FLOAT_TFLOAT",
+      "meos_call": "tge_float_tfloat",
+      "input_type": "tfloat",
+      "return_kind": "extract_bool",
+      "extra_headers": [],
+      "extra_args": [
+        {
+          "kind": "scalar",
+          "cpp": "double"
+        }
+      ],
+      "build_generic": true,
+      "comment_one_liner": "Per-event tge_float_tfloat.",
+      "scalar_first": true
+    },
+    {
+      "nebula_name": "TgeTintInt",
+      "sql_token": "TGE_TINT_INT",
+      "meos_call": "tge_tint_int",
+      "input_type": "tint",
+      "return_kind": "extract_bool",
+      "extra_headers": [],
+      "extra_args": [
+        {
+          "kind": "int_scalar"
+        }
+      ],
+      "build_generic": true,
+      "comment_one_liner": "Per-event tge_tint_int."
+    },
+    {
+      "nebula_name": "TgeIntTint",
+      "sql_token": "TGE_INT_TINT",
+      "meos_call": "tge_int_tint",
+      "input_type": "tint",
+      "return_kind": "extract_bool",
+      "extra_headers": [],
+      "extra_args": [
+        {
+          "kind": "int_scalar"
+        }
+      ],
+      "build_generic": true,
+      "comment_one_liner": "Per-event tge_int_tint.",
+      "scalar_first": true
+    },
+    {
+      "nebula_name": "TgeTtextText",
+      "sql_token": "TGE_TTEXT_TEXT",
+      "meos_call": "tge_ttext_text",
+      "input_type": "ttext",
+      "return_kind": "extract_bool",
+      "extra_headers": [],
+      "extra_args": [
+        {
+          "kind": "text_varsized"
+        }
+      ],
+      "build_generic": true,
+      "comment_one_liner": "Per-event tge_ttext_text."
+    },
+    {
+      "nebula_name": "TgeTextTtext",
+      "sql_token": "TGE_TEXT_TTEXT",
+      "meos_call": "tge_text_ttext",
+      "input_type": "ttext",
+      "return_kind": "extract_bool",
+      "extra_headers": [],
+      "extra_args": [
+        {
+          "kind": "text_varsized"
+        }
+      ],
+      "build_generic": true,
+      "comment_one_liner": "Per-event tge_text_ttext.",
+      "scalar_first": true
+    },
+    {
+      "nebula_name": "TgeTemporalTemporal",
+      "sql_token": "TGE_TEMPORAL_TEMPORAL",
+      "meos_call": "tge_temporal_temporal",
+      "input_type": "wkb_temporal",
+      "return_kind": "bool",
+      "extra_headers": [],
+      "extra_args": [
+        {
+          "kind": "wkb_temporal"
+        }
+      ],
+      "build_generic": true,
+      "comment_one_liner": "Per-event tge_temporal_temporal."
+    },
+    {
+      "nebula_name": "GeoFromGeojson",
+      "sql_token": "GEO_FROM_GEOJSON",
+      "meos_call": "geo_from_geojson(std::string(jsonPtr,jsonSize).c_str())",
+      "input_type": "static_scalar",
+      "return_kind": "varsized_geom",
+      "extra_headers": [
+        "meos_geo.h"
+      ],
+      "extra_args": [],
+      "build_generic": true,
+      "primary_fields": [
+        [
+          "json",
+          "VariableSizedData"
+        ]
+      ],
+      "comment_one_liner": "Deserialise GeoJSON string to geometry WKT."
+    },
+    {
+      "nebula_name": "GeomFromHexewkb",
+      "sql_token": "GEOM_FROM_HEXEWKB",
+      "meos_call": "geom_from_hexewkb(std::string(hexPtr,hexSize).c_str())",
+      "input_type": "static_scalar",
+      "return_kind": "varsized_geom",
+      "extra_headers": [
+        "meos_geo.h"
+      ],
+      "extra_args": [],
+      "build_generic": true,
+      "primary_fields": [
+        [
+          "hex",
+          "VariableSizedData"
+        ]
+      ],
+      "comment_one_liner": "Decode hex-EWKB string to geometry WKT."
+    },
+    {
+      "nebula_name": "GeoAsHexewkb",
+      "sql_token": "GEO_AS_HEXEWKB",
+      "meos_call": "({std::string _s(wktPtr,wktSize),_es(endianPtr,endianSize);GSERIALIZED* _gs=geom_in(_s.c_str(),-1);if(!_gs)return 0u;char* _out=geo_as_hexewkb(_gs,_es.c_str());free(_gs);_out;})",
+      "input_type": "static_scalar",
+      "return_kind": "varsized_cstring",
+      "extra_headers": [
+        "meos_geo.h"
+      ],
+      "extra_args": [],
+      "build_generic": true,
+      "primary_fields": [
+        [
+          "wkt",
+          "VariableSizedData"
+        ],
+        [
+          "endian",
+          "VariableSizedData"
+        ]
+      ],
+      "comment_one_liner": "Encode geometry as hex-EWKB."
+    },
+    {
+      "nebula_name": "GeomMinBoundingCenter",
+      "sql_token": "GEOM_MIN_BOUNDING_CENTER",
+      "meos_call": "({std::string _s(wktPtr,wktSize);GSERIALIZED* _gs=geom_in(_s.c_str(),-1);if(!_gs)return 0u;MinBoundingCircle _mbc=geom_min_bounding_radius(_gs);free(_gs);_mbc.center;})",
+      "input_type": "static_scalar",
+      "return_kind": "varsized_geom",
+      "extra_headers": [
+        "meos_geo.h"
+      ],
+      "extra_args": [],
+      "build_generic": true,
+      "primary_fields": [
+        [
+          "wkt",
+          "VariableSizedData"
+        ]
+      ],
+      "comment_one_liner": "Centre of the minimum bounding circle of a geometry."
+    },
+    {
+      "nebula_name": "GeomMinBoundingRadius",
+      "sql_token": "GEOM_MIN_BOUNDING_RADIUS",
+      "meos_call": "({std::string _s(wktPtr,wktSize);GSERIALIZED* _gs=geom_in(_s.c_str(),-1);if(!_gs)return 0.0;MinBoundingCircle _mbc=geom_min_bounding_radius(_gs);double _r=_mbc.radius;if(_mbc.center)free(_mbc.center);free(_gs);_r;})",
+      "input_type": "static_scalar",
+      "return_kind": "double",
+      "extra_headers": [
+        "meos_geo.h"
+      ],
+      "extra_args": [],
+      "build_generic": true,
+      "primary_fields": [
+        [
+          "wkt",
+          "VariableSizedData"
+        ]
+      ],
+      "comment_one_liner": "Radius of the minimum bounding circle of a geometry."
+    },
+    {
+      "nebula_name": "GeoTransformPipeline",
+      "sql_token": "GEO_TRANSFORM_PIPELINE",
+      "meos_call": "({std::string _s(wktPtr,wktSize),_ps(pipelinePtr,pipelineSize);GSERIALIZED* _gs=geom_in(_s.c_str(),-1);if(!_gs)return 0u;GSERIALIZED* _res=geo_transform_pipeline(_gs,const_cast<char*>(_ps.c_str()),(int32_t)srid_to,(bool)is_forward);free(_gs);_res;})",
+      "input_type": "static_scalar",
+      "return_kind": "varsized_geom",
+      "extra_headers": [
+        "meos_geo.h"
+      ],
+      "extra_args": [],
+      "build_generic": true,
+      "primary_fields": [
+        [
+          "wkt",
+          "VariableSizedData"
+        ],
+        [
+          "pipeline",
+          "VariableSizedData"
+        ],
+        [
+          "srid_to",
+          "double"
+        ],
+        [
+          "is_forward",
+          "double"
+        ]
+      ],
+      "comment_one_liner": "Transform geometry through a coordinate pipeline."
+    },
+    {
+      "nebula_name": "GeomBuffer",
+      "sql_token": "GEOM_BUFFER",
+      "meos_call": "({std::string _s(wktPtr,wktSize),_ps(paramsPtr,paramsSize);GSERIALIZED* _gs=geom_in(_s.c_str(),-1);if(!_gs)return 0u;GSERIALIZED* _res=geom_buffer(_gs,size,_ps.c_str());free(_gs);_res;})",
+      "input_type": "static_scalar",
+      "return_kind": "varsized_geom",
+      "extra_headers": [
+        "meos_geo.h"
+      ],
+      "extra_args": [],
+      "build_generic": true,
+      "primary_fields": [
+        [
+          "wkt",
+          "VariableSizedData"
+        ],
+        [
+          "size",
+          "double"
+        ],
+        [
+          "params",
+          "VariableSizedData"
+        ]
+      ],
+      "comment_one_liner": "Compute the buffer zone around a geometry."
+    },
+    {
+      "nebula_name": "GeomRelatePattern",
+      "sql_token": "GEOM_RELATE_PATTERN",
+      "meos_call": "({std::string _s1(wkt1Ptr,wkt1Size),_s2(wkt2Ptr,wkt2Size),_sp(patternPtr,patternSize);GSERIALIZED* _gs1=geom_in(_s1.c_str(),-1);if(!_gs1)return 0.0;GSERIALIZED* _gs2=geom_in(_s2.c_str(),-1);if(!_gs2){free(_gs1);return 0.0;}bool _r=geom_relate_pattern(_gs1,_gs2,const_cast<char*>(_sp.c_str()));free(_gs1);free(_gs2);_r?1.0:0.0;})",
+      "input_type": "static_scalar",
+      "return_kind": "double",
+      "extra_headers": [
+        "meos_geo.h"
+      ],
+      "extra_args": [],
+      "build_generic": true,
+      "primary_fields": [
+        [
+          "wkt1",
+          "VariableSizedData"
+        ],
+        [
+          "wkt2",
+          "VariableSizedData"
+        ],
+        [
+          "pattern",
+          "VariableSizedData"
+        ]
+      ],
+      "comment_one_liner": "Test DE-9IM relation pattern between two geometries."
+    },
+    {
+      "nebula_name": "H3GsPointToCell",
+      "sql_token": "H3_GS_POINT_TO_CELL",
+      "meos_call": "({std::string _wkt=fmt::format(\"SRID=4326;POINT({} {})\",lon,lat);GSERIALIZED* _gs=geom_in(_wkt.c_str(),-1);if(!_gs)return 0u;H3Index _cell=h3_gs_point_to_cell(_gs,(int32_t)res);free(_gs);_cell;})",
+      "input_type": "static_scalar",
+      "return_kind": "varsized_h3out",
+      "extra_headers": [
+        "meos_h3.h",
+        "meos_geo.h"
+      ],
+      "extra_args": [],
+      "build_generic": true,
+      "primary_fields": [
+        [
+          "lon",
+          "double"
+        ],
+        [
+          "lat",
+          "double"
+        ],
+        [
+          "res",
+          "double"
+        ]
+      ],
+      "comment_one_liner": "Map (lon,lat) point to H3 cell at given resolution."
+    },
+    {
+      "nebula_name": "H3indexIn",
+      "sql_token": "H3INDEX_IN",
+      "meos_call": "(uint64_t)h3index_in(std::string(hexPtr,hexSize).c_str())",
+      "input_type": "static_scalar",
+      "return_kind": "uint64",
+      "extra_headers": [
+        "meos_h3.h"
+      ],
+      "extra_args": [],
+      "build_generic": true,
+      "primary_fields": [
+        [
+          "hex",
+          "VariableSizedData"
+        ]
+      ],
+      "comment_one_liner": "Parse H3 cell index from a hex string."
+    },
+    {
+      "nebula_name": "EintersectsTpcpointGeo",
+      "sql_token": "EINTERSECTS_TPCPOINT_GEO",
+      "meos_call": "({char* _hs=(char*)malloc(pt_hexwkbSize+1);if(!_hs)return 0.0;memcpy(_hs,pt_hexwkbPtr,pt_hexwkbSize);_hs[pt_hexwkbSize]='\\0';Pcpoint* _pt=pcpoint_from_hexwkb(_hs);free(_hs);if(!_pt)return 0.0;TInstant* _inst=tpointcloudinst_make(_pt,(TimestampTz)ts);free(_pt);if(!_inst)return 0.0;char* _gs_str=(char*)malloc(tgt_wktSize+1);if(!_gs_str){free(_inst);return 0.0;}memcpy(_gs_str,tgt_wktPtr,tgt_wktSize);_gs_str[tgt_wktSize]='\\0';GSERIALIZED* _gs=geom_in(_gs_str,-1);free(_gs_str);if(!_gs){free(_inst);return 0.0;}bool _r=eintersects_tpcpoint_geo((Temporal*)_inst,_gs);free(_inst);free(_gs);_r?1.0:0.0;})",
+      "input_type": "static_scalar",
+      "return_kind": "double",
+      "extra_headers": [
+        "meos_geo.h",
+        "meos_pointcloud.h"
+      ],
+      "extra_args": [],
+      "build_generic": true,
+      "primary_fields": [
+        [
+          "pt_hexwkb",
+          "VariableSizedData"
+        ],
+        [
+          "ts",
+          "uint64_t"
+        ],
+        [
+          "tgt_wkt",
+          "VariableSizedData"
+        ]
+      ],
+      "comment_one_liner": "Ever-intersects predicate for a tpcpoint instant and a geometry."
+    },
+    {
+      "nebula_name": "NadTpcpointGeo",
+      "sql_token": "NAD_TPCPOINT_GEO",
+      "meos_call": "({char* _hs=(char*)malloc(pt_hexwkbSize+1);if(!_hs)return 0.0;memcpy(_hs,pt_hexwkbPtr,pt_hexwkbSize);_hs[pt_hexwkbSize]='\\0';Pcpoint* _pt=pcpoint_from_hexwkb(_hs);free(_hs);if(!_pt)return 0.0;TInstant* _inst=tpointcloudinst_make(_pt,(TimestampTz)ts);free(_pt);if(!_inst)return 0.0;char* _gs_str=(char*)malloc(tgt_wktSize+1);if(!_gs_str){free(_inst);return 0.0;}memcpy(_gs_str,tgt_wktPtr,tgt_wktSize);_gs_str[tgt_wktSize]='\\0';GSERIALIZED* _gs=geom_in(_gs_str,-1);free(_gs_str);if(!_gs){free(_inst);return 0.0;}double _r=nad_tpcpoint_geo((Temporal*)_inst,_gs);free(_inst);free(_gs);_r;})",
+      "input_type": "static_scalar",
+      "return_kind": "double",
+      "extra_headers": [
+        "meos_geo.h",
+        "meos_pointcloud.h"
+      ],
+      "extra_args": [],
+      "build_generic": true,
+      "primary_fields": [
+        [
+          "pt_hexwkb",
+          "VariableSizedData"
+        ],
+        [
+          "ts",
+          "uint64_t"
+        ],
+        [
+          "tgt_wkt",
+          "VariableSizedData"
+        ]
+      ],
+      "comment_one_liner": "Nearest-approach distance for a tpcpoint instant and a geometry."
+    },
+    {
+      "nebula_name": "JsonArrayLength",
+      "sql_token": "JSON_ARRAY_LENGTH",
+      "meos_call": "({std::string _s(jsonPtr,jsonSize);text* _js=json_in(_s.c_str());if(!_js)return 0.0;int _n=json_array_length(_js);free(_js);(double)_n;})",
+      "input_type": "static_scalar",
+      "return_kind": "double",
+      "extra_headers": [
+        "meos_json.h"
+      ],
+      "extra_args": [],
+      "build_generic": true,
+      "primary_fields": [
+        [
+          "json",
+          "VariableSizedData"
+        ]
+      ],
+      "comment_one_liner": "Number of elements in a JSON array."
+    },
+    {
+      "nebula_name": "JsonTypeof",
+      "sql_token": "JSON_TYPEOF",
+      "meos_call": "({std::string _s(jsonPtr,jsonSize);text* _js=json_in(_s.c_str());if(!_js)return 0u;text* _res=json_typeof(_js);free(_js);_res;})",
+      "input_type": "static_scalar",
+      "return_kind": "varsized_json_out",
+      "extra_headers": [
+        "meos_json.h"
+      ],
+      "extra_args": [],
+      "build_generic": true,
+      "primary_fields": [
+        [
+          "json",
+          "VariableSizedData"
+        ]
+      ],
+      "comment_one_liner": "Data type of the outermost JSON element."
+    },
+    {
+      "nebula_name": "JsonArrayElementText",
+      "sql_token": "JSON_ARRAY_ELEMENT_TEXT",
+      "meos_call": "({std::string _s(jsonPtr,jsonSize);text* _js=json_in(_s.c_str());if(!_js)return 0u;text* _res=json_array_element_text(_js,(int)idx);free(_js);_res;})",
+      "input_type": "static_scalar",
+      "return_kind": "varsized_json_out",
+      "extra_headers": [
+        "meos_json.h"
+      ],
+      "extra_args": [],
+      "build_generic": true,
+      "primary_fields": [
+        [
+          "json",
+          "VariableSizedData"
+        ],
+        [
+          "idx",
+          "double"
+        ]
+      ],
+      "comment_one_liner": "Text value of a JSON array element at a given index."
+    },
+    {
+      "nebula_name": "JsonObjectFieldText",
+      "sql_token": "JSON_OBJECT_FIELD_TEXT",
+      "meos_call": "({std::string _sj(jsonPtr,jsonSize),_sk(keyPtr,keySize);text* _js=json_in(_sj.c_str());if(!_js)return 0u;text* _key=cstring_to_text(_sk.c_str());text* _res=json_object_field_text(_js,_key);free(_js);free(_key);_res;})",
+      "input_type": "static_scalar",
+      "return_kind": "varsized_json_out",
+      "extra_headers": [
+        "meos_json.h"
+      ],
+      "extra_args": [],
+      "build_generic": true,
+      "primary_fields": [
+        [
+          "json",
+          "VariableSizedData"
+        ],
+        [
+          "key",
+          "VariableSizedData"
+        ]
+      ],
+      "comment_one_liner": "Text value of a JSON object field by key."
+    },
+    {
+      "nebula_name": "FloatspanMake",
+      "sql_token": "FLOATSPAN_MAKE",
+      "meos_call": "({Span* _sp=floatspan_make(lower,upper,lower_inc!=0.0,upper_inc!=0.0);if(!_sp)return 0u;char* _out=floatspan_out(_sp,-1);free(_sp);_out;})",
+      "input_type": "static_scalar",
+      "return_kind": "varsized_floatspan",
+      "extra_headers": [],
+      "extra_args": [],
+      "build_generic": true,
+      "primary_fields": [
+        [
+          "lower",
+          "double"
+        ],
+        [
+          "upper",
+          "double"
+        ],
+        [
+          "lower_inc",
+          "double"
+        ],
+        [
+          "upper_inc",
+          "double"
+        ]
+      ],
+      "comment_one_liner": "Construct a float span from bounds and inclusivity flags."
+    },
+    {
+      "nebula_name": "IntspanMake",
+      "sql_token": "INTSPAN_MAKE",
+      "meos_call": "({Span* _sp=intspan_make((int)lower,(int)upper,lower_inc!=0.0,upper_inc!=0.0);if(!_sp)return 0u;char* _out=intspan_out(_sp);free(_sp);_out;})",
+      "input_type": "static_scalar",
+      "return_kind": "varsized_intspan",
+      "extra_headers": [],
+      "extra_args": [],
+      "build_generic": true,
+      "primary_fields": [
+        [
+          "lower",
+          "double"
+        ],
+        [
+          "upper",
+          "double"
+        ],
+        [
+          "lower_inc",
+          "double"
+        ],
+        [
+          "upper_inc",
+          "double"
+        ]
+      ],
+      "comment_one_liner": "Construct an integer span from bounds and inclusivity flags."
+    }
+  ]
+}
