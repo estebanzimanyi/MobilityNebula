@@ -1,3 +1,17 @@
+/*
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        https://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+*/
+
 #include <Functions/Meos/TemporalAtStBoxPhysicalFunction.hpp>
 
 #include <Functions/PhysicalFunction.hpp>
@@ -10,40 +24,27 @@
 #include <ExecutionContext.hpp>
 #include <fmt/format.h>
 #include <function.hpp>
-#include <cctype>
-#include <iostream>
 #include <string>
 #include <utility>
 #include <val.hpp>
 
+extern "C" {
+#include <meos.h>
+#include <meos_geo.h>
+}
+
 namespace NES {
 
 TemporalAtStBoxPhysicalFunction::TemporalAtStBoxPhysicalFunction(PhysicalFunction lonFunction,
-                                                                 PhysicalFunction latFunction,
-                                                                 PhysicalFunction timestampFunction,
-                                                                 PhysicalFunction stboxFunction)
-    : hasBorderParam(false)
+                                                          PhysicalFunction latFunction,
+                                                          PhysicalFunction timestampFunction,
+                                                          PhysicalFunction geometryFunction)
 {
     parameterFunctions.reserve(4);
     parameterFunctions.push_back(std::move(lonFunction));
     parameterFunctions.push_back(std::move(latFunction));
     parameterFunctions.push_back(std::move(timestampFunction));
-    parameterFunctions.push_back(std::move(stboxFunction));
-}
-
-TemporalAtStBoxPhysicalFunction::TemporalAtStBoxPhysicalFunction(PhysicalFunction lonFunction,
-                                                                 PhysicalFunction latFunction,
-                                                                 PhysicalFunction timestampFunction,
-                                                                 PhysicalFunction stboxFunction,
-                                                                 PhysicalFunction borderInclusiveFunction)
-    : hasBorderParam(true)
-{
-    parameterFunctions.reserve(5);
-    parameterFunctions.push_back(std::move(lonFunction));
-    parameterFunctions.push_back(std::move(latFunction));
-    parameterFunctions.push_back(std::move(timestampFunction));
-    parameterFunctions.push_back(std::move(stboxFunction));
-    parameterFunctions.push_back(std::move(borderInclusiveFunction));
+    parameterFunctions.push_back(std::move(geometryFunction));
 }
 
 VarVal TemporalAtStBoxPhysicalFunction::execute(const Record& record, ArenaRef& arena) const
@@ -55,74 +56,69 @@ VarVal TemporalAtStBoxPhysicalFunction::execute(const Record& record, ArenaRef& 
         parameterValues.emplace_back(function.execute(record, arena));
     }
 
-    auto lon = parameterValues[0].cast<nautilus::val<double>>();
-    auto lat = parameterValues[1].cast<nautilus::val<double>>();
+    auto lon       = parameterValues[0].cast<nautilus::val<double>>();
+    auto lat       = parameterValues[1].cast<nautilus::val<double>>();
     auto timestamp = parameterValues[2].cast<nautilus::val<uint64_t>>();
-    auto stboxLiteral = parameterValues[3].cast<VariableSizedData>();
-
-    nautilus::val<bool> borderVal = nautilus::val<bool>(true);
-    if (hasBorderParam && parameterValues.size() >= 5)
-    {
-        borderVal = parameterValues[4].cast<nautilus::val<bool>>();
-    }
+    auto geometry  = parameterValues[3].cast<VariableSizedData>();
 
     const auto result = nautilus::invoke(
         +[](double lonValue,
             double latValue,
             uint64_t timestampValue,
-            const char* stboxPtr,
-            uint32_t stboxSize,
-            bool borderInclusiveFlag) -> int {
+            const char* geometryPtr,
+            uint32_t geometrySize) -> int {
             try
             {
                 MEOS::Meos::ensureMeosInitialized();
+                if (!(lonValue >= -180.0 && lonValue <= 180.0 && latValue >= -90.0 && latValue <= 90.0)) return 0;
+
                 const std::string timestampString = MEOS::Meos::convertEpochToTimestamp(timestampValue);
                 std::string temporalGeometryWkt = fmt::format("SRID=4326;Point({} {})@{}", lonValue, latValue, timestampString);
-                std::string stboxWkt(stboxPtr, stboxSize);
-                while (!stboxWkt.empty() && (stboxWkt.front()=='\'' || stboxWkt.front()=='"')) stboxWkt.erase(stboxWkt.begin());
-                while (!stboxWkt.empty() && (stboxWkt.back()=='\'' || stboxWkt.back()=='"')) stboxWkt.pop_back();
-                if (temporalGeometryWkt.empty() || stboxWkt.empty()) return 0;
+                std::string staticGeometryWkt(geometryPtr, geometrySize);
+
+                while (!staticGeometryWkt.empty() && (staticGeometryWkt.front() == '\'' || staticGeometryWkt.front() == '"'))
+                    staticGeometryWkt.erase(staticGeometryWkt.begin());
+                while (!staticGeometryWkt.empty() && (staticGeometryWkt.back() == '\'' || staticGeometryWkt.back() == '"'))
+                    staticGeometryWkt.pop_back();
+
+                if (temporalGeometryWkt.empty() || staticGeometryWkt.empty()) return 0;
 
                 MEOS::Meos::TemporalGeometry temporalGeometry(temporalGeometryWkt);
                 if (!temporalGeometry.getGeometry()) return 0;
-                MEOS::Meos::SpatioTemporalBox stbox(stboxWkt);
-                if (!stbox.getBox()) return 0;
-                MEOS::Meos::TemporalHolder clipped(MEOS::Meos::safe_tgeo_at_stbox(temporalGeometry.getGeometry(), stbox.getBox(), borderInclusiveFlag));
-                return clipped.get() != nullptr ? 1 : 0;
+                MEOS::Meos::StaticGeometry staticGeometry(staticGeometryWkt);
+                if (!staticGeometry.getGeometry()) return 0;
+
+                // MEOS restriction call — returns Temporal* (non-null if the
+                // input survived the restriction, null if clipped/empty).
+                // For per-event single-instant inputs this collapses to a
+                // filter predicate: 1 if the point survives, 0 if clipped.
+                Temporal* clipped = tgeo_at_stbox(temporalGeometry.getGeometry(),
+                                                staticGeometry.getGeometry());
+                if (clipped == nullptr) return 0;
+                free(clipped);
+                return 1;
             }
-            catch (...) { return -1; }
+            catch (const std::exception&)
+            {
+                return 0;
+            }
         },
-        lon,
-        lat,
-        timestamp,
-        stboxLiteral.getContent(),
-        stboxLiteral.getContentSize(),
-        borderVal);
+        lon, lat, timestamp, geometry.getContent(), geometry.getContentSize());
 
     return VarVal(result);
 }
 
-PhysicalFunctionRegistryReturnType
-PhysicalFunctionGeneratedRegistrar::RegisterTemporalAtStBoxPhysicalFunction(PhysicalFunctionRegistryArguments arguments)
+PhysicalFunctionRegistryReturnType PhysicalFunctionGeneratedRegistrar::RegisterTemporalAtStBoxPhysicalFunction(
+    PhysicalFunctionRegistryArguments arguments)
 {
-    if (arguments.childFunctions.size() == 4)
-    {
-        return TemporalAtStBoxPhysicalFunction(arguments.childFunctions[0],
-                                                arguments.childFunctions[1],
-                                                arguments.childFunctions[2],
-                                                arguments.childFunctions[3]);
-    }
-    if (arguments.childFunctions.size() == 5)
-    {
-        return TemporalAtStBoxPhysicalFunction(arguments.childFunctions[0],
-                                                arguments.childFunctions[1],
-                                                arguments.childFunctions[2],
-                                                arguments.childFunctions[3],
-                                                arguments.childFunctions[4]);
-    }
-    PRECONDITION(false,
-                 "TemporalAtStBoxPhysicalFunction requires 4 or 5 child functions, but got {}",
+    PRECONDITION(arguments.childFunctions.size() == 4,
+                 "TemporalAtStBoxPhysicalFunction requires 4 children but got {}",
                  arguments.childFunctions.size());
+    auto arg0 = std::move(arguments.childFunctions[0]);
+    auto arg1 = std::move(arguments.childFunctions[1]);
+    auto arg2 = std::move(arguments.childFunctions[2]);
+    auto arg3 = std::move(arguments.childFunctions[3]);
+    return TemporalAtStBoxPhysicalFunction(std::move(arg0), std::move(arg1), std::move(arg2), std::move(arg3));
 }
 
 } // namespace NES
