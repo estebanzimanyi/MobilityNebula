@@ -1,0 +1,23 @@
+name: Codegen Drift Guard
+
+on:
+  pull_request:
+
+jobs:
+  codegen-drift-guard:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Regenerate the per-event operator surface from the committed descriptors
+        run: python tools/codegen/gen_all.py --output-root .
+      - name: Assert the committed operators equal the generator output
+        run: |
+          if ! git diff --quiet; then
+            echo "::error::The MEOS operator surface drifted from the generator output."
+            echo "Regenerate with: python tools/codegen/gen_all.py --output-root ."
+            git diff --stat
+            exit 1
+          fi
