@@ -1,0 +1,159 @@
+{
+  "_comment": "Spatial predicate descriptor for 9 missing tgeo/tcbuffer operators (W148-wave gap-fill); input verify/nebula-gen-spatial",
+  "operators": [
+    {
+      "nebula_name": "EcoversTgeoGeo",
+      "sql_token": "ECOVERS_TGEO_GEO",
+      "meos_call": "ecovers_tgeo_geo",
+      "args": [
+        {"name": "lon",       "nautilus_type": "double",          "cpp_type": "double"},
+        {"name": "lat",       "nautilus_type": "double",          "cpp_type": "double"},
+        {"name": "timestamp", "nautilus_type": "uint64_t",        "cpp_type": "uint64_t"},
+        {"name": "geometry",  "nautilus_type": "VariableSizedData", "cpp_type": "const char*"}
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_temporal_point": true,
+      "comment_one_liner": "Per-event ever-covers between a single-instant tgeo built from event fields and a static geometry."
+    },
+    {
+      "nebula_name": "EdisjointTgeoGeo",
+      "sql_token": "EDISJOINT_TGEO_GEO",
+      "meos_call": "edisjoint_tgeo_geo",
+      "args": [
+        {"name": "lon",       "nautilus_type": "double",          "cpp_type": "double"},
+        {"name": "lat",       "nautilus_type": "double",          "cpp_type": "double"},
+        {"name": "timestamp", "nautilus_type": "uint64_t",        "cpp_type": "uint64_t"},
+        {"name": "geometry",  "nautilus_type": "VariableSizedData", "cpp_type": "const char*"}
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_temporal_point": true,
+      "comment_one_liner": "Per-event ever-disjoint between a single-instant tgeo built from event fields and a static geometry."
+    },
+    {
+      "nebula_name": "EdwithinTgeoGeo",
+      "sql_token": "EDWITHIN_TGEO_GEO",
+      "meos_call": "edwithin_tgeo_geo",
+      "args": [
+        {"name": "lon",       "nautilus_type": "double",          "cpp_type": "double"},
+        {"name": "lat",       "nautilus_type": "double",          "cpp_type": "double"},
+        {"name": "timestamp", "nautilus_type": "uint64_t",        "cpp_type": "uint64_t"},
+        {"name": "geometry",  "nautilus_type": "VariableSizedData", "cpp_type": "const char*"},
+        {"name": "dist",      "nautilus_type": "double",          "cpp_type": "double"}
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_temporal_point_with_dist": true,
+      "comment_one_liner": "Per-event ever-within-distance between a single-instant tgeo and a static geometry."
+    },
+    {
+      "nebula_name": "NadTgeoTgeo",
+      "sql_token": "NAD_TGEO_TGEO",
+      "meos_call": "nad_tgeo_tgeo",
+      "args": [
+        {"name": "lonA", "nautilus_type": "double",   "cpp_type": "double"},
+        {"name": "latA", "nautilus_type": "double",   "cpp_type": "double"},
+        {"name": "tsA",  "nautilus_type": "uint64_t", "cpp_type": "uint64_t"},
+        {"name": "lonB", "nautilus_type": "double",   "cpp_type": "double"},
+        {"name": "latB", "nautilus_type": "double",   "cpp_type": "double"},
+        {"name": "tsB",  "nautilus_type": "uint64_t", "cpp_type": "uint64_t"}
+      ],
+      "return_type": "double",
+      "nautilus_return": "FLOAT64",
+      "build_two_temporal_points": true,
+      "comment_one_liner": "Per-event nearest-approach distance between two single-instant tgeo built from event fields."
+    },
+    {
+      "nebula_name": "EcontainsTcbufferTcbuffer",
+      "sql_token": "ECONTAINS_TCBUFFER_TCBUFFER",
+      "meos_call": "econtains_tcbuffer_tcbuffer",
+      "args": [
+        {"name": "lonA",    "nautilus_type": "double",   "cpp_type": "double"},
+        {"name": "latA",    "nautilus_type": "double",   "cpp_type": "double"},
+        {"name": "radiusA", "nautilus_type": "double",   "cpp_type": "double"},
+        {"name": "tsA",     "nautilus_type": "uint64_t", "cpp_type": "uint64_t"},
+        {"name": "lonB",    "nautilus_type": "double",   "cpp_type": "double"},
+        {"name": "latB",    "nautilus_type": "double",   "cpp_type": "double"},
+        {"name": "radiusB", "nautilus_type": "double",   "cpp_type": "double"},
+        {"name": "tsB",     "nautilus_type": "uint64_t", "cpp_type": "uint64_t"}
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_two_tcbuffer_points": true,
+      "comment_one_liner": "Per-event ever-contains between two single-instant tcbuffer built from event fields."
+    },
+    {
+      "nebula_name": "AcontainsTcbufferTcbuffer",
+      "sql_token": "ACONTAINS_TCBUFFER_TCBUFFER",
+      "meos_call": "acontains_tcbuffer_tcbuffer",
+      "args": [
+        {"name": "lonA",    "nautilus_type": "double",   "cpp_type": "double"},
+        {"name": "latA",    "nautilus_type": "double",   "cpp_type": "double"},
+        {"name": "radiusA", "nautilus_type": "double",   "cpp_type": "double"},
+        {"name": "tsA",     "nautilus_type": "uint64_t", "cpp_type": "uint64_t"},
+        {"name": "lonB",    "nautilus_type": "double",   "cpp_type": "double"},
+        {"name": "latB",    "nautilus_type": "double",   "cpp_type": "double"},
+        {"name": "radiusB", "nautilus_type": "double",   "cpp_type": "double"},
+        {"name": "tsB",     "nautilus_type": "uint64_t", "cpp_type": "uint64_t"}
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_two_tcbuffer_points": true,
+      "comment_one_liner": "Per-event always-contains between two single-instant tcbuffer built from event fields."
+    },
+    {
+      "nebula_name": "EdisjointTcbufferTcbuffer",
+      "sql_token": "EDISJOINT_TCBUFFER_TCBUFFER",
+      "meos_call": "edisjoint_tcbuffer_tcbuffer",
+      "args": [
+        {"name": "lonA",    "nautilus_type": "double",   "cpp_type": "double"},
+        {"name": "latA",    "nautilus_type": "double",   "cpp_type": "double"},
+        {"name": "radiusA", "nautilus_type": "double",   "cpp_type": "double"},
+        {"name": "tsA",     "nautilus_type": "uint64_t", "cpp_type": "uint64_t"},
+        {"name": "lonB",    "nautilus_type": "double",   "cpp_type": "double"},
+        {"name": "latB",    "nautilus_type": "double",   "cpp_type": "double"},
+        {"name": "radiusB", "nautilus_type": "double",   "cpp_type": "double"},
+        {"name": "tsB",     "nautilus_type": "uint64_t", "cpp_type": "uint64_t"}
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_two_tcbuffer_points": true,
+      "comment_one_liner": "Per-event ever-disjoint between two single-instant tcbuffer built from event fields."
+    },
+    {
+      "nebula_name": "EdwithinTcbufferCbuffer",
+      "sql_token": "EDWITHIN_TCBUFFER_CBUFFER",
+      "meos_call": "edwithin_tcbuffer_cbuffer",
+      "args": [
+        {"name": "lon",      "nautilus_type": "double",          "cpp_type": "double"},
+        {"name": "lat",      "nautilus_type": "double",          "cpp_type": "double"},
+        {"name": "radius",   "nautilus_type": "double",          "cpp_type": "double"},
+        {"name": "timestamp","nautilus_type": "uint64_t",        "cpp_type": "uint64_t"},
+        {"name": "cbufLit",  "nautilus_type": "VariableSizedData", "cpp_type": "const char*"},
+        {"name": "dist",     "nautilus_type": "double",          "cpp_type": "double"}
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_tcbuffer_point_cbuffer_with_dist": true,
+      "comment_one_liner": "Per-event ever-within-distance between a single-instant tcbuffer and a static cbuffer."
+    },
+    {
+      "nebula_name": "AdwithinTcbufferCbuffer",
+      "sql_token": "ADWITHIN_TCBUFFER_CBUFFER",
+      "meos_call": "adwithin_tcbuffer_cbuffer",
+      "args": [
+        {"name": "lon",      "nautilus_type": "double",          "cpp_type": "double"},
+        {"name": "lat",      "nautilus_type": "double",          "cpp_type": "double"},
+        {"name": "radius",   "nautilus_type": "double",          "cpp_type": "double"},
+        {"name": "timestamp","nautilus_type": "uint64_t",        "cpp_type": "uint64_t"},
+        {"name": "cbufLit",  "nautilus_type": "VariableSizedData", "cpp_type": "const char*"},
+        {"name": "dist",     "nautilus_type": "double",          "cpp_type": "double"}
+      ],
+      "return_type": "int",
+      "nautilus_return": "INT32",
+      "build_tcbuffer_point_cbuffer_with_dist": true,
+      "comment_one_liner": "Per-event always-within-distance between a single-instant tcbuffer and a static cbuffer."
+    }
+  ]
+}

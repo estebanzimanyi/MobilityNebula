@@ -1,0 +1,85 @@
+{
+  "_comment": "tfloat/tint unary transform family descriptor (8 ops)",
+  "operators": [
+    {
+      "nebula_name": "TfloatCeil",
+      "sql_token": "TFLOAT_CEIL",
+      "meos_call": "tfloat_ceil",
+      "build_generic": true,
+      "input_type": "tfloat",
+      "extra_args": [],
+      "return_kind": "extract_double",
+      "comment_one_liner": "Per-event tfloat_ceil: single-instant tfloat transform, value extracted -> double."
+    },
+    {
+      "nebula_name": "TfloatExp",
+      "sql_token": "TFLOAT_EXP",
+      "meos_call": "tfloat_exp",
+      "build_generic": true,
+      "input_type": "tfloat",
+      "extra_args": [],
+      "return_kind": "extract_double",
+      "comment_one_liner": "Per-event tfloat_exp: single-instant tfloat transform, value extracted -> double."
+    },
+    {
+      "nebula_name": "TfloatFloor",
+      "sql_token": "TFLOAT_FLOOR",
+      "meos_call": "tfloat_floor",
+      "build_generic": true,
+      "input_type": "tfloat",
+      "extra_args": [],
+      "return_kind": "extract_double",
+      "comment_one_liner": "Per-event tfloat_floor: single-instant tfloat transform, value extracted -> double."
+    },
+    {
+      "nebula_name": "TfloatLn",
+      "sql_token": "TFLOAT_LN",
+      "meos_call": "tfloat_ln",
+      "build_generic": true,
+      "input_type": "tfloat",
+      "extra_args": [],
+      "return_kind": "extract_double",
+      "comment_one_liner": "Per-event tfloat_ln: single-instant tfloat transform, value extracted -> double."
+    },
+    {
+      "nebula_name": "TfloatLog10",
+      "sql_token": "TFLOAT_LOG10",
+      "meos_call": "tfloat_log10",
+      "build_generic": true,
+      "input_type": "tfloat",
+      "extra_args": [],
+      "return_kind": "extract_double",
+      "comment_one_liner": "Per-event tfloat_log10: single-instant tfloat transform, value extracted -> double."
+    },
+    {
+      "nebula_name": "TfloatRadians",
+      "sql_token": "TFLOAT_RADIANS",
+      "meos_call": "tfloat_radians",
+      "build_generic": true,
+      "input_type": "tfloat",
+      "extra_args": [],
+      "return_kind": "extract_double",
+      "comment_one_liner": "Per-event tfloat_radians: single-instant tfloat transform, value extracted -> double."
+    },
+    {
+      "nebula_name": "TfloatToTint",
+      "sql_token": "TFLOAT_TO_TINT",
+      "meos_call": "tfloat_to_tint",
+      "build_generic": true,
+      "input_type": "tfloat",
+      "extra_args": [],
+      "return_kind": "extract_int",
+      "comment_one_liner": "Per-event tfloat_to_tint: single-instant tfloat transform, value extracted -> int."
+    },
+    {
+      "nebula_name": "TintToTfloat",
+      "sql_token": "TINT_TO_TFLOAT",
+      "meos_call": "tint_to_tfloat",
+      "build_generic": true,
+      "input_type": "tfloat",
+      "extra_args": [],
+      "return_kind": "extract_double",
+      "comment_one_liner": "Per-event tint_to_tfloat: single-instant tfloat transform, value extracted -> double."
+    }
+  ]
+}
