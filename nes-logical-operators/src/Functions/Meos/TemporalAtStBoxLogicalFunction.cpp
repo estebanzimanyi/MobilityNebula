@@ -1,3 +1,17 @@
+/*
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        https://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+*/
+
 #include <Functions/Meos/TemporalAtStBoxLogicalFunction.hpp>
 
 #include <DataTypes/DataType.hpp>
@@ -13,33 +27,16 @@ namespace NES
 {
 
 TemporalAtStBoxLogicalFunction::TemporalAtStBoxLogicalFunction(LogicalFunction lon,
-                                                               LogicalFunction lat,
-                                                               LogicalFunction timestamp,
-                                                               LogicalFunction stbox)
+                                          LogicalFunction lat,
+                                          LogicalFunction timestamp,
+                                          LogicalFunction geometry)
     : dataType(DataTypeProvider::provideDataType(DataType::Type::INT32))
-    , hasBorderParam(false)
 {
     parameters.reserve(4);
     parameters.push_back(std::move(lon));
     parameters.push_back(std::move(lat));
     parameters.push_back(std::move(timestamp));
-    parameters.push_back(std::move(stbox));
-}
-
-TemporalAtStBoxLogicalFunction::TemporalAtStBoxLogicalFunction(LogicalFunction lon,
-                                                               LogicalFunction lat,
-                                                               LogicalFunction timestamp,
-                                                               LogicalFunction stbox,
-                                                               LogicalFunction borderInclusive)
-    : dataType(DataTypeProvider::provideDataType(DataType::Type::INT32))
-    , hasBorderParam(true)
-{
-    parameters.reserve(5);
-    parameters.push_back(std::move(lon));
-    parameters.push_back(std::move(lat));
-    parameters.push_back(std::move(timestamp));
-    parameters.push_back(std::move(stbox));
-    parameters.push_back(std::move(borderInclusive));
+    parameters.push_back(std::move(geometry));
 }
 
 DataType TemporalAtStBoxLogicalFunction::getDataType() const
@@ -61,12 +58,9 @@ std::vector<LogicalFunction> TemporalAtStBoxLogicalFunction::getChildren() const
 
 LogicalFunction TemporalAtStBoxLogicalFunction::withChildren(const std::vector<LogicalFunction>& children) const
 {
-    PRECONDITION(children.size() == 4 || children.size() == 5,
-                 "TemporalAtStBoxLogicalFunction requires 4 or 5 children, but got {}",
-                 children.size());
+    PRECONDITION(children.size() == 4, "TemporalAtStBoxLogicalFunction requires 4 children, but got {}", children.size());
     auto copy = *this;
     copy.parameters = children;
-    copy.hasBorderParam = (children.size() == 5);
     return copy;
 }
 
@@ -79,7 +73,7 @@ bool TemporalAtStBoxLogicalFunction::operator==(const LogicalFunctionConcept& rh
 {
     if (const auto* other = dynamic_cast<const TemporalAtStBoxLogicalFunction*>(&rhs))
     {
-        return parameters == other->parameters && hasBorderParam == other->hasBorderParam;
+        return parameters == other->parameters;
     }
     return false;
 }
@@ -106,54 +100,32 @@ LogicalFunction TemporalAtStBoxLogicalFunction::withInferredDataType(const Schem
     {
         newChildren.emplace_back(child.withInferredDataType(schema));
     }
-
-    INVARIANT(newChildren[0].getDataType().isNumeric(), "Longitude must be numeric, but was: {}", newChildren[0].getDataType());
-    INVARIANT(newChildren[1].getDataType().isNumeric(), "Latitude must be numeric, but was: {}", newChildren[1].getDataType());
-    INVARIANT(newChildren[2].getDataType().isType(DataType::Type::UINT64), "Timestamp must be UINT64, but was: {}", newChildren[2].getDataType());
-    INVARIANT(newChildren[3].getDataType().isType(DataType::Type::VARSIZED), "STBOX literal must be VARSIZED, but was: {}", newChildren[3].getDataType());
-    if (newChildren.size() == 5)
-    {
-        INVARIANT(newChildren[4].getDataType().isType(DataType::Type::BOOLEAN),
-                  "Border flag must be BOOL, but was: {}",
-                  newChildren[4].getDataType());
-    }
-
     return withChildren(newChildren);
 }
 
 SerializableFunction TemporalAtStBoxLogicalFunction::serialize() const
 {
-    SerializableFunction serialized;
-    serialized.set_function_type(NAME);
+    SerializableFunction proto;
+    proto.set_function_type(std::string(NAME));
+    DataTypeSerializationUtil::serializeDataType(dataType, proto.mutable_data_type());
     for (const auto& child : parameters)
     {
-        serialized.add_children()->CopyFrom(child.serialize());
+        proto.add_children()->CopyFrom(child.serialize());
     }
-    DataTypeSerializationUtil::serializeDataType(getDataType(), serialized.mutable_data_type());
-    return serialized;
+    return proto;
 }
 
-LogicalFunctionRegistryReturnType
-LogicalFunctionGeneratedRegistrar::RegisterTemporalAtStBoxLogicalFunction(LogicalFunctionRegistryArguments arguments)
+LogicalFunctionRegistryReturnType LogicalFunctionGeneratedRegistrar::RegisterTemporalAtStBoxLogicalFunction(
+    LogicalFunctionRegistryArguments arguments)
 {
-    if (arguments.children.size() == 4)
-    {
-        return TemporalAtStBoxLogicalFunction(arguments.children[0],
-                                              arguments.children[1],
-                                              arguments.children[2],
-                                              arguments.children[3]);
-    }
-    if (arguments.children.size() == 5)
-    {
-        return TemporalAtStBoxLogicalFunction(arguments.children[0],
-                                              arguments.children[1],
-                                              arguments.children[2],
-                                              arguments.children[3],
-                                              arguments.children[4]);
-    }
-    PRECONDITION(false,
-                 "TemporalAtStBoxLogicalFunction requires 4 or 5 children, but got {}",
+    PRECONDITION(arguments.children.size() == 4,
+                 "TemporalAtStBoxLogicalFunction requires 4 children but got {}",
                  arguments.children.size());
+    auto arg0 = std::move(arguments.children[0]);
+    auto arg1 = std::move(arguments.children[1]);
+    auto arg2 = std::move(arguments.children[2]);
+    auto arg3 = std::move(arguments.children[3]);
+    return TemporalAtStBoxLogicalFunction(std::move(arg0), std::move(arg1), std::move(arg2), std::move(arg3));
 }
 
 } // namespace NES
