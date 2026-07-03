@@ -13973,6 +13973,31 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             }
             break;
         /* END CODEGEN AGGREGATION GLUE: TPOINT_TWCENTROID_EXP (case-switch) */
+        /* BEGIN CODEGEN AGGREGATION GLUE: TEMPORAL_TNUMBER_TW_AVG (case-switch) */
+        case AntlrSQLLexer::TEMPORAL_TNUMBER_TW_AVG:
+            // Time-weighted average of values across the per-(window, group) tfloat sequence.
+            if (helpers.top().functionBuilder.size() != 2) {
+                throw InvalidQuerySyntax("TEMPORAL_TNUMBER_TW_AVG requires exactly two arguments (value, timestamp), but got {}", helpers.top().functionBuilder.size());
+            }
+            {
+                const auto timestampFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+                const auto valueFunction = helpers.top().functionBuilder.back();
+                helpers.top().functionBuilder.pop_back();
+
+                if (!valueFunction.tryGet<FieldAccessLogicalFunction>() ||
+                    !timestampFunction.tryGet<FieldAccessLogicalFunction>()) {
+                    throw InvalidQuerySyntax("TEMPORAL_TNUMBER_TW_AVG arguments must be field references");
+                }
+
+                helpers.top().windowAggs.push_back(
+                    TemporalTNumberTwAvgAggregationLogicalFunction::create(valueFunction.get<FieldAccessLogicalFunction>(),
+                                                                    timestampFunction.get<FieldAccessLogicalFunction>()));
+                helpers.top().functionBuilder.push_back(valueFunction);
+            }
+            break;
+        /* END CODEGEN AGGREGATION GLUE: TEMPORAL_TNUMBER_TW_AVG (case-switch) */
+
 
 
 
@@ -14979,6 +15004,21 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
                 helpers.top().windowAggs.push_back(TpointTwcentroidExpAggregationLogicalFunction::create(lon, lat, ts));
             }
             /* END CODEGEN AGGREGATION GLUE: TPOINT_TWCENTROID_EXP (funcName chain) */
+            /* BEGIN CODEGEN AGGREGATION GLUE: TEMPORAL_TNUMBER_TW_AVG (funcName chain) */
+            else if (funcName == "TEMPORAL_TNUMBER_TW_AVG")
+            {
+                if (helpers.top().functionBuilder.size() < 2)
+                {
+                    throw InvalidQuerySyntax("TEMPORAL_TNUMBER_TW_AVG requires two arguments at {}", context->getText());
+                }
+                const auto ts = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                const auto value = helpers.top().functionBuilder.back().get<FieldAccessLogicalFunction>();
+                helpers.top().functionBuilder.pop_back();
+                helpers.top().windowAggs.push_back(TemporalTNumberTwAvgAggregationLogicalFunction::create(value, ts));
+            }
+            /* END CODEGEN AGGREGATION GLUE: TEMPORAL_TNUMBER_TW_AVG (funcName chain) */
+
 
 
 

@@ -86,7 +86,7 @@ namespace NES
  *
  * Three-input (lon, lat, ts) tgeo aggregation. Lift accumulates the events
  * into a paged vector; lower assembles the per-(window, group) trajectory
- * and calls MEOS `{meos_scalar_fn}` to fold it to a single scalar.
+ * and calls MEOS `{comment_meos_fn}` to fold it to a single scalar.
  */
 class {nebula_name}AggregationLogicalFunction : public WindowAggregationLogicalFunction
 {{
@@ -149,7 +149,7 @@ namespace NES
  *
  * Two-input (value, ts) tnumber aggregation. Lift accumulates the events
  * into a paged vector; lower assembles the per-(window, group) tnumber
- * sequence and calls MEOS `{meos_scalar_fn}` to fold it to a single scalar.
+ * sequence and calls MEOS `{comment_meos_fn}` to fold it to a single scalar.
  */
 class {nebula_name}AggregationLogicalFunction : public WindowAggregationLogicalFunction
 {{
@@ -404,7 +404,7 @@ NES::SerializableAggregationFunction {nebula_name}AggregationLogicalFunction::se
 AggregationLogicalFunctionRegistryReturnType AggregationLogicalFunctionGeneratedRegistrar::Register{nebula_name}AggregationLogicalFunction(
     AggregationLogicalFunctionRegistryArguments arguments)
 {{
-    // serializeTemporalSequence only has a 4-field (lon, lat, ts, as) form, so
+__REGISTRY_TNUMBER_PREFIX__    // serializeTemporalSequence only has a 4-field (lon, lat, ts, as) form, so
     // the two-field (value, ts) shape packs the value field twice; fields[2] is
     // that duplicate and is ignored here — the alias is fields[3].
     if (arguments.fields.size() == 4)
@@ -805,7 +805,7 @@ void {nebula_name}AggregationPhysicalFunction::cleanup(nautilus::val<Aggregation
 AggregationPhysicalFunctionRegistryReturnType AggregationPhysicalFunctionGeneratedRegistrar::Register{nebula_name}AggregationPhysicalFunction(
     AggregationPhysicalFunctionRegistryArguments)
 {{
-    throw std::runtime_error("{class_name_token} aggregation cannot be created through the registry. "
+    throw std::runtime_error("{registry_label} aggregation cannot be created through the registry. "
                              "It requires three field functions (longitude, latitude, timestamp)");
 }}
 
@@ -1059,7 +1059,7 @@ void {nebula_name}AggregationPhysicalFunction::cleanup(nautilus::val<Aggregation
 AggregationPhysicalFunctionRegistryReturnType AggregationPhysicalFunctionGeneratedRegistrar::Register{nebula_name}AggregationPhysicalFunction(
     AggregationPhysicalFunctionRegistryArguments)
 {{
-    throw std::runtime_error("{class_name_token} aggregation cannot be created through the registry. "
+    throw std::runtime_error("{registry_label} aggregation cannot be created through the registry. "
                              "It requires two field functions (value, timestamp)");
 }}
 
@@ -1566,7 +1566,7 @@ void {nebula_name}AggregationPhysicalFunction::cleanup(nautilus::val<Aggregation
 AggregationPhysicalFunctionRegistryReturnType AggregationPhysicalFunctionGeneratedRegistrar::Register{nebula_name}AggregationPhysicalFunction(
     AggregationPhysicalFunctionRegistryArguments)
 {{
-    throw std::runtime_error("{class_name_token} aggregation cannot be created through the registry. "
+    throw std::runtime_error("{registry_label} aggregation cannot be created through the registry. "
                              "It requires three field functions (longitude, latitude, timestamp)");
 }}
 
@@ -1802,7 +1802,7 @@ void {nebula_name}AggregationPhysicalFunction::cleanup(nautilus::val<Aggregation
 AggregationPhysicalFunctionRegistryReturnType AggregationPhysicalFunctionGeneratedRegistrar::Register{nebula_name}AggregationPhysicalFunction(
     AggregationPhysicalFunctionRegistryArguments)
 {{
-    throw std::runtime_error("{class_name_token} aggregation cannot be created through the registry. "
+    throw std::runtime_error("{registry_label} aggregation cannot be created through the registry. "
                              "It requires two field functions (value, timestamp)");
 }}
 
@@ -2281,11 +2281,781 @@ PHYSICAL_CPP_TNPOINT_EXPAND_WKB = _swap_once(
 
 
 # ===========================================================================
+# Span-slot physical template (return_mode "span_slot").
+#
+# State is a Span** slot (not a paged vector).  Each event folds directly
+# into the running Span via the typed *_extent_transfn; combine merges two
+# Span slots with super_union_span_span; lower serialises with the typed
+# *span_out and frees.  Used by FloatExtent / IntExtent / BigintExtent /
+# TimestamptzExtent.
+# ===========================================================================
+PHYSICAL_CPP_SPAN_SLOT_EXTENT = """\
+/*
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        https://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+*/
+
+#include <Aggregation/Function/Meos/{nebula_name}AggregationPhysicalFunction.hpp>
+
+#include <cstddef>
+#include <cstdint>
+#include <memory>
+#include <stdexcept>
+#include <utility>
+#include <string_view>
+#include <cstdlib>
+#include <mutex>
+#include <cstring>
+#include <string>
+
+#include <MemoryLayout/ColumnLayout.hpp>
+#include <Nautilus/Interface/BufferRef/TupleBufferRef.hpp>
+#include <Nautilus/Interface/PagedVector/PagedVector.hpp>
+#include <Nautilus/Interface/PagedVector/PagedVectorRef.hpp>
+#include <Nautilus/Interface/Record.hpp>
+#include <nautilus/function.hpp>
+
+#include <AggregationPhysicalFunctionRegistry.hpp>
+#include <ErrorHandling.hpp>
+#include <val.hpp>
+#include <val_concepts.hpp>
+#include <val_ptr.hpp>
+
+#include <MEOSWrapper.hpp>
+extern "C" {{
+#include <meos.h>
+}}
+
+namespace NES
+{{
+
+constexpr static std::string_view ValueFieldName = "value";
+constexpr static std::string_view TimestampFieldName = "timestamp";
+
+static std::mutex {mutex_name};
+
+
+{nebula_name}AggregationPhysicalFunction::{nebula_name}AggregationPhysicalFunction(
+    DataType inputType,
+    DataType resultType,
+    PhysicalFunction valueFunctionParam,
+    PhysicalFunction timestampFunctionParam,
+    Nautilus::Record::RecordFieldIdentifier resultFieldIdentifier,
+    std::shared_ptr<Nautilus::Interface::BufferRef::TupleBufferRef> bufferRef)
+    : AggregationPhysicalFunction(std::move(inputType), std::move(resultType), valueFunctionParam, std::move(resultFieldIdentifier))
+    , bufferRef(std::move(bufferRef))
+    , valueFunction(std::move(valueFunctionParam))
+    , timestampFunction(std::move(timestampFunctionParam))
+{{
+}}
+
+void {nebula_name}AggregationPhysicalFunction::lift(
+    const nautilus::val<AggregationState*>& aggregationState, PipelineMemoryProvider& pipelineMemoryProvider, const Nautilus::Record& record)
+{{
+    // Incremental Span accumulator slot: each event folds into the running span;
+    // O(1) state, no event buffer.
+    auto valueValue = valueFunction.execute(record, pipelineMemoryProvider.arena);
+    auto value = valueValue.cast<nautilus::val<{fold_field_cpp_type}>>();
+
+    nautilus::invoke(
+        +[](AggregationState* st, {fold_field_cpp_type} val) -> void
+        {{
+            MEOS::Meos::ensureMeosInitialized();
+            std::lock_guard<std::mutex> lock({mutex_name});
+            Span** slot = reinterpret_cast<Span**>(st);
+            {fold_invoke_body}
+        }},
+        aggregationState, value);
+}}
+
+void {nebula_name}AggregationPhysicalFunction::combine(
+    const nautilus::val<AggregationState*> aggregationState1,
+    const nautilus::val<AggregationState*> aggregationState2,
+    PipelineMemoryProvider&)
+{{
+    nautilus::invoke(
+        +[](AggregationState* s1, AggregationState* s2) -> void
+        {{
+            MEOS::Meos::ensureMeosInitialized();
+            std::lock_guard<std::mutex> lock({mutex_name});
+            Span** slot1 = reinterpret_cast<Span**>(s1);
+            Span** slot2 = reinterpret_cast<Span**>(s2);
+            if (!*slot2) {{ return; }}
+            if (!*slot1) {{ *slot1 = span_copy(*slot2); return; }}
+            Span* merged = super_union_span_span(*slot1, *slot2, false);
+            free(*slot1);
+            *slot1 = merged;
+        }},
+        aggregationState1, aggregationState2);
+}}
+
+Nautilus::Record {nebula_name}AggregationPhysicalFunction::lower(
+    const nautilus::val<AggregationState*> aggregationState, PipelineMemoryProvider& pipelineMemoryProvider)
+{{
+    MEOS::Meos::ensureMeosInitialized();
+    auto boxStr = nautilus::invoke(
+        +[](AggregationState* st) -> char*
+        {{
+            std::lock_guard<std::mutex> lock({mutex_name});
+            Span** slot = reinterpret_cast<Span**>(st);
+            if (!*slot) {{ return (char*) nullptr; }}
+            char* out = {box_out_call};
+            free(*slot);
+            *slot = nullptr;
+            return out;
+        }},
+        aggregationState);
+
+    const auto boxLen = nautilus::invoke(
+        +[](const char* s) -> size_t {{ return s ? strlen(s) : (size_t) 0; }}, boxStr);
+    auto variableSized = pipelineMemoryProvider.arena.allocateVariableSizedData(boxLen);
+    nautilus::invoke(
+        +[](int8_t* dest, const char* s, size_t len) -> void
+        {{ if (s) {{ memcpy(dest, s, len); free((void*) s); }} }},
+        variableSized.getContent(), boxStr, boxLen);
+
+    Nautilus::Record resultRecord;
+    resultRecord.write(resultFieldIdentifier, variableSized);
+    return resultRecord;
+}}
+
+void {nebula_name}AggregationPhysicalFunction::reset(const nautilus::val<AggregationState*> aggregationState, PipelineMemoryProvider&)
+{{
+    nautilus::invoke(+[](AggregationState* st) -> void
+        {{ Span** slot = reinterpret_cast<Span**>(st); *slot = nullptr; }}, aggregationState);
+}}
+
+size_t {nebula_name}AggregationPhysicalFunction::getSizeOfStateInBytes() const
+{{
+    return sizeof(Span*);
+}}
+
+void {nebula_name}AggregationPhysicalFunction::cleanup(nautilus::val<AggregationState*> aggregationState)
+{{
+    nautilus::invoke(+[](AggregationState* st) -> void
+        {{ Span** slot = reinterpret_cast<Span**>(st); if (*slot) {{ free(*slot); *slot = nullptr; }} }}, aggregationState);
+}}
+
+AggregationPhysicalFunctionRegistryReturnType AggregationPhysicalFunctionGeneratedRegistrar::Register{nebula_name}AggregationPhysicalFunction(
+    AggregationPhysicalFunctionRegistryArguments)
+{{
+    throw std::runtime_error("{sql_token} aggregation cannot be created through the registry. "
+                             "It requires two field functions (value, timestamp)");
+}}
+
+}}
+"""
+
+
+# ===========================================================================
+# Set-slot physical template (return_mode "set_slot").
+#
+# State is a Set** slot.  Each event folds via *_union_transfn; combine merges
+# with set_union_transfn; lower finalises with set_union_finalfn + typed
+# *set_out.  Used by FloatUnion / IntUnion / BigintUnion / TimestamptzUnion.
+# ===========================================================================
+PHYSICAL_CPP_SET_SLOT_UNION = """\
+/*
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        https://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+*/
+
+#include <Aggregation/Function/Meos/{nebula_name}AggregationPhysicalFunction.hpp>
+
+#include <cstddef>
+#include <cstdint>
+#include <memory>
+#include <stdexcept>
+#include <utility>
+#include <string_view>
+#include <cstdlib>
+#include <mutex>
+#include <cstring>
+#include <string>
+
+#include <MemoryLayout/ColumnLayout.hpp>
+#include <Nautilus/Interface/BufferRef/TupleBufferRef.hpp>
+#include <Nautilus/Interface/PagedVector/PagedVector.hpp>
+#include <Nautilus/Interface/PagedVector/PagedVectorRef.hpp>
+#include <Nautilus/Interface/Record.hpp>
+#include <nautilus/function.hpp>
+
+#include <AggregationPhysicalFunctionRegistry.hpp>
+#include <ErrorHandling.hpp>
+#include <val.hpp>
+#include <val_concepts.hpp>
+#include <val_ptr.hpp>
+
+#include <MEOSWrapper.hpp>
+extern "C" {{
+#include <meos.h>
+}}
+
+namespace NES
+{{
+
+constexpr static std::string_view ValueFieldName = "value";
+constexpr static std::string_view TimestampFieldName = "timestamp";
+
+static std::mutex {mutex_name};
+
+
+{nebula_name}AggregationPhysicalFunction::{nebula_name}AggregationPhysicalFunction(
+    DataType inputType,
+    DataType resultType,
+    PhysicalFunction valueFunctionParam,
+    PhysicalFunction timestampFunctionParam,
+    Nautilus::Record::RecordFieldIdentifier resultFieldIdentifier,
+    std::shared_ptr<Nautilus::Interface::BufferRef::TupleBufferRef> bufferRef)
+    : AggregationPhysicalFunction(std::move(inputType), std::move(resultType), valueFunctionParam, std::move(resultFieldIdentifier))
+    , bufferRef(std::move(bufferRef))
+    , valueFunction(std::move(valueFunctionParam))
+    , timestampFunction(std::move(timestampFunctionParam))
+{{
+}}
+
+void {nebula_name}AggregationPhysicalFunction::lift(
+    const nautilus::val<AggregationState*>& aggregationState, PipelineMemoryProvider& pipelineMemoryProvider, const Nautilus::Record& record)
+{{
+    // Incremental Set accumulator slot: each event folds its value into the
+    // running set; O(1)-amortized state, no event buffer.
+    auto valueValue = valueFunction.execute(record, pipelineMemoryProvider.arena);
+    auto value = valueValue.cast<nautilus::val<{fold_field_cpp_type}>>();
+
+    nautilus::invoke(
+        +[](AggregationState* st, {fold_field_cpp_type} val) -> void
+        {{
+            MEOS::Meos::ensureMeosInitialized();
+            std::lock_guard<std::mutex> lock({mutex_name});
+            Set** slot = reinterpret_cast<Set**>(st);
+            {fold_invoke_body}
+        }},
+        aggregationState, value);
+}}
+
+void {nebula_name}AggregationPhysicalFunction::combine(
+    const nautilus::val<AggregationState*> aggregationState1,
+    const nautilus::val<AggregationState*> aggregationState2,
+    PipelineMemoryProvider&)
+{{
+    nautilus::invoke(
+        +[](AggregationState* s1, AggregationState* s2) -> void
+        {{
+            MEOS::Meos::ensureMeosInitialized();
+            std::lock_guard<std::mutex> lock({mutex_name});
+            Set** slot1 = reinterpret_cast<Set**>(s1);
+            Set** slot2 = reinterpret_cast<Set**>(s2);
+            if (!*slot2) {{ return; }}
+            // set_union_transfn appends slot2's values into slot1 (creates from
+            // slot2 if slot1 is null); slot2 is freed by its own cleanup.
+            *slot1 = set_union_transfn(*slot1, *slot2);
+        }},
+        aggregationState1, aggregationState2);
+}}
+
+Nautilus::Record {nebula_name}AggregationPhysicalFunction::lower(
+    const nautilus::val<AggregationState*> aggregationState, PipelineMemoryProvider& pipelineMemoryProvider)
+{{
+    MEOS::Meos::ensureMeosInitialized();
+    auto setStr = nautilus::invoke(
+        +[](AggregationState* st) -> char*
+        {{
+            std::lock_guard<std::mutex> lock({mutex_name});
+            Set** slot = reinterpret_cast<Set**>(st);
+            if (!*slot) {{ return (char*) nullptr; }}
+            // set_union_finalfn consumes (frees) the state and returns the
+            // deduplicated, sorted Set; the slot must not be freed again.
+            Set* fin = set_union_finalfn(*slot);
+            *slot = nullptr;
+            if (!fin) {{ return (char*) nullptr; }}
+            char* out = {box_out_call};
+            free(fin);
+            return out;
+        }},
+        aggregationState);
+
+    const auto setLen = nautilus::invoke(
+        +[](const char* s) -> size_t {{ return s ? strlen(s) : (size_t) 0; }}, setStr);
+    auto variableSized = pipelineMemoryProvider.arena.allocateVariableSizedData(setLen);
+    nautilus::invoke(
+        +[](int8_t* dest, const char* s, size_t len) -> void
+        {{ if (s) {{ memcpy(dest, s, len); free((void*) s); }} }},
+        variableSized.getContent(), setStr, setLen);
+
+    Nautilus::Record resultRecord;
+    resultRecord.write(resultFieldIdentifier, variableSized);
+    return resultRecord;
+}}
+
+void {nebula_name}AggregationPhysicalFunction::reset(const nautilus::val<AggregationState*> aggregationState, PipelineMemoryProvider&)
+{{
+    nautilus::invoke(+[](AggregationState* st) -> void
+        {{ Set** slot = reinterpret_cast<Set**>(st); *slot = nullptr; }}, aggregationState);
+}}
+
+size_t {nebula_name}AggregationPhysicalFunction::getSizeOfStateInBytes() const
+{{
+    return sizeof(Set*);
+}}
+
+void {nebula_name}AggregationPhysicalFunction::cleanup(nautilus::val<AggregationState*> aggregationState)
+{{
+    nautilus::invoke(+[](AggregationState* st) -> void
+        {{ Set** slot = reinterpret_cast<Set**>(st); if (*slot) {{ free(*slot); *slot = nullptr; }} }}, aggregationState);
+}}
+
+AggregationPhysicalFunctionRegistryReturnType AggregationPhysicalFunctionGeneratedRegistrar::Register{nebula_name}AggregationPhysicalFunction(
+    AggregationPhysicalFunctionRegistryArguments)
+{{
+    throw std::runtime_error("{sql_token} aggregation cannot be created through the registry. "
+                             "It requires two field functions (value, timestamp)");
+}}
+
+}}
+"""
+
+
+# ===========================================================================
+# TBox-slot physical template (return_mode "tbox_slot").
+#
+# State is a TBox** slot.  Each event builds a tfloat WKT instant, calls
+# tnumber_extent_transfn; combine merges with tbox_copy + union_tbox_tbox;
+# lower serialises with tbox_out.  Used by TnumberExtent.
+# ===========================================================================
+PHYSICAL_CPP_TBOX_SLOT = """\
+/*
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        https://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+*/
+
+#include <Aggregation/Function/Meos/{nebula_name}AggregationPhysicalFunction.hpp>
+
+#include <cstddef>
+#include <cstdint>
+#include <memory>
+#include <stdexcept>
+#include <utility>
+#include <string_view>
+#include <cstdlib>
+#include <ctime>
+#include <mutex>
+#include <cstring>
+#include <cstdio>
+#include <string>
+
+#include <MemoryLayout/ColumnLayout.hpp>
+#include <Nautilus/Interface/BufferRef/TupleBufferRef.hpp>
+#include <Nautilus/Interface/PagedVector/PagedVector.hpp>
+#include <Nautilus/Interface/PagedVector/PagedVectorRef.hpp>
+#include <Nautilus/Interface/Record.hpp>
+#include <nautilus/function.hpp>
+
+#include <AggregationPhysicalFunctionRegistry.hpp>
+#include <ErrorHandling.hpp>
+#include <val.hpp>
+#include <val_concepts.hpp>
+#include <val_ptr.hpp>
+
+#include <MEOSWrapper.hpp>
+extern "C" {{
+#include <meos.h>
+}}
+
+namespace NES
+{{
+
+constexpr static std::string_view ValueFieldName = "value";
+constexpr static std::string_view TimestampFieldName = "timestamp";
+
+static std::mutex {mutex_name};
+
+
+{nebula_name}AggregationPhysicalFunction::{nebula_name}AggregationPhysicalFunction(
+    DataType inputType,
+    DataType resultType,
+    PhysicalFunction valueFunctionParam,
+    PhysicalFunction timestampFunctionParam,
+    Nautilus::Record::RecordFieldIdentifier resultFieldIdentifier,
+    std::shared_ptr<Nautilus::Interface::BufferRef::TupleBufferRef> bufferRef)
+    : AggregationPhysicalFunction(std::move(inputType), std::move(resultType), valueFunctionParam, std::move(resultFieldIdentifier))
+    , bufferRef(std::move(bufferRef))
+    , valueFunction(std::move(valueFunctionParam))
+    , timestampFunction(std::move(timestampFunctionParam))
+{{
+}}
+
+void {nebula_name}AggregationPhysicalFunction::lift(
+    const nautilus::val<AggregationState*>& aggregationState, PipelineMemoryProvider& pipelineMemoryProvider, const Nautilus::Record& record)
+{{
+    // Incremental accumulator slot: each event folds into the running value/time
+    // TBox via tnumber_extent_transfn. O(1) state, no event buffer.
+    auto valueValue = valueFunction.execute(record, pipelineMemoryProvider.arena);
+    auto timestampValue = timestampFunction.execute(record, pipelineMemoryProvider.arena);
+    auto value = valueValue.cast<nautilus::val<double>>();
+    auto timestamp = timestampValue.cast<nautilus::val<int64_t>>();
+
+    nautilus::invoke(
+        +[](AggregationState* st, double valueVal, int64_t tsVal) -> void
+        {{
+            MEOS::Meos::ensureMeosInitialized();
+            std::lock_guard<std::mutex> lock({mutex_name});
+            TBox** slot = reinterpret_cast<TBox**>(st);
+            long long sec = (tsVal > 1000000000000LL) ? (tsVal / 1000) : tsVal;
+            std::string ts = MEOS::Meos::convertSecondsToTimestamp(sec);
+            char wkt[64];
+            snprintf(wkt, sizeof(wkt), "%.6f@%s", valueVal, ts.c_str());
+            Temporal* inst = tfloat_in(wkt);
+            if (!inst) {{
+                return;
+            }}
+            *slot = tnumber_extent_transfn(*slot, inst);
+            free(inst);
+        }},
+        aggregationState, value, timestamp);
+}}
+
+void {nebula_name}AggregationPhysicalFunction::combine(
+    const nautilus::val<AggregationState*> aggregationState1,
+    const nautilus::val<AggregationState*> aggregationState2,
+    PipelineMemoryProvider&)
+{{
+    nautilus::invoke(
+        +[](AggregationState* s1, AggregationState* s2) -> void
+        {{
+            MEOS::Meos::ensureMeosInitialized();
+            std::lock_guard<std::mutex> lock({mutex_name});
+            TBox** slot1 = reinterpret_cast<TBox**>(s1);
+            TBox** slot2 = reinterpret_cast<TBox**>(s2);
+            if (!*slot2) {{
+                return;
+            }}
+            if (!*slot1) {{
+                *slot1 = tbox_copy(*slot2);
+                return;
+            }}
+            TBox* merged = union_tbox_tbox(*slot1, *slot2, false);
+            free(*slot1);
+            *slot1 = merged;
+        }},
+        aggregationState1, aggregationState2);
+}}
+
+Nautilus::Record {nebula_name}AggregationPhysicalFunction::lower(
+    const nautilus::val<AggregationState*> aggregationState, PipelineMemoryProvider& pipelineMemoryProvider)
+{{
+    MEOS::Meos::ensureMeosInitialized();
+    auto boxStr = nautilus::invoke(
+        +[](AggregationState* st) -> char*
+        {{
+            std::lock_guard<std::mutex> lock({mutex_name});
+            TBox** slot = reinterpret_cast<TBox**>(st);
+            if (!*slot) {{
+                return (char*) nullptr;
+            }}
+            char* out = tbox_out(*slot, 15);
+            free(*slot);
+            *slot = nullptr;
+            return out;
+        }},
+        aggregationState);
+
+    const auto boxLen = nautilus::invoke(
+        +[](const char* s) -> size_t {{ return s ? strlen(s) : (size_t) 0; }}, boxStr);
+    auto variableSized = pipelineMemoryProvider.arena.allocateVariableSizedData(boxLen);
+    nautilus::invoke(
+        +[](int8_t* dest, const char* s, size_t len) -> void
+        {{
+            if (s) {{ memcpy(dest, s, len); free((void*) s); }}
+        }},
+        variableSized.getContent(), boxStr, boxLen);
+
+    Nautilus::Record resultRecord;
+    resultRecord.write(resultFieldIdentifier, variableSized);
+    return resultRecord;
+}}
+
+void {nebula_name}AggregationPhysicalFunction::reset(const nautilus::val<AggregationState*> aggregationState, PipelineMemoryProvider&)
+{{
+    nautilus::invoke(
+        +[](AggregationState* st) -> void
+        {{ TBox** slot = reinterpret_cast<TBox**>(st); *slot = nullptr; }},
+        aggregationState);
+}}
+
+size_t {nebula_name}AggregationPhysicalFunction::getSizeOfStateInBytes() const
+{{
+    return sizeof(TBox*);
+}}
+
+void {nebula_name}AggregationPhysicalFunction::cleanup(nautilus::val<AggregationState*> aggregationState)
+{{
+    nautilus::invoke(
+        +[](AggregationState* st) -> void
+        {{ TBox** slot = reinterpret_cast<TBox**>(st); if (*slot) {{ free(*slot); *slot = nullptr; }} }},
+        aggregationState);
+}}
+
+AggregationPhysicalFunctionRegistryReturnType AggregationPhysicalFunctionGeneratedRegistrar::Register{nebula_name}AggregationPhysicalFunction(
+    AggregationPhysicalFunctionRegistryArguments)
+{{
+    throw std::runtime_error("{sql_token} aggregation cannot be created through the registry. "
+                             "It requires two field functions (value, timestamp)");
+}}
+
+}}
+"""
+
+
+# ===========================================================================
+# STBox-slot physical template (return_mode "stbox_slot").
+#
+# State is a STBox** slot.  Three input fields (lon, lat, ts).  Each event
+# builds a tgeompoint WKT instant, calls tspatial_extent_transfn; combine
+# merges with stbox_copy + union_stbox_stbox; lower serialises with stbox_out.
+# Used by TspatialExtent.
+# ===========================================================================
+PHYSICAL_CPP_STBOX_SLOT = """\
+/*
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        https://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+*/
+
+#include <Aggregation/Function/Meos/{nebula_name}AggregationPhysicalFunction.hpp>
+
+#include <cstddef>
+#include <cstdint>
+#include <memory>
+#include <stdexcept>
+#include <utility>
+#include <string_view>
+#include <cstdlib>
+#include <ctime>
+#include <mutex>
+#include <cstring>
+#include <cstdio>
+#include <string>
+
+#include <MemoryLayout/ColumnLayout.hpp>
+#include <Nautilus/Interface/BufferRef/TupleBufferRef.hpp>
+#include <Nautilus/Interface/PagedVector/PagedVector.hpp>
+#include <Nautilus/Interface/PagedVector/PagedVectorRef.hpp>
+#include <Nautilus/Interface/Record.hpp>
+#include <nautilus/function.hpp>
+
+#include <AggregationPhysicalFunctionRegistry.hpp>
+#include <ErrorHandling.hpp>
+#include <val.hpp>
+#include <val_concepts.hpp>
+#include <val_ptr.hpp>
+
+#include <MEOSWrapper.hpp>
+extern "C" {{
+#include <meos.h>
+#include <meos_geo.h>
+}}
+
+namespace NES
+{{
+
+constexpr static std::string_view LonFieldName = "lon";
+constexpr static std::string_view LatFieldName = "lat";
+constexpr static std::string_view TimestampFieldName = "timestamp";
+
+static std::mutex {mutex_name};
+
+
+{nebula_name}AggregationPhysicalFunction::{nebula_name}AggregationPhysicalFunction(
+    DataType inputType,
+    DataType resultType,
+    PhysicalFunction lonFunctionParam,
+    PhysicalFunction latFunctionParam,
+    PhysicalFunction timestampFunctionParam,
+    Nautilus::Record::RecordFieldIdentifier resultFieldIdentifier,
+    std::shared_ptr<Nautilus::Interface::BufferRef::TupleBufferRef> bufferRef)
+    : AggregationPhysicalFunction(std::move(inputType), std::move(resultType), lonFunctionParam, std::move(resultFieldIdentifier))
+    , bufferRef(std::move(bufferRef))
+    , lonFunction(std::move(lonFunctionParam))
+    , latFunction(std::move(latFunctionParam))
+    , timestampFunction(std::move(timestampFunctionParam))
+{{
+}}
+
+void {nebula_name}AggregationPhysicalFunction::lift(
+    const nautilus::val<AggregationState*>& aggregationState, PipelineMemoryProvider& pipelineMemoryProvider, const Nautilus::Record& record)
+{{
+    // Incremental accumulator slot (no event buffer): each event folds into the
+    // running extent STBox via tspatial_extent_transfn. O(1) state, like the
+    // expandable-Temporal* value-output operators.
+    auto lonValue = lonFunction.execute(record, pipelineMemoryProvider.arena);
+    auto latValue = latFunction.execute(record, pipelineMemoryProvider.arena);
+    auto timestampValue = timestampFunction.execute(record, pipelineMemoryProvider.arena);
+    auto lon = lonValue.cast<nautilus::val<double>>();
+    auto lat = latValue.cast<nautilus::val<double>>();
+    auto timestamp = timestampValue.cast<nautilus::val<int64_t>>();
+
+    nautilus::invoke(
+        +[](AggregationState* st, double lonVal, double latVal, int64_t tsVal) -> void
+        {{
+            MEOS::Meos::ensureMeosInitialized();
+            std::lock_guard<std::mutex> lock({mutex_name});
+            STBox** slot = reinterpret_cast<STBox**>(st);
+            long long sec = (tsVal > 1000000000000LL) ? (tsVal / 1000) : tsVal;
+            std::string ts = MEOS::Meos::convertSecondsToTimestamp(sec);
+            char wkt[96];
+            snprintf(wkt, sizeof(wkt), "Point(%.6f %.6f)@%s", lonVal, latVal, ts.c_str());
+            Temporal* inst = tgeompoint_in(wkt);
+            if (!inst) {{
+                return;
+            }}
+            *slot = tspatial_extent_transfn(*slot, inst);
+            free(inst);
+        }},
+        aggregationState, lon, lat, timestamp);
+}}
+
+void {nebula_name}AggregationPhysicalFunction::combine(
+    const nautilus::val<AggregationState*> aggregationState1,
+    const nautilus::val<AggregationState*> aggregationState2,
+    PipelineMemoryProvider&)
+{{
+    nautilus::invoke(
+        +[](AggregationState* s1, AggregationState* s2) -> void
+        {{
+            MEOS::Meos::ensureMeosInitialized();
+            std::lock_guard<std::mutex> lock({mutex_name});
+            STBox** slot1 = reinterpret_cast<STBox**>(s1);
+            STBox** slot2 = reinterpret_cast<STBox**>(s2);
+            if (!*slot2) {{
+                return;
+            }}
+            if (!*slot1) {{
+                *slot1 = stbox_copy(*slot2);
+                return;
+            }}
+            STBox* merged = union_stbox_stbox(*slot1, *slot2, false);
+            free(*slot1);
+            *slot1 = merged;
+        }},
+        aggregationState1, aggregationState2);
+}}
+
+Nautilus::Record {nebula_name}AggregationPhysicalFunction::lower(
+    const nautilus::val<AggregationState*> aggregationState, PipelineMemoryProvider& pipelineMemoryProvider)
+{{
+    MEOS::Meos::ensureMeosInitialized();
+    auto boxStr = nautilus::invoke(
+        +[](AggregationState* st) -> char*
+        {{
+            std::lock_guard<std::mutex> lock({mutex_name});
+            STBox** slot = reinterpret_cast<STBox**>(st);
+            if (!*slot) {{
+                return (char*) nullptr;
+            }}
+            char* out = stbox_out(*slot, 15);
+            free(*slot);
+            *slot = nullptr;
+            return out;
+        }},
+        aggregationState);
+
+    const auto boxLen = nautilus::invoke(
+        +[](const char* s) -> size_t {{ return s ? strlen(s) : (size_t) 0; }}, boxStr);
+    auto variableSized = pipelineMemoryProvider.arena.allocateVariableSizedData(boxLen);
+    nautilus::invoke(
+        +[](int8_t* dest, const char* s, size_t len) -> void
+        {{
+            if (s) {{ memcpy(dest, s, len); free((void*) s); }}
+        }},
+        variableSized.getContent(), boxStr, boxLen);
+
+    Nautilus::Record resultRecord;
+    resultRecord.write(resultFieldIdentifier, variableSized);
+    return resultRecord;
+}}
+
+void {nebula_name}AggregationPhysicalFunction::reset(const nautilus::val<AggregationState*> aggregationState, PipelineMemoryProvider&)
+{{
+    nautilus::invoke(
+        +[](AggregationState* st) -> void
+        {{ STBox** slot = reinterpret_cast<STBox**>(st); *slot = nullptr; }},
+        aggregationState);
+}}
+
+size_t {nebula_name}AggregationPhysicalFunction::getSizeOfStateInBytes() const
+{{
+    return sizeof(STBox*);
+}}
+
+void {nebula_name}AggregationPhysicalFunction::cleanup(nautilus::val<AggregationState*> aggregationState)
+{{
+    nautilus::invoke(
+        +[](AggregationState* st) -> void
+        {{ STBox** slot = reinterpret_cast<STBox**>(st); if (*slot) {{ free(*slot); *slot = nullptr; }} }},
+        aggregationState);
+}}
+
+
+AggregationPhysicalFunctionRegistryReturnType AggregationPhysicalFunctionGeneratedRegistrar::Register{nebula_name}AggregationPhysicalFunction(
+    AggregationPhysicalFunctionRegistryArguments)
+{{
+    throw std::runtime_error("{sql_token} aggregation cannot be created through the registry. "
+                             "It requires three field functions (longitude, latitude, timestamp)");
+}}
+
+}}
+"""
+
+
+# ===========================================================================
 # Shape dispatchers + emit_operator.
 # ===========================================================================
 
 def physical_template_for(op):
     box = op.get("return_mode") == "box"
+    if op.get("return_mode") == "span_slot":
+        return PHYSICAL_HPP_TNUMBER, PHYSICAL_CPP_SPAN_SLOT_EXTENT
+    if op.get("return_mode") == "set_slot":
+        return PHYSICAL_HPP_TNUMBER, PHYSICAL_CPP_SET_SLOT_UNION
+    if op.get("return_mode") == "tbox_slot":
+        return PHYSICAL_HPP_TNUMBER, PHYSICAL_CPP_TBOX_SLOT
+    if op.get("return_mode") == "stbox_slot":
+        return PHYSICAL_HPP_TGEO, PHYSICAL_CPP_STBOX_SLOT
     if op["input_shape"] == "tgeo":
         if op.get("return_mode") == "wkb":
             return PHYSICAL_HPP_TGEO, PHYSICAL_CPP_TGEO_WKB
@@ -2334,16 +3104,24 @@ def optimizer_lowering_template_for(op):
 
 def emit_operator(op, output_root: Path):
     nebula_name = op["nebula_name"]
+    if op.get("return_mode") == "bespoke":
+        sys.stderr.write(f"  ~ {nebula_name}: bespoke (hand-written), skipping file emission\n")
+        return
+    bespoke_logical  = op.get("bespoke_logical", False)
+    bespoke_physical = op.get("bespoke_physical", False)
     logical_hpp_tmpl, logical_cpp_tmpl = logical_template_for(op)
     physical_hpp_tmpl, physical_cpp_tmpl = physical_template_for(op)
 
     # Common substitution dict.
+    _registry_label = op["sql_token"] if op.get("registry_use_sql") else op["class_name_token"]
     fmt = {
         "nebula_name":         nebula_name,
         "class_name_token":    op["class_name_token"],
         "sql_token":           op["sql_token"],
+        "registry_label":      _registry_label,
         "comment_one_liner":   op["comment_one_liner"],
         "meos_scalar_fn":      op.get("meos_scalar_fn", ""),
+        "comment_meos_fn":     op.get("comment_meos_fn", op.get("meos_scalar_fn", "")),
         "return_cpp_type":     op.get("return_cpp_type", "double"),
         "final_stamp_type":    op["final_stamp_type"],
         "mutex_name":          f"meos_{nebula_name.lower()}_mutex",
@@ -2361,6 +3139,7 @@ def emit_operator(op, output_root: Path):
         "fold_invoke_body":    op.get("fold_invoke_body", ""),
         "box_out_call":        op.get("box_out_call", ""),
         "finalfn":             op.get("finalfn", ""),
+        "registry_tnumber_prefix": op.get("registry_tnumber_prefix", "").replace("{nebula_name}", nebula_name),
     }
 
     # value_compute (point/tgeo finalize): either fold the windowed sequence
@@ -2369,7 +3148,9 @@ def emit_operator(op, output_root: Path):
     # accessor/predicate to that windowed extent. In box-output mode the
     # finalize is the serialized extent box itself (no value_compute).
     box_build = op.get("extent_box_build_fn")
-    if op.get("return_mode") in ("box", "wkb"):
+    if op.get("return_mode") in ("box", "wkb", "expand", "expand_wkb", "expand_geo_wkb",
+                                  "expand_wkb_tnpoint", "span_slot", "set_slot",
+                                  "tbox_slot", "stbox_slot"):
         fmt["value_compute"] = ""
     elif box_build:
         box_t = op.get("extent_box_type", "STBox")
@@ -2392,11 +3173,18 @@ def emit_operator(op, output_root: Path):
     for p in paths.values():
         p.parent.mkdir(parents=True, exist_ok=True)
 
-    paths["logical_hpp"].write_text(logical_hpp_tmpl.format(**fmt))
-    paths["logical_cpp"].write_text(logical_cpp_tmpl.format(**fmt))
-    paths["physical_hpp"].write_text(physical_hpp_tmpl.format(**fmt))
-    paths["physical_cpp"].write_text(physical_cpp_tmpl.format(**fmt))
-    sys.stderr.write(f"  ✓ {nebula_name}: emitted 4 files\n")
+    n_emitted = 0
+    if not bespoke_logical:
+        paths["logical_hpp"].write_text(logical_hpp_tmpl.format(**fmt))
+        _logical_cpp = logical_cpp_tmpl.format(**fmt).replace(
+            "__REGISTRY_TNUMBER_PREFIX__", fmt["registry_tnumber_prefix"])
+        paths["logical_cpp"].write_text(_logical_cpp)
+        n_emitted += 2
+    if not bespoke_physical:
+        paths["physical_hpp"].write_text(physical_hpp_tmpl.format(**fmt))
+        paths["physical_cpp"].write_text(physical_cpp_tmpl.format(**fmt))
+        n_emitted += 2
+    sys.stderr.write(f"  ✓ {nebula_name}: emitted {n_emitted} files\n")
 
 
 # ===========================================================================
@@ -2626,8 +3414,12 @@ def inject_optimizer(operators, opt_path: Path) -> int:
     n_added = 0
 
     # 1) #include for the physical class header
+    # Bespoke operators have hand-written lowering blocks with their own (possibly
+    # differently-named) includes already present; skip them here.
     new_includes = []
     for op in operators:
+        if op.get("return_mode") == "bespoke":
+            continue
         inc = f"#include <Aggregation/Function/Meos/{op['nebula_name']}AggregationPhysicalFunction.hpp>"
         if inc in body:
             continue
@@ -2635,6 +3427,8 @@ def inject_optimizer(operators, opt_path: Path) -> int:
     # Also need the logical class header
     new_logical_includes = []
     for op in operators:
+        if op.get("return_mode") == "bespoke":
+            continue
         inc = f"#include <Operators/Windows/Aggregations/Meos/{op['nebula_name']}AggregationLogicalFunction.hpp>"
         if inc in body:
             continue
@@ -2654,9 +3448,13 @@ def inject_optimizer(operators, opt_path: Path) -> int:
         else:
             sys.stderr.write(f"  ! optimizer: no Aggregation/Function/Meos include anchor found\n")
 
-    # 2) The if-name-match block. Insert after last codegen END marker, else after mariana's CrossDistance block.
+    # 2) The if-name-match block. Insert after last codegen END marker, else before the #endif guard.
+    # Bespoke operators have hand-written lowering blocks; skip them so the codegen
+    # never emits a block with the wrong constructor signature.
     new_blocks = []
     for op in operators:
+        if op.get("return_mode") == "bespoke":
+            continue
         tmpl = optimizer_lowering_template_for(op)
         marker = f"/* BEGIN CODEGEN AGGREGATION GLUE: {op['class_name_token']} (optimizer lowering) */"
         if marker in body:
@@ -2676,9 +3474,18 @@ def inject_optimizer(operators, opt_path: Path) -> int:
             body = body[:insert_at] + "\n" + "\n".join(new_blocks) + body[insert_at:]
             sys.stderr.write(f"  ✓ optimizer lowering: added {len(new_blocks)} (after marker)\n")
         else:
-            # Anchor: insert just before the "Default path: use registry" comment.
-            anchor_re = re.compile(r"(\n\s*// Default path: use registry)")
+            # Anchor: insert just before the #endif / "Default path: use registry" guard boundary.
+            # After the NES_ENABLE_MEOS guard was added, the structure is:
+            #   ...last codegen block...
+            # #endif
+            #         // Default path: use registry
+            # Try the #endif anchor first; fall back to the bare "Default path" comment.
+            anchor_re = re.compile(r"(\n#endif\n\s*// Default path: use registry)")
             m = anchor_re.search(body)
+            if m is None:
+                # Pre-guard fallback (fresh file before NES_ENABLE_MEOS guard was applied)
+                anchor_re = re.compile(r"(\n\s*// Default path: use registry)")
+                m = anchor_re.search(body)
             if m is None:
                 sys.stderr.write(f"  ! optimizer: 'Default path' anchor not found\n")
             else:
