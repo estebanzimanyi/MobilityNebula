@@ -54,7 +54,6 @@
 #include <QueryExecutionConfiguration.hpp>
 #include <RewriteRuleRegistry.hpp>
 // Special-case lowering for TEMPORAL_SEQUENCE (multi-input) aggregation
-#ifdef NES_ENABLE_MEOS
 #include <Operators/Windows/Aggregations/Meos/TemporalSequenceAggregationLogicalFunctionV2.hpp>
 #include <Operators/Windows/Aggregations/Meos/TemporalLengthAggregationLogicalFunction.hpp>
 #include <Operators/Windows/Aggregations/Meos/PairMeetingAggregationLogicalFunction.hpp>
@@ -63,8 +62,8 @@
 #include <Aggregation/Function/Meos/TemporalLengthAggregationPhysicalFunction.hpp>
 #include <Aggregation/Function/Meos/PairMeetingAggregationPhysicalFunction.hpp>
 #include <Aggregation/Function/Meos/CrossDistanceAggregationPhysicalFunction.hpp>
-#endif
 
+#ifdef NES_ENABLE_MEOS
 #include <Aggregation/Function/Meos/TemporalNumInstantsAggregationPhysicalFunction.hpp>
 #include <Aggregation/Function/Meos/TemporalNumSequencesAggregationPhysicalFunction.hpp>
 #include <Aggregation/Function/Meos/TemporalNumTimestampsAggregationPhysicalFunction.hpp>
@@ -179,6 +178,7 @@
 #include <Operators/Windows/Aggregations/Meos/TemporalTIntEndValueAggregationLogicalFunction.hpp>
 #include <Operators/Windows/Aggregations/Meos/TemporalTIntMinValueAggregationLogicalFunction.hpp>
 #include <Operators/Windows/Aggregations/Meos/TemporalTIntMaxValueAggregationLogicalFunction.hpp>
+#endif
 namespace NES
 {
 
@@ -284,6 +284,7 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
         }
 #endif
 
+#ifdef NES_ENABLE_MEOS
         // Custom lowering path for TEMPORAL_LENGTH: same three-input shape as TEMPORAL_SEQUENCE,
         // returns a FLOAT64 (the spheroidal length of the per-(window, group) trajectory) instead of a VARSIZED WKB blob.
         if (name == std::string_view("TemporalLength"))
@@ -1943,6 +1944,8 @@ getAggregationPhysicalFunctions(const WindowedAggregationLogicalOperator& logica
 
 
 
+
+#endif
         // Default path: use registry for single-input aggregations
         auto aggregationInputFunction = QueryCompilation::FunctionProvider::lowerFunction(descriptor->onField);
         auto aggregationArguments = AggregationPhysicalFunctionRegistryArguments(
