@@ -72,7 +72,7 @@ VarVal MultTnumberTnumberPhysicalFunction::execute(const Record& record, ArenaRe
                 if (!a) return (char*) nullptr;
                 Temporal* b = temporal_from_hexwkb(bHex.c_str());
                 if (!b) { free(a); return (char*) nullptr; }
-                Temporal* res = mult_tnumber_tnumber(a, b);
+                Temporal* res = mul_tnumber_tnumber(a, b);
                 free(a);
                 free(b);
                 if (!res) return (char*) nullptr;
