@@ -394,7 +394,7 @@ add_plugin(NadTnpointTnpoint LogicalFunction nes-logical-operators NadTnpointTnp
 add_plugin(NadTposeTpose LogicalFunction nes-logical-operators NadTposeTposeLogicalFunction.cpp)
 add_plugin(AddTnumberTnumber LogicalFunction nes-logical-operators AddTnumberTnumberLogicalFunction.cpp)
 add_plugin(DivTnumberTnumber LogicalFunction nes-logical-operators DivTnumberTnumberLogicalFunction.cpp)
-add_plugin(MultTnumberTnumber LogicalFunction nes-logical-operators MultTnumberTnumberLogicalFunction.cpp)
+add_plugin(MulTnumberTnumber LogicalFunction nes-logical-operators MulTnumberTnumberLogicalFunction.cpp)
 add_plugin(SubTnumberTnumber LogicalFunction nes-logical-operators SubTnumberTnumberLogicalFunction.cpp)
 add_plugin(TcontainsTcbufferTcbuffer LogicalFunction nes-logical-operators TcontainsTcbufferTcbufferLogicalFunction.cpp)
 add_plugin(TcontainsTgeoTgeo LogicalFunction nes-logical-operators TcontainsTgeoTgeoLogicalFunction.cpp)
