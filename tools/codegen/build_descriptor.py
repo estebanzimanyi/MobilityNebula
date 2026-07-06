@@ -440,14 +440,15 @@ def two_temporal_temporal(fn, ret, args):
 
 
 # --- Trgeometry spatial predicate shapes (W148/W149 wave) -------------------
-# MEOS normalizes GSERIALIZED* -> "int*" in the parse_sigs output (the IDL
-# carries it as "const int *"; after strip-const + split it becomes "int*").
+# The current MEOS-API run.py correctly resolves GSERIALIZED* in the IDL, so
+# parse_sigs normalizes `const GSERIALIZED *` -> "GSERIALIZED*" (strip-const +
+# first-token + "*"). Classifiers use GSERIALIZED* for every geometry argument.
 #
 # Five classifiers, each selecting the correct emit_trgeometry_operator build key:
 #
-#   trgeometry_geo_predicate      (Temporal*, int*)  int  — e/a intersects/disjoint/covers/touches
-#   geo_trgeometry_predicate      (int*, Temporal*)  int  — geo-first: econtains/acontains/ecovers/acovers
-#   trgeometry_geo_dwithin        (Temporal*, int*, double) int — edwithin/adwithin with distance
+#   trgeometry_geo_predicate      (Temporal*, GSERIALIZED*)  int  — e/a intersects/disjoint/covers/touches
+#   geo_trgeometry_predicate      (GSERIALIZED*, Temporal*)  int  — geo-first: econtains/acontains/ecovers/acovers
+#   trgeometry_geo_dwithin        (Temporal*, GSERIALIZED*, double) int — edwithin/adwithin with distance
 #   trgeometry_trgeometry_predicate (Temporal*, Temporal*) int — both-trgeometry predicates
 #   trgeometry_trgeometry_dwithin  (Temporal*, Temporal*, double) int — both-trgeometry dwithin
 #
@@ -497,14 +498,14 @@ def _trgeo_brief(fn):
 
 
 def trgeometry_geo_predicate(fn, ret, args):
-    """int fn(Temporal*, int*) — trgeometry_geo spatial predicates and eq/ne.
+    """int fn(Temporal*, GSERIALIZED*) — trgeometry_geo spatial predicates and eq/ne.
 
     Routes to build_trgeometry_geo (compact, trgeometryinst_make) for the
     spatial-predicate families (eintersects/adisjoint/ecovers/etouches/…) and
     to build_trgeometry_geo_nad (nad, trgeoinst_make) for ever_eq/always_eq/…"""
-    if ret != "int" or args != ("Temporal*", "int*"):
+    if ret != "int" or args != ("Temporal*", "GSERIALIZED*"):
         return None
-    # Must be a trgeometry function (not a plain tgeo/tpoint that hits "int*" too)
+    # Must be a trgeometry function (not a plain tgeo/tpoint that hits "GSERIALIZED*" too)
     if "trgeometry" not in fn:
         return None
     build_key = "build_trgeometry_geo_nad" if _is_eq_ne(fn) else "build_trgeometry_geo"
@@ -521,12 +522,12 @@ def trgeometry_geo_predicate(fn, ret, args):
 
 
 def geo_trgeometry_predicate(fn, ret, args):
-    """int fn(int*, Temporal*) — geo-first trgeometry predicates and eq/ne.
+    """int fn(GSERIALIZED*, Temporal*) — geo-first trgeometry predicates and eq/ne.
 
     Routes to build_geo_trgeometry (compact, trgeometryinst_make) for spatial
     predicates (econtains/acontains/ecovers/acovers_geo_trgeometry) and to
     build_geo_trgeometry_eq (nad, trgeoinst_make) for ever_eq/always_eq geo-first."""
-    if ret != "int" or args != ("int*", "Temporal*"):
+    if ret != "int" or args != ("GSERIALIZED*", "Temporal*"):
         return None
     if "trgeometry" not in fn:
         return None
@@ -544,8 +545,8 @@ def geo_trgeometry_predicate(fn, ret, args):
 
 
 def trgeometry_geo_dwithin(fn, ret, args):
-    """int fn(Temporal*, int*, double) — trgeometry_geo dwithin with distance arg."""
-    if ret != "int" or args != ("Temporal*", "int*", "double"):
+    """int fn(Temporal*, GSERIALIZED*, double) — trgeometry_geo dwithin with distance arg."""
+    if ret != "int" or args != ("Temporal*", "GSERIALIZED*", "double"):
         return None
     if "trgeometry" not in fn:
         return None
@@ -605,15 +606,16 @@ def trgeometry_trgeometry_dwithin(fn, ret, args):
 
 
 def trgeometry_nad(fn, ret, args):
-    """double fn(Temporal*, int* | Temporal*) — nad nearest-approach-distance.
+    """double fn(Temporal*, GSERIALIZED* | Temporal*) — nad nearest-approach-distance.
 
-    Two sub-shapes: trgeometry_geo (Temporal*, int*) and trgeometry_trgeometry
-    (Temporal*, Temporal*). Both emit double-returning nad layouts."""
+    Two sub-shapes: trgeometry_geo (Temporal*, GSERIALIZED*) and trgeometry_trgeometry
+    (Temporal*, Temporal*). Both emit double-returning nad layouts. The two-temporal
+    branch requires fn.endswith("_trgeometry") to exclude nad_trgeometry_tpoint."""
     if ret != "double" or "trgeometry" not in fn or not fn.startswith("nad_"):
         return None
-    if args == ("Temporal*", "int*"):
+    if args == ("Temporal*", "GSERIALIZED*"):
         build_key = "build_nad_trgeometry_geo"
-    elif args == ("Temporal*", "Temporal*"):
+    elif args == ("Temporal*", "Temporal*") and fn.endswith("_trgeometry"):
         build_key = "build_nad_trgeometry_trgeometry"
     else:
         return None
