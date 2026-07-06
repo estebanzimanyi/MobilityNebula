@@ -16,7 +16,9 @@ cp "$CATALOG" "$HERE/tools/codegen/meos-idl.json"
 
 # 2. run the in-repo generator (tools/codegen/codegen_nebula.py) -> the NES MEOS-operator surface
 #    + build/grammar/QPC glue. The codegen input descriptor follows tools/codegen/codegen_input.example.json.
-( cd "$HERE" && python3 tools/codegen/codegen_nebula.py )
+( cd "$HERE" && python3 tools/codegen/codegen_nebula.py \
+    --input tools/codegen/codegen_input.example.json \
+    --output-root . )
 
 # 3. run the aggregation generator (tools/codegen/codegen_aggregations.py) -> the windowed
 #    aggregation surface (61 operators: scalar, box, set, expand, WKB, tnumber, tnpoint shapes).
