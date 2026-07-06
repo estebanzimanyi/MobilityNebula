@@ -65,6 +65,9 @@ def parse_sigs(path):
 def cmp_scalar_tempfirst(fn, ret, args):
     """ever/always comparison: int fn(const Temporal*, double|int), temp first.
     Reuses build_tnumber_point_with_scalar (already in codegen_nebula.py)."""
+    parts = fn.split("_")
+    if len(parts) < 2 or parts[0] not in ("ever", "always") or parts[1] not in ("eq", "ne", "lt", "le", "gt", "ge"):
+        return None
     if ret != "int" or args not in (("Temporal*", "double"), ("Temporal*", "int")):
         return None
     base = "tfloat" if args[1] == "double" else "tint"
@@ -94,6 +97,9 @@ def cmp_scalar_tempfirst(fn, ret, args):
 def cmp_scalar_scalarfirst(fn, ret, args):
     """ever/always comparison: int fn(double|int, const Temporal*), scalar first.
     Reuses build_tnumber_scalar_first (MEOS call passes scalar as 1st arg)."""
+    parts = fn.split("_")
+    if len(parts) < 2 or parts[0] not in ("ever", "always") or parts[1] not in ("eq", "ne", "lt", "le", "gt", "ge"):
+        return None
     if ret != "int" or args not in (("double", "Temporal*"), ("int", "Temporal*")):
         return None
     base = "tfloat" if args[0] == "double" else "tint"
