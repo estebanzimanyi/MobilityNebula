@@ -16,7 +16,9 @@ cp "$CATALOG" "$HERE/tools/codegen/meos-idl.json"
 
 # 2. run the in-repo generator (tools/codegen/codegen_nebula.py) -> the NES MEOS-operator surface
 #    + build/grammar/QPC glue. The codegen input descriptor follows tools/codegen/codegen_input.example.json.
-( cd "$HERE" && python3 tools/codegen/codegen_nebula.py )
+( cd "$HERE" && python3 tools/codegen/codegen_nebula.py \
+    --input tools/codegen/codegen_input.example.json \
+    --output-root . )
 
 # 3. build-verify the generated operators (the in-repo containerized build)
 ( cd "$HERE" && bash tools/codegen/build_local.sh ) || echo "WARN: MobilityNebula build returned non-zero"
