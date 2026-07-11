@@ -392,6 +392,45 @@ _BOXTYPE_PARSER = {
     "TBox*":  ("TBox", "tbox_in", "meos.h"),
 }
 
+# MEOS base-type operand (as normalized cType) -> (cpp type, text `<type>_in` parser,
+# header). These carry as a VARSIZED text literal parsed on the worker exactly like a
+# `box` extra (text -> *_in -> freed), so the base-type comparison / restriction shapes
+# reuse the box-kind marshalling with no new emission machinery.
+_BASETYPE_PARSER = {
+    "Cbuffer*":  ("Cbuffer", "cbuffer_in", "meos_cbuffer.h"),
+    "Npoint*":   ("Npoint", "npoint_in", "meos_npoint.h"),
+    "Nsegment*": ("Nsegment", "nsegment_in", "meos_npoint.h"),
+    "Pose*":     ("Pose", "pose_in", "meos_pose.h"),
+    "Jsonb*":    ("Jsonb", "jsonb_in", "meos_json.h"),
+}
+
+
+def basetype_cmp(fn, ret, args):
+    """int fn(<Base>*, Temporal*) | (Temporal*, <Base>*) — ever/always comparison or
+    base-type spatial predicate (always_eq/ne, acontains/acovers, ...) whose scalar
+    operand is a MEOS base type (Cbuffer/Npoint/Nsegment/Pose/Jsonb). The temporal is the
+    primary hex-WKB input; the base value is a box-kind extra parsed via <base>_in. The
+    base-first form emits geom_first so the MEOS call is fn(base, temp)."""
+    if ret != "int" or len(args) != 2 or "Temporal*" not in args:
+        return None
+    if args[0] in _BASETYPE_PARSER:
+        bt_arg, base_first = args[0], True
+    elif args[1] in _BASETYPE_PARSER:
+        bt_arg, base_first = args[1], False
+    else:
+        return None
+    bt, parser, hdr = _BASETYPE_PARSER[bt_arg]
+    d = {
+        "nebula_name": pascal(fn), "sql_token": fn.upper(), "meos_call": fn,
+        "build_generic": True, "input_type": "wkb_temporal", "return_kind": "int",
+        "extra_args": [{"kind": "box", "box_type": bt, "parser": parser, "header": hdr}],
+        "extra_headers": [hdr],
+        "comment_one_liner": f"Per-event {fn}: single-instant hex-WKB temporal vs a {bt} base value -> int.",
+    }
+    if base_first:
+        d["geom_first"] = True
+    return d
+
 
 def temporal_x_box(fn, ret, args):
     """int|double|bool fn over a Temporal and an STBox/TBox/Span query LITERAL,
@@ -759,6 +798,9 @@ def temporal_transform_wkb(fn, ret, args):
         elif a in _BOXTYPE_PARSER:
             bt, parser, hdr = _BOXTYPE_PARSER[a]
             extras.append({"kind": "box", "box_type": bt, "parser": parser, "header": hdr})
+        elif a in _BASETYPE_PARSER:
+            bt, parser, hdr = _BASETYPE_PARSER[a]
+            extras.append({"kind": "box", "box_type": bt, "parser": parser, "header": hdr})
         elif a == "Temporal*":
             extras.append({"kind": "wkb_temporal"})
         else:
@@ -777,6 +819,7 @@ SHAPES = {
     "temporal_x_scalar": temporal_x_scalar,
     "temporal_x_geom": temporal_x_geom,
     "geo_tgeo_predicate": geo_tgeo_predicate,
+    "basetype_cmp": basetype_cmp,
     "temporal_extract_scalar": temporal_extract_scalar,
     "temporal_x_box": temporal_x_box,
     "stbox_x_stbox": stbox_x_stbox,
