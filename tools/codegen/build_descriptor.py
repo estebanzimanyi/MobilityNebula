@@ -405,6 +405,37 @@ _BASETYPE_PARSER = {
 }
 
 
+# MEOS base return type (normalized cType) -> (typed <base>_out serialize call over `res`,
+# header). `_out(res, 15)` uses OUT_DEFAULT_DECIMAL_DIGITS = 15 (MEOS's own default). These
+# are the TYPED public wrappers; Datum-returning accessors are internal and never match here.
+_BASETYPE_OUT = {
+    "Cbuffer*":  ("cbuffer_out(res, 15)", "meos_cbuffer.h"),
+    "Npoint*":   ("npoint_out(res, 15)", "meos_npoint.h"),
+    "Nsegment*": ("nsegment_out(res, 15)", "meos_npoint.h"),
+    "Pose*":     ("pose_out(res, 15)", "meos_pose.h"),
+    "Jsonb*":    ("jsonb_out(res)", "meos_json.h"),
+}
+
+
+def basetype_accessor(fn, ret, args):
+    """<Base>* fn(const Temporal*) — accessor returning a MEOS base value
+    (tcbuffer_start_value -> Cbuffer, tnpoint_end_value -> Npoint, tpose_start_value ->
+    Pose, tjsonb_end_value -> Jsonb). Emitted through the serialize-on-return path with
+    output_kind=basetype: the result is serialized to text via the typed <base>_out
+    wrapper, which round-trips through <base>_in on the consuming input."""
+    if ret not in _BASETYPE_OUT or args != ("Temporal*",):
+        return None
+    serialize, hdr = _BASETYPE_OUT[ret]
+    return {
+        "nebula_name": pascal(fn), "sql_token": fn.upper(), "meos_call": fn,
+        "build_generic": True, "input_type": "wkb_temporal", "return_kind": "wkb",
+        "extra_args": [], "output_kind": "basetype",
+        "output_result_type": ret, "output_serialize": serialize,
+        "extra_headers": [hdr],
+        "comment_one_liner": f"Per-event {fn}: hex-WKB temporal -> {ret.rstrip('*')} base value (text).",
+    }
+
+
 def basetype_cmp(fn, ret, args):
     """int fn(<Base>*, Temporal*) | (Temporal*, <Base>*) — ever/always comparison or
     base-type spatial predicate (always_eq/ne, acontains/acovers, ...) whose scalar
@@ -824,6 +855,7 @@ SHAPES = {
     "temporal_x_geom": temporal_x_geom,
     "geo_tgeo_predicate": geo_tgeo_predicate,
     "basetype_cmp": basetype_cmp,
+    "basetype_accessor": basetype_accessor,
     "temporal_extract_scalar": temporal_extract_scalar,
     "temporal_x_box": temporal_x_box,
     "stbox_x_stbox": stbox_x_stbox,

@@ -4140,6 +4140,12 @@ def assemble_wkb_output(op):
     if op.get("output_kind") == "geom":
         result_type = "GSERIALIZED*"
         serialize_stmt = "char* hexOut = geo_as_hexewkb(res, (char*) nullptr);"
+    elif op.get("output_kind") == "basetype":
+        # a MEOS base value (Cbuffer/Npoint/Pose/Jsonb/Nsegment) serialized to text via
+        # the typed <base>_out(res, 15) public wrapper — round-trips through <base>_in on
+        # the consuming input. (Datum-returning accessors are internal and never reach here.)
+        result_type = op["output_result_type"]
+        serialize_stmt = f"char* hexOut = {op['output_serialize']};"
     else:
         result_type = "Temporal*"
         serialize_stmt = ("size_t hexSize = 0;\n"
