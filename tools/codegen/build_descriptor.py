@@ -636,12 +636,41 @@ def trgeometry_nad(fn, ret, args):
     }
 
 
+_ARITH_SCALAR_CPP = {"int64": "int64_t", "double": "double", "int": "int"}
+
+
+def arith_number_scalar_first(fn, ret, args):
+    """Temporal* fn(scalar, const Temporal*) — scalar-number arithmetic whose result
+    is itself a temporal (add/sub/mul/div of a scalar constant and a temporal number),
+    scalar-first MEOS arg order. The temporal operand is carried as a hex-WKB VARSIZED
+    field and the result is serialized back to hex-WKB VARSIZED, the same
+    serialize-on-return round-trip two_temporal_temporal uses, with the scalar passed
+    as the first MEOS argument (add_bigint_tbigint(int64, Temporal*), etc.)."""
+    if ret != "Temporal*" or len(args) != 2 or args[1] != "Temporal*":
+        return None
+    if fn.split("_")[0] not in ("add", "sub", "mul", "div"):
+        return None
+    cpp = _ARITH_SCALAR_CPP.get(args[0])
+    if not cpp:
+        return None
+    return {
+        "nebula_name": pascal(fn), "sql_token": fn.upper(), "meos_call": fn,
+        "build_generic": True, "input_type": "wkb_temporal", "return_kind": "wkb",
+        "extra_args": [{"kind": "scalar", "cpp": cpp}],
+        "scalar_first": True,
+        "comment_one_liner": (
+            f"Per-event {fn}: a scalar constant and a hex-WKB temporal number -> "
+            f"hex-WKB temporal (scalar-first MEOS arg order)."),
+    }
+
+
 SHAPES = {
     "cmp_scalar_tempfirst": cmp_scalar_tempfirst,
     "cmp_scalar_scalarfirst": cmp_scalar_scalarfirst,
     "cmp_two_temporal": cmp_two_temporal,
     "two_temporal_scalar": two_temporal_scalar,
     "two_temporal_temporal": two_temporal_temporal,
+    "arith_number_scalar_first": arith_number_scalar_first,
     "sprel_scalar_existing": sprel_scalar_existing,
     "temporal_unary_scalar": temporal_unary_scalar,
     "temporal_x_scalar": temporal_x_scalar,
