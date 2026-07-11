@@ -529,21 +529,14 @@ def two_temporal_scalar(fn, ret, args):
     rk = {"bool": "bool", "int": "int", "double": "double"}.get(ret)
     if not rk:
         return None
-    # the meos_call's type may live outside meos.h/meos_geo.h
-    extra_headers = []
-    if "tnpoint" in fn:
-        extra_headers = ["meos_npoint.h"]
-    elif "tpose" in fn or "trgeometry" in fn:
-        extra_headers = ["meos_pose.h"]
-    d = {
+    # the meos_call's declaring header (meos_rgeo.h/meos_npoint.h/...) is added by the
+    # catalog `file` enrichment in main(), not guessed from the symbol name.
+    return {
         "nebula_name": pascal(fn), "sql_token": fn.upper(), "meos_call": fn,
         "build_generic": True, "input_type": "wkb_temporal", "return_kind": rk,
         "extra_args": [{"kind": "wkb_temporal"}],
         "comment_one_liner": f"Per-event {fn}: two hex-WKB temporal operands -> {rk}.",
     }
-    if extra_headers:
-        d["extra_headers"] = extra_headers
-    return d
 
 
 def two_temporal_temporal(fn, ret, args):
@@ -558,23 +551,13 @@ def two_temporal_temporal(fn, ret, args):
         return None
     if ret != "Temporal*":
         return None
-    # the meos_call symbol may live outside meos.h/meos_geo.h
-    extra_headers = []
-    if "tcbuffer" in fn:
-        extra_headers = ["meos_cbuffer.h"]
-    elif "tnpoint" in fn:
-        extra_headers = ["meos_npoint.h"]
-    elif "tpose" in fn or "trgeometry" in fn:
-        extra_headers = ["meos_pose.h"]
-    d = {
+    # the meos_call's declaring header is added by the catalog `file` enrichment in main().
+    return {
         "nebula_name": pascal(fn), "sql_token": fn.upper(), "meos_call": fn,
         "build_generic": True, "input_type": "wkb_temporal", "return_kind": "wkb",
         "extra_args": [{"kind": "wkb_temporal"}],
         "comment_one_liner": f"Per-event {fn}: two hex-WKB temporal operands -> hex-WKB temporal.",
     }
-    if extra_headers:
-        d["extra_headers"] = extra_headers
-    return d
 
 
 # --- Trgeometry spatial predicate shapes (W148/W149 wave) -------------------
@@ -773,17 +756,6 @@ def trgeometry_nad(fn, ret, args):
 _TRANSFORM_SCALAR_CPP = {"double": "double", "int": "int32_t", "int64_t": "int64_t", "bool": "bool"}
 
 
-def _transform_extra_headers(fn):
-    """meos_call symbols that live outside meos.h/meos_geo.h need their family header."""
-    if "trgeometry" in fn or "tpose" in fn:
-        return ["meos_pose.h"]
-    if "tnpoint" in fn:
-        return ["meos_npoint.h"]
-    if "tcbuffer" in fn:
-        return ["meos_cbuffer.h"]
-    return []
-
-
 def temporal_transform_wkb(fn, ret, args):
     """GENERAL serialize-on-return transform: Temporal* fn(<temporal + supported extras>)
     -> Temporal*, emitted via the wkb round-trip (parse hex-WKB -> MEOS call -> serialize
@@ -810,9 +782,7 @@ def temporal_transform_wkb(fn, ret, args):
              "comment_one_liner": f"Per-event {fn}: hex-WKB temporal transform -> hex-WKB {out}."}
         if geom_out:
             d["output_kind"] = "geom"          # serialize the GSERIALIZED* result via geo_as_hexewkb
-        eh = _transform_extra_headers(fn)
-        if eh:
-            d["extra_headers"] = eh
+        # the meos_call's declaring header is added by the catalog `file` enrichment in main().
         if scalar_first:
             d["scalar_first"] = True
         return d
@@ -921,13 +891,50 @@ def main():
         else:
             unmatched.append(fn)
 
+    # Declaring-header resolution + public-surface gate (codegen chain MEOS -> MEOS-API ->
+    # binding): the header that must be #included for each meos_call is the catalog's `file`
+    # for that symbol -- DERIVED from the single-source catalog, never a hand-maintained
+    # fn->header map (a hand-list silently drops every family whose header it forgot, e.g.
+    # trgeometry -> meos_rgeo.h, ttext_to_tjsonb -> meos_json.h, yielding "undeclared
+    # identifier" at compile).
+    #
+    # A binding may only call symbols declared in an INSTALLED PUBLIC umbrella header
+    # (meos.h / meos_<family>.h, excluding meos_internal*). If the catalog attributes a
+    # symbol to a non-umbrella internal source header (tgeo_spatialfuncs.h, tcbuffer.h,
+    # ensure_* validators, ...), that symbol is NOT on the public API surface -- it is
+    # reason-marked residue here, NOT emitted with an unbuildable #include. The honest fix
+    # for a genuinely-useful such symbol is to EXPORT it in a MEOS umbrella upstream
+    # (prefer-proper-meos-export), which then flows to a generated op automatically.
+    if funcs is not None:
+        file_of = {f["name"]: f.get("file") for f in funcs}
+        UMBRELLA = re.compile(r"^meos(_[a-z0-9]+)?\.h$")
+
+        def is_public_umbrella(h):
+            return bool(h) and bool(UMBRELLA.match(h)) and not h.startswith("meos_internal")
+
+        kept, internal_residue = [], []
+        for d in ops:
+            hdr = file_of.get(d.get("meos_call"))
+            if not is_public_umbrella(hdr):
+                internal_residue.append((d["meos_call"], hdr))
+                continue
+            if hdr != "meos.h":
+                eh = d.setdefault("extra_headers", [])
+                if hdr not in eh:
+                    eh.append(hdr)
+            kept.append(d)
+        ops = kept
+    else:
+        internal_residue = []
+
     src = a.catalog or a.sigs
     json.dump({"_comment": f"codegen descriptor; source={src}; shapes={a.shapes}", "operators": ops},
               open(a.out, "w"), indent=2)
     present_unmatched = [f for f in unmatched if f in sigs]
     sys.stderr.write(f"emitted {len(ops)} operator descriptor(s) -> {a.out}\n")
     sys.stderr.write(f"candidates={len(candidates)}  in-sigs matched={len(ops)}  "
-                     f"unmatched-in-sigs={len(present_unmatched)} (residue)\n")
+                     f"unmatched-by-shape={len(present_unmatched)}  "
+                     f"internal-header-residue={len(internal_residue)} (not public API)\n")
 
 
 if __name__ == "__main__":
