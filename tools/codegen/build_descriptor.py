@@ -28,10 +28,14 @@ import sys
 # --- per-base-type input construction -------------------------------------
 # token in the meos-call name -> (tnumber_in_fn, cpp value type, wkt format)
 BASE = {
-    "tfloat": ("tfloat_in", "double", "{}@{}"),
-    "tint":   ("tint_in",   "int",    "{}@{}"),
+    "tfloat":   ("tfloat_in",   "double",  "{}@{}"),
+    "tint":     ("tint_in",     "int",     "{}@{}"),
+    "tbigint":  ("tbigint_in",  "int64_t", "{}@{}"),
 }
-SCALAR_CPP = {"double": "double", "int": "int"}
+SCALAR_CPP = {"double": "double", "int": "int", "int64_t": "int64_t"}
+
+# meos-call scalar-arg C type (as normalized by parse_sigs) -> BASE key
+SCALAR_ARG_TO_BASE = {"double": "tfloat", "int": "tint", "int64": "tbigint"}
 
 
 def pascal(meos_call):
@@ -68,9 +72,9 @@ def cmp_scalar_tempfirst(fn, ret, args):
     parts = fn.split("_")
     if len(parts) < 2 or parts[0] not in ("ever", "always") or parts[1] not in ("eq", "ne", "lt", "le", "gt", "ge"):
         return None
-    if ret != "int" or args not in (("Temporal*", "double"), ("Temporal*", "int")):
+    if ret != "int" or args not in (("Temporal*", "double"), ("Temporal*", "int"), ("Temporal*", "int64")):
         return None
-    base = "tfloat" if args[1] == "double" else "tint"
+    base = SCALAR_ARG_TO_BASE[args[1]]
     in_fn, vcpp, wkt = BASE[base]
     return {
         "nebula_name": pascal(fn),
@@ -100,9 +104,9 @@ def cmp_scalar_scalarfirst(fn, ret, args):
     parts = fn.split("_")
     if len(parts) < 2 or parts[0] not in ("ever", "always") or parts[1] not in ("eq", "ne", "lt", "le", "gt", "ge"):
         return None
-    if ret != "int" or args not in (("double", "Temporal*"), ("int", "Temporal*")):
+    if ret != "int" or args not in (("double", "Temporal*"), ("int", "Temporal*"), ("int64", "Temporal*")):
         return None
-    base = "tfloat" if args[0] == "double" else "tint"
+    base = SCALAR_ARG_TO_BASE[args[0]]
     in_fn, vcpp, wkt = BASE[base]
     return {
         "nebula_name": pascal(fn),
