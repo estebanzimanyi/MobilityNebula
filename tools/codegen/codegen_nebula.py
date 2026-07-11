@@ -354,8 +354,8 @@ VarVal {nebula_name}PhysicalFunction::execute(const Record& record, ArenaRef& ar
                 // edwithin_tgeo_geo, but specific MEOS function per generated operator.
                 // Real MEOS spatial-rel signature: int fn(const Temporal *, const GSERIALIZED *)
                 // (no `atstart` flag — that's specific to geog_dwithin / edwithin's 3-arg variant).
-                return {meos_call}(temporalGeometry.getGeometry(),
-                                   staticGeometry.getGeometry());
+                return {meos_call}({first_geom},
+                                   {second_geom});
             }}
             catch (const std::exception&)
             {{
@@ -583,8 +583,8 @@ VarVal {nebula_name}PhysicalFunction::execute(const Record& record, ArenaRef& ar
 
                 // MEOS *_tgeo_geo with trailing distance arg
                 // — int fn(const Temporal*, const GSERIALIZED*, double).
-                return {meos_call}(temporalGeometry.getGeometry(),
-                                   staticGeometry.getGeometry(),
+                return {meos_call}({first_geom},
+                                   {second_geom},
                                    distValue);
             }}
             catch (const std::exception&)
@@ -1781,6 +1781,16 @@ def emit_operator(op, output_root: Path):
 
     physical_common = dict(common)
     physical_common["registrar_pushes"] = registrar_p
+    # MEOS-call operand order for the temporal-point spatial-relation templates.
+    # Default builds the temporal geometry first (tgeo-first calls, e.g.
+    # eintersects_tgeo_geo); geo_first swaps so the static geometry leads
+    # (geo-first calls, e.g. eintersects_geo_tgeo).
+    if op.get("geo_first"):
+        physical_common["first_geom"] = "staticGeometry.getGeometry()"
+        physical_common["second_geom"] = "temporalGeometry.getGeometry()"
+    else:
+        physical_common["first_geom"] = "temporalGeometry.getGeometry()"
+        physical_common["second_geom"] = "staticGeometry.getGeometry()"
     if op.get("build_generic"):
         physical_cpp_path.write_text(assemble_generic_physical(op))
     elif op.get("build_two_temporal_points_with_dist"):

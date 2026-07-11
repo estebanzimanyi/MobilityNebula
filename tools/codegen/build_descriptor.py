@@ -162,6 +162,7 @@ def _args(spec):
 
 # per-template SQL arg layouts (must match the physical-cpp template's parameterValues order)
 _A_TGEO_GEO = [("lon", "double"), ("lat", "double"), ("timestamp", "uint64_t"), ("geometry", "VariableSizedData")]
+_A_TGEO_GEO_DIST = _A_TGEO_GEO + [("dist", "double")]
 _A_TWO_TGEO = [("lonA", "double"), ("latA", "double"), ("tsA", "uint64_t"),
                ("lonB", "double"), ("latB", "double"), ("tsB", "uint64_t")]
 _A_TCB_CB   = [("lon", "double"), ("lat", "double"), ("radius", "double"), ("timestamp", "uint64_t"), ("cbuffer", "VariableSizedData")]
@@ -197,6 +198,16 @@ def sprel_scalar_existing(fn, ret, args):
     if args == ("Temporal*", "GSERIALIZED*") and ("_tgeo_" in fn or "_tpoint_" in fn or "_tspatial_" in fn):
         return _mk_scalar(fn, "build_temporal_point", _A_TGEO_GEO,
                           f"Per-event {fn}: single-instant tgeompoint vs a static geometry -> {ret}.", ret)
+    if args == ("GSERIALIZED*", "Temporal*") and "_geo_tgeo" in fn:
+        d = _mk_scalar(fn, "build_temporal_point", _A_TGEO_GEO,
+                       f"Per-event {fn}: a static geometry vs a single-instant tgeompoint (geo-first) -> {ret}.", ret)
+        d["geo_first"] = True
+        return d
+    if args == ("GSERIALIZED*", "Temporal*", "double") and "_geo_tgeo" in fn:
+        d = _mk_scalar(fn, "build_temporal_point_with_dist", _A_TGEO_GEO_DIST,
+                       f"Per-event {fn}: a static geometry within a distance of a single-instant tgeompoint (geo-first) -> {ret}.", ret)
+        d["geo_first"] = True
+        return d
     if args == ("Temporal*", "Temporal*") and "tcbuffer" in fn:
         return _mk_scalar(fn, "build_two_tcbuffer_points", _A_TWO_TCB,
                           f"Per-event {fn} between two single-instant tcbuffers -> {ret}.", ret)
