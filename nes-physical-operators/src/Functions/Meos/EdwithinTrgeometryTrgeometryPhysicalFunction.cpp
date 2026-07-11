@@ -1,0 +1,117 @@
+/*
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        https://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+*/
+
+#include <Functions/Meos/EdwithinTrgeometryTrgeometryPhysicalFunction.hpp>
+#include <Functions/PhysicalFunction.hpp>
+#include <MEOSWrapper.hpp>
+#include <Nautilus/DataTypes/VarVal.hpp>
+#include <Nautilus/DataTypes/VariableSizedData.hpp>
+#include <Nautilus/Interface/Record.hpp>
+#include <PhysicalFunctionRegistry.hpp>
+#include <ErrorHandling.hpp>
+#include <ExecutionContext.hpp>
+#include <function.hpp>
+#include <utility>
+#include <val.hpp>
+#include <stdlib.h>
+#include <string.h>
+
+extern "C" {
+#include <meos.h>
+#include <meos_geo.h>
+#include <meos_pose.h>
+#include <meos_rgeo.h>
+}
+
+namespace NES {
+
+EdwithinTrgeometryTrgeometryPhysicalFunction::EdwithinTrgeometryTrgeometryPhysicalFunction(PhysicalFunction ref1_wkt, PhysicalFunction x1, PhysicalFunction y1, PhysicalFunction theta1, PhysicalFunction ts1, PhysicalFunction ref2_wkt, PhysicalFunction x2, PhysicalFunction y2, PhysicalFunction theta2, PhysicalFunction ts2, PhysicalFunction dist) {
+    paramFns.reserve(11);
+    paramFns.push_back(std::move(ref1_wkt));
+    paramFns.push_back(std::move(x1));
+    paramFns.push_back(std::move(y1));
+    paramFns.push_back(std::move(theta1));
+    paramFns.push_back(std::move(ts1));
+    paramFns.push_back(std::move(ref2_wkt));
+    paramFns.push_back(std::move(x2));
+    paramFns.push_back(std::move(y2));
+    paramFns.push_back(std::move(theta2));
+    paramFns.push_back(std::move(ts2));
+    paramFns.push_back(std::move(dist));
+}
+
+VarVal EdwithinTrgeometryTrgeometryPhysicalFunction::execute(const Record& record, ArenaRef& arena) const {
+    auto ref1_wkt = paramFns[0].execute(record, arena).cast<VariableSizedData>();
+    auto x1 = paramFns[1].execute(record, arena).cast<nautilus::val<double>>();
+    auto y1 = paramFns[2].execute(record, arena).cast<nautilus::val<double>>();
+    auto theta1 = paramFns[3].execute(record, arena).cast<nautilus::val<double>>();
+    auto ts1 = paramFns[4].execute(record, arena).cast<nautilus::val<uint64_t>>();
+    auto ref2_wkt = paramFns[5].execute(record, arena).cast<VariableSizedData>();
+    auto x2 = paramFns[6].execute(record, arena).cast<nautilus::val<double>>();
+    auto y2 = paramFns[7].execute(record, arena).cast<nautilus::val<double>>();
+    auto theta2 = paramFns[8].execute(record, arena).cast<nautilus::val<double>>();
+    auto ts2 = paramFns[9].execute(record, arena).cast<nautilus::val<uint64_t>>();
+    auto dist = paramFns[10].execute(record, arena).cast<nautilus::val<double>>();
+    const auto result = nautilus::invoke(
+        +[](const char* ref1_wkt, uint32_t ref1_wktsz, double x1, double y1, double theta1, uint64_t ts1, const char* ref2_wkt, uint32_t ref2_wktsz, double x2, double y2, double theta2, uint64_t ts2, double dist) -> double {
+            try {
+                MEOS::Meos::ensureMeosInitialized();
+                char* ref1_str = (char*)malloc(ref1_wktsz + 1);
+                memcpy(ref1_str, ref1_wkt, ref1_wktsz); ref1_str[ref1_wktsz] = '\0';
+                GSERIALIZED* gref1 = geom_in(ref1_str, -1); free(ref1_str);
+                if (!gref1) return 0.0;
+                Pose* pose1 = pose_make_2d(x1, y1, theta1, false, 0);
+                if (!pose1) { free(gref1); return 0.0; }
+                TInstant* inst1 = trgeometryinst_make(gref1, pose1, (TimestampTz)ts1);
+                free(gref1); free(pose1);
+                if (!inst1) return 0.0;
+                char* ref2_str = (char*)malloc(ref2_wktsz + 1);
+                memcpy(ref2_str, ref2_wkt, ref2_wktsz); ref2_str[ref2_wktsz] = '\0';
+                GSERIALIZED* gref2 = geom_in(ref2_str, -1); free(ref2_str);
+                if (!gref2) return 0.0;
+                Pose* pose2 = pose_make_2d(x2, y2, theta2, false, 0);
+                if (!pose2) { free(gref2); return 0.0; }
+                TInstant* inst2 = trgeometryinst_make(gref2, pose2, (TimestampTz)ts2);
+                free(gref2); free(pose2);
+                if (!inst2) { free(inst1); return 0.0; }
+                int r = edwithin_trgeometry_trgeometry((Temporal*)inst1, (Temporal*)inst2, dist);
+                free(inst1); free(inst2);
+                return r > 0 ? 1.0 : 0.0;
+            } catch (const std::exception&) { return 0.0; }
+        },
+        ref1_wkt.getContent(), ref1_wkt.getContentSize(), x1, y1, theta1, ts1, ref2_wkt.getContent(), ref2_wkt.getContentSize(), x2, y2, theta2, ts2, dist);
+    return VarVal(result);
+}
+
+PhysicalFunctionRegistryReturnType PhysicalFunctionGeneratedRegistrar::RegisterEdwithinTrgeometryTrgeometryPhysicalFunction(
+    PhysicalFunctionRegistryArguments arguments)
+{
+    PRECONDITION(arguments.childFunctions.size()==11,
+                 "EdwithinTrgeometryTrgeometryPhysicalFunction requires 11 children but got {}",
+                 arguments.childFunctions.size());
+    return EdwithinTrgeometryTrgeometryPhysicalFunction(
+                                  std::move(arguments.childFunctions[0]),
+                                  std::move(arguments.childFunctions[1]),
+                                  std::move(arguments.childFunctions[2]),
+                                  std::move(arguments.childFunctions[3]),
+                                  std::move(arguments.childFunctions[4]),
+                                  std::move(arguments.childFunctions[5]),
+                                  std::move(arguments.childFunctions[6]),
+                                  std::move(arguments.childFunctions[7]),
+                                  std::move(arguments.childFunctions[8]),
+                                  std::move(arguments.childFunctions[9]),
+                                  std::move(arguments.childFunctions[10]));
+}
+
+} // namespace NES
