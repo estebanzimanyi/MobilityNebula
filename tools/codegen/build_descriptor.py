@@ -636,12 +636,44 @@ def trgeometry_nad(fn, ret, args):
     }
 
 
+def temporal_stbox_border_transform_wkb(fn, ret, args):
+    """Temporal* fn(const Temporal*, const STBox*, bool) — restrict / difference a
+    temporal spatial value to a static STBox with a border-inclusion flag; the result
+    is itself a temporal. The temporal operand is carried as a hex-WKB VARSIZED field,
+    the STBox as a WKT/text VARSIZED literal, and the border flag as a bool; the
+    temporal result is serialized back to hex-WKB VARSIZED. Completes the
+    temporal_geom_transform_wkb restriction family for the stbox second operand."""
+    if ret != "Temporal*" or args != ("Temporal*", "STBox*", "bool"):
+        return None
+    extra_headers = []
+    if "trgeometry" in fn:
+        extra_headers = ["meos_rgeo.h"]
+    elif "tpose" in fn:
+        extra_headers = ["meos_pose.h"]
+    d = {
+        "nebula_name": pascal(fn), "sql_token": fn.upper(), "meos_call": fn,
+        "build_generic": True, "input_type": "wkb_temporal", "return_kind": "wkb",
+        "wkb_stbox_border": True,
+        "extra_args": [
+            {"kind": "box", "box_type": "STBox", "parser": "stbox_in", "header": "meos.h"},
+            {"kind": "scalar", "cpp": "bool"},
+        ],
+        "comment_one_liner": (
+            f"Per-event {fn}: a hex-WKB temporal, a static STBox, and a border flag -> "
+            f"hex-WKB temporal."),
+    }
+    if extra_headers:
+        d["extra_headers"] = extra_headers
+    return d
+
+
 SHAPES = {
     "cmp_scalar_tempfirst": cmp_scalar_tempfirst,
     "cmp_scalar_scalarfirst": cmp_scalar_scalarfirst,
     "cmp_two_temporal": cmp_two_temporal,
     "two_temporal_scalar": two_temporal_scalar,
     "two_temporal_temporal": two_temporal_temporal,
+    "temporal_stbox_border_transform_wkb": temporal_stbox_border_transform_wkb,
     "sprel_scalar_existing": sprel_scalar_existing,
     "temporal_unary_scalar": temporal_unary_scalar,
     "temporal_x_scalar": temporal_x_scalar,
