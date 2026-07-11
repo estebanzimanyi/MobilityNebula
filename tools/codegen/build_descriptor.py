@@ -636,12 +636,45 @@ def trgeometry_nad(fn, ret, args):
     }
 
 
+def temporal_geom_transform_wkb(fn, ret, args):
+    """Temporal* fn(const Temporal*, const GSERIALIZED*) — a per-event transform of a
+    temporal against a static geometry whose result is itself a temporal (restrict /
+    difference / project / body-trajectory of a temporal spatial value against a
+    geometry). The temporal operand is carried as a hex-WKB VARSIZED field and the
+    static geometry as a WKT/text VARSIZED literal; the temporal result is serialized
+    back to hex-WKB VARSIZED, the same serialize-on-return round-trip
+    two_temporal_temporal uses with a static-geometry second operand."""
+    if ret != "Temporal*" or args != ("Temporal*", "GSERIALIZED*"):
+        return None
+    extra_headers = []
+    if "trgeometry" in fn:
+        extra_headers = ["meos_rgeo.h"]
+    elif "tpose" in fn:
+        extra_headers = ["meos_pose.h"]
+    elif "tnpoint" in fn:
+        extra_headers = ["meos_npoint.h"]
+    elif "tcbuffer" in fn:
+        extra_headers = ["meos_cbuffer.h"]
+    d = {
+        "nebula_name": pascal(fn), "sql_token": fn.upper(), "meos_call": fn,
+        "build_generic": True, "input_type": "wkb_temporal", "return_kind": "wkb",
+        "extra_args": [{"kind": "geom"}],
+        "comment_one_liner": (
+            f"Per-event {fn}: a hex-WKB temporal and a static geometry -> "
+            f"hex-WKB temporal."),
+    }
+    if extra_headers:
+        d["extra_headers"] = extra_headers
+    return d
+
+
 SHAPES = {
     "cmp_scalar_tempfirst": cmp_scalar_tempfirst,
     "cmp_scalar_scalarfirst": cmp_scalar_scalarfirst,
     "cmp_two_temporal": cmp_two_temporal,
     "two_temporal_scalar": two_temporal_scalar,
     "two_temporal_temporal": two_temporal_temporal,
+    "temporal_geom_transform_wkb": temporal_geom_transform_wkb,
     "sprel_scalar_existing": sprel_scalar_existing,
     "temporal_unary_scalar": temporal_unary_scalar,
     "temporal_x_scalar": temporal_x_scalar,
