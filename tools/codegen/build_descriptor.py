@@ -28,10 +28,14 @@ import sys
 # --- per-base-type input construction -------------------------------------
 # token in the meos-call name -> (tnumber_in_fn, cpp value type, wkt format)
 BASE = {
-    "tfloat": ("tfloat_in", "double", "{}@{}"),
-    "tint":   ("tint_in",   "int",    "{}@{}"),
+    "tfloat":  ("tfloat_in",  "double",  "{}@{}"),
+    "tint":    ("tint_in",    "int",     "{}@{}"),
+    "tbigint": ("tbigint_in", "int64_t", "{}@{}"),
 }
-SCALAR_CPP = {"double": "double", "int": "int"}
+SCALAR_CPP = {"double": "double", "int": "int", "int64_t": "int64_t"}
+
+# meos-call scalar-arg C type (as normalized by parse_sigs) -> BASE key
+SCALAR_ARG_TO_BASE = {"double": "tfloat", "int": "tint", "int64_t": "tbigint"}
 
 
 def pascal(meos_call):
@@ -59,6 +63,35 @@ def parse_sigs(path):
     return out
 
 
+def _norm_ctype(ctype):
+    """Normalize a catalog cType string to the token the SHAPE classifiers match:
+    strip a leading const / struct, collapse any pointer to '<base>*', and keep the
+    catalog-canonical scalar spelling (int64_t / uint64_t / int / double / bool). Mirrors
+    parse_sigs' header normalization but reads the catalog's already-canonical cType, so
+    the two agree on the overlap (the catalog additionally resolves typedefs such as
+    Quadbin / H3Index -> uint64_t and int32 -> int, which only ever land in residue)."""
+    t = ctype.strip()
+    ptr = "*" in t
+    t = re.sub(r"\b(const|struct)\b", " ", t).replace("*", " ").strip()
+    t = t.split()[0] if t.split() else t
+    return t + "*" if ptr else t
+
+
+def load_catalog(path):
+    """MEOS-API catalog (meos-idl.json) -> (sigs, functions). This is the CANONICAL import
+    (codegen chain MEOS -> MEOS-API -> binding): signatures come from the single-source
+    catalog, never re-parsed from headers. sigs = name -> (ret, args) in catalog-canonical
+    tokens; the raw functions list is returned so the caller can derive the candidate
+    surface from api / family / network metadata."""
+    d = json.load(open(path))
+    sigs = {}
+    for f in d["functions"]:
+        ret = _norm_ctype(f["returnType"]["c"])
+        args = tuple(_norm_ctype(p["cType"]) for p in f["params"])
+        sigs[f["name"]] = (ret, args)
+    return sigs, d["functions"]
+
+
 # --- SHAPE classifiers ------------------------------------------------------
 # Each returns a descriptor dict for `fn` if it matches, else None.
 
@@ -68,9 +101,9 @@ def cmp_scalar_tempfirst(fn, ret, args):
     parts = fn.split("_")
     if len(parts) < 2 or parts[0] not in ("ever", "always") or parts[1] not in ("eq", "ne", "lt", "le", "gt", "ge"):
         return None
-    if ret != "int" or args not in (("Temporal*", "double"), ("Temporal*", "int")):
+    if ret != "int" or args not in (("Temporal*", "double"), ("Temporal*", "int"), ("Temporal*", "int64_t")):
         return None
-    base = "tfloat" if args[1] == "double" else "tint"
+    base = SCALAR_ARG_TO_BASE[args[1]]
     in_fn, vcpp, wkt = BASE[base]
     return {
         "nebula_name": pascal(fn),
@@ -100,9 +133,9 @@ def cmp_scalar_scalarfirst(fn, ret, args):
     parts = fn.split("_")
     if len(parts) < 2 or parts[0] not in ("ever", "always") or parts[1] not in ("eq", "ne", "lt", "le", "gt", "ge"):
         return None
-    if ret != "int" or args not in (("double", "Temporal*"), ("int", "Temporal*")):
+    if ret != "int" or args not in (("double", "Temporal*"), ("int", "Temporal*"), ("int64_t", "Temporal*")):
         return None
-    base = "tfloat" if args[0] == "double" else "tint"
+    base = SCALAR_ARG_TO_BASE[args[0]]
     in_fn, vcpp, wkt = BASE[base]
     return {
         "nebula_name": pascal(fn),
@@ -276,6 +309,35 @@ def temporal_x_geom(fn, ret, args):
         "build_generic": True, "input_type": inp,
         "extra_args": [{"kind": "geom"}], "return_kind": rk,
         "comment_one_liner": f"Per-event {fn}: single-instant {inp} against a static geometry -> {rk}.",
+    }
+
+
+def geo_tgeo_predicate(fn, ret, args):
+    """int|bool fn(const GSERIALIZED*, const Temporal*[, double]) — geo-FIRST spatial
+    predicate over a PLAIN tgeo (acovers/econtains/edisjoint/eintersects/etouches +
+    e/a dwithin, geometry as the first MEOS arg). The temporal is the primary input; the
+    geometry is a geom extra emitted geom_first so the MEOS call is fn(geo, temp[, dist]).
+    trgeometry geo-first predicates are handled by geo_trgeometry_predicate, so exclude
+    them here."""
+    if "trgeometry" in fn:
+        return None
+    rk = {"int": "int", "bool": "bool"}.get(ret)
+    if not rk:
+        return None
+    inp = _infer_input(fn)
+    if not inp:
+        return None
+    if args == ("GSERIALIZED*", "Temporal*"):
+        extra = [{"kind": "geom"}]
+    elif args == ("GSERIALIZED*", "Temporal*", "double"):
+        extra = [{"kind": "geom"}, {"kind": "scalar", "cpp": "double"}]
+    else:
+        return None
+    return {
+        "nebula_name": pascal(fn), "sql_token": fn.upper(), "meos_call": fn,
+        "build_generic": True, "input_type": inp, "return_kind": rk,
+        "extra_args": extra, "geom_first": True,
+        "comment_one_liner": f"Per-event {fn}: geo-first spatial predicate over a single-instant {inp} -> {rk}.",
     }
 
 
@@ -638,7 +700,7 @@ def trgeometry_nad(fn, ret, args):
 
 # C scalar arg-type -> cpp lambda-param type for the general wkb transform. int64
 # maps to int64_t (tbigint); the phase1 base has no separate SCALAR_ARG_TO_BASE table.
-_TRANSFORM_SCALAR_CPP = {"double": "double", "int": "int32_t", "int64": "int64_t", "bool": "bool"}
+_TRANSFORM_SCALAR_CPP = {"double": "double", "int": "int32_t", "int64_t": "int64_t", "bool": "bool"}
 
 
 def _transform_extra_headers(fn):
@@ -714,6 +776,7 @@ SHAPES = {
     "temporal_unary_scalar": temporal_unary_scalar,
     "temporal_x_scalar": temporal_x_scalar,
     "temporal_x_geom": temporal_x_geom,
+    "geo_tgeo_predicate": geo_tgeo_predicate,
     "temporal_extract_scalar": temporal_extract_scalar,
     "temporal_x_box": temporal_x_box,
     "stbox_x_stbox": stbox_x_stbox,
@@ -732,19 +795,42 @@ SHAPES = {
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--sigs", required=True, help="header signature dump")
-    ap.add_argument("--gap", required=True, help="streamable-not-wired function list")
+    ap.add_argument("--catalog", help="MEOS-API meos-idl.json — CANONICAL import "
+                                      "(codegen chain MEOS -> MEOS-API -> binding); supersedes --sigs")
+    ap.add_argument("--sigs", help="legacy header signature dump (prefer --catalog)")
+    ap.add_argument("--gap", help="optional explicit subset of MEOS symbol names to classify; "
+                                  "default with --catalog = every api=public function")
+    ap.add_argument("--wired", help="optional file of already-wired MEOS symbol names to exclude")
     ap.add_argument("--shapes", required=True,
                     help="comma-separated SHAPE names to apply (order = match priority)")
     ap.add_argument("--out", required=True, help="descriptor JSON output path")
     a = ap.parse_args()
 
-    sigs = parse_sigs(a.sigs)
-    gap = {ln.strip() for ln in open(a.gap) if ln.strip()}
-    shapes = [SHAPES[s] for s in a.shapes.split(",")]
+    # Signatures: canonical catalog (preferred) or legacy header dump.
+    funcs = None
+    if a.catalog:
+        sigs, funcs = load_catalog(a.catalog)
+    elif a.sigs:
+        sigs = parse_sigs(a.sigs)
+    else:
+        ap.error("one of --catalog (canonical) or --sigs (legacy) is required")
 
+    # Candidate surface: an explicit --gap subset, else every public function from the
+    # catalog. Nebula-streamability is decided by the SHAPE classification below, NOT by
+    # the catalog's network.exposable flag (that is a REST-server decoder constraint, e.g.
+    # reason "no-decoder:int64_t" — Nebula streams int64 columns fine).
+    if a.gap:
+        candidates = {ln.strip() for ln in open(a.gap) if ln.strip()}
+    elif funcs is not None:
+        candidates = {f["name"] for f in funcs if f.get("api") == "public"}
+    else:
+        ap.error("--gap is required with --sigs")
+    if a.wired:
+        candidates -= {ln.strip() for ln in open(a.wired) if ln.strip()}
+
+    shapes = [SHAPES[s] for s in a.shapes.split(",")]
     ops, unmatched = [], []
-    for fn in sorted(gap):
+    for fn in sorted(candidates):
         if fn not in sigs:
             continue
         ret, args = sigs[fn]
@@ -756,11 +842,13 @@ def main():
         else:
             unmatched.append(fn)
 
-    json.dump({"_comment": f"codegen descriptor; shapes={a.shapes}", "operators": ops},
+    src = a.catalog or a.sigs
+    json.dump({"_comment": f"codegen descriptor; source={src}; shapes={a.shapes}", "operators": ops},
               open(a.out, "w"), indent=2)
+    present_unmatched = [f for f in unmatched if f in sigs]
     sys.stderr.write(f"emitted {len(ops)} operator descriptor(s) -> {a.out}\n")
-    sys.stderr.write(f"(gap functions present in sig-dump but unmatched by these shapes: "
-                     f"{len([f for f in unmatched if f in sigs])})\n")
+    sys.stderr.write(f"candidates={len(candidates)}  in-sigs matched={len(ops)}  "
+                     f"unmatched-in-sigs={len(present_unmatched)} (residue)\n")
 
 
 if __name__ == "__main__":

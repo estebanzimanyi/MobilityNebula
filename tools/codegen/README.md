@@ -47,14 +47,22 @@ python3 run.py /usr/local/include/meos.h /usr/local/include/meos_geo.h \
 
 ## Running the generator
 
+`build_descriptor.py` reads signatures and the candidate surface directly from the
+canonical MEOS-API catalog `meos-idl.json` (the codegen chain MEOS → MEOS-API →
+binding — no header re-parsing). The catalog is derived, never committed (see the
+`.gitignore`); regenerate it via `run.py` above or the shared `provision-meos` action.
+
 ```bash
-# 1. Build a descriptor from the IDL gap (example: trgeometry family)
+# 1. Build a descriptor from the canonical catalog. With no --gap, every api=public
+#    function is a candidate and the SHAPE classifiers decide which are Nebula-streamable
+#    (NOT the catalog's network.exposable flag, which is a REST-server decoder constraint).
 python3 tools/codegen/build_descriptor.py \
-    --sigs /tmp/cmp_sigs.txt \
-    --gap  /tmp/nebula_gap.txt \
+    --catalog tools/codegen/meos-idl.json \
     --shapes trgeometry_geo_predicate,geo_trgeometry_predicate,trgeometry_geo_dwithin,\
 trgeometry_trgeometry_predicate,trgeometry_trgeometry_dwithin,trgeometry_nad \
     --out tools/codegen/trgeo-descriptor.json
+#    Optional: --gap <names.txt> restricts to a subset; --wired <names.txt> excludes
+#    already-generated MEOS symbols so the descriptor is the remaining gap only.
 
 # 2. Emit C++ files and patch build/grammar/QPC
 python3 tools/codegen/codegen_nebula.py \

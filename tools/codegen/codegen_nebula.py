@@ -4028,6 +4028,18 @@ def _generic_field_decl(name, cpp):
     return cpp
 
 
+def _reorder_extra_first(op, call_terms):
+    """For box_first/scalar_first (single extra) swap the extra ahead of the temporal;
+    for geom_first move the geometry (first extra) to the front while keeping any trailing
+    operand (e.g. the dwithin distance), so f(geo, temp) and f(geo, temp, dist) both emit
+    correctly. Children/param order is unchanged — only the MEOS call-arg order flips."""
+    if op.get("geom_first") and len(call_terms) >= 2:
+        return [call_terms[1], call_terms[0]] + call_terms[2:]
+    if (op.get("box_first") or op.get("scalar_first")) and len(call_terms) == 2:
+        return [call_terms[1], call_terms[0]]
+    return call_terms
+
+
 def _generic_call_extras(op, zero):
     """Shared marshalling for a build_generic op: resolve the primary input and, for
     each extra_arg, emit its lambda field + parse lines + MEOS call term (+ any post-call
@@ -4119,8 +4131,7 @@ def assemble_wkb_output(op):
     inp, fields, headers, call_terms, parse_lines, box_frees, casts, lparams, invoke, n_args = \
         _generic_call_extras(op, zero)
     headers.add("meos_geo.h")  # temporal_from_hexwkb / temporal_as_hexwkb
-    if (op.get("scalar_first") or op.get("box_first")) and len(call_terms) == 2:
-        call_terms = [call_terms[1], call_terms[0]]
+    call_terms = _reorder_extra_first(op, call_terms)
     callargs = ", ".join(call_terms)
     build = inp["build"].format(var="temp", z=zero) + "".join(parse_lines)
     bf = "".join(f"                {x}\n" for x in box_frees)
@@ -4155,10 +4166,11 @@ def assemble_generic_physical(op):
     inc = "\n".join(f"#include <{h}>" for h in
                     ["meos.h"] + sorted(h for h in headers if h != "meos.h"))
 
-    # box_first ops (e.g. above_stbox_tspatial(box, temp)) call with the box/span
-    # literal before the temporal; the default order is temporal-first.
-    if op.get("box_first") and len(call_terms) == 2:
-        call_terms = [call_terms[1], call_terms[0]]
+    # box_first / geom_first / scalar_first ops (e.g. above_stbox_tspatial(box, temp),
+    # acovers_geo_tgeo(geo, temp), edwithin_geo_tgeo(geo, temp, dist)) call with the extra
+    # operand before the temporal; the default order is temporal-first. Children stay
+    # temporal-first; only the MEOS call flips.
+    call_terms = _reorder_extra_first(op, call_terms)
     callargs = ", ".join(call_terms)
     bf = "".join(f"                {x}\n" for x in box_frees)
     if extract_fn is None:
