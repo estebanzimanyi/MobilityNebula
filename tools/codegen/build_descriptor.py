@@ -445,6 +445,36 @@ def two_temporal_temporal(fn, ret, args):
     return d
 
 
+def temporal_unary_transform_wkb(fn, ret, args):
+    """Temporal* fn(const Temporal*) — a unary per-event transform whose result is
+    itself a temporal (tnpoint/tgeo/tgeometry/...) that cannot be flattened to a
+    scalar. The single operand is carried as a hex-WKB VARSIZED field and the
+    temporal result is serialized back to hex-WKB VARSIZED (serialize-on-return) —
+    the one-operand form of two_temporal_temporal. The output VARSIZED can itself
+    feed another per-event MEOS operator. Scalar-carrying transforms are handled
+    first by temporal_extract_scalar; this is the fallback for non-scalar results."""
+    if args != ("Temporal*",) or ret != "Temporal*":
+        return None
+    extra_headers = []
+    if "tcbuffer" in fn:
+        extra_headers = ["meos_cbuffer.h"]
+    elif "tnpoint" in fn:
+        extra_headers = ["meos_npoint.h"]
+    elif "trgeometry" in fn:
+        extra_headers = ["meos_rgeo.h"]
+    elif "tpose" in fn:
+        extra_headers = ["meos_pose.h"]
+    d = {
+        "nebula_name": pascal(fn), "sql_token": fn.upper(), "meos_call": fn,
+        "build_generic": True, "input_type": "wkb_temporal", "return_kind": "wkb",
+        "wkb_unary": True, "extra_args": [],
+        "comment_one_liner": f"Per-event {fn}: one hex-WKB temporal operand -> hex-WKB temporal.",
+    }
+    if extra_headers:
+        d["extra_headers"] = extra_headers
+    return d
+
+
 # --- Trgeometry spatial predicate shapes (W148/W149 wave) -------------------
 # The current MEOS-API run.py correctly resolves GSERIALIZED* in the IDL, so
 # parse_sigs normalizes `const GSERIALIZED *` -> "GSERIALIZED*" (strip-const +
@@ -642,6 +672,7 @@ SHAPES = {
     "cmp_two_temporal": cmp_two_temporal,
     "two_temporal_scalar": two_temporal_scalar,
     "two_temporal_temporal": two_temporal_temporal,
+    "temporal_unary_transform_wkb": temporal_unary_transform_wkb,
     "sprel_scalar_existing": sprel_scalar_existing,
     "temporal_unary_scalar": temporal_unary_scalar,
     "temporal_x_scalar": temporal_x_scalar,

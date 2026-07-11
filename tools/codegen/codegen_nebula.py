@@ -4055,11 +4055,25 @@ def assemble_wkb_output(op):
         registrar_pushes=registrar)
 
 
+def assemble_wkb_output_unary(op):
+    """Physical .cpp for a per-event UNARY transform f(Temporal*) -> Temporal*
+    over one hex-WKB VARSIZED operand, emitting the temporal result as a hex-WKB
+    VARSIZED field. Single-operand form of assemble_wkb_output."""
+    name = op["nebula_name"]
+    headers = {"meos.h", "meos_geo.h"}
+    for h in op.get("extra_headers", []):
+        headers.add(h)
+    inc = "\n".join(f"#include <{h}>" for h in
+                    ["meos.h"] + sorted(h for h in headers if h != "meos.h"))
+    return GENERIC_PHYSICAL_WKB_UNARY_TEMPLATE.format(
+        nebula_name=name, includes=inc, meos_call=op["meos_call"])
+
+
 def assemble_generic_physical(op):
     """Build the physical .cpp for a 'generic' (build_generic) operator."""
     name = op["nebula_name"]
     if op["return_kind"] == "wkb":
-        return assemble_wkb_output(op)
+        return assemble_wkb_output_unary(op) if op.get("wkb_unary") else assemble_wkb_output(op)
     inp = GENERIC_INPUTS[op["input_type"]]
     ret_cpp, _, zero, extract_fn = GENERIC_RETURNS[op["return_kind"]]
     extras = op.get("extra_args", [])
@@ -4372,6 +4386,127 @@ PhysicalFunctionRegistryReturnType PhysicalFunctionGeneratedRegistrar::Register{
                  "{nebula_name}PhysicalFunction requires 2 children but got {{}}",
                  arguments.childFunctions.size());
 {registrar_pushes}
+}}
+
+}} // namespace NES
+"""
+
+
+# Unary variant of GENERIC_PHYSICAL_WKB_TEMPLATE: a per-event transform
+# f(Temporal*) -> Temporal* over a SINGLE hex-WKB VARSIZED operand whose result
+# is itself a temporal (tnpoint/tgeo/...) that cannot be flattened to a scalar, so
+# it is serialized back to hex-WKB and emitted as a VARSIZED field — the same
+# serialize-on-return round-trip the two-operand form uses.
+GENERIC_PHYSICAL_WKB_UNARY_TEMPLATE = """\
+/*
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        https://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+*/
+
+#include <Functions/Meos/{nebula_name}PhysicalFunction.hpp>
+
+#include <Functions/PhysicalFunction.hpp>
+#include <MEOSWrapper.hpp>
+#include <Nautilus/DataTypes/VarVal.hpp>
+#include <Nautilus/DataTypes/VariableSizedData.hpp>
+#include <Nautilus/Interface/Record.hpp>
+#include <PhysicalFunctionRegistry.hpp>
+#include <ErrorHandling.hpp>
+#include <ExecutionContext.hpp>
+#include <cstdlib>
+#include <cstring>
+#include <function.hpp>
+#include <string>
+#include <utility>
+#include <val.hpp>
+
+extern "C" {{
+{includes}
+}}
+
+namespace NES {{
+
+{nebula_name}PhysicalFunction::{nebula_name}PhysicalFunction(PhysicalFunction trajFunction)
+{{
+    parameterFunctions.reserve(1);
+    parameterFunctions.push_back(std::move(trajFunction));
+}}
+
+VarVal {nebula_name}PhysicalFunction::execute(const Record& record, ArenaRef& arena) const
+{{
+    std::vector<VarVal> parameterValues;
+    parameterValues.reserve(parameterFunctions.size());
+    for (const auto& function : parameterFunctions)
+    {{
+        parameterValues.emplace_back(function.execute(record, arena));
+    }}
+
+    auto traj = parameterValues[0].cast<VariableSizedData>();
+
+    // Parse the hex-WKB operand, call f(Temporal*) -> Temporal*, and serialize
+    // the temporal result back to hex-WKB inside the invoke; the heap string is
+    // copied into the arena below. The operand and the MEOS result are freed here.
+    auto hexStr = nautilus::invoke(
+        +[](const char* aPtr, uint32_t aSize) -> char*
+        {{
+            try
+            {{
+                MEOS::Meos::ensureMeosInitialized();
+                std::string aHex(aPtr, aSize);
+                Temporal* a = temporal_from_hexwkb(aHex.c_str());
+                if (!a) return (char*) nullptr;
+                Temporal* res = {meos_call}(a);
+                free(a);
+                if (!res) return (char*) nullptr;
+                size_t hexSize = 0;
+                char* hexOut = temporal_as_hexwkb(res, 0, &hexSize);
+                free(res);
+                return hexOut;
+            }}
+            catch (const std::exception&)
+            {{
+                return (char*) nullptr;
+            }}
+        }},
+        traj.getContent(), traj.getContentSize());
+
+    const auto hexLen = nautilus::invoke(
+        +[](const char* s) -> uint32_t {{ return s ? (uint32_t) strlen(s) : (uint32_t) 0; }},
+        hexStr);
+
+    auto variableSized = arena.allocateVariableSizedData(hexLen);
+
+    nautilus::invoke(
+        +[](int8_t* dest, const char* s, uint32_t len) -> void
+        {{
+            if (s)
+            {{
+                memcpy(dest, s, len);
+                free((void*) s);
+            }}
+        }},
+        variableSized.getContent(), hexStr, hexLen);
+
+    return variableSized;
+}}
+
+PhysicalFunctionRegistryReturnType PhysicalFunctionGeneratedRegistrar::Register{nebula_name}PhysicalFunction(
+    PhysicalFunctionRegistryArguments arguments)
+{{
+    PRECONDITION(arguments.childFunctions.size() == 1,
+                 "{nebula_name}PhysicalFunction requires 1 child but got {{}}",
+                 arguments.childFunctions.size());
+    auto arg0 = std::move(arguments.childFunctions[0]);
+    return {nebula_name}PhysicalFunction(std::move(arg0));
 }}
 
 }} // namespace NES
