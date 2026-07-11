@@ -636,6 +636,74 @@ def trgeometry_nad(fn, ret, args):
     }
 
 
+# C scalar arg-type -> cpp lambda-param type for the general wkb transform. int64
+# maps to int64_t (tbigint); the phase1 base has no separate SCALAR_ARG_TO_BASE table.
+_TRANSFORM_SCALAR_CPP = {"double": "double", "int": "int32_t", "int64": "int64_t", "bool": "bool"}
+
+
+def _transform_extra_headers(fn):
+    """meos_call symbols that live outside meos.h/meos_geo.h need their family header."""
+    if "trgeometry" in fn or "tpose" in fn:
+        return ["meos_pose.h"]
+    if "tnpoint" in fn:
+        return ["meos_npoint.h"]
+    if "tcbuffer" in fn:
+        return ["meos_cbuffer.h"]
+    return []
+
+
+def temporal_transform_wkb(fn, ret, args):
+    """GENERAL serialize-on-return transform: Temporal* fn(<temporal + supported extras>)
+    -> Temporal*, emitted via the wkb round-trip (parse hex-WKB -> MEOS call -> serialize
+    hex-WKB) through the ONE consolidated assemble_wkb_output extras path. The primary
+    Temporal* is carried as a hex-WKB field; each remaining operand maps to a scalar /
+    static geometry (GSERIALIZED*) / box (STBox/TBox) / second temporal extra. Also handles
+    the scalar-first arithmetic form (scalar, Temporal*), e.g. add_bigint_tbigint.
+
+    Returns None (-> reason-marked structural residue, NOT a silent drop) for ANY
+    unsupported operand — TSequence*/TInstant* (whole-sequence, not per-event),
+    Match**/AFFINE*/int*/out-params, a bare Span* (ambiguous tstzspan vs numspan), or an
+    arity >3 (stateful transforms such as the Kalman filter) — so the generator only emits
+    genuinely per-event marshallable transforms and everything else stays measurable."""
+    if ret != "Temporal*" or not (1 <= len(args) <= 3):
+        return None
+    args = list(args)
+
+    def mk(extras, scalar_first=False):
+        d = {"nebula_name": pascal(fn), "sql_token": fn.upper(), "meos_call": fn,
+             "build_generic": True, "input_type": "wkb_temporal", "return_kind": "wkb",
+             "extra_args": extras,
+             "comment_one_liner": f"Per-event {fn}: hex-WKB temporal transform -> hex-WKB temporal."}
+        eh = _transform_extra_headers(fn)
+        if eh:
+            d["extra_headers"] = eh
+        if scalar_first:
+            d["scalar_first"] = True
+        return d
+
+    # scalar-first arithmetic: (scalar, Temporal*) -> f(scalar, temp)
+    if args[0] in _TRANSFORM_SCALAR_CPP:
+        if len(args) == 2 and args[1] == "Temporal*":
+            return mk([{"kind": "scalar", "cpp": _TRANSFORM_SCALAR_CPP[args[0]]}], scalar_first=True)
+        return None
+    if args[0] != "Temporal*":
+        return None
+    extras = []
+    for a in args[1:]:
+        if a in _TRANSFORM_SCALAR_CPP:
+            extras.append({"kind": "scalar", "cpp": _TRANSFORM_SCALAR_CPP[a]})
+        elif a == "GSERIALIZED*":
+            extras.append({"kind": "geom"})
+        elif a in _BOXTYPE_PARSER:
+            bt, parser, hdr = _BOXTYPE_PARSER[a]
+            extras.append({"kind": "box", "box_type": bt, "parser": parser, "header": hdr})
+        elif a == "Temporal*":
+            extras.append({"kind": "wkb_temporal"})
+        else:
+            return None  # unsupported operand -> reason-marked residue
+    return mk(extras)
+
+
 SHAPES = {
     "cmp_scalar_tempfirst": cmp_scalar_tempfirst,
     "cmp_scalar_scalarfirst": cmp_scalar_scalarfirst,
@@ -655,6 +723,10 @@ SHAPES = {
     "trgeometry_trgeometry_predicate": trgeometry_trgeometry_predicate,
     "trgeometry_trgeometry_dwithin": trgeometry_trgeometry_dwithin,
     "trgeometry_nad": trgeometry_nad,
+    # Catch-all LAST: any remaining Temporal*-returning per-event transform whose
+    # operands are all marshallable (scalar/geom/box/temporal) via the consolidated
+    # serialize-on-return wkb path. Specific shapes above take priority.
+    "temporal_transform_wkb": temporal_transform_wkb,
 }
 
 

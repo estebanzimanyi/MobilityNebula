@@ -4028,43 +4028,16 @@ def _generic_field_decl(name, cpp):
     return cpp
 
 
-def assemble_wkb_output(op):
-    """Physical .cpp for a per-event op that calls f(Temporal*, Temporal*) ->
-    Temporal* over two hex-WKB VARSIZED operands and emits the result as a
-    hex-WKB VARSIZED field. The MEOS call + serialization run inside one
-    nautilus::invoke (returning the heap hex string); the bytes are then copied
-    into an arena-allocated VariableSizedData (the canonical VARSIZED-output
-    idiom, see TemporalDerivativeExpAggregation::lower). A null/empty result
-    yields a zero-length VARSIZED."""
-    name = op["nebula_name"]
-    headers = {"meos.h", "meos_geo.h"}
-    for h in op.get("extra_headers", []):
-        headers.add(h)
-    inc = "\n".join(f"#include <{h}>" for h in
-                    ["meos.h"] + sorted(h for h in headers if h != "meos.h"))
-    registrar = "\n".join(
-        [f"    auto arg{i} = std::move(arguments.childFunctions[{i}]);" for i in range(2)]
-        + [f"    return {name}PhysicalFunction(std::move(arg0), std::move(arg1));"])
-    physical_args = ("PhysicalFunction trajFunction,\n"
-                     "                                                          PhysicalFunction arg0Function")
-    pushes = ("    parameterFunctions.push_back(std::move(trajFunction));\n"
-              "    parameterFunctions.push_back(std::move(arg0Function));")
-    return GENERIC_PHYSICAL_WKB_TEMPLATE.format(
-        nebula_name=name, includes=inc, meos_call=op["meos_call"],
-        ctor_physical_args=physical_args, ctor_physical_pushes=pushes,
-        registrar_pushes=registrar)
-
-
-def assemble_generic_physical(op):
-    """Build the physical .cpp for a 'generic' (build_generic) operator."""
-    name = op["nebula_name"]
-    if op["return_kind"] == "wkb":
-        return assemble_wkb_output(op)
+def _generic_call_extras(op, zero):
+    """Shared marshalling for a build_generic op: resolve the primary input and, for
+    each extra_arg, emit its lambda field + parse lines + MEOS call term (+ any post-call
+    free), then derive the parameterValues casts / lambda params / invoke args. Returns
+    (inp, fields, headers, call_terms, parse_lines, box_frees, casts, lparams, invoke,
+    n_args). Used by BOTH the scalar/value-return path (assemble_generic_physical) and the
+    wkb serialize-on-return path (assemble_wkb_output) so every extra-arg kind
+    (scalar / static geometry / box / second temporal) is handled in exactly ONE place.
+    `zero` is the caller's failure sentinel spliced into the parse-guard early returns."""
     inp = GENERIC_INPUTS[op["input_type"]]
-    ret_cpp, _, zero, extract_fn = GENERIC_RETURNS[op["return_kind"]]
-    extras = op.get("extra_args", [])
-
-    # Ordered (lambda-param) fields: primary input fields, then each extra arg's.
     fields = list(inp["fields"])
     headers = {"meos.h", inp["header"]}
     # op-level extra headers (e.g. meos_npoint.h / meos_pose.h for a meos_call
@@ -4073,8 +4046,8 @@ def assemble_generic_physical(op):
         headers.add(h)
     call_terms = ["temp"]
     parse_lines = []
-    box_frees = []      # raw box/span literals to free after the MEOS call
-    for i, ex in enumerate(extras):
+    box_frees = []      # raw box/temporal literals to free after the MEOS call
+    for i, ex in enumerate(op.get("extra_args", [])):
         if ex["kind"] == "scalar":
             fields.append((f"arg{i}", ex["cpp"]))
             call_terms.append(f"arg{i}")
@@ -4128,7 +4101,55 @@ def assemble_generic_physical(op):
             lparams.append(f"{cpp} {fn}")
             invoke.append(fn)
         idx += 1
-    n_args = idx
+    return inp, fields, headers, call_terms, parse_lines, box_frees, casts, lparams, invoke, idx
+
+
+def assemble_wkb_output(op):
+    """Physical .cpp for a per-event transform whose result is a Temporal* serialized
+    back to a hex-WKB VARSIZED field — the serialize-on-return round-trip, GENERAL over
+    the primary temporal input plus any extra_args (scalar / static geometry / box /
+    second temporal), reusing _generic_call_extras. The MEOS call + temporal_as_hexwkb
+    run in one nautilus::invoke (returning the heap hex string); the bytes are copied into
+    an arena-allocated VariableSizedData (the canonical VARSIZED-output idiom, see
+    TemporalDerivativeExpAggregation::lower). A null result yields a zero-length VARSIZED.
+    scalar_first / box_first reorder a single extra ahead of the temporal in the MEOS
+    call, mirroring the value-return path."""
+    name = op["nebula_name"]
+    zero = "(char*) nullptr"
+    inp, fields, headers, call_terms, parse_lines, box_frees, casts, lparams, invoke, n_args = \
+        _generic_call_extras(op, zero)
+    headers.add("meos_geo.h")  # temporal_from_hexwkb / temporal_as_hexwkb
+    if (op.get("scalar_first") or op.get("box_first")) and len(call_terms) == 2:
+        call_terms = [call_terms[1], call_terms[0]]
+    callargs = ", ".join(call_terms)
+    build = inp["build"].format(var="temp", z=zero) + "".join(parse_lines)
+    bf = "".join(f"                {x}\n" for x in box_frees)
+    inc = "\n".join(f"#include <{h}>" for h in
+                    ["meos.h"] + sorted(h for h in headers if h != "meos.h"))
+    physical_args = ",\n                                                          ".join(
+        f"PhysicalFunction {fn}Function" for fn, _ in fields)
+    pushes = "\n".join(f"    parameterFunctions.push_back(std::move({fn}Function));" for fn, _ in fields)
+    registrar = "\n".join(
+        [f"    auto arg{i} = std::move(arguments.childFunctions[{i}]);" for i in range(n_args)]
+        + [f"    return {name}PhysicalFunction(" + ", ".join(f"std::move(arg{i})" for i in range(n_args)) + ");"])
+    return GENERIC_PHYSICAL_WKB_GENERAL_TEMPLATE.format(
+        nebula_name=name, includes=inc, ctor_physical_args=physical_args, n_args=n_args,
+        ctor_physical_pushes=pushes, casts="\n".join(casts),
+        lambda_params=",\n            ".join(lparams), build=build,
+        meos_call=op["meos_call"], callargs=callargs, box_frees=bf,
+        invoke_args=", ".join(invoke), registrar_pushes=registrar)
+
+
+def assemble_generic_physical(op):
+    """Build the physical .cpp for a 'generic' (build_generic) operator."""
+    name = op["nebula_name"]
+    if op["return_kind"] == "wkb":
+        return assemble_wkb_output(op)
+    ret_cpp, _, zero, extract_fn = GENERIC_RETURNS[op["return_kind"]]
+    # Primary input + every extra-arg's field/parse/call-term/cast — shared with the
+    # wkb serialize-on-return path so the extras dispatch lives in ONE place.
+    inp, fields, headers, call_terms, parse_lines, box_frees, casts, lparams, invoke, n_args = \
+        _generic_call_extras(op, zero)
 
     build = inp["build"].format(var="temp", z=zero) + "".join(parse_lines)
     inc = "\n".join(f"#include <{h}>" for h in
@@ -4257,7 +4278,7 @@ PhysicalFunctionRegistryReturnType PhysicalFunctionGeneratedRegistrar::Register{
 """
 
 
-GENERIC_PHYSICAL_WKB_TEMPLATE = """\
+GENERIC_PHYSICAL_WKB_GENERAL_TEMPLATE = """\
 /*
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -4284,6 +4305,7 @@ GENERIC_PHYSICAL_WKB_TEMPLATE = """\
 #include <ExecutionContext.hpp>
 #include <cstdlib>
 #include <cstring>
+#include <fmt/format.h>
 #include <function.hpp>
 #include <string>
 #include <utility>
@@ -4297,7 +4319,7 @@ namespace NES {{
 
 {nebula_name}PhysicalFunction::{nebula_name}PhysicalFunction({ctor_physical_args})
 {{
-    parameterFunctions.reserve(2);
+    parameterFunctions.reserve({n_args});
 {ctor_physical_pushes}
 }}
 
@@ -4310,29 +4332,22 @@ VarVal {nebula_name}PhysicalFunction::execute(const Record& record, ArenaRef& ar
         parameterValues.emplace_back(function.execute(record, arena));
     }}
 
-    auto traj = parameterValues[0].cast<VariableSizedData>();
-    auto arg0 = parameterValues[1].cast<VariableSizedData>();
+{casts}
 
-    // Call MEOS f(Temporal*, Temporal*) -> Temporal* over the two hex-WKB
-    // operands and serialize the result back to hex-WKB inside the invoke; the
-    // returned heap string is copied into the arena below. Both operands and the
-    // MEOS result are freed here.
+    // Parse the primary temporal (+ any extra operands), call the MEOS transform,
+    // and serialize the Temporal* result back to hex-WKB inside a single invoke; the
+    // returned heap string is copied into the arena below. All operands and the MEOS
+    // result are freed here. A null result yields an empty string -> zero-length VARSIZED.
     auto hexStr = nautilus::invoke(
-        +[](const char* aPtr, uint32_t aSize, const char* bPtr, uint32_t bSize) -> char*
+        +[]({lambda_params}) -> char*
         {{
             try
             {{
                 MEOS::Meos::ensureMeosInitialized();
-                std::string aHex(aPtr, aSize);
-                std::string bHex(bPtr, bSize);
-                Temporal* a = temporal_from_hexwkb(aHex.c_str());
-                if (!a) return (char*) nullptr;
-                Temporal* b = temporal_from_hexwkb(bHex.c_str());
-                if (!b) {{ free(a); return (char*) nullptr; }}
-                Temporal* res = {meos_call}(a, b);
-                free(a);
-                free(b);
-                if (!res) return (char*) nullptr;
+{build}
+                Temporal* res = {meos_call}({callargs});
+                free(temp);
+{box_frees}                if (!res) return (char*) nullptr;
                 size_t hexSize = 0;
                 char* hexOut = temporal_as_hexwkb(res, 0, &hexSize);
                 free(res);
@@ -4343,7 +4358,7 @@ VarVal {nebula_name}PhysicalFunction::execute(const Record& record, ArenaRef& ar
                 return (char*) nullptr;
             }}
         }},
-        traj.getContent(), traj.getContentSize(), arg0.getContent(), arg0.getContentSize());
+        {invoke_args});
 
     const auto hexLen = nautilus::invoke(
         +[](const char* s) -> uint32_t {{ return s ? (uint32_t) strlen(s) : (uint32_t) 0; }},
@@ -4368,8 +4383,8 @@ VarVal {nebula_name}PhysicalFunction::execute(const Record& record, ArenaRef& ar
 PhysicalFunctionRegistryReturnType PhysicalFunctionGeneratedRegistrar::Register{nebula_name}PhysicalFunction(
     PhysicalFunctionRegistryArguments arguments)
 {{
-    PRECONDITION(arguments.childFunctions.size() == 2,
-                 "{nebula_name}PhysicalFunction requires 2 children but got {{}}",
+    PRECONDITION(arguments.childFunctions.size() == {n_args},
+                 "{nebula_name}PhysicalFunction requires {n_args} children but got {{}}",
                  arguments.childFunctions.size());
 {registrar_pushes}
 }}
