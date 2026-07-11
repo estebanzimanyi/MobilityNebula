@@ -766,15 +766,19 @@ def temporal_transform_wkb(fn, ret, args):
     Match**/AFFINE*/int*/out-params, a bare Span* (ambiguous tstzspan vs numspan), or an
     arity >3 (stateful transforms such as the Kalman filter) — so the generator only emits
     genuinely per-event marshallable transforms and everything else stays measurable."""
-    if ret != "Temporal*" or not (1 <= len(args) <= 3):
+    if ret not in ("Temporal*", "GSERIALIZED*") or not (1 <= len(args) <= 3):
         return None
     args = list(args)
+    geom_out = ret == "GSERIALIZED*"
 
     def mk(extras, scalar_first=False):
+        out = "geometry" if geom_out else "temporal"
         d = {"nebula_name": pascal(fn), "sql_token": fn.upper(), "meos_call": fn,
              "build_generic": True, "input_type": "wkb_temporal", "return_kind": "wkb",
              "extra_args": extras,
-             "comment_one_liner": f"Per-event {fn}: hex-WKB temporal transform -> hex-WKB temporal."}
+             "comment_one_liner": f"Per-event {fn}: hex-WKB temporal transform -> hex-WKB {out}."}
+        if geom_out:
+            d["output_kind"] = "geom"          # serialize the GSERIALIZED* result via geo_as_hexewkb
         eh = _transform_extra_headers(fn)
         if eh:
             d["extra_headers"] = eh

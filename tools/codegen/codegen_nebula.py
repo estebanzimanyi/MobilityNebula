@@ -4130,11 +4130,20 @@ def assemble_wkb_output(op):
     zero = "(char*) nullptr"
     inp, fields, headers, call_terms, parse_lines, box_frees, casts, lparams, invoke, n_args = \
         _generic_call_extras(op, zero)
-    headers.add("meos_geo.h")  # temporal_from_hexwkb / temporal_as_hexwkb
+    headers.add("meos_geo.h")  # temporal_from_hexwkb / temporal_as_hexwkb / geo_as_hexewkb
     call_terms = _reorder_extra_first(op, call_terms)
     callargs = ", ".join(call_terms)
     build = inp["build"].format(var="temp", z=zero) + "".join(parse_lines)
     bf = "".join(f"                {x}\n" for x in box_frees)
+    # Result kind: a Temporal* (temporal_as_hexwkb) or a GSERIALIZED* geometry
+    # (geo_as_hexewkb — hex-EWKB, endian NULL = NDR, round-trips through geom_in on input).
+    if op.get("output_kind") == "geom":
+        result_type = "GSERIALIZED*"
+        serialize_stmt = "char* hexOut = geo_as_hexewkb(res, (char*) nullptr);"
+    else:
+        result_type = "Temporal*"
+        serialize_stmt = ("size_t hexSize = 0;\n"
+                          "                char* hexOut = temporal_as_hexwkb(res, 0, &hexSize);")
     inc = "\n".join(f"#include <{h}>" for h in
                     ["meos.h"] + sorted(h for h in headers if h != "meos.h"))
     physical_args = ",\n                                                          ".join(
@@ -4148,6 +4157,7 @@ def assemble_wkb_output(op):
         ctor_physical_pushes=pushes, casts="\n".join(casts),
         lambda_params=",\n            ".join(lparams), build=build,
         meos_call=op["meos_call"], callargs=callargs, box_frees=bf,
+        result_type=result_type, serialize_stmt=serialize_stmt,
         invoke_args=", ".join(invoke), registrar_pushes=registrar)
 
 
@@ -4357,11 +4367,10 @@ VarVal {nebula_name}PhysicalFunction::execute(const Record& record, ArenaRef& ar
             {{
                 MEOS::Meos::ensureMeosInitialized();
 {build}
-                Temporal* res = {meos_call}({callargs});
+                {result_type} res = {meos_call}({callargs});
                 free(temp);
 {box_frees}                if (!res) return (char*) nullptr;
-                size_t hexSize = 0;
-                char* hexOut = temporal_as_hexwkb(res, 0, &hexSize);
+                {serialize_stmt}
                 free(res);
                 return hexOut;
             }}
