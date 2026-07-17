@@ -1711,7 +1711,7 @@ def build_registrar_pushes_physical(args, nebula_name):
 def generic_fields(op):
     """The ordered (name, cpp) event fields for a 'generic' operator:
     the input type's fields followed by one per extra arg."""
-    fields = list(GENERIC_INPUTS[op["input_type"]]["fields"])
+    fields = list(_resolve_input(op["input_type"])["fields"])
     for i, ex in enumerate(op.get("extra_args", [])):
         fields.append((f"arg{i}", ex["cpp"] if ex["kind"] == "scalar" else "VariableSizedData"))
     return fields
@@ -4002,6 +4002,52 @@ GENERIC_INPUTS = {
         '                if (!{var}) return {z};\n')),
 }
 
+
+def _valdom_input_entry(input_type):
+    """Synthesize a GENERIC_INPUTS entry for a value-domain span<T>/set<T>/spanset<T>/tbox
+    primary operand carried as a text VARSIZED field. span/set/spanset/tbox are TEMPLATE
+    CLASSES — one C struct parameterized by element type T via a runtime basetype field —
+    so this resolves ANY current OR future instantiation from the REGULAR typed public
+    parser `<type>_in` (intspan_in / bigintset_in / floatspanset_in / tbox_in …); NO
+    per-instantiation table (that scoping is the anti-pattern). The generic internal
+    span_in/set_in/spanset_in need a MeosType, hence the concrete typed parser. Mirrors
+    stbox_text (quote-strip + parse + null-guard); the primary is freed via free(temp) by
+    the generic cleanup, like the STBox* primary. classify_v4 tiers these `stateless` =
+    streamable (a per-event op over a streamed span/set/box field), so they are WIRED, not
+    reason-marked. Returns None if input_type is not a value-domain `<type>_text` token."""
+    if not input_type.endswith("_text"):
+        return None
+    tok = input_type[: -len("_text")]
+    if tok.endswith("spanset"):
+        ct = "SpanSet"
+    elif tok.endswith("span"):
+        ct = "Span"
+    elif tok.endswith("set"):
+        ct = "Set"
+    elif tok == "tbox":
+        ct = "TBox"
+    else:
+        return None
+    parser = f"{tok}_in"  # regular typed public parser
+    return dict(fields=[("prim", "VariableSizedData")], header="meos.h", build=(
+        '                std::string {var}S(primPtr, primSize);\n'
+        '                while (!{var}S.empty() && ({var}S.front()==\'\\\'\' || {var}S.front()==\'"\')) {var}S.erase({var}S.begin());\n'
+        '                while (!{var}S.empty() && ({var}S.back()==\'\\\'\' || {var}S.back()==\'"\')) {var}S.pop_back();\n'
+        f'                {ct}* {{var}} = {parser}({{var}}S.c_str());\n'
+        '                if (!{var}) return {z};\n'))
+
+
+def _resolve_input(input_type):
+    """GENERIC_INPUTS lookup that falls back to the derived value-domain entry, so
+    span<T>/set<T>/spanset<T>/tbox primaries need no hand-enumerated per-type table."""
+    if input_type in GENERIC_INPUTS:
+        return GENERIC_INPUTS[input_type]
+    entry = _valdom_input_entry(input_type)
+    if entry is None:
+        raise KeyError(input_type)
+    return entry
+
+
 # return_kind -> (cpp_return_type, nautilus_return, zero_literal, extract_fn|None)
 # For a direct scalar return extract_fn is None. For a Temporal*-returning
 # transform/restriction whose single-instant result carries a scalar value, the
@@ -4009,8 +4055,14 @@ GENERIC_INPUTS = {
 # single instant); the wrapper temporal is freed.
 GENERIC_RETURNS = {
     "int":     ("int", "INT32", "0", None),
+    "int64":   ("int64_t", "INT64", "0", None),
     "double":  ("double", "FLOAT64", "0.0", None),
     "bool":    ("bool", "BOOLEAN", "false", None),
+    # DateADT / TimestampTz accessors carry the raw MEOS-internal scalar (DateADT = int32
+    # day count, TimestampTz = int64 microsecond count). Nebula has no date/timestamp
+    # DataType, so the physical carrier is INT32 / INT64.
+    "date":    ("int", "INT32", "0", None),
+    "tstz":    ("int64_t", "INT64", "0", None),
     "extract_int":    ("int", "INT32", "0", "tint_start_value"),
     "extract_double": ("double", "FLOAT64", "0.0", "tfloat_start_value"),
     "extract_bool":   ("bool", "BOOLEAN", "false", "tbool_start_value"),
@@ -4049,7 +4101,7 @@ def _generic_call_extras(op, zero):
     wkb serialize-on-return path (assemble_wkb_output) so every extra-arg kind
     (scalar / static geometry / box / second temporal) is handled in exactly ONE place.
     `zero` is the caller's failure sentinel spliced into the parse-guard early returns."""
-    inp = GENERIC_INPUTS[op["input_type"]]
+    inp = _resolve_input(op["input_type"])
     fields = list(inp["fields"])
     headers = {"meos.h", inp["header"]}
     # op-level extra headers (e.g. meos_npoint.h / meos_pose.h for a meos_call

@@ -89,6 +89,19 @@ def load_catalog(path):
         ret = _norm_ctype(f["returnType"]["c"])
         args = tuple(_norm_ctype(p["cType"]) for p in f["params"])
         sigs[f["name"]] = (ret, args)
+    # Catalog-derived SQL metadata so a shape never has to name-parse a result element type:
+    # the concrete typed SQL return + arg tokens per fn, plus the arity of every PUBLIC *_in
+    # parser and *_out serializer (float value-domain serializers take a maxdd 2nd arg,
+    # int/date/tstz do not — read the truth from the catalog, never a hardcoded rule). A
+    # cast-only function MEOS exposes with no @sqlfn has sqlReturnType=None -> drops out.
+    _SQL_META.clear(); _PUB_IN.clear(); _PUB_OUT_ARITY.clear()
+    for f in d["functions"]:
+        sig = (f.get("sqlSignatures") or [{}])[0]
+        _SQL_META[f["name"]] = (f.get("sqlReturnType"), tuple(sig.get("args") or ()))
+        if f.get("api") == "public" and len(f.get("params", [])) == 1 and f["name"].endswith("_in"):
+            _PUB_IN.add(f["name"])
+        if f.get("api") == "public" and f["name"].endswith("_out"):
+            _PUB_OUT_ARITY[f["name"]] = len(f.get("params", []))
     return sigs, d["functions"]
 
 
@@ -518,6 +531,322 @@ def stbox_x_stbox(fn, ret, args):
     }
 
 
+# scalar/container args in _norm_ctype tokens (const/struct stripped, pointer -> '<base>*')
+_VD_NUM_SCALAR = {"int": "int", "bigint": "int64_t", "float": "double"}
+_VD_CONTAINER_C = {"span": "Span*", "set": "Set*", "spanset": "SpanSet*"}
+# date/timestamptz scalar tokens -> (C arg type, nautilus carrier cpp, typed-parser base
+# prefix). DateADT is int32, TimestampTz is int64, carried RAW MEOS-internal as int/int64_t
+# (the same carrier the date/tstz RETURN accessors use). The scalar UNAMBIGUOUSLY fixes the
+# container's base (a DateADT only compares to a datespan), so `<op>_<container>_<date|tstz>`
+# parses the container via `<date|tstz><container>_in` (datespan_in / tstzset_in / ...).
+_VD_DT_SCALAR = {"date": ("DateADT", "int", "date"), "timestamptz": ("TimestampTz", "int64_t", "tstz")}
+
+
+def valuedomain_predicate(fn, ret, args):
+    """bool predicate over VALUE-DOMAIN operands (no temporal operand) — a per-event
+    stateless op over streamed span/set/spanset/box fields (classify_v4 = `stateless` =
+    streamable, NOT reason-marked). span<T>/set<T>/spanset<T> are TEMPLATE CLASSES; the
+    concrete instantiation is carried in the fn name (the C sig is a bare `const Span *`),
+    so the base is read from the numeric-scalar token and the primary is parsed by the
+    REGULAR typed input_type `<base><container>_text` (resolved to `<..>_in` in
+    codegen_nebula._valdom_input_entry). Two shapes:
+      * <op>_<num>_<container> / <op>_<container>_<num>  (num in {int,bigint,float}):
+        primary = the container (VARSIZED typed), extra = the numeric scalar; scalar_first
+        when the scalar precedes the container in the MEOS arg order.
+      * <op>_tbox_tbox: two TBoxes, single-arg tbox_in (primary + box extra), like
+        stbox_x_stbox.
+      * <op>_<container>_<date|tstz>: the temporal scalar (DateADT/TimestampTz, carried
+        RAW as int/int64_t) fixes the container base, parsed via the typed
+        <date|tstz><container>_in (datespan_in / tstzset_in / ...); container-first.
+    Text scalars and bare polymorphic <op>_span_span (base not in name) are deferred /
+    structural (base not derivable at codegen time)."""
+    if ret != "bool":
+        return None
+    toks = fn.split("_")[1:]
+    # two TBoxes
+    if toks == ["tbox", "tbox"] and len(args) == 2 \
+            and args[0] == "TBox*" and args[1] == "TBox*":
+        return {
+            "nebula_name": pascal(fn), "sql_token": fn.upper(), "meos_call": fn,
+            "build_generic": True, "input_type": "tbox_text", "return_kind": "bool",
+            "extra_args": [{"kind": "box", "box_type": "TBox", "parser": "tbox_in", "header": "meos.h"}],
+            "comment_one_liner": f"Per-event {fn}: two value-domain TBoxes -> bool.",
+        }
+    # numeric-scalar (x) container  OR  date/timestamptz-scalar (x) container
+    if len(toks) != 2 or len(args) != 2:
+        return None
+    # date/timestamptz scalar container: the temporal scalar fixes the container base
+    # (<op>_<container>_<date|tstz>), parsed via the typed <date|tstz><container>_in.
+    dts = [t for t in toks if t in _VD_DT_SCALAR]
+    dcont = [t for t in toks if t in _VD_CONTAINER_C]
+    if len(dts) == 1 and len(dcont) == 1:
+        dt_tok, cont_tok = dts[0], dcont[0]
+        c_c, cpp, base = _VD_DT_SCALAR[dt_tok]
+        scalar_first = toks[0] == dt_tok
+        ci = 1 if scalar_first else 0   # container arg index in the MEOS sig
+        if args[ci] != _VD_CONTAINER_C[cont_tok] or args[1 - ci] != c_c:
+            return None
+        d = {
+            "nebula_name": pascal(fn), "sql_token": fn.upper(), "meos_call": fn,
+            "build_generic": True, "input_type": f"{base}{cont_tok}_text",
+            "return_kind": "bool",
+            "extra_args": [{"kind": "scalar", "cpp": cpp}],
+            "comment_one_liner": f"Per-event {fn}: value-domain {base}{cont_tok} vs {dt_tok} -> bool.",
+        }
+        if scalar_first:
+            d["scalar_first"] = True
+        return d
+    scal = [t for t in toks if t in _VD_NUM_SCALAR]
+    cont = [t for t in toks if t in _VD_CONTAINER_C]
+    if len(scal) != 1 or len(cont) != 1:
+        return None
+    scal_tok, cont_tok = scal[0], cont[0]
+    scalar_first = toks[0] == scal_tok
+    ci = 1 if scalar_first else 0   # container arg index in the MEOS sig
+    if args[ci] != _VD_CONTAINER_C[cont_tok] or args[1 - ci] != _VD_NUM_SCALAR[scal_tok]:
+        return None
+    d = {
+        "nebula_name": pascal(fn), "sql_token": fn.upper(), "meos_call": fn,
+        "build_generic": True, "input_type": f"{scal_tok}{cont_tok}_text",
+        "return_kind": "bool",
+        "extra_args": [{"kind": "scalar", "cpp": _VD_NUM_SCALAR[scal_tok]}],
+        "comment_one_liner": f"Per-event {fn}: value-domain {cont_tok}<{scal_tok}> vs {scal_tok} -> bool.",
+    }
+    if scalar_first:
+        d["scalar_first"] = True
+    return d
+
+
+_VD_ACCESSOR_CONT = {"Span*": "span", "Set*": "set", "SpanSet*": "spanset"}
+_VD_ACCESSOR_RET = {"int64_t": "int64", "int": "int", "double": "double", "bool": "bool",
+                    "DateADT": "date", "TimestampTz": "tstz"}
+
+
+def valuedomain_accessor(fn, ret, args):
+    """Unary accessor over a VALUE-DOMAIN span<T>/set<T>/spanset<T> (VARSIZED primary,
+    typed parser) returning a scalar — a per-event stateless/bounded op over a streamed
+    span/set/spanset field (classify_v4 = bounded-state accessor = streamable). The
+    concrete instantiation is the fn-name PREFIX (`bigintspan_lower` -> `bigintspan`), so
+    input_type = `<prefix>_text` (resolved to `<prefix>_in` by codegen_nebula
+    ._valdom_input_entry — template-level, any current/future instantiation). Scalar
+    returns {int64/int/double/bool} this sub-wave; Date/timestamptz (epoch), Interval*/
+    text* (typed *_out) and complex Span*/Set* returns + n-th/shift/values (extra args /
+    out-param arrays) are follow-ups."""
+    if len(args) != 1:
+        return None
+    cont = _VD_ACCESSOR_CONT.get(args[0])
+    rk = _VD_ACCESSOR_RET.get(ret)
+    if not cont or not rk:
+        return None
+    type_tok = fn.split("_")[0]           # bigintspan_lower -> bigintspan
+    if not type_tok.endswith(cont):       # prefix's container must match the arg container
+        return None
+    if type_tok == cont:
+        return None                       # bare span/set/spanset: no public single-arg parser
+    if cont in ("span", "set") and type_tok.endswith("spanset"):
+        return None                       # a spanset is neither span nor set
+    return {
+        "nebula_name": pascal(fn), "sql_token": fn.upper(), "meos_call": fn,
+        "build_generic": True, "input_type": f"{type_tok}_text", "return_kind": rk,
+        "comment_one_liner": f"Per-event {fn}: value-domain {type_tok} accessor -> {ret}.",
+    }
+
+
+# Catalog-derived SQL metadata, populated by load_catalog (NOT the legacy --sigs path).
+_SQL_META = {}        # fn -> (sqlReturnType, tuple(sql arg tokens))
+_PUB_IN = set()       # "<tok>_in"  public single-arg parsers
+_PUB_OUT_ARITY = {}   # "<tok>_out" -> param count, for public serializers
+
+
+def _vd_container_of(tok):
+    """The C container type a typed value-domain token names (intspan -> Span*,
+    floatset -> Set*, datespanset -> SpanSet*). spanset checked before span/set since
+    every token ends in one of them."""
+    if tok.endswith("spanset"):
+        return "SpanSet*"
+    if tok.endswith("span"):
+        return "Span*"
+    if tok.endswith("set"):
+        return "Set*"
+    return None
+
+
+def valuedomain_complex_return(fn, ret, args):
+    """<Container>* fn(const <Container>*) over a TYPED value-domain span<T>/set<T>/
+    spanset<T> whose result is ANOTHER typed span/set/spanset, serialized to text via the
+    typed <result>_out wrapper (round-trips through <result>_in on the consuming input) —
+    the serialize-on-return path (output_kind=basetype), reusing the compile-proven
+    assemble_wkb_output basetype branch (no codegen template change).
+
+    FULLY CATALOG-DERIVED — no name-parsing, no hand result map. The concrete input + result
+    tokens come from the catalog's sqlSignatures/sqlReturnType (datespanset_dates -> dateset,
+    npointset_routes -> bigintset, tstzspanset_timestamps -> tstzset), the parser/serializer
+    existence + arity from _PUB_IN / _PUB_OUT_ARITY (float* _out take a maxdd 2nd arg).
+
+    ⛔ EXCLUDES `_to_X` CASTS. `X_to_Y` is a CAST (CREATE CAST / `::Y`), a SEPARATE generation
+    surface per the cast-only north-star ([[cast-only-spatial-uniformization-campaign]],
+    [[binding-zero-hand-includes-casts-aggs-types]]): casts get their own emitter, never a
+    synthesized named operator here. Value-domain casts are a DEFERRED Nebula cast surface
+    (needs CAST grammar + a cast emitter). A cast-only MEOS fn (no @sqlfn) also has
+    sqlReturnType=None and drops out on its own; the `_to_` guard covers the named ones too."""
+    if len(args) != 1 or ret not in ("Span*", "Set*", "SpanSet*") or args[0] not in ("Span*", "Set*", "SpanSet*"):
+        return None
+    if "_to_" in fn:
+        return None                        # cast -> deferred cast surface, not a named op
+    sql_ret, sql_args = _SQL_META.get(fn, (None, ()))
+    if not sql_ret or len(sql_args) != 1:
+        return None                        # cast-only / no typed SQL return -> not wireable here
+    input_tok, result_tok = sql_args[0], sql_ret
+    if input_tok in ("span", "set", "spanset") or result_tok in ("span", "set", "spanset"):
+        return None                        # bare: no public single-arg parser/serializer
+    if _vd_container_of(input_tok) != args[0] or _vd_container_of(result_tok) != ret:
+        return None                        # tokens must match the C containers
+    if f"{input_tok}_in" not in _PUB_IN:
+        return None                        # need a public single-arg input parser
+    out_arity = _PUB_OUT_ARITY.get(f"{result_tok}_out")
+    if out_arity not in (1, 2):
+        return None                        # need a public <result>_out serializer
+    serialize = f"{result_tok}_out(res, 15)" if out_arity == 2 else f"{result_tok}_out(res)"
+    return {
+        "nebula_name": pascal(fn), "sql_token": fn.upper(), "meos_call": fn,
+        "build_generic": True, "input_type": f"{input_tok}_text", "return_kind": "wkb",
+        "extra_args": [], "output_kind": "basetype",
+        "output_result_type": ret, "output_serialize": serialize,
+        "comment_one_liner": f"Per-event {fn}: value-domain {input_tok} -> {result_tok} (text serialize-on-return).",
+    }
+
+
+# Non-container object result types carried back as text via a single-arg <base>_out:
+# Interval (interval_out) and text (text_out), both core meos.h. Base-value set accessors
+# returning a -D family object (Cbuffer/Npoint/Pose/Jsonb, whose <base>_out takes a 2-arg
+# maxdd) are outside this set.
+_VD_SERIALIZE_ACCESSOR_RET = {"Interval*", "text*"}
+
+
+def valuedomain_serialize_accessor(fn, ret, args):
+    """<Obj>* fn(const <Container>*) over a TYPED value-domain span<T>/set<T>/spanset<T>
+    whose result is a non-container object (Interval* / text*) carried back as text via the
+    typed <base>_out serializer — the serialize-on-return path (output_kind=basetype),
+    reusing assemble_wkb_output (frees the pointer result). The serializer is derived from
+    the result C type (Interval* -> interval_out, text* -> text_out), verified public
+    single-arg via _PUB_OUT_ARITY. Excludes `_to_` casts and bare-token inputs."""
+    if len(args) != 1 or args[0] not in ("Span*", "Set*", "SpanSet*"):
+        return None
+    if ret not in _VD_SERIALIZE_ACCESSOR_RET or "_to_" in fn:
+        return None
+    input_tok = fn.split("_")[0]
+    if input_tok in ("span", "set", "spanset") or _vd_container_of(input_tok) != args[0]:
+        return None
+    if f"{input_tok}_in" not in _PUB_IN:
+        return None                        # need a public single-arg input parser
+    base = ret[:-1].lower()                # "Interval*" -> "interval", "text*" -> "text"
+    if _PUB_OUT_ARITY.get(f"{base}_out") != 1:
+        return None                        # need a public single-arg <base>_out serializer
+    return {
+        "nebula_name": pascal(fn), "sql_token": fn.upper(), "meos_call": fn,
+        "build_generic": True, "input_type": f"{input_tok}_text", "return_kind": "wkb",
+        "extra_args": [], "output_kind": "basetype",
+        "output_result_type": ret, "output_serialize": f"{base}_out(res)",
+        "comment_one_liner": f"Per-event {fn}: value-domain {input_tok} -> {base} (text serialize-on-return).",
+    }
+
+
+_VD_RET_SUFFIX = {"Span*": "span", "Set*": "set", "SpanSet*": "spanset"}
+
+
+def valuedomain_setop(fn, ret, args):
+    """<verb>_<num>_<container> / <verb>_<container>_<num> set operation (union / minus /
+    intersection) over a TYPED value-domain span<T>/set<T>/spanset<T> and a numeric scalar,
+    returning ANOTHER typed span/set/spanset serialized to text via the typed <result>_out
+    wrapper — the RETURN-TYPE analog of valuedomain_predicate: the SAME operand logic (base
+    read from the numeric-scalar token, container primary parsed by <base><container>_text,
+    scalar extra, scalar_first when the scalar precedes the container) routed through the
+    serialize-on-return path (output_kind=basetype) proven by valuedomain_complex_return.
+    assemble_wkb_output is GENERAL over extra_args + scalar_first, so NO codegen change.
+
+    The result base = the numeric-scalar base + the RESULT container suffix (which may differ
+    from the input container: union_int_span -> SpanSet* -> intspanset_out). Serializer arity
+    from _PUB_OUT_ARITY (float* _out take a maxdd 2nd arg). Bare <verb>_<container>_<container>
+    (base not in name -> internal <container>_in) and non-numeric scalars (cbuffer/geo/npoint/
+    pose/jsonb/text/date/tstz, some -D-gated) are deferred follow-up slices."""
+    if ret not in _VD_RET_SUFFIX:
+        return None
+    toks = fn.split("_")[1:]
+    if len(toks) != 2 or len(args) != 2:
+        return None
+    scal = [t for t in toks if t in _VD_NUM_SCALAR]
+    cont = [t for t in toks if t in _VD_CONTAINER_C]
+    if len(scal) != 1 or len(cont) != 1:
+        return None
+    scal_tok, cont_tok = scal[0], cont[0]
+    # Order from the NAME (the regular MEOS convention: union_int_span is value-first,
+    # union_span_int is span-first); then REQUIRE the C sig to match. A function whose args
+    # contradict its name (an upstream MEOS irregularity, e.g. union_bigint_span declared
+    # (const Span*, int64) not (int64, const Span*)) is DROPPED here and relayed for a source
+    # fix — never accommodated by reading order from the sig, which would entrench the bug.
+    scalar_first = toks[0] == scal_tok
+    ci = 1 if scalar_first else 0            # container arg index in the MEOS sig
+    if args[ci] != _VD_CONTAINER_C[cont_tok] or args[1 - ci] != _VD_NUM_SCALAR[scal_tok]:
+        return None
+    if f"{scal_tok}{cont_tok}_in" not in _PUB_IN:
+        return None                          # need a public single-arg input parser
+    result_tok = f"{scal_tok}{_VD_RET_SUFFIX[ret]}"   # e.g. int + spanset -> intspanset
+    out_arity = _PUB_OUT_ARITY.get(f"{result_tok}_out")
+    if out_arity not in (1, 2):
+        return None                          # need a public <result>_out serializer
+    serialize = f"{result_tok}_out(res, 15)" if out_arity == 2 else f"{result_tok}_out(res)"
+    d = {
+        "nebula_name": pascal(fn), "sql_token": fn.upper(), "meos_call": fn,
+        "build_generic": True, "input_type": f"{scal_tok}{cont_tok}_text", "return_kind": "wkb",
+        "extra_args": [{"kind": "scalar", "cpp": _VD_NUM_SCALAR[scal_tok]}],
+        "output_kind": "basetype", "output_result_type": ret, "output_serialize": serialize,
+        "comment_one_liner": f"Per-event {fn}: value-domain {cont_tok}<{scal_tok}> setop {scal_tok} -> {result_tok} (text serialize-on-return).",
+    }
+    if scalar_first:
+        d["scalar_first"] = True
+    return d
+
+
+_VD_TRANSFORM_SCALAR = {"int": "int", "int64_t": "int64_t", "double": "double", "bool": "bool"}
+
+
+def valuedomain_transform(fn, ret, args):
+    """Unary-primary TRANSFORM over a TYPED value-domain span<T>/set<T>/spanset<T> plus N
+    plain scalar arguments (int/bigint/float/bool), returning the SAME typed container
+    serialized to text via the typed <tok>_out wrapper — shift_scale, expand, round, degrees.
+    The RETURN-TYPE analog of valuedomain_accessor with scalar extras: the container is the
+    fn-name PREFIX (input_type <tok>_text -> <tok>_in), each trailing scalar is a `scalar`
+    extra_arg (container-first MEOS call order, the assemble_wkb_output default), and the
+    result is the SAME token (these transforms preserve the value type + container). NO
+    codegen change (assemble_wkb_output is GENERAL over N scalar extra_args).
+
+    ALL-scalar extras only (int/int64_t/double/bool). Transforms whose extras include an
+    Interval*/text*/Jsonb*/JsonPath* operand or an out-param (`int*`/`text**` — bins count,
+    array element) are separate follow-up shapes / structural residue."""
+    tok = fn.split("_")[0]
+    cont = _vd_container_of(tok)
+    if cont is None or tok in ("span", "set", "spanset"):
+        return None                          # bare token has no public single-arg parser
+    if ret != cont or not args or args[0] != cont:
+        return None                          # container-preserving unary primary
+    extras = args[1:]
+    if not extras or any(a not in _VD_TRANSFORM_SCALAR for a in extras):
+        return None                          # ALL-scalar extras only
+    if f"{tok}_in" not in _PUB_IN:
+        return None                          # need a public single-arg input parser
+    out_arity = _PUB_OUT_ARITY.get(f"{tok}_out")
+    if out_arity not in (1, 2):
+        return None                          # need a public <tok>_out serializer
+    serialize = f"{tok}_out(res, 15)" if out_arity == 2 else f"{tok}_out(res)"
+    return {
+        "nebula_name": pascal(fn), "sql_token": fn.upper(), "meos_call": fn,
+        "build_generic": True, "input_type": f"{tok}_text", "return_kind": "wkb",
+        "extra_args": [{"kind": "scalar", "cpp": _VD_TRANSFORM_SCALAR[a]} for a in extras],
+        "output_kind": "basetype", "output_result_type": ret, "output_serialize": serialize,
+        "comment_one_liner": f"Per-event {fn}: value-domain {tok} transform -> {tok} (text serialize-on-return).",
+    }
+
+
 def two_temporal_scalar(fn, ret, args):
     """bool|int|double fn(const Temporal*, const Temporal*) over TWO temporal
     operands carried as hex-WKB VARSIZED fields — the cross-vehicle f(trajA, trajB)
@@ -829,6 +1158,12 @@ SHAPES = {
     "temporal_extract_scalar": temporal_extract_scalar,
     "temporal_x_box": temporal_x_box,
     "stbox_x_stbox": stbox_x_stbox,
+    "valuedomain_predicate": valuedomain_predicate,
+    "valuedomain_accessor": valuedomain_accessor,
+    "valuedomain_complex_return": valuedomain_complex_return,
+    "valuedomain_serialize_accessor": valuedomain_serialize_accessor,
+    "valuedomain_setop": valuedomain_setop,
+    "valuedomain_transform": valuedomain_transform,
     "trgeometry_geo_predicate": trgeometry_geo_predicate,
     "geo_trgeometry_predicate": geo_trgeometry_predicate,
     "trgeometry_geo_dwithin": trgeometry_geo_dwithin,
@@ -878,9 +1213,24 @@ def main():
         candidates -= {ln.strip() for ln in open(a.wired) if ln.strip()}
 
     shapes = [SHAPES[s] for s in a.shapes.split(",")]
+    # Structural-residue pre-filter: a `**` (pointer-to-pointer) param or return is an
+    # ARRAY / out-param (Temporal**, Type** + int* count, Match**) — not per-event
+    # streamable in the baked-parser model. _norm_ctype collapses `**` -> `*`, so a shape
+    # sees `Temporal**` as a plain `Temporal*` and mis-emits a call with a pointer-arity
+    # mismatch (temparr_round / temporal_merge_array). Skip these uniformly on the RAW
+    # catalog signature — measurable structural residue, enforcing the exclusion every
+    # transform docstring already promises.
+    dblptr = set()
+    if funcs is not None:
+        for f in funcs:
+            if "**" in f["returnType"]["c"] or any("**" in p["cType"] for p in f["params"]):
+                dblptr.add(f["name"])
     ops, unmatched = [], []
     for fn in sorted(candidates):
         if fn not in sigs:
+            continue
+        if fn in dblptr:
+            unmatched.append(fn)   # array / out-param double-pointer: structural residue
             continue
         ret, args = sigs[fn]
         for cls in shapes:
