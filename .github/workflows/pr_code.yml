@@ -60,6 +60,14 @@ jobs:
             --output-root "$ROOT" \
             --no-parser-glue --no-cmake-entries
 
+      - name: Install clang-format 22, which formats the generated plugin as scripts/format.sh does
+        run: |
+          wget -qO llvm.sh https://apt.llvm.org/llvm.sh
+          sudo bash llvm.sh 22
+          sudo apt-get install -y clang-format-22
+          rm llvm.sh
+          clang-format-22 --version
+
       - name: Generate the MEOS plugin and compare it with the committed one
         run: |
           python3 tools/codegen/codegen_nebula_sql.py \

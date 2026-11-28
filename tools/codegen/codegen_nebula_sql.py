@@ -44,9 +44,12 @@ Usage:
   codegen_nebula_sql.py --catalog meos-idl.json --output-root <MobilityNebula root>
 """
 import argparse
+import functools
 import importlib.util
 import json
 import re
+import shutil
+import subprocess
 import sys
 from pathlib import Path
 
@@ -1573,8 +1576,33 @@ def nebula_function_names(root):
     return names
 
 
+@functools.cache
+def clang_format():
+    """The clang-format of version 22 that scripts/format.sh requires, looked up as its #CLANG_FORMAT is,
+    clang-format-22 first; the run stops where none is installed, since an unformatted plugin differs
+    from the committed one, which scripts/format.sh keeps formatted"""
+    for exe in ('clang-format-22', 'clang-format'):
+        path = shutil.which(exe)
+        if path and 'version 22' in subprocess.run([path, '--version'], capture_output=True, text=True).stdout:
+            return path
+    sys.exit('codegen_nebula_sql.py: clang-format 22 is required to format the generated C++, '
+             'as scripts/format.sh formats every .cpp and .hpp; install it (apt.llvm.org, llvm.sh 22)')
+
+
+def formatted(path, text):
+    """The text of a .cpp or .hpp as clang-format writes it under the repository's .clang-format, which it
+    finds from the path it is told the text has; any other file as it is"""
+    if path.suffix not in ('.cpp', '.hpp'):
+        return text
+    run = subprocess.run([clang_format(), '--style=file', f'--assume-filename={path.resolve()}'],
+                         input=text, capture_output=True, text=True, check=True)
+    return run.stdout
+
+
 def write_if_changed(path, text):
-    """Write the file only where its content changes, so that a build recompiles only what a run changed"""
+    """Write the file, formatted (#formatted), only where its content changes, so that a build recompiles
+    only what a run changed"""
+    text = formatted(path, text)
     if not path.exists() or path.read_text() != text:
         path.write_text(text)
 
