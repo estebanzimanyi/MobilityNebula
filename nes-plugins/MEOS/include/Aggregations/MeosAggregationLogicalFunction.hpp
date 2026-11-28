@@ -75,12 +75,18 @@ public:
     [[nodiscard]] MeosAggregationLogicalFunction withInferredType(const Schema<Field, Unordered>& schema) const;
     /// The physical aggregation of the chosen overload, else the name
     [[nodiscard]] std::string_view getName() const noexcept;
+
     /// The name of the aggregate, as the catalog states it
     [[nodiscard]] std::string_view getAggregateName() const noexcept { return name; }
+
     [[nodiscard]] DataType getAggregateType() const;
+
     [[nodiscard]] static bool shallIncludeNullValues() noexcept { return false; }
+
     [[nodiscard]] AggregationFieldAccess getInputFunction() const { return inputFunction; }
+
     [[nodiscard]] const std::vector<LogicalFunction>& getLiterals() const { return literals; }
+
     [[nodiscard]] std::string explain(ExplainVerbosity verbosity) const;
     [[nodiscard]] bool operator==(const MeosAggregationLogicalFunction& other) const;
 

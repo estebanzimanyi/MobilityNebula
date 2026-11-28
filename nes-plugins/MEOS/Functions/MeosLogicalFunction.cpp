@@ -114,8 +114,8 @@ std::optional<size_t> MeosLogicalFunction::chooseOverload() const
 
 DataType MeosLogicalFunction::answerType() const
 {
-    const bool nullable = overloads[*chosen].answersNone
-        or std::ranges::any_of(children, [](const auto& child) { return child.getDataType().nullable; });
+    const bool nullable
+        = overloads[*chosen].answersNone or std::ranges::any_of(children, [](const auto& child) { return child.getDataType().nullable; });
     return DataTypeProvider::provideDataType(
         std::string(overloads[*chosen].result), nullable ? DataType::NULLABLE::IS_NULLABLE : DataType::NULLABLE::NOT_NULLABLE);
 }
@@ -152,7 +152,8 @@ LogicalFunction MeosLogicalFunction::withInferredDataType(const Schema<Field, Un
         throw FunctionNotImplemented(
             "{} takes no arguments of types ({})",
             name,
-            fmt::join(copy.children | std::views::transform([](const auto& child) { return fmt::format("{}", child.getDataType()); }), ", "));
+            fmt::join(
+                copy.children | std::views::transform([](const auto& child) { return fmt::format("{}", child.getDataType()); }), ", "));
     }
     copy.dataType = copy.answerType();
     return copy;
@@ -182,7 +183,8 @@ std::string_view MeosLogicalFunction::getType() const
 
 Reflected Reflector<MeosLogicalFunction>::operator()(const MeosLogicalFunction& function, const ReflectionContext& context) const
 {
-    return context.reflect(detail::ReflectedMeosLogicalFunction{.name = std::string(function.getName()), .children = function.getChildren()});
+    return context.reflect(
+        detail::ReflectedMeosLogicalFunction{.name = std::string(function.getName()), .children = function.getChildren()});
 }
 
 MeosLogicalFunction Unreflector<MeosLogicalFunction>::operator()(const Reflected& reflected, const ReflectionContext& context) const

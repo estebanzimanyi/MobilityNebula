@@ -80,8 +80,7 @@ RequiredWatermarkAssigners mergeContexts(const std::vector<RequiredWatermarkAssi
     return contexts.at(0);
 }
 
-LogicalOperator
-addWatermarkAssigners(LogicalOperator op, const bool ingestionTime, std::vector<EventTimeAssigner> eventTime)
+LogicalOperator addWatermarkAssigners(LogicalOperator op, const bool ingestionTime, std::vector<EventTimeAssigner> eventTime)
 {
     /// adds all required watermark assigners
 
@@ -95,13 +94,13 @@ addWatermarkAssigners(LogicalOperator op, const bool ingestionTime, std::vector<
         auto field = op.getOutputSchema()[onField.getLastName()];
         PRECONDITION(field.has_value(), "the operator must have the event time field");
         eventTime.pop_back();
-        op = TypedLogicalOperator<EventTimeWatermarkAssignerLogicalOperator>{op, FieldAccessLogicalFunction{field.value()}, unit, allowedLateness};
+        op = TypedLogicalOperator<EventTimeWatermarkAssignerLogicalOperator>{
+            op, FieldAccessLogicalFunction{field.value()}, unit, allowedLateness};
     }
     return op;
 }
 
-std::vector<EventTimeAssigner>
-fieldsWithNewBase(const LogicalOperator& base, std::vector<EventTimeAssigner> eventTime)
+std::vector<EventTimeAssigner> fieldsWithNewBase(const LogicalOperator& base, std::vector<EventTimeAssigner> eventTime)
 {
     for (auto& field : eventTime | std::views::keys)
     {

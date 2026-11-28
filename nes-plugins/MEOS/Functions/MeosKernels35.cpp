@@ -26,7 +26,6 @@ extern "C" {
 #include <meos_cbuffer.h>
 #include <meos_cellindex.h>
 #include <meos_geo.h>
-#include <meos_h3.h>
 #include <meos_json.h>
 #include <meos_npoint.h>
 #include <meos_pointcloud.h>
@@ -34,6 +33,7 @@ extern "C" {
 #include <meos_quadbin.h>
 #include <meos_raster.h>
 #include <meos_rgeo.h>
+#include <meos_h3.h>
 #include <meos_s2cell.h>
 }
 
@@ -60,7 +60,9 @@ int8_t* Meos_s2cellset_make_0(int8_t* a0, int8_t* out)
         return MeosRuntime::none();
     }
     meos_errno_reset();
-    auto r = s2cellset_make(static_cast<const uint64_t*>(v0.values<uint64_t>([](const uint8_t* wkb, size_t size) { return s2cell_from_wkb(wkb, size); })), v0.count());
+    auto r = s2cellset_make(
+        static_cast<const uint64_t*>(v0.values<uint64_t>([](const uint8_t* wkb, size_t size) { return s2cell_from_wkb(wkb, size); })),
+        v0.count());
     MeosRuntime::raised("s2cellset_make");
     if (r == nullptr)
     {
@@ -145,7 +147,16 @@ int8_t* Meos_s2cellset_values_0(int8_t* a0, int8_t* out)
     meos_errno_reset();
     auto r = s2cellset_values(static_cast<Set*>(v0.get()), &length0);
     MeosRuntime::raised("s2cellset_values");
-    return MeosRuntime::encoded<uint64_t>(r, static_cast<int>(length0), [](const uint64_t value, size_t* written) { size_t size = 0; uint8_t* w = s2cell_as_wkb(value, 4, &size); *written = size; return w; });
+    return MeosRuntime::encoded<uint64_t>(
+        r,
+        static_cast<int>(length0),
+        [](const uint64_t value, size_t* written)
+        {
+            size_t size = 0;
+            uint8_t* w = s2cell_as_wkb(value, 4, &size);
+            *written = size;
+            return w;
+        });
 }
 
 int8_t* Meos_contained_s2cell_set_0(int8_t* a0, int8_t* a1, int8_t* out)
@@ -559,7 +570,8 @@ int8_t* Meos_ts2cell_value_at_timestamptz_0(int8_t* a0, int8_t* a1, int8_t* out)
     }
     uint64_t value{};
     meos_errno_reset();
-    const bool found = ts2cell_value_at_timestamptz(static_cast<Temporal*>(v0.get()), MeosRuntime::timestamptz(MeosRuntime::number<uint64_t>(a1)), true, &value);
+    const bool found = ts2cell_value_at_timestamptz(
+        static_cast<Temporal*>(v0.get()), MeosRuntime::timestamptz(MeosRuntime::number<uint64_t>(a1)), true, &value);
     MeosRuntime::raised("ts2cell_value_at_timestamptz");
     if (!found)
     {
@@ -659,7 +671,10 @@ int8_t* Meos_tgeogpoint_to_ts2cell_0(int8_t* a0, int8_t* a1, int8_t* a2, int8_t*
         return MeosRuntime::none();
     }
     meos_errno_reset();
-    auto r = tgeogpoint_to_ts2cell(static_cast<Temporal*>(v0.get()), static_cast<int32_t>(MeosRuntime::number<int32_t>(a1)), static_cast<bool>(MeosRuntime::number<bool>(a2)));
+    auto r = tgeogpoint_to_ts2cell(
+        static_cast<Temporal*>(v0.get()),
+        static_cast<int32_t>(MeosRuntime::number<int32_t>(a1)),
+        static_cast<bool>(MeosRuntime::number<bool>(a2)));
     MeosRuntime::raised("tgeogpoint_to_ts2cell");
     if (r == nullptr)
     {
@@ -678,7 +693,8 @@ int8_t* Meos_tgeogpoint_to_ts2cell_0_2(int8_t* a0, int8_t* a1, int8_t* out)
         return MeosRuntime::none();
     }
     meos_errno_reset();
-    auto r = tgeogpoint_to_ts2cell(static_cast<Temporal*>(v0.get()), static_cast<int32_t>(MeosRuntime::number<int32_t>(a1)), static_cast<bool>(true));
+    auto r = tgeogpoint_to_ts2cell(
+        static_cast<Temporal*>(v0.get()), static_cast<int32_t>(MeosRuntime::number<int32_t>(a1)), static_cast<bool>(true));
     MeosRuntime::raised("tgeogpoint_to_ts2cell");
     if (r == nullptr)
     {
@@ -697,7 +713,10 @@ int8_t* Meos_tgeompoint_to_ts2cell_0(int8_t* a0, int8_t* a1, int8_t* a2, int8_t*
         return MeosRuntime::none();
     }
     meos_errno_reset();
-    auto r = tgeompoint_to_ts2cell(static_cast<Temporal*>(v0.get()), static_cast<int32_t>(MeosRuntime::number<int32_t>(a1)), static_cast<bool>(MeosRuntime::number<bool>(a2)));
+    auto r = tgeompoint_to_ts2cell(
+        static_cast<Temporal*>(v0.get()),
+        static_cast<int32_t>(MeosRuntime::number<int32_t>(a1)),
+        static_cast<bool>(MeosRuntime::number<bool>(a2)));
     MeosRuntime::raised("tgeompoint_to_ts2cell");
     if (r == nullptr)
     {
@@ -716,7 +735,8 @@ int8_t* Meos_tgeompoint_to_ts2cell_0_2(int8_t* a0, int8_t* a1, int8_t* out)
         return MeosRuntime::none();
     }
     meos_errno_reset();
-    auto r = tgeompoint_to_ts2cell(static_cast<Temporal*>(v0.get()), static_cast<int32_t>(MeosRuntime::number<int32_t>(a1)), static_cast<bool>(true));
+    auto r = tgeompoint_to_ts2cell(
+        static_cast<Temporal*>(v0.get()), static_cast<int32_t>(MeosRuntime::number<int32_t>(a1)), static_cast<bool>(true));
     MeosRuntime::raised("tgeompoint_to_ts2cell");
     if (r == nullptr)
     {
@@ -7391,1256 +7411,3506 @@ int8_t* Meos_composition228(int8_t* a0, int8_t* a1, int8_t* out)
 
 void describe(PluginDescriptor& descriptor)
 {
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_s2cellset_make_0",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_s2cellset_make_0}, {DataType::Type::VARSIZED}, DataType::Type::VARSIZED, false, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_s2cellset_end_value_0",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_s2cellset_end_value_0}, {DataType::Type::VARSIZED}, DataType::Type::VARSIZED, false, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_s2cellset_start_value_0",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_s2cellset_start_value_0}, {DataType::Type::VARSIZED}, DataType::Type::VARSIZED, false, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_s2cellset_value_n_0",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_s2cellset_value_n_0}, {DataType::Type::VARSIZED, DataType::Type::INT32}, DataType::Type::VARSIZED, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_s2cellset_values_0",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_s2cellset_values_0}, {DataType::Type::VARSIZED}, DataType::Type::VARSIZED, false, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_contained_s2cell_set_0",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_contained_s2cell_set_0}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, false, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_contains_set_s2cell_0",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_contains_set_s2cell_0}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, false, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_intersection_s2cell_set_0",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_intersection_s2cell_set_0}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::VARSIZED, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_intersection_set_s2cell_0",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_intersection_set_s2cell_0}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::VARSIZED, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_minus_s2cell_set_0",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_minus_s2cell_set_0}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::VARSIZED, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_minus_set_s2cell_0",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_minus_set_s2cell_0}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::VARSIZED, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_union_s2cell_set_0",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_union_s2cell_set_0}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::VARSIZED, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_union_set_s2cell_0",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_union_set_s2cell_0}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::VARSIZED, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_ts2cell_in_1",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_ts2cell_in_1}, {DataType::Type::VARSIZED}, DataType::Type::VARSIZED, false, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_ts2cell_in_2",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_ts2cell_in_2}, {DataType::Type::VARSIZED}, DataType::Type::VARSIZED, false, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_ts2cell_from_mfjson_0",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_ts2cell_from_mfjson_0}, {DataType::Type::VARSIZED}, DataType::Type::VARSIZED, false, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_ts2cellinst_make_0",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_ts2cellinst_make_0}, {DataType::Type::VARSIZED, DataType::Type::UINT64}, DataType::Type::VARSIZED, false, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_ts2cellseq_from_base_tstzset_0",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_ts2cellseq_from_base_tstzset_0}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::VARSIZED, false, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_ts2cellseq_from_base_tstzspan_0",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_ts2cellseq_from_base_tstzspan_0}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::VARSIZED, false, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_ts2cellseqset_from_base_tstzspanset_0",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_ts2cellseqset_from_base_tstzspanset_0}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::VARSIZED, false, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_ts2cell_start_value_0",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_ts2cell_start_value_0}, {DataType::Type::VARSIZED}, DataType::Type::VARSIZED, false, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_ts2cell_end_value_0",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_ts2cell_end_value_0}, {DataType::Type::VARSIZED}, DataType::Type::VARSIZED, false, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_ts2cell_value_0",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_ts2cell_value_0}, {DataType::Type::VARSIZED}, DataType::Type::VARSIZED, false, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_ts2cell_value_n_0",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_ts2cell_value_n_0}, {DataType::Type::VARSIZED, DataType::Type::INT32}, DataType::Type::VARSIZED, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_ts2cell_value_at_timestamptz_0",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_ts2cell_value_at_timestamptz_0}, {DataType::Type::VARSIZED, DataType::Type::UINT64}, DataType::Type::VARSIZED, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_s2cell_to_set_0",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_s2cell_to_set_0}, {DataType::Type::VARSIZED}, DataType::Type::VARSIZED, false, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_tbigint_to_ts2cell_0",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_tbigint_to_ts2cell_0}, {DataType::Type::VARSIZED}, DataType::Type::VARSIZED, false, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_ts2cell_to_tbigint_0",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_ts2cell_to_tbigint_0}, {DataType::Type::VARSIZED}, DataType::Type::VARSIZED, false, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_ts2cell_to_tgeompoint_0",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_ts2cell_to_tgeompoint_0}, {DataType::Type::VARSIZED}, DataType::Type::VARSIZED, false, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_tgeogpoint_to_ts2cell_0",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_tgeogpoint_to_ts2cell_0}, {DataType::Type::VARSIZED, DataType::Type::INT32, DataType::Type::BOOLEAN}, DataType::Type::VARSIZED, false, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_tgeogpoint_to_ts2cell_0_2",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_tgeogpoint_to_ts2cell_0_2}, {DataType::Type::VARSIZED, DataType::Type::INT32}, DataType::Type::VARSIZED, false, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_tgeompoint_to_ts2cell_0",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_tgeompoint_to_ts2cell_0}, {DataType::Type::VARSIZED, DataType::Type::INT32, DataType::Type::BOOLEAN}, DataType::Type::VARSIZED, false, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_tgeompoint_to_ts2cell_0_2",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_tgeompoint_to_ts2cell_0_2}, {DataType::Type::VARSIZED, DataType::Type::INT32}, DataType::Type::VARSIZED, false, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_ts2cell_at_value_0",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_ts2cell_at_value_0}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::VARSIZED, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_ts2cell_minus_value_0",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_ts2cell_minus_value_0}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::VARSIZED, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_ever_eq_s2cell_ts2cell_0",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_ever_eq_s2cell_ts2cell_0}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, false, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_ever_eq_ts2cell_s2cell_0",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_ever_eq_ts2cell_s2cell_0}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, false, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_ever_ne_s2cell_ts2cell_0",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_ever_ne_s2cell_ts2cell_0}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, false, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_ever_ne_ts2cell_s2cell_0",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_ever_ne_ts2cell_s2cell_0}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, false, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_always_eq_s2cell_ts2cell_0",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_always_eq_s2cell_ts2cell_0}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, false, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_always_eq_ts2cell_s2cell_0",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_always_eq_ts2cell_s2cell_0}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, false, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_always_ne_s2cell_ts2cell_0",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_always_ne_s2cell_ts2cell_0}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, false, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_always_ne_ts2cell_s2cell_0",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_always_ne_ts2cell_s2cell_0}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, false, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_ever_eq_ts2cell_ts2cell_0",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_ever_eq_ts2cell_ts2cell_0}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, false, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_ever_ne_ts2cell_ts2cell_0",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_ever_ne_ts2cell_ts2cell_0}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, false, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_always_eq_ts2cell_ts2cell_0",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_always_eq_ts2cell_ts2cell_0}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, false, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_always_ne_ts2cell_ts2cell_0",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_always_ne_ts2cell_ts2cell_0}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, false, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_teq_s2cell_ts2cell_0",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_teq_s2cell_ts2cell_0}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::VARSIZED, false, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_teq_ts2cell_s2cell_0",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_teq_ts2cell_s2cell_0}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::VARSIZED, false, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_tne_s2cell_ts2cell_0",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_tne_s2cell_ts2cell_0}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::VARSIZED, false, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_tne_ts2cell_s2cell_0",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_tne_ts2cell_s2cell_0}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::VARSIZED, false, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_ts2cell_cell_to_token_0",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_ts2cell_cell_to_token_0}, {DataType::Type::VARSIZED}, DataType::Type::VARSIZED, false, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_ts2cell_grid_distance_0",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_ts2cell_grid_distance_0}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::VARSIZED, false, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition0",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition0}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition1",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition1}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition2",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition2}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition3",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition3}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition4",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition4}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition5",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition5}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition6",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition6}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition7",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition7}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition8",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition8}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition9",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition9}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition10",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition10}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition11",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition11}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition12",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition12}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition13",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition13}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition14",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition14}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition15",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition15}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition16",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition16}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition17",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition17}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition18",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition18}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition19",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition19}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition20",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition20}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition21",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition21}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition22",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition22}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition23",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition23}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition24",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition24}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition25",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition25}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition26",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition26}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition27",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition27}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition28",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition28}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition29",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition29}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition30",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition30}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition31",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition31}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition32",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition32}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition33",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition33}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition34",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition34}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition35",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition35}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition36",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition36}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition37",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition37}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition38",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition38}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition39",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition39}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition40",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition40}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition41",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition41}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition42",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition42}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition43",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition43}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition44",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition44}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED, DataType::Type::FLOAT64}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition45",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition45}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED, DataType::Type::FLOAT64}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition46",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition46}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED, DataType::Type::FLOAT64}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition47",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition47}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED, DataType::Type::FLOAT64}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition48",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition48}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED, DataType::Type::FLOAT64}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition49",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition49}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED, DataType::Type::FLOAT64}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition50",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition50}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED, DataType::Type::FLOAT64}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition51",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition51}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED, DataType::Type::FLOAT64}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition52",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition52}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED, DataType::Type::FLOAT64}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition53",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition53}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED, DataType::Type::FLOAT64}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition54",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition54}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED, DataType::Type::FLOAT64}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition55",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition55}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED, DataType::Type::FLOAT64}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition56",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition56}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED, DataType::Type::FLOAT64}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition57",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition57}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED, DataType::Type::FLOAT64}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition58",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition58}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED, DataType::Type::FLOAT64}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition59",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition59}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED, DataType::Type::FLOAT64}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition60",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition60}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED, DataType::Type::FLOAT64}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition61",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition61}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED, DataType::Type::FLOAT64}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition62",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition62}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED, DataType::Type::FLOAT64}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition63",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition63}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED, DataType::Type::FLOAT64}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition64",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition64}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition65",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition65}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition66",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition66}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition67",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition67}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition68",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition68}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition69",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition69}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition70",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition70}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition71",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition71}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition72",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition72}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition73",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition73}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition74",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition74}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition75",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition75}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition76",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition76}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition77",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition77}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition78",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition78}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition79",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition79}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition80",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition80}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition81",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition81}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition82",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition82}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition83",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition83}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition84",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition84}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition85",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition85}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition86",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition86}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition87",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition87}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition88",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition88}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition89",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition89}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition90",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition90}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition91",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition91}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition92",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition92}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition93",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition93}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition94",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition94}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition95",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition95}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition96",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition96}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition97",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition97}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition98",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition98}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition99",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition99}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition100",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition100}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition101",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition101}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition102",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition102}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition103",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition103}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition104",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition104}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition105",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition105}, {DataType::Type::VARSIZED}, DataType::Type::VARSIZED, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition106",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition106}, {DataType::Type::VARSIZED}, DataType::Type::VARSIZED, false, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition107",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition107}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition108",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition108}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition109",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition109}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition110",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition110}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition111",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition111}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition112",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition112}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition113",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition113}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition114",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition114}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition115",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition115}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition116",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition116}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition117",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition117}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition118",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition118}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition119",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition119}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition120",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition120}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition121",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition121}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition122",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition122}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition123",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition123}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition124",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition124}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition125",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition125}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition126",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition126}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition127",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition127}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition128",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition128}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition129",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition129}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition130",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition130}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition131",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition131}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition132",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition132}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition133",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition133}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition134",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition134}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition135",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition135}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition136",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition136}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition137",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition137}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition138",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition138}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition139",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition139}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition140",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition140}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition141",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition141}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition142",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition142}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition143",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition143}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition144",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition144}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition145",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition145}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition146",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition146}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition147",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition147}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition148",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition148}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition149",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition149}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition150",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition150}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition151",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition151}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED, DataType::Type::FLOAT64}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition152",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition152}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED, DataType::Type::FLOAT64}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition153",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition153}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED, DataType::Type::FLOAT64}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition154",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition154}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED, DataType::Type::FLOAT64}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition155",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition155}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED, DataType::Type::FLOAT64}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition156",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition156}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED, DataType::Type::FLOAT64}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition157",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition157}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition158",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition158}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition159",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition159}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition160",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition160}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition161",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition161}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition162",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition162}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition163",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition163}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition164",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition164}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition165",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition165}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition166",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition166}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition167",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition167}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition168",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition168}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition169",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition169}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition170",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition170}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition171",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition171}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition172",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition172}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition173",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition173}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition174",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition174}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::BOOLEAN, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition175",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition175}, {DataType::Type::VARSIZED, DataType::Type::FLOAT64}, DataType::Type::VARSIZED, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition176",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition176}, {DataType::Type::VARSIZED, DataType::Type::FLOAT64}, DataType::Type::VARSIZED, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition177",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition177}, {DataType::Type::VARSIZED, DataType::Type::FLOAT64}, DataType::Type::VARSIZED, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition178",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition178}, {DataType::Type::VARSIZED, DataType::Type::FLOAT64}, DataType::Type::VARSIZED, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition179",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition179}, {DataType::Type::VARSIZED, DataType::Type::FLOAT64}, DataType::Type::VARSIZED, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition180",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition180}, {DataType::Type::VARSIZED, DataType::Type::FLOAT64}, DataType::Type::VARSIZED, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition181",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition181}, {DataType::Type::VARSIZED, DataType::Type::FLOAT64}, DataType::Type::VARSIZED, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition182",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition182}, {DataType::Type::VARSIZED, DataType::Type::FLOAT64}, DataType::Type::VARSIZED, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition183",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition183}, {DataType::Type::VARSIZED, DataType::Type::FLOAT64}, DataType::Type::VARSIZED, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition184",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition184}, {DataType::Type::VARSIZED, DataType::Type::FLOAT64}, DataType::Type::VARSIZED, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition185",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition185}, {DataType::Type::VARSIZED, DataType::Type::FLOAT64}, DataType::Type::VARSIZED, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition186",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition186}, {DataType::Type::VARSIZED, DataType::Type::FLOAT64}, DataType::Type::VARSIZED, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition187",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition187}, {DataType::Type::VARSIZED, DataType::Type::FLOAT64}, DataType::Type::VARSIZED, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition188",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition188}, {DataType::Type::VARSIZED, DataType::Type::FLOAT64}, DataType::Type::VARSIZED, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition189",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition189}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::FLOAT64, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition190",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition190}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::FLOAT64, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition193",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition193}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::VARSIZED, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition194",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition194}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::VARSIZED, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition225",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition225}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::VARSIZED, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition226",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition226}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::VARSIZED, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition227",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition227}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::VARSIZED, true, std::move(arguments.childFunctions)); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "PhysicalFunctionRegistry",
-        .key = "Meos_composition228",
-        .entry = std::any{PhysicalFunctionRegistry::EntryType{[](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
-            { return MeosPhysicalFunction(MeosKernel{&Meos_composition228}, {DataType::Type::VARSIZED, DataType::Type::VARSIZED}, DataType::Type::VARSIZED, true, std::move(arguments.childFunctions)); }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_s2cellset_make_0",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_s2cellset_make_0},
+                        {DataType::Type::VARSIZED},
+                        DataType::Type::VARSIZED,
+                        false,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_s2cellset_end_value_0",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_s2cellset_end_value_0},
+                        {DataType::Type::VARSIZED},
+                        DataType::Type::VARSIZED,
+                        false,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_s2cellset_start_value_0",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_s2cellset_start_value_0},
+                        {DataType::Type::VARSIZED},
+                        DataType::Type::VARSIZED,
+                        false,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_s2cellset_value_n_0",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_s2cellset_value_n_0},
+                        {DataType::Type::VARSIZED, DataType::Type::INT32},
+                        DataType::Type::VARSIZED,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_s2cellset_values_0",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_s2cellset_values_0},
+                        {DataType::Type::VARSIZED},
+                        DataType::Type::VARSIZED,
+                        false,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_contained_s2cell_set_0",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_contained_s2cell_set_0},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        false,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_contains_set_s2cell_0",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_contains_set_s2cell_0},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        false,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_intersection_s2cell_set_0",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_intersection_s2cell_set_0},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::VARSIZED,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_intersection_set_s2cell_0",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_intersection_set_s2cell_0},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::VARSIZED,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_minus_s2cell_set_0",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_minus_s2cell_set_0},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::VARSIZED,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_minus_set_s2cell_0",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_minus_set_s2cell_0},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::VARSIZED,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_union_s2cell_set_0",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_union_s2cell_set_0},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::VARSIZED,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_union_set_s2cell_0",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_union_set_s2cell_0},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::VARSIZED,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_ts2cell_in_1",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_ts2cell_in_1},
+                        {DataType::Type::VARSIZED},
+                        DataType::Type::VARSIZED,
+                        false,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_ts2cell_in_2",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_ts2cell_in_2},
+                        {DataType::Type::VARSIZED},
+                        DataType::Type::VARSIZED,
+                        false,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_ts2cell_from_mfjson_0",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_ts2cell_from_mfjson_0},
+                        {DataType::Type::VARSIZED},
+                        DataType::Type::VARSIZED,
+                        false,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_ts2cellinst_make_0",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_ts2cellinst_make_0},
+                        {DataType::Type::VARSIZED, DataType::Type::UINT64},
+                        DataType::Type::VARSIZED,
+                        false,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_ts2cellseq_from_base_tstzset_0",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_ts2cellseq_from_base_tstzset_0},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::VARSIZED,
+                        false,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_ts2cellseq_from_base_tstzspan_0",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_ts2cellseq_from_base_tstzspan_0},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::VARSIZED,
+                        false,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_ts2cellseqset_from_base_tstzspanset_0",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_ts2cellseqset_from_base_tstzspanset_0},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::VARSIZED,
+                        false,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_ts2cell_start_value_0",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_ts2cell_start_value_0},
+                        {DataType::Type::VARSIZED},
+                        DataType::Type::VARSIZED,
+                        false,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_ts2cell_end_value_0",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_ts2cell_end_value_0},
+                        {DataType::Type::VARSIZED},
+                        DataType::Type::VARSIZED,
+                        false,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_ts2cell_value_0",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_ts2cell_value_0},
+                        {DataType::Type::VARSIZED},
+                        DataType::Type::VARSIZED,
+                        false,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_ts2cell_value_n_0",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_ts2cell_value_n_0},
+                        {DataType::Type::VARSIZED, DataType::Type::INT32},
+                        DataType::Type::VARSIZED,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_ts2cell_value_at_timestamptz_0",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_ts2cell_value_at_timestamptz_0},
+                        {DataType::Type::VARSIZED, DataType::Type::UINT64},
+                        DataType::Type::VARSIZED,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_s2cell_to_set_0",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_s2cell_to_set_0},
+                        {DataType::Type::VARSIZED},
+                        DataType::Type::VARSIZED,
+                        false,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_tbigint_to_ts2cell_0",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_tbigint_to_ts2cell_0},
+                        {DataType::Type::VARSIZED},
+                        DataType::Type::VARSIZED,
+                        false,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_ts2cell_to_tbigint_0",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_ts2cell_to_tbigint_0},
+                        {DataType::Type::VARSIZED},
+                        DataType::Type::VARSIZED,
+                        false,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_ts2cell_to_tgeompoint_0",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_ts2cell_to_tgeompoint_0},
+                        {DataType::Type::VARSIZED},
+                        DataType::Type::VARSIZED,
+                        false,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_tgeogpoint_to_ts2cell_0",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_tgeogpoint_to_ts2cell_0},
+                        {DataType::Type::VARSIZED, DataType::Type::INT32, DataType::Type::BOOLEAN},
+                        DataType::Type::VARSIZED,
+                        false,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_tgeogpoint_to_ts2cell_0_2",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_tgeogpoint_to_ts2cell_0_2},
+                        {DataType::Type::VARSIZED, DataType::Type::INT32},
+                        DataType::Type::VARSIZED,
+                        false,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_tgeompoint_to_ts2cell_0",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_tgeompoint_to_ts2cell_0},
+                        {DataType::Type::VARSIZED, DataType::Type::INT32, DataType::Type::BOOLEAN},
+                        DataType::Type::VARSIZED,
+                        false,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_tgeompoint_to_ts2cell_0_2",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_tgeompoint_to_ts2cell_0_2},
+                        {DataType::Type::VARSIZED, DataType::Type::INT32},
+                        DataType::Type::VARSIZED,
+                        false,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_ts2cell_at_value_0",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_ts2cell_at_value_0},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::VARSIZED,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_ts2cell_minus_value_0",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_ts2cell_minus_value_0},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::VARSIZED,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_ever_eq_s2cell_ts2cell_0",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_ever_eq_s2cell_ts2cell_0},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        false,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_ever_eq_ts2cell_s2cell_0",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_ever_eq_ts2cell_s2cell_0},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        false,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_ever_ne_s2cell_ts2cell_0",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_ever_ne_s2cell_ts2cell_0},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        false,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_ever_ne_ts2cell_s2cell_0",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_ever_ne_ts2cell_s2cell_0},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        false,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_always_eq_s2cell_ts2cell_0",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_always_eq_s2cell_ts2cell_0},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        false,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_always_eq_ts2cell_s2cell_0",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_always_eq_ts2cell_s2cell_0},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        false,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_always_ne_s2cell_ts2cell_0",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_always_ne_s2cell_ts2cell_0},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        false,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_always_ne_ts2cell_s2cell_0",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_always_ne_ts2cell_s2cell_0},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        false,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_ever_eq_ts2cell_ts2cell_0",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_ever_eq_ts2cell_ts2cell_0},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        false,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_ever_ne_ts2cell_ts2cell_0",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_ever_ne_ts2cell_ts2cell_0},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        false,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_always_eq_ts2cell_ts2cell_0",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_always_eq_ts2cell_ts2cell_0},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        false,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_always_ne_ts2cell_ts2cell_0",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_always_ne_ts2cell_ts2cell_0},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        false,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_teq_s2cell_ts2cell_0",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_teq_s2cell_ts2cell_0},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::VARSIZED,
+                        false,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_teq_ts2cell_s2cell_0",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_teq_ts2cell_s2cell_0},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::VARSIZED,
+                        false,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_tne_s2cell_ts2cell_0",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_tne_s2cell_ts2cell_0},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::VARSIZED,
+                        false,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_tne_ts2cell_s2cell_0",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_tne_ts2cell_s2cell_0},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::VARSIZED,
+                        false,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_ts2cell_cell_to_token_0",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_ts2cell_cell_to_token_0},
+                        {DataType::Type::VARSIZED},
+                        DataType::Type::VARSIZED,
+                        false,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_ts2cell_grid_distance_0",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_ts2cell_grid_distance_0},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::VARSIZED,
+                        false,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition0",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition0},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition1",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition1},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition2",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition2},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition3",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition3},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition4",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition4},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition5",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition5},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition6",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition6},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition7",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition7},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition8",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition8},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition9",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition9},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition10",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition10},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition11",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition11},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition12",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition12},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition13",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition13},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition14",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition14},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition15",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition15},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition16",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition16},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition17",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition17},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition18",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition18},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition19",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition19},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition20",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition20},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition21",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition21},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition22",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition22},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition23",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition23},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition24",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition24},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition25",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition25},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition26",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition26},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition27",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition27},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition28",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition28},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition29",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition29},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition30",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition30},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition31",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition31},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition32",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition32},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition33",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition33},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition34",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition34},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition35",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition35},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition36",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition36},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition37",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition37},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition38",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition38},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition39",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition39},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition40",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition40},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition41",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition41},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition42",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition42},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition43",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition43},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition44",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition44},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED, DataType::Type::FLOAT64},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition45",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition45},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED, DataType::Type::FLOAT64},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition46",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition46},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED, DataType::Type::FLOAT64},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition47",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition47},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED, DataType::Type::FLOAT64},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition48",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition48},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED, DataType::Type::FLOAT64},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition49",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition49},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED, DataType::Type::FLOAT64},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition50",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition50},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED, DataType::Type::FLOAT64},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition51",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition51},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED, DataType::Type::FLOAT64},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition52",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition52},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED, DataType::Type::FLOAT64},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition53",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition53},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED, DataType::Type::FLOAT64},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition54",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition54},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED, DataType::Type::FLOAT64},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition55",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition55},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED, DataType::Type::FLOAT64},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition56",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition56},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED, DataType::Type::FLOAT64},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition57",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition57},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED, DataType::Type::FLOAT64},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition58",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition58},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED, DataType::Type::FLOAT64},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition59",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition59},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED, DataType::Type::FLOAT64},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition60",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition60},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED, DataType::Type::FLOAT64},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition61",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition61},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED, DataType::Type::FLOAT64},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition62",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition62},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED, DataType::Type::FLOAT64},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition63",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition63},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED, DataType::Type::FLOAT64},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition64",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition64},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition65",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition65},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition66",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition66},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition67",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition67},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition68",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition68},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition69",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition69},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition70",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition70},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition71",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition71},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition72",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition72},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition73",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition73},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition74",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition74},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition75",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition75},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition76",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition76},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition77",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition77},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition78",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition78},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition79",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition79},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition80",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition80},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition81",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition81},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition82",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition82},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition83",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition83},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition84",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition84},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition85",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition85},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition86",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition86},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition87",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition87},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition88",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition88},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition89",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition89},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition90",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition90},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition91",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition91},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition92",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition92},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition93",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition93},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition94",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition94},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition95",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition95},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition96",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition96},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition97",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition97},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition98",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition98},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition99",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition99},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition100",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition100},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition101",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition101},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition102",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition102},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition103",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition103},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition104",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition104},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition105",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition105},
+                        {DataType::Type::VARSIZED},
+                        DataType::Type::VARSIZED,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition106",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition106},
+                        {DataType::Type::VARSIZED},
+                        DataType::Type::VARSIZED,
+                        false,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition107",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition107},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition108",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition108},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition109",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition109},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition110",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition110},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition111",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition111},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition112",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition112},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition113",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition113},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition114",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition114},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition115",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition115},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition116",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition116},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition117",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition117},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition118",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition118},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition119",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition119},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition120",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition120},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition121",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition121},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition122",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition122},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition123",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition123},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition124",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition124},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition125",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition125},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition126",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition126},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition127",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition127},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition128",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition128},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition129",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition129},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition130",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition130},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition131",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition131},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition132",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition132},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition133",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition133},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition134",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition134},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition135",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition135},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition136",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition136},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition137",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition137},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition138",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition138},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition139",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition139},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition140",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition140},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition141",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition141},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition142",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition142},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition143",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition143},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition144",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition144},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition145",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition145},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition146",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition146},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition147",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition147},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition148",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition148},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition149",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition149},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition150",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition150},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition151",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition151},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED, DataType::Type::FLOAT64},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition152",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition152},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED, DataType::Type::FLOAT64},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition153",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition153},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED, DataType::Type::FLOAT64},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition154",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition154},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED, DataType::Type::FLOAT64},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition155",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition155},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED, DataType::Type::FLOAT64},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition156",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition156},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED, DataType::Type::FLOAT64},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition157",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition157},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition158",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition158},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition159",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition159},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition160",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition160},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition161",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition161},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition162",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition162},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition163",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition163},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition164",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition164},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition165",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition165},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition166",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition166},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition167",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition167},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition168",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition168},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition169",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition169},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition170",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition170},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition171",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition171},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition172",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition172},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition173",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition173},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition174",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition174},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::BOOLEAN,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition175",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition175},
+                        {DataType::Type::VARSIZED, DataType::Type::FLOAT64},
+                        DataType::Type::VARSIZED,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition176",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition176},
+                        {DataType::Type::VARSIZED, DataType::Type::FLOAT64},
+                        DataType::Type::VARSIZED,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition177",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition177},
+                        {DataType::Type::VARSIZED, DataType::Type::FLOAT64},
+                        DataType::Type::VARSIZED,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition178",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition178},
+                        {DataType::Type::VARSIZED, DataType::Type::FLOAT64},
+                        DataType::Type::VARSIZED,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition179",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition179},
+                        {DataType::Type::VARSIZED, DataType::Type::FLOAT64},
+                        DataType::Type::VARSIZED,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition180",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition180},
+                        {DataType::Type::VARSIZED, DataType::Type::FLOAT64},
+                        DataType::Type::VARSIZED,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition181",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition181},
+                        {DataType::Type::VARSIZED, DataType::Type::FLOAT64},
+                        DataType::Type::VARSIZED,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition182",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition182},
+                        {DataType::Type::VARSIZED, DataType::Type::FLOAT64},
+                        DataType::Type::VARSIZED,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition183",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition183},
+                        {DataType::Type::VARSIZED, DataType::Type::FLOAT64},
+                        DataType::Type::VARSIZED,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition184",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition184},
+                        {DataType::Type::VARSIZED, DataType::Type::FLOAT64},
+                        DataType::Type::VARSIZED,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition185",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition185},
+                        {DataType::Type::VARSIZED, DataType::Type::FLOAT64},
+                        DataType::Type::VARSIZED,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition186",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition186},
+                        {DataType::Type::VARSIZED, DataType::Type::FLOAT64},
+                        DataType::Type::VARSIZED,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition187",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition187},
+                        {DataType::Type::VARSIZED, DataType::Type::FLOAT64},
+                        DataType::Type::VARSIZED,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition188",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition188},
+                        {DataType::Type::VARSIZED, DataType::Type::FLOAT64},
+                        DataType::Type::VARSIZED,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition189",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition189},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::FLOAT64,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition190",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition190},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::FLOAT64,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition193",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition193},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::VARSIZED,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition194",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition194},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::VARSIZED,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition225",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition225},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::VARSIZED,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition226",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition226},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::VARSIZED,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition227",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition227},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::VARSIZED,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "PhysicalFunctionRegistry",
+            .key = "Meos_composition228",
+            .entry = std::any{PhysicalFunctionRegistry::EntryType{
+                [](PhysicalFunctionRegistryArguments arguments) -> PhysicalFunction
+                {
+                    return MeosPhysicalFunction(
+                        MeosKernel{&Meos_composition228},
+                        {DataType::Type::VARSIZED, DataType::Type::VARSIZED},
+                        DataType::Type::VARSIZED,
+                        true,
+                        std::move(arguments.childFunctions));
+                }}}});
 }
 
 /// Static registration is the purpose of this initializer; it only stores a function pointer.

@@ -22,16 +22,16 @@
 #include <Functions/PhysicalFunction.hpp>
 #include <Interface/Record.hpp>
 #include <LoweringRules/AbstractLoweringRule.hpp>
-#include <Operators/LogicalOperator.hpp>
 #include <Operators/InlineTableJoinLogicalOperator.hpp>
+#include <Operators/LogicalOperator.hpp>
 #include <Schema/Binder.hpp>
 #include <Traits/FieldMappingTrait.hpp>
 #include <Traits/MemoryLayoutTypeTrait.hpp>
 #include <Util/SchemaFactory.hpp>
 #include <ErrorHandling.hpp>
+#include <InlineTableJoinPhysicalOperator.hpp>
 #include <LoweringRuleRegistry.hpp>
 #include <PhysicalOperator.hpp>
-#include <InlineTableJoinPhysicalOperator.hpp>
 
 namespace NES
 {

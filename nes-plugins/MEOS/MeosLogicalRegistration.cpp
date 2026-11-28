@@ -27,13 +27,13 @@
 #include <string_view>
 #include <utility>
 #include <vector>
+#include <Aggregations/MeosAggregationLogicalFunction.hpp>
 #include <DataTypes/DataType.hpp>
 #include <DataTypes/ExtensionType.hpp>
 #include <DataTypes/VarVal.hpp>
 #include <DataTypes/VariableSizedData.hpp>
 #include <Functions/LogicalFunction.hpp>
 #include <Functions/MeosLogicalFunction.hpp>
-#include <Aggregations/MeosAggregationLogicalFunction.hpp>
 #include <Interface/RecordBuffer.hpp>
 #include <OutputFormatters/OutputFormatterUtil.hpp>
 #include <OutputFormatters/ValueSerializer.hpp>
@@ -127,20 +127,23 @@ void describe(PluginDescriptor& descriptor)
     for (const auto& type : meosTypes())
     {
         const auto name = std::string{type.type->name};
-        descriptor.entries.push_back(EntryProvision{
-            .registryClassName = "DataTypeRegistry",
-            .key = name,
-            .entry = std::any{DataTypeRegistry::EntryType{[extension = type.type](const DataTypeRegistryArguments arguments)
-                                                          {
-                                                              DataType dataType{DataType::Type::VARSIZED, arguments.nullable};
-                                                              dataType.extension = extension;
-                                                              return dataType;
-                                                          }}}});
-        descriptor.entries.push_back(EntryProvision{
-            .registryClassName = "ValueSerializerRegistry",
-            .key = name,
-            .entry = std::any{ValueSerializerRegistry::EntryType{[&type](const ValueSerializerRegistryArguments arguments)
-                                                                 { return std::make_unique<MeosValueSerializer>(type, arguments.quoted); }}}});
+        descriptor.entries.push_back(
+            EntryProvision{
+                .registryClassName = "DataTypeRegistry",
+                .key = name,
+                .entry = std::any{DataTypeRegistry::EntryType{[extension = type.type](const DataTypeRegistryArguments arguments)
+                                                              {
+                                                                  DataType dataType{DataType::Type::VARSIZED, arguments.nullable};
+                                                                  dataType.extension = extension;
+                                                                  return dataType;
+                                                              }}}});
+        descriptor.entries.push_back(
+            EntryProvision{
+                .registryClassName = "ValueSerializerRegistry",
+                .key = name,
+                .entry
+                = std::any{ValueSerializerRegistry::EntryType{[&type](const ValueSerializerRegistryArguments arguments)
+                                                              { return std::make_unique<MeosValueSerializer>(type, arguments.quoted); }}}});
     }
 
     const auto unreflect = [](const Reflected& data, const ReflectionContext& context) -> LogicalFunction
@@ -149,11 +152,13 @@ void describe(PluginDescriptor& descriptor)
     functions.insert(functions.end(), mobilityNebulaFunctions().begin(), mobilityNebulaFunctions().end());
     for (const auto& function : functions)
     {
-        descriptor.entries.push_back(EntryProvision{
-            .registryClassName = "LogicalFunctionRegistry",
-            .key = std::string{function.name},
-            .entry = std::any{LogicalFunctionRegistry::EntryType{[function](LogicalFunctionRegistryArguments arguments) -> LogicalFunction
-                                                                 { return MeosLogicalFunction{function.name, function.overloads, std::move(arguments.children)}; }}}});
+        descriptor.entries.push_back(
+            EntryProvision{
+                .registryClassName = "LogicalFunctionRegistry",
+                .key = std::string{function.name},
+                .entry = std::any{LogicalFunctionRegistry::EntryType{
+                    [function](LogicalFunctionRegistryArguments arguments) -> LogicalFunction
+                    { return MeosLogicalFunction{function.name, function.overloads, std::move(arguments.children)}; }}}});
         /// A function is reflected as its SQL name until its signature is chosen, then as the signature's physical function
         std::set<std::string_view> reflectedAs{function.name};
         for (const auto& overload : function.overloads)
@@ -162,29 +167,31 @@ void describe(PluginDescriptor& descriptor)
         }
         for (const auto key : reflectedAs)
         {
-            descriptor.entries.push_back(EntryProvision{
-                .registryClassName = "LogicalFunctionUnreflectionRegistry",
-                .key = std::string{key},
-                .entry = std::any{LogicalFunctionUnreflectionRegistry::EntryType{unreflect}}});
+            descriptor.entries.push_back(
+                EntryProvision{
+                    .registryClassName = "LogicalFunctionUnreflectionRegistry",
+                    .key = std::string{key},
+                    .entry = std::any{LogicalFunctionUnreflectionRegistry::EntryType{unreflect}}});
         }
     }
     const auto unreflectAggregation = [](const Reflected& data, const ReflectionContext& context) -> WindowAggregationLogicalFunction
     { return context.unreflect<MeosAggregationLogicalFunction>(data); };
     for (const auto& aggregate : meosAggregates())
     {
-        descriptor.entries.push_back(EntryProvision{
-            .registryClassName = "AggregationLogicalFunctionRegistry",
-            .key = std::string{aggregate.name},
-            .entry = std::any{AggregationLogicalFunctionRegistry::EntryType{
-                [aggregate](AggregationLogicalFunctionRegistryArguments arguments) -> AggregationLogicalFunctionRegistryReturnType
-                {
-                    if (arguments.on.size() != 1)
+        descriptor.entries.push_back(
+            EntryProvision{
+                .registryClassName = "AggregationLogicalFunctionRegistry",
+                .key = std::string{aggregate.name},
+                .entry = std::any{AggregationLogicalFunctionRegistry::EntryType{
+                    [aggregate](AggregationLogicalFunctionRegistryArguments arguments) -> AggregationLogicalFunctionRegistryReturnType
                     {
-                        throw CannotDeserialize("{} takes one field, but got {}", aggregate.name, arguments.on.size());
-                    }
-                    return MeosAggregationLogicalFunction{
-                        aggregate.name, aggregate.overloads, arguments.on.at(0), std::move(arguments.literals)};
-                }}}});
+                        if (arguments.on.size() != 1)
+                        {
+                            throw CannotDeserialize("{} takes one field, but got {}", aggregate.name, arguments.on.size());
+                        }
+                        return MeosAggregationLogicalFunction{
+                            aggregate.name, aggregate.overloads, arguments.on.at(0), std::move(arguments.literals)};
+                    }}}});
         /// An aggregation is reflected as its name until its overload is chosen, then as the overload's physical
         /// aggregation, as a function is
         std::set<std::string_view> reflectedAs{aggregate.name};
@@ -194,10 +201,11 @@ void describe(PluginDescriptor& descriptor)
         }
         for (const auto key : reflectedAs)
         {
-            descriptor.entries.push_back(EntryProvision{
-                .registryClassName = "AggregationLogicalFunctionUnreflectionRegistry",
-                .key = std::string{key},
-                .entry = std::any{AggregationLogicalFunctionUnreflectionRegistry::EntryType{unreflectAggregation}}});
+            descriptor.entries.push_back(
+                EntryProvision{
+                    .registryClassName = "AggregationLogicalFunctionUnreflectionRegistry",
+                    .key = std::string{key},
+                    .entry = std::any{AggregationLogicalFunctionUnreflectionRegistry::EntryType{unreflectAggregation}}});
         }
     }
 }

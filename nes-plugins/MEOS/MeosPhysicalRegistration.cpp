@@ -30,11 +30,11 @@
 #include <vector>
 #include <DataTypes/VarVal.hpp>
 #include <DataTypes/VariableSizedData.hpp>
-#include <ValueDeserializer.hpp>
 #include <Plugins/BuiltinPlugins.hpp>
 #include <Plugins/PluginDescriptor.hpp>
 #include <Arena.hpp>
 #include <MeosRegistration.hpp>
+#include <ValueDeserializer.hpp>
 #include <ValueDeserializerRegistry.hpp>
 #include <function.hpp>
 #include <val_arith.hpp>
@@ -88,9 +88,7 @@ class MeosValueDeserializer final : public ValueDeserializer
 {
 public:
     MeosValueDeserializer(const MeosType& type, const bool nullable, const bool quoted)
-        : type(&type), nullable(nullable), quoted(quoted)
-    {
-    }
+        : type(&type), nullable(nullable), quoted(quoted) { }
 
     [[nodiscard]] VarVal deserializeToVarVal(
         const nautilus::val<int8_t*>& fieldAddress,
@@ -113,11 +111,7 @@ public:
             }
         }
         const auto answer = nautilus::invoke(
-            {.modRefInfo = nautilus::ModRefInfo::Ref, .noUnwind = false},
-            readText,
-            nautilus::val<const MeosType*>{type},
-            address,
-            size);
+            {.modRefInfo = nautilus::ModRefInfo::Ref, .noUnwind = false}, readText, nautilus::val<const MeosType*>{type}, address, size);
         const auto length = nautilus::invoke(readLength, answer);
         auto value = arena.allocateVariableSizedData(length);
         nautilus::invoke(keepRead, value.getContent(), answer, length);
@@ -137,12 +131,13 @@ void describe(PluginDescriptor& descriptor)
         const auto name = std::string{type.type->name};
         for (const bool nullable : {false, true})
         {
-            descriptor.entries.push_back(EntryProvision{
-                .registryClassName = "ValueDeserializerRegistry",
-                .key = nullable ? "Nullable" + name : name,
-                .entry = std::any{ValueDeserializerRegistry::EntryType{
-                    [&type, nullable](const ValueDeserializerRegistryArguments arguments)
-                    { return std::make_unique<MeosValueDeserializer>(type, nullable, arguments.quoted); }}}});
+            descriptor.entries.push_back(
+                EntryProvision{
+                    .registryClassName = "ValueDeserializerRegistry",
+                    .key = nullable ? "Nullable" + name : name,
+                    .entry = std::any{ValueDeserializerRegistry::EntryType{
+                        [&type, nullable](const ValueDeserializerRegistryArguments arguments)
+                        { return std::make_unique<MeosValueDeserializer>(type, nullable, arguments.quoted); }}}});
         }
     }
 }

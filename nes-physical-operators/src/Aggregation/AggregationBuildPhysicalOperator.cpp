@@ -120,7 +120,10 @@ void registerSessionFunctions(
 
     sessionFunctions.chain.emplace(compilationContext.registerFunction(
         std::function(
-            [config = hashMapConfig, functions, boundsOffset = SessionBoundsAggregationPhysicalFunction::stateOffset(functions), gapInMilliseconds](
+            [config = hashMapConfig,
+             functions,
+             boundsOffset = SessionBoundsAggregationPhysicalFunction::stateOffset(functions),
+             gapInMilliseconds](
                 nautilus::val<TupleBuffer*> open,
                 nautilus::val<TupleBuffer*> slice,
                 nautilus::val<TupleBuffer*> goingOn,
@@ -198,7 +201,10 @@ void registerSessionFunctions(
 
     sessionFunctions.close.emplace(compilationContext.registerFunction(
         std::function(
-            [config = hashMapConfig, functions, boundsOffset = SessionBoundsAggregationPhysicalFunction::stateOffset(functions), gapInMilliseconds](
+            [config = hashMapConfig,
+             functions,
+             boundsOffset = SessionBoundsAggregationPhysicalFunction::stateOffset(functions),
+             gapInMilliseconds](
                 nautilus::val<TupleBuffer*> open,
                 nautilus::val<TupleBuffer*> stillOpen,
                 nautilus::val<TupleBuffer*> ended,
@@ -240,6 +246,7 @@ void registerSessionFunctions(
             }),
         "sessionClose"));
 }
+
 /// NOLINTEND(performance-unnecessary-value-param)
 }
 
@@ -252,7 +259,8 @@ void AggregationBuildPhysicalOperator::setup(ExecutionContext& executionCtx, Com
         const std::scoped_lock lock(sessionFunctions->mutex);
         if (not sessionFunctions->merge)
         {
-            registerSessionFunctions(*sessionFunctions, compilationContext, hashMapConfig, aggregationPhysicalFunctions, sessionGapInMilliseconds);
+            registerSessionFunctions(
+                *sessionFunctions, compilationContext, hashMapConfig, aggregationPhysicalFunctions, sessionGapInMilliseconds);
         }
     }
 }

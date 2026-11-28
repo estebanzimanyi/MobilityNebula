@@ -45,9 +45,14 @@ namespace NES
 class InlineTableJoinLogicalOperator : public ManagedByOperator
 {
 public:
-    InlineTableJoinLogicalOperator(WeakLogicalOperator self, std::vector<LogicalFunction> values, Identifier alias, std::vector<Identifier> fields);
     InlineTableJoinLogicalOperator(
-        WeakLogicalOperator self, LogicalOperator child, std::vector<LogicalFunction> values, Identifier alias, std::vector<Identifier> fields);
+        WeakLogicalOperator self, std::vector<LogicalFunction> values, Identifier alias, std::vector<Identifier> fields);
+    InlineTableJoinLogicalOperator(
+        WeakLogicalOperator self,
+        LogicalOperator child,
+        std::vector<LogicalFunction> values,
+        Identifier alias,
+        std::vector<Identifier> fields);
 
     static TypedLogicalOperator<InlineTableJoinLogicalOperator>
     create(std::vector<LogicalFunction> values, Identifier alias, std::vector<Identifier> fields);

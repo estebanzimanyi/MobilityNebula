@@ -76,7 +76,8 @@ nautilus::val<uint64_t> SessionBoundsAggregationPhysicalFunction::readLast(const
     return readValueFromMemRef<uint64_t>(lastRef(aggregationState));
 }
 
-size_t SessionBoundsAggregationPhysicalFunction::stateOffset(const std::vector<std::shared_ptr<AggregationPhysicalFunction>>& aggregationFunctions)
+size_t
+SessionBoundsAggregationPhysicalFunction::stateOffset(const std::vector<std::shared_ptr<AggregationPhysicalFunction>>& aggregationFunctions)
 {
     size_t offset = 0;
     for (size_t i = 0; i + 1 < aggregationFunctions.size(); ++i)
@@ -124,7 +125,8 @@ void SessionBoundsAggregationPhysicalFunction::combine(
     }
 }
 
-Record SessionBoundsAggregationPhysicalFunction::lower(const nautilus::val<AggregationState*>, BorrowedNautilusBuffer, PipelineMemoryProvider&)
+Record
+SessionBoundsAggregationPhysicalFunction::lower(const nautilus::val<AggregationState*>, BorrowedNautilusBuffer, PipelineMemoryProvider&)
 {
     return Record{};
 }

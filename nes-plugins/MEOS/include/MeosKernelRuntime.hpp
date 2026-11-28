@@ -79,15 +79,20 @@ public:
             std::memcpy(laid, contentOf(reference), length);
         }
     }
+
     Value(const Value&) = delete;
     Value& operator=(const Value&) = delete;
+
     ~Value() { std::free(laid); }
 
     [[nodiscard]] bool empty() const { return laid == nullptr; }
+
     /// The value, as MEOS takes it: some functions take their argument as a pointer to non-const
     [[nodiscard]] void* get() const { return laid; }
+
     /// The bytes of the value, a WKB or a string for a value carried in its codec's form
     [[nodiscard]] const uint8_t* bytes() const { return static_cast<const uint8_t*>(laid); }
+
     [[nodiscard]] size_t size() const { return length; }
 
 private:
@@ -209,8 +214,10 @@ public:
             sizes.push_back(size);
         }
     }
+
     Array(const Array&) = delete;
     Array& operator=(const Array&) = delete;
+
     ~Array()
     {
         for (void* element : elements)
@@ -225,9 +232,12 @@ public:
 
     /// An array carried in no bytes is no value; an array of no element is a value
     [[nodiscard]] bool empty() const { return length == 0; }
+
     /// The C array of the elements, as MEOS takes it
     [[nodiscard]] void** get() { return elements.data(); }
+
     [[nodiscard]] int count() const { return static_cast<int>(elements.size()); }
+
     /// The elements laid end to end, each the size of the struct MEOS reads, as the contiguous C array of
     /// structs it takes (spanset_make reads Span *spans), as JMEOS's MeosSqlRuntime#structs copies the first
     /// size bytes of each decoded value into it; an element shorter than the struct leaves the rest zero
@@ -240,6 +250,7 @@ public:
         }
         return laid.data();
     }
+
     /// The C array of the values the reader makes of each element, a string, as MEOS takes an array of texts
     /// (text **, each made by the reader the catalog states for the element, text_in), as JMEOS's
     /// MeosSqlRuntime#texts makes them; the values are freed with the array
@@ -253,6 +264,7 @@ public:
         }
         return read.data();
     }
+
     /// The values the decoder makes of each element, its bytes, laid end to end as #structs lays its structs, the
     /// contiguous C array of the values MEOS takes by value (h3indexset_make reads uint64_t *values, each made by
     /// h3index_from_wkb), as JMEOS's MeosSqlRuntime#longs lays the decoded cells end to end

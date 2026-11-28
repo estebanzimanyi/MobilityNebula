@@ -571,8 +571,11 @@ void AntlrSQLQueryPlanCreator::exitUnnestRelation(AntlrSQLParser::UnnestRelation
     {
         throw InvalidQuerySyntax("UNNEST takes one array, but got {} at {}", helpers.top().functionBuilder.size(), context->getText());
     }
-    helpers.top().unnest.emplace(AntlrSQLHelper::Unnest{
-        .array = helpers.top().functionBuilder.back(), .alias = bindIdentifier(context->alias), .element = bindIdentifier(context->element)});
+    helpers.top().unnest.emplace(
+        AntlrSQLHelper::Unnest{
+            .array = helpers.top().functionBuilder.back(),
+            .alias = bindIdentifier(context->alias),
+            .element = bindIdentifier(context->element)});
     helpers.top().functionBuilder.clear();
     AntlrSQLBaseListener::exitUnnestRelation(context);
 }
@@ -637,9 +640,15 @@ void AntlrSQLQueryPlanCreator::exitInlineTableRelation(AntlrSQLParser::InlineTab
     /// Each value leaves one function, in the order the rows state them
     if (helper.functionBuilder.size() != numberOfValues)
     {
-        throw InvalidQuerySyntax("The inline table {} states {} values, but {} were read at {}", alias, numberOfValues, helper.functionBuilder.size(), context->getText());
+        throw InvalidQuerySyntax(
+            "The inline table {} states {} values, but {} were read at {}",
+            alias,
+            numberOfValues,
+            helper.functionBuilder.size(),
+            context->getText());
     }
-    helper.inlineTable.emplace(AntlrSQLHelper::InlineTable{.values = std::move(helper.functionBuilder), .alias = alias, .fields = std::move(fields)});
+    helper.inlineTable.emplace(
+        AntlrSQLHelper::InlineTable{.values = std::move(helper.functionBuilder), .alias = alias, .fields = std::move(fields)});
     helper.functionBuilder.clear();
     AntlrSQLBaseListener::exitInlineTableRelation(context);
 }
@@ -812,8 +821,7 @@ void AntlrSQLQueryPlanCreator::enterIdentifier(AntlrSQLParser::IdentifierContext
     }
     else if (
         helpers.top().isFrom and not helpers.top().isJoinRelation and not helpers.top().isModelInference and not helpers.top().isUnnest
-        and not helpers.top().isInlineTable
-        and AntlrSQLParser::RuleErrorCapturingIdentifier == parentRuleIndex)
+        and not helpers.top().isInlineTable and AntlrSQLParser::RuleErrorCapturingIdentifier == parentRuleIndex)
     {
         /// get main source name
         helpers.top().setSource(bindIdentifier(context));
@@ -1483,7 +1491,8 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
             if (context->setQuantifier != nullptr)
             {
                 helpers.top().windowAggs.emplace_back(
-                    CountDistinctAggregationLogicalFunction{helpers.top().functionBuilder.back().getAs<UnboundFieldAccessLogicalFunction>()},
+                    CountDistinctAggregationLogicalFunction{
+                        helpers.top().functionBuilder.back().getAs<UnboundFieldAccessLogicalFunction>()},
                     std::nullopt);
             }
             else
@@ -1584,12 +1593,12 @@ void AntlrSQLQueryPlanCreator::exitFunctionCall(AntlrSQLParser::FunctionCallCont
                     helpers.top().functionBuilder.resize(helpers.top().functionBuilder.size() - numArgs);
                     helpers.top().functionBuilder.push_back(*logicalFunction);
                 }
-                else if (const auto aggregation = AggregationLogicalFunctionRegistry::instance().find(funcName);
-                         aggregation.has_value() and numArgs >= 1 and funcArgs.front().tryGetAs<UnboundFieldAccessLogicalFunction>()
-                         and std::ranges::all_of(
-                             funcArgs | std::views::drop(1),
-                             [](const LogicalFunction& argument)
-                             { return argument.tryGetAs<ConstantValueLogicalFunction>().has_value(); }))
+                else if (
+                    const auto aggregation = AggregationLogicalFunctionRegistry::instance().find(funcName); aggregation.has_value()
+                    and numArgs >= 1 and funcArgs.front().tryGetAs<UnboundFieldAccessLogicalFunction>()
+                    and std::ranges::all_of(funcArgs | std::views::drop(1),
+                                            [](const LogicalFunction& argument)
+                                            { return argument.tryGetAs<ConstantValueLogicalFunction>().has_value(); }))
                 {
                     /// An aggregation a plugin registers, over the field of its first argument and the constants after it,
                     /// as COUNT is over its field; the field stays for the name of the result

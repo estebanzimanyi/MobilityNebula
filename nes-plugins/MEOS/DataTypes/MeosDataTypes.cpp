@@ -29,22 +29,22 @@ extern "C" {
 #include <meos.h>
 #include <meos_cbuffer.h>
 #include <meos_geo.h>
-#include <meos_h3.h>
 #include <meos_json.h>
 #include <meos_npoint.h>
 #include <meos_pointcloud.h>
 #include <meos_pose.h>
 #include <meos_quadbin.h>
 #include <meos_raster.h>
-#include <meos_s2cell.h>
 #include <pg_float.h>
 #include <pg_int.h>
+#include <meos_h3.h>
+#include <meos_s2cell.h>
 }
 
 #include <array>
 #include <DataTypes/ExtensionType.hpp>
-#include <MEOSWrapper.hpp>
 #include <ErrorHandling.hpp>
+#include <MEOSWrapper.hpp>
 #include <MeosRegistration.hpp>
 
 namespace
@@ -304,7 +304,10 @@ std::string BigintsetToText(std::span<const std::byte> bytes)
     size_t size = 0;
     auto* written = set_as_wkb(value, 4, &size);
     std::free(value);
-    if (written == nullptr) { cannotWrite("bigintset"); }
+    if (written == nullptr)
+    {
+        cannotWrite("bigintset");
+    }
     auto text = hex(std::as_bytes(std::span{written, size}));
     std::free(written);
     return text;
@@ -315,7 +318,10 @@ std::vector<std::byte> BigintsetFromText(std::string_view text)
     MEOS::Meos::ensureMeosInitialized();
     const auto wkb = unhex(text);
     auto value = set_from_wkb(wkb.data(), wkb.size());
-    if (value == nullptr) { cannotRead("bigintset", text); }
+    if (value == nullptr)
+    {
+        cannotRead("bigintset", text);
+    }
     auto carried = image(value, static_cast<size_t>(set_mem_size(value)));
     std::free(value);
     return carried;
@@ -335,7 +341,10 @@ std::string BigintspanToText(std::span<const std::byte> bytes)
     size_t size = 0;
     auto* written = span_as_wkb(value, 4, &size);
     std::free(value);
-    if (written == nullptr) { cannotWrite("bigintspan"); }
+    if (written == nullptr)
+    {
+        cannotWrite("bigintspan");
+    }
     auto text = hex(std::as_bytes(std::span{written, size}));
     std::free(written);
     return text;
@@ -346,7 +355,10 @@ std::vector<std::byte> BigintspanFromText(std::string_view text)
     MEOS::Meos::ensureMeosInitialized();
     const auto wkb = unhex(text);
     auto value = span_from_wkb(wkb.data(), wkb.size());
-    if (value == nullptr) { cannotRead("bigintspan", text); }
+    if (value == nullptr)
+    {
+        cannotRead("bigintspan", text);
+    }
     auto carried = image(value, size_t{24});
     std::free(value);
     return carried;
@@ -362,11 +374,15 @@ std::string BigintspansetToText(std::span<const std::byte> bytes)
         return {};
     }
     MEOS::Meos::ensureMeosInitialized();
-    auto* value = static_cast<SpanSet*>(fromImage(bytes, [](const void* laid) -> void* { return spanset_copy(static_cast<const SpanSet*>(laid)); }));
+    auto* value = static_cast<SpanSet*>(
+        fromImage(bytes, [](const void* laid) -> void* { return spanset_copy(static_cast<const SpanSet*>(laid)); }));
     size_t size = 0;
     auto* written = spanset_as_wkb(value, 4, &size);
     std::free(value);
-    if (written == nullptr) { cannotWrite("bigintspanset"); }
+    if (written == nullptr)
+    {
+        cannotWrite("bigintspanset");
+    }
     auto text = hex(std::as_bytes(std::span{written, size}));
     std::free(written);
     return text;
@@ -377,7 +393,10 @@ std::vector<std::byte> BigintspansetFromText(std::string_view text)
     MEOS::Meos::ensureMeosInitialized();
     const auto wkb = unhex(text);
     auto value = spanset_from_wkb(wkb.data(), wkb.size());
-    if (value == nullptr) { cannotRead("bigintspanset", text); }
+    if (value == nullptr)
+    {
+        cannotRead("bigintspanset", text);
+    }
     auto carried = image(value, static_cast<size_t>(spanset_mem_size(value)));
     std::free(value);
     return carried;
@@ -400,7 +419,10 @@ std::vector<std::byte> Box2dFromText(std::string_view text)
     MEOS::Meos::ensureMeosInitialized();
     const std::string terminated{text};
     auto value = gbox_in(terminated.c_str());
-    if (value == nullptr) { cannotRead("box2d", text); }
+    if (value == nullptr)
+    {
+        cannotRead("box2d", text);
+    }
     std::free(value);
     return bytesOf(std::span{terminated});
 }
@@ -422,7 +444,10 @@ std::vector<std::byte> Box3dFromText(std::string_view text)
     MEOS::Meos::ensureMeosInitialized();
     const std::string terminated{text};
     auto value = box3d_in(terminated.c_str());
-    if (value == nullptr) { cannotRead("box3d", text); }
+    if (value == nullptr)
+    {
+        cannotRead("box3d", text);
+    }
     std::free(value);
     return bytesOf(std::span{terminated});
 }
@@ -437,11 +462,15 @@ std::string CbufferToText(std::span<const std::byte> bytes)
         return {};
     }
     MEOS::Meos::ensureMeosInitialized();
-    auto* value = static_cast<struct Cbuffer*>(fromImage(bytes, [](const void* laid) -> void* { return cbuffer_copy(static_cast<const struct Cbuffer*>(laid)); }));
+    auto* value = static_cast<struct Cbuffer*>(
+        fromImage(bytes, [](const void* laid) -> void* { return cbuffer_copy(static_cast<const struct Cbuffer*>(laid)); }));
     size_t size = 0;
     auto* written = cbuffer_as_wkb(value, 4, &size);
     std::free(value);
-    if (written == nullptr) { cannotWrite("cbuffer"); }
+    if (written == nullptr)
+    {
+        cannotWrite("cbuffer");
+    }
     auto text = hex(std::as_bytes(std::span{written, size}));
     std::free(written);
     return text;
@@ -452,7 +481,10 @@ std::vector<std::byte> CbufferFromText(std::string_view text)
     MEOS::Meos::ensureMeosInitialized();
     const auto wkb = unhex(text);
     auto value = cbuffer_from_wkb(wkb.data(), wkb.size());
-    if (value == nullptr) { cannotRead("cbuffer", text); }
+    if (value == nullptr)
+    {
+        cannotRead("cbuffer", text);
+    }
     auto carried = image(value, static_cast<size_t>(cbuffer_mem_size(value)));
     std::free(value);
     return carried;
@@ -472,7 +504,10 @@ std::string CbuffersetToText(std::span<const std::byte> bytes)
     size_t size = 0;
     auto* written = set_as_wkb(value, 4, &size);
     std::free(value);
-    if (written == nullptr) { cannotWrite("cbufferset"); }
+    if (written == nullptr)
+    {
+        cannotWrite("cbufferset");
+    }
     auto text = hex(std::as_bytes(std::span{written, size}));
     std::free(written);
     return text;
@@ -483,7 +518,10 @@ std::vector<std::byte> CbuffersetFromText(std::string_view text)
     MEOS::Meos::ensureMeosInitialized();
     const auto wkb = unhex(text);
     auto value = set_from_wkb(wkb.data(), wkb.size());
-    if (value == nullptr) { cannotRead("cbufferset", text); }
+    if (value == nullptr)
+    {
+        cannotRead("cbufferset", text);
+    }
     auto carried = image(value, static_cast<size_t>(set_mem_size(value)));
     std::free(value);
     return carried;
@@ -503,7 +541,10 @@ std::string DatesetToText(std::span<const std::byte> bytes)
     size_t size = 0;
     auto* written = set_as_wkb(value, 4, &size);
     std::free(value);
-    if (written == nullptr) { cannotWrite("dateset"); }
+    if (written == nullptr)
+    {
+        cannotWrite("dateset");
+    }
     auto text = hex(std::as_bytes(std::span{written, size}));
     std::free(written);
     return text;
@@ -514,7 +555,10 @@ std::vector<std::byte> DatesetFromText(std::string_view text)
     MEOS::Meos::ensureMeosInitialized();
     const auto wkb = unhex(text);
     auto value = set_from_wkb(wkb.data(), wkb.size());
-    if (value == nullptr) { cannotRead("dateset", text); }
+    if (value == nullptr)
+    {
+        cannotRead("dateset", text);
+    }
     auto carried = image(value, static_cast<size_t>(set_mem_size(value)));
     std::free(value);
     return carried;
@@ -534,7 +578,10 @@ std::string DatespanToText(std::span<const std::byte> bytes)
     size_t size = 0;
     auto* written = span_as_wkb(value, 4, &size);
     std::free(value);
-    if (written == nullptr) { cannotWrite("datespan"); }
+    if (written == nullptr)
+    {
+        cannotWrite("datespan");
+    }
     auto text = hex(std::as_bytes(std::span{written, size}));
     std::free(written);
     return text;
@@ -545,7 +592,10 @@ std::vector<std::byte> DatespanFromText(std::string_view text)
     MEOS::Meos::ensureMeosInitialized();
     const auto wkb = unhex(text);
     auto value = span_from_wkb(wkb.data(), wkb.size());
-    if (value == nullptr) { cannotRead("datespan", text); }
+    if (value == nullptr)
+    {
+        cannotRead("datespan", text);
+    }
     auto carried = image(value, size_t{24});
     std::free(value);
     return carried;
@@ -561,11 +611,15 @@ std::string DatespansetToText(std::span<const std::byte> bytes)
         return {};
     }
     MEOS::Meos::ensureMeosInitialized();
-    auto* value = static_cast<SpanSet*>(fromImage(bytes, [](const void* laid) -> void* { return spanset_copy(static_cast<const SpanSet*>(laid)); }));
+    auto* value = static_cast<SpanSet*>(
+        fromImage(bytes, [](const void* laid) -> void* { return spanset_copy(static_cast<const SpanSet*>(laid)); }));
     size_t size = 0;
     auto* written = spanset_as_wkb(value, 4, &size);
     std::free(value);
-    if (written == nullptr) { cannotWrite("datespanset"); }
+    if (written == nullptr)
+    {
+        cannotWrite("datespanset");
+    }
     auto text = hex(std::as_bytes(std::span{written, size}));
     std::free(written);
     return text;
@@ -576,7 +630,10 @@ std::vector<std::byte> DatespansetFromText(std::string_view text)
     MEOS::Meos::ensureMeosInitialized();
     const auto wkb = unhex(text);
     auto value = spanset_from_wkb(wkb.data(), wkb.size());
-    if (value == nullptr) { cannotRead("datespanset", text); }
+    if (value == nullptr)
+    {
+        cannotRead("datespanset", text);
+    }
     auto carried = image(value, static_cast<size_t>(spanset_mem_size(value)));
     std::free(value);
     return carried;
@@ -596,7 +653,10 @@ std::string FloatsetToText(std::span<const std::byte> bytes)
     size_t size = 0;
     auto* written = set_as_wkb(value, 4, &size);
     std::free(value);
-    if (written == nullptr) { cannotWrite("floatset"); }
+    if (written == nullptr)
+    {
+        cannotWrite("floatset");
+    }
     auto text = hex(std::as_bytes(std::span{written, size}));
     std::free(written);
     return text;
@@ -607,7 +667,10 @@ std::vector<std::byte> FloatsetFromText(std::string_view text)
     MEOS::Meos::ensureMeosInitialized();
     const auto wkb = unhex(text);
     auto value = set_from_wkb(wkb.data(), wkb.size());
-    if (value == nullptr) { cannotRead("floatset", text); }
+    if (value == nullptr)
+    {
+        cannotRead("floatset", text);
+    }
     auto carried = image(value, static_cast<size_t>(set_mem_size(value)));
     std::free(value);
     return carried;
@@ -627,7 +690,10 @@ std::string FloatspanToText(std::span<const std::byte> bytes)
     size_t size = 0;
     auto* written = span_as_wkb(value, 4, &size);
     std::free(value);
-    if (written == nullptr) { cannotWrite("floatspan"); }
+    if (written == nullptr)
+    {
+        cannotWrite("floatspan");
+    }
     auto text = hex(std::as_bytes(std::span{written, size}));
     std::free(written);
     return text;
@@ -638,7 +704,10 @@ std::vector<std::byte> FloatspanFromText(std::string_view text)
     MEOS::Meos::ensureMeosInitialized();
     const auto wkb = unhex(text);
     auto value = span_from_wkb(wkb.data(), wkb.size());
-    if (value == nullptr) { cannotRead("floatspan", text); }
+    if (value == nullptr)
+    {
+        cannotRead("floatspan", text);
+    }
     auto carried = image(value, size_t{24});
     std::free(value);
     return carried;
@@ -654,11 +723,15 @@ std::string FloatspansetToText(std::span<const std::byte> bytes)
         return {};
     }
     MEOS::Meos::ensureMeosInitialized();
-    auto* value = static_cast<SpanSet*>(fromImage(bytes, [](const void* laid) -> void* { return spanset_copy(static_cast<const SpanSet*>(laid)); }));
+    auto* value = static_cast<SpanSet*>(
+        fromImage(bytes, [](const void* laid) -> void* { return spanset_copy(static_cast<const SpanSet*>(laid)); }));
     size_t size = 0;
     auto* written = spanset_as_wkb(value, 4, &size);
     std::free(value);
-    if (written == nullptr) { cannotWrite("floatspanset"); }
+    if (written == nullptr)
+    {
+        cannotWrite("floatspanset");
+    }
     auto text = hex(std::as_bytes(std::span{written, size}));
     std::free(written);
     return text;
@@ -669,7 +742,10 @@ std::vector<std::byte> FloatspansetFromText(std::string_view text)
     MEOS::Meos::ensureMeosInitialized();
     const auto wkb = unhex(text);
     auto value = spanset_from_wkb(wkb.data(), wkb.size());
-    if (value == nullptr) { cannotRead("floatspanset", text); }
+    if (value == nullptr)
+    {
+        cannotRead("floatspanset", text);
+    }
     auto carried = image(value, static_cast<size_t>(spanset_mem_size(value)));
     std::free(value);
     return carried;
@@ -685,11 +761,15 @@ std::string GeographyToText(std::span<const std::byte> bytes)
         return {};
     }
     MEOS::Meos::ensureMeosInitialized();
-    auto* value = static_cast<GSERIALIZED*>(fromImage(bytes, [](const void* laid) -> void* { return geo_copy(static_cast<const GSERIALIZED*>(laid)); }));
+    auto* value = static_cast<GSERIALIZED*>(
+        fromImage(bytes, [](const void* laid) -> void* { return geo_copy(static_cast<const GSERIALIZED*>(laid)); }));
     size_t size = 0;
     auto* written = geo_as_hexewkb(value, nullptr, &size);
     std::free(value);
-    if (written == nullptr) { cannotWrite("geography"); }
+    if (written == nullptr)
+    {
+        cannotWrite("geography");
+    }
     std::string text{written};
     std::free(written);
     return text;
@@ -700,7 +780,10 @@ std::vector<std::byte> GeographyFromText(std::string_view text)
     MEOS::Meos::ensureMeosInitialized();
     const std::string terminated{text};
     auto value = geog_from_hexewkb(terminated.c_str());
-    if (value == nullptr) { cannotRead("geography", text); }
+    if (value == nullptr)
+    {
+        cannotRead("geography", text);
+    }
     auto carried = image(value, static_cast<size_t>(geo_mem_size(value)));
     std::free(value);
     return carried;
@@ -720,7 +803,10 @@ std::string GeogsetToText(std::span<const std::byte> bytes)
     size_t size = 0;
     auto* written = set_as_wkb(value, 4, &size);
     std::free(value);
-    if (written == nullptr) { cannotWrite("geogset"); }
+    if (written == nullptr)
+    {
+        cannotWrite("geogset");
+    }
     auto text = hex(std::as_bytes(std::span{written, size}));
     std::free(written);
     return text;
@@ -731,7 +817,10 @@ std::vector<std::byte> GeogsetFromText(std::string_view text)
     MEOS::Meos::ensureMeosInitialized();
     const auto wkb = unhex(text);
     auto value = set_from_wkb(wkb.data(), wkb.size());
-    if (value == nullptr) { cannotRead("geogset", text); }
+    if (value == nullptr)
+    {
+        cannotRead("geogset", text);
+    }
     auto carried = image(value, static_cast<size_t>(set_mem_size(value)));
     std::free(value);
     return carried;
@@ -747,11 +836,15 @@ std::string GeometryToText(std::span<const std::byte> bytes)
         return {};
     }
     MEOS::Meos::ensureMeosInitialized();
-    auto* value = static_cast<GSERIALIZED*>(fromImage(bytes, [](const void* laid) -> void* { return geo_copy(static_cast<const GSERIALIZED*>(laid)); }));
+    auto* value = static_cast<GSERIALIZED*>(
+        fromImage(bytes, [](const void* laid) -> void* { return geo_copy(static_cast<const GSERIALIZED*>(laid)); }));
     size_t size = 0;
     auto* written = geo_as_hexewkb(value, nullptr, &size);
     std::free(value);
-    if (written == nullptr) { cannotWrite("geometry"); }
+    if (written == nullptr)
+    {
+        cannotWrite("geometry");
+    }
     std::string text{written};
     std::free(written);
     return text;
@@ -762,7 +855,10 @@ std::vector<std::byte> GeometryFromText(std::string_view text)
     MEOS::Meos::ensureMeosInitialized();
     const std::string terminated{text};
     auto value = geom_from_hexewkb(terminated.c_str());
-    if (value == nullptr) { cannotRead("geometry", text); }
+    if (value == nullptr)
+    {
+        cannotRead("geometry", text);
+    }
     auto carried = image(value, static_cast<size_t>(geo_mem_size(value)));
     std::free(value);
     return carried;
@@ -782,7 +878,10 @@ std::string GeomsetToText(std::span<const std::byte> bytes)
     size_t size = 0;
     auto* written = set_as_wkb(value, 4, &size);
     std::free(value);
-    if (written == nullptr) { cannotWrite("geomset"); }
+    if (written == nullptr)
+    {
+        cannotWrite("geomset");
+    }
     auto text = hex(std::as_bytes(std::span{written, size}));
     std::free(written);
     return text;
@@ -793,7 +892,10 @@ std::vector<std::byte> GeomsetFromText(std::string_view text)
     MEOS::Meos::ensureMeosInitialized();
     const auto wkb = unhex(text);
     auto value = set_from_wkb(wkb.data(), wkb.size());
-    if (value == nullptr) { cannotRead("geomset", text); }
+    if (value == nullptr)
+    {
+        cannotRead("geomset", text);
+    }
     auto carried = image(value, static_cast<size_t>(set_mem_size(value)));
     std::free(value);
     return carried;
@@ -834,7 +936,10 @@ std::string H3indexsetToText(std::span<const std::byte> bytes)
     size_t size = 0;
     auto* written = set_as_wkb(value, 4, &size);
     std::free(value);
-    if (written == nullptr) { cannotWrite("h3indexset"); }
+    if (written == nullptr)
+    {
+        cannotWrite("h3indexset");
+    }
     auto text = hex(std::as_bytes(std::span{written, size}));
     std::free(written);
     return text;
@@ -845,7 +950,10 @@ std::vector<std::byte> H3indexsetFromText(std::string_view text)
     MEOS::Meos::ensureMeosInitialized();
     const auto wkb = unhex(text);
     auto value = set_from_wkb(wkb.data(), wkb.size());
-    if (value == nullptr) { cannotRead("h3indexset", text); }
+    if (value == nullptr)
+    {
+        cannotRead("h3indexset", text);
+    }
     auto carried = image(value, static_cast<size_t>(set_mem_size(value)));
     std::free(value);
     return carried;
@@ -865,7 +973,10 @@ std::string IntsetToText(std::span<const std::byte> bytes)
     size_t size = 0;
     auto* written = set_as_wkb(value, 4, &size);
     std::free(value);
-    if (written == nullptr) { cannotWrite("intset"); }
+    if (written == nullptr)
+    {
+        cannotWrite("intset");
+    }
     auto text = hex(std::as_bytes(std::span{written, size}));
     std::free(written);
     return text;
@@ -876,7 +987,10 @@ std::vector<std::byte> IntsetFromText(std::string_view text)
     MEOS::Meos::ensureMeosInitialized();
     const auto wkb = unhex(text);
     auto value = set_from_wkb(wkb.data(), wkb.size());
-    if (value == nullptr) { cannotRead("intset", text); }
+    if (value == nullptr)
+    {
+        cannotRead("intset", text);
+    }
     auto carried = image(value, static_cast<size_t>(set_mem_size(value)));
     std::free(value);
     return carried;
@@ -896,7 +1010,10 @@ std::string IntspanToText(std::span<const std::byte> bytes)
     size_t size = 0;
     auto* written = span_as_wkb(value, 4, &size);
     std::free(value);
-    if (written == nullptr) { cannotWrite("intspan"); }
+    if (written == nullptr)
+    {
+        cannotWrite("intspan");
+    }
     auto text = hex(std::as_bytes(std::span{written, size}));
     std::free(written);
     return text;
@@ -907,7 +1024,10 @@ std::vector<std::byte> IntspanFromText(std::string_view text)
     MEOS::Meos::ensureMeosInitialized();
     const auto wkb = unhex(text);
     auto value = span_from_wkb(wkb.data(), wkb.size());
-    if (value == nullptr) { cannotRead("intspan", text); }
+    if (value == nullptr)
+    {
+        cannotRead("intspan", text);
+    }
     auto carried = image(value, size_t{24});
     std::free(value);
     return carried;
@@ -923,11 +1043,15 @@ std::string IntspansetToText(std::span<const std::byte> bytes)
         return {};
     }
     MEOS::Meos::ensureMeosInitialized();
-    auto* value = static_cast<SpanSet*>(fromImage(bytes, [](const void* laid) -> void* { return spanset_copy(static_cast<const SpanSet*>(laid)); }));
+    auto* value = static_cast<SpanSet*>(
+        fromImage(bytes, [](const void* laid) -> void* { return spanset_copy(static_cast<const SpanSet*>(laid)); }));
     size_t size = 0;
     auto* written = spanset_as_wkb(value, 4, &size);
     std::free(value);
-    if (written == nullptr) { cannotWrite("intspanset"); }
+    if (written == nullptr)
+    {
+        cannotWrite("intspanset");
+    }
     auto text = hex(std::as_bytes(std::span{written, size}));
     std::free(written);
     return text;
@@ -938,7 +1062,10 @@ std::vector<std::byte> IntspansetFromText(std::string_view text)
     MEOS::Meos::ensureMeosInitialized();
     const auto wkb = unhex(text);
     auto value = spanset_from_wkb(wkb.data(), wkb.size());
-    if (value == nullptr) { cannotRead("intspanset", text); }
+    if (value == nullptr)
+    {
+        cannotRead("intspanset", text);
+    }
     auto carried = image(value, static_cast<size_t>(spanset_mem_size(value)));
     std::free(value);
     return carried;
@@ -954,11 +1081,15 @@ std::string JsonbToText(std::span<const std::byte> bytes)
         return {};
     }
     MEOS::Meos::ensureMeosInitialized();
-    auto* value = static_cast<Jsonb*>(fromImage(bytes, [](const void* laid) -> void* { return jsonb_copy(static_cast<const Jsonb*>(laid)); }));
+    auto* value
+        = static_cast<Jsonb*>(fromImage(bytes, [](const void* laid) -> void* { return jsonb_copy(static_cast<const Jsonb*>(laid)); }));
     size_t size = 0;
     auto* written = jsonb_out(value, &size);
     std::free(value);
-    if (written == nullptr) { cannotWrite("jsonb"); }
+    if (written == nullptr)
+    {
+        cannotWrite("jsonb");
+    }
     std::string text{written};
     std::free(written);
     return text;
@@ -969,7 +1100,10 @@ std::vector<std::byte> JsonbFromText(std::string_view text)
     MEOS::Meos::ensureMeosInitialized();
     const std::string terminated{text};
     auto value = jsonb_in(terminated.c_str());
-    if (value == nullptr) { cannotRead("jsonb", text); }
+    if (value == nullptr)
+    {
+        cannotRead("jsonb", text);
+    }
     auto carried = image(value, static_cast<size_t>(jsonb_mem_size(value)));
     std::free(value);
     return carried;
@@ -989,7 +1123,10 @@ std::string JsonbsetToText(std::span<const std::byte> bytes)
     size_t size = 0;
     auto* written = set_as_wkb(value, 4, &size);
     std::free(value);
-    if (written == nullptr) { cannotWrite("jsonbset"); }
+    if (written == nullptr)
+    {
+        cannotWrite("jsonbset");
+    }
     auto text = hex(std::as_bytes(std::span{written, size}));
     std::free(written);
     return text;
@@ -1000,7 +1137,10 @@ std::vector<std::byte> JsonbsetFromText(std::string_view text)
     MEOS::Meos::ensureMeosInitialized();
     const auto wkb = unhex(text);
     auto value = set_from_wkb(wkb.data(), wkb.size());
-    if (value == nullptr) { cannotRead("jsonbset", text); }
+    if (value == nullptr)
+    {
+        cannotRead("jsonbset", text);
+    }
     auto carried = image(value, static_cast<size_t>(set_mem_size(value)));
     std::free(value);
     return carried;
@@ -1016,11 +1156,15 @@ std::string JsonpathToText(std::span<const std::byte> bytes)
         return {};
     }
     MEOS::Meos::ensureMeosInitialized();
-    auto* value = static_cast<JsonPath*>(fromImage(bytes, [](const void* laid) -> void* { return jsonpath_copy(static_cast<const JsonPath*>(laid)); }));
+    auto* value = static_cast<JsonPath*>(
+        fromImage(bytes, [](const void* laid) -> void* { return jsonpath_copy(static_cast<const JsonPath*>(laid)); }));
     size_t size = 0;
     auto* written = jsonpath_out(value, &size);
     std::free(value);
-    if (written == nullptr) { cannotWrite("jsonpath"); }
+    if (written == nullptr)
+    {
+        cannotWrite("jsonpath");
+    }
     std::string text{written};
     std::free(written);
     return text;
@@ -1031,7 +1175,10 @@ std::vector<std::byte> JsonpathFromText(std::string_view text)
     MEOS::Meos::ensureMeosInitialized();
     const std::string terminated{text};
     auto value = jsonpath_in(terminated.c_str());
-    if (value == nullptr) { cannotRead("jsonpath", text); }
+    if (value == nullptr)
+    {
+        cannotRead("jsonpath", text);
+    }
     auto carried = image(value, static_cast<size_t>(jsonpath_mem_size(value)));
     std::free(value);
     return carried;
@@ -1047,11 +1194,15 @@ std::string NpointToText(std::span<const std::byte> bytes)
         return {};
     }
     MEOS::Meos::ensureMeosInitialized();
-    auto* value = static_cast<Npoint*>(fromImage(bytes, [](const void* laid) -> void* { return npoint_copy(static_cast<const Npoint*>(laid)); }));
+    auto* value
+        = static_cast<Npoint*>(fromImage(bytes, [](const void* laid) -> void* { return npoint_copy(static_cast<const Npoint*>(laid)); }));
     size_t size = 0;
     auto* written = npoint_as_wkb(value, 4, &size);
     std::free(value);
-    if (written == nullptr) { cannotWrite("npoint"); }
+    if (written == nullptr)
+    {
+        cannotWrite("npoint");
+    }
     auto text = hex(std::as_bytes(std::span{written, size}));
     std::free(written);
     return text;
@@ -1062,7 +1213,10 @@ std::vector<std::byte> NpointFromText(std::string_view text)
     MEOS::Meos::ensureMeosInitialized();
     const auto wkb = unhex(text);
     auto value = npoint_from_wkb(wkb.data(), wkb.size());
-    if (value == nullptr) { cannotRead("npoint", text); }
+    if (value == nullptr)
+    {
+        cannotRead("npoint", text);
+    }
     auto carried = image(value, size_t{16});
     std::free(value);
     return carried;
@@ -1082,7 +1236,10 @@ std::string NpointsetToText(std::span<const std::byte> bytes)
     size_t size = 0;
     auto* written = set_as_wkb(value, 4, &size);
     std::free(value);
-    if (written == nullptr) { cannotWrite("npointset"); }
+    if (written == nullptr)
+    {
+        cannotWrite("npointset");
+    }
     auto text = hex(std::as_bytes(std::span{written, size}));
     std::free(written);
     return text;
@@ -1093,7 +1250,10 @@ std::vector<std::byte> NpointsetFromText(std::string_view text)
     MEOS::Meos::ensureMeosInitialized();
     const auto wkb = unhex(text);
     auto value = set_from_wkb(wkb.data(), wkb.size());
-    if (value == nullptr) { cannotRead("npointset", text); }
+    if (value == nullptr)
+    {
+        cannotRead("npointset", text);
+    }
     auto carried = image(value, static_cast<size_t>(set_mem_size(value)));
     std::free(value);
     return carried;
@@ -1109,11 +1269,15 @@ std::string NsegmentToText(std::span<const std::byte> bytes)
         return {};
     }
     MEOS::Meos::ensureMeosInitialized();
-    auto* value = static_cast<Nsegment*>(fromImage(bytes, [](const void* laid) -> void* { return nsegment_copy(static_cast<const Nsegment*>(laid)); }));
+    auto* value = static_cast<Nsegment*>(
+        fromImage(bytes, [](const void* laid) -> void* { return nsegment_copy(static_cast<const Nsegment*>(laid)); }));
     size_t size = 0;
     auto* written = nsegment_as_wkb(value, 4, &size);
     std::free(value);
-    if (written == nullptr) { cannotWrite("nsegment"); }
+    if (written == nullptr)
+    {
+        cannotWrite("nsegment");
+    }
     auto text = hex(std::as_bytes(std::span{written, size}));
     std::free(written);
     return text;
@@ -1124,7 +1288,10 @@ std::vector<std::byte> NsegmentFromText(std::string_view text)
     MEOS::Meos::ensureMeosInitialized();
     const auto wkb = unhex(text);
     auto value = nsegment_from_wkb(wkb.data(), wkb.size());
-    if (value == nullptr) { cannotRead("nsegment", text); }
+    if (value == nullptr)
+    {
+        cannotRead("nsegment", text);
+    }
     auto carried = image(value, size_t{24});
     std::free(value);
     return carried;
@@ -1140,11 +1307,15 @@ std::string PcpatchToText(std::span<const std::byte> bytes)
         return {};
     }
     MEOS::Meos::ensureMeosInitialized();
-    auto* value = static_cast<struct Pcpatch*>(fromImage(bytes, [](const void* laid) -> void* { return pcpatch_copy(static_cast<const struct Pcpatch*>(laid)); }));
+    auto* value = static_cast<struct Pcpatch*>(
+        fromImage(bytes, [](const void* laid) -> void* { return pcpatch_copy(static_cast<const struct Pcpatch*>(laid)); }));
     size_t size = 0;
     auto* written = pcpatch_as_wkb(value, 4, &size);
     std::free(value);
-    if (written == nullptr) { cannotWrite("pcpatch"); }
+    if (written == nullptr)
+    {
+        cannotWrite("pcpatch");
+    }
     auto text = hex(std::as_bytes(std::span{written, size}));
     std::free(written);
     return text;
@@ -1155,7 +1326,10 @@ std::vector<std::byte> PcpatchFromText(std::string_view text)
     MEOS::Meos::ensureMeosInitialized();
     const auto wkb = unhex(text);
     auto value = pcpatch_from_wkb(wkb.data(), wkb.size());
-    if (value == nullptr) { cannotRead("pcpatch", text); }
+    if (value == nullptr)
+    {
+        cannotRead("pcpatch", text);
+    }
     auto carried = image(value, static_cast<size_t>(pcpatch_mem_size(value)));
     std::free(value);
     return carried;
@@ -1175,7 +1349,10 @@ std::string PcpatchsetToText(std::span<const std::byte> bytes)
     size_t size = 0;
     auto* written = set_as_wkb(value, 4, &size);
     std::free(value);
-    if (written == nullptr) { cannotWrite("pcpatchset"); }
+    if (written == nullptr)
+    {
+        cannotWrite("pcpatchset");
+    }
     auto text = hex(std::as_bytes(std::span{written, size}));
     std::free(written);
     return text;
@@ -1186,7 +1363,10 @@ std::vector<std::byte> PcpatchsetFromText(std::string_view text)
     MEOS::Meos::ensureMeosInitialized();
     const auto wkb = unhex(text);
     auto value = set_from_wkb(wkb.data(), wkb.size());
-    if (value == nullptr) { cannotRead("pcpatchset", text); }
+    if (value == nullptr)
+    {
+        cannotRead("pcpatchset", text);
+    }
     auto carried = image(value, static_cast<size_t>(set_mem_size(value)));
     std::free(value);
     return carried;
@@ -1202,11 +1382,15 @@ std::string PcpointToText(std::span<const std::byte> bytes)
         return {};
     }
     MEOS::Meos::ensureMeosInitialized();
-    auto* value = static_cast<struct Pcpoint*>(fromImage(bytes, [](const void* laid) -> void* { return pcpoint_copy(static_cast<const struct Pcpoint*>(laid)); }));
+    auto* value = static_cast<struct Pcpoint*>(
+        fromImage(bytes, [](const void* laid) -> void* { return pcpoint_copy(static_cast<const struct Pcpoint*>(laid)); }));
     size_t size = 0;
     auto* written = pcpoint_as_wkb(value, 4, &size);
     std::free(value);
-    if (written == nullptr) { cannotWrite("pcpoint"); }
+    if (written == nullptr)
+    {
+        cannotWrite("pcpoint");
+    }
     auto text = hex(std::as_bytes(std::span{written, size}));
     std::free(written);
     return text;
@@ -1217,7 +1401,10 @@ std::vector<std::byte> PcpointFromText(std::string_view text)
     MEOS::Meos::ensureMeosInitialized();
     const auto wkb = unhex(text);
     auto value = pcpoint_from_wkb(wkb.data(), wkb.size());
-    if (value == nullptr) { cannotRead("pcpoint", text); }
+    if (value == nullptr)
+    {
+        cannotRead("pcpoint", text);
+    }
     auto carried = image(value, static_cast<size_t>(pcpoint_mem_size(value)));
     std::free(value);
     return carried;
@@ -1237,7 +1424,10 @@ std::string PcpointsetToText(std::span<const std::byte> bytes)
     size_t size = 0;
     auto* written = set_as_wkb(value, 4, &size);
     std::free(value);
-    if (written == nullptr) { cannotWrite("pcpointset"); }
+    if (written == nullptr)
+    {
+        cannotWrite("pcpointset");
+    }
     auto text = hex(std::as_bytes(std::span{written, size}));
     std::free(written);
     return text;
@@ -1248,7 +1438,10 @@ std::vector<std::byte> PcpointsetFromText(std::string_view text)
     MEOS::Meos::ensureMeosInitialized();
     const auto wkb = unhex(text);
     auto value = set_from_wkb(wkb.data(), wkb.size());
-    if (value == nullptr) { cannotRead("pcpointset", text); }
+    if (value == nullptr)
+    {
+        cannotRead("pcpointset", text);
+    }
     auto carried = image(value, static_cast<size_t>(set_mem_size(value)));
     std::free(value);
     return carried;
@@ -1264,11 +1457,15 @@ std::string PoseToText(std::span<const std::byte> bytes)
         return {};
     }
     MEOS::Meos::ensureMeosInitialized();
-    auto* value = static_cast<struct Pose*>(fromImage(bytes, [](const void* laid) -> void* { return pose_copy(static_cast<const struct Pose*>(laid)); }));
+    auto* value = static_cast<struct Pose*>(
+        fromImage(bytes, [](const void* laid) -> void* { return pose_copy(static_cast<const struct Pose*>(laid)); }));
     size_t size = 0;
     auto* written = pose_as_wkb(value, 4, &size);
     std::free(value);
-    if (written == nullptr) { cannotWrite("pose"); }
+    if (written == nullptr)
+    {
+        cannotWrite("pose");
+    }
     auto text = hex(std::as_bytes(std::span{written, size}));
     std::free(written);
     return text;
@@ -1279,7 +1476,10 @@ std::vector<std::byte> PoseFromText(std::string_view text)
     MEOS::Meos::ensureMeosInitialized();
     const auto wkb = unhex(text);
     auto value = pose_from_wkb(wkb.data(), wkb.size());
-    if (value == nullptr) { cannotRead("pose", text); }
+    if (value == nullptr)
+    {
+        cannotRead("pose", text);
+    }
     auto carried = image(value, static_cast<size_t>(pose_mem_size(value)));
     std::free(value);
     return carried;
@@ -1295,11 +1495,15 @@ std::string PosechainToText(std::span<const std::byte> bytes)
         return {};
     }
     MEOS::Meos::ensureMeosInitialized();
-    auto* value = static_cast<struct PoseChain*>(fromImage(bytes, [](const void* laid) -> void* { return posechain_copy(static_cast<const struct PoseChain*>(laid)); }));
+    auto* value = static_cast<struct PoseChain*>(
+        fromImage(bytes, [](const void* laid) -> void* { return posechain_copy(static_cast<const struct PoseChain*>(laid)); }));
     size_t size = 0;
     auto* written = posechain_as_wkb(value, 4, &size);
     std::free(value);
-    if (written == nullptr) { cannotWrite("posechain"); }
+    if (written == nullptr)
+    {
+        cannotWrite("posechain");
+    }
     auto text = hex(std::as_bytes(std::span{written, size}));
     std::free(written);
     return text;
@@ -1310,7 +1514,10 @@ std::vector<std::byte> PosechainFromText(std::string_view text)
     MEOS::Meos::ensureMeosInitialized();
     const auto wkb = unhex(text);
     auto value = posechain_from_wkb(wkb.data(), wkb.size());
-    if (value == nullptr) { cannotRead("posechain", text); }
+    if (value == nullptr)
+    {
+        cannotRead("posechain", text);
+    }
     auto carried = image(value, static_cast<size_t>(posechain_mem_size(value)));
     std::free(value);
     return carried;
@@ -1330,7 +1537,10 @@ std::string PosechainsetToText(std::span<const std::byte> bytes)
     size_t size = 0;
     auto* written = set_as_wkb(value, 4, &size);
     std::free(value);
-    if (written == nullptr) { cannotWrite("posechainset"); }
+    if (written == nullptr)
+    {
+        cannotWrite("posechainset");
+    }
     auto text = hex(std::as_bytes(std::span{written, size}));
     std::free(written);
     return text;
@@ -1341,7 +1551,10 @@ std::vector<std::byte> PosechainsetFromText(std::string_view text)
     MEOS::Meos::ensureMeosInitialized();
     const auto wkb = unhex(text);
     auto value = set_from_wkb(wkb.data(), wkb.size());
-    if (value == nullptr) { cannotRead("posechainset", text); }
+    if (value == nullptr)
+    {
+        cannotRead("posechainset", text);
+    }
     auto carried = image(value, static_cast<size_t>(set_mem_size(value)));
     std::free(value);
     return carried;
@@ -1361,7 +1574,10 @@ std::string PosesetToText(std::span<const std::byte> bytes)
     size_t size = 0;
     auto* written = set_as_wkb(value, 4, &size);
     std::free(value);
-    if (written == nullptr) { cannotWrite("poseset"); }
+    if (written == nullptr)
+    {
+        cannotWrite("poseset");
+    }
     auto text = hex(std::as_bytes(std::span{written, size}));
     std::free(written);
     return text;
@@ -1372,7 +1588,10 @@ std::vector<std::byte> PosesetFromText(std::string_view text)
     MEOS::Meos::ensureMeosInitialized();
     const auto wkb = unhex(text);
     auto value = set_from_wkb(wkb.data(), wkb.size());
-    if (value == nullptr) { cannotRead("poseset", text); }
+    if (value == nullptr)
+    {
+        cannotRead("poseset", text);
+    }
     auto carried = image(value, static_cast<size_t>(set_mem_size(value)));
     std::free(value);
     return carried;
@@ -1413,7 +1632,10 @@ std::string QuadbinsetToText(std::span<const std::byte> bytes)
     size_t size = 0;
     auto* written = set_as_wkb(value, 4, &size);
     std::free(value);
-    if (written == nullptr) { cannotWrite("quadbinset"); }
+    if (written == nullptr)
+    {
+        cannotWrite("quadbinset");
+    }
     auto text = hex(std::as_bytes(std::span{written, size}));
     std::free(written);
     return text;
@@ -1424,7 +1646,10 @@ std::vector<std::byte> QuadbinsetFromText(std::string_view text)
     MEOS::Meos::ensureMeosInitialized();
     const auto wkb = unhex(text);
     auto value = set_from_wkb(wkb.data(), wkb.size());
-    if (value == nullptr) { cannotRead("quadbinset", text); }
+    if (value == nullptr)
+    {
+        cannotRead("quadbinset", text);
+    }
     auto carried = image(value, static_cast<size_t>(set_mem_size(value)));
     std::free(value);
     return carried;
@@ -1440,11 +1665,15 @@ std::string RaquetToText(std::span<const std::byte> bytes)
         return {};
     }
     MEOS::Meos::ensureMeosInitialized();
-    auto* value = static_cast<struct Raquet*>(fromImage(bytes, [](const void* laid) -> void* { return raquet_copy(static_cast<const struct Raquet*>(laid)); }));
+    auto* value = static_cast<struct Raquet*>(
+        fromImage(bytes, [](const void* laid) -> void* { return raquet_copy(static_cast<const struct Raquet*>(laid)); }));
     size_t size = 0;
     auto* written = raquet_as_wkb(value, 4, &size);
     std::free(value);
-    if (written == nullptr) { cannotWrite("raquet"); }
+    if (written == nullptr)
+    {
+        cannotWrite("raquet");
+    }
     auto text = hex(std::as_bytes(std::span{written, size}));
     std::free(written);
     return text;
@@ -1455,7 +1684,10 @@ std::vector<std::byte> RaquetFromText(std::string_view text)
     MEOS::Meos::ensureMeosInitialized();
     const auto wkb = unhex(text);
     auto value = raquet_from_wkb(wkb.data(), wkb.size());
-    if (value == nullptr) { cannotRead("raquet", text); }
+    if (value == nullptr)
+    {
+        cannotRead("raquet", text);
+    }
     auto carried = image(value, static_cast<size_t>(raquet_mem_size(value)));
     std::free(value);
     return carried;
@@ -1471,11 +1703,15 @@ std::string RasterToText(std::span<const std::byte> bytes)
         return {};
     }
     MEOS::Meos::ensureMeosInitialized();
-    auto* value = static_cast<struct Raster*>(fromImage(bytes, [](const void* laid) -> void* { return raster_copy(static_cast<const struct Raster*>(laid)); }));
+    auto* value = static_cast<struct Raster*>(
+        fromImage(bytes, [](const void* laid) -> void* { return raster_copy(static_cast<const struct Raster*>(laid)); }));
     size_t size = 0;
     auto* written = raster_as_wkb(value, 4, &size);
     std::free(value);
-    if (written == nullptr) { cannotWrite("raster"); }
+    if (written == nullptr)
+    {
+        cannotWrite("raster");
+    }
     auto text = hex(std::as_bytes(std::span{written, size}));
     std::free(written);
     return text;
@@ -1486,7 +1722,10 @@ std::vector<std::byte> RasterFromText(std::string_view text)
     MEOS::Meos::ensureMeosInitialized();
     const auto wkb = unhex(text);
     auto value = raster_from_wkb(wkb.data(), wkb.size());
-    if (value == nullptr) { cannotRead("raster", text); }
+    if (value == nullptr)
+    {
+        cannotRead("raster", text);
+    }
     auto carried = image(value, static_cast<size_t>(raster_mem_size(value)));
     std::free(value);
     return carried;
@@ -1527,7 +1766,10 @@ std::string S2cellsetToText(std::span<const std::byte> bytes)
     size_t size = 0;
     auto* written = set_as_wkb(value, 4, &size);
     std::free(value);
-    if (written == nullptr) { cannotWrite("s2cellset"); }
+    if (written == nullptr)
+    {
+        cannotWrite("s2cellset");
+    }
     auto text = hex(std::as_bytes(std::span{written, size}));
     std::free(written);
     return text;
@@ -1538,7 +1780,10 @@ std::vector<std::byte> S2cellsetFromText(std::string_view text)
     MEOS::Meos::ensureMeosInitialized();
     const auto wkb = unhex(text);
     auto value = set_from_wkb(wkb.data(), wkb.size());
-    if (value == nullptr) { cannotRead("s2cellset", text); }
+    if (value == nullptr)
+    {
+        cannotRead("s2cellset", text);
+    }
     auto carried = image(value, static_cast<size_t>(set_mem_size(value)));
     std::free(value);
     return carried;
@@ -1554,11 +1799,15 @@ std::string StboxToText(std::span<const std::byte> bytes)
         return {};
     }
     MEOS::Meos::ensureMeosInitialized();
-    auto* value = static_cast<STBox*>(fromImage(bytes, [](const void* laid) -> void* { return stbox_copy(static_cast<const STBox*>(laid)); }));
+    auto* value
+        = static_cast<STBox*>(fromImage(bytes, [](const void* laid) -> void* { return stbox_copy(static_cast<const STBox*>(laid)); }));
     size_t size = 0;
     auto* written = stbox_as_wkb(value, 4, &size);
     std::free(value);
-    if (written == nullptr) { cannotWrite("stbox"); }
+    if (written == nullptr)
+    {
+        cannotWrite("stbox");
+    }
     auto text = hex(std::as_bytes(std::span{written, size}));
     std::free(written);
     return text;
@@ -1569,7 +1818,10 @@ std::vector<std::byte> StboxFromText(std::string_view text)
     MEOS::Meos::ensureMeosInitialized();
     const auto wkb = unhex(text);
     auto value = stbox_from_wkb(wkb.data(), wkb.size());
-    if (value == nullptr) { cannotRead("stbox", text); }
+    if (value == nullptr)
+    {
+        cannotRead("stbox", text);
+    }
     auto carried = image(value, size_t{80});
     std::free(value);
     return carried;
@@ -1585,11 +1837,15 @@ std::string SummarystatsToText(std::span<const std::byte> bytes)
         return {};
     }
     MEOS::Meos::ensureMeosInitialized();
-    auto* value = static_cast<BandStats*>(fromImage(bytes, [](const void* laid) -> void* { return bandstats_copy(static_cast<const BandStats*>(laid)); }));
+    auto* value = static_cast<BandStats*>(
+        fromImage(bytes, [](const void* laid) -> void* { return bandstats_copy(static_cast<const BandStats*>(laid)); }));
     size_t size = 0;
     auto* written = bandstats_out(value, &size);
     std::free(value);
-    if (written == nullptr) { cannotWrite("summarystats"); }
+    if (written == nullptr)
+    {
+        cannotWrite("summarystats");
+    }
     std::string text{written};
     std::free(written);
     return text;
@@ -1600,7 +1856,10 @@ std::vector<std::byte> SummarystatsFromText(std::string_view text)
     MEOS::Meos::ensureMeosInitialized();
     const std::string terminated{text};
     auto value = bandstats_in(terminated.c_str());
-    if (value == nullptr) { cannotRead("summarystats", text); }
+    if (value == nullptr)
+    {
+        cannotRead("summarystats", text);
+    }
     auto carried = image(value, size_t{48});
     std::free(value);
     return carried;
@@ -1616,11 +1875,15 @@ std::string TbigintToText(std::span<const std::byte> bytes)
         return {};
     }
     MEOS::Meos::ensureMeosInitialized();
-    auto* value = static_cast<Temporal*>(fromImage(bytes, [](const void* laid) -> void* { return temporal_copy(static_cast<const Temporal*>(laid)); }));
+    auto* value = static_cast<Temporal*>(
+        fromImage(bytes, [](const void* laid) -> void* { return temporal_copy(static_cast<const Temporal*>(laid)); }));
     size_t size = 0;
     auto* written = temporal_as_wkb(value, 4, &size);
     std::free(value);
-    if (written == nullptr) { cannotWrite("tbigint"); }
+    if (written == nullptr)
+    {
+        cannotWrite("tbigint");
+    }
     auto text = hex(std::as_bytes(std::span{written, size}));
     std::free(written);
     return text;
@@ -1631,7 +1894,10 @@ std::vector<std::byte> TbigintFromText(std::string_view text)
     MEOS::Meos::ensureMeosInitialized();
     const auto wkb = unhex(text);
     auto value = temporal_from_wkb(wkb.data(), wkb.size());
-    if (value == nullptr) { cannotRead("tbigint", text); }
+    if (value == nullptr)
+    {
+        cannotRead("tbigint", text);
+    }
     auto carried = image(value, static_cast<size_t>(temporal_mem_size(value)));
     std::free(value);
     return carried;
@@ -1647,11 +1913,15 @@ std::string TboolToText(std::span<const std::byte> bytes)
         return {};
     }
     MEOS::Meos::ensureMeosInitialized();
-    auto* value = static_cast<Temporal*>(fromImage(bytes, [](const void* laid) -> void* { return temporal_copy(static_cast<const Temporal*>(laid)); }));
+    auto* value = static_cast<Temporal*>(
+        fromImage(bytes, [](const void* laid) -> void* { return temporal_copy(static_cast<const Temporal*>(laid)); }));
     size_t size = 0;
     auto* written = temporal_as_wkb(value, 4, &size);
     std::free(value);
-    if (written == nullptr) { cannotWrite("tbool"); }
+    if (written == nullptr)
+    {
+        cannotWrite("tbool");
+    }
     auto text = hex(std::as_bytes(std::span{written, size}));
     std::free(written);
     return text;
@@ -1662,7 +1932,10 @@ std::vector<std::byte> TboolFromText(std::string_view text)
     MEOS::Meos::ensureMeosInitialized();
     const auto wkb = unhex(text);
     auto value = temporal_from_wkb(wkb.data(), wkb.size());
-    if (value == nullptr) { cannotRead("tbool", text); }
+    if (value == nullptr)
+    {
+        cannotRead("tbool", text);
+    }
     auto carried = image(value, static_cast<size_t>(temporal_mem_size(value)));
     std::free(value);
     return carried;
@@ -1682,7 +1955,10 @@ std::string TboxToText(std::span<const std::byte> bytes)
     size_t size = 0;
     auto* written = tbox_as_wkb(value, 4, &size);
     std::free(value);
-    if (written == nullptr) { cannotWrite("tbox"); }
+    if (written == nullptr)
+    {
+        cannotWrite("tbox");
+    }
     auto text = hex(std::as_bytes(std::span{written, size}));
     std::free(written);
     return text;
@@ -1693,7 +1969,10 @@ std::vector<std::byte> TboxFromText(std::string_view text)
     MEOS::Meos::ensureMeosInitialized();
     const auto wkb = unhex(text);
     auto value = tbox_from_wkb(wkb.data(), wkb.size());
-    if (value == nullptr) { cannotRead("tbox", text); }
+    if (value == nullptr)
+    {
+        cannotRead("tbox", text);
+    }
     auto carried = image(value, size_t{56});
     std::free(value);
     return carried;
@@ -1709,11 +1988,15 @@ std::string TcbufferToText(std::span<const std::byte> bytes)
         return {};
     }
     MEOS::Meos::ensureMeosInitialized();
-    auto* value = static_cast<Temporal*>(fromImage(bytes, [](const void* laid) -> void* { return temporal_copy(static_cast<const Temporal*>(laid)); }));
+    auto* value = static_cast<Temporal*>(
+        fromImage(bytes, [](const void* laid) -> void* { return temporal_copy(static_cast<const Temporal*>(laid)); }));
     size_t size = 0;
     auto* written = temporal_as_wkb(value, 4, &size);
     std::free(value);
-    if (written == nullptr) { cannotWrite("tcbuffer"); }
+    if (written == nullptr)
+    {
+        cannotWrite("tcbuffer");
+    }
     auto text = hex(std::as_bytes(std::span{written, size}));
     std::free(written);
     return text;
@@ -1724,7 +2007,10 @@ std::vector<std::byte> TcbufferFromText(std::string_view text)
     MEOS::Meos::ensureMeosInitialized();
     const auto wkb = unhex(text);
     auto value = temporal_from_wkb(wkb.data(), wkb.size());
-    if (value == nullptr) { cannotRead("tcbuffer", text); }
+    if (value == nullptr)
+    {
+        cannotRead("tcbuffer", text);
+    }
     auto carried = image(value, static_cast<size_t>(temporal_mem_size(value)));
     std::free(value);
     return carried;
@@ -1744,7 +2030,10 @@ std::string TextsetToText(std::span<const std::byte> bytes)
     size_t size = 0;
     auto* written = set_as_wkb(value, 4, &size);
     std::free(value);
-    if (written == nullptr) { cannotWrite("textset"); }
+    if (written == nullptr)
+    {
+        cannotWrite("textset");
+    }
     auto text = hex(std::as_bytes(std::span{written, size}));
     std::free(written);
     return text;
@@ -1755,7 +2044,10 @@ std::vector<std::byte> TextsetFromText(std::string_view text)
     MEOS::Meos::ensureMeosInitialized();
     const auto wkb = unhex(text);
     auto value = set_from_wkb(wkb.data(), wkb.size());
-    if (value == nullptr) { cannotRead("textset", text); }
+    if (value == nullptr)
+    {
+        cannotRead("textset", text);
+    }
     auto carried = image(value, static_cast<size_t>(set_mem_size(value)));
     std::free(value);
     return carried;
@@ -1771,11 +2063,15 @@ std::string TfloatToText(std::span<const std::byte> bytes)
         return {};
     }
     MEOS::Meos::ensureMeosInitialized();
-    auto* value = static_cast<Temporal*>(fromImage(bytes, [](const void* laid) -> void* { return temporal_copy(static_cast<const Temporal*>(laid)); }));
+    auto* value = static_cast<Temporal*>(
+        fromImage(bytes, [](const void* laid) -> void* { return temporal_copy(static_cast<const Temporal*>(laid)); }));
     size_t size = 0;
     auto* written = temporal_as_wkb(value, 4, &size);
     std::free(value);
-    if (written == nullptr) { cannotWrite("tfloat"); }
+    if (written == nullptr)
+    {
+        cannotWrite("tfloat");
+    }
     auto text = hex(std::as_bytes(std::span{written, size}));
     std::free(written);
     return text;
@@ -1786,7 +2082,10 @@ std::vector<std::byte> TfloatFromText(std::string_view text)
     MEOS::Meos::ensureMeosInitialized();
     const auto wkb = unhex(text);
     auto value = temporal_from_wkb(wkb.data(), wkb.size());
-    if (value == nullptr) { cannotRead("tfloat", text); }
+    if (value == nullptr)
+    {
+        cannotRead("tfloat", text);
+    }
     auto carried = image(value, static_cast<size_t>(temporal_mem_size(value)));
     std::free(value);
     return carried;
@@ -1802,11 +2101,15 @@ std::string TgeogpointToText(std::span<const std::byte> bytes)
         return {};
     }
     MEOS::Meos::ensureMeosInitialized();
-    auto* value = static_cast<Temporal*>(fromImage(bytes, [](const void* laid) -> void* { return temporal_copy(static_cast<const Temporal*>(laid)); }));
+    auto* value = static_cast<Temporal*>(
+        fromImage(bytes, [](const void* laid) -> void* { return temporal_copy(static_cast<const Temporal*>(laid)); }));
     size_t size = 0;
     auto* written = temporal_as_wkb(value, 4, &size);
     std::free(value);
-    if (written == nullptr) { cannotWrite("tgeogpoint"); }
+    if (written == nullptr)
+    {
+        cannotWrite("tgeogpoint");
+    }
     auto text = hex(std::as_bytes(std::span{written, size}));
     std::free(written);
     return text;
@@ -1817,7 +2120,10 @@ std::vector<std::byte> TgeogpointFromText(std::string_view text)
     MEOS::Meos::ensureMeosInitialized();
     const auto wkb = unhex(text);
     auto value = temporal_from_wkb(wkb.data(), wkb.size());
-    if (value == nullptr) { cannotRead("tgeogpoint", text); }
+    if (value == nullptr)
+    {
+        cannotRead("tgeogpoint", text);
+    }
     auto carried = image(value, static_cast<size_t>(temporal_mem_size(value)));
     std::free(value);
     return carried;
@@ -1833,11 +2139,15 @@ std::string TgeographyToText(std::span<const std::byte> bytes)
         return {};
     }
     MEOS::Meos::ensureMeosInitialized();
-    auto* value = static_cast<Temporal*>(fromImage(bytes, [](const void* laid) -> void* { return temporal_copy(static_cast<const Temporal*>(laid)); }));
+    auto* value = static_cast<Temporal*>(
+        fromImage(bytes, [](const void* laid) -> void* { return temporal_copy(static_cast<const Temporal*>(laid)); }));
     size_t size = 0;
     auto* written = temporal_as_wkb(value, 4, &size);
     std::free(value);
-    if (written == nullptr) { cannotWrite("tgeography"); }
+    if (written == nullptr)
+    {
+        cannotWrite("tgeography");
+    }
     auto text = hex(std::as_bytes(std::span{written, size}));
     std::free(written);
     return text;
@@ -1848,7 +2158,10 @@ std::vector<std::byte> TgeographyFromText(std::string_view text)
     MEOS::Meos::ensureMeosInitialized();
     const auto wkb = unhex(text);
     auto value = temporal_from_wkb(wkb.data(), wkb.size());
-    if (value == nullptr) { cannotRead("tgeography", text); }
+    if (value == nullptr)
+    {
+        cannotRead("tgeography", text);
+    }
     auto carried = image(value, static_cast<size_t>(temporal_mem_size(value)));
     std::free(value);
     return carried;
@@ -1864,11 +2177,15 @@ std::string TgeometryToText(std::span<const std::byte> bytes)
         return {};
     }
     MEOS::Meos::ensureMeosInitialized();
-    auto* value = static_cast<Temporal*>(fromImage(bytes, [](const void* laid) -> void* { return temporal_copy(static_cast<const Temporal*>(laid)); }));
+    auto* value = static_cast<Temporal*>(
+        fromImage(bytes, [](const void* laid) -> void* { return temporal_copy(static_cast<const Temporal*>(laid)); }));
     size_t size = 0;
     auto* written = temporal_as_wkb(value, 4, &size);
     std::free(value);
-    if (written == nullptr) { cannotWrite("tgeometry"); }
+    if (written == nullptr)
+    {
+        cannotWrite("tgeometry");
+    }
     auto text = hex(std::as_bytes(std::span{written, size}));
     std::free(written);
     return text;
@@ -1879,7 +2196,10 @@ std::vector<std::byte> TgeometryFromText(std::string_view text)
     MEOS::Meos::ensureMeosInitialized();
     const auto wkb = unhex(text);
     auto value = temporal_from_wkb(wkb.data(), wkb.size());
-    if (value == nullptr) { cannotRead("tgeometry", text); }
+    if (value == nullptr)
+    {
+        cannotRead("tgeometry", text);
+    }
     auto carried = image(value, static_cast<size_t>(temporal_mem_size(value)));
     std::free(value);
     return carried;
@@ -1895,11 +2215,15 @@ std::string TgeompointToText(std::span<const std::byte> bytes)
         return {};
     }
     MEOS::Meos::ensureMeosInitialized();
-    auto* value = static_cast<Temporal*>(fromImage(bytes, [](const void* laid) -> void* { return temporal_copy(static_cast<const Temporal*>(laid)); }));
+    auto* value = static_cast<Temporal*>(
+        fromImage(bytes, [](const void* laid) -> void* { return temporal_copy(static_cast<const Temporal*>(laid)); }));
     size_t size = 0;
     auto* written = temporal_as_wkb(value, 4, &size);
     std::free(value);
-    if (written == nullptr) { cannotWrite("tgeompoint"); }
+    if (written == nullptr)
+    {
+        cannotWrite("tgeompoint");
+    }
     auto text = hex(std::as_bytes(std::span{written, size}));
     std::free(written);
     return text;
@@ -1910,7 +2234,10 @@ std::vector<std::byte> TgeompointFromText(std::string_view text)
     MEOS::Meos::ensureMeosInitialized();
     const auto wkb = unhex(text);
     auto value = temporal_from_wkb(wkb.data(), wkb.size());
-    if (value == nullptr) { cannotRead("tgeompoint", text); }
+    if (value == nullptr)
+    {
+        cannotRead("tgeompoint", text);
+    }
     auto carried = image(value, static_cast<size_t>(temporal_mem_size(value)));
     std::free(value);
     return carried;
@@ -1926,11 +2253,15 @@ std::string Th3indexToText(std::span<const std::byte> bytes)
         return {};
     }
     MEOS::Meos::ensureMeosInitialized();
-    auto* value = static_cast<Temporal*>(fromImage(bytes, [](const void* laid) -> void* { return temporal_copy(static_cast<const Temporal*>(laid)); }));
+    auto* value = static_cast<Temporal*>(
+        fromImage(bytes, [](const void* laid) -> void* { return temporal_copy(static_cast<const Temporal*>(laid)); }));
     size_t size = 0;
     auto* written = temporal_as_wkb(value, 4, &size);
     std::free(value);
-    if (written == nullptr) { cannotWrite("th3index"); }
+    if (written == nullptr)
+    {
+        cannotWrite("th3index");
+    }
     auto text = hex(std::as_bytes(std::span{written, size}));
     std::free(written);
     return text;
@@ -1941,7 +2272,10 @@ std::vector<std::byte> Th3indexFromText(std::string_view text)
     MEOS::Meos::ensureMeosInitialized();
     const auto wkb = unhex(text);
     auto value = temporal_from_wkb(wkb.data(), wkb.size());
-    if (value == nullptr) { cannotRead("th3index", text); }
+    if (value == nullptr)
+    {
+        cannotRead("th3index", text);
+    }
     auto carried = image(value, static_cast<size_t>(temporal_mem_size(value)));
     std::free(value);
     return carried;
@@ -1957,11 +2291,15 @@ std::string TintToText(std::span<const std::byte> bytes)
         return {};
     }
     MEOS::Meos::ensureMeosInitialized();
-    auto* value = static_cast<Temporal*>(fromImage(bytes, [](const void* laid) -> void* { return temporal_copy(static_cast<const Temporal*>(laid)); }));
+    auto* value = static_cast<Temporal*>(
+        fromImage(bytes, [](const void* laid) -> void* { return temporal_copy(static_cast<const Temporal*>(laid)); }));
     size_t size = 0;
     auto* written = temporal_as_wkb(value, 4, &size);
     std::free(value);
-    if (written == nullptr) { cannotWrite("tint"); }
+    if (written == nullptr)
+    {
+        cannotWrite("tint");
+    }
     auto text = hex(std::as_bytes(std::span{written, size}));
     std::free(written);
     return text;
@@ -1972,7 +2310,10 @@ std::vector<std::byte> TintFromText(std::string_view text)
     MEOS::Meos::ensureMeosInitialized();
     const auto wkb = unhex(text);
     auto value = temporal_from_wkb(wkb.data(), wkb.size());
-    if (value == nullptr) { cannotRead("tint", text); }
+    if (value == nullptr)
+    {
+        cannotRead("tint", text);
+    }
     auto carried = image(value, static_cast<size_t>(temporal_mem_size(value)));
     std::free(value);
     return carried;
@@ -1988,11 +2329,15 @@ std::string TjsonbToText(std::span<const std::byte> bytes)
         return {};
     }
     MEOS::Meos::ensureMeosInitialized();
-    auto* value = static_cast<Temporal*>(fromImage(bytes, [](const void* laid) -> void* { return temporal_copy(static_cast<const Temporal*>(laid)); }));
+    auto* value = static_cast<Temporal*>(
+        fromImage(bytes, [](const void* laid) -> void* { return temporal_copy(static_cast<const Temporal*>(laid)); }));
     size_t size = 0;
     auto* written = temporal_as_wkb(value, 4, &size);
     std::free(value);
-    if (written == nullptr) { cannotWrite("tjsonb"); }
+    if (written == nullptr)
+    {
+        cannotWrite("tjsonb");
+    }
     auto text = hex(std::as_bytes(std::span{written, size}));
     std::free(written);
     return text;
@@ -2003,7 +2348,10 @@ std::vector<std::byte> TjsonbFromText(std::string_view text)
     MEOS::Meos::ensureMeosInitialized();
     const auto wkb = unhex(text);
     auto value = temporal_from_wkb(wkb.data(), wkb.size());
-    if (value == nullptr) { cannotRead("tjsonb", text); }
+    if (value == nullptr)
+    {
+        cannotRead("tjsonb", text);
+    }
     auto carried = image(value, static_cast<size_t>(temporal_mem_size(value)));
     std::free(value);
     return carried;
@@ -2019,11 +2367,15 @@ std::string TnpointToText(std::span<const std::byte> bytes)
         return {};
     }
     MEOS::Meos::ensureMeosInitialized();
-    auto* value = static_cast<Temporal*>(fromImage(bytes, [](const void* laid) -> void* { return temporal_copy(static_cast<const Temporal*>(laid)); }));
+    auto* value = static_cast<Temporal*>(
+        fromImage(bytes, [](const void* laid) -> void* { return temporal_copy(static_cast<const Temporal*>(laid)); }));
     size_t size = 0;
     auto* written = temporal_as_wkb(value, 4, &size);
     std::free(value);
-    if (written == nullptr) { cannotWrite("tnpoint"); }
+    if (written == nullptr)
+    {
+        cannotWrite("tnpoint");
+    }
     auto text = hex(std::as_bytes(std::span{written, size}));
     std::free(written);
     return text;
@@ -2034,7 +2386,10 @@ std::vector<std::byte> TnpointFromText(std::string_view text)
     MEOS::Meos::ensureMeosInitialized();
     const auto wkb = unhex(text);
     auto value = temporal_from_wkb(wkb.data(), wkb.size());
-    if (value == nullptr) { cannotRead("tnpoint", text); }
+    if (value == nullptr)
+    {
+        cannotRead("tnpoint", text);
+    }
     auto carried = image(value, static_cast<size_t>(temporal_mem_size(value)));
     std::free(value);
     return carried;
@@ -2050,11 +2405,15 @@ std::string TpcboxToText(std::span<const std::byte> bytes)
         return {};
     }
     MEOS::Meos::ensureMeosInitialized();
-    auto* value = static_cast<TPCBox*>(fromImage(bytes, [](const void* laid) -> void* { return tpcbox_copy(static_cast<const TPCBox*>(laid)); }));
+    auto* value
+        = static_cast<TPCBox*>(fromImage(bytes, [](const void* laid) -> void* { return tpcbox_copy(static_cast<const TPCBox*>(laid)); }));
     size_t size = 0;
     auto* written = tpcbox_as_wkb(value, 4, &size);
     std::free(value);
-    if (written == nullptr) { cannotWrite("tpcbox"); }
+    if (written == nullptr)
+    {
+        cannotWrite("tpcbox");
+    }
     auto text = hex(std::as_bytes(std::span{written, size}));
     std::free(written);
     return text;
@@ -2065,7 +2424,10 @@ std::vector<std::byte> TpcboxFromText(std::string_view text)
     MEOS::Meos::ensureMeosInitialized();
     const auto wkb = unhex(text);
     auto value = tpcbox_from_wkb(wkb.data(), wkb.size());
-    if (value == nullptr) { cannotRead("tpcbox", text); }
+    if (value == nullptr)
+    {
+        cannotRead("tpcbox", text);
+    }
     auto carried = image(value, size_t{88});
     std::free(value);
     return carried;
@@ -2081,11 +2443,15 @@ std::string TpcpatchToText(std::span<const std::byte> bytes)
         return {};
     }
     MEOS::Meos::ensureMeosInitialized();
-    auto* value = static_cast<Temporal*>(fromImage(bytes, [](const void* laid) -> void* { return temporal_copy(static_cast<const Temporal*>(laid)); }));
+    auto* value = static_cast<Temporal*>(
+        fromImage(bytes, [](const void* laid) -> void* { return temporal_copy(static_cast<const Temporal*>(laid)); }));
     size_t size = 0;
     auto* written = temporal_as_wkb(value, 4, &size);
     std::free(value);
-    if (written == nullptr) { cannotWrite("tpcpatch"); }
+    if (written == nullptr)
+    {
+        cannotWrite("tpcpatch");
+    }
     auto text = hex(std::as_bytes(std::span{written, size}));
     std::free(written);
     return text;
@@ -2096,7 +2462,10 @@ std::vector<std::byte> TpcpatchFromText(std::string_view text)
     MEOS::Meos::ensureMeosInitialized();
     const auto wkb = unhex(text);
     auto value = temporal_from_wkb(wkb.data(), wkb.size());
-    if (value == nullptr) { cannotRead("tpcpatch", text); }
+    if (value == nullptr)
+    {
+        cannotRead("tpcpatch", text);
+    }
     auto carried = image(value, static_cast<size_t>(temporal_mem_size(value)));
     std::free(value);
     return carried;
@@ -2112,11 +2481,15 @@ std::string TpcpointToText(std::span<const std::byte> bytes)
         return {};
     }
     MEOS::Meos::ensureMeosInitialized();
-    auto* value = static_cast<Temporal*>(fromImage(bytes, [](const void* laid) -> void* { return temporal_copy(static_cast<const Temporal*>(laid)); }));
+    auto* value = static_cast<Temporal*>(
+        fromImage(bytes, [](const void* laid) -> void* { return temporal_copy(static_cast<const Temporal*>(laid)); }));
     size_t size = 0;
     auto* written = temporal_as_wkb(value, 4, &size);
     std::free(value);
-    if (written == nullptr) { cannotWrite("tpcpoint"); }
+    if (written == nullptr)
+    {
+        cannotWrite("tpcpoint");
+    }
     auto text = hex(std::as_bytes(std::span{written, size}));
     std::free(written);
     return text;
@@ -2127,7 +2500,10 @@ std::vector<std::byte> TpcpointFromText(std::string_view text)
     MEOS::Meos::ensureMeosInitialized();
     const auto wkb = unhex(text);
     auto value = temporal_from_wkb(wkb.data(), wkb.size());
-    if (value == nullptr) { cannotRead("tpcpoint", text); }
+    if (value == nullptr)
+    {
+        cannotRead("tpcpoint", text);
+    }
     auto carried = image(value, static_cast<size_t>(temporal_mem_size(value)));
     std::free(value);
     return carried;
@@ -2143,11 +2519,15 @@ std::string TposeToText(std::span<const std::byte> bytes)
         return {};
     }
     MEOS::Meos::ensureMeosInitialized();
-    auto* value = static_cast<Temporal*>(fromImage(bytes, [](const void* laid) -> void* { return temporal_copy(static_cast<const Temporal*>(laid)); }));
+    auto* value = static_cast<Temporal*>(
+        fromImage(bytes, [](const void* laid) -> void* { return temporal_copy(static_cast<const Temporal*>(laid)); }));
     size_t size = 0;
     auto* written = temporal_as_wkb(value, 4, &size);
     std::free(value);
-    if (written == nullptr) { cannotWrite("tpose"); }
+    if (written == nullptr)
+    {
+        cannotWrite("tpose");
+    }
     auto text = hex(std::as_bytes(std::span{written, size}));
     std::free(written);
     return text;
@@ -2158,7 +2538,10 @@ std::vector<std::byte> TposeFromText(std::string_view text)
     MEOS::Meos::ensureMeosInitialized();
     const auto wkb = unhex(text);
     auto value = temporal_from_wkb(wkb.data(), wkb.size());
-    if (value == nullptr) { cannotRead("tpose", text); }
+    if (value == nullptr)
+    {
+        cannotRead("tpose", text);
+    }
     auto carried = image(value, static_cast<size_t>(temporal_mem_size(value)));
     std::free(value);
     return carried;
@@ -2174,11 +2557,15 @@ std::string TposechainToText(std::span<const std::byte> bytes)
         return {};
     }
     MEOS::Meos::ensureMeosInitialized();
-    auto* value = static_cast<Temporal*>(fromImage(bytes, [](const void* laid) -> void* { return temporal_copy(static_cast<const Temporal*>(laid)); }));
+    auto* value = static_cast<Temporal*>(
+        fromImage(bytes, [](const void* laid) -> void* { return temporal_copy(static_cast<const Temporal*>(laid)); }));
     size_t size = 0;
     auto* written = temporal_as_wkb(value, 4, &size);
     std::free(value);
-    if (written == nullptr) { cannotWrite("tposechain"); }
+    if (written == nullptr)
+    {
+        cannotWrite("tposechain");
+    }
     auto text = hex(std::as_bytes(std::span{written, size}));
     std::free(written);
     return text;
@@ -2189,7 +2576,10 @@ std::vector<std::byte> TposechainFromText(std::string_view text)
     MEOS::Meos::ensureMeosInitialized();
     const auto wkb = unhex(text);
     auto value = temporal_from_wkb(wkb.data(), wkb.size());
-    if (value == nullptr) { cannotRead("tposechain", text); }
+    if (value == nullptr)
+    {
+        cannotRead("tposechain", text);
+    }
     auto carried = image(value, static_cast<size_t>(temporal_mem_size(value)));
     std::free(value);
     return carried;
@@ -2205,11 +2595,15 @@ std::string TquadbinToText(std::span<const std::byte> bytes)
         return {};
     }
     MEOS::Meos::ensureMeosInitialized();
-    auto* value = static_cast<Temporal*>(fromImage(bytes, [](const void* laid) -> void* { return temporal_copy(static_cast<const Temporal*>(laid)); }));
+    auto* value = static_cast<Temporal*>(
+        fromImage(bytes, [](const void* laid) -> void* { return temporal_copy(static_cast<const Temporal*>(laid)); }));
     size_t size = 0;
     auto* written = temporal_as_wkb(value, 4, &size);
     std::free(value);
-    if (written == nullptr) { cannotWrite("tquadbin"); }
+    if (written == nullptr)
+    {
+        cannotWrite("tquadbin");
+    }
     auto text = hex(std::as_bytes(std::span{written, size}));
     std::free(written);
     return text;
@@ -2220,7 +2614,10 @@ std::vector<std::byte> TquadbinFromText(std::string_view text)
     MEOS::Meos::ensureMeosInitialized();
     const auto wkb = unhex(text);
     auto value = temporal_from_wkb(wkb.data(), wkb.size());
-    if (value == nullptr) { cannotRead("tquadbin", text); }
+    if (value == nullptr)
+    {
+        cannotRead("tquadbin", text);
+    }
     auto carried = image(value, static_cast<size_t>(temporal_mem_size(value)));
     std::free(value);
     return carried;
@@ -2236,11 +2633,15 @@ std::string TrgeometryToText(std::span<const std::byte> bytes)
         return {};
     }
     MEOS::Meos::ensureMeosInitialized();
-    auto* value = static_cast<Temporal*>(fromImage(bytes, [](const void* laid) -> void* { return temporal_copy(static_cast<const Temporal*>(laid)); }));
+    auto* value = static_cast<Temporal*>(
+        fromImage(bytes, [](const void* laid) -> void* { return temporal_copy(static_cast<const Temporal*>(laid)); }));
     size_t size = 0;
     auto* written = temporal_as_wkb(value, 4, &size);
     std::free(value);
-    if (written == nullptr) { cannotWrite("trgeometry"); }
+    if (written == nullptr)
+    {
+        cannotWrite("trgeometry");
+    }
     auto text = hex(std::as_bytes(std::span{written, size}));
     std::free(written);
     return text;
@@ -2251,7 +2652,10 @@ std::vector<std::byte> TrgeometryFromText(std::string_view text)
     MEOS::Meos::ensureMeosInitialized();
     const auto wkb = unhex(text);
     auto value = temporal_from_wkb(wkb.data(), wkb.size());
-    if (value == nullptr) { cannotRead("trgeometry", text); }
+    if (value == nullptr)
+    {
+        cannotRead("trgeometry", text);
+    }
     auto carried = image(value, static_cast<size_t>(temporal_mem_size(value)));
     std::free(value);
     return carried;
@@ -2267,11 +2671,15 @@ std::string Ts2cellToText(std::span<const std::byte> bytes)
         return {};
     }
     MEOS::Meos::ensureMeosInitialized();
-    auto* value = static_cast<Temporal*>(fromImage(bytes, [](const void* laid) -> void* { return temporal_copy(static_cast<const Temporal*>(laid)); }));
+    auto* value = static_cast<Temporal*>(
+        fromImage(bytes, [](const void* laid) -> void* { return temporal_copy(static_cast<const Temporal*>(laid)); }));
     size_t size = 0;
     auto* written = temporal_as_wkb(value, 4, &size);
     std::free(value);
-    if (written == nullptr) { cannotWrite("ts2cell"); }
+    if (written == nullptr)
+    {
+        cannotWrite("ts2cell");
+    }
     auto text = hex(std::as_bytes(std::span{written, size}));
     std::free(written);
     return text;
@@ -2282,7 +2690,10 @@ std::vector<std::byte> Ts2cellFromText(std::string_view text)
     MEOS::Meos::ensureMeosInitialized();
     const auto wkb = unhex(text);
     auto value = temporal_from_wkb(wkb.data(), wkb.size());
-    if (value == nullptr) { cannotRead("ts2cell", text); }
+    if (value == nullptr)
+    {
+        cannotRead("ts2cell", text);
+    }
     auto carried = image(value, static_cast<size_t>(temporal_mem_size(value)));
     std::free(value);
     return carried;
@@ -2302,7 +2713,10 @@ std::string TstzsetToText(std::span<const std::byte> bytes)
     size_t size = 0;
     auto* written = set_as_wkb(value, 4, &size);
     std::free(value);
-    if (written == nullptr) { cannotWrite("tstzset"); }
+    if (written == nullptr)
+    {
+        cannotWrite("tstzset");
+    }
     auto text = hex(std::as_bytes(std::span{written, size}));
     std::free(written);
     return text;
@@ -2313,7 +2727,10 @@ std::vector<std::byte> TstzsetFromText(std::string_view text)
     MEOS::Meos::ensureMeosInitialized();
     const auto wkb = unhex(text);
     auto value = set_from_wkb(wkb.data(), wkb.size());
-    if (value == nullptr) { cannotRead("tstzset", text); }
+    if (value == nullptr)
+    {
+        cannotRead("tstzset", text);
+    }
     auto carried = image(value, static_cast<size_t>(set_mem_size(value)));
     std::free(value);
     return carried;
@@ -2333,7 +2750,10 @@ std::string TstzspanToText(std::span<const std::byte> bytes)
     size_t size = 0;
     auto* written = span_as_wkb(value, 4, &size);
     std::free(value);
-    if (written == nullptr) { cannotWrite("tstzspan"); }
+    if (written == nullptr)
+    {
+        cannotWrite("tstzspan");
+    }
     auto text = hex(std::as_bytes(std::span{written, size}));
     std::free(written);
     return text;
@@ -2344,7 +2764,10 @@ std::vector<std::byte> TstzspanFromText(std::string_view text)
     MEOS::Meos::ensureMeosInitialized();
     const auto wkb = unhex(text);
     auto value = span_from_wkb(wkb.data(), wkb.size());
-    if (value == nullptr) { cannotRead("tstzspan", text); }
+    if (value == nullptr)
+    {
+        cannotRead("tstzspan", text);
+    }
     auto carried = image(value, size_t{24});
     std::free(value);
     return carried;
@@ -2360,11 +2783,15 @@ std::string TstzspansetToText(std::span<const std::byte> bytes)
         return {};
     }
     MEOS::Meos::ensureMeosInitialized();
-    auto* value = static_cast<SpanSet*>(fromImage(bytes, [](const void* laid) -> void* { return spanset_copy(static_cast<const SpanSet*>(laid)); }));
+    auto* value = static_cast<SpanSet*>(
+        fromImage(bytes, [](const void* laid) -> void* { return spanset_copy(static_cast<const SpanSet*>(laid)); }));
     size_t size = 0;
     auto* written = spanset_as_wkb(value, 4, &size);
     std::free(value);
-    if (written == nullptr) { cannotWrite("tstzspanset"); }
+    if (written == nullptr)
+    {
+        cannotWrite("tstzspanset");
+    }
     auto text = hex(std::as_bytes(std::span{written, size}));
     std::free(written);
     return text;
@@ -2375,7 +2802,10 @@ std::vector<std::byte> TstzspansetFromText(std::string_view text)
     MEOS::Meos::ensureMeosInitialized();
     const auto wkb = unhex(text);
     auto value = spanset_from_wkb(wkb.data(), wkb.size());
-    if (value == nullptr) { cannotRead("tstzspanset", text); }
+    if (value == nullptr)
+    {
+        cannotRead("tstzspanset", text);
+    }
     auto carried = image(value, static_cast<size_t>(spanset_mem_size(value)));
     std::free(value);
     return carried;
@@ -2391,11 +2821,15 @@ std::string TtextToText(std::span<const std::byte> bytes)
         return {};
     }
     MEOS::Meos::ensureMeosInitialized();
-    auto* value = static_cast<Temporal*>(fromImage(bytes, [](const void* laid) -> void* { return temporal_copy(static_cast<const Temporal*>(laid)); }));
+    auto* value = static_cast<Temporal*>(
+        fromImage(bytes, [](const void* laid) -> void* { return temporal_copy(static_cast<const Temporal*>(laid)); }));
     size_t size = 0;
     auto* written = temporal_as_wkb(value, 4, &size);
     std::free(value);
-    if (written == nullptr) { cannotWrite("ttext"); }
+    if (written == nullptr)
+    {
+        cannotWrite("ttext");
+    }
     auto text = hex(std::as_bytes(std::span{written, size}));
     std::free(written);
     return text;
@@ -2406,7 +2840,10 @@ std::vector<std::byte> TtextFromText(std::string_view text)
     MEOS::Meos::ensureMeosInitialized();
     const auto wkb = unhex(text);
     auto value = temporal_from_wkb(wkb.data(), wkb.size());
-    if (value == nullptr) { cannotRead("ttext", text); }
+    if (value == nullptr)
+    {
+        cannotRead("ttext", text);
+    }
     auto carried = image(value, static_cast<size_t>(temporal_mem_size(value)));
     std::free(value);
     return carried;
@@ -2998,7 +3435,10 @@ std::string BigintElementToText(std::span<const std::byte> bytes)
     std::memcpy(&value, bytes.data(), std::min(bytes.size(), sizeof(value)));
     [[maybe_unused]] size_t size = 0;
     char* written = int64_out(value, &size);
-    if (written == nullptr) { cannotWrite("bigint"); }
+    if (written == nullptr)
+    {
+        cannotWrite("bigint");
+    }
     std::string text{written};
     std::free(written);
     return text;
@@ -3031,7 +3471,10 @@ std::string BooleanElementToText(std::span<const std::byte> bytes)
     std::memcpy(&value, bytes.data(), std::min(bytes.size(), sizeof(value)));
     [[maybe_unused]] size_t size = 0;
     char* written = bool_out(value, &size);
-    if (written == nullptr) { cannotWrite("boolean"); }
+    if (written == nullptr)
+    {
+        cannotWrite("boolean");
+    }
     std::string text{written};
     std::free(written);
     return text;
@@ -3064,7 +3507,10 @@ std::string DateElementToText(std::span<const std::byte> bytes)
     std::memcpy(&value, bytes.data(), std::min(bytes.size(), sizeof(value)));
     [[maybe_unused]] size_t size = 0;
     char* written = date_out(value, &size);
-    if (written == nullptr) { cannotWrite("date"); }
+    if (written == nullptr)
+    {
+        cannotWrite("date");
+    }
     std::string text{written};
     std::free(written);
     return text;
@@ -3097,7 +3543,10 @@ std::string DoublePrecisionElementToText(std::span<const std::byte> bytes)
     std::memcpy(&value, bytes.data(), std::min(bytes.size(), sizeof(value)));
     [[maybe_unused]] size_t size = 0;
     char* written = float8_out(value, 15, &size);
-    if (written == nullptr) { cannotWrite("double precision"); }
+    if (written == nullptr)
+    {
+        cannotWrite("double precision");
+    }
     std::string text{written};
     std::free(written);
     return text;
@@ -3130,7 +3579,10 @@ std::string FloatElementToText(std::span<const std::byte> bytes)
     std::memcpy(&value, bytes.data(), std::min(bytes.size(), sizeof(value)));
     [[maybe_unused]] size_t size = 0;
     char* written = float8_out(value, 15, &size);
-    if (written == nullptr) { cannotWrite("float"); }
+    if (written == nullptr)
+    {
+        cannotWrite("float");
+    }
     std::string text{written};
     std::free(written);
     return text;
@@ -3163,7 +3615,10 @@ std::string IntegerElementToText(std::span<const std::byte> bytes)
     std::memcpy(&value, bytes.data(), std::min(bytes.size(), sizeof(value)));
     [[maybe_unused]] size_t size = 0;
     char* written = int32_out(value, &size);
-    if (written == nullptr) { cannotWrite("integer"); }
+    if (written == nullptr)
+    {
+        cannotWrite("integer");
+    }
     std::string text{written};
     std::free(written);
     return text;
@@ -3219,7 +3674,10 @@ std::string TimestamptzElementToText(std::span<const std::byte> bytes)
     std::memcpy(&value, bytes.data(), std::min(bytes.size(), sizeof(value)));
     [[maybe_unused]] size_t size = 0;
     char* written = timestamptz_out(value, &size);
-    if (written == nullptr) { cannotWrite("timestamptz"); }
+    if (written == nullptr)
+    {
+        cannotWrite("timestamptz");
+    }
     std::string text{written};
     std::free(written);
     return text;
@@ -3252,130 +3710,129 @@ namespace NES
 
 std::span<const MeosType> meosTypes()
 {
-    static constexpr std::array<MeosType, 122> types{{
-    MeosType{&BigintsetType, BigintsetToText},
-    MeosType{&BigintspanType, BigintspanToText},
-    MeosType{&BigintspansetType, BigintspansetToText},
-    MeosType{&Box2dType, Box2dToText},
-    MeosType{&Box3dType, Box3dToText},
-    MeosType{&CbufferType, CbufferToText},
-    MeosType{&CbuffersetType, CbuffersetToText},
-    MeosType{&DatesetType, DatesetToText},
-    MeosType{&DatespanType, DatespanToText},
-    MeosType{&DatespansetType, DatespansetToText},
-    MeosType{&FloatsetType, FloatsetToText},
-    MeosType{&FloatspanType, FloatspanToText},
-    MeosType{&FloatspansetType, FloatspansetToText},
-    MeosType{&GeographyType, GeographyToText},
-    MeosType{&GeogsetType, GeogsetToText},
-    MeosType{&GeometryType, GeometryToText},
-    MeosType{&GeomsetType, GeomsetToText},
-    MeosType{&H3indexType, H3indexToText},
-    MeosType{&H3indexsetType, H3indexsetToText},
-    MeosType{&IntsetType, IntsetToText},
-    MeosType{&IntspanType, IntspanToText},
-    MeosType{&IntspansetType, IntspansetToText},
-    MeosType{&JsonbType, JsonbToText},
-    MeosType{&JsonbsetType, JsonbsetToText},
-    MeosType{&JsonpathType, JsonpathToText},
-    MeosType{&NpointType, NpointToText},
-    MeosType{&NpointsetType, NpointsetToText},
-    MeosType{&NsegmentType, NsegmentToText},
-    MeosType{&PcpatchType, PcpatchToText},
-    MeosType{&PcpatchsetType, PcpatchsetToText},
-    MeosType{&PcpointType, PcpointToText},
-    MeosType{&PcpointsetType, PcpointsetToText},
-    MeosType{&PoseType, PoseToText},
-    MeosType{&PosechainType, PosechainToText},
-    MeosType{&PosechainsetType, PosechainsetToText},
-    MeosType{&PosesetType, PosesetToText},
-    MeosType{&QuadbinType, QuadbinToText},
-    MeosType{&QuadbinsetType, QuadbinsetToText},
-    MeosType{&RaquetType, RaquetToText},
-    MeosType{&RasterType, RasterToText},
-    MeosType{&S2cellType, S2cellToText},
-    MeosType{&S2cellsetType, S2cellsetToText},
-    MeosType{&StboxType, StboxToText},
-    MeosType{&SummarystatsType, SummarystatsToText},
-    MeosType{&TbigintType, TbigintToText},
-    MeosType{&TboolType, TboolToText},
-    MeosType{&TboxType, TboxToText},
-    MeosType{&TcbufferType, TcbufferToText},
-    MeosType{&TextsetType, TextsetToText},
-    MeosType{&TfloatType, TfloatToText},
-    MeosType{&TgeogpointType, TgeogpointToText},
-    MeosType{&TgeographyType, TgeographyToText},
-    MeosType{&TgeometryType, TgeometryToText},
-    MeosType{&TgeompointType, TgeompointToText},
-    MeosType{&Th3indexType, Th3indexToText},
-    MeosType{&TintType, TintToText},
-    MeosType{&TjsonbType, TjsonbToText},
-    MeosType{&TnpointType, TnpointToText},
-    MeosType{&TpcboxType, TpcboxToText},
-    MeosType{&TpcpatchType, TpcpatchToText},
-    MeosType{&TpcpointType, TpcpointToText},
-    MeosType{&TposeType, TposeToText},
-    MeosType{&TposechainType, TposechainToText},
-    MeosType{&TquadbinType, TquadbinToText},
-    MeosType{&TrgeometryType, TrgeometryToText},
-    MeosType{&Ts2cellType, Ts2cellToText},
-    MeosType{&TstzsetType, TstzsetToText},
-    MeosType{&TstzspanType, TstzspanToText},
-    MeosType{&TstzspansetType, TstzspansetToText},
-    MeosType{&TtextType, TtextToText},
-    MeosType{&ByteaType, ByteaToText},
-    MeosType{&BigintspanArrayType, BigintspanArrayToText},
-    MeosType{&CbufferArrayType, CbufferArrayToText},
-    MeosType{&DatespanArrayType, DatespanArrayToText},
-    MeosType{&FloatspanArrayType, FloatspanArrayToText},
-    MeosType{&GeographyArrayType, GeographyArrayToText},
-    MeosType{&GeometryArrayType, GeometryArrayToText},
-    MeosType{&H3indexArrayType, H3indexArrayToText},
-    MeosType{&IntspanArrayType, IntspanArrayToText},
-    MeosType{&JsonbArrayType, JsonbArrayToText},
-    MeosType{&NpointArrayType, NpointArrayToText},
-    MeosType{&NsegmentArrayType, NsegmentArrayToText},
-    MeosType{&PcpatchArrayType, PcpatchArrayToText},
-    MeosType{&PcpointArrayType, PcpointArrayToText},
-    MeosType{&PoseArrayType, PoseArrayToText},
-    MeosType{&PosechainArrayType, PosechainArrayToText},
-    MeosType{&QuadbinArrayType, QuadbinArrayToText},
-    MeosType{&RaquetArrayType, RaquetArrayToText},
-    MeosType{&RasterArrayType, RasterArrayToText},
-    MeosType{&S2cellArrayType, S2cellArrayToText},
-    MeosType{&StboxArrayType, StboxArrayToText},
-    MeosType{&TbigintArrayType, TbigintArrayToText},
-    MeosType{&TboolArrayType, TboolArrayToText},
-    MeosType{&TboxArrayType, TboxArrayToText},
-    MeosType{&TcbufferArrayType, TcbufferArrayToText},
-    MeosType{&TfloatArrayType, TfloatArrayToText},
-    MeosType{&TgeogpointArrayType, TgeogpointArrayToText},
-    MeosType{&TgeographyArrayType, TgeographyArrayToText},
-    MeosType{&TgeometryArrayType, TgeometryArrayToText},
-    MeosType{&TgeompointArrayType, TgeompointArrayToText},
-    MeosType{&Th3indexArrayType, Th3indexArrayToText},
-    MeosType{&TintArrayType, TintArrayToText},
-    MeosType{&TjsonbArrayType, TjsonbArrayToText},
-    MeosType{&TnpointArrayType, TnpointArrayToText},
-    MeosType{&TpcboxArrayType, TpcboxArrayToText},
-    MeosType{&TpcpatchArrayType, TpcpatchArrayToText},
-    MeosType{&TpcpointArrayType, TpcpointArrayToText},
-    MeosType{&TposeArrayType, TposeArrayToText},
-    MeosType{&TposechainArrayType, TposechainArrayToText},
-    MeosType{&TquadbinArrayType, TquadbinArrayToText},
-    MeosType{&TrgeometryArrayType, TrgeometryArrayToText},
-    MeosType{&Ts2cellArrayType, Ts2cellArrayToText},
-    MeosType{&TstzspanArrayType, TstzspanArrayToText},
-    MeosType{&TtextArrayType, TtextArrayToText},
-    MeosType{&BigintArrayType, BigintArrayToText},
-    MeosType{&BooleanArrayType, BooleanArrayToText},
-    MeosType{&DateArrayType, DateArrayToText},
-    MeosType{&DoublePrecisionArrayType, DoublePrecisionArrayToText},
-    MeosType{&FloatArrayType, FloatArrayToText},
-    MeosType{&IntegerArrayType, IntegerArrayToText},
-    MeosType{&TextArrayType, TextArrayToText},
-    MeosType{&TimestamptzArrayType, TimestamptzArrayToText}
-    }};
+    static constexpr std::array<MeosType, 122> types{
+        {MeosType{&BigintsetType, BigintsetToText},
+         MeosType{&BigintspanType, BigintspanToText},
+         MeosType{&BigintspansetType, BigintspansetToText},
+         MeosType{&Box2dType, Box2dToText},
+         MeosType{&Box3dType, Box3dToText},
+         MeosType{&CbufferType, CbufferToText},
+         MeosType{&CbuffersetType, CbuffersetToText},
+         MeosType{&DatesetType, DatesetToText},
+         MeosType{&DatespanType, DatespanToText},
+         MeosType{&DatespansetType, DatespansetToText},
+         MeosType{&FloatsetType, FloatsetToText},
+         MeosType{&FloatspanType, FloatspanToText},
+         MeosType{&FloatspansetType, FloatspansetToText},
+         MeosType{&GeographyType, GeographyToText},
+         MeosType{&GeogsetType, GeogsetToText},
+         MeosType{&GeometryType, GeometryToText},
+         MeosType{&GeomsetType, GeomsetToText},
+         MeosType{&H3indexType, H3indexToText},
+         MeosType{&H3indexsetType, H3indexsetToText},
+         MeosType{&IntsetType, IntsetToText},
+         MeosType{&IntspanType, IntspanToText},
+         MeosType{&IntspansetType, IntspansetToText},
+         MeosType{&JsonbType, JsonbToText},
+         MeosType{&JsonbsetType, JsonbsetToText},
+         MeosType{&JsonpathType, JsonpathToText},
+         MeosType{&NpointType, NpointToText},
+         MeosType{&NpointsetType, NpointsetToText},
+         MeosType{&NsegmentType, NsegmentToText},
+         MeosType{&PcpatchType, PcpatchToText},
+         MeosType{&PcpatchsetType, PcpatchsetToText},
+         MeosType{&PcpointType, PcpointToText},
+         MeosType{&PcpointsetType, PcpointsetToText},
+         MeosType{&PoseType, PoseToText},
+         MeosType{&PosechainType, PosechainToText},
+         MeosType{&PosechainsetType, PosechainsetToText},
+         MeosType{&PosesetType, PosesetToText},
+         MeosType{&QuadbinType, QuadbinToText},
+         MeosType{&QuadbinsetType, QuadbinsetToText},
+         MeosType{&RaquetType, RaquetToText},
+         MeosType{&RasterType, RasterToText},
+         MeosType{&S2cellType, S2cellToText},
+         MeosType{&S2cellsetType, S2cellsetToText},
+         MeosType{&StboxType, StboxToText},
+         MeosType{&SummarystatsType, SummarystatsToText},
+         MeosType{&TbigintType, TbigintToText},
+         MeosType{&TboolType, TboolToText},
+         MeosType{&TboxType, TboxToText},
+         MeosType{&TcbufferType, TcbufferToText},
+         MeosType{&TextsetType, TextsetToText},
+         MeosType{&TfloatType, TfloatToText},
+         MeosType{&TgeogpointType, TgeogpointToText},
+         MeosType{&TgeographyType, TgeographyToText},
+         MeosType{&TgeometryType, TgeometryToText},
+         MeosType{&TgeompointType, TgeompointToText},
+         MeosType{&Th3indexType, Th3indexToText},
+         MeosType{&TintType, TintToText},
+         MeosType{&TjsonbType, TjsonbToText},
+         MeosType{&TnpointType, TnpointToText},
+         MeosType{&TpcboxType, TpcboxToText},
+         MeosType{&TpcpatchType, TpcpatchToText},
+         MeosType{&TpcpointType, TpcpointToText},
+         MeosType{&TposeType, TposeToText},
+         MeosType{&TposechainType, TposechainToText},
+         MeosType{&TquadbinType, TquadbinToText},
+         MeosType{&TrgeometryType, TrgeometryToText},
+         MeosType{&Ts2cellType, Ts2cellToText},
+         MeosType{&TstzsetType, TstzsetToText},
+         MeosType{&TstzspanType, TstzspanToText},
+         MeosType{&TstzspansetType, TstzspansetToText},
+         MeosType{&TtextType, TtextToText},
+         MeosType{&ByteaType, ByteaToText},
+         MeosType{&BigintspanArrayType, BigintspanArrayToText},
+         MeosType{&CbufferArrayType, CbufferArrayToText},
+         MeosType{&DatespanArrayType, DatespanArrayToText},
+         MeosType{&FloatspanArrayType, FloatspanArrayToText},
+         MeosType{&GeographyArrayType, GeographyArrayToText},
+         MeosType{&GeometryArrayType, GeometryArrayToText},
+         MeosType{&H3indexArrayType, H3indexArrayToText},
+         MeosType{&IntspanArrayType, IntspanArrayToText},
+         MeosType{&JsonbArrayType, JsonbArrayToText},
+         MeosType{&NpointArrayType, NpointArrayToText},
+         MeosType{&NsegmentArrayType, NsegmentArrayToText},
+         MeosType{&PcpatchArrayType, PcpatchArrayToText},
+         MeosType{&PcpointArrayType, PcpointArrayToText},
+         MeosType{&PoseArrayType, PoseArrayToText},
+         MeosType{&PosechainArrayType, PosechainArrayToText},
+         MeosType{&QuadbinArrayType, QuadbinArrayToText},
+         MeosType{&RaquetArrayType, RaquetArrayToText},
+         MeosType{&RasterArrayType, RasterArrayToText},
+         MeosType{&S2cellArrayType, S2cellArrayToText},
+         MeosType{&StboxArrayType, StboxArrayToText},
+         MeosType{&TbigintArrayType, TbigintArrayToText},
+         MeosType{&TboolArrayType, TboolArrayToText},
+         MeosType{&TboxArrayType, TboxArrayToText},
+         MeosType{&TcbufferArrayType, TcbufferArrayToText},
+         MeosType{&TfloatArrayType, TfloatArrayToText},
+         MeosType{&TgeogpointArrayType, TgeogpointArrayToText},
+         MeosType{&TgeographyArrayType, TgeographyArrayToText},
+         MeosType{&TgeometryArrayType, TgeometryArrayToText},
+         MeosType{&TgeompointArrayType, TgeompointArrayToText},
+         MeosType{&Th3indexArrayType, Th3indexArrayToText},
+         MeosType{&TintArrayType, TintArrayToText},
+         MeosType{&TjsonbArrayType, TjsonbArrayToText},
+         MeosType{&TnpointArrayType, TnpointArrayToText},
+         MeosType{&TpcboxArrayType, TpcboxArrayToText},
+         MeosType{&TpcpatchArrayType, TpcpatchArrayToText},
+         MeosType{&TpcpointArrayType, TpcpointArrayToText},
+         MeosType{&TposeArrayType, TposeArrayToText},
+         MeosType{&TposechainArrayType, TposechainArrayToText},
+         MeosType{&TquadbinArrayType, TquadbinArrayToText},
+         MeosType{&TrgeometryArrayType, TrgeometryArrayToText},
+         MeosType{&Ts2cellArrayType, Ts2cellArrayToText},
+         MeosType{&TstzspanArrayType, TstzspanArrayToText},
+         MeosType{&TtextArrayType, TtextArrayToText},
+         MeosType{&BigintArrayType, BigintArrayToText},
+         MeosType{&BooleanArrayType, BooleanArrayToText},
+         MeosType{&DateArrayType, DateArrayToText},
+         MeosType{&DoublePrecisionArrayType, DoublePrecisionArrayToText},
+         MeosType{&FloatArrayType, FloatArrayToText},
+         MeosType{&IntegerArrayType, IntegerArrayToText},
+         MeosType{&TextArrayType, TextArrayToText},
+         MeosType{&TimestamptzArrayType, TimestamptzArrayToText}}};
     return types;
 }
 

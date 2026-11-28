@@ -36,8 +36,8 @@ namespace NES
 LoweringRuleResultSubgraph LowerToPhysicalUnnest::apply(LogicalOperator logicalOperator)
 {
     const auto unnest = logicalOperator.getAs<UnnestLogicalOperator>();
-    const auto array
-        = QueryCompilation::FunctionProvider::lowerFunction(unnest->getArray(), *unnest->getChild()->getTraitSet().get<FieldMappingTrait>());
+    const auto array = QueryCompilation::FunctionProvider::lowerFunction(
+        unnest->getArray(), *unnest->getChild()->getTraitSet().get<FieldMappingTrait>());
     const auto traitSet = logicalOperator.getTraitSet();
 
     /// The element field is the one field of the output its child does not have, named as the field mapping names it

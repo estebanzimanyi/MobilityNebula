@@ -85,7 +85,8 @@ void SessionAggregationOperatorHandler::checkAndTriggerWindows(const BufferMetaD
         }
     }
 
-    const auto [slicesAndWindowInfo, outputWatermarkAndSequenceNumber] = sliceAndWindowStore->getTriggerableWindowSlices(newGlobalWatermark);
+    const auto [slicesAndWindowInfo, outputWatermarkAndSequenceNumber]
+        = sliceAndWindowStore->getTriggerableWindowSlices(newGlobalWatermark);
     const std::scoped_lock lock(mutex);
     for (const auto& [windowInfo, slices] : slicesAndWindowInfo)
     {
@@ -127,7 +128,8 @@ void SessionAggregationOperatorHandler::processInSequence(PipelineExecutionConte
 
 TupleBuffer SessionAggregationOperatorHandler::createHashMap(AbstractBufferProvider& bufferProvider) const
 {
-    const auto neededBufferSize = ChainedHashMap::calculateBufferSize(hashMapConfig.numberOfBuckets, hashMapConfig.bloomFilterMemAreaSize());
+    const auto neededBufferSize
+        = ChainedHashMap::calculateBufferSize(hashMapConfig.numberOfBuckets, hashMapConfig.bloomFilterMemAreaSize());
     auto buffer = bufferProvider.getUnpooledBuffer(neededBufferSize);
     if (not buffer.has_value())
     {
@@ -140,8 +142,8 @@ TupleBuffer SessionAggregationOperatorHandler::createHashMap(AbstractBufferProvi
 void SessionAggregationOperatorHandler::chainSlice(
     const PendingSlice& pending, const SequenceNumber sequenceNumber, PipelineExecutionContext* pipelineCtx)
 {
-    const auto watermarkOfSlice = Timestamp(std::min(
-        openSessions ? firstOpenEventTime : std::numeric_limits<uint64_t>::max(), pending.windowInfo.windowStart.getRawValue()));
+    const auto watermarkOfSlice = Timestamp(
+        std::min(openSessions ? firstOpenEventTime : std::numeric_limits<uint64_t>::max(), pending.windowInfo.windowStart.getRawValue()));
     if (pending.windowInfo.windowEnd <= lastChainedSliceEnd)
     {
         /// The slice was created again for records that arrived after their slice had been chained
@@ -197,14 +199,17 @@ void SessionAggregationOperatorHandler::chainSlice(
 
     auto goingOnSessions = createHashMap(*bufferProvider);
     auto endedSessions = createHashMap(*bufferProvider);
-    firstOpenEventTime = (*sessionFunctions->chain)(
-        &openSessions.value(), &sliceSessions, &goingOnSessions, &endedSessions, bufferProvider.get(), &arena);
+    firstOpenEventTime
+        = (*sessionFunctions->chain)(&openSessions.value(), &sliceSessions, &goingOnSessions, &endedSessions, bufferProvider.get(), &arena);
     openSessions = std::move(goingOnSessions);
 
     /// No later session starts before the open ones or before this slice
     const auto watermark = Timestamp(std::min(firstOpenEventTime, pending.windowInfo.windowStart.getRawValue()));
     emitSessions(
-        numberOfRecords(endedSessions) > 0 ? std::optional(std::move(endedSessions)) : std::nullopt, watermark, sequenceNumber, pipelineCtx);
+        numberOfRecords(endedSessions) > 0 ? std::optional(std::move(endedSessions)) : std::nullopt,
+        watermark,
+        sequenceNumber,
+        pipelineCtx);
 }
 
 void SessionAggregationOperatorHandler::closeSessions(
@@ -242,7 +247,10 @@ void SessionAggregationOperatorHandler::closeSessions(
 }
 
 void SessionAggregationOperatorHandler::emitSessions(
-    std::optional<TupleBuffer> sessions, const Timestamp watermark, const SequenceNumber sequenceNumber, PipelineExecutionContext* pipelineCtx)
+    std::optional<TupleBuffer> sessions,
+    const Timestamp watermark,
+    const SequenceNumber sequenceNumber,
+    PipelineExecutionContext* pipelineCtx)
 {
     /// The watermark a session window forwards never goes back
     lastEmittedWatermark = std::max(lastEmittedWatermark, watermark);
@@ -274,7 +282,11 @@ void SessionAggregationOperatorHandler::emitSessions(
         WindowInfo{lastEmittedWatermark.getRawValue(), lastEmittedWatermark.getRawValue()}, sessions ? uint64_t{1} : uint64_t{0}};
     pipelineCtx->emitBuffer(tupleBuffer);
     NES_TRACE(
-        "Emitted {} sessions with watermarkTs {} sequenceNumber {} originId {}", numberOfSessions, lastEmittedWatermark, sequenceNumber, outputOriginId);
+        "Emitted {} sessions with watermarkTs {} sequenceNumber {} originId {}",
+        numberOfSessions,
+        lastEmittedWatermark,
+        sequenceNumber,
+        outputOriginId);
 }
 
 }

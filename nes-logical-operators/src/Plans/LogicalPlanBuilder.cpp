@@ -32,17 +32,17 @@
 #include <Operators/EventTimeWatermarkAssignerLogicalOperator.hpp>
 #include <Operators/InferModelNameLogicalOperator.hpp>
 #include <Operators/IngestionTimeWatermarkAssignerLogicalOperator.hpp>
+#include <Operators/InlineTableJoinLogicalOperator.hpp>
 #include <Operators/LogicalOperator.hpp>
 #include <Operators/LogicalOperatorFwd.hpp>
 #include <Operators/ProjectionLogicalOperator.hpp>
 #include <Operators/SelectionLogicalOperator.hpp>
-#include <Operators/InlineTableJoinLogicalOperator.hpp>
-#include <Operators/UnnestLogicalOperator.hpp>
 #include <Operators/Sinks/AnonymousSinkLogicalOperator.hpp>
 #include <Operators/Sinks/SinkLogicalOperator.hpp>
 #include <Operators/Sources/AnonymousSourceLogicalOperator.hpp>
 #include <Operators/Sources/SourceNameLogicalOperator.hpp>
 #include <Operators/UnionLogicalOperator.hpp>
+#include <Operators/UnnestLogicalOperator.hpp>
 #include <Operators/Windows/Aggregations/WindowAggregationLogicalFunction.hpp>
 #include <Operators/Windows/JoinLogicalOperator.hpp>
 #include <Operators/Windows/WindowedAggregationLogicalOperator.hpp>
@@ -110,8 +110,7 @@ LogicalPlan LogicalPlanBuilder::addInlineTableJoin(
     std::vector<LogicalFunction> values, Identifier alias, std::vector<Identifier> fields, const LogicalPlan& queryPlan)
 {
     NES_TRACE("LogicalPlanBuilder: add inline table join operator to query plan");
-    return promoteOperatorToRoot(
-        queryPlan, InlineTableJoinLogicalOperator::create(std::move(values), std::move(alias), std::move(fields)));
+    return promoteOperatorToRoot(queryPlan, InlineTableJoinLogicalOperator::create(std::move(values), std::move(alias), std::move(fields)));
 }
 
 LogicalPlan LogicalPlanBuilder::addWindowAggregation(
@@ -213,7 +212,9 @@ LogicalPlan LogicalPlanBuilder::checkAndAddWatermarkAssigner(LogicalPlan queryPl
                         [&queryPlan](const auto& eventTime)
                         {
                             return promoteOperatorToRoot(
-                                queryPlan, EventTimeWatermarkAssignerLogicalOperator::create(eventTime.field, eventTime.unit, eventTime.allowedLateness));
+                                queryPlan,
+                                EventTimeWatermarkAssignerLogicalOperator::create(
+                                    eventTime.field, eventTime.unit, eventTime.allowedLateness));
                         },
                     },
                     unboundBound);

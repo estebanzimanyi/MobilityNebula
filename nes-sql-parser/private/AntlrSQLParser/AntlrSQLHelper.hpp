@@ -119,6 +119,7 @@ public:
 
     /// Flag set while parsing CROSS JOIN UNNEST(array) AS u(x), whose identifiers name no source
     bool isUnnest = false;
+
     /// The array of CROSS JOIN UNNEST, the alias u and the field x of its elements
     struct Unnest
     {
@@ -126,10 +127,12 @@ public:
         Identifier alias;
         Identifier element;
     };
+
     std::optional<Unnest> unnest;
 
     /// Flag set while parsing the inline table of a cross join, (VALUES ...) AS f(x, y), whose identifiers name no source
     bool isInlineTable = false;
+
     /// The values of the inline table of a cross join, row after row, and the fields x, y its alias f names
     struct InlineTable
     {
@@ -137,6 +140,7 @@ public:
         Identifier alias;
         std::vector<Identifier> fields;
     };
+
     std::optional<InlineTable> inlineTable;
 
     [[nodiscard]] std::vector<LogicalFunction>& getWhereClauses();

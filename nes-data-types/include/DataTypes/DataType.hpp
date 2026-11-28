@@ -131,6 +131,7 @@ struct DataType final
     [[nodiscard]] bool isSignedInteger() const;
     [[nodiscard]] bool isFloat() const;
     [[nodiscard]] bool isNumeric() const;
+
     /// Whether the values are those of a type a plugin adds over VARSIZED (@struct ExtensionType).
     [[nodiscard]] bool isExtension() const { return extension != nullptr; }
 

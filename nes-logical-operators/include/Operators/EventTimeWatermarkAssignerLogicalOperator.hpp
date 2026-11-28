@@ -49,7 +49,11 @@ public:
     EventTimeWatermarkAssignerLogicalOperator(
         WeakLogicalOperator self, LogicalFunction onField, const Windowing::TimeUnit& unit, uint64_t allowedLateness = 0);
     EventTimeWatermarkAssignerLogicalOperator(
-        WeakLogicalOperator self, LogicalOperator child, LogicalFunction onField, const Windowing::TimeUnit& unit, uint64_t allowedLateness = 0);
+        WeakLogicalOperator self,
+        LogicalOperator child,
+        LogicalFunction onField,
+        const Windowing::TimeUnit& unit,
+        uint64_t allowedLateness = 0);
 
     static TypedLogicalOperator<EventTimeWatermarkAssignerLogicalOperator>
     create(LogicalFunction onField, const Windowing::TimeUnit& unit, uint64_t allowedLateness = 0);

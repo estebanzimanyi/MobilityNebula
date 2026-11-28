@@ -134,22 +134,20 @@ BoundTimeCharacteristic TimeCharacteristicWrapper::withInferredSchema(const Sche
                         const auto erasedFieldAccess = unboundEventTimeCharacteristic.field.withInferredDataType(schema);
                         const auto fieldAccessOpt = erasedFieldAccess.tryGetAs<FieldAccessLogicalFunction>();
 
-                        return BoundTimeCharacteristic{
-                            BoundEventTimeCharacteristic{
-                                .field = fieldAccessOpt.value(),
-                                .unit = unboundEventTimeCharacteristic.unit,
-                                .allowedLateness = unboundEventTimeCharacteristic.allowedLateness}};
+                        return BoundTimeCharacteristic{BoundEventTimeCharacteristic{
+                            .field = fieldAccessOpt.value(),
+                            .unit = unboundEventTimeCharacteristic.unit,
+                            .allowedLateness = unboundEventTimeCharacteristic.allowedLateness}};
                     },
                     [&](const BoundEventTimeCharacteristic& boundEventTimeCharacteristic)
                     {
                         const auto erasedFieldAccess = boundEventTimeCharacteristic.field.withInferredDataType(schema);
                         const auto fieldAccessOpt = erasedFieldAccess.tryGetAs<FieldAccessLogicalFunction>();
 
-                        return BoundTimeCharacteristic{
-                            BoundEventTimeCharacteristic{
-                                .field = fieldAccessOpt.value(),
-                                .unit = boundEventTimeCharacteristic.unit,
-                                .allowedLateness = boundEventTimeCharacteristic.allowedLateness}};
+                        return BoundTimeCharacteristic{BoundEventTimeCharacteristic{
+                            .field = fieldAccessOpt.value(),
+                            .unit = boundEventTimeCharacteristic.unit,
+                            .allowedLateness = boundEventTimeCharacteristic.allowedLateness}};
                     },
                 },
                 unboundBound);

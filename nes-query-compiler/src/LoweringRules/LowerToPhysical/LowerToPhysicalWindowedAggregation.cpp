@@ -161,8 +161,10 @@ LoweringRuleResultSubgraph LowerToPhysicalWindowedAggregation::apply(LogicalOper
         {
             throw UnknownWindowType("A session window closes on event time, so it needs a timestamp field");
         }
-        aggregationPhysicalFunctions.emplace_back(std::make_shared<SessionBoundsAggregationPhysicalFunction>(
-            FieldAccessPhysicalFunction{eventTime->field->getField().getLastName()}, eventTime->unit.getMillisecondsConversionMultiplier()));
+        aggregationPhysicalFunctions.emplace_back(
+            std::make_shared<SessionBoundsAggregationPhysicalFunction>(
+                FieldAccessPhysicalFunction{eventTime->field->getField().getLastName()},
+                eventTime->unit.getMillisecondsConversionMultiplier()));
     }
 
     const auto physicalInputSchema = createPhysicalOutputSchema(childTraitSet);
@@ -248,7 +250,11 @@ LoweringRuleResultSubgraph LowerToPhysicalWindowedAggregation::apply(LogicalOper
     if (sessionWindow != nullptr)
     {
         handler = std::make_shared<SessionAggregationOperatorHandler>(
-            *inputOriginIds | std::ranges::to<std::vector>(), outputOriginId, std::move(sliceAndWindowStore), hashMapConfig, sessionFunctions);
+            *inputOriginIds | std::ranges::to<std::vector>(),
+            outputOriginId,
+            std::move(sliceAndWindowStore),
+            hashMapConfig,
+            sessionFunctions);
     }
     else
     {

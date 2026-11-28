@@ -33,10 +33,10 @@
 #include <Util/Logger/Logger.hpp>
 #include <Util/Logger/impl/NesLogger.hpp>
 #include <gtest/gtest.h>
+#include <nautilus/std/cstring.h>
 #include <Arena.hpp>
 #include <BaseUnitTest.hpp>
 #include <ErrorHandling.hpp>
-#include <nautilus/std/cstring.h>
 
 namespace NES
 {
@@ -112,7 +112,8 @@ TEST_F(ExtensionTypeConstantTest, HoldsTheBytesItsTextStates)
 TEST_F(ExtensionTypeConstantTest, RefusedWithoutAReader)
 {
     const auto constant = ConstantValueLogicalFunction{extensionDataType(Opaque), "0A0B0C"};
-    ASSERT_EXCEPTION_ERRORCODE(std::ignore = QueryCompilation::FunctionProvider::lowerFunction(constant, noFields), ErrorCode::QueryCompilerError);
+    ASSERT_EXCEPTION_ERRORCODE(
+        std::ignore = QueryCompilation::FunctionProvider::lowerFunction(constant, noFields), ErrorCode::QueryCompilerError);
 }
 
 }

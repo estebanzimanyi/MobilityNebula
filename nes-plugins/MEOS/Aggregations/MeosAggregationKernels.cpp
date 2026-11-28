@@ -27,7 +27,6 @@ extern "C" {
 #include <meos.h>
 #include <meos_cbuffer.h>
 #include <meos_geo.h>
-#include <meos_h3.h>
 #include <meos_internal.h>
 #include <meos_json.h>
 #include <meos_npoint.h>
@@ -35,6 +34,7 @@ extern "C" {
 #include <meos_pose.h>
 #include <meos_quadbin.h>
 #include <meos_raster.h>
+#include <meos_h3.h>
 #include <meos_s2cell.h>
 }
 
@@ -57,9 +57,11 @@ struct MeosAggregate_setUnionAgg_0Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -70,22 +72,15 @@ struct MeosAggregate_setUnionAgg_0Ops
         }
         return true;
     }
-    static void* Transition(void* s, Row& row)
-    {
-        return cbuffer_union_transfn(static_cast<Set*>(s), static_cast<Cbuffer*>(row.a0));
-    }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return set_union_finalfn(static_cast<Set*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void* Transition(void* s, Row& row) { return cbuffer_union_transfn(static_cast<Set*>(s), static_cast<Cbuffer*>(row.a0)); }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return set_union_finalfn(static_cast<Set*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Set*>(v);
@@ -96,15 +91,18 @@ struct MeosAggregate_setUnionAgg_0Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(set_mem_size(static_cast<const Set*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_setUnionAgg_0Literals{};
 using MeosAggregate_setUnionAgg_0 = MeosRuntime::MeosAggregate<MeosAggregate_setUnionAgg_0Ops>;
-constexpr MeosAggregateKernels MeosAggregate_setUnionAgg_0Kernels{&MeosAggregate_setUnionAgg_0::Initialize, &MeosAggregate_setUnionAgg_0::Update, &MeosAggregate_setUnionAgg_0::Combine, &MeosAggregate_setUnionAgg_0::Finish, MeosAggregate_setUnionAgg_0::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_setUnionAgg_0Kernels{
+    &MeosAggregate_setUnionAgg_0::Initialize,
+    &MeosAggregate_setUnionAgg_0::Update,
+    &MeosAggregate_setUnionAgg_0::Combine,
+    &MeosAggregate_setUnionAgg_0::Finish,
+    MeosAggregate_setUnionAgg_0::StateSize};
 
 struct MeosAggregate_setUnionAgg_1Ops
 {
@@ -112,9 +110,11 @@ struct MeosAggregate_setUnionAgg_1Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -125,22 +125,15 @@ struct MeosAggregate_setUnionAgg_1Ops
         }
         return true;
     }
-    static void* Transition(void* s, Row& row)
-    {
-        return set_union_transfn(static_cast<Set*>(s), static_cast<Set*>(row.a0));
-    }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return set_union_finalfn(static_cast<Set*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void* Transition(void* s, Row& row) { return set_union_transfn(static_cast<Set*>(s), static_cast<Set*>(row.a0)); }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return set_union_finalfn(static_cast<Set*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Set*>(v);
@@ -151,15 +144,18 @@ struct MeosAggregate_setUnionAgg_1Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(set_mem_size(static_cast<const Set*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_setUnionAgg_1Literals{};
 using MeosAggregate_setUnionAgg_1 = MeosRuntime::MeosAggregate<MeosAggregate_setUnionAgg_1Ops>;
-constexpr MeosAggregateKernels MeosAggregate_setUnionAgg_1Kernels{&MeosAggregate_setUnionAgg_1::Initialize, &MeosAggregate_setUnionAgg_1::Update, &MeosAggregate_setUnionAgg_1::Combine, &MeosAggregate_setUnionAgg_1::Finish, MeosAggregate_setUnionAgg_1::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_setUnionAgg_1Kernels{
+    &MeosAggregate_setUnionAgg_1::Initialize,
+    &MeosAggregate_setUnionAgg_1::Update,
+    &MeosAggregate_setUnionAgg_1::Combine,
+    &MeosAggregate_setUnionAgg_1::Finish,
+    MeosAggregate_setUnionAgg_1::StateSize};
 
 struct MeosAggregate_extent_0Ops
 {
@@ -167,9 +163,11 @@ struct MeosAggregate_extent_0Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = false;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -180,22 +178,15 @@ struct MeosAggregate_extent_0Ops
         }
         return true;
     }
-    static void* Transition(void* s, Row& row)
-    {
-        return tspatial_extent_transfn(static_cast<STBox*>(s), static_cast<Temporal*>(row.a0));
-    }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return s;
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void* Transition(void* s, Row& row) { return tspatial_extent_transfn(static_cast<STBox*>(s), static_cast<Temporal*>(row.a0)); }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return s; }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<STBox*>(v);
@@ -206,15 +197,18 @@ struct MeosAggregate_extent_0Ops
         }
         return MeosRuntime::image(r, size_t{80});
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_extent_0Literals{};
 using MeosAggregate_extent_0 = MeosRuntime::MeosAggregate<MeosAggregate_extent_0Ops>;
-constexpr MeosAggregateKernels MeosAggregate_extent_0Kernels{&MeosAggregate_extent_0::Initialize, &MeosAggregate_extent_0::Update, &MeosAggregate_extent_0::Combine, &MeosAggregate_extent_0::Finish, MeosAggregate_extent_0::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_extent_0Kernels{
+    &MeosAggregate_extent_0::Initialize,
+    &MeosAggregate_extent_0::Update,
+    &MeosAggregate_extent_0::Combine,
+    &MeosAggregate_extent_0::Finish,
+    MeosAggregate_extent_0::StateSize};
 
 struct MeosAggregate_tCount_0Ops
 {
@@ -222,9 +216,11 @@ struct MeosAggregate_tCount_0Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -235,22 +231,18 @@ struct MeosAggregate_tCount_0Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_tcount_transfn(static_cast<struct SkipList*>(s), static_cast<Temporal*>(row.a0));
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_tagg_finalfn(static_cast<struct SkipList*>(s));
-    }
-    static void Release(void* s)
-    {
-        skiplist_free(static_cast<struct SkipList*>(s));
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_tagg_finalfn(static_cast<struct SkipList*>(s)); }
+
+    static void Release(void* s) { skiplist_free(static_cast<struct SkipList*>(s)); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -261,15 +253,18 @@ struct MeosAggregate_tCount_0Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_tCount_0Literals{};
 using MeosAggregate_tCount_0 = MeosRuntime::MeosAggregate<MeosAggregate_tCount_0Ops>;
-constexpr MeosAggregateKernels MeosAggregate_tCount_0Kernels{&MeosAggregate_tCount_0::Initialize, &MeosAggregate_tCount_0::Update, &MeosAggregate_tCount_0::Combine, &MeosAggregate_tCount_0::Finish, MeosAggregate_tCount_0::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_tCount_0Kernels{
+    &MeosAggregate_tCount_0::Initialize,
+    &MeosAggregate_tCount_0::Update,
+    &MeosAggregate_tCount_0::Combine,
+    &MeosAggregate_tCount_0::Finish,
+    MeosAggregate_tCount_0::StateSize};
 
 struct MeosAggregate_wCount_0Ops
 {
@@ -278,9 +273,11 @@ struct MeosAggregate_wCount_0Ops
         void* a0;
         Interval* a1;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         row.a0 = MeosRuntime::laid(a0);
@@ -296,23 +293,22 @@ struct MeosAggregate_wCount_0Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_wcount_transfn(static_cast<struct SkipList*>(s), static_cast<Temporal*>(row.a0), row.a1);
     }
+
     static void Free(Row& row)
     {
         std::free(row.a0);
         std::free(row.a1);
     }
-    static void* Final(void* s)
-    {
-        return temporal_tagg_finalfn(static_cast<struct SkipList*>(s));
-    }
-    static void Release(void* s)
-    {
-        skiplist_free(static_cast<struct SkipList*>(s));
-    }
+
+    static void* Final(void* s) { return temporal_tagg_finalfn(static_cast<struct SkipList*>(s)); }
+
+    static void Release(void* s) { skiplist_free(static_cast<struct SkipList*>(s)); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -323,15 +319,18 @@ struct MeosAggregate_wCount_0Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 1> MeosAggregate_wCount_0Literals{DataType::Type::VARSIZED};
 using MeosAggregate_wCount_0 = MeosRuntime::MeosAggregate<MeosAggregate_wCount_0Ops>;
-constexpr MeosAggregateKernels MeosAggregate_wCount_0Kernels{&MeosAggregate_wCount_0::Initialize, &MeosAggregate_wCount_0::Update, &MeosAggregate_wCount_0::Combine, &MeosAggregate_wCount_0::Finish, MeosAggregate_wCount_0::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_wCount_0Kernels{
+    &MeosAggregate_wCount_0::Initialize,
+    &MeosAggregate_wCount_0::Update,
+    &MeosAggregate_wCount_0::Combine,
+    &MeosAggregate_wCount_0::Finish,
+    MeosAggregate_wCount_0::StateSize};
 
 struct MeosAggregate_mergeAgg_0Ops
 {
@@ -339,9 +338,11 @@ struct MeosAggregate_mergeAgg_0Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -352,22 +353,18 @@ struct MeosAggregate_mergeAgg_0Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_merge_transfn(static_cast<struct SkipList*>(s), static_cast<Temporal*>(row.a0));
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_tagg_finalfn(static_cast<struct SkipList*>(s));
-    }
-    static void Release(void* s)
-    {
-        skiplist_free(static_cast<struct SkipList*>(s));
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_tagg_finalfn(static_cast<struct SkipList*>(s)); }
+
+    static void Release(void* s) { skiplist_free(static_cast<struct SkipList*>(s)); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -378,15 +375,18 @@ struct MeosAggregate_mergeAgg_0Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_mergeAgg_0Literals{};
 using MeosAggregate_mergeAgg_0 = MeosRuntime::MeosAggregate<MeosAggregate_mergeAgg_0Ops>;
-constexpr MeosAggregateKernels MeosAggregate_mergeAgg_0Kernels{&MeosAggregate_mergeAgg_0::Initialize, &MeosAggregate_mergeAgg_0::Update, &MeosAggregate_mergeAgg_0::Combine, &MeosAggregate_mergeAgg_0::Finish, MeosAggregate_mergeAgg_0::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_mergeAgg_0Kernels{
+    &MeosAggregate_mergeAgg_0::Initialize,
+    &MeosAggregate_mergeAgg_0::Update,
+    &MeosAggregate_mergeAgg_0::Combine,
+    &MeosAggregate_mergeAgg_0::Finish,
+    MeosAggregate_mergeAgg_0::StateSize};
 
 struct MeosAggregate_appendInstantAgg_0Ops
 {
@@ -394,9 +394,11 @@ struct MeosAggregate_appendInstantAgg_0Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = true;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = true;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -407,22 +409,18 @@ struct MeosAggregate_appendInstantAgg_0Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_app_tinst_transfn(static_cast<Temporal*>(s), static_cast<TInstant*>(row.a0), LINEAR, -1.0, nullptr);
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_append_finalfn(static_cast<const Temporal*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_append_finalfn(static_cast<const Temporal*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -433,15 +431,18 @@ struct MeosAggregate_appendInstantAgg_0Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row& row)
-    {
-        return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0));
-    }
+
+    static int64_t Order(const Row& row) { return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0)); }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_appendInstantAgg_0Literals{};
 using MeosAggregate_appendInstantAgg_0 = MeosRuntime::MeosAggregate<MeosAggregate_appendInstantAgg_0Ops>;
-constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_0Kernels{&MeosAggregate_appendInstantAgg_0::Initialize, &MeosAggregate_appendInstantAgg_0::Update, &MeosAggregate_appendInstantAgg_0::Combine, &MeosAggregate_appendInstantAgg_0::Finish, MeosAggregate_appendInstantAgg_0::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_0Kernels{
+    &MeosAggregate_appendInstantAgg_0::Initialize,
+    &MeosAggregate_appendInstantAgg_0::Update,
+    &MeosAggregate_appendInstantAgg_0::Combine,
+    &MeosAggregate_appendInstantAgg_0::Finish,
+    MeosAggregate_appendInstantAgg_0::StateSize};
 
 struct MeosAggregate_appendInstantAgg_1Ops
 {
@@ -450,9 +451,11 @@ struct MeosAggregate_appendInstantAgg_1Ops
         void* a0;
         interpType a1;
     };
+
     static constexpr bool GATHERS = true;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = true;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         row.a0 = MeosRuntime::laid(a0);
@@ -463,22 +466,18 @@ struct MeosAggregate_appendInstantAgg_1Ops
         row.a1 = interptype_from_string(MeosRuntime::text(MeosRuntime::literal(block, 0)).c_str());
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_app_tinst_transfn(static_cast<Temporal*>(s), static_cast<TInstant*>(row.a0), row.a1, -1.0, nullptr);
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_append_finalfn(static_cast<const Temporal*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_append_finalfn(static_cast<const Temporal*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -489,15 +488,18 @@ struct MeosAggregate_appendInstantAgg_1Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row& row)
-    {
-        return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0));
-    }
+
+    static int64_t Order(const Row& row) { return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0)); }
 };
 
 constexpr std::array<DataType::Type, 1> MeosAggregate_appendInstantAgg_1Literals{DataType::Type::VARSIZED};
 using MeosAggregate_appendInstantAgg_1 = MeosRuntime::MeosAggregate<MeosAggregate_appendInstantAgg_1Ops>;
-constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_1Kernels{&MeosAggregate_appendInstantAgg_1::Initialize, &MeosAggregate_appendInstantAgg_1::Update, &MeosAggregate_appendInstantAgg_1::Combine, &MeosAggregate_appendInstantAgg_1::Finish, MeosAggregate_appendInstantAgg_1::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_1Kernels{
+    &MeosAggregate_appendInstantAgg_1::Initialize,
+    &MeosAggregate_appendInstantAgg_1::Update,
+    &MeosAggregate_appendInstantAgg_1::Combine,
+    &MeosAggregate_appendInstantAgg_1::Finish,
+    MeosAggregate_appendInstantAgg_1::StateSize};
 
 struct MeosAggregate_appendInstantAgg_2Ops
 {
@@ -508,9 +510,11 @@ struct MeosAggregate_appendInstantAgg_2Ops
         double a2;
         Interval* a3;
     };
+
     static constexpr bool GATHERS = true;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = true;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         row.a0 = MeosRuntime::laid(a0);
@@ -528,23 +532,22 @@ struct MeosAggregate_appendInstantAgg_2Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_app_tinst_transfn(static_cast<Temporal*>(s), static_cast<TInstant*>(row.a0), row.a1, row.a2, row.a3);
     }
+
     static void Free(Row& row)
     {
         std::free(row.a0);
         std::free(row.a3);
     }
-    static void* Final(void* s)
-    {
-        return temporal_append_finalfn(static_cast<const Temporal*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void* Final(void* s) { return temporal_append_finalfn(static_cast<const Temporal*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -555,15 +558,19 @@ struct MeosAggregate_appendInstantAgg_2Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row& row)
-    {
-        return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0));
-    }
+
+    static int64_t Order(const Row& row) { return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0)); }
 };
 
-constexpr std::array<DataType::Type, 3> MeosAggregate_appendInstantAgg_2Literals{DataType::Type::VARSIZED, DataType::Type::FLOAT64, DataType::Type::VARSIZED};
+constexpr std::array<DataType::Type, 3> MeosAggregate_appendInstantAgg_2Literals{
+    DataType::Type::VARSIZED, DataType::Type::FLOAT64, DataType::Type::VARSIZED};
 using MeosAggregate_appendInstantAgg_2 = MeosRuntime::MeosAggregate<MeosAggregate_appendInstantAgg_2Ops>;
-constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_2Kernels{&MeosAggregate_appendInstantAgg_2::Initialize, &MeosAggregate_appendInstantAgg_2::Update, &MeosAggregate_appendInstantAgg_2::Combine, &MeosAggregate_appendInstantAgg_2::Finish, MeosAggregate_appendInstantAgg_2::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_2Kernels{
+    &MeosAggregate_appendInstantAgg_2::Initialize,
+    &MeosAggregate_appendInstantAgg_2::Update,
+    &MeosAggregate_appendInstantAgg_2::Combine,
+    &MeosAggregate_appendInstantAgg_2::Finish,
+    MeosAggregate_appendInstantAgg_2::StateSize};
 
 struct MeosAggregate_appendSequenceAgg_0Ops
 {
@@ -571,9 +578,11 @@ struct MeosAggregate_appendSequenceAgg_0Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = true;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = true;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -584,22 +593,18 @@ struct MeosAggregate_appendSequenceAgg_0Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_app_tseq_transfn(static_cast<Temporal*>(s), static_cast<TSequence*>(row.a0));
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_append_finalfn(static_cast<const Temporal*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_append_finalfn(static_cast<const Temporal*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -610,15 +615,18 @@ struct MeosAggregate_appendSequenceAgg_0Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row& row)
-    {
-        return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0));
-    }
+
+    static int64_t Order(const Row& row) { return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0)); }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_appendSequenceAgg_0Literals{};
 using MeosAggregate_appendSequenceAgg_0 = MeosRuntime::MeosAggregate<MeosAggregate_appendSequenceAgg_0Ops>;
-constexpr MeosAggregateKernels MeosAggregate_appendSequenceAgg_0Kernels{&MeosAggregate_appendSequenceAgg_0::Initialize, &MeosAggregate_appendSequenceAgg_0::Update, &MeosAggregate_appendSequenceAgg_0::Combine, &MeosAggregate_appendSequenceAgg_0::Finish, MeosAggregate_appendSequenceAgg_0::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_appendSequenceAgg_0Kernels{
+    &MeosAggregate_appendSequenceAgg_0::Initialize,
+    &MeosAggregate_appendSequenceAgg_0::Update,
+    &MeosAggregate_appendSequenceAgg_0::Combine,
+    &MeosAggregate_appendSequenceAgg_0::Finish,
+    MeosAggregate_appendSequenceAgg_0::StateSize};
 
 struct MeosAggregate_setUnionAgg_2Ops
 {
@@ -626,9 +634,11 @@ struct MeosAggregate_setUnionAgg_2Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -639,22 +649,15 @@ struct MeosAggregate_setUnionAgg_2Ops
         }
         return true;
     }
-    static void* Transition(void* s, Row& row)
-    {
-        return geo_union_transfn(static_cast<Set*>(s), static_cast<GSERIALIZED*>(row.a0));
-    }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return set_union_finalfn(static_cast<Set*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void* Transition(void* s, Row& row) { return geo_union_transfn(static_cast<Set*>(s), static_cast<GSERIALIZED*>(row.a0)); }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return set_union_finalfn(static_cast<Set*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Set*>(v);
@@ -665,15 +668,18 @@ struct MeosAggregate_setUnionAgg_2Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(set_mem_size(static_cast<const Set*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_setUnionAgg_2Literals{};
 using MeosAggregate_setUnionAgg_2 = MeosRuntime::MeosAggregate<MeosAggregate_setUnionAgg_2Ops>;
-constexpr MeosAggregateKernels MeosAggregate_setUnionAgg_2Kernels{&MeosAggregate_setUnionAgg_2::Initialize, &MeosAggregate_setUnionAgg_2::Update, &MeosAggregate_setUnionAgg_2::Combine, &MeosAggregate_setUnionAgg_2::Finish, MeosAggregate_setUnionAgg_2::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_setUnionAgg_2Kernels{
+    &MeosAggregate_setUnionAgg_2::Initialize,
+    &MeosAggregate_setUnionAgg_2::Update,
+    &MeosAggregate_setUnionAgg_2::Combine,
+    &MeosAggregate_setUnionAgg_2::Finish,
+    MeosAggregate_setUnionAgg_2::StateSize};
 
 struct MeosAggregate_setUnionAgg_3Ops
 {
@@ -681,9 +687,11 @@ struct MeosAggregate_setUnionAgg_3Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -694,22 +702,15 @@ struct MeosAggregate_setUnionAgg_3Ops
         }
         return true;
     }
-    static void* Transition(void* s, Row& row)
-    {
-        return geo_union_transfn(static_cast<Set*>(s), static_cast<GSERIALIZED*>(row.a0));
-    }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return set_union_finalfn(static_cast<Set*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void* Transition(void* s, Row& row) { return geo_union_transfn(static_cast<Set*>(s), static_cast<GSERIALIZED*>(row.a0)); }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return set_union_finalfn(static_cast<Set*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Set*>(v);
@@ -720,15 +721,18 @@ struct MeosAggregate_setUnionAgg_3Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(set_mem_size(static_cast<const Set*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_setUnionAgg_3Literals{};
 using MeosAggregate_setUnionAgg_3 = MeosRuntime::MeosAggregate<MeosAggregate_setUnionAgg_3Ops>;
-constexpr MeosAggregateKernels MeosAggregate_setUnionAgg_3Kernels{&MeosAggregate_setUnionAgg_3::Initialize, &MeosAggregate_setUnionAgg_3::Update, &MeosAggregate_setUnionAgg_3::Combine, &MeosAggregate_setUnionAgg_3::Finish, MeosAggregate_setUnionAgg_3::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_setUnionAgg_3Kernels{
+    &MeosAggregate_setUnionAgg_3::Initialize,
+    &MeosAggregate_setUnionAgg_3::Update,
+    &MeosAggregate_setUnionAgg_3::Combine,
+    &MeosAggregate_setUnionAgg_3::Finish,
+    MeosAggregate_setUnionAgg_3::StateSize};
 
 struct MeosAggregate_setUnionAgg_4Ops
 {
@@ -736,9 +740,11 @@ struct MeosAggregate_setUnionAgg_4Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -749,22 +755,15 @@ struct MeosAggregate_setUnionAgg_4Ops
         }
         return true;
     }
-    static void* Transition(void* s, Row& row)
-    {
-        return set_union_transfn(static_cast<Set*>(s), static_cast<Set*>(row.a0));
-    }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return set_union_finalfn(static_cast<Set*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void* Transition(void* s, Row& row) { return set_union_transfn(static_cast<Set*>(s), static_cast<Set*>(row.a0)); }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return set_union_finalfn(static_cast<Set*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Set*>(v);
@@ -775,15 +774,18 @@ struct MeosAggregate_setUnionAgg_4Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(set_mem_size(static_cast<const Set*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_setUnionAgg_4Literals{};
 using MeosAggregate_setUnionAgg_4 = MeosRuntime::MeosAggregate<MeosAggregate_setUnionAgg_4Ops>;
-constexpr MeosAggregateKernels MeosAggregate_setUnionAgg_4Kernels{&MeosAggregate_setUnionAgg_4::Initialize, &MeosAggregate_setUnionAgg_4::Update, &MeosAggregate_setUnionAgg_4::Combine, &MeosAggregate_setUnionAgg_4::Finish, MeosAggregate_setUnionAgg_4::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_setUnionAgg_4Kernels{
+    &MeosAggregate_setUnionAgg_4::Initialize,
+    &MeosAggregate_setUnionAgg_4::Update,
+    &MeosAggregate_setUnionAgg_4::Combine,
+    &MeosAggregate_setUnionAgg_4::Finish,
+    MeosAggregate_setUnionAgg_4::StateSize};
 
 struct MeosAggregate_setUnionAgg_5Ops
 {
@@ -791,9 +793,11 @@ struct MeosAggregate_setUnionAgg_5Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -804,22 +808,15 @@ struct MeosAggregate_setUnionAgg_5Ops
         }
         return true;
     }
-    static void* Transition(void* s, Row& row)
-    {
-        return set_union_transfn(static_cast<Set*>(s), static_cast<Set*>(row.a0));
-    }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return set_union_finalfn(static_cast<Set*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void* Transition(void* s, Row& row) { return set_union_transfn(static_cast<Set*>(s), static_cast<Set*>(row.a0)); }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return set_union_finalfn(static_cast<Set*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Set*>(v);
@@ -830,15 +827,18 @@ struct MeosAggregate_setUnionAgg_5Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(set_mem_size(static_cast<const Set*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_setUnionAgg_5Literals{};
 using MeosAggregate_setUnionAgg_5 = MeosRuntime::MeosAggregate<MeosAggregate_setUnionAgg_5Ops>;
-constexpr MeosAggregateKernels MeosAggregate_setUnionAgg_5Kernels{&MeosAggregate_setUnionAgg_5::Initialize, &MeosAggregate_setUnionAgg_5::Update, &MeosAggregate_setUnionAgg_5::Combine, &MeosAggregate_setUnionAgg_5::Finish, MeosAggregate_setUnionAgg_5::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_setUnionAgg_5Kernels{
+    &MeosAggregate_setUnionAgg_5::Initialize,
+    &MeosAggregate_setUnionAgg_5::Update,
+    &MeosAggregate_setUnionAgg_5::Combine,
+    &MeosAggregate_setUnionAgg_5::Finish,
+    MeosAggregate_setUnionAgg_5::StateSize};
 
 struct MeosAggregate_extent_1Ops
 {
@@ -846,9 +846,11 @@ struct MeosAggregate_extent_1Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = false;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -859,22 +861,15 @@ struct MeosAggregate_extent_1Ops
         }
         return true;
     }
-    static void* Transition(void* s, Row& row)
-    {
-        return stbox_extent_transfn(static_cast<STBox*>(s), static_cast<STBox*>(row.a0));
-    }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return s;
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void* Transition(void* s, Row& row) { return stbox_extent_transfn(static_cast<STBox*>(s), static_cast<STBox*>(row.a0)); }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return s; }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<STBox*>(v);
@@ -885,15 +880,18 @@ struct MeosAggregate_extent_1Ops
         }
         return MeosRuntime::image(r, size_t{80});
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_extent_1Literals{};
 using MeosAggregate_extent_1 = MeosRuntime::MeosAggregate<MeosAggregate_extent_1Ops>;
-constexpr MeosAggregateKernels MeosAggregate_extent_1Kernels{&MeosAggregate_extent_1::Initialize, &MeosAggregate_extent_1::Update, &MeosAggregate_extent_1::Combine, &MeosAggregate_extent_1::Finish, MeosAggregate_extent_1::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_extent_1Kernels{
+    &MeosAggregate_extent_1::Initialize,
+    &MeosAggregate_extent_1::Update,
+    &MeosAggregate_extent_1::Combine,
+    &MeosAggregate_extent_1::Finish,
+    MeosAggregate_extent_1::StateSize};
 
 struct MeosAggregate_extent_2Ops
 {
@@ -901,9 +899,11 @@ struct MeosAggregate_extent_2Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = false;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -914,22 +914,15 @@ struct MeosAggregate_extent_2Ops
         }
         return true;
     }
-    static void* Transition(void* s, Row& row)
-    {
-        return tspatial_extent_transfn(static_cast<STBox*>(s), static_cast<Temporal*>(row.a0));
-    }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return s;
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void* Transition(void* s, Row& row) { return tspatial_extent_transfn(static_cast<STBox*>(s), static_cast<Temporal*>(row.a0)); }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return s; }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<STBox*>(v);
@@ -940,15 +933,18 @@ struct MeosAggregate_extent_2Ops
         }
         return MeosRuntime::image(r, size_t{80});
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_extent_2Literals{};
 using MeosAggregate_extent_2 = MeosRuntime::MeosAggregate<MeosAggregate_extent_2Ops>;
-constexpr MeosAggregateKernels MeosAggregate_extent_2Kernels{&MeosAggregate_extent_2::Initialize, &MeosAggregate_extent_2::Update, &MeosAggregate_extent_2::Combine, &MeosAggregate_extent_2::Finish, MeosAggregate_extent_2::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_extent_2Kernels{
+    &MeosAggregate_extent_2::Initialize,
+    &MeosAggregate_extent_2::Update,
+    &MeosAggregate_extent_2::Combine,
+    &MeosAggregate_extent_2::Finish,
+    MeosAggregate_extent_2::StateSize};
 
 struct MeosAggregate_extent_3Ops
 {
@@ -956,9 +952,11 @@ struct MeosAggregate_extent_3Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = false;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -969,22 +967,15 @@ struct MeosAggregate_extent_3Ops
         }
         return true;
     }
-    static void* Transition(void* s, Row& row)
-    {
-        return tspatial_extent_transfn(static_cast<STBox*>(s), static_cast<Temporal*>(row.a0));
-    }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return s;
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void* Transition(void* s, Row& row) { return tspatial_extent_transfn(static_cast<STBox*>(s), static_cast<Temporal*>(row.a0)); }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return s; }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<STBox*>(v);
@@ -995,15 +986,18 @@ struct MeosAggregate_extent_3Ops
         }
         return MeosRuntime::image(r, size_t{80});
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_extent_3Literals{};
 using MeosAggregate_extent_3 = MeosRuntime::MeosAggregate<MeosAggregate_extent_3Ops>;
-constexpr MeosAggregateKernels MeosAggregate_extent_3Kernels{&MeosAggregate_extent_3::Initialize, &MeosAggregate_extent_3::Update, &MeosAggregate_extent_3::Combine, &MeosAggregate_extent_3::Finish, MeosAggregate_extent_3::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_extent_3Kernels{
+    &MeosAggregate_extent_3::Initialize,
+    &MeosAggregate_extent_3::Update,
+    &MeosAggregate_extent_3::Combine,
+    &MeosAggregate_extent_3::Finish,
+    MeosAggregate_extent_3::StateSize};
 
 struct MeosAggregate_tCount_1Ops
 {
@@ -1011,9 +1005,11 @@ struct MeosAggregate_tCount_1Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -1024,22 +1020,18 @@ struct MeosAggregate_tCount_1Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_tcount_transfn(static_cast<struct SkipList*>(s), static_cast<Temporal*>(row.a0));
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_tagg_finalfn(static_cast<struct SkipList*>(s));
-    }
-    static void Release(void* s)
-    {
-        skiplist_free(static_cast<struct SkipList*>(s));
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_tagg_finalfn(static_cast<struct SkipList*>(s)); }
+
+    static void Release(void* s) { skiplist_free(static_cast<struct SkipList*>(s)); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -1050,15 +1042,18 @@ struct MeosAggregate_tCount_1Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_tCount_1Literals{};
 using MeosAggregate_tCount_1 = MeosRuntime::MeosAggregate<MeosAggregate_tCount_1Ops>;
-constexpr MeosAggregateKernels MeosAggregate_tCount_1Kernels{&MeosAggregate_tCount_1::Initialize, &MeosAggregate_tCount_1::Update, &MeosAggregate_tCount_1::Combine, &MeosAggregate_tCount_1::Finish, MeosAggregate_tCount_1::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_tCount_1Kernels{
+    &MeosAggregate_tCount_1::Initialize,
+    &MeosAggregate_tCount_1::Update,
+    &MeosAggregate_tCount_1::Combine,
+    &MeosAggregate_tCount_1::Finish,
+    MeosAggregate_tCount_1::StateSize};
 
 struct MeosAggregate_tCount_2Ops
 {
@@ -1066,9 +1061,11 @@ struct MeosAggregate_tCount_2Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -1079,22 +1076,18 @@ struct MeosAggregate_tCount_2Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_tcount_transfn(static_cast<struct SkipList*>(s), static_cast<Temporal*>(row.a0));
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_tagg_finalfn(static_cast<struct SkipList*>(s));
-    }
-    static void Release(void* s)
-    {
-        skiplist_free(static_cast<struct SkipList*>(s));
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_tagg_finalfn(static_cast<struct SkipList*>(s)); }
+
+    static void Release(void* s) { skiplist_free(static_cast<struct SkipList*>(s)); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -1105,15 +1098,18 @@ struct MeosAggregate_tCount_2Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_tCount_2Literals{};
 using MeosAggregate_tCount_2 = MeosRuntime::MeosAggregate<MeosAggregate_tCount_2Ops>;
-constexpr MeosAggregateKernels MeosAggregate_tCount_2Kernels{&MeosAggregate_tCount_2::Initialize, &MeosAggregate_tCount_2::Update, &MeosAggregate_tCount_2::Combine, &MeosAggregate_tCount_2::Finish, MeosAggregate_tCount_2::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_tCount_2Kernels{
+    &MeosAggregate_tCount_2::Initialize,
+    &MeosAggregate_tCount_2::Update,
+    &MeosAggregate_tCount_2::Combine,
+    &MeosAggregate_tCount_2::Finish,
+    MeosAggregate_tCount_2::StateSize};
 
 struct MeosAggregate_wCount_1Ops
 {
@@ -1122,9 +1118,11 @@ struct MeosAggregate_wCount_1Ops
         void* a0;
         Interval* a1;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         row.a0 = MeosRuntime::laid(a0);
@@ -1140,23 +1138,22 @@ struct MeosAggregate_wCount_1Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_wcount_transfn(static_cast<struct SkipList*>(s), static_cast<Temporal*>(row.a0), row.a1);
     }
+
     static void Free(Row& row)
     {
         std::free(row.a0);
         std::free(row.a1);
     }
-    static void* Final(void* s)
-    {
-        return temporal_tagg_finalfn(static_cast<struct SkipList*>(s));
-    }
-    static void Release(void* s)
-    {
-        skiplist_free(static_cast<struct SkipList*>(s));
-    }
+
+    static void* Final(void* s) { return temporal_tagg_finalfn(static_cast<struct SkipList*>(s)); }
+
+    static void Release(void* s) { skiplist_free(static_cast<struct SkipList*>(s)); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -1167,15 +1164,18 @@ struct MeosAggregate_wCount_1Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 1> MeosAggregate_wCount_1Literals{DataType::Type::VARSIZED};
 using MeosAggregate_wCount_1 = MeosRuntime::MeosAggregate<MeosAggregate_wCount_1Ops>;
-constexpr MeosAggregateKernels MeosAggregate_wCount_1Kernels{&MeosAggregate_wCount_1::Initialize, &MeosAggregate_wCount_1::Update, &MeosAggregate_wCount_1::Combine, &MeosAggregate_wCount_1::Finish, MeosAggregate_wCount_1::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_wCount_1Kernels{
+    &MeosAggregate_wCount_1::Initialize,
+    &MeosAggregate_wCount_1::Update,
+    &MeosAggregate_wCount_1::Combine,
+    &MeosAggregate_wCount_1::Finish,
+    MeosAggregate_wCount_1::StateSize};
 
 struct MeosAggregate_wCount_2Ops
 {
@@ -1184,9 +1184,11 @@ struct MeosAggregate_wCount_2Ops
         void* a0;
         Interval* a1;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         row.a0 = MeosRuntime::laid(a0);
@@ -1202,23 +1204,22 @@ struct MeosAggregate_wCount_2Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_wcount_transfn(static_cast<struct SkipList*>(s), static_cast<Temporal*>(row.a0), row.a1);
     }
+
     static void Free(Row& row)
     {
         std::free(row.a0);
         std::free(row.a1);
     }
-    static void* Final(void* s)
-    {
-        return temporal_tagg_finalfn(static_cast<struct SkipList*>(s));
-    }
-    static void Release(void* s)
-    {
-        skiplist_free(static_cast<struct SkipList*>(s));
-    }
+
+    static void* Final(void* s) { return temporal_tagg_finalfn(static_cast<struct SkipList*>(s)); }
+
+    static void Release(void* s) { skiplist_free(static_cast<struct SkipList*>(s)); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -1229,15 +1230,18 @@ struct MeosAggregate_wCount_2Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 1> MeosAggregate_wCount_2Literals{DataType::Type::VARSIZED};
 using MeosAggregate_wCount_2 = MeosRuntime::MeosAggregate<MeosAggregate_wCount_2Ops>;
-constexpr MeosAggregateKernels MeosAggregate_wCount_2Kernels{&MeosAggregate_wCount_2::Initialize, &MeosAggregate_wCount_2::Update, &MeosAggregate_wCount_2::Combine, &MeosAggregate_wCount_2::Finish, MeosAggregate_wCount_2::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_wCount_2Kernels{
+    &MeosAggregate_wCount_2::Initialize,
+    &MeosAggregate_wCount_2::Update,
+    &MeosAggregate_wCount_2::Combine,
+    &MeosAggregate_wCount_2::Finish,
+    MeosAggregate_wCount_2::StateSize};
 
 struct MeosAggregate_mergeAgg_1Ops
 {
@@ -1245,9 +1249,11 @@ struct MeosAggregate_mergeAgg_1Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -1258,22 +1264,18 @@ struct MeosAggregate_mergeAgg_1Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_merge_transfn(static_cast<struct SkipList*>(s), static_cast<Temporal*>(row.a0));
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_tagg_finalfn(static_cast<struct SkipList*>(s));
-    }
-    static void Release(void* s)
-    {
-        skiplist_free(static_cast<struct SkipList*>(s));
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_tagg_finalfn(static_cast<struct SkipList*>(s)); }
+
+    static void Release(void* s) { skiplist_free(static_cast<struct SkipList*>(s)); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -1284,15 +1286,18 @@ struct MeosAggregate_mergeAgg_1Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_mergeAgg_1Literals{};
 using MeosAggregate_mergeAgg_1 = MeosRuntime::MeosAggregate<MeosAggregate_mergeAgg_1Ops>;
-constexpr MeosAggregateKernels MeosAggregate_mergeAgg_1Kernels{&MeosAggregate_mergeAgg_1::Initialize, &MeosAggregate_mergeAgg_1::Update, &MeosAggregate_mergeAgg_1::Combine, &MeosAggregate_mergeAgg_1::Finish, MeosAggregate_mergeAgg_1::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_mergeAgg_1Kernels{
+    &MeosAggregate_mergeAgg_1::Initialize,
+    &MeosAggregate_mergeAgg_1::Update,
+    &MeosAggregate_mergeAgg_1::Combine,
+    &MeosAggregate_mergeAgg_1::Finish,
+    MeosAggregate_mergeAgg_1::StateSize};
 
 struct MeosAggregate_mergeAgg_2Ops
 {
@@ -1300,9 +1305,11 @@ struct MeosAggregate_mergeAgg_2Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -1313,22 +1320,18 @@ struct MeosAggregate_mergeAgg_2Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_merge_transfn(static_cast<struct SkipList*>(s), static_cast<Temporal*>(row.a0));
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_tagg_finalfn(static_cast<struct SkipList*>(s));
-    }
-    static void Release(void* s)
-    {
-        skiplist_free(static_cast<struct SkipList*>(s));
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_tagg_finalfn(static_cast<struct SkipList*>(s)); }
+
+    static void Release(void* s) { skiplist_free(static_cast<struct SkipList*>(s)); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -1339,15 +1342,18 @@ struct MeosAggregate_mergeAgg_2Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_mergeAgg_2Literals{};
 using MeosAggregate_mergeAgg_2 = MeosRuntime::MeosAggregate<MeosAggregate_mergeAgg_2Ops>;
-constexpr MeosAggregateKernels MeosAggregate_mergeAgg_2Kernels{&MeosAggregate_mergeAgg_2::Initialize, &MeosAggregate_mergeAgg_2::Update, &MeosAggregate_mergeAgg_2::Combine, &MeosAggregate_mergeAgg_2::Finish, MeosAggregate_mergeAgg_2::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_mergeAgg_2Kernels{
+    &MeosAggregate_mergeAgg_2::Initialize,
+    &MeosAggregate_mergeAgg_2::Update,
+    &MeosAggregate_mergeAgg_2::Combine,
+    &MeosAggregate_mergeAgg_2::Finish,
+    MeosAggregate_mergeAgg_2::StateSize};
 
 struct MeosAggregate_appendInstantAgg_3Ops
 {
@@ -1355,9 +1361,11 @@ struct MeosAggregate_appendInstantAgg_3Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = true;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = true;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -1368,22 +1376,18 @@ struct MeosAggregate_appendInstantAgg_3Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_app_tinst_transfn(static_cast<Temporal*>(s), static_cast<TInstant*>(row.a0), STEP, -1.0, nullptr);
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_append_finalfn(static_cast<const Temporal*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_append_finalfn(static_cast<const Temporal*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -1394,15 +1398,18 @@ struct MeosAggregate_appendInstantAgg_3Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row& row)
-    {
-        return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0));
-    }
+
+    static int64_t Order(const Row& row) { return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0)); }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_appendInstantAgg_3Literals{};
 using MeosAggregate_appendInstantAgg_3 = MeosRuntime::MeosAggregate<MeosAggregate_appendInstantAgg_3Ops>;
-constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_3Kernels{&MeosAggregate_appendInstantAgg_3::Initialize, &MeosAggregate_appendInstantAgg_3::Update, &MeosAggregate_appendInstantAgg_3::Combine, &MeosAggregate_appendInstantAgg_3::Finish, MeosAggregate_appendInstantAgg_3::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_3Kernels{
+    &MeosAggregate_appendInstantAgg_3::Initialize,
+    &MeosAggregate_appendInstantAgg_3::Update,
+    &MeosAggregate_appendInstantAgg_3::Combine,
+    &MeosAggregate_appendInstantAgg_3::Finish,
+    MeosAggregate_appendInstantAgg_3::StateSize};
 
 struct MeosAggregate_appendInstantAgg_4Ops
 {
@@ -1411,9 +1418,11 @@ struct MeosAggregate_appendInstantAgg_4Ops
         void* a0;
         interpType a1;
     };
+
     static constexpr bool GATHERS = true;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = true;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         row.a0 = MeosRuntime::laid(a0);
@@ -1424,22 +1433,18 @@ struct MeosAggregate_appendInstantAgg_4Ops
         row.a1 = interptype_from_string(MeosRuntime::text(MeosRuntime::literal(block, 0)).c_str());
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_app_tinst_transfn(static_cast<Temporal*>(s), static_cast<TInstant*>(row.a0), row.a1, -1.0, nullptr);
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_append_finalfn(static_cast<const Temporal*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_append_finalfn(static_cast<const Temporal*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -1450,15 +1455,18 @@ struct MeosAggregate_appendInstantAgg_4Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row& row)
-    {
-        return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0));
-    }
+
+    static int64_t Order(const Row& row) { return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0)); }
 };
 
 constexpr std::array<DataType::Type, 1> MeosAggregate_appendInstantAgg_4Literals{DataType::Type::VARSIZED};
 using MeosAggregate_appendInstantAgg_4 = MeosRuntime::MeosAggregate<MeosAggregate_appendInstantAgg_4Ops>;
-constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_4Kernels{&MeosAggregate_appendInstantAgg_4::Initialize, &MeosAggregate_appendInstantAgg_4::Update, &MeosAggregate_appendInstantAgg_4::Combine, &MeosAggregate_appendInstantAgg_4::Finish, MeosAggregate_appendInstantAgg_4::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_4Kernels{
+    &MeosAggregate_appendInstantAgg_4::Initialize,
+    &MeosAggregate_appendInstantAgg_4::Update,
+    &MeosAggregate_appendInstantAgg_4::Combine,
+    &MeosAggregate_appendInstantAgg_4::Finish,
+    MeosAggregate_appendInstantAgg_4::StateSize};
 
 struct MeosAggregate_appendInstantAgg_5Ops
 {
@@ -1469,9 +1477,11 @@ struct MeosAggregate_appendInstantAgg_5Ops
         double a2;
         Interval* a3;
     };
+
     static constexpr bool GATHERS = true;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = true;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         row.a0 = MeosRuntime::laid(a0);
@@ -1489,23 +1499,22 @@ struct MeosAggregate_appendInstantAgg_5Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_app_tinst_transfn(static_cast<Temporal*>(s), static_cast<TInstant*>(row.a0), row.a1, row.a2, row.a3);
     }
+
     static void Free(Row& row)
     {
         std::free(row.a0);
         std::free(row.a3);
     }
-    static void* Final(void* s)
-    {
-        return temporal_append_finalfn(static_cast<const Temporal*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void* Final(void* s) { return temporal_append_finalfn(static_cast<const Temporal*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -1516,15 +1525,19 @@ struct MeosAggregate_appendInstantAgg_5Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row& row)
-    {
-        return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0));
-    }
+
+    static int64_t Order(const Row& row) { return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0)); }
 };
 
-constexpr std::array<DataType::Type, 3> MeosAggregate_appendInstantAgg_5Literals{DataType::Type::VARSIZED, DataType::Type::FLOAT64, DataType::Type::VARSIZED};
+constexpr std::array<DataType::Type, 3> MeosAggregate_appendInstantAgg_5Literals{
+    DataType::Type::VARSIZED, DataType::Type::FLOAT64, DataType::Type::VARSIZED};
 using MeosAggregate_appendInstantAgg_5 = MeosRuntime::MeosAggregate<MeosAggregate_appendInstantAgg_5Ops>;
-constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_5Kernels{&MeosAggregate_appendInstantAgg_5::Initialize, &MeosAggregate_appendInstantAgg_5::Update, &MeosAggregate_appendInstantAgg_5::Combine, &MeosAggregate_appendInstantAgg_5::Finish, MeosAggregate_appendInstantAgg_5::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_5Kernels{
+    &MeosAggregate_appendInstantAgg_5::Initialize,
+    &MeosAggregate_appendInstantAgg_5::Update,
+    &MeosAggregate_appendInstantAgg_5::Combine,
+    &MeosAggregate_appendInstantAgg_5::Finish,
+    MeosAggregate_appendInstantAgg_5::StateSize};
 
 struct MeosAggregate_appendInstantAgg_6Ops
 {
@@ -1532,9 +1545,11 @@ struct MeosAggregate_appendInstantAgg_6Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = true;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = true;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -1545,22 +1560,18 @@ struct MeosAggregate_appendInstantAgg_6Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_app_tinst_transfn(static_cast<Temporal*>(s), static_cast<TInstant*>(row.a0), STEP, -1.0, nullptr);
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_append_finalfn(static_cast<const Temporal*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_append_finalfn(static_cast<const Temporal*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -1571,15 +1582,18 @@ struct MeosAggregate_appendInstantAgg_6Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row& row)
-    {
-        return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0));
-    }
+
+    static int64_t Order(const Row& row) { return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0)); }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_appendInstantAgg_6Literals{};
 using MeosAggregate_appendInstantAgg_6 = MeosRuntime::MeosAggregate<MeosAggregate_appendInstantAgg_6Ops>;
-constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_6Kernels{&MeosAggregate_appendInstantAgg_6::Initialize, &MeosAggregate_appendInstantAgg_6::Update, &MeosAggregate_appendInstantAgg_6::Combine, &MeosAggregate_appendInstantAgg_6::Finish, MeosAggregate_appendInstantAgg_6::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_6Kernels{
+    &MeosAggregate_appendInstantAgg_6::Initialize,
+    &MeosAggregate_appendInstantAgg_6::Update,
+    &MeosAggregate_appendInstantAgg_6::Combine,
+    &MeosAggregate_appendInstantAgg_6::Finish,
+    MeosAggregate_appendInstantAgg_6::StateSize};
 
 struct MeosAggregate_appendInstantAgg_7Ops
 {
@@ -1588,9 +1602,11 @@ struct MeosAggregate_appendInstantAgg_7Ops
         void* a0;
         interpType a1;
     };
+
     static constexpr bool GATHERS = true;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = true;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         row.a0 = MeosRuntime::laid(a0);
@@ -1601,22 +1617,18 @@ struct MeosAggregate_appendInstantAgg_7Ops
         row.a1 = interptype_from_string(MeosRuntime::text(MeosRuntime::literal(block, 0)).c_str());
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_app_tinst_transfn(static_cast<Temporal*>(s), static_cast<TInstant*>(row.a0), row.a1, -1.0, nullptr);
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_append_finalfn(static_cast<const Temporal*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_append_finalfn(static_cast<const Temporal*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -1627,15 +1639,18 @@ struct MeosAggregate_appendInstantAgg_7Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row& row)
-    {
-        return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0));
-    }
+
+    static int64_t Order(const Row& row) { return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0)); }
 };
 
 constexpr std::array<DataType::Type, 1> MeosAggregate_appendInstantAgg_7Literals{DataType::Type::VARSIZED};
 using MeosAggregate_appendInstantAgg_7 = MeosRuntime::MeosAggregate<MeosAggregate_appendInstantAgg_7Ops>;
-constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_7Kernels{&MeosAggregate_appendInstantAgg_7::Initialize, &MeosAggregate_appendInstantAgg_7::Update, &MeosAggregate_appendInstantAgg_7::Combine, &MeosAggregate_appendInstantAgg_7::Finish, MeosAggregate_appendInstantAgg_7::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_7Kernels{
+    &MeosAggregate_appendInstantAgg_7::Initialize,
+    &MeosAggregate_appendInstantAgg_7::Update,
+    &MeosAggregate_appendInstantAgg_7::Combine,
+    &MeosAggregate_appendInstantAgg_7::Finish,
+    MeosAggregate_appendInstantAgg_7::StateSize};
 
 struct MeosAggregate_appendInstantAgg_8Ops
 {
@@ -1646,9 +1661,11 @@ struct MeosAggregate_appendInstantAgg_8Ops
         double a2;
         Interval* a3;
     };
+
     static constexpr bool GATHERS = true;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = true;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         row.a0 = MeosRuntime::laid(a0);
@@ -1666,23 +1683,22 @@ struct MeosAggregate_appendInstantAgg_8Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_app_tinst_transfn(static_cast<Temporal*>(s), static_cast<TInstant*>(row.a0), row.a1, row.a2, row.a3);
     }
+
     static void Free(Row& row)
     {
         std::free(row.a0);
         std::free(row.a3);
     }
-    static void* Final(void* s)
-    {
-        return temporal_append_finalfn(static_cast<const Temporal*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void* Final(void* s) { return temporal_append_finalfn(static_cast<const Temporal*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -1693,15 +1709,19 @@ struct MeosAggregate_appendInstantAgg_8Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row& row)
-    {
-        return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0));
-    }
+
+    static int64_t Order(const Row& row) { return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0)); }
 };
 
-constexpr std::array<DataType::Type, 3> MeosAggregate_appendInstantAgg_8Literals{DataType::Type::VARSIZED, DataType::Type::FLOAT64, DataType::Type::VARSIZED};
+constexpr std::array<DataType::Type, 3> MeosAggregate_appendInstantAgg_8Literals{
+    DataType::Type::VARSIZED, DataType::Type::FLOAT64, DataType::Type::VARSIZED};
 using MeosAggregate_appendInstantAgg_8 = MeosRuntime::MeosAggregate<MeosAggregate_appendInstantAgg_8Ops>;
-constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_8Kernels{&MeosAggregate_appendInstantAgg_8::Initialize, &MeosAggregate_appendInstantAgg_8::Update, &MeosAggregate_appendInstantAgg_8::Combine, &MeosAggregate_appendInstantAgg_8::Finish, MeosAggregate_appendInstantAgg_8::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_8Kernels{
+    &MeosAggregate_appendInstantAgg_8::Initialize,
+    &MeosAggregate_appendInstantAgg_8::Update,
+    &MeosAggregate_appendInstantAgg_8::Combine,
+    &MeosAggregate_appendInstantAgg_8::Finish,
+    MeosAggregate_appendInstantAgg_8::StateSize};
 
 struct MeosAggregate_appendSequenceAgg_1Ops
 {
@@ -1709,9 +1729,11 @@ struct MeosAggregate_appendSequenceAgg_1Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = true;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = true;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -1722,22 +1744,18 @@ struct MeosAggregate_appendSequenceAgg_1Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_app_tseq_transfn(static_cast<Temporal*>(s), static_cast<TSequence*>(row.a0));
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_append_finalfn(static_cast<const Temporal*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_append_finalfn(static_cast<const Temporal*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -1748,15 +1766,18 @@ struct MeosAggregate_appendSequenceAgg_1Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row& row)
-    {
-        return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0));
-    }
+
+    static int64_t Order(const Row& row) { return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0)); }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_appendSequenceAgg_1Literals{};
 using MeosAggregate_appendSequenceAgg_1 = MeosRuntime::MeosAggregate<MeosAggregate_appendSequenceAgg_1Ops>;
-constexpr MeosAggregateKernels MeosAggregate_appendSequenceAgg_1Kernels{&MeosAggregate_appendSequenceAgg_1::Initialize, &MeosAggregate_appendSequenceAgg_1::Update, &MeosAggregate_appendSequenceAgg_1::Combine, &MeosAggregate_appendSequenceAgg_1::Finish, MeosAggregate_appendSequenceAgg_1::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_appendSequenceAgg_1Kernels{
+    &MeosAggregate_appendSequenceAgg_1::Initialize,
+    &MeosAggregate_appendSequenceAgg_1::Update,
+    &MeosAggregate_appendSequenceAgg_1::Combine,
+    &MeosAggregate_appendSequenceAgg_1::Finish,
+    MeosAggregate_appendSequenceAgg_1::StateSize};
 
 struct MeosAggregate_appendSequenceAgg_2Ops
 {
@@ -1764,9 +1785,11 @@ struct MeosAggregate_appendSequenceAgg_2Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = true;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = true;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -1777,22 +1800,18 @@ struct MeosAggregate_appendSequenceAgg_2Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_app_tseq_transfn(static_cast<Temporal*>(s), static_cast<TSequence*>(row.a0));
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_append_finalfn(static_cast<const Temporal*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_append_finalfn(static_cast<const Temporal*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -1803,15 +1822,18 @@ struct MeosAggregate_appendSequenceAgg_2Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row& row)
-    {
-        return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0));
-    }
+
+    static int64_t Order(const Row& row) { return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0)); }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_appendSequenceAgg_2Literals{};
 using MeosAggregate_appendSequenceAgg_2 = MeosRuntime::MeosAggregate<MeosAggregate_appendSequenceAgg_2Ops>;
-constexpr MeosAggregateKernels MeosAggregate_appendSequenceAgg_2Kernels{&MeosAggregate_appendSequenceAgg_2::Initialize, &MeosAggregate_appendSequenceAgg_2::Update, &MeosAggregate_appendSequenceAgg_2::Combine, &MeosAggregate_appendSequenceAgg_2::Finish, MeosAggregate_appendSequenceAgg_2::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_appendSequenceAgg_2Kernels{
+    &MeosAggregate_appendSequenceAgg_2::Initialize,
+    &MeosAggregate_appendSequenceAgg_2::Update,
+    &MeosAggregate_appendSequenceAgg_2::Combine,
+    &MeosAggregate_appendSequenceAgg_2::Finish,
+    MeosAggregate_appendSequenceAgg_2::StateSize};
 
 struct MeosAggregate_extent_4Ops
 {
@@ -1819,9 +1841,11 @@ struct MeosAggregate_extent_4Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = false;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -1832,22 +1856,15 @@ struct MeosAggregate_extent_4Ops
         }
         return true;
     }
-    static void* Transition(void* s, Row& row)
-    {
-        return tspatial_extent_transfn(static_cast<STBox*>(s), static_cast<Temporal*>(row.a0));
-    }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return s;
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void* Transition(void* s, Row& row) { return tspatial_extent_transfn(static_cast<STBox*>(s), static_cast<Temporal*>(row.a0)); }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return s; }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<STBox*>(v);
@@ -1858,15 +1875,18 @@ struct MeosAggregate_extent_4Ops
         }
         return MeosRuntime::image(r, size_t{80});
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_extent_4Literals{};
 using MeosAggregate_extent_4 = MeosRuntime::MeosAggregate<MeosAggregate_extent_4Ops>;
-constexpr MeosAggregateKernels MeosAggregate_extent_4Kernels{&MeosAggregate_extent_4::Initialize, &MeosAggregate_extent_4::Update, &MeosAggregate_extent_4::Combine, &MeosAggregate_extent_4::Finish, MeosAggregate_extent_4::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_extent_4Kernels{
+    &MeosAggregate_extent_4::Initialize,
+    &MeosAggregate_extent_4::Update,
+    &MeosAggregate_extent_4::Combine,
+    &MeosAggregate_extent_4::Finish,
+    MeosAggregate_extent_4::StateSize};
 
 struct MeosAggregate_extent_5Ops
 {
@@ -1874,9 +1894,11 @@ struct MeosAggregate_extent_5Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = false;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -1887,22 +1909,15 @@ struct MeosAggregate_extent_5Ops
         }
         return true;
     }
-    static void* Transition(void* s, Row& row)
-    {
-        return tspatial_extent_transfn(static_cast<STBox*>(s), static_cast<Temporal*>(row.a0));
-    }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return s;
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void* Transition(void* s, Row& row) { return tspatial_extent_transfn(static_cast<STBox*>(s), static_cast<Temporal*>(row.a0)); }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return s; }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<STBox*>(v);
@@ -1913,15 +1928,18 @@ struct MeosAggregate_extent_5Ops
         }
         return MeosRuntime::image(r, size_t{80});
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_extent_5Literals{};
 using MeosAggregate_extent_5 = MeosRuntime::MeosAggregate<MeosAggregate_extent_5Ops>;
-constexpr MeosAggregateKernels MeosAggregate_extent_5Kernels{&MeosAggregate_extent_5::Initialize, &MeosAggregate_extent_5::Update, &MeosAggregate_extent_5::Combine, &MeosAggregate_extent_5::Finish, MeosAggregate_extent_5::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_extent_5Kernels{
+    &MeosAggregate_extent_5::Initialize,
+    &MeosAggregate_extent_5::Update,
+    &MeosAggregate_extent_5::Combine,
+    &MeosAggregate_extent_5::Finish,
+    MeosAggregate_extent_5::StateSize};
 
 struct MeosAggregate_tCount_3Ops
 {
@@ -1929,9 +1947,11 @@ struct MeosAggregate_tCount_3Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -1942,22 +1962,18 @@ struct MeosAggregate_tCount_3Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_tcount_transfn(static_cast<struct SkipList*>(s), static_cast<Temporal*>(row.a0));
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_tagg_finalfn(static_cast<struct SkipList*>(s));
-    }
-    static void Release(void* s)
-    {
-        skiplist_free(static_cast<struct SkipList*>(s));
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_tagg_finalfn(static_cast<struct SkipList*>(s)); }
+
+    static void Release(void* s) { skiplist_free(static_cast<struct SkipList*>(s)); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -1968,15 +1984,18 @@ struct MeosAggregate_tCount_3Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_tCount_3Literals{};
 using MeosAggregate_tCount_3 = MeosRuntime::MeosAggregate<MeosAggregate_tCount_3Ops>;
-constexpr MeosAggregateKernels MeosAggregate_tCount_3Kernels{&MeosAggregate_tCount_3::Initialize, &MeosAggregate_tCount_3::Update, &MeosAggregate_tCount_3::Combine, &MeosAggregate_tCount_3::Finish, MeosAggregate_tCount_3::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_tCount_3Kernels{
+    &MeosAggregate_tCount_3::Initialize,
+    &MeosAggregate_tCount_3::Update,
+    &MeosAggregate_tCount_3::Combine,
+    &MeosAggregate_tCount_3::Finish,
+    MeosAggregate_tCount_3::StateSize};
 
 struct MeosAggregate_tCount_4Ops
 {
@@ -1984,9 +2003,11 @@ struct MeosAggregate_tCount_4Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -1997,22 +2018,18 @@ struct MeosAggregate_tCount_4Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_tcount_transfn(static_cast<struct SkipList*>(s), static_cast<Temporal*>(row.a0));
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_tagg_finalfn(static_cast<struct SkipList*>(s));
-    }
-    static void Release(void* s)
-    {
-        skiplist_free(static_cast<struct SkipList*>(s));
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_tagg_finalfn(static_cast<struct SkipList*>(s)); }
+
+    static void Release(void* s) { skiplist_free(static_cast<struct SkipList*>(s)); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -2023,15 +2040,18 @@ struct MeosAggregate_tCount_4Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_tCount_4Literals{};
 using MeosAggregate_tCount_4 = MeosRuntime::MeosAggregate<MeosAggregate_tCount_4Ops>;
-constexpr MeosAggregateKernels MeosAggregate_tCount_4Kernels{&MeosAggregate_tCount_4::Initialize, &MeosAggregate_tCount_4::Update, &MeosAggregate_tCount_4::Combine, &MeosAggregate_tCount_4::Finish, MeosAggregate_tCount_4::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_tCount_4Kernels{
+    &MeosAggregate_tCount_4::Initialize,
+    &MeosAggregate_tCount_4::Update,
+    &MeosAggregate_tCount_4::Combine,
+    &MeosAggregate_tCount_4::Finish,
+    MeosAggregate_tCount_4::StateSize};
 
 struct MeosAggregate_wCount_3Ops
 {
@@ -2040,9 +2060,11 @@ struct MeosAggregate_wCount_3Ops
         void* a0;
         Interval* a1;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         row.a0 = MeosRuntime::laid(a0);
@@ -2058,23 +2080,22 @@ struct MeosAggregate_wCount_3Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_wcount_transfn(static_cast<struct SkipList*>(s), static_cast<Temporal*>(row.a0), row.a1);
     }
+
     static void Free(Row& row)
     {
         std::free(row.a0);
         std::free(row.a1);
     }
-    static void* Final(void* s)
-    {
-        return temporal_tagg_finalfn(static_cast<struct SkipList*>(s));
-    }
-    static void Release(void* s)
-    {
-        skiplist_free(static_cast<struct SkipList*>(s));
-    }
+
+    static void* Final(void* s) { return temporal_tagg_finalfn(static_cast<struct SkipList*>(s)); }
+
+    static void Release(void* s) { skiplist_free(static_cast<struct SkipList*>(s)); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -2085,15 +2106,18 @@ struct MeosAggregate_wCount_3Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 1> MeosAggregate_wCount_3Literals{DataType::Type::VARSIZED};
 using MeosAggregate_wCount_3 = MeosRuntime::MeosAggregate<MeosAggregate_wCount_3Ops>;
-constexpr MeosAggregateKernels MeosAggregate_wCount_3Kernels{&MeosAggregate_wCount_3::Initialize, &MeosAggregate_wCount_3::Update, &MeosAggregate_wCount_3::Combine, &MeosAggregate_wCount_3::Finish, MeosAggregate_wCount_3::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_wCount_3Kernels{
+    &MeosAggregate_wCount_3::Initialize,
+    &MeosAggregate_wCount_3::Update,
+    &MeosAggregate_wCount_3::Combine,
+    &MeosAggregate_wCount_3::Finish,
+    MeosAggregate_wCount_3::StateSize};
 
 struct MeosAggregate_wCount_4Ops
 {
@@ -2102,9 +2126,11 @@ struct MeosAggregate_wCount_4Ops
         void* a0;
         Interval* a1;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         row.a0 = MeosRuntime::laid(a0);
@@ -2120,23 +2146,22 @@ struct MeosAggregate_wCount_4Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_wcount_transfn(static_cast<struct SkipList*>(s), static_cast<Temporal*>(row.a0), row.a1);
     }
+
     static void Free(Row& row)
     {
         std::free(row.a0);
         std::free(row.a1);
     }
-    static void* Final(void* s)
-    {
-        return temporal_tagg_finalfn(static_cast<struct SkipList*>(s));
-    }
-    static void Release(void* s)
-    {
-        skiplist_free(static_cast<struct SkipList*>(s));
-    }
+
+    static void* Final(void* s) { return temporal_tagg_finalfn(static_cast<struct SkipList*>(s)); }
+
+    static void Release(void* s) { skiplist_free(static_cast<struct SkipList*>(s)); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -2147,15 +2172,18 @@ struct MeosAggregate_wCount_4Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 1> MeosAggregate_wCount_4Literals{DataType::Type::VARSIZED};
 using MeosAggregate_wCount_4 = MeosRuntime::MeosAggregate<MeosAggregate_wCount_4Ops>;
-constexpr MeosAggregateKernels MeosAggregate_wCount_4Kernels{&MeosAggregate_wCount_4::Initialize, &MeosAggregate_wCount_4::Update, &MeosAggregate_wCount_4::Combine, &MeosAggregate_wCount_4::Finish, MeosAggregate_wCount_4::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_wCount_4Kernels{
+    &MeosAggregate_wCount_4::Initialize,
+    &MeosAggregate_wCount_4::Update,
+    &MeosAggregate_wCount_4::Combine,
+    &MeosAggregate_wCount_4::Finish,
+    MeosAggregate_wCount_4::StateSize};
 
 struct MeosAggregate_tCentroid_0Ops
 {
@@ -2163,9 +2191,11 @@ struct MeosAggregate_tCentroid_0Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -2176,22 +2206,18 @@ struct MeosAggregate_tCentroid_0Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return tpoint_tcentroid_transfn(static_cast<struct SkipList*>(s), static_cast<Temporal*>(row.a0));
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return tpoint_tcentroid_finalfn(static_cast<struct SkipList*>(s));
-    }
-    static void Release(void* s)
-    {
-        skiplist_free(static_cast<struct SkipList*>(s));
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return tpoint_tcentroid_finalfn(static_cast<struct SkipList*>(s)); }
+
+    static void Release(void* s) { skiplist_free(static_cast<struct SkipList*>(s)); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -2202,15 +2228,18 @@ struct MeosAggregate_tCentroid_0Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_tCentroid_0Literals{};
 using MeosAggregate_tCentroid_0 = MeosRuntime::MeosAggregate<MeosAggregate_tCentroid_0Ops>;
-constexpr MeosAggregateKernels MeosAggregate_tCentroid_0Kernels{&MeosAggregate_tCentroid_0::Initialize, &MeosAggregate_tCentroid_0::Update, &MeosAggregate_tCentroid_0::Combine, &MeosAggregate_tCentroid_0::Finish, MeosAggregate_tCentroid_0::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_tCentroid_0Kernels{
+    &MeosAggregate_tCentroid_0::Initialize,
+    &MeosAggregate_tCentroid_0::Update,
+    &MeosAggregate_tCentroid_0::Combine,
+    &MeosAggregate_tCentroid_0::Finish,
+    MeosAggregate_tCentroid_0::StateSize};
 
 struct MeosAggregate_mergeAgg_3Ops
 {
@@ -2218,9 +2247,11 @@ struct MeosAggregate_mergeAgg_3Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -2231,22 +2262,18 @@ struct MeosAggregate_mergeAgg_3Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_merge_transfn(static_cast<struct SkipList*>(s), static_cast<Temporal*>(row.a0));
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_tagg_finalfn(static_cast<struct SkipList*>(s));
-    }
-    static void Release(void* s)
-    {
-        skiplist_free(static_cast<struct SkipList*>(s));
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_tagg_finalfn(static_cast<struct SkipList*>(s)); }
+
+    static void Release(void* s) { skiplist_free(static_cast<struct SkipList*>(s)); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -2257,15 +2284,18 @@ struct MeosAggregate_mergeAgg_3Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_mergeAgg_3Literals{};
 using MeosAggregate_mergeAgg_3 = MeosRuntime::MeosAggregate<MeosAggregate_mergeAgg_3Ops>;
-constexpr MeosAggregateKernels MeosAggregate_mergeAgg_3Kernels{&MeosAggregate_mergeAgg_3::Initialize, &MeosAggregate_mergeAgg_3::Update, &MeosAggregate_mergeAgg_3::Combine, &MeosAggregate_mergeAgg_3::Finish, MeosAggregate_mergeAgg_3::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_mergeAgg_3Kernels{
+    &MeosAggregate_mergeAgg_3::Initialize,
+    &MeosAggregate_mergeAgg_3::Update,
+    &MeosAggregate_mergeAgg_3::Combine,
+    &MeosAggregate_mergeAgg_3::Finish,
+    MeosAggregate_mergeAgg_3::StateSize};
 
 struct MeosAggregate_mergeAgg_4Ops
 {
@@ -2273,9 +2303,11 @@ struct MeosAggregate_mergeAgg_4Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -2286,22 +2318,18 @@ struct MeosAggregate_mergeAgg_4Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_merge_transfn(static_cast<struct SkipList*>(s), static_cast<Temporal*>(row.a0));
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_tagg_finalfn(static_cast<struct SkipList*>(s));
-    }
-    static void Release(void* s)
-    {
-        skiplist_free(static_cast<struct SkipList*>(s));
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_tagg_finalfn(static_cast<struct SkipList*>(s)); }
+
+    static void Release(void* s) { skiplist_free(static_cast<struct SkipList*>(s)); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -2312,15 +2340,18 @@ struct MeosAggregate_mergeAgg_4Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_mergeAgg_4Literals{};
 using MeosAggregate_mergeAgg_4 = MeosRuntime::MeosAggregate<MeosAggregate_mergeAgg_4Ops>;
-constexpr MeosAggregateKernels MeosAggregate_mergeAgg_4Kernels{&MeosAggregate_mergeAgg_4::Initialize, &MeosAggregate_mergeAgg_4::Update, &MeosAggregate_mergeAgg_4::Combine, &MeosAggregate_mergeAgg_4::Finish, MeosAggregate_mergeAgg_4::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_mergeAgg_4Kernels{
+    &MeosAggregate_mergeAgg_4::Initialize,
+    &MeosAggregate_mergeAgg_4::Update,
+    &MeosAggregate_mergeAgg_4::Combine,
+    &MeosAggregate_mergeAgg_4::Finish,
+    MeosAggregate_mergeAgg_4::StateSize};
 
 struct MeosAggregate_appendInstantAgg_9Ops
 {
@@ -2328,9 +2359,11 @@ struct MeosAggregate_appendInstantAgg_9Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = true;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = true;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -2341,22 +2374,18 @@ struct MeosAggregate_appendInstantAgg_9Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_app_tinst_transfn(static_cast<Temporal*>(s), static_cast<TInstant*>(row.a0), LINEAR, -1.0, nullptr);
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_append_finalfn(static_cast<const Temporal*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_append_finalfn(static_cast<const Temporal*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -2367,15 +2396,18 @@ struct MeosAggregate_appendInstantAgg_9Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row& row)
-    {
-        return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0));
-    }
+
+    static int64_t Order(const Row& row) { return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0)); }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_appendInstantAgg_9Literals{};
 using MeosAggregate_appendInstantAgg_9 = MeosRuntime::MeosAggregate<MeosAggregate_appendInstantAgg_9Ops>;
-constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_9Kernels{&MeosAggregate_appendInstantAgg_9::Initialize, &MeosAggregate_appendInstantAgg_9::Update, &MeosAggregate_appendInstantAgg_9::Combine, &MeosAggregate_appendInstantAgg_9::Finish, MeosAggregate_appendInstantAgg_9::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_9Kernels{
+    &MeosAggregate_appendInstantAgg_9::Initialize,
+    &MeosAggregate_appendInstantAgg_9::Update,
+    &MeosAggregate_appendInstantAgg_9::Combine,
+    &MeosAggregate_appendInstantAgg_9::Finish,
+    MeosAggregate_appendInstantAgg_9::StateSize};
 
 struct MeosAggregate_appendInstantAgg_10Ops
 {
@@ -2384,9 +2416,11 @@ struct MeosAggregate_appendInstantAgg_10Ops
         void* a0;
         interpType a1;
     };
+
     static constexpr bool GATHERS = true;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = true;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         row.a0 = MeosRuntime::laid(a0);
@@ -2397,22 +2431,18 @@ struct MeosAggregate_appendInstantAgg_10Ops
         row.a1 = interptype_from_string(MeosRuntime::text(MeosRuntime::literal(block, 0)).c_str());
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_app_tinst_transfn(static_cast<Temporal*>(s), static_cast<TInstant*>(row.a0), row.a1, -1.0, nullptr);
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_append_finalfn(static_cast<const Temporal*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_append_finalfn(static_cast<const Temporal*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -2423,15 +2453,18 @@ struct MeosAggregate_appendInstantAgg_10Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row& row)
-    {
-        return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0));
-    }
+
+    static int64_t Order(const Row& row) { return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0)); }
 };
 
 constexpr std::array<DataType::Type, 1> MeosAggregate_appendInstantAgg_10Literals{DataType::Type::VARSIZED};
 using MeosAggregate_appendInstantAgg_10 = MeosRuntime::MeosAggregate<MeosAggregate_appendInstantAgg_10Ops>;
-constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_10Kernels{&MeosAggregate_appendInstantAgg_10::Initialize, &MeosAggregate_appendInstantAgg_10::Update, &MeosAggregate_appendInstantAgg_10::Combine, &MeosAggregate_appendInstantAgg_10::Finish, MeosAggregate_appendInstantAgg_10::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_10Kernels{
+    &MeosAggregate_appendInstantAgg_10::Initialize,
+    &MeosAggregate_appendInstantAgg_10::Update,
+    &MeosAggregate_appendInstantAgg_10::Combine,
+    &MeosAggregate_appendInstantAgg_10::Finish,
+    MeosAggregate_appendInstantAgg_10::StateSize};
 
 struct MeosAggregate_appendInstantAgg_11Ops
 {
@@ -2442,9 +2475,11 @@ struct MeosAggregate_appendInstantAgg_11Ops
         double a2;
         Interval* a3;
     };
+
     static constexpr bool GATHERS = true;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = true;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         row.a0 = MeosRuntime::laid(a0);
@@ -2462,23 +2497,22 @@ struct MeosAggregate_appendInstantAgg_11Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_app_tinst_transfn(static_cast<Temporal*>(s), static_cast<TInstant*>(row.a0), row.a1, row.a2, row.a3);
     }
+
     static void Free(Row& row)
     {
         std::free(row.a0);
         std::free(row.a3);
     }
-    static void* Final(void* s)
-    {
-        return temporal_append_finalfn(static_cast<const Temporal*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void* Final(void* s) { return temporal_append_finalfn(static_cast<const Temporal*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -2489,15 +2523,19 @@ struct MeosAggregate_appendInstantAgg_11Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row& row)
-    {
-        return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0));
-    }
+
+    static int64_t Order(const Row& row) { return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0)); }
 };
 
-constexpr std::array<DataType::Type, 3> MeosAggregate_appendInstantAgg_11Literals{DataType::Type::VARSIZED, DataType::Type::FLOAT64, DataType::Type::VARSIZED};
+constexpr std::array<DataType::Type, 3> MeosAggregate_appendInstantAgg_11Literals{
+    DataType::Type::VARSIZED, DataType::Type::FLOAT64, DataType::Type::VARSIZED};
 using MeosAggregate_appendInstantAgg_11 = MeosRuntime::MeosAggregate<MeosAggregate_appendInstantAgg_11Ops>;
-constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_11Kernels{&MeosAggregate_appendInstantAgg_11::Initialize, &MeosAggregate_appendInstantAgg_11::Update, &MeosAggregate_appendInstantAgg_11::Combine, &MeosAggregate_appendInstantAgg_11::Finish, MeosAggregate_appendInstantAgg_11::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_11Kernels{
+    &MeosAggregate_appendInstantAgg_11::Initialize,
+    &MeosAggregate_appendInstantAgg_11::Update,
+    &MeosAggregate_appendInstantAgg_11::Combine,
+    &MeosAggregate_appendInstantAgg_11::Finish,
+    MeosAggregate_appendInstantAgg_11::StateSize};
 
 struct MeosAggregate_appendInstantAgg_12Ops
 {
@@ -2505,9 +2543,11 @@ struct MeosAggregate_appendInstantAgg_12Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = true;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = true;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -2518,22 +2558,18 @@ struct MeosAggregate_appendInstantAgg_12Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_app_tinst_transfn(static_cast<Temporal*>(s), static_cast<TInstant*>(row.a0), LINEAR, -1.0, nullptr);
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_append_finalfn(static_cast<const Temporal*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_append_finalfn(static_cast<const Temporal*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -2544,15 +2580,18 @@ struct MeosAggregate_appendInstantAgg_12Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row& row)
-    {
-        return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0));
-    }
+
+    static int64_t Order(const Row& row) { return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0)); }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_appendInstantAgg_12Literals{};
 using MeosAggregate_appendInstantAgg_12 = MeosRuntime::MeosAggregate<MeosAggregate_appendInstantAgg_12Ops>;
-constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_12Kernels{&MeosAggregate_appendInstantAgg_12::Initialize, &MeosAggregate_appendInstantAgg_12::Update, &MeosAggregate_appendInstantAgg_12::Combine, &MeosAggregate_appendInstantAgg_12::Finish, MeosAggregate_appendInstantAgg_12::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_12Kernels{
+    &MeosAggregate_appendInstantAgg_12::Initialize,
+    &MeosAggregate_appendInstantAgg_12::Update,
+    &MeosAggregate_appendInstantAgg_12::Combine,
+    &MeosAggregate_appendInstantAgg_12::Finish,
+    MeosAggregate_appendInstantAgg_12::StateSize};
 
 struct MeosAggregate_appendInstantAgg_13Ops
 {
@@ -2561,9 +2600,11 @@ struct MeosAggregate_appendInstantAgg_13Ops
         void* a0;
         interpType a1;
     };
+
     static constexpr bool GATHERS = true;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = true;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         row.a0 = MeosRuntime::laid(a0);
@@ -2574,22 +2615,18 @@ struct MeosAggregate_appendInstantAgg_13Ops
         row.a1 = interptype_from_string(MeosRuntime::text(MeosRuntime::literal(block, 0)).c_str());
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_app_tinst_transfn(static_cast<Temporal*>(s), static_cast<TInstant*>(row.a0), row.a1, -1.0, nullptr);
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_append_finalfn(static_cast<const Temporal*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_append_finalfn(static_cast<const Temporal*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -2600,15 +2637,18 @@ struct MeosAggregate_appendInstantAgg_13Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row& row)
-    {
-        return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0));
-    }
+
+    static int64_t Order(const Row& row) { return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0)); }
 };
 
 constexpr std::array<DataType::Type, 1> MeosAggregate_appendInstantAgg_13Literals{DataType::Type::VARSIZED};
 using MeosAggregate_appendInstantAgg_13 = MeosRuntime::MeosAggregate<MeosAggregate_appendInstantAgg_13Ops>;
-constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_13Kernels{&MeosAggregate_appendInstantAgg_13::Initialize, &MeosAggregate_appendInstantAgg_13::Update, &MeosAggregate_appendInstantAgg_13::Combine, &MeosAggregate_appendInstantAgg_13::Finish, MeosAggregate_appendInstantAgg_13::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_13Kernels{
+    &MeosAggregate_appendInstantAgg_13::Initialize,
+    &MeosAggregate_appendInstantAgg_13::Update,
+    &MeosAggregate_appendInstantAgg_13::Combine,
+    &MeosAggregate_appendInstantAgg_13::Finish,
+    MeosAggregate_appendInstantAgg_13::StateSize};
 
 struct MeosAggregate_appendInstantAgg_14Ops
 {
@@ -2619,9 +2659,11 @@ struct MeosAggregate_appendInstantAgg_14Ops
         double a2;
         Interval* a3;
     };
+
     static constexpr bool GATHERS = true;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = true;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         row.a0 = MeosRuntime::laid(a0);
@@ -2639,23 +2681,22 @@ struct MeosAggregate_appendInstantAgg_14Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_app_tinst_transfn(static_cast<Temporal*>(s), static_cast<TInstant*>(row.a0), row.a1, row.a2, row.a3);
     }
+
     static void Free(Row& row)
     {
         std::free(row.a0);
         std::free(row.a3);
     }
-    static void* Final(void* s)
-    {
-        return temporal_append_finalfn(static_cast<const Temporal*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void* Final(void* s) { return temporal_append_finalfn(static_cast<const Temporal*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -2666,15 +2707,19 @@ struct MeosAggregate_appendInstantAgg_14Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row& row)
-    {
-        return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0));
-    }
+
+    static int64_t Order(const Row& row) { return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0)); }
 };
 
-constexpr std::array<DataType::Type, 3> MeosAggregate_appendInstantAgg_14Literals{DataType::Type::VARSIZED, DataType::Type::FLOAT64, DataType::Type::VARSIZED};
+constexpr std::array<DataType::Type, 3> MeosAggregate_appendInstantAgg_14Literals{
+    DataType::Type::VARSIZED, DataType::Type::FLOAT64, DataType::Type::VARSIZED};
 using MeosAggregate_appendInstantAgg_14 = MeosRuntime::MeosAggregate<MeosAggregate_appendInstantAgg_14Ops>;
-constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_14Kernels{&MeosAggregate_appendInstantAgg_14::Initialize, &MeosAggregate_appendInstantAgg_14::Update, &MeosAggregate_appendInstantAgg_14::Combine, &MeosAggregate_appendInstantAgg_14::Finish, MeosAggregate_appendInstantAgg_14::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_14Kernels{
+    &MeosAggregate_appendInstantAgg_14::Initialize,
+    &MeosAggregate_appendInstantAgg_14::Update,
+    &MeosAggregate_appendInstantAgg_14::Combine,
+    &MeosAggregate_appendInstantAgg_14::Finish,
+    MeosAggregate_appendInstantAgg_14::StateSize};
 
 struct MeosAggregate_appendSequenceAgg_3Ops
 {
@@ -2682,9 +2727,11 @@ struct MeosAggregate_appendSequenceAgg_3Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = true;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = true;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -2695,22 +2742,18 @@ struct MeosAggregate_appendSequenceAgg_3Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_app_tseq_transfn(static_cast<Temporal*>(s), static_cast<TSequence*>(row.a0));
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_append_finalfn(static_cast<const Temporal*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_append_finalfn(static_cast<const Temporal*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -2721,15 +2764,18 @@ struct MeosAggregate_appendSequenceAgg_3Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row& row)
-    {
-        return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0));
-    }
+
+    static int64_t Order(const Row& row) { return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0)); }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_appendSequenceAgg_3Literals{};
 using MeosAggregate_appendSequenceAgg_3 = MeosRuntime::MeosAggregate<MeosAggregate_appendSequenceAgg_3Ops>;
-constexpr MeosAggregateKernels MeosAggregate_appendSequenceAgg_3Kernels{&MeosAggregate_appendSequenceAgg_3::Initialize, &MeosAggregate_appendSequenceAgg_3::Update, &MeosAggregate_appendSequenceAgg_3::Combine, &MeosAggregate_appendSequenceAgg_3::Finish, MeosAggregate_appendSequenceAgg_3::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_appendSequenceAgg_3Kernels{
+    &MeosAggregate_appendSequenceAgg_3::Initialize,
+    &MeosAggregate_appendSequenceAgg_3::Update,
+    &MeosAggregate_appendSequenceAgg_3::Combine,
+    &MeosAggregate_appendSequenceAgg_3::Finish,
+    MeosAggregate_appendSequenceAgg_3::StateSize};
 
 struct MeosAggregate_appendSequenceAgg_4Ops
 {
@@ -2737,9 +2783,11 @@ struct MeosAggregate_appendSequenceAgg_4Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = true;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = true;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -2750,22 +2798,18 @@ struct MeosAggregate_appendSequenceAgg_4Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_app_tseq_transfn(static_cast<Temporal*>(s), static_cast<TSequence*>(row.a0));
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_append_finalfn(static_cast<const Temporal*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_append_finalfn(static_cast<const Temporal*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -2776,15 +2820,18 @@ struct MeosAggregate_appendSequenceAgg_4Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row& row)
-    {
-        return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0));
-    }
+
+    static int64_t Order(const Row& row) { return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0)); }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_appendSequenceAgg_4Literals{};
 using MeosAggregate_appendSequenceAgg_4 = MeosRuntime::MeosAggregate<MeosAggregate_appendSequenceAgg_4Ops>;
-constexpr MeosAggregateKernels MeosAggregate_appendSequenceAgg_4Kernels{&MeosAggregate_appendSequenceAgg_4::Initialize, &MeosAggregate_appendSequenceAgg_4::Update, &MeosAggregate_appendSequenceAgg_4::Combine, &MeosAggregate_appendSequenceAgg_4::Finish, MeosAggregate_appendSequenceAgg_4::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_appendSequenceAgg_4Kernels{
+    &MeosAggregate_appendSequenceAgg_4::Initialize,
+    &MeosAggregate_appendSequenceAgg_4::Update,
+    &MeosAggregate_appendSequenceAgg_4::Combine,
+    &MeosAggregate_appendSequenceAgg_4::Finish,
+    MeosAggregate_appendSequenceAgg_4::StateSize};
 
 struct MeosAggregate_reachabilityFilterAgg_0Ops
 {
@@ -2793,9 +2840,11 @@ struct MeosAggregate_reachabilityFilterAgg_0Ops
         void* a0;
         double a1;
     };
+
     static constexpr bool GATHERS = true;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         row.a0 = MeosRuntime::laid(a0);
@@ -2806,22 +2855,18 @@ struct MeosAggregate_reachabilityFilterAgg_0Ops
         row.a1 = static_cast<double>(MeosRuntime::number<double>(MeosRuntime::literal(block, 0)));
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_reachability_filter_transfn(static_cast<struct ReachabilityState*>(s), static_cast<TInstant*>(row.a0), row.a1);
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_reachability_filter_finalfn(static_cast<struct ReachabilityState*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(temporal_reachability_filter_finalfn(static_cast<struct ReachabilityState*>(s)));
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_reachability_filter_finalfn(static_cast<struct ReachabilityState*>(s)); }
+
+    static void Release(void* s) { std::free(temporal_reachability_filter_finalfn(static_cast<struct ReachabilityState*>(s))); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -2832,15 +2877,18 @@ struct MeosAggregate_reachabilityFilterAgg_0Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row& row)
-    {
-        return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0));
-    }
+
+    static int64_t Order(const Row& row) { return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0)); }
 };
 
 constexpr std::array<DataType::Type, 1> MeosAggregate_reachabilityFilterAgg_0Literals{DataType::Type::FLOAT64};
 using MeosAggregate_reachabilityFilterAgg_0 = MeosRuntime::MeosAggregate<MeosAggregate_reachabilityFilterAgg_0Ops>;
-constexpr MeosAggregateKernels MeosAggregate_reachabilityFilterAgg_0Kernels{&MeosAggregate_reachabilityFilterAgg_0::Initialize, &MeosAggregate_reachabilityFilterAgg_0::Update, &MeosAggregate_reachabilityFilterAgg_0::Combine, &MeosAggregate_reachabilityFilterAgg_0::Finish, MeosAggregate_reachabilityFilterAgg_0::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_reachabilityFilterAgg_0Kernels{
+    &MeosAggregate_reachabilityFilterAgg_0::Initialize,
+    &MeosAggregate_reachabilityFilterAgg_0::Update,
+    &MeosAggregate_reachabilityFilterAgg_0::Combine,
+    &MeosAggregate_reachabilityFilterAgg_0::Finish,
+    MeosAggregate_reachabilityFilterAgg_0::StateSize};
 
 struct MeosAggregate_reachabilityFilterAgg_1Ops
 {
@@ -2849,9 +2897,11 @@ struct MeosAggregate_reachabilityFilterAgg_1Ops
         void* a0;
         double a1;
     };
+
     static constexpr bool GATHERS = true;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         row.a0 = MeosRuntime::laid(a0);
@@ -2862,22 +2912,18 @@ struct MeosAggregate_reachabilityFilterAgg_1Ops
         row.a1 = static_cast<double>(MeosRuntime::number<double>(MeosRuntime::literal(block, 0)));
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_reachability_filter_transfn(static_cast<struct ReachabilityState*>(s), static_cast<TInstant*>(row.a0), row.a1);
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_reachability_filter_finalfn(static_cast<struct ReachabilityState*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(temporal_reachability_filter_finalfn(static_cast<struct ReachabilityState*>(s)));
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_reachability_filter_finalfn(static_cast<struct ReachabilityState*>(s)); }
+
+    static void Release(void* s) { std::free(temporal_reachability_filter_finalfn(static_cast<struct ReachabilityState*>(s))); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -2888,15 +2934,18 @@ struct MeosAggregate_reachabilityFilterAgg_1Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row& row)
-    {
-        return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0));
-    }
+
+    static int64_t Order(const Row& row) { return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0)); }
 };
 
 constexpr std::array<DataType::Type, 1> MeosAggregate_reachabilityFilterAgg_1Literals{DataType::Type::FLOAT64};
 using MeosAggregate_reachabilityFilterAgg_1 = MeosRuntime::MeosAggregate<MeosAggregate_reachabilityFilterAgg_1Ops>;
-constexpr MeosAggregateKernels MeosAggregate_reachabilityFilterAgg_1Kernels{&MeosAggregate_reachabilityFilterAgg_1::Initialize, &MeosAggregate_reachabilityFilterAgg_1::Update, &MeosAggregate_reachabilityFilterAgg_1::Combine, &MeosAggregate_reachabilityFilterAgg_1::Finish, MeosAggregate_reachabilityFilterAgg_1::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_reachabilityFilterAgg_1Kernels{
+    &MeosAggregate_reachabilityFilterAgg_1::Initialize,
+    &MeosAggregate_reachabilityFilterAgg_1::Update,
+    &MeosAggregate_reachabilityFilterAgg_1::Combine,
+    &MeosAggregate_reachabilityFilterAgg_1::Finish,
+    MeosAggregate_reachabilityFilterAgg_1::StateSize};
 
 struct MeosAggregate_setUnionAgg_6Ops
 {
@@ -2904,9 +2953,11 @@ struct MeosAggregate_setUnionAgg_6Ops
     {
         uint64_t a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -2918,22 +2969,15 @@ struct MeosAggregate_setUnionAgg_6Ops
         row.a0 = h3index_from_wkb(v0.bytes(), v0.size());
         return true;
     }
-    static void* Transition(void* s, Row& row)
-    {
-        return h3index_union_transfn(static_cast<Set*>(s), row.a0);
-    }
-    static void Free(Row& row)
-    {
-        static_cast<void>(row);
-    }
-    static void* Final(void* s)
-    {
-        return set_union_finalfn(static_cast<Set*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void* Transition(void* s, Row& row) { return h3index_union_transfn(static_cast<Set*>(s), row.a0); }
+
+    static void Free(Row& row) { static_cast<void>(row); }
+
+    static void* Final(void* s) { return set_union_finalfn(static_cast<Set*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Set*>(v);
@@ -2944,15 +2988,18 @@ struct MeosAggregate_setUnionAgg_6Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(set_mem_size(static_cast<const Set*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_setUnionAgg_6Literals{};
 using MeosAggregate_setUnionAgg_6 = MeosRuntime::MeosAggregate<MeosAggregate_setUnionAgg_6Ops>;
-constexpr MeosAggregateKernels MeosAggregate_setUnionAgg_6Kernels{&MeosAggregate_setUnionAgg_6::Initialize, &MeosAggregate_setUnionAgg_6::Update, &MeosAggregate_setUnionAgg_6::Combine, &MeosAggregate_setUnionAgg_6::Finish, MeosAggregate_setUnionAgg_6::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_setUnionAgg_6Kernels{
+    &MeosAggregate_setUnionAgg_6::Initialize,
+    &MeosAggregate_setUnionAgg_6::Update,
+    &MeosAggregate_setUnionAgg_6::Combine,
+    &MeosAggregate_setUnionAgg_6::Finish,
+    MeosAggregate_setUnionAgg_6::StateSize};
 
 struct MeosAggregate_setUnionAgg_7Ops
 {
@@ -2960,9 +3007,11 @@ struct MeosAggregate_setUnionAgg_7Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -2973,22 +3022,15 @@ struct MeosAggregate_setUnionAgg_7Ops
         }
         return true;
     }
-    static void* Transition(void* s, Row& row)
-    {
-        return set_union_transfn(static_cast<Set*>(s), static_cast<Set*>(row.a0));
-    }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return set_union_finalfn(static_cast<Set*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void* Transition(void* s, Row& row) { return set_union_transfn(static_cast<Set*>(s), static_cast<Set*>(row.a0)); }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return set_union_finalfn(static_cast<Set*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Set*>(v);
@@ -2999,15 +3041,18 @@ struct MeosAggregate_setUnionAgg_7Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(set_mem_size(static_cast<const Set*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_setUnionAgg_7Literals{};
 using MeosAggregate_setUnionAgg_7 = MeosRuntime::MeosAggregate<MeosAggregate_setUnionAgg_7Ops>;
-constexpr MeosAggregateKernels MeosAggregate_setUnionAgg_7Kernels{&MeosAggregate_setUnionAgg_7::Initialize, &MeosAggregate_setUnionAgg_7::Update, &MeosAggregate_setUnionAgg_7::Combine, &MeosAggregate_setUnionAgg_7::Finish, MeosAggregate_setUnionAgg_7::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_setUnionAgg_7Kernels{
+    &MeosAggregate_setUnionAgg_7::Initialize,
+    &MeosAggregate_setUnionAgg_7::Update,
+    &MeosAggregate_setUnionAgg_7::Combine,
+    &MeosAggregate_setUnionAgg_7::Finish,
+    MeosAggregate_setUnionAgg_7::StateSize};
 
 struct MeosAggregate_extent_6Ops
 {
@@ -3015,9 +3060,11 @@ struct MeosAggregate_extent_6Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = false;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -3028,22 +3075,15 @@ struct MeosAggregate_extent_6Ops
         }
         return true;
     }
-    static void* Transition(void* s, Row& row)
-    {
-        return tspatial_extent_transfn(static_cast<STBox*>(s), static_cast<Temporal*>(row.a0));
-    }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return s;
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void* Transition(void* s, Row& row) { return tspatial_extent_transfn(static_cast<STBox*>(s), static_cast<Temporal*>(row.a0)); }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return s; }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<STBox*>(v);
@@ -3054,15 +3094,18 @@ struct MeosAggregate_extent_6Ops
         }
         return MeosRuntime::image(r, size_t{80});
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_extent_6Literals{};
 using MeosAggregate_extent_6 = MeosRuntime::MeosAggregate<MeosAggregate_extent_6Ops>;
-constexpr MeosAggregateKernels MeosAggregate_extent_6Kernels{&MeosAggregate_extent_6::Initialize, &MeosAggregate_extent_6::Update, &MeosAggregate_extent_6::Combine, &MeosAggregate_extent_6::Finish, MeosAggregate_extent_6::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_extent_6Kernels{
+    &MeosAggregate_extent_6::Initialize,
+    &MeosAggregate_extent_6::Update,
+    &MeosAggregate_extent_6::Combine,
+    &MeosAggregate_extent_6::Finish,
+    MeosAggregate_extent_6::StateSize};
 
 struct MeosAggregate_tCount_5Ops
 {
@@ -3070,9 +3113,11 @@ struct MeosAggregate_tCount_5Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -3083,22 +3128,18 @@ struct MeosAggregate_tCount_5Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_tcount_transfn(static_cast<struct SkipList*>(s), static_cast<Temporal*>(row.a0));
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_tagg_finalfn(static_cast<struct SkipList*>(s));
-    }
-    static void Release(void* s)
-    {
-        skiplist_free(static_cast<struct SkipList*>(s));
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_tagg_finalfn(static_cast<struct SkipList*>(s)); }
+
+    static void Release(void* s) { skiplist_free(static_cast<struct SkipList*>(s)); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -3109,15 +3150,18 @@ struct MeosAggregate_tCount_5Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_tCount_5Literals{};
 using MeosAggregate_tCount_5 = MeosRuntime::MeosAggregate<MeosAggregate_tCount_5Ops>;
-constexpr MeosAggregateKernels MeosAggregate_tCount_5Kernels{&MeosAggregate_tCount_5::Initialize, &MeosAggregate_tCount_5::Update, &MeosAggregate_tCount_5::Combine, &MeosAggregate_tCount_5::Finish, MeosAggregate_tCount_5::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_tCount_5Kernels{
+    &MeosAggregate_tCount_5::Initialize,
+    &MeosAggregate_tCount_5::Update,
+    &MeosAggregate_tCount_5::Combine,
+    &MeosAggregate_tCount_5::Finish,
+    MeosAggregate_tCount_5::StateSize};
 
 struct MeosAggregate_wCount_5Ops
 {
@@ -3126,9 +3170,11 @@ struct MeosAggregate_wCount_5Ops
         void* a0;
         Interval* a1;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         row.a0 = MeosRuntime::laid(a0);
@@ -3144,23 +3190,22 @@ struct MeosAggregate_wCount_5Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_wcount_transfn(static_cast<struct SkipList*>(s), static_cast<Temporal*>(row.a0), row.a1);
     }
+
     static void Free(Row& row)
     {
         std::free(row.a0);
         std::free(row.a1);
     }
-    static void* Final(void* s)
-    {
-        return temporal_tagg_finalfn(static_cast<struct SkipList*>(s));
-    }
-    static void Release(void* s)
-    {
-        skiplist_free(static_cast<struct SkipList*>(s));
-    }
+
+    static void* Final(void* s) { return temporal_tagg_finalfn(static_cast<struct SkipList*>(s)); }
+
+    static void Release(void* s) { skiplist_free(static_cast<struct SkipList*>(s)); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -3171,15 +3216,18 @@ struct MeosAggregate_wCount_5Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 1> MeosAggregate_wCount_5Literals{DataType::Type::VARSIZED};
 using MeosAggregate_wCount_5 = MeosRuntime::MeosAggregate<MeosAggregate_wCount_5Ops>;
-constexpr MeosAggregateKernels MeosAggregate_wCount_5Kernels{&MeosAggregate_wCount_5::Initialize, &MeosAggregate_wCount_5::Update, &MeosAggregate_wCount_5::Combine, &MeosAggregate_wCount_5::Finish, MeosAggregate_wCount_5::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_wCount_5Kernels{
+    &MeosAggregate_wCount_5::Initialize,
+    &MeosAggregate_wCount_5::Update,
+    &MeosAggregate_wCount_5::Combine,
+    &MeosAggregate_wCount_5::Finish,
+    MeosAggregate_wCount_5::StateSize};
 
 struct MeosAggregate_mergeAgg_5Ops
 {
@@ -3187,9 +3235,11 @@ struct MeosAggregate_mergeAgg_5Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -3200,22 +3250,18 @@ struct MeosAggregate_mergeAgg_5Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_merge_transfn(static_cast<struct SkipList*>(s), static_cast<Temporal*>(row.a0));
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_tagg_finalfn(static_cast<struct SkipList*>(s));
-    }
-    static void Release(void* s)
-    {
-        skiplist_free(static_cast<struct SkipList*>(s));
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_tagg_finalfn(static_cast<struct SkipList*>(s)); }
+
+    static void Release(void* s) { skiplist_free(static_cast<struct SkipList*>(s)); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -3226,15 +3272,18 @@ struct MeosAggregate_mergeAgg_5Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_mergeAgg_5Literals{};
 using MeosAggregate_mergeAgg_5 = MeosRuntime::MeosAggregate<MeosAggregate_mergeAgg_5Ops>;
-constexpr MeosAggregateKernels MeosAggregate_mergeAgg_5Kernels{&MeosAggregate_mergeAgg_5::Initialize, &MeosAggregate_mergeAgg_5::Update, &MeosAggregate_mergeAgg_5::Combine, &MeosAggregate_mergeAgg_5::Finish, MeosAggregate_mergeAgg_5::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_mergeAgg_5Kernels{
+    &MeosAggregate_mergeAgg_5::Initialize,
+    &MeosAggregate_mergeAgg_5::Update,
+    &MeosAggregate_mergeAgg_5::Combine,
+    &MeosAggregate_mergeAgg_5::Finish,
+    MeosAggregate_mergeAgg_5::StateSize};
 
 struct MeosAggregate_appendInstantAgg_15Ops
 {
@@ -3242,9 +3291,11 @@ struct MeosAggregate_appendInstantAgg_15Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = true;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = true;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -3255,22 +3306,18 @@ struct MeosAggregate_appendInstantAgg_15Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_app_tinst_transfn(static_cast<Temporal*>(s), static_cast<TInstant*>(row.a0), STEP, -1.0, nullptr);
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_append_finalfn(static_cast<const Temporal*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_append_finalfn(static_cast<const Temporal*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -3281,15 +3328,18 @@ struct MeosAggregate_appendInstantAgg_15Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row& row)
-    {
-        return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0));
-    }
+
+    static int64_t Order(const Row& row) { return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0)); }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_appendInstantAgg_15Literals{};
 using MeosAggregate_appendInstantAgg_15 = MeosRuntime::MeosAggregate<MeosAggregate_appendInstantAgg_15Ops>;
-constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_15Kernels{&MeosAggregate_appendInstantAgg_15::Initialize, &MeosAggregate_appendInstantAgg_15::Update, &MeosAggregate_appendInstantAgg_15::Combine, &MeosAggregate_appendInstantAgg_15::Finish, MeosAggregate_appendInstantAgg_15::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_15Kernels{
+    &MeosAggregate_appendInstantAgg_15::Initialize,
+    &MeosAggregate_appendInstantAgg_15::Update,
+    &MeosAggregate_appendInstantAgg_15::Combine,
+    &MeosAggregate_appendInstantAgg_15::Finish,
+    MeosAggregate_appendInstantAgg_15::StateSize};
 
 struct MeosAggregate_appendInstantAgg_16Ops
 {
@@ -3298,9 +3348,11 @@ struct MeosAggregate_appendInstantAgg_16Ops
         void* a0;
         interpType a1;
     };
+
     static constexpr bool GATHERS = true;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = true;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         row.a0 = MeosRuntime::laid(a0);
@@ -3311,22 +3363,18 @@ struct MeosAggregate_appendInstantAgg_16Ops
         row.a1 = interptype_from_string(MeosRuntime::text(MeosRuntime::literal(block, 0)).c_str());
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_app_tinst_transfn(static_cast<Temporal*>(s), static_cast<TInstant*>(row.a0), row.a1, -1.0, nullptr);
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_append_finalfn(static_cast<const Temporal*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_append_finalfn(static_cast<const Temporal*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -3337,15 +3385,18 @@ struct MeosAggregate_appendInstantAgg_16Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row& row)
-    {
-        return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0));
-    }
+
+    static int64_t Order(const Row& row) { return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0)); }
 };
 
 constexpr std::array<DataType::Type, 1> MeosAggregate_appendInstantAgg_16Literals{DataType::Type::VARSIZED};
 using MeosAggregate_appendInstantAgg_16 = MeosRuntime::MeosAggregate<MeosAggregate_appendInstantAgg_16Ops>;
-constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_16Kernels{&MeosAggregate_appendInstantAgg_16::Initialize, &MeosAggregate_appendInstantAgg_16::Update, &MeosAggregate_appendInstantAgg_16::Combine, &MeosAggregate_appendInstantAgg_16::Finish, MeosAggregate_appendInstantAgg_16::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_16Kernels{
+    &MeosAggregate_appendInstantAgg_16::Initialize,
+    &MeosAggregate_appendInstantAgg_16::Update,
+    &MeosAggregate_appendInstantAgg_16::Combine,
+    &MeosAggregate_appendInstantAgg_16::Finish,
+    MeosAggregate_appendInstantAgg_16::StateSize};
 
 struct MeosAggregate_appendInstantAgg_17Ops
 {
@@ -3355,9 +3406,11 @@ struct MeosAggregate_appendInstantAgg_17Ops
         interpType a1;
         Interval* a2;
     };
+
     static constexpr bool GATHERS = true;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = true;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         row.a0 = MeosRuntime::laid(a0);
@@ -3374,23 +3427,22 @@ struct MeosAggregate_appendInstantAgg_17Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_app_tinst_transfn(static_cast<Temporal*>(s), static_cast<TInstant*>(row.a0), row.a1, -1.0, row.a2);
     }
+
     static void Free(Row& row)
     {
         std::free(row.a0);
         std::free(row.a2);
     }
-    static void* Final(void* s)
-    {
-        return temporal_append_finalfn(static_cast<const Temporal*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void* Final(void* s) { return temporal_append_finalfn(static_cast<const Temporal*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -3401,15 +3453,18 @@ struct MeosAggregate_appendInstantAgg_17Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row& row)
-    {
-        return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0));
-    }
+
+    static int64_t Order(const Row& row) { return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0)); }
 };
 
 constexpr std::array<DataType::Type, 2> MeosAggregate_appendInstantAgg_17Literals{DataType::Type::VARSIZED, DataType::Type::VARSIZED};
 using MeosAggregate_appendInstantAgg_17 = MeosRuntime::MeosAggregate<MeosAggregate_appendInstantAgg_17Ops>;
-constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_17Kernels{&MeosAggregate_appendInstantAgg_17::Initialize, &MeosAggregate_appendInstantAgg_17::Update, &MeosAggregate_appendInstantAgg_17::Combine, &MeosAggregate_appendInstantAgg_17::Finish, MeosAggregate_appendInstantAgg_17::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_17Kernels{
+    &MeosAggregate_appendInstantAgg_17::Initialize,
+    &MeosAggregate_appendInstantAgg_17::Update,
+    &MeosAggregate_appendInstantAgg_17::Combine,
+    &MeosAggregate_appendInstantAgg_17::Finish,
+    MeosAggregate_appendInstantAgg_17::StateSize};
 
 struct MeosAggregate_appendSequenceAgg_5Ops
 {
@@ -3417,9 +3472,11 @@ struct MeosAggregate_appendSequenceAgg_5Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = true;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = true;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -3430,22 +3487,18 @@ struct MeosAggregate_appendSequenceAgg_5Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_app_tseq_transfn(static_cast<Temporal*>(s), static_cast<TSequence*>(row.a0));
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_append_finalfn(static_cast<const Temporal*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_append_finalfn(static_cast<const Temporal*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -3456,15 +3509,18 @@ struct MeosAggregate_appendSequenceAgg_5Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row& row)
-    {
-        return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0));
-    }
+
+    static int64_t Order(const Row& row) { return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0)); }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_appendSequenceAgg_5Literals{};
 using MeosAggregate_appendSequenceAgg_5 = MeosRuntime::MeosAggregate<MeosAggregate_appendSequenceAgg_5Ops>;
-constexpr MeosAggregateKernels MeosAggregate_appendSequenceAgg_5Kernels{&MeosAggregate_appendSequenceAgg_5::Initialize, &MeosAggregate_appendSequenceAgg_5::Update, &MeosAggregate_appendSequenceAgg_5::Combine, &MeosAggregate_appendSequenceAgg_5::Finish, MeosAggregate_appendSequenceAgg_5::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_appendSequenceAgg_5Kernels{
+    &MeosAggregate_appendSequenceAgg_5::Initialize,
+    &MeosAggregate_appendSequenceAgg_5::Update,
+    &MeosAggregate_appendSequenceAgg_5::Combine,
+    &MeosAggregate_appendSequenceAgg_5::Finish,
+    MeosAggregate_appendSequenceAgg_5::StateSize};
 
 struct MeosAggregate_setUnionAgg_8Ops
 {
@@ -3472,9 +3528,11 @@ struct MeosAggregate_setUnionAgg_8Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -3485,22 +3543,15 @@ struct MeosAggregate_setUnionAgg_8Ops
         }
         return true;
     }
-    static void* Transition(void* s, Row& row)
-    {
-        return jsonb_union_transfn(static_cast<Set*>(s), static_cast<Jsonb*>(row.a0));
-    }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return set_union_finalfn(static_cast<Set*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void* Transition(void* s, Row& row) { return jsonb_union_transfn(static_cast<Set*>(s), static_cast<Jsonb*>(row.a0)); }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return set_union_finalfn(static_cast<Set*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Set*>(v);
@@ -3511,15 +3562,18 @@ struct MeosAggregate_setUnionAgg_8Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(set_mem_size(static_cast<const Set*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_setUnionAgg_8Literals{};
 using MeosAggregate_setUnionAgg_8 = MeosRuntime::MeosAggregate<MeosAggregate_setUnionAgg_8Ops>;
-constexpr MeosAggregateKernels MeosAggregate_setUnionAgg_8Kernels{&MeosAggregate_setUnionAgg_8::Initialize, &MeosAggregate_setUnionAgg_8::Update, &MeosAggregate_setUnionAgg_8::Combine, &MeosAggregate_setUnionAgg_8::Finish, MeosAggregate_setUnionAgg_8::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_setUnionAgg_8Kernels{
+    &MeosAggregate_setUnionAgg_8::Initialize,
+    &MeosAggregate_setUnionAgg_8::Update,
+    &MeosAggregate_setUnionAgg_8::Combine,
+    &MeosAggregate_setUnionAgg_8::Finish,
+    MeosAggregate_setUnionAgg_8::StateSize};
 
 struct MeosAggregate_setUnionAgg_9Ops
 {
@@ -3527,9 +3581,11 @@ struct MeosAggregate_setUnionAgg_9Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -3540,22 +3596,15 @@ struct MeosAggregate_setUnionAgg_9Ops
         }
         return true;
     }
-    static void* Transition(void* s, Row& row)
-    {
-        return set_union_transfn(static_cast<Set*>(s), static_cast<Set*>(row.a0));
-    }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return set_union_finalfn(static_cast<Set*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void* Transition(void* s, Row& row) { return set_union_transfn(static_cast<Set*>(s), static_cast<Set*>(row.a0)); }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return set_union_finalfn(static_cast<Set*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Set*>(v);
@@ -3566,15 +3615,18 @@ struct MeosAggregate_setUnionAgg_9Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(set_mem_size(static_cast<const Set*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_setUnionAgg_9Literals{};
 using MeosAggregate_setUnionAgg_9 = MeosRuntime::MeosAggregate<MeosAggregate_setUnionAgg_9Ops>;
-constexpr MeosAggregateKernels MeosAggregate_setUnionAgg_9Kernels{&MeosAggregate_setUnionAgg_9::Initialize, &MeosAggregate_setUnionAgg_9::Update, &MeosAggregate_setUnionAgg_9::Combine, &MeosAggregate_setUnionAgg_9::Finish, MeosAggregate_setUnionAgg_9::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_setUnionAgg_9Kernels{
+    &MeosAggregate_setUnionAgg_9::Initialize,
+    &MeosAggregate_setUnionAgg_9::Update,
+    &MeosAggregate_setUnionAgg_9::Combine,
+    &MeosAggregate_setUnionAgg_9::Finish,
+    MeosAggregate_setUnionAgg_9::StateSize};
 
 struct MeosAggregate_extent_7Ops
 {
@@ -3582,9 +3634,11 @@ struct MeosAggregate_extent_7Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = false;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -3595,22 +3649,15 @@ struct MeosAggregate_extent_7Ops
         }
         return true;
     }
-    static void* Transition(void* s, Row& row)
-    {
-        return temporal_extent_transfn(static_cast<Span*>(s), static_cast<Temporal*>(row.a0));
-    }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return s;
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void* Transition(void* s, Row& row) { return temporal_extent_transfn(static_cast<Span*>(s), static_cast<Temporal*>(row.a0)); }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return s; }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Span*>(v);
@@ -3621,15 +3668,18 @@ struct MeosAggregate_extent_7Ops
         }
         return MeosRuntime::image(r, size_t{24});
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_extent_7Literals{};
 using MeosAggregate_extent_7 = MeosRuntime::MeosAggregate<MeosAggregate_extent_7Ops>;
-constexpr MeosAggregateKernels MeosAggregate_extent_7Kernels{&MeosAggregate_extent_7::Initialize, &MeosAggregate_extent_7::Update, &MeosAggregate_extent_7::Combine, &MeosAggregate_extent_7::Finish, MeosAggregate_extent_7::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_extent_7Kernels{
+    &MeosAggregate_extent_7::Initialize,
+    &MeosAggregate_extent_7::Update,
+    &MeosAggregate_extent_7::Combine,
+    &MeosAggregate_extent_7::Finish,
+    MeosAggregate_extent_7::StateSize};
 
 struct MeosAggregate_tCount_6Ops
 {
@@ -3637,9 +3687,11 @@ struct MeosAggregate_tCount_6Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -3650,22 +3702,18 @@ struct MeosAggregate_tCount_6Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_tcount_transfn(static_cast<struct SkipList*>(s), static_cast<Temporal*>(row.a0));
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_tagg_finalfn(static_cast<struct SkipList*>(s));
-    }
-    static void Release(void* s)
-    {
-        skiplist_free(static_cast<struct SkipList*>(s));
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_tagg_finalfn(static_cast<struct SkipList*>(s)); }
+
+    static void Release(void* s) { skiplist_free(static_cast<struct SkipList*>(s)); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -3676,15 +3724,18 @@ struct MeosAggregate_tCount_6Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_tCount_6Literals{};
 using MeosAggregate_tCount_6 = MeosRuntime::MeosAggregate<MeosAggregate_tCount_6Ops>;
-constexpr MeosAggregateKernels MeosAggregate_tCount_6Kernels{&MeosAggregate_tCount_6::Initialize, &MeosAggregate_tCount_6::Update, &MeosAggregate_tCount_6::Combine, &MeosAggregate_tCount_6::Finish, MeosAggregate_tCount_6::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_tCount_6Kernels{
+    &MeosAggregate_tCount_6::Initialize,
+    &MeosAggregate_tCount_6::Update,
+    &MeosAggregate_tCount_6::Combine,
+    &MeosAggregate_tCount_6::Finish,
+    MeosAggregate_tCount_6::StateSize};
 
 struct MeosAggregate_wCount_6Ops
 {
@@ -3693,9 +3744,11 @@ struct MeosAggregate_wCount_6Ops
         void* a0;
         Interval* a1;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         row.a0 = MeosRuntime::laid(a0);
@@ -3711,23 +3764,22 @@ struct MeosAggregate_wCount_6Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_wcount_transfn(static_cast<struct SkipList*>(s), static_cast<Temporal*>(row.a0), row.a1);
     }
+
     static void Free(Row& row)
     {
         std::free(row.a0);
         std::free(row.a1);
     }
-    static void* Final(void* s)
-    {
-        return temporal_tagg_finalfn(static_cast<struct SkipList*>(s));
-    }
-    static void Release(void* s)
-    {
-        skiplist_free(static_cast<struct SkipList*>(s));
-    }
+
+    static void* Final(void* s) { return temporal_tagg_finalfn(static_cast<struct SkipList*>(s)); }
+
+    static void Release(void* s) { skiplist_free(static_cast<struct SkipList*>(s)); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -3738,15 +3790,18 @@ struct MeosAggregate_wCount_6Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 1> MeosAggregate_wCount_6Literals{DataType::Type::VARSIZED};
 using MeosAggregate_wCount_6 = MeosRuntime::MeosAggregate<MeosAggregate_wCount_6Ops>;
-constexpr MeosAggregateKernels MeosAggregate_wCount_6Kernels{&MeosAggregate_wCount_6::Initialize, &MeosAggregate_wCount_6::Update, &MeosAggregate_wCount_6::Combine, &MeosAggregate_wCount_6::Finish, MeosAggregate_wCount_6::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_wCount_6Kernels{
+    &MeosAggregate_wCount_6::Initialize,
+    &MeosAggregate_wCount_6::Update,
+    &MeosAggregate_wCount_6::Combine,
+    &MeosAggregate_wCount_6::Finish,
+    MeosAggregate_wCount_6::StateSize};
 
 struct MeosAggregate_mergeAgg_6Ops
 {
@@ -3754,9 +3809,11 @@ struct MeosAggregate_mergeAgg_6Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -3767,22 +3824,18 @@ struct MeosAggregate_mergeAgg_6Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_merge_transfn(static_cast<struct SkipList*>(s), static_cast<Temporal*>(row.a0));
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_tagg_finalfn(static_cast<struct SkipList*>(s));
-    }
-    static void Release(void* s)
-    {
-        skiplist_free(static_cast<struct SkipList*>(s));
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_tagg_finalfn(static_cast<struct SkipList*>(s)); }
+
+    static void Release(void* s) { skiplist_free(static_cast<struct SkipList*>(s)); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -3793,15 +3846,18 @@ struct MeosAggregate_mergeAgg_6Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_mergeAgg_6Literals{};
 using MeosAggregate_mergeAgg_6 = MeosRuntime::MeosAggregate<MeosAggregate_mergeAgg_6Ops>;
-constexpr MeosAggregateKernels MeosAggregate_mergeAgg_6Kernels{&MeosAggregate_mergeAgg_6::Initialize, &MeosAggregate_mergeAgg_6::Update, &MeosAggregate_mergeAgg_6::Combine, &MeosAggregate_mergeAgg_6::Finish, MeosAggregate_mergeAgg_6::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_mergeAgg_6Kernels{
+    &MeosAggregate_mergeAgg_6::Initialize,
+    &MeosAggregate_mergeAgg_6::Update,
+    &MeosAggregate_mergeAgg_6::Combine,
+    &MeosAggregate_mergeAgg_6::Finish,
+    MeosAggregate_mergeAgg_6::StateSize};
 
 struct MeosAggregate_appendInstantAgg_18Ops
 {
@@ -3809,9 +3865,11 @@ struct MeosAggregate_appendInstantAgg_18Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = true;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = true;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -3822,22 +3880,18 @@ struct MeosAggregate_appendInstantAgg_18Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_app_tinst_transfn(static_cast<Temporal*>(s), static_cast<TInstant*>(row.a0), STEP, -1.0, nullptr);
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_append_finalfn(static_cast<const Temporal*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_append_finalfn(static_cast<const Temporal*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -3848,15 +3902,18 @@ struct MeosAggregate_appendInstantAgg_18Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row& row)
-    {
-        return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0));
-    }
+
+    static int64_t Order(const Row& row) { return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0)); }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_appendInstantAgg_18Literals{};
 using MeosAggregate_appendInstantAgg_18 = MeosRuntime::MeosAggregate<MeosAggregate_appendInstantAgg_18Ops>;
-constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_18Kernels{&MeosAggregate_appendInstantAgg_18::Initialize, &MeosAggregate_appendInstantAgg_18::Update, &MeosAggregate_appendInstantAgg_18::Combine, &MeosAggregate_appendInstantAgg_18::Finish, MeosAggregate_appendInstantAgg_18::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_18Kernels{
+    &MeosAggregate_appendInstantAgg_18::Initialize,
+    &MeosAggregate_appendInstantAgg_18::Update,
+    &MeosAggregate_appendInstantAgg_18::Combine,
+    &MeosAggregate_appendInstantAgg_18::Finish,
+    MeosAggregate_appendInstantAgg_18::StateSize};
 
 struct MeosAggregate_appendInstantAgg_19Ops
 {
@@ -3865,9 +3922,11 @@ struct MeosAggregate_appendInstantAgg_19Ops
         void* a0;
         interpType a1;
     };
+
     static constexpr bool GATHERS = true;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = true;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         row.a0 = MeosRuntime::laid(a0);
@@ -3878,22 +3937,18 @@ struct MeosAggregate_appendInstantAgg_19Ops
         row.a1 = interptype_from_string(MeosRuntime::text(MeosRuntime::literal(block, 0)).c_str());
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_app_tinst_transfn(static_cast<Temporal*>(s), static_cast<TInstant*>(row.a0), row.a1, -1.0, nullptr);
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_append_finalfn(static_cast<const Temporal*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_append_finalfn(static_cast<const Temporal*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -3904,15 +3959,18 @@ struct MeosAggregate_appendInstantAgg_19Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row& row)
-    {
-        return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0));
-    }
+
+    static int64_t Order(const Row& row) { return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0)); }
 };
 
 constexpr std::array<DataType::Type, 1> MeosAggregate_appendInstantAgg_19Literals{DataType::Type::VARSIZED};
 using MeosAggregate_appendInstantAgg_19 = MeosRuntime::MeosAggregate<MeosAggregate_appendInstantAgg_19Ops>;
-constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_19Kernels{&MeosAggregate_appendInstantAgg_19::Initialize, &MeosAggregate_appendInstantAgg_19::Update, &MeosAggregate_appendInstantAgg_19::Combine, &MeosAggregate_appendInstantAgg_19::Finish, MeosAggregate_appendInstantAgg_19::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_19Kernels{
+    &MeosAggregate_appendInstantAgg_19::Initialize,
+    &MeosAggregate_appendInstantAgg_19::Update,
+    &MeosAggregate_appendInstantAgg_19::Combine,
+    &MeosAggregate_appendInstantAgg_19::Finish,
+    MeosAggregate_appendInstantAgg_19::StateSize};
 
 struct MeosAggregate_appendInstantAgg_20Ops
 {
@@ -3922,9 +3980,11 @@ struct MeosAggregate_appendInstantAgg_20Ops
         interpType a1;
         Interval* a2;
     };
+
     static constexpr bool GATHERS = true;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = true;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         row.a0 = MeosRuntime::laid(a0);
@@ -3941,23 +4001,22 @@ struct MeosAggregate_appendInstantAgg_20Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_app_tinst_transfn(static_cast<Temporal*>(s), static_cast<TInstant*>(row.a0), row.a1, -1.0, row.a2);
     }
+
     static void Free(Row& row)
     {
         std::free(row.a0);
         std::free(row.a2);
     }
-    static void* Final(void* s)
-    {
-        return temporal_append_finalfn(static_cast<const Temporal*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void* Final(void* s) { return temporal_append_finalfn(static_cast<const Temporal*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -3968,15 +4027,18 @@ struct MeosAggregate_appendInstantAgg_20Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row& row)
-    {
-        return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0));
-    }
+
+    static int64_t Order(const Row& row) { return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0)); }
 };
 
 constexpr std::array<DataType::Type, 2> MeosAggregate_appendInstantAgg_20Literals{DataType::Type::VARSIZED, DataType::Type::VARSIZED};
 using MeosAggregate_appendInstantAgg_20 = MeosRuntime::MeosAggregate<MeosAggregate_appendInstantAgg_20Ops>;
-constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_20Kernels{&MeosAggregate_appendInstantAgg_20::Initialize, &MeosAggregate_appendInstantAgg_20::Update, &MeosAggregate_appendInstantAgg_20::Combine, &MeosAggregate_appendInstantAgg_20::Finish, MeosAggregate_appendInstantAgg_20::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_20Kernels{
+    &MeosAggregate_appendInstantAgg_20::Initialize,
+    &MeosAggregate_appendInstantAgg_20::Update,
+    &MeosAggregate_appendInstantAgg_20::Combine,
+    &MeosAggregate_appendInstantAgg_20::Finish,
+    MeosAggregate_appendInstantAgg_20::StateSize};
 
 struct MeosAggregate_appendSequenceAgg_6Ops
 {
@@ -3984,9 +4046,11 @@ struct MeosAggregate_appendSequenceAgg_6Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = true;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = true;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -3997,22 +4061,18 @@ struct MeosAggregate_appendSequenceAgg_6Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_app_tseq_transfn(static_cast<Temporal*>(s), static_cast<TSequence*>(row.a0));
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_append_finalfn(static_cast<const Temporal*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_append_finalfn(static_cast<const Temporal*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -4023,15 +4083,18 @@ struct MeosAggregate_appendSequenceAgg_6Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row& row)
-    {
-        return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0));
-    }
+
+    static int64_t Order(const Row& row) { return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0)); }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_appendSequenceAgg_6Literals{};
 using MeosAggregate_appendSequenceAgg_6 = MeosRuntime::MeosAggregate<MeosAggregate_appendSequenceAgg_6Ops>;
-constexpr MeosAggregateKernels MeosAggregate_appendSequenceAgg_6Kernels{&MeosAggregate_appendSequenceAgg_6::Initialize, &MeosAggregate_appendSequenceAgg_6::Update, &MeosAggregate_appendSequenceAgg_6::Combine, &MeosAggregate_appendSequenceAgg_6::Finish, MeosAggregate_appendSequenceAgg_6::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_appendSequenceAgg_6Kernels{
+    &MeosAggregate_appendSequenceAgg_6::Initialize,
+    &MeosAggregate_appendSequenceAgg_6::Update,
+    &MeosAggregate_appendSequenceAgg_6::Combine,
+    &MeosAggregate_appendSequenceAgg_6::Finish,
+    MeosAggregate_appendSequenceAgg_6::StateSize};
 
 struct MeosAggregate_setUnionAgg_10Ops
 {
@@ -4039,9 +4102,11 @@ struct MeosAggregate_setUnionAgg_10Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -4052,22 +4117,15 @@ struct MeosAggregate_setUnionAgg_10Ops
         }
         return true;
     }
-    static void* Transition(void* s, Row& row)
-    {
-        return npoint_union_transfn(static_cast<Set*>(s), static_cast<Npoint*>(row.a0));
-    }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return set_union_finalfn(static_cast<Set*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void* Transition(void* s, Row& row) { return npoint_union_transfn(static_cast<Set*>(s), static_cast<Npoint*>(row.a0)); }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return set_union_finalfn(static_cast<Set*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Set*>(v);
@@ -4078,15 +4136,18 @@ struct MeosAggregate_setUnionAgg_10Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(set_mem_size(static_cast<const Set*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_setUnionAgg_10Literals{};
 using MeosAggregate_setUnionAgg_10 = MeosRuntime::MeosAggregate<MeosAggregate_setUnionAgg_10Ops>;
-constexpr MeosAggregateKernels MeosAggregate_setUnionAgg_10Kernels{&MeosAggregate_setUnionAgg_10::Initialize, &MeosAggregate_setUnionAgg_10::Update, &MeosAggregate_setUnionAgg_10::Combine, &MeosAggregate_setUnionAgg_10::Finish, MeosAggregate_setUnionAgg_10::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_setUnionAgg_10Kernels{
+    &MeosAggregate_setUnionAgg_10::Initialize,
+    &MeosAggregate_setUnionAgg_10::Update,
+    &MeosAggregate_setUnionAgg_10::Combine,
+    &MeosAggregate_setUnionAgg_10::Finish,
+    MeosAggregate_setUnionAgg_10::StateSize};
 
 struct MeosAggregate_setUnionAgg_11Ops
 {
@@ -4094,9 +4155,11 @@ struct MeosAggregate_setUnionAgg_11Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -4107,22 +4170,15 @@ struct MeosAggregate_setUnionAgg_11Ops
         }
         return true;
     }
-    static void* Transition(void* s, Row& row)
-    {
-        return set_union_transfn(static_cast<Set*>(s), static_cast<Set*>(row.a0));
-    }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return set_union_finalfn(static_cast<Set*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void* Transition(void* s, Row& row) { return set_union_transfn(static_cast<Set*>(s), static_cast<Set*>(row.a0)); }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return set_union_finalfn(static_cast<Set*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Set*>(v);
@@ -4133,15 +4189,18 @@ struct MeosAggregate_setUnionAgg_11Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(set_mem_size(static_cast<const Set*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_setUnionAgg_11Literals{};
 using MeosAggregate_setUnionAgg_11 = MeosRuntime::MeosAggregate<MeosAggregate_setUnionAgg_11Ops>;
-constexpr MeosAggregateKernels MeosAggregate_setUnionAgg_11Kernels{&MeosAggregate_setUnionAgg_11::Initialize, &MeosAggregate_setUnionAgg_11::Update, &MeosAggregate_setUnionAgg_11::Combine, &MeosAggregate_setUnionAgg_11::Finish, MeosAggregate_setUnionAgg_11::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_setUnionAgg_11Kernels{
+    &MeosAggregate_setUnionAgg_11::Initialize,
+    &MeosAggregate_setUnionAgg_11::Update,
+    &MeosAggregate_setUnionAgg_11::Combine,
+    &MeosAggregate_setUnionAgg_11::Finish,
+    MeosAggregate_setUnionAgg_11::StateSize};
 
 struct MeosAggregate_extent_8Ops
 {
@@ -4149,9 +4208,11 @@ struct MeosAggregate_extent_8Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = false;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -4162,22 +4223,15 @@ struct MeosAggregate_extent_8Ops
         }
         return true;
     }
-    static void* Transition(void* s, Row& row)
-    {
-        return tspatial_extent_transfn(static_cast<STBox*>(s), static_cast<Temporal*>(row.a0));
-    }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return s;
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void* Transition(void* s, Row& row) { return tspatial_extent_transfn(static_cast<STBox*>(s), static_cast<Temporal*>(row.a0)); }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return s; }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<STBox*>(v);
@@ -4188,15 +4242,18 @@ struct MeosAggregate_extent_8Ops
         }
         return MeosRuntime::image(r, size_t{80});
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_extent_8Literals{};
 using MeosAggregate_extent_8 = MeosRuntime::MeosAggregate<MeosAggregate_extent_8Ops>;
-constexpr MeosAggregateKernels MeosAggregate_extent_8Kernels{&MeosAggregate_extent_8::Initialize, &MeosAggregate_extent_8::Update, &MeosAggregate_extent_8::Combine, &MeosAggregate_extent_8::Finish, MeosAggregate_extent_8::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_extent_8Kernels{
+    &MeosAggregate_extent_8::Initialize,
+    &MeosAggregate_extent_8::Update,
+    &MeosAggregate_extent_8::Combine,
+    &MeosAggregate_extent_8::Finish,
+    MeosAggregate_extent_8::StateSize};
 
 struct MeosAggregate_tCount_7Ops
 {
@@ -4204,9 +4261,11 @@ struct MeosAggregate_tCount_7Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -4217,22 +4276,18 @@ struct MeosAggregate_tCount_7Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_tcount_transfn(static_cast<struct SkipList*>(s), static_cast<Temporal*>(row.a0));
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_tagg_finalfn(static_cast<struct SkipList*>(s));
-    }
-    static void Release(void* s)
-    {
-        skiplist_free(static_cast<struct SkipList*>(s));
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_tagg_finalfn(static_cast<struct SkipList*>(s)); }
+
+    static void Release(void* s) { skiplist_free(static_cast<struct SkipList*>(s)); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -4243,15 +4298,18 @@ struct MeosAggregate_tCount_7Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_tCount_7Literals{};
 using MeosAggregate_tCount_7 = MeosRuntime::MeosAggregate<MeosAggregate_tCount_7Ops>;
-constexpr MeosAggregateKernels MeosAggregate_tCount_7Kernels{&MeosAggregate_tCount_7::Initialize, &MeosAggregate_tCount_7::Update, &MeosAggregate_tCount_7::Combine, &MeosAggregate_tCount_7::Finish, MeosAggregate_tCount_7::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_tCount_7Kernels{
+    &MeosAggregate_tCount_7::Initialize,
+    &MeosAggregate_tCount_7::Update,
+    &MeosAggregate_tCount_7::Combine,
+    &MeosAggregate_tCount_7::Finish,
+    MeosAggregate_tCount_7::StateSize};
 
 struct MeosAggregate_wCount_7Ops
 {
@@ -4260,9 +4318,11 @@ struct MeosAggregate_wCount_7Ops
         void* a0;
         Interval* a1;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         row.a0 = MeosRuntime::laid(a0);
@@ -4278,23 +4338,22 @@ struct MeosAggregate_wCount_7Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_wcount_transfn(static_cast<struct SkipList*>(s), static_cast<Temporal*>(row.a0), row.a1);
     }
+
     static void Free(Row& row)
     {
         std::free(row.a0);
         std::free(row.a1);
     }
-    static void* Final(void* s)
-    {
-        return temporal_tagg_finalfn(static_cast<struct SkipList*>(s));
-    }
-    static void Release(void* s)
-    {
-        skiplist_free(static_cast<struct SkipList*>(s));
-    }
+
+    static void* Final(void* s) { return temporal_tagg_finalfn(static_cast<struct SkipList*>(s)); }
+
+    static void Release(void* s) { skiplist_free(static_cast<struct SkipList*>(s)); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -4305,15 +4364,18 @@ struct MeosAggregate_wCount_7Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 1> MeosAggregate_wCount_7Literals{DataType::Type::VARSIZED};
 using MeosAggregate_wCount_7 = MeosRuntime::MeosAggregate<MeosAggregate_wCount_7Ops>;
-constexpr MeosAggregateKernels MeosAggregate_wCount_7Kernels{&MeosAggregate_wCount_7::Initialize, &MeosAggregate_wCount_7::Update, &MeosAggregate_wCount_7::Combine, &MeosAggregate_wCount_7::Finish, MeosAggregate_wCount_7::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_wCount_7Kernels{
+    &MeosAggregate_wCount_7::Initialize,
+    &MeosAggregate_wCount_7::Update,
+    &MeosAggregate_wCount_7::Combine,
+    &MeosAggregate_wCount_7::Finish,
+    MeosAggregate_wCount_7::StateSize};
 
 struct MeosAggregate_tCentroid_1Ops
 {
@@ -4321,9 +4383,11 @@ struct MeosAggregate_tCentroid_1Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -4334,22 +4398,18 @@ struct MeosAggregate_tCentroid_1Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return tnpoint_tcentroid_transfn(static_cast<struct SkipList*>(s), static_cast<Temporal*>(row.a0));
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return tpoint_tcentroid_finalfn(static_cast<struct SkipList*>(s));
-    }
-    static void Release(void* s)
-    {
-        skiplist_free(static_cast<struct SkipList*>(s));
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return tpoint_tcentroid_finalfn(static_cast<struct SkipList*>(s)); }
+
+    static void Release(void* s) { skiplist_free(static_cast<struct SkipList*>(s)); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -4360,15 +4420,18 @@ struct MeosAggregate_tCentroid_1Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_tCentroid_1Literals{};
 using MeosAggregate_tCentroid_1 = MeosRuntime::MeosAggregate<MeosAggregate_tCentroid_1Ops>;
-constexpr MeosAggregateKernels MeosAggregate_tCentroid_1Kernels{&MeosAggregate_tCentroid_1::Initialize, &MeosAggregate_tCentroid_1::Update, &MeosAggregate_tCentroid_1::Combine, &MeosAggregate_tCentroid_1::Finish, MeosAggregate_tCentroid_1::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_tCentroid_1Kernels{
+    &MeosAggregate_tCentroid_1::Initialize,
+    &MeosAggregate_tCentroid_1::Update,
+    &MeosAggregate_tCentroid_1::Combine,
+    &MeosAggregate_tCentroid_1::Finish,
+    MeosAggregate_tCentroid_1::StateSize};
 
 struct MeosAggregate_mergeAgg_7Ops
 {
@@ -4376,9 +4439,11 @@ struct MeosAggregate_mergeAgg_7Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -4389,22 +4454,18 @@ struct MeosAggregate_mergeAgg_7Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_merge_transfn(static_cast<struct SkipList*>(s), static_cast<Temporal*>(row.a0));
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_tagg_finalfn(static_cast<struct SkipList*>(s));
-    }
-    static void Release(void* s)
-    {
-        skiplist_free(static_cast<struct SkipList*>(s));
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_tagg_finalfn(static_cast<struct SkipList*>(s)); }
+
+    static void Release(void* s) { skiplist_free(static_cast<struct SkipList*>(s)); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -4415,15 +4476,18 @@ struct MeosAggregate_mergeAgg_7Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_mergeAgg_7Literals{};
 using MeosAggregate_mergeAgg_7 = MeosRuntime::MeosAggregate<MeosAggregate_mergeAgg_7Ops>;
-constexpr MeosAggregateKernels MeosAggregate_mergeAgg_7Kernels{&MeosAggregate_mergeAgg_7::Initialize, &MeosAggregate_mergeAgg_7::Update, &MeosAggregate_mergeAgg_7::Combine, &MeosAggregate_mergeAgg_7::Finish, MeosAggregate_mergeAgg_7::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_mergeAgg_7Kernels{
+    &MeosAggregate_mergeAgg_7::Initialize,
+    &MeosAggregate_mergeAgg_7::Update,
+    &MeosAggregate_mergeAgg_7::Combine,
+    &MeosAggregate_mergeAgg_7::Finish,
+    MeosAggregate_mergeAgg_7::StateSize};
 
 struct MeosAggregate_appendInstantAgg_21Ops
 {
@@ -4431,9 +4495,11 @@ struct MeosAggregate_appendInstantAgg_21Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = true;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = true;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -4444,22 +4510,18 @@ struct MeosAggregate_appendInstantAgg_21Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_app_tinst_transfn(static_cast<Temporal*>(s), static_cast<TInstant*>(row.a0), LINEAR, -1.0, nullptr);
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_append_finalfn(static_cast<const Temporal*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_append_finalfn(static_cast<const Temporal*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -4470,15 +4532,18 @@ struct MeosAggregate_appendInstantAgg_21Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row& row)
-    {
-        return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0));
-    }
+
+    static int64_t Order(const Row& row) { return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0)); }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_appendInstantAgg_21Literals{};
 using MeosAggregate_appendInstantAgg_21 = MeosRuntime::MeosAggregate<MeosAggregate_appendInstantAgg_21Ops>;
-constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_21Kernels{&MeosAggregate_appendInstantAgg_21::Initialize, &MeosAggregate_appendInstantAgg_21::Update, &MeosAggregate_appendInstantAgg_21::Combine, &MeosAggregate_appendInstantAgg_21::Finish, MeosAggregate_appendInstantAgg_21::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_21Kernels{
+    &MeosAggregate_appendInstantAgg_21::Initialize,
+    &MeosAggregate_appendInstantAgg_21::Update,
+    &MeosAggregate_appendInstantAgg_21::Combine,
+    &MeosAggregate_appendInstantAgg_21::Finish,
+    MeosAggregate_appendInstantAgg_21::StateSize};
 
 struct MeosAggregate_appendInstantAgg_22Ops
 {
@@ -4487,9 +4552,11 @@ struct MeosAggregate_appendInstantAgg_22Ops
         void* a0;
         interpType a1;
     };
+
     static constexpr bool GATHERS = true;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = true;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         row.a0 = MeosRuntime::laid(a0);
@@ -4500,22 +4567,18 @@ struct MeosAggregate_appendInstantAgg_22Ops
         row.a1 = interptype_from_string(MeosRuntime::text(MeosRuntime::literal(block, 0)).c_str());
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_app_tinst_transfn(static_cast<Temporal*>(s), static_cast<TInstant*>(row.a0), row.a1, -1.0, nullptr);
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_append_finalfn(static_cast<const Temporal*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_append_finalfn(static_cast<const Temporal*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -4526,15 +4589,18 @@ struct MeosAggregate_appendInstantAgg_22Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row& row)
-    {
-        return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0));
-    }
+
+    static int64_t Order(const Row& row) { return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0)); }
 };
 
 constexpr std::array<DataType::Type, 1> MeosAggregate_appendInstantAgg_22Literals{DataType::Type::VARSIZED};
 using MeosAggregate_appendInstantAgg_22 = MeosRuntime::MeosAggregate<MeosAggregate_appendInstantAgg_22Ops>;
-constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_22Kernels{&MeosAggregate_appendInstantAgg_22::Initialize, &MeosAggregate_appendInstantAgg_22::Update, &MeosAggregate_appendInstantAgg_22::Combine, &MeosAggregate_appendInstantAgg_22::Finish, MeosAggregate_appendInstantAgg_22::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_22Kernels{
+    &MeosAggregate_appendInstantAgg_22::Initialize,
+    &MeosAggregate_appendInstantAgg_22::Update,
+    &MeosAggregate_appendInstantAgg_22::Combine,
+    &MeosAggregate_appendInstantAgg_22::Finish,
+    MeosAggregate_appendInstantAgg_22::StateSize};
 
 struct MeosAggregate_appendInstantAgg_23Ops
 {
@@ -4545,9 +4611,11 @@ struct MeosAggregate_appendInstantAgg_23Ops
         double a2;
         Interval* a3;
     };
+
     static constexpr bool GATHERS = true;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = true;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         row.a0 = MeosRuntime::laid(a0);
@@ -4565,23 +4633,22 @@ struct MeosAggregate_appendInstantAgg_23Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_app_tinst_transfn(static_cast<Temporal*>(s), static_cast<TInstant*>(row.a0), row.a1, row.a2, row.a3);
     }
+
     static void Free(Row& row)
     {
         std::free(row.a0);
         std::free(row.a3);
     }
-    static void* Final(void* s)
-    {
-        return temporal_append_finalfn(static_cast<const Temporal*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void* Final(void* s) { return temporal_append_finalfn(static_cast<const Temporal*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -4592,15 +4659,19 @@ struct MeosAggregate_appendInstantAgg_23Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row& row)
-    {
-        return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0));
-    }
+
+    static int64_t Order(const Row& row) { return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0)); }
 };
 
-constexpr std::array<DataType::Type, 3> MeosAggregate_appendInstantAgg_23Literals{DataType::Type::VARSIZED, DataType::Type::FLOAT64, DataType::Type::VARSIZED};
+constexpr std::array<DataType::Type, 3> MeosAggregate_appendInstantAgg_23Literals{
+    DataType::Type::VARSIZED, DataType::Type::FLOAT64, DataType::Type::VARSIZED};
 using MeosAggregate_appendInstantAgg_23 = MeosRuntime::MeosAggregate<MeosAggregate_appendInstantAgg_23Ops>;
-constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_23Kernels{&MeosAggregate_appendInstantAgg_23::Initialize, &MeosAggregate_appendInstantAgg_23::Update, &MeosAggregate_appendInstantAgg_23::Combine, &MeosAggregate_appendInstantAgg_23::Finish, MeosAggregate_appendInstantAgg_23::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_23Kernels{
+    &MeosAggregate_appendInstantAgg_23::Initialize,
+    &MeosAggregate_appendInstantAgg_23::Update,
+    &MeosAggregate_appendInstantAgg_23::Combine,
+    &MeosAggregate_appendInstantAgg_23::Finish,
+    MeosAggregate_appendInstantAgg_23::StateSize};
 
 struct MeosAggregate_appendSequenceAgg_7Ops
 {
@@ -4608,9 +4679,11 @@ struct MeosAggregate_appendSequenceAgg_7Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = true;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = true;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -4621,22 +4694,18 @@ struct MeosAggregate_appendSequenceAgg_7Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_app_tseq_transfn(static_cast<Temporal*>(s), static_cast<TSequence*>(row.a0));
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_append_finalfn(static_cast<const Temporal*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_append_finalfn(static_cast<const Temporal*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -4647,15 +4716,18 @@ struct MeosAggregate_appendSequenceAgg_7Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row& row)
-    {
-        return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0));
-    }
+
+    static int64_t Order(const Row& row) { return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0)); }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_appendSequenceAgg_7Literals{};
 using MeosAggregate_appendSequenceAgg_7 = MeosRuntime::MeosAggregate<MeosAggregate_appendSequenceAgg_7Ops>;
-constexpr MeosAggregateKernels MeosAggregate_appendSequenceAgg_7Kernels{&MeosAggregate_appendSequenceAgg_7::Initialize, &MeosAggregate_appendSequenceAgg_7::Update, &MeosAggregate_appendSequenceAgg_7::Combine, &MeosAggregate_appendSequenceAgg_7::Finish, MeosAggregate_appendSequenceAgg_7::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_appendSequenceAgg_7Kernels{
+    &MeosAggregate_appendSequenceAgg_7::Initialize,
+    &MeosAggregate_appendSequenceAgg_7::Update,
+    &MeosAggregate_appendSequenceAgg_7::Combine,
+    &MeosAggregate_appendSequenceAgg_7::Finish,
+    MeosAggregate_appendSequenceAgg_7::StateSize};
 
 struct MeosAggregate_setUnionAgg_12Ops
 {
@@ -4663,9 +4735,11 @@ struct MeosAggregate_setUnionAgg_12Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -4676,22 +4750,15 @@ struct MeosAggregate_setUnionAgg_12Ops
         }
         return true;
     }
-    static void* Transition(void* s, Row& row)
-    {
-        return pcpoint_union_transfn(static_cast<Set*>(s), static_cast<Pcpoint*>(row.a0));
-    }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return set_union_finalfn(static_cast<Set*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void* Transition(void* s, Row& row) { return pcpoint_union_transfn(static_cast<Set*>(s), static_cast<Pcpoint*>(row.a0)); }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return set_union_finalfn(static_cast<Set*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Set*>(v);
@@ -4702,15 +4769,18 @@ struct MeosAggregate_setUnionAgg_12Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(set_mem_size(static_cast<const Set*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_setUnionAgg_12Literals{};
 using MeosAggregate_setUnionAgg_12 = MeosRuntime::MeosAggregate<MeosAggregate_setUnionAgg_12Ops>;
-constexpr MeosAggregateKernels MeosAggregate_setUnionAgg_12Kernels{&MeosAggregate_setUnionAgg_12::Initialize, &MeosAggregate_setUnionAgg_12::Update, &MeosAggregate_setUnionAgg_12::Combine, &MeosAggregate_setUnionAgg_12::Finish, MeosAggregate_setUnionAgg_12::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_setUnionAgg_12Kernels{
+    &MeosAggregate_setUnionAgg_12::Initialize,
+    &MeosAggregate_setUnionAgg_12::Update,
+    &MeosAggregate_setUnionAgg_12::Combine,
+    &MeosAggregate_setUnionAgg_12::Finish,
+    MeosAggregate_setUnionAgg_12::StateSize};
 
 struct MeosAggregate_setUnionAgg_13Ops
 {
@@ -4718,9 +4788,11 @@ struct MeosAggregate_setUnionAgg_13Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -4731,22 +4803,15 @@ struct MeosAggregate_setUnionAgg_13Ops
         }
         return true;
     }
-    static void* Transition(void* s, Row& row)
-    {
-        return set_union_transfn(static_cast<Set*>(s), static_cast<Set*>(row.a0));
-    }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return set_union_finalfn(static_cast<Set*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void* Transition(void* s, Row& row) { return set_union_transfn(static_cast<Set*>(s), static_cast<Set*>(row.a0)); }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return set_union_finalfn(static_cast<Set*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Set*>(v);
@@ -4757,15 +4822,18 @@ struct MeosAggregate_setUnionAgg_13Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(set_mem_size(static_cast<const Set*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_setUnionAgg_13Literals{};
 using MeosAggregate_setUnionAgg_13 = MeosRuntime::MeosAggregate<MeosAggregate_setUnionAgg_13Ops>;
-constexpr MeosAggregateKernels MeosAggregate_setUnionAgg_13Kernels{&MeosAggregate_setUnionAgg_13::Initialize, &MeosAggregate_setUnionAgg_13::Update, &MeosAggregate_setUnionAgg_13::Combine, &MeosAggregate_setUnionAgg_13::Finish, MeosAggregate_setUnionAgg_13::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_setUnionAgg_13Kernels{
+    &MeosAggregate_setUnionAgg_13::Initialize,
+    &MeosAggregate_setUnionAgg_13::Update,
+    &MeosAggregate_setUnionAgg_13::Combine,
+    &MeosAggregate_setUnionAgg_13::Finish,
+    MeosAggregate_setUnionAgg_13::StateSize};
 
 struct MeosAggregate_setUnionAgg_14Ops
 {
@@ -4773,9 +4841,11 @@ struct MeosAggregate_setUnionAgg_14Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -4786,22 +4856,15 @@ struct MeosAggregate_setUnionAgg_14Ops
         }
         return true;
     }
-    static void* Transition(void* s, Row& row)
-    {
-        return pcpatch_union_transfn(static_cast<Set*>(s), static_cast<Pcpatch*>(row.a0));
-    }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return set_union_finalfn(static_cast<Set*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void* Transition(void* s, Row& row) { return pcpatch_union_transfn(static_cast<Set*>(s), static_cast<Pcpatch*>(row.a0)); }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return set_union_finalfn(static_cast<Set*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Set*>(v);
@@ -4812,15 +4875,18 @@ struct MeosAggregate_setUnionAgg_14Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(set_mem_size(static_cast<const Set*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_setUnionAgg_14Literals{};
 using MeosAggregate_setUnionAgg_14 = MeosRuntime::MeosAggregate<MeosAggregate_setUnionAgg_14Ops>;
-constexpr MeosAggregateKernels MeosAggregate_setUnionAgg_14Kernels{&MeosAggregate_setUnionAgg_14::Initialize, &MeosAggregate_setUnionAgg_14::Update, &MeosAggregate_setUnionAgg_14::Combine, &MeosAggregate_setUnionAgg_14::Finish, MeosAggregate_setUnionAgg_14::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_setUnionAgg_14Kernels{
+    &MeosAggregate_setUnionAgg_14::Initialize,
+    &MeosAggregate_setUnionAgg_14::Update,
+    &MeosAggregate_setUnionAgg_14::Combine,
+    &MeosAggregate_setUnionAgg_14::Finish,
+    MeosAggregate_setUnionAgg_14::StateSize};
 
 struct MeosAggregate_setUnionAgg_15Ops
 {
@@ -4828,9 +4894,11 @@ struct MeosAggregate_setUnionAgg_15Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -4841,22 +4909,15 @@ struct MeosAggregate_setUnionAgg_15Ops
         }
         return true;
     }
-    static void* Transition(void* s, Row& row)
-    {
-        return set_union_transfn(static_cast<Set*>(s), static_cast<Set*>(row.a0));
-    }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return set_union_finalfn(static_cast<Set*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void* Transition(void* s, Row& row) { return set_union_transfn(static_cast<Set*>(s), static_cast<Set*>(row.a0)); }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return set_union_finalfn(static_cast<Set*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Set*>(v);
@@ -4867,15 +4928,18 @@ struct MeosAggregate_setUnionAgg_15Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(set_mem_size(static_cast<const Set*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_setUnionAgg_15Literals{};
 using MeosAggregate_setUnionAgg_15 = MeosRuntime::MeosAggregate<MeosAggregate_setUnionAgg_15Ops>;
-constexpr MeosAggregateKernels MeosAggregate_setUnionAgg_15Kernels{&MeosAggregate_setUnionAgg_15::Initialize, &MeosAggregate_setUnionAgg_15::Update, &MeosAggregate_setUnionAgg_15::Combine, &MeosAggregate_setUnionAgg_15::Finish, MeosAggregate_setUnionAgg_15::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_setUnionAgg_15Kernels{
+    &MeosAggregate_setUnionAgg_15::Initialize,
+    &MeosAggregate_setUnionAgg_15::Update,
+    &MeosAggregate_setUnionAgg_15::Combine,
+    &MeosAggregate_setUnionAgg_15::Finish,
+    MeosAggregate_setUnionAgg_15::StateSize};
 
 struct MeosAggregate_extent_9Ops
 {
@@ -4883,9 +4947,11 @@ struct MeosAggregate_extent_9Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = false;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -4896,22 +4962,15 @@ struct MeosAggregate_extent_9Ops
         }
         return true;
     }
-    static void* Transition(void* s, Row& row)
-    {
-        return tpcbox_extent_transfn(static_cast<TPCBox*>(s), static_cast<TPCBox*>(row.a0));
-    }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return s;
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void* Transition(void* s, Row& row) { return tpcbox_extent_transfn(static_cast<TPCBox*>(s), static_cast<TPCBox*>(row.a0)); }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return s; }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<TPCBox*>(v);
@@ -4922,15 +4981,18 @@ struct MeosAggregate_extent_9Ops
         }
         return MeosRuntime::image(r, size_t{88});
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_extent_9Literals{};
 using MeosAggregate_extent_9 = MeosRuntime::MeosAggregate<MeosAggregate_extent_9Ops>;
-constexpr MeosAggregateKernels MeosAggregate_extent_9Kernels{&MeosAggregate_extent_9::Initialize, &MeosAggregate_extent_9::Update, &MeosAggregate_extent_9::Combine, &MeosAggregate_extent_9::Finish, MeosAggregate_extent_9::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_extent_9Kernels{
+    &MeosAggregate_extent_9::Initialize,
+    &MeosAggregate_extent_9::Update,
+    &MeosAggregate_extent_9::Combine,
+    &MeosAggregate_extent_9::Finish,
+    MeosAggregate_extent_9::StateSize};
 
 struct MeosAggregate_extent_10Ops
 {
@@ -4938,9 +5000,11 @@ struct MeosAggregate_extent_10Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = false;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -4951,22 +5015,15 @@ struct MeosAggregate_extent_10Ops
         }
         return true;
     }
-    static void* Transition(void* s, Row& row)
-    {
-        return tpc_extent_transfn(static_cast<TPCBox*>(s), static_cast<Temporal*>(row.a0));
-    }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return s;
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void* Transition(void* s, Row& row) { return tpc_extent_transfn(static_cast<TPCBox*>(s), static_cast<Temporal*>(row.a0)); }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return s; }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<TPCBox*>(v);
@@ -4977,15 +5034,18 @@ struct MeosAggregate_extent_10Ops
         }
         return MeosRuntime::image(r, size_t{88});
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_extent_10Literals{};
 using MeosAggregate_extent_10 = MeosRuntime::MeosAggregate<MeosAggregate_extent_10Ops>;
-constexpr MeosAggregateKernels MeosAggregate_extent_10Kernels{&MeosAggregate_extent_10::Initialize, &MeosAggregate_extent_10::Update, &MeosAggregate_extent_10::Combine, &MeosAggregate_extent_10::Finish, MeosAggregate_extent_10::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_extent_10Kernels{
+    &MeosAggregate_extent_10::Initialize,
+    &MeosAggregate_extent_10::Update,
+    &MeosAggregate_extent_10::Combine,
+    &MeosAggregate_extent_10::Finish,
+    MeosAggregate_extent_10::StateSize};
 
 struct MeosAggregate_extent_11Ops
 {
@@ -4993,9 +5053,11 @@ struct MeosAggregate_extent_11Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = false;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -5006,22 +5068,15 @@ struct MeosAggregate_extent_11Ops
         }
         return true;
     }
-    static void* Transition(void* s, Row& row)
-    {
-        return tpc_extent_transfn(static_cast<TPCBox*>(s), static_cast<Temporal*>(row.a0));
-    }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return s;
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void* Transition(void* s, Row& row) { return tpc_extent_transfn(static_cast<TPCBox*>(s), static_cast<Temporal*>(row.a0)); }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return s; }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<TPCBox*>(v);
@@ -5032,15 +5087,18 @@ struct MeosAggregate_extent_11Ops
         }
         return MeosRuntime::image(r, size_t{88});
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_extent_11Literals{};
 using MeosAggregate_extent_11 = MeosRuntime::MeosAggregate<MeosAggregate_extent_11Ops>;
-constexpr MeosAggregateKernels MeosAggregate_extent_11Kernels{&MeosAggregate_extent_11::Initialize, &MeosAggregate_extent_11::Update, &MeosAggregate_extent_11::Combine, &MeosAggregate_extent_11::Finish, MeosAggregate_extent_11::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_extent_11Kernels{
+    &MeosAggregate_extent_11::Initialize,
+    &MeosAggregate_extent_11::Update,
+    &MeosAggregate_extent_11::Combine,
+    &MeosAggregate_extent_11::Finish,
+    MeosAggregate_extent_11::StateSize};
 
 struct MeosAggregate_tCount_8Ops
 {
@@ -5048,9 +5106,11 @@ struct MeosAggregate_tCount_8Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -5061,22 +5121,18 @@ struct MeosAggregate_tCount_8Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_tcount_transfn(static_cast<struct SkipList*>(s), static_cast<Temporal*>(row.a0));
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_tagg_finalfn(static_cast<struct SkipList*>(s));
-    }
-    static void Release(void* s)
-    {
-        skiplist_free(static_cast<struct SkipList*>(s));
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_tagg_finalfn(static_cast<struct SkipList*>(s)); }
+
+    static void Release(void* s) { skiplist_free(static_cast<struct SkipList*>(s)); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -5087,15 +5143,18 @@ struct MeosAggregate_tCount_8Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_tCount_8Literals{};
 using MeosAggregate_tCount_8 = MeosRuntime::MeosAggregate<MeosAggregate_tCount_8Ops>;
-constexpr MeosAggregateKernels MeosAggregate_tCount_8Kernels{&MeosAggregate_tCount_8::Initialize, &MeosAggregate_tCount_8::Update, &MeosAggregate_tCount_8::Combine, &MeosAggregate_tCount_8::Finish, MeosAggregate_tCount_8::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_tCount_8Kernels{
+    &MeosAggregate_tCount_8::Initialize,
+    &MeosAggregate_tCount_8::Update,
+    &MeosAggregate_tCount_8::Combine,
+    &MeosAggregate_tCount_8::Finish,
+    MeosAggregate_tCount_8::StateSize};
 
 struct MeosAggregate_tCount_9Ops
 {
@@ -5103,9 +5162,11 @@ struct MeosAggregate_tCount_9Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -5116,22 +5177,18 @@ struct MeosAggregate_tCount_9Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_tcount_transfn(static_cast<struct SkipList*>(s), static_cast<Temporal*>(row.a0));
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_tagg_finalfn(static_cast<struct SkipList*>(s));
-    }
-    static void Release(void* s)
-    {
-        skiplist_free(static_cast<struct SkipList*>(s));
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_tagg_finalfn(static_cast<struct SkipList*>(s)); }
+
+    static void Release(void* s) { skiplist_free(static_cast<struct SkipList*>(s)); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -5142,15 +5199,18 @@ struct MeosAggregate_tCount_9Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_tCount_9Literals{};
 using MeosAggregate_tCount_9 = MeosRuntime::MeosAggregate<MeosAggregate_tCount_9Ops>;
-constexpr MeosAggregateKernels MeosAggregate_tCount_9Kernels{&MeosAggregate_tCount_9::Initialize, &MeosAggregate_tCount_9::Update, &MeosAggregate_tCount_9::Combine, &MeosAggregate_tCount_9::Finish, MeosAggregate_tCount_9::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_tCount_9Kernels{
+    &MeosAggregate_tCount_9::Initialize,
+    &MeosAggregate_tCount_9::Update,
+    &MeosAggregate_tCount_9::Combine,
+    &MeosAggregate_tCount_9::Finish,
+    MeosAggregate_tCount_9::StateSize};
 
 struct MeosAggregate_tnpoints_0Ops
 {
@@ -5158,9 +5218,11 @@ struct MeosAggregate_tnpoints_0Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -5171,22 +5233,18 @@ struct MeosAggregate_tnpoints_0Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return tpcpatch_tnpoints_transfn(static_cast<struct SkipList*>(s), static_cast<Temporal*>(row.a0));
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_tagg_finalfn(static_cast<struct SkipList*>(s));
-    }
-    static void Release(void* s)
-    {
-        skiplist_free(static_cast<struct SkipList*>(s));
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_tagg_finalfn(static_cast<struct SkipList*>(s)); }
+
+    static void Release(void* s) { skiplist_free(static_cast<struct SkipList*>(s)); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -5197,15 +5255,18 @@ struct MeosAggregate_tnpoints_0Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_tnpoints_0Literals{};
 using MeosAggregate_tnpoints_0 = MeosRuntime::MeosAggregate<MeosAggregate_tnpoints_0Ops>;
-constexpr MeosAggregateKernels MeosAggregate_tnpoints_0Kernels{&MeosAggregate_tnpoints_0::Initialize, &MeosAggregate_tnpoints_0::Update, &MeosAggregate_tnpoints_0::Combine, &MeosAggregate_tnpoints_0::Finish, MeosAggregate_tnpoints_0::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_tnpoints_0Kernels{
+    &MeosAggregate_tnpoints_0::Initialize,
+    &MeosAggregate_tnpoints_0::Update,
+    &MeosAggregate_tnpoints_0::Combine,
+    &MeosAggregate_tnpoints_0::Finish,
+    MeosAggregate_tnpoints_0::StateSize};
 
 struct MeosAggregate_tdensity_0Ops
 {
@@ -5213,9 +5274,11 @@ struct MeosAggregate_tdensity_0Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -5226,22 +5289,18 @@ struct MeosAggregate_tdensity_0Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return tpcpatch_tdensity_transfn(static_cast<struct SkipList*>(s), static_cast<Temporal*>(row.a0));
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_tagg_finalfn(static_cast<struct SkipList*>(s));
-    }
-    static void Release(void* s)
-    {
-        skiplist_free(static_cast<struct SkipList*>(s));
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_tagg_finalfn(static_cast<struct SkipList*>(s)); }
+
+    static void Release(void* s) { skiplist_free(static_cast<struct SkipList*>(s)); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -5252,15 +5311,18 @@ struct MeosAggregate_tdensity_0Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_tdensity_0Literals{};
 using MeosAggregate_tdensity_0 = MeosRuntime::MeosAggregate<MeosAggregate_tdensity_0Ops>;
-constexpr MeosAggregateKernels MeosAggregate_tdensity_0Kernels{&MeosAggregate_tdensity_0::Initialize, &MeosAggregate_tdensity_0::Update, &MeosAggregate_tdensity_0::Combine, &MeosAggregate_tdensity_0::Finish, MeosAggregate_tdensity_0::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_tdensity_0Kernels{
+    &MeosAggregate_tdensity_0::Initialize,
+    &MeosAggregate_tdensity_0::Update,
+    &MeosAggregate_tdensity_0::Combine,
+    &MeosAggregate_tdensity_0::Finish,
+    MeosAggregate_tdensity_0::StateSize};
 
 struct MeosAggregate_wCount_8Ops
 {
@@ -5269,9 +5331,11 @@ struct MeosAggregate_wCount_8Ops
         void* a0;
         Interval* a1;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         row.a0 = MeosRuntime::laid(a0);
@@ -5287,23 +5351,22 @@ struct MeosAggregate_wCount_8Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_wcount_transfn(static_cast<struct SkipList*>(s), static_cast<Temporal*>(row.a0), row.a1);
     }
+
     static void Free(Row& row)
     {
         std::free(row.a0);
         std::free(row.a1);
     }
-    static void* Final(void* s)
-    {
-        return temporal_tagg_finalfn(static_cast<struct SkipList*>(s));
-    }
-    static void Release(void* s)
-    {
-        skiplist_free(static_cast<struct SkipList*>(s));
-    }
+
+    static void* Final(void* s) { return temporal_tagg_finalfn(static_cast<struct SkipList*>(s)); }
+
+    static void Release(void* s) { skiplist_free(static_cast<struct SkipList*>(s)); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -5314,15 +5377,18 @@ struct MeosAggregate_wCount_8Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 1> MeosAggregate_wCount_8Literals{DataType::Type::VARSIZED};
 using MeosAggregate_wCount_8 = MeosRuntime::MeosAggregate<MeosAggregate_wCount_8Ops>;
-constexpr MeosAggregateKernels MeosAggregate_wCount_8Kernels{&MeosAggregate_wCount_8::Initialize, &MeosAggregate_wCount_8::Update, &MeosAggregate_wCount_8::Combine, &MeosAggregate_wCount_8::Finish, MeosAggregate_wCount_8::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_wCount_8Kernels{
+    &MeosAggregate_wCount_8::Initialize,
+    &MeosAggregate_wCount_8::Update,
+    &MeosAggregate_wCount_8::Combine,
+    &MeosAggregate_wCount_8::Finish,
+    MeosAggregate_wCount_8::StateSize};
 
 struct MeosAggregate_wCount_9Ops
 {
@@ -5331,9 +5397,11 @@ struct MeosAggregate_wCount_9Ops
         void* a0;
         Interval* a1;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         row.a0 = MeosRuntime::laid(a0);
@@ -5349,23 +5417,22 @@ struct MeosAggregate_wCount_9Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_wcount_transfn(static_cast<struct SkipList*>(s), static_cast<Temporal*>(row.a0), row.a1);
     }
+
     static void Free(Row& row)
     {
         std::free(row.a0);
         std::free(row.a1);
     }
-    static void* Final(void* s)
-    {
-        return temporal_tagg_finalfn(static_cast<struct SkipList*>(s));
-    }
-    static void Release(void* s)
-    {
-        skiplist_free(static_cast<struct SkipList*>(s));
-    }
+
+    static void* Final(void* s) { return temporal_tagg_finalfn(static_cast<struct SkipList*>(s)); }
+
+    static void Release(void* s) { skiplist_free(static_cast<struct SkipList*>(s)); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -5376,15 +5443,18 @@ struct MeosAggregate_wCount_9Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 1> MeosAggregate_wCount_9Literals{DataType::Type::VARSIZED};
 using MeosAggregate_wCount_9 = MeosRuntime::MeosAggregate<MeosAggregate_wCount_9Ops>;
-constexpr MeosAggregateKernels MeosAggregate_wCount_9Kernels{&MeosAggregate_wCount_9::Initialize, &MeosAggregate_wCount_9::Update, &MeosAggregate_wCount_9::Combine, &MeosAggregate_wCount_9::Finish, MeosAggregate_wCount_9::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_wCount_9Kernels{
+    &MeosAggregate_wCount_9::Initialize,
+    &MeosAggregate_wCount_9::Update,
+    &MeosAggregate_wCount_9::Combine,
+    &MeosAggregate_wCount_9::Finish,
+    MeosAggregate_wCount_9::StateSize};
 
 struct MeosAggregate_mergeAgg_8Ops
 {
@@ -5392,9 +5462,11 @@ struct MeosAggregate_mergeAgg_8Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -5405,22 +5477,18 @@ struct MeosAggregate_mergeAgg_8Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_merge_transfn(static_cast<struct SkipList*>(s), static_cast<Temporal*>(row.a0));
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_tagg_finalfn(static_cast<struct SkipList*>(s));
-    }
-    static void Release(void* s)
-    {
-        skiplist_free(static_cast<struct SkipList*>(s));
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_tagg_finalfn(static_cast<struct SkipList*>(s)); }
+
+    static void Release(void* s) { skiplist_free(static_cast<struct SkipList*>(s)); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -5431,15 +5499,18 @@ struct MeosAggregate_mergeAgg_8Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_mergeAgg_8Literals{};
 using MeosAggregate_mergeAgg_8 = MeosRuntime::MeosAggregate<MeosAggregate_mergeAgg_8Ops>;
-constexpr MeosAggregateKernels MeosAggregate_mergeAgg_8Kernels{&MeosAggregate_mergeAgg_8::Initialize, &MeosAggregate_mergeAgg_8::Update, &MeosAggregate_mergeAgg_8::Combine, &MeosAggregate_mergeAgg_8::Finish, MeosAggregate_mergeAgg_8::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_mergeAgg_8Kernels{
+    &MeosAggregate_mergeAgg_8::Initialize,
+    &MeosAggregate_mergeAgg_8::Update,
+    &MeosAggregate_mergeAgg_8::Combine,
+    &MeosAggregate_mergeAgg_8::Finish,
+    MeosAggregate_mergeAgg_8::StateSize};
 
 struct MeosAggregate_mergeAgg_9Ops
 {
@@ -5447,9 +5518,11 @@ struct MeosAggregate_mergeAgg_9Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -5460,22 +5533,18 @@ struct MeosAggregate_mergeAgg_9Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_merge_transfn(static_cast<struct SkipList*>(s), static_cast<Temporal*>(row.a0));
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_tagg_finalfn(static_cast<struct SkipList*>(s));
-    }
-    static void Release(void* s)
-    {
-        skiplist_free(static_cast<struct SkipList*>(s));
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_tagg_finalfn(static_cast<struct SkipList*>(s)); }
+
+    static void Release(void* s) { skiplist_free(static_cast<struct SkipList*>(s)); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -5486,15 +5555,18 @@ struct MeosAggregate_mergeAgg_9Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_mergeAgg_9Literals{};
 using MeosAggregate_mergeAgg_9 = MeosRuntime::MeosAggregate<MeosAggregate_mergeAgg_9Ops>;
-constexpr MeosAggregateKernels MeosAggregate_mergeAgg_9Kernels{&MeosAggregate_mergeAgg_9::Initialize, &MeosAggregate_mergeAgg_9::Update, &MeosAggregate_mergeAgg_9::Combine, &MeosAggregate_mergeAgg_9::Finish, MeosAggregate_mergeAgg_9::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_mergeAgg_9Kernels{
+    &MeosAggregate_mergeAgg_9::Initialize,
+    &MeosAggregate_mergeAgg_9::Update,
+    &MeosAggregate_mergeAgg_9::Combine,
+    &MeosAggregate_mergeAgg_9::Finish,
+    MeosAggregate_mergeAgg_9::StateSize};
 
 struct MeosAggregate_appendInstantAgg_24Ops
 {
@@ -5502,9 +5574,11 @@ struct MeosAggregate_appendInstantAgg_24Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = true;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = true;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -5515,22 +5589,18 @@ struct MeosAggregate_appendInstantAgg_24Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_app_tinst_transfn(static_cast<Temporal*>(s), static_cast<TInstant*>(row.a0), STEP, -1.0, nullptr);
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_append_finalfn(static_cast<const Temporal*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_append_finalfn(static_cast<const Temporal*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -5541,15 +5611,18 @@ struct MeosAggregate_appendInstantAgg_24Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row& row)
-    {
-        return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0));
-    }
+
+    static int64_t Order(const Row& row) { return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0)); }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_appendInstantAgg_24Literals{};
 using MeosAggregate_appendInstantAgg_24 = MeosRuntime::MeosAggregate<MeosAggregate_appendInstantAgg_24Ops>;
-constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_24Kernels{&MeosAggregate_appendInstantAgg_24::Initialize, &MeosAggregate_appendInstantAgg_24::Update, &MeosAggregate_appendInstantAgg_24::Combine, &MeosAggregate_appendInstantAgg_24::Finish, MeosAggregate_appendInstantAgg_24::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_24Kernels{
+    &MeosAggregate_appendInstantAgg_24::Initialize,
+    &MeosAggregate_appendInstantAgg_24::Update,
+    &MeosAggregate_appendInstantAgg_24::Combine,
+    &MeosAggregate_appendInstantAgg_24::Finish,
+    MeosAggregate_appendInstantAgg_24::StateSize};
 
 struct MeosAggregate_appendInstantAgg_25Ops
 {
@@ -5558,9 +5631,11 @@ struct MeosAggregate_appendInstantAgg_25Ops
         void* a0;
         interpType a1;
     };
+
     static constexpr bool GATHERS = true;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = true;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         row.a0 = MeosRuntime::laid(a0);
@@ -5571,22 +5646,18 @@ struct MeosAggregate_appendInstantAgg_25Ops
         row.a1 = interptype_from_string(MeosRuntime::text(MeosRuntime::literal(block, 0)).c_str());
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_app_tinst_transfn(static_cast<Temporal*>(s), static_cast<TInstant*>(row.a0), row.a1, -1.0, nullptr);
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_append_finalfn(static_cast<const Temporal*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_append_finalfn(static_cast<const Temporal*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -5597,15 +5668,18 @@ struct MeosAggregate_appendInstantAgg_25Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row& row)
-    {
-        return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0));
-    }
+
+    static int64_t Order(const Row& row) { return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0)); }
 };
 
 constexpr std::array<DataType::Type, 1> MeosAggregate_appendInstantAgg_25Literals{DataType::Type::VARSIZED};
 using MeosAggregate_appendInstantAgg_25 = MeosRuntime::MeosAggregate<MeosAggregate_appendInstantAgg_25Ops>;
-constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_25Kernels{&MeosAggregate_appendInstantAgg_25::Initialize, &MeosAggregate_appendInstantAgg_25::Update, &MeosAggregate_appendInstantAgg_25::Combine, &MeosAggregate_appendInstantAgg_25::Finish, MeosAggregate_appendInstantAgg_25::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_25Kernels{
+    &MeosAggregate_appendInstantAgg_25::Initialize,
+    &MeosAggregate_appendInstantAgg_25::Update,
+    &MeosAggregate_appendInstantAgg_25::Combine,
+    &MeosAggregate_appendInstantAgg_25::Finish,
+    MeosAggregate_appendInstantAgg_25::StateSize};
 
 struct MeosAggregate_appendInstantAgg_26Ops
 {
@@ -5615,9 +5689,11 @@ struct MeosAggregate_appendInstantAgg_26Ops
         interpType a1;
         Interval* a2;
     };
+
     static constexpr bool GATHERS = true;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = true;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         row.a0 = MeosRuntime::laid(a0);
@@ -5634,23 +5710,22 @@ struct MeosAggregate_appendInstantAgg_26Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_app_tinst_transfn(static_cast<Temporal*>(s), static_cast<TInstant*>(row.a0), row.a1, -1.0, row.a2);
     }
+
     static void Free(Row& row)
     {
         std::free(row.a0);
         std::free(row.a2);
     }
-    static void* Final(void* s)
-    {
-        return temporal_append_finalfn(static_cast<const Temporal*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void* Final(void* s) { return temporal_append_finalfn(static_cast<const Temporal*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -5661,15 +5736,18 @@ struct MeosAggregate_appendInstantAgg_26Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row& row)
-    {
-        return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0));
-    }
+
+    static int64_t Order(const Row& row) { return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0)); }
 };
 
 constexpr std::array<DataType::Type, 2> MeosAggregate_appendInstantAgg_26Literals{DataType::Type::VARSIZED, DataType::Type::VARSIZED};
 using MeosAggregate_appendInstantAgg_26 = MeosRuntime::MeosAggregate<MeosAggregate_appendInstantAgg_26Ops>;
-constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_26Kernels{&MeosAggregate_appendInstantAgg_26::Initialize, &MeosAggregate_appendInstantAgg_26::Update, &MeosAggregate_appendInstantAgg_26::Combine, &MeosAggregate_appendInstantAgg_26::Finish, MeosAggregate_appendInstantAgg_26::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_26Kernels{
+    &MeosAggregate_appendInstantAgg_26::Initialize,
+    &MeosAggregate_appendInstantAgg_26::Update,
+    &MeosAggregate_appendInstantAgg_26::Combine,
+    &MeosAggregate_appendInstantAgg_26::Finish,
+    MeosAggregate_appendInstantAgg_26::StateSize};
 
 struct MeosAggregate_appendInstantAgg_27Ops
 {
@@ -5677,9 +5755,11 @@ struct MeosAggregate_appendInstantAgg_27Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = true;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = true;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -5690,22 +5770,18 @@ struct MeosAggregate_appendInstantAgg_27Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_app_tinst_transfn(static_cast<Temporal*>(s), static_cast<TInstant*>(row.a0), STEP, -1.0, nullptr);
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_append_finalfn(static_cast<const Temporal*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_append_finalfn(static_cast<const Temporal*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -5716,15 +5792,18 @@ struct MeosAggregate_appendInstantAgg_27Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row& row)
-    {
-        return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0));
-    }
+
+    static int64_t Order(const Row& row) { return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0)); }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_appendInstantAgg_27Literals{};
 using MeosAggregate_appendInstantAgg_27 = MeosRuntime::MeosAggregate<MeosAggregate_appendInstantAgg_27Ops>;
-constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_27Kernels{&MeosAggregate_appendInstantAgg_27::Initialize, &MeosAggregate_appendInstantAgg_27::Update, &MeosAggregate_appendInstantAgg_27::Combine, &MeosAggregate_appendInstantAgg_27::Finish, MeosAggregate_appendInstantAgg_27::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_27Kernels{
+    &MeosAggregate_appendInstantAgg_27::Initialize,
+    &MeosAggregate_appendInstantAgg_27::Update,
+    &MeosAggregate_appendInstantAgg_27::Combine,
+    &MeosAggregate_appendInstantAgg_27::Finish,
+    MeosAggregate_appendInstantAgg_27::StateSize};
 
 struct MeosAggregate_appendInstantAgg_28Ops
 {
@@ -5733,9 +5812,11 @@ struct MeosAggregate_appendInstantAgg_28Ops
         void* a0;
         interpType a1;
     };
+
     static constexpr bool GATHERS = true;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = true;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         row.a0 = MeosRuntime::laid(a0);
@@ -5746,22 +5827,18 @@ struct MeosAggregate_appendInstantAgg_28Ops
         row.a1 = interptype_from_string(MeosRuntime::text(MeosRuntime::literal(block, 0)).c_str());
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_app_tinst_transfn(static_cast<Temporal*>(s), static_cast<TInstant*>(row.a0), row.a1, -1.0, nullptr);
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_append_finalfn(static_cast<const Temporal*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_append_finalfn(static_cast<const Temporal*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -5772,15 +5849,18 @@ struct MeosAggregate_appendInstantAgg_28Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row& row)
-    {
-        return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0));
-    }
+
+    static int64_t Order(const Row& row) { return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0)); }
 };
 
 constexpr std::array<DataType::Type, 1> MeosAggregate_appendInstantAgg_28Literals{DataType::Type::VARSIZED};
 using MeosAggregate_appendInstantAgg_28 = MeosRuntime::MeosAggregate<MeosAggregate_appendInstantAgg_28Ops>;
-constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_28Kernels{&MeosAggregate_appendInstantAgg_28::Initialize, &MeosAggregate_appendInstantAgg_28::Update, &MeosAggregate_appendInstantAgg_28::Combine, &MeosAggregate_appendInstantAgg_28::Finish, MeosAggregate_appendInstantAgg_28::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_28Kernels{
+    &MeosAggregate_appendInstantAgg_28::Initialize,
+    &MeosAggregate_appendInstantAgg_28::Update,
+    &MeosAggregate_appendInstantAgg_28::Combine,
+    &MeosAggregate_appendInstantAgg_28::Finish,
+    MeosAggregate_appendInstantAgg_28::StateSize};
 
 struct MeosAggregate_appendInstantAgg_29Ops
 {
@@ -5790,9 +5870,11 @@ struct MeosAggregate_appendInstantAgg_29Ops
         interpType a1;
         Interval* a2;
     };
+
     static constexpr bool GATHERS = true;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = true;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         row.a0 = MeosRuntime::laid(a0);
@@ -5809,23 +5891,22 @@ struct MeosAggregate_appendInstantAgg_29Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_app_tinst_transfn(static_cast<Temporal*>(s), static_cast<TInstant*>(row.a0), row.a1, -1.0, row.a2);
     }
+
     static void Free(Row& row)
     {
         std::free(row.a0);
         std::free(row.a2);
     }
-    static void* Final(void* s)
-    {
-        return temporal_append_finalfn(static_cast<const Temporal*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void* Final(void* s) { return temporal_append_finalfn(static_cast<const Temporal*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -5836,15 +5917,18 @@ struct MeosAggregate_appendInstantAgg_29Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row& row)
-    {
-        return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0));
-    }
+
+    static int64_t Order(const Row& row) { return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0)); }
 };
 
 constexpr std::array<DataType::Type, 2> MeosAggregate_appendInstantAgg_29Literals{DataType::Type::VARSIZED, DataType::Type::VARSIZED};
 using MeosAggregate_appendInstantAgg_29 = MeosRuntime::MeosAggregate<MeosAggregate_appendInstantAgg_29Ops>;
-constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_29Kernels{&MeosAggregate_appendInstantAgg_29::Initialize, &MeosAggregate_appendInstantAgg_29::Update, &MeosAggregate_appendInstantAgg_29::Combine, &MeosAggregate_appendInstantAgg_29::Finish, MeosAggregate_appendInstantAgg_29::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_29Kernels{
+    &MeosAggregate_appendInstantAgg_29::Initialize,
+    &MeosAggregate_appendInstantAgg_29::Update,
+    &MeosAggregate_appendInstantAgg_29::Combine,
+    &MeosAggregate_appendInstantAgg_29::Finish,
+    MeosAggregate_appendInstantAgg_29::StateSize};
 
 struct MeosAggregate_appendSequenceAgg_8Ops
 {
@@ -5852,9 +5936,11 @@ struct MeosAggregate_appendSequenceAgg_8Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = true;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = true;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -5865,22 +5951,18 @@ struct MeosAggregate_appendSequenceAgg_8Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_app_tseq_transfn(static_cast<Temporal*>(s), static_cast<TSequence*>(row.a0));
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_append_finalfn(static_cast<const Temporal*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_append_finalfn(static_cast<const Temporal*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -5891,15 +5973,18 @@ struct MeosAggregate_appendSequenceAgg_8Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row& row)
-    {
-        return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0));
-    }
+
+    static int64_t Order(const Row& row) { return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0)); }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_appendSequenceAgg_8Literals{};
 using MeosAggregate_appendSequenceAgg_8 = MeosRuntime::MeosAggregate<MeosAggregate_appendSequenceAgg_8Ops>;
-constexpr MeosAggregateKernels MeosAggregate_appendSequenceAgg_8Kernels{&MeosAggregate_appendSequenceAgg_8::Initialize, &MeosAggregate_appendSequenceAgg_8::Update, &MeosAggregate_appendSequenceAgg_8::Combine, &MeosAggregate_appendSequenceAgg_8::Finish, MeosAggregate_appendSequenceAgg_8::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_appendSequenceAgg_8Kernels{
+    &MeosAggregate_appendSequenceAgg_8::Initialize,
+    &MeosAggregate_appendSequenceAgg_8::Update,
+    &MeosAggregate_appendSequenceAgg_8::Combine,
+    &MeosAggregate_appendSequenceAgg_8::Finish,
+    MeosAggregate_appendSequenceAgg_8::StateSize};
 
 struct MeosAggregate_appendSequenceAgg_9Ops
 {
@@ -5907,9 +5992,11 @@ struct MeosAggregate_appendSequenceAgg_9Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = true;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = true;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -5920,22 +6007,18 @@ struct MeosAggregate_appendSequenceAgg_9Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_app_tseq_transfn(static_cast<Temporal*>(s), static_cast<TSequence*>(row.a0));
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_append_finalfn(static_cast<const Temporal*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_append_finalfn(static_cast<const Temporal*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -5946,15 +6029,18 @@ struct MeosAggregate_appendSequenceAgg_9Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row& row)
-    {
-        return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0));
-    }
+
+    static int64_t Order(const Row& row) { return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0)); }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_appendSequenceAgg_9Literals{};
 using MeosAggregate_appendSequenceAgg_9 = MeosRuntime::MeosAggregate<MeosAggregate_appendSequenceAgg_9Ops>;
-constexpr MeosAggregateKernels MeosAggregate_appendSequenceAgg_9Kernels{&MeosAggregate_appendSequenceAgg_9::Initialize, &MeosAggregate_appendSequenceAgg_9::Update, &MeosAggregate_appendSequenceAgg_9::Combine, &MeosAggregate_appendSequenceAgg_9::Finish, MeosAggregate_appendSequenceAgg_9::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_appendSequenceAgg_9Kernels{
+    &MeosAggregate_appendSequenceAgg_9::Initialize,
+    &MeosAggregate_appendSequenceAgg_9::Update,
+    &MeosAggregate_appendSequenceAgg_9::Combine,
+    &MeosAggregate_appendSequenceAgg_9::Finish,
+    MeosAggregate_appendSequenceAgg_9::StateSize};
 
 struct MeosAggregate_setUnionAgg_16Ops
 {
@@ -5962,9 +6048,11 @@ struct MeosAggregate_setUnionAgg_16Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -5975,22 +6063,15 @@ struct MeosAggregate_setUnionAgg_16Ops
         }
         return true;
     }
-    static void* Transition(void* s, Row& row)
-    {
-        return pose_union_transfn(static_cast<Set*>(s), static_cast<Pose*>(row.a0));
-    }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return set_union_finalfn(static_cast<Set*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void* Transition(void* s, Row& row) { return pose_union_transfn(static_cast<Set*>(s), static_cast<Pose*>(row.a0)); }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return set_union_finalfn(static_cast<Set*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Set*>(v);
@@ -6001,15 +6082,18 @@ struct MeosAggregate_setUnionAgg_16Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(set_mem_size(static_cast<const Set*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_setUnionAgg_16Literals{};
 using MeosAggregate_setUnionAgg_16 = MeosRuntime::MeosAggregate<MeosAggregate_setUnionAgg_16Ops>;
-constexpr MeosAggregateKernels MeosAggregate_setUnionAgg_16Kernels{&MeosAggregate_setUnionAgg_16::Initialize, &MeosAggregate_setUnionAgg_16::Update, &MeosAggregate_setUnionAgg_16::Combine, &MeosAggregate_setUnionAgg_16::Finish, MeosAggregate_setUnionAgg_16::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_setUnionAgg_16Kernels{
+    &MeosAggregate_setUnionAgg_16::Initialize,
+    &MeosAggregate_setUnionAgg_16::Update,
+    &MeosAggregate_setUnionAgg_16::Combine,
+    &MeosAggregate_setUnionAgg_16::Finish,
+    MeosAggregate_setUnionAgg_16::StateSize};
 
 struct MeosAggregate_setUnionAgg_17Ops
 {
@@ -6017,9 +6101,11 @@ struct MeosAggregate_setUnionAgg_17Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -6030,22 +6116,15 @@ struct MeosAggregate_setUnionAgg_17Ops
         }
         return true;
     }
-    static void* Transition(void* s, Row& row)
-    {
-        return set_union_transfn(static_cast<Set*>(s), static_cast<Set*>(row.a0));
-    }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return set_union_finalfn(static_cast<Set*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void* Transition(void* s, Row& row) { return set_union_transfn(static_cast<Set*>(s), static_cast<Set*>(row.a0)); }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return set_union_finalfn(static_cast<Set*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Set*>(v);
@@ -6056,15 +6135,18 @@ struct MeosAggregate_setUnionAgg_17Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(set_mem_size(static_cast<const Set*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_setUnionAgg_17Literals{};
 using MeosAggregate_setUnionAgg_17 = MeosRuntime::MeosAggregate<MeosAggregate_setUnionAgg_17Ops>;
-constexpr MeosAggregateKernels MeosAggregate_setUnionAgg_17Kernels{&MeosAggregate_setUnionAgg_17::Initialize, &MeosAggregate_setUnionAgg_17::Update, &MeosAggregate_setUnionAgg_17::Combine, &MeosAggregate_setUnionAgg_17::Finish, MeosAggregate_setUnionAgg_17::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_setUnionAgg_17Kernels{
+    &MeosAggregate_setUnionAgg_17::Initialize,
+    &MeosAggregate_setUnionAgg_17::Update,
+    &MeosAggregate_setUnionAgg_17::Combine,
+    &MeosAggregate_setUnionAgg_17::Finish,
+    MeosAggregate_setUnionAgg_17::StateSize};
 
 struct MeosAggregate_tCount_10Ops
 {
@@ -6072,9 +6154,11 @@ struct MeosAggregate_tCount_10Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -6085,22 +6169,18 @@ struct MeosAggregate_tCount_10Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_tcount_transfn(static_cast<struct SkipList*>(s), static_cast<Temporal*>(row.a0));
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_tagg_finalfn(static_cast<struct SkipList*>(s));
-    }
-    static void Release(void* s)
-    {
-        skiplist_free(static_cast<struct SkipList*>(s));
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_tagg_finalfn(static_cast<struct SkipList*>(s)); }
+
+    static void Release(void* s) { skiplist_free(static_cast<struct SkipList*>(s)); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -6111,15 +6191,18 @@ struct MeosAggregate_tCount_10Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_tCount_10Literals{};
 using MeosAggregate_tCount_10 = MeosRuntime::MeosAggregate<MeosAggregate_tCount_10Ops>;
-constexpr MeosAggregateKernels MeosAggregate_tCount_10Kernels{&MeosAggregate_tCount_10::Initialize, &MeosAggregate_tCount_10::Update, &MeosAggregate_tCount_10::Combine, &MeosAggregate_tCount_10::Finish, MeosAggregate_tCount_10::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_tCount_10Kernels{
+    &MeosAggregate_tCount_10::Initialize,
+    &MeosAggregate_tCount_10::Update,
+    &MeosAggregate_tCount_10::Combine,
+    &MeosAggregate_tCount_10::Finish,
+    MeosAggregate_tCount_10::StateSize};
 
 struct MeosAggregate_extent_12Ops
 {
@@ -6127,9 +6210,11 @@ struct MeosAggregate_extent_12Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = false;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -6140,22 +6225,15 @@ struct MeosAggregate_extent_12Ops
         }
         return true;
     }
-    static void* Transition(void* s, Row& row)
-    {
-        return tspatial_extent_transfn(static_cast<STBox*>(s), static_cast<Temporal*>(row.a0));
-    }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return s;
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void* Transition(void* s, Row& row) { return tspatial_extent_transfn(static_cast<STBox*>(s), static_cast<Temporal*>(row.a0)); }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return s; }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<STBox*>(v);
@@ -6166,15 +6244,18 @@ struct MeosAggregate_extent_12Ops
         }
         return MeosRuntime::image(r, size_t{80});
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_extent_12Literals{};
 using MeosAggregate_extent_12 = MeosRuntime::MeosAggregate<MeosAggregate_extent_12Ops>;
-constexpr MeosAggregateKernels MeosAggregate_extent_12Kernels{&MeosAggregate_extent_12::Initialize, &MeosAggregate_extent_12::Update, &MeosAggregate_extent_12::Combine, &MeosAggregate_extent_12::Finish, MeosAggregate_extent_12::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_extent_12Kernels{
+    &MeosAggregate_extent_12::Initialize,
+    &MeosAggregate_extent_12::Update,
+    &MeosAggregate_extent_12::Combine,
+    &MeosAggregate_extent_12::Finish,
+    MeosAggregate_extent_12::StateSize};
 
 struct MeosAggregate_wCount_10Ops
 {
@@ -6183,9 +6264,11 @@ struct MeosAggregate_wCount_10Ops
         void* a0;
         Interval* a1;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         row.a0 = MeosRuntime::laid(a0);
@@ -6201,23 +6284,22 @@ struct MeosAggregate_wCount_10Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_wcount_transfn(static_cast<struct SkipList*>(s), static_cast<Temporal*>(row.a0), row.a1);
     }
+
     static void Free(Row& row)
     {
         std::free(row.a0);
         std::free(row.a1);
     }
-    static void* Final(void* s)
-    {
-        return temporal_tagg_finalfn(static_cast<struct SkipList*>(s));
-    }
-    static void Release(void* s)
-    {
-        skiplist_free(static_cast<struct SkipList*>(s));
-    }
+
+    static void* Final(void* s) { return temporal_tagg_finalfn(static_cast<struct SkipList*>(s)); }
+
+    static void Release(void* s) { skiplist_free(static_cast<struct SkipList*>(s)); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -6228,15 +6310,18 @@ struct MeosAggregate_wCount_10Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 1> MeosAggregate_wCount_10Literals{DataType::Type::VARSIZED};
 using MeosAggregate_wCount_10 = MeosRuntime::MeosAggregate<MeosAggregate_wCount_10Ops>;
-constexpr MeosAggregateKernels MeosAggregate_wCount_10Kernels{&MeosAggregate_wCount_10::Initialize, &MeosAggregate_wCount_10::Update, &MeosAggregate_wCount_10::Combine, &MeosAggregate_wCount_10::Finish, MeosAggregate_wCount_10::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_wCount_10Kernels{
+    &MeosAggregate_wCount_10::Initialize,
+    &MeosAggregate_wCount_10::Update,
+    &MeosAggregate_wCount_10::Combine,
+    &MeosAggregate_wCount_10::Finish,
+    MeosAggregate_wCount_10::StateSize};
 
 struct MeosAggregate_mergeAgg_10Ops
 {
@@ -6244,9 +6329,11 @@ struct MeosAggregate_mergeAgg_10Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -6257,22 +6344,18 @@ struct MeosAggregate_mergeAgg_10Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_merge_transfn(static_cast<struct SkipList*>(s), static_cast<Temporal*>(row.a0));
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_tagg_finalfn(static_cast<struct SkipList*>(s));
-    }
-    static void Release(void* s)
-    {
-        skiplist_free(static_cast<struct SkipList*>(s));
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_tagg_finalfn(static_cast<struct SkipList*>(s)); }
+
+    static void Release(void* s) { skiplist_free(static_cast<struct SkipList*>(s)); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -6283,15 +6366,18 @@ struct MeosAggregate_mergeAgg_10Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_mergeAgg_10Literals{};
 using MeosAggregate_mergeAgg_10 = MeosRuntime::MeosAggregate<MeosAggregate_mergeAgg_10Ops>;
-constexpr MeosAggregateKernels MeosAggregate_mergeAgg_10Kernels{&MeosAggregate_mergeAgg_10::Initialize, &MeosAggregate_mergeAgg_10::Update, &MeosAggregate_mergeAgg_10::Combine, &MeosAggregate_mergeAgg_10::Finish, MeosAggregate_mergeAgg_10::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_mergeAgg_10Kernels{
+    &MeosAggregate_mergeAgg_10::Initialize,
+    &MeosAggregate_mergeAgg_10::Update,
+    &MeosAggregate_mergeAgg_10::Combine,
+    &MeosAggregate_mergeAgg_10::Finish,
+    MeosAggregate_mergeAgg_10::StateSize};
 
 struct MeosAggregate_appendInstantAgg_30Ops
 {
@@ -6299,9 +6385,11 @@ struct MeosAggregate_appendInstantAgg_30Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = true;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = true;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -6312,22 +6400,18 @@ struct MeosAggregate_appendInstantAgg_30Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_app_tinst_transfn(static_cast<Temporal*>(s), static_cast<TInstant*>(row.a0), LINEAR, -1.0, nullptr);
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_append_finalfn(static_cast<const Temporal*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_append_finalfn(static_cast<const Temporal*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -6338,15 +6422,18 @@ struct MeosAggregate_appendInstantAgg_30Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row& row)
-    {
-        return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0));
-    }
+
+    static int64_t Order(const Row& row) { return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0)); }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_appendInstantAgg_30Literals{};
 using MeosAggregate_appendInstantAgg_30 = MeosRuntime::MeosAggregate<MeosAggregate_appendInstantAgg_30Ops>;
-constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_30Kernels{&MeosAggregate_appendInstantAgg_30::Initialize, &MeosAggregate_appendInstantAgg_30::Update, &MeosAggregate_appendInstantAgg_30::Combine, &MeosAggregate_appendInstantAgg_30::Finish, MeosAggregate_appendInstantAgg_30::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_30Kernels{
+    &MeosAggregate_appendInstantAgg_30::Initialize,
+    &MeosAggregate_appendInstantAgg_30::Update,
+    &MeosAggregate_appendInstantAgg_30::Combine,
+    &MeosAggregate_appendInstantAgg_30::Finish,
+    MeosAggregate_appendInstantAgg_30::StateSize};
 
 struct MeosAggregate_appendInstantAgg_31Ops
 {
@@ -6355,9 +6442,11 @@ struct MeosAggregate_appendInstantAgg_31Ops
         void* a0;
         interpType a1;
     };
+
     static constexpr bool GATHERS = true;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = true;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         row.a0 = MeosRuntime::laid(a0);
@@ -6368,22 +6457,18 @@ struct MeosAggregate_appendInstantAgg_31Ops
         row.a1 = interptype_from_string(MeosRuntime::text(MeosRuntime::literal(block, 0)).c_str());
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_app_tinst_transfn(static_cast<Temporal*>(s), static_cast<TInstant*>(row.a0), row.a1, -1.0, nullptr);
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_append_finalfn(static_cast<const Temporal*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_append_finalfn(static_cast<const Temporal*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -6394,15 +6479,18 @@ struct MeosAggregate_appendInstantAgg_31Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row& row)
-    {
-        return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0));
-    }
+
+    static int64_t Order(const Row& row) { return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0)); }
 };
 
 constexpr std::array<DataType::Type, 1> MeosAggregate_appendInstantAgg_31Literals{DataType::Type::VARSIZED};
 using MeosAggregate_appendInstantAgg_31 = MeosRuntime::MeosAggregate<MeosAggregate_appendInstantAgg_31Ops>;
-constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_31Kernels{&MeosAggregate_appendInstantAgg_31::Initialize, &MeosAggregate_appendInstantAgg_31::Update, &MeosAggregate_appendInstantAgg_31::Combine, &MeosAggregate_appendInstantAgg_31::Finish, MeosAggregate_appendInstantAgg_31::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_31Kernels{
+    &MeosAggregate_appendInstantAgg_31::Initialize,
+    &MeosAggregate_appendInstantAgg_31::Update,
+    &MeosAggregate_appendInstantAgg_31::Combine,
+    &MeosAggregate_appendInstantAgg_31::Finish,
+    MeosAggregate_appendInstantAgg_31::StateSize};
 
 struct MeosAggregate_appendInstantAgg_32Ops
 {
@@ -6413,9 +6501,11 @@ struct MeosAggregate_appendInstantAgg_32Ops
         double a2;
         Interval* a3;
     };
+
     static constexpr bool GATHERS = true;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = true;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         row.a0 = MeosRuntime::laid(a0);
@@ -6433,23 +6523,22 @@ struct MeosAggregate_appendInstantAgg_32Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_app_tinst_transfn(static_cast<Temporal*>(s), static_cast<TInstant*>(row.a0), row.a1, row.a2, row.a3);
     }
+
     static void Free(Row& row)
     {
         std::free(row.a0);
         std::free(row.a3);
     }
-    static void* Final(void* s)
-    {
-        return temporal_append_finalfn(static_cast<const Temporal*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void* Final(void* s) { return temporal_append_finalfn(static_cast<const Temporal*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -6460,15 +6549,19 @@ struct MeosAggregate_appendInstantAgg_32Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row& row)
-    {
-        return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0));
-    }
+
+    static int64_t Order(const Row& row) { return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0)); }
 };
 
-constexpr std::array<DataType::Type, 3> MeosAggregate_appendInstantAgg_32Literals{DataType::Type::VARSIZED, DataType::Type::FLOAT64, DataType::Type::VARSIZED};
+constexpr std::array<DataType::Type, 3> MeosAggregate_appendInstantAgg_32Literals{
+    DataType::Type::VARSIZED, DataType::Type::FLOAT64, DataType::Type::VARSIZED};
 using MeosAggregate_appendInstantAgg_32 = MeosRuntime::MeosAggregate<MeosAggregate_appendInstantAgg_32Ops>;
-constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_32Kernels{&MeosAggregate_appendInstantAgg_32::Initialize, &MeosAggregate_appendInstantAgg_32::Update, &MeosAggregate_appendInstantAgg_32::Combine, &MeosAggregate_appendInstantAgg_32::Finish, MeosAggregate_appendInstantAgg_32::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_32Kernels{
+    &MeosAggregate_appendInstantAgg_32::Initialize,
+    &MeosAggregate_appendInstantAgg_32::Update,
+    &MeosAggregate_appendInstantAgg_32::Combine,
+    &MeosAggregate_appendInstantAgg_32::Finish,
+    MeosAggregate_appendInstantAgg_32::StateSize};
 
 struct MeosAggregate_appendSequenceAgg_10Ops
 {
@@ -6476,9 +6569,11 @@ struct MeosAggregate_appendSequenceAgg_10Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = true;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = true;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -6489,22 +6584,18 @@ struct MeosAggregate_appendSequenceAgg_10Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_app_tseq_transfn(static_cast<Temporal*>(s), static_cast<TSequence*>(row.a0));
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_append_finalfn(static_cast<const Temporal*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_append_finalfn(static_cast<const Temporal*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -6515,15 +6606,18 @@ struct MeosAggregate_appendSequenceAgg_10Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row& row)
-    {
-        return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0));
-    }
+
+    static int64_t Order(const Row& row) { return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0)); }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_appendSequenceAgg_10Literals{};
 using MeosAggregate_appendSequenceAgg_10 = MeosRuntime::MeosAggregate<MeosAggregate_appendSequenceAgg_10Ops>;
-constexpr MeosAggregateKernels MeosAggregate_appendSequenceAgg_10Kernels{&MeosAggregate_appendSequenceAgg_10::Initialize, &MeosAggregate_appendSequenceAgg_10::Update, &MeosAggregate_appendSequenceAgg_10::Combine, &MeosAggregate_appendSequenceAgg_10::Finish, MeosAggregate_appendSequenceAgg_10::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_appendSequenceAgg_10Kernels{
+    &MeosAggregate_appendSequenceAgg_10::Initialize,
+    &MeosAggregate_appendSequenceAgg_10::Update,
+    &MeosAggregate_appendSequenceAgg_10::Combine,
+    &MeosAggregate_appendSequenceAgg_10::Finish,
+    MeosAggregate_appendSequenceAgg_10::StateSize};
 
 struct MeosAggregate_setUnionAgg_18Ops
 {
@@ -6531,9 +6625,11 @@ struct MeosAggregate_setUnionAgg_18Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -6544,22 +6640,15 @@ struct MeosAggregate_setUnionAgg_18Ops
         }
         return true;
     }
-    static void* Transition(void* s, Row& row)
-    {
-        return posechain_union_transfn(static_cast<Set*>(s), static_cast<PoseChain*>(row.a0));
-    }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return set_union_finalfn(static_cast<Set*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void* Transition(void* s, Row& row) { return posechain_union_transfn(static_cast<Set*>(s), static_cast<PoseChain*>(row.a0)); }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return set_union_finalfn(static_cast<Set*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Set*>(v);
@@ -6570,15 +6659,18 @@ struct MeosAggregate_setUnionAgg_18Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(set_mem_size(static_cast<const Set*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_setUnionAgg_18Literals{};
 using MeosAggregate_setUnionAgg_18 = MeosRuntime::MeosAggregate<MeosAggregate_setUnionAgg_18Ops>;
-constexpr MeosAggregateKernels MeosAggregate_setUnionAgg_18Kernels{&MeosAggregate_setUnionAgg_18::Initialize, &MeosAggregate_setUnionAgg_18::Update, &MeosAggregate_setUnionAgg_18::Combine, &MeosAggregate_setUnionAgg_18::Finish, MeosAggregate_setUnionAgg_18::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_setUnionAgg_18Kernels{
+    &MeosAggregate_setUnionAgg_18::Initialize,
+    &MeosAggregate_setUnionAgg_18::Update,
+    &MeosAggregate_setUnionAgg_18::Combine,
+    &MeosAggregate_setUnionAgg_18::Finish,
+    MeosAggregate_setUnionAgg_18::StateSize};
 
 struct MeosAggregate_setUnionAgg_19Ops
 {
@@ -6586,9 +6678,11 @@ struct MeosAggregate_setUnionAgg_19Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -6599,22 +6693,15 @@ struct MeosAggregate_setUnionAgg_19Ops
         }
         return true;
     }
-    static void* Transition(void* s, Row& row)
-    {
-        return set_union_transfn(static_cast<Set*>(s), static_cast<Set*>(row.a0));
-    }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return set_union_finalfn(static_cast<Set*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void* Transition(void* s, Row& row) { return set_union_transfn(static_cast<Set*>(s), static_cast<Set*>(row.a0)); }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return set_union_finalfn(static_cast<Set*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Set*>(v);
@@ -6625,15 +6712,18 @@ struct MeosAggregate_setUnionAgg_19Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(set_mem_size(static_cast<const Set*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_setUnionAgg_19Literals{};
 using MeosAggregate_setUnionAgg_19 = MeosRuntime::MeosAggregate<MeosAggregate_setUnionAgg_19Ops>;
-constexpr MeosAggregateKernels MeosAggregate_setUnionAgg_19Kernels{&MeosAggregate_setUnionAgg_19::Initialize, &MeosAggregate_setUnionAgg_19::Update, &MeosAggregate_setUnionAgg_19::Combine, &MeosAggregate_setUnionAgg_19::Finish, MeosAggregate_setUnionAgg_19::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_setUnionAgg_19Kernels{
+    &MeosAggregate_setUnionAgg_19::Initialize,
+    &MeosAggregate_setUnionAgg_19::Update,
+    &MeosAggregate_setUnionAgg_19::Combine,
+    &MeosAggregate_setUnionAgg_19::Finish,
+    MeosAggregate_setUnionAgg_19::StateSize};
 
 struct MeosAggregate_tCount_11Ops
 {
@@ -6641,9 +6731,11 @@ struct MeosAggregate_tCount_11Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -6654,22 +6746,18 @@ struct MeosAggregate_tCount_11Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_tcount_transfn(static_cast<struct SkipList*>(s), static_cast<Temporal*>(row.a0));
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_tagg_finalfn(static_cast<struct SkipList*>(s));
-    }
-    static void Release(void* s)
-    {
-        skiplist_free(static_cast<struct SkipList*>(s));
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_tagg_finalfn(static_cast<struct SkipList*>(s)); }
+
+    static void Release(void* s) { skiplist_free(static_cast<struct SkipList*>(s)); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -6680,15 +6768,18 @@ struct MeosAggregate_tCount_11Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_tCount_11Literals{};
 using MeosAggregate_tCount_11 = MeosRuntime::MeosAggregate<MeosAggregate_tCount_11Ops>;
-constexpr MeosAggregateKernels MeosAggregate_tCount_11Kernels{&MeosAggregate_tCount_11::Initialize, &MeosAggregate_tCount_11::Update, &MeosAggregate_tCount_11::Combine, &MeosAggregate_tCount_11::Finish, MeosAggregate_tCount_11::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_tCount_11Kernels{
+    &MeosAggregate_tCount_11::Initialize,
+    &MeosAggregate_tCount_11::Update,
+    &MeosAggregate_tCount_11::Combine,
+    &MeosAggregate_tCount_11::Finish,
+    MeosAggregate_tCount_11::StateSize};
 
 struct MeosAggregate_extent_13Ops
 {
@@ -6696,9 +6787,11 @@ struct MeosAggregate_extent_13Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = false;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -6709,22 +6802,15 @@ struct MeosAggregate_extent_13Ops
         }
         return true;
     }
-    static void* Transition(void* s, Row& row)
-    {
-        return tspatial_extent_transfn(static_cast<STBox*>(s), static_cast<Temporal*>(row.a0));
-    }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return s;
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void* Transition(void* s, Row& row) { return tspatial_extent_transfn(static_cast<STBox*>(s), static_cast<Temporal*>(row.a0)); }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return s; }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<STBox*>(v);
@@ -6735,15 +6821,18 @@ struct MeosAggregate_extent_13Ops
         }
         return MeosRuntime::image(r, size_t{80});
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_extent_13Literals{};
 using MeosAggregate_extent_13 = MeosRuntime::MeosAggregate<MeosAggregate_extent_13Ops>;
-constexpr MeosAggregateKernels MeosAggregate_extent_13Kernels{&MeosAggregate_extent_13::Initialize, &MeosAggregate_extent_13::Update, &MeosAggregate_extent_13::Combine, &MeosAggregate_extent_13::Finish, MeosAggregate_extent_13::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_extent_13Kernels{
+    &MeosAggregate_extent_13::Initialize,
+    &MeosAggregate_extent_13::Update,
+    &MeosAggregate_extent_13::Combine,
+    &MeosAggregate_extent_13::Finish,
+    MeosAggregate_extent_13::StateSize};
 
 struct MeosAggregate_wCount_11Ops
 {
@@ -6752,9 +6841,11 @@ struct MeosAggregate_wCount_11Ops
         void* a0;
         Interval* a1;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         row.a0 = MeosRuntime::laid(a0);
@@ -6770,23 +6861,22 @@ struct MeosAggregate_wCount_11Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_wcount_transfn(static_cast<struct SkipList*>(s), static_cast<Temporal*>(row.a0), row.a1);
     }
+
     static void Free(Row& row)
     {
         std::free(row.a0);
         std::free(row.a1);
     }
-    static void* Final(void* s)
-    {
-        return temporal_tagg_finalfn(static_cast<struct SkipList*>(s));
-    }
-    static void Release(void* s)
-    {
-        skiplist_free(static_cast<struct SkipList*>(s));
-    }
+
+    static void* Final(void* s) { return temporal_tagg_finalfn(static_cast<struct SkipList*>(s)); }
+
+    static void Release(void* s) { skiplist_free(static_cast<struct SkipList*>(s)); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -6797,15 +6887,18 @@ struct MeosAggregate_wCount_11Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 1> MeosAggregate_wCount_11Literals{DataType::Type::VARSIZED};
 using MeosAggregate_wCount_11 = MeosRuntime::MeosAggregate<MeosAggregate_wCount_11Ops>;
-constexpr MeosAggregateKernels MeosAggregate_wCount_11Kernels{&MeosAggregate_wCount_11::Initialize, &MeosAggregate_wCount_11::Update, &MeosAggregate_wCount_11::Combine, &MeosAggregate_wCount_11::Finish, MeosAggregate_wCount_11::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_wCount_11Kernels{
+    &MeosAggregate_wCount_11::Initialize,
+    &MeosAggregate_wCount_11::Update,
+    &MeosAggregate_wCount_11::Combine,
+    &MeosAggregate_wCount_11::Finish,
+    MeosAggregate_wCount_11::StateSize};
 
 struct MeosAggregate_mergeAgg_11Ops
 {
@@ -6813,9 +6906,11 @@ struct MeosAggregate_mergeAgg_11Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -6826,22 +6921,18 @@ struct MeosAggregate_mergeAgg_11Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_merge_transfn(static_cast<struct SkipList*>(s), static_cast<Temporal*>(row.a0));
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_tagg_finalfn(static_cast<struct SkipList*>(s));
-    }
-    static void Release(void* s)
-    {
-        skiplist_free(static_cast<struct SkipList*>(s));
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_tagg_finalfn(static_cast<struct SkipList*>(s)); }
+
+    static void Release(void* s) { skiplist_free(static_cast<struct SkipList*>(s)); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -6852,15 +6943,18 @@ struct MeosAggregate_mergeAgg_11Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_mergeAgg_11Literals{};
 using MeosAggregate_mergeAgg_11 = MeosRuntime::MeosAggregate<MeosAggregate_mergeAgg_11Ops>;
-constexpr MeosAggregateKernels MeosAggregate_mergeAgg_11Kernels{&MeosAggregate_mergeAgg_11::Initialize, &MeosAggregate_mergeAgg_11::Update, &MeosAggregate_mergeAgg_11::Combine, &MeosAggregate_mergeAgg_11::Finish, MeosAggregate_mergeAgg_11::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_mergeAgg_11Kernels{
+    &MeosAggregate_mergeAgg_11::Initialize,
+    &MeosAggregate_mergeAgg_11::Update,
+    &MeosAggregate_mergeAgg_11::Combine,
+    &MeosAggregate_mergeAgg_11::Finish,
+    MeosAggregate_mergeAgg_11::StateSize};
 
 struct MeosAggregate_appendInstantAgg_33Ops
 {
@@ -6868,9 +6962,11 @@ struct MeosAggregate_appendInstantAgg_33Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = true;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = true;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -6881,22 +6977,18 @@ struct MeosAggregate_appendInstantAgg_33Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_app_tinst_transfn(static_cast<Temporal*>(s), static_cast<TInstant*>(row.a0), LINEAR, -1.0, nullptr);
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_append_finalfn(static_cast<const Temporal*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_append_finalfn(static_cast<const Temporal*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -6907,15 +6999,18 @@ struct MeosAggregate_appendInstantAgg_33Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row& row)
-    {
-        return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0));
-    }
+
+    static int64_t Order(const Row& row) { return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0)); }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_appendInstantAgg_33Literals{};
 using MeosAggregate_appendInstantAgg_33 = MeosRuntime::MeosAggregate<MeosAggregate_appendInstantAgg_33Ops>;
-constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_33Kernels{&MeosAggregate_appendInstantAgg_33::Initialize, &MeosAggregate_appendInstantAgg_33::Update, &MeosAggregate_appendInstantAgg_33::Combine, &MeosAggregate_appendInstantAgg_33::Finish, MeosAggregate_appendInstantAgg_33::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_33Kernels{
+    &MeosAggregate_appendInstantAgg_33::Initialize,
+    &MeosAggregate_appendInstantAgg_33::Update,
+    &MeosAggregate_appendInstantAgg_33::Combine,
+    &MeosAggregate_appendInstantAgg_33::Finish,
+    MeosAggregate_appendInstantAgg_33::StateSize};
 
 struct MeosAggregate_appendInstantAgg_34Ops
 {
@@ -6924,9 +7019,11 @@ struct MeosAggregate_appendInstantAgg_34Ops
         void* a0;
         interpType a1;
     };
+
     static constexpr bool GATHERS = true;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = true;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         row.a0 = MeosRuntime::laid(a0);
@@ -6937,22 +7034,18 @@ struct MeosAggregate_appendInstantAgg_34Ops
         row.a1 = interptype_from_string(MeosRuntime::text(MeosRuntime::literal(block, 0)).c_str());
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_app_tinst_transfn(static_cast<Temporal*>(s), static_cast<TInstant*>(row.a0), row.a1, -1.0, nullptr);
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_append_finalfn(static_cast<const Temporal*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_append_finalfn(static_cast<const Temporal*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -6963,15 +7056,18 @@ struct MeosAggregate_appendInstantAgg_34Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row& row)
-    {
-        return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0));
-    }
+
+    static int64_t Order(const Row& row) { return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0)); }
 };
 
 constexpr std::array<DataType::Type, 1> MeosAggregate_appendInstantAgg_34Literals{DataType::Type::VARSIZED};
 using MeosAggregate_appendInstantAgg_34 = MeosRuntime::MeosAggregate<MeosAggregate_appendInstantAgg_34Ops>;
-constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_34Kernels{&MeosAggregate_appendInstantAgg_34::Initialize, &MeosAggregate_appendInstantAgg_34::Update, &MeosAggregate_appendInstantAgg_34::Combine, &MeosAggregate_appendInstantAgg_34::Finish, MeosAggregate_appendInstantAgg_34::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_34Kernels{
+    &MeosAggregate_appendInstantAgg_34::Initialize,
+    &MeosAggregate_appendInstantAgg_34::Update,
+    &MeosAggregate_appendInstantAgg_34::Combine,
+    &MeosAggregate_appendInstantAgg_34::Finish,
+    MeosAggregate_appendInstantAgg_34::StateSize};
 
 struct MeosAggregate_appendInstantAgg_35Ops
 {
@@ -6981,9 +7077,11 @@ struct MeosAggregate_appendInstantAgg_35Ops
         interpType a1;
         Interval* a2;
     };
+
     static constexpr bool GATHERS = true;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = true;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         row.a0 = MeosRuntime::laid(a0);
@@ -7000,23 +7098,22 @@ struct MeosAggregate_appendInstantAgg_35Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_app_tinst_transfn(static_cast<Temporal*>(s), static_cast<TInstant*>(row.a0), row.a1, -1.0, row.a2);
     }
+
     static void Free(Row& row)
     {
         std::free(row.a0);
         std::free(row.a2);
     }
-    static void* Final(void* s)
-    {
-        return temporal_append_finalfn(static_cast<const Temporal*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void* Final(void* s) { return temporal_append_finalfn(static_cast<const Temporal*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -7027,15 +7124,18 @@ struct MeosAggregate_appendInstantAgg_35Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row& row)
-    {
-        return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0));
-    }
+
+    static int64_t Order(const Row& row) { return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0)); }
 };
 
 constexpr std::array<DataType::Type, 2> MeosAggregate_appendInstantAgg_35Literals{DataType::Type::VARSIZED, DataType::Type::VARSIZED};
 using MeosAggregate_appendInstantAgg_35 = MeosRuntime::MeosAggregate<MeosAggregate_appendInstantAgg_35Ops>;
-constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_35Kernels{&MeosAggregate_appendInstantAgg_35::Initialize, &MeosAggregate_appendInstantAgg_35::Update, &MeosAggregate_appendInstantAgg_35::Combine, &MeosAggregate_appendInstantAgg_35::Finish, MeosAggregate_appendInstantAgg_35::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_35Kernels{
+    &MeosAggregate_appendInstantAgg_35::Initialize,
+    &MeosAggregate_appendInstantAgg_35::Update,
+    &MeosAggregate_appendInstantAgg_35::Combine,
+    &MeosAggregate_appendInstantAgg_35::Finish,
+    MeosAggregate_appendInstantAgg_35::StateSize};
 
 struct MeosAggregate_appendInstantAgg_36Ops
 {
@@ -7046,9 +7146,11 @@ struct MeosAggregate_appendInstantAgg_36Ops
         double a2;
         Interval* a3;
     };
+
     static constexpr bool GATHERS = true;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = true;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         row.a0 = MeosRuntime::laid(a0);
@@ -7066,23 +7168,22 @@ struct MeosAggregate_appendInstantAgg_36Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_app_tinst_transfn(static_cast<Temporal*>(s), static_cast<TInstant*>(row.a0), row.a1, row.a2, row.a3);
     }
+
     static void Free(Row& row)
     {
         std::free(row.a0);
         std::free(row.a3);
     }
-    static void* Final(void* s)
-    {
-        return temporal_append_finalfn(static_cast<const Temporal*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void* Final(void* s) { return temporal_append_finalfn(static_cast<const Temporal*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -7093,15 +7194,19 @@ struct MeosAggregate_appendInstantAgg_36Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row& row)
-    {
-        return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0));
-    }
+
+    static int64_t Order(const Row& row) { return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0)); }
 };
 
-constexpr std::array<DataType::Type, 3> MeosAggregate_appendInstantAgg_36Literals{DataType::Type::VARSIZED, DataType::Type::FLOAT64, DataType::Type::VARSIZED};
+constexpr std::array<DataType::Type, 3> MeosAggregate_appendInstantAgg_36Literals{
+    DataType::Type::VARSIZED, DataType::Type::FLOAT64, DataType::Type::VARSIZED};
 using MeosAggregate_appendInstantAgg_36 = MeosRuntime::MeosAggregate<MeosAggregate_appendInstantAgg_36Ops>;
-constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_36Kernels{&MeosAggregate_appendInstantAgg_36::Initialize, &MeosAggregate_appendInstantAgg_36::Update, &MeosAggregate_appendInstantAgg_36::Combine, &MeosAggregate_appendInstantAgg_36::Finish, MeosAggregate_appendInstantAgg_36::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_36Kernels{
+    &MeosAggregate_appendInstantAgg_36::Initialize,
+    &MeosAggregate_appendInstantAgg_36::Update,
+    &MeosAggregate_appendInstantAgg_36::Combine,
+    &MeosAggregate_appendInstantAgg_36::Finish,
+    MeosAggregate_appendInstantAgg_36::StateSize};
 
 struct MeosAggregate_appendSequenceAgg_11Ops
 {
@@ -7109,9 +7214,11 @@ struct MeosAggregate_appendSequenceAgg_11Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = true;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = true;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -7122,22 +7229,18 @@ struct MeosAggregate_appendSequenceAgg_11Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_app_tseq_transfn(static_cast<Temporal*>(s), static_cast<TSequence*>(row.a0));
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_append_finalfn(static_cast<const Temporal*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_append_finalfn(static_cast<const Temporal*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -7148,15 +7251,18 @@ struct MeosAggregate_appendSequenceAgg_11Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row& row)
-    {
-        return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0));
-    }
+
+    static int64_t Order(const Row& row) { return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0)); }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_appendSequenceAgg_11Literals{};
 using MeosAggregate_appendSequenceAgg_11 = MeosRuntime::MeosAggregate<MeosAggregate_appendSequenceAgg_11Ops>;
-constexpr MeosAggregateKernels MeosAggregate_appendSequenceAgg_11Kernels{&MeosAggregate_appendSequenceAgg_11::Initialize, &MeosAggregate_appendSequenceAgg_11::Update, &MeosAggregate_appendSequenceAgg_11::Combine, &MeosAggregate_appendSequenceAgg_11::Finish, MeosAggregate_appendSequenceAgg_11::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_appendSequenceAgg_11Kernels{
+    &MeosAggregate_appendSequenceAgg_11::Initialize,
+    &MeosAggregate_appendSequenceAgg_11::Update,
+    &MeosAggregate_appendSequenceAgg_11::Combine,
+    &MeosAggregate_appendSequenceAgg_11::Finish,
+    MeosAggregate_appendSequenceAgg_11::StateSize};
 
 struct MeosAggregate_setUnionAgg_20Ops
 {
@@ -7164,9 +7270,11 @@ struct MeosAggregate_setUnionAgg_20Ops
     {
         uint64_t a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -7178,22 +7286,15 @@ struct MeosAggregate_setUnionAgg_20Ops
         row.a0 = quadbin_from_wkb(v0.bytes(), v0.size());
         return true;
     }
-    static void* Transition(void* s, Row& row)
-    {
-        return quadbin_union_transfn(static_cast<Set*>(s), row.a0);
-    }
-    static void Free(Row& row)
-    {
-        static_cast<void>(row);
-    }
-    static void* Final(void* s)
-    {
-        return set_union_finalfn(static_cast<Set*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void* Transition(void* s, Row& row) { return quadbin_union_transfn(static_cast<Set*>(s), row.a0); }
+
+    static void Free(Row& row) { static_cast<void>(row); }
+
+    static void* Final(void* s) { return set_union_finalfn(static_cast<Set*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Set*>(v);
@@ -7204,15 +7305,18 @@ struct MeosAggregate_setUnionAgg_20Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(set_mem_size(static_cast<const Set*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_setUnionAgg_20Literals{};
 using MeosAggregate_setUnionAgg_20 = MeosRuntime::MeosAggregate<MeosAggregate_setUnionAgg_20Ops>;
-constexpr MeosAggregateKernels MeosAggregate_setUnionAgg_20Kernels{&MeosAggregate_setUnionAgg_20::Initialize, &MeosAggregate_setUnionAgg_20::Update, &MeosAggregate_setUnionAgg_20::Combine, &MeosAggregate_setUnionAgg_20::Finish, MeosAggregate_setUnionAgg_20::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_setUnionAgg_20Kernels{
+    &MeosAggregate_setUnionAgg_20::Initialize,
+    &MeosAggregate_setUnionAgg_20::Update,
+    &MeosAggregate_setUnionAgg_20::Combine,
+    &MeosAggregate_setUnionAgg_20::Finish,
+    MeosAggregate_setUnionAgg_20::StateSize};
 
 struct MeosAggregate_setUnionAgg_21Ops
 {
@@ -7220,9 +7324,11 @@ struct MeosAggregate_setUnionAgg_21Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -7233,22 +7339,15 @@ struct MeosAggregate_setUnionAgg_21Ops
         }
         return true;
     }
-    static void* Transition(void* s, Row& row)
-    {
-        return set_union_transfn(static_cast<Set*>(s), static_cast<Set*>(row.a0));
-    }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return set_union_finalfn(static_cast<Set*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void* Transition(void* s, Row& row) { return set_union_transfn(static_cast<Set*>(s), static_cast<Set*>(row.a0)); }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return set_union_finalfn(static_cast<Set*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Set*>(v);
@@ -7259,15 +7358,18 @@ struct MeosAggregate_setUnionAgg_21Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(set_mem_size(static_cast<const Set*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_setUnionAgg_21Literals{};
 using MeosAggregate_setUnionAgg_21 = MeosRuntime::MeosAggregate<MeosAggregate_setUnionAgg_21Ops>;
-constexpr MeosAggregateKernels MeosAggregate_setUnionAgg_21Kernels{&MeosAggregate_setUnionAgg_21::Initialize, &MeosAggregate_setUnionAgg_21::Update, &MeosAggregate_setUnionAgg_21::Combine, &MeosAggregate_setUnionAgg_21::Finish, MeosAggregate_setUnionAgg_21::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_setUnionAgg_21Kernels{
+    &MeosAggregate_setUnionAgg_21::Initialize,
+    &MeosAggregate_setUnionAgg_21::Update,
+    &MeosAggregate_setUnionAgg_21::Combine,
+    &MeosAggregate_setUnionAgg_21::Finish,
+    MeosAggregate_setUnionAgg_21::StateSize};
 
 struct MeosAggregate_extent_14Ops
 {
@@ -7275,9 +7377,11 @@ struct MeosAggregate_extent_14Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = false;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -7288,22 +7392,15 @@ struct MeosAggregate_extent_14Ops
         }
         return true;
     }
-    static void* Transition(void* s, Row& row)
-    {
-        return tspatial_extent_transfn(static_cast<STBox*>(s), static_cast<Temporal*>(row.a0));
-    }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return s;
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void* Transition(void* s, Row& row) { return tspatial_extent_transfn(static_cast<STBox*>(s), static_cast<Temporal*>(row.a0)); }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return s; }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<STBox*>(v);
@@ -7314,15 +7411,18 @@ struct MeosAggregate_extent_14Ops
         }
         return MeosRuntime::image(r, size_t{80});
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_extent_14Literals{};
 using MeosAggregate_extent_14 = MeosRuntime::MeosAggregate<MeosAggregate_extent_14Ops>;
-constexpr MeosAggregateKernels MeosAggregate_extent_14Kernels{&MeosAggregate_extent_14::Initialize, &MeosAggregate_extent_14::Update, &MeosAggregate_extent_14::Combine, &MeosAggregate_extent_14::Finish, MeosAggregate_extent_14::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_extent_14Kernels{
+    &MeosAggregate_extent_14::Initialize,
+    &MeosAggregate_extent_14::Update,
+    &MeosAggregate_extent_14::Combine,
+    &MeosAggregate_extent_14::Finish,
+    MeosAggregate_extent_14::StateSize};
 
 struct MeosAggregate_tCount_12Ops
 {
@@ -7330,9 +7430,11 @@ struct MeosAggregate_tCount_12Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -7343,22 +7445,18 @@ struct MeosAggregate_tCount_12Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_tcount_transfn(static_cast<struct SkipList*>(s), static_cast<Temporal*>(row.a0));
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_tagg_finalfn(static_cast<struct SkipList*>(s));
-    }
-    static void Release(void* s)
-    {
-        skiplist_free(static_cast<struct SkipList*>(s));
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_tagg_finalfn(static_cast<struct SkipList*>(s)); }
+
+    static void Release(void* s) { skiplist_free(static_cast<struct SkipList*>(s)); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -7369,15 +7467,18 @@ struct MeosAggregate_tCount_12Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_tCount_12Literals{};
 using MeosAggregate_tCount_12 = MeosRuntime::MeosAggregate<MeosAggregate_tCount_12Ops>;
-constexpr MeosAggregateKernels MeosAggregate_tCount_12Kernels{&MeosAggregate_tCount_12::Initialize, &MeosAggregate_tCount_12::Update, &MeosAggregate_tCount_12::Combine, &MeosAggregate_tCount_12::Finish, MeosAggregate_tCount_12::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_tCount_12Kernels{
+    &MeosAggregate_tCount_12::Initialize,
+    &MeosAggregate_tCount_12::Update,
+    &MeosAggregate_tCount_12::Combine,
+    &MeosAggregate_tCount_12::Finish,
+    MeosAggregate_tCount_12::StateSize};
 
 struct MeosAggregate_wCount_12Ops
 {
@@ -7386,9 +7487,11 @@ struct MeosAggregate_wCount_12Ops
         void* a0;
         Interval* a1;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         row.a0 = MeosRuntime::laid(a0);
@@ -7404,23 +7507,22 @@ struct MeosAggregate_wCount_12Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_wcount_transfn(static_cast<struct SkipList*>(s), static_cast<Temporal*>(row.a0), row.a1);
     }
+
     static void Free(Row& row)
     {
         std::free(row.a0);
         std::free(row.a1);
     }
-    static void* Final(void* s)
-    {
-        return temporal_tagg_finalfn(static_cast<struct SkipList*>(s));
-    }
-    static void Release(void* s)
-    {
-        skiplist_free(static_cast<struct SkipList*>(s));
-    }
+
+    static void* Final(void* s) { return temporal_tagg_finalfn(static_cast<struct SkipList*>(s)); }
+
+    static void Release(void* s) { skiplist_free(static_cast<struct SkipList*>(s)); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -7431,15 +7533,18 @@ struct MeosAggregate_wCount_12Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 1> MeosAggregate_wCount_12Literals{DataType::Type::VARSIZED};
 using MeosAggregate_wCount_12 = MeosRuntime::MeosAggregate<MeosAggregate_wCount_12Ops>;
-constexpr MeosAggregateKernels MeosAggregate_wCount_12Kernels{&MeosAggregate_wCount_12::Initialize, &MeosAggregate_wCount_12::Update, &MeosAggregate_wCount_12::Combine, &MeosAggregate_wCount_12::Finish, MeosAggregate_wCount_12::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_wCount_12Kernels{
+    &MeosAggregate_wCount_12::Initialize,
+    &MeosAggregate_wCount_12::Update,
+    &MeosAggregate_wCount_12::Combine,
+    &MeosAggregate_wCount_12::Finish,
+    MeosAggregate_wCount_12::StateSize};
 
 struct MeosAggregate_mergeAgg_12Ops
 {
@@ -7447,9 +7552,11 @@ struct MeosAggregate_mergeAgg_12Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -7460,22 +7567,18 @@ struct MeosAggregate_mergeAgg_12Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_merge_transfn(static_cast<struct SkipList*>(s), static_cast<Temporal*>(row.a0));
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_tagg_finalfn(static_cast<struct SkipList*>(s));
-    }
-    static void Release(void* s)
-    {
-        skiplist_free(static_cast<struct SkipList*>(s));
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_tagg_finalfn(static_cast<struct SkipList*>(s)); }
+
+    static void Release(void* s) { skiplist_free(static_cast<struct SkipList*>(s)); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -7486,15 +7589,18 @@ struct MeosAggregate_mergeAgg_12Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_mergeAgg_12Literals{};
 using MeosAggregate_mergeAgg_12 = MeosRuntime::MeosAggregate<MeosAggregate_mergeAgg_12Ops>;
-constexpr MeosAggregateKernels MeosAggregate_mergeAgg_12Kernels{&MeosAggregate_mergeAgg_12::Initialize, &MeosAggregate_mergeAgg_12::Update, &MeosAggregate_mergeAgg_12::Combine, &MeosAggregate_mergeAgg_12::Finish, MeosAggregate_mergeAgg_12::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_mergeAgg_12Kernels{
+    &MeosAggregate_mergeAgg_12::Initialize,
+    &MeosAggregate_mergeAgg_12::Update,
+    &MeosAggregate_mergeAgg_12::Combine,
+    &MeosAggregate_mergeAgg_12::Finish,
+    MeosAggregate_mergeAgg_12::StateSize};
 
 struct MeosAggregate_appendInstantAgg_37Ops
 {
@@ -7502,9 +7608,11 @@ struct MeosAggregate_appendInstantAgg_37Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = true;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = true;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -7515,22 +7623,18 @@ struct MeosAggregate_appendInstantAgg_37Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_app_tinst_transfn(static_cast<Temporal*>(s), static_cast<TInstant*>(row.a0), STEP, -1.0, nullptr);
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_append_finalfn(static_cast<const Temporal*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_append_finalfn(static_cast<const Temporal*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -7541,15 +7645,18 @@ struct MeosAggregate_appendInstantAgg_37Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row& row)
-    {
-        return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0));
-    }
+
+    static int64_t Order(const Row& row) { return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0)); }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_appendInstantAgg_37Literals{};
 using MeosAggregate_appendInstantAgg_37 = MeosRuntime::MeosAggregate<MeosAggregate_appendInstantAgg_37Ops>;
-constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_37Kernels{&MeosAggregate_appendInstantAgg_37::Initialize, &MeosAggregate_appendInstantAgg_37::Update, &MeosAggregate_appendInstantAgg_37::Combine, &MeosAggregate_appendInstantAgg_37::Finish, MeosAggregate_appendInstantAgg_37::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_37Kernels{
+    &MeosAggregate_appendInstantAgg_37::Initialize,
+    &MeosAggregate_appendInstantAgg_37::Update,
+    &MeosAggregate_appendInstantAgg_37::Combine,
+    &MeosAggregate_appendInstantAgg_37::Finish,
+    MeosAggregate_appendInstantAgg_37::StateSize};
 
 struct MeosAggregate_appendInstantAgg_38Ops
 {
@@ -7558,9 +7665,11 @@ struct MeosAggregate_appendInstantAgg_38Ops
         void* a0;
         interpType a1;
     };
+
     static constexpr bool GATHERS = true;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = true;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         row.a0 = MeosRuntime::laid(a0);
@@ -7571,22 +7680,18 @@ struct MeosAggregate_appendInstantAgg_38Ops
         row.a1 = interptype_from_string(MeosRuntime::text(MeosRuntime::literal(block, 0)).c_str());
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_app_tinst_transfn(static_cast<Temporal*>(s), static_cast<TInstant*>(row.a0), row.a1, -1.0, nullptr);
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_append_finalfn(static_cast<const Temporal*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_append_finalfn(static_cast<const Temporal*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -7597,15 +7702,18 @@ struct MeosAggregate_appendInstantAgg_38Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row& row)
-    {
-        return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0));
-    }
+
+    static int64_t Order(const Row& row) { return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0)); }
 };
 
 constexpr std::array<DataType::Type, 1> MeosAggregate_appendInstantAgg_38Literals{DataType::Type::VARSIZED};
 using MeosAggregate_appendInstantAgg_38 = MeosRuntime::MeosAggregate<MeosAggregate_appendInstantAgg_38Ops>;
-constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_38Kernels{&MeosAggregate_appendInstantAgg_38::Initialize, &MeosAggregate_appendInstantAgg_38::Update, &MeosAggregate_appendInstantAgg_38::Combine, &MeosAggregate_appendInstantAgg_38::Finish, MeosAggregate_appendInstantAgg_38::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_38Kernels{
+    &MeosAggregate_appendInstantAgg_38::Initialize,
+    &MeosAggregate_appendInstantAgg_38::Update,
+    &MeosAggregate_appendInstantAgg_38::Combine,
+    &MeosAggregate_appendInstantAgg_38::Finish,
+    MeosAggregate_appendInstantAgg_38::StateSize};
 
 struct MeosAggregate_appendInstantAgg_39Ops
 {
@@ -7615,9 +7723,11 @@ struct MeosAggregate_appendInstantAgg_39Ops
         interpType a1;
         Interval* a2;
     };
+
     static constexpr bool GATHERS = true;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = true;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         row.a0 = MeosRuntime::laid(a0);
@@ -7634,23 +7744,22 @@ struct MeosAggregate_appendInstantAgg_39Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_app_tinst_transfn(static_cast<Temporal*>(s), static_cast<TInstant*>(row.a0), row.a1, -1.0, row.a2);
     }
+
     static void Free(Row& row)
     {
         std::free(row.a0);
         std::free(row.a2);
     }
-    static void* Final(void* s)
-    {
-        return temporal_append_finalfn(static_cast<const Temporal*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void* Final(void* s) { return temporal_append_finalfn(static_cast<const Temporal*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -7661,15 +7770,18 @@ struct MeosAggregate_appendInstantAgg_39Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row& row)
-    {
-        return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0));
-    }
+
+    static int64_t Order(const Row& row) { return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0)); }
 };
 
 constexpr std::array<DataType::Type, 2> MeosAggregate_appendInstantAgg_39Literals{DataType::Type::VARSIZED, DataType::Type::VARSIZED};
 using MeosAggregate_appendInstantAgg_39 = MeosRuntime::MeosAggregate<MeosAggregate_appendInstantAgg_39Ops>;
-constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_39Kernels{&MeosAggregate_appendInstantAgg_39::Initialize, &MeosAggregate_appendInstantAgg_39::Update, &MeosAggregate_appendInstantAgg_39::Combine, &MeosAggregate_appendInstantAgg_39::Finish, MeosAggregate_appendInstantAgg_39::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_39Kernels{
+    &MeosAggregate_appendInstantAgg_39::Initialize,
+    &MeosAggregate_appendInstantAgg_39::Update,
+    &MeosAggregate_appendInstantAgg_39::Combine,
+    &MeosAggregate_appendInstantAgg_39::Finish,
+    MeosAggregate_appendInstantAgg_39::StateSize};
 
 struct MeosAggregate_appendSequenceAgg_12Ops
 {
@@ -7677,9 +7789,11 @@ struct MeosAggregate_appendSequenceAgg_12Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = true;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = true;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -7690,22 +7804,18 @@ struct MeosAggregate_appendSequenceAgg_12Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_app_tseq_transfn(static_cast<Temporal*>(s), static_cast<TSequence*>(row.a0));
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_append_finalfn(static_cast<const Temporal*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_append_finalfn(static_cast<const Temporal*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -7716,15 +7826,18 @@ struct MeosAggregate_appendSequenceAgg_12Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row& row)
-    {
-        return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0));
-    }
+
+    static int64_t Order(const Row& row) { return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0)); }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_appendSequenceAgg_12Literals{};
 using MeosAggregate_appendSequenceAgg_12 = MeosRuntime::MeosAggregate<MeosAggregate_appendSequenceAgg_12Ops>;
-constexpr MeosAggregateKernels MeosAggregate_appendSequenceAgg_12Kernels{&MeosAggregate_appendSequenceAgg_12::Initialize, &MeosAggregate_appendSequenceAgg_12::Update, &MeosAggregate_appendSequenceAgg_12::Combine, &MeosAggregate_appendSequenceAgg_12::Finish, MeosAggregate_appendSequenceAgg_12::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_appendSequenceAgg_12Kernels{
+    &MeosAggregate_appendSequenceAgg_12::Initialize,
+    &MeosAggregate_appendSequenceAgg_12::Update,
+    &MeosAggregate_appendSequenceAgg_12::Combine,
+    &MeosAggregate_appendSequenceAgg_12::Finish,
+    MeosAggregate_appendSequenceAgg_12::StateSize};
 
 struct MeosAggregate_rasterUnion_0Ops
 {
@@ -7732,9 +7845,11 @@ struct MeosAggregate_rasterUnion_0Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -7745,22 +7860,18 @@ struct MeosAggregate_rasterUnion_0Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return raster_union_transfn(static_cast<RasterUnionState*>(s), static_cast<Raster*>(row.a0), static_cast<int>(0), nullptr);
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return raster_union_finalfn(static_cast<RasterUnionState*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(raster_union_finalfn(static_cast<RasterUnionState*>(s)));
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return raster_union_finalfn(static_cast<RasterUnionState*>(s)); }
+
+    static void Release(void* s) { std::free(raster_union_finalfn(static_cast<RasterUnionState*>(s))); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<struct Raster*>(v);
@@ -7771,15 +7882,18 @@ struct MeosAggregate_rasterUnion_0Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(raster_mem_size(static_cast<const struct Raster*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_rasterUnion_0Literals{};
 using MeosAggregate_rasterUnion_0 = MeosRuntime::MeosAggregate<MeosAggregate_rasterUnion_0Ops>;
-constexpr MeosAggregateKernels MeosAggregate_rasterUnion_0Kernels{&MeosAggregate_rasterUnion_0::Initialize, &MeosAggregate_rasterUnion_0::Update, &MeosAggregate_rasterUnion_0::Combine, &MeosAggregate_rasterUnion_0::Finish, MeosAggregate_rasterUnion_0::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_rasterUnion_0Kernels{
+    &MeosAggregate_rasterUnion_0::Initialize,
+    &MeosAggregate_rasterUnion_0::Update,
+    &MeosAggregate_rasterUnion_0::Combine,
+    &MeosAggregate_rasterUnion_0::Finish,
+    MeosAggregate_rasterUnion_0::StateSize};
 
 struct MeosAggregate_rasterUnion_1Ops
 {
@@ -7788,9 +7902,11 @@ struct MeosAggregate_rasterUnion_1Ops
         void* a0;
         int a1;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         row.a0 = MeosRuntime::laid(a0);
@@ -7801,22 +7917,18 @@ struct MeosAggregate_rasterUnion_1Ops
         row.a1 = static_cast<int>(MeosRuntime::number<int32_t>(MeosRuntime::literal(block, 0)));
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return raster_union_transfn(static_cast<RasterUnionState*>(s), static_cast<Raster*>(row.a0), row.a1, nullptr);
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return raster_union_finalfn(static_cast<RasterUnionState*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(raster_union_finalfn(static_cast<RasterUnionState*>(s)));
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return raster_union_finalfn(static_cast<RasterUnionState*>(s)); }
+
+    static void Release(void* s) { std::free(raster_union_finalfn(static_cast<RasterUnionState*>(s))); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<struct Raster*>(v);
@@ -7827,15 +7939,18 @@ struct MeosAggregate_rasterUnion_1Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(raster_mem_size(static_cast<const struct Raster*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 1> MeosAggregate_rasterUnion_1Literals{DataType::Type::INT32};
 using MeosAggregate_rasterUnion_1 = MeosRuntime::MeosAggregate<MeosAggregate_rasterUnion_1Ops>;
-constexpr MeosAggregateKernels MeosAggregate_rasterUnion_1Kernels{&MeosAggregate_rasterUnion_1::Initialize, &MeosAggregate_rasterUnion_1::Update, &MeosAggregate_rasterUnion_1::Combine, &MeosAggregate_rasterUnion_1::Finish, MeosAggregate_rasterUnion_1::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_rasterUnion_1Kernels{
+    &MeosAggregate_rasterUnion_1::Initialize,
+    &MeosAggregate_rasterUnion_1::Update,
+    &MeosAggregate_rasterUnion_1::Combine,
+    &MeosAggregate_rasterUnion_1::Finish,
+    MeosAggregate_rasterUnion_1::StateSize};
 
 struct MeosAggregate_rasterUnion_2Ops
 {
@@ -7844,9 +7959,11 @@ struct MeosAggregate_rasterUnion_2Ops
         void* a0;
         char* a1;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         row.a0 = MeosRuntime::laid(a0);
@@ -7857,23 +7974,22 @@ struct MeosAggregate_rasterUnion_2Ops
         row.a1 = strdup(MeosRuntime::text(MeosRuntime::literal(block, 0)).c_str());
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return raster_union_transfn(static_cast<RasterUnionState*>(s), static_cast<Raster*>(row.a0), static_cast<int>(0), row.a1);
     }
+
     static void Free(Row& row)
     {
         std::free(row.a0);
         std::free(row.a1);
     }
-    static void* Final(void* s)
-    {
-        return raster_union_finalfn(static_cast<RasterUnionState*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(raster_union_finalfn(static_cast<RasterUnionState*>(s)));
-    }
+
+    static void* Final(void* s) { return raster_union_finalfn(static_cast<RasterUnionState*>(s)); }
+
+    static void Release(void* s) { std::free(raster_union_finalfn(static_cast<RasterUnionState*>(s))); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<struct Raster*>(v);
@@ -7884,15 +8000,18 @@ struct MeosAggregate_rasterUnion_2Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(raster_mem_size(static_cast<const struct Raster*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 1> MeosAggregate_rasterUnion_2Literals{DataType::Type::VARSIZED};
 using MeosAggregate_rasterUnion_2 = MeosRuntime::MeosAggregate<MeosAggregate_rasterUnion_2Ops>;
-constexpr MeosAggregateKernels MeosAggregate_rasterUnion_2Kernels{&MeosAggregate_rasterUnion_2::Initialize, &MeosAggregate_rasterUnion_2::Update, &MeosAggregate_rasterUnion_2::Combine, &MeosAggregate_rasterUnion_2::Finish, MeosAggregate_rasterUnion_2::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_rasterUnion_2Kernels{
+    &MeosAggregate_rasterUnion_2::Initialize,
+    &MeosAggregate_rasterUnion_2::Update,
+    &MeosAggregate_rasterUnion_2::Combine,
+    &MeosAggregate_rasterUnion_2::Finish,
+    MeosAggregate_rasterUnion_2::StateSize};
 
 struct MeosAggregate_rasterUnion_3Ops
 {
@@ -7902,9 +8021,11 @@ struct MeosAggregate_rasterUnion_3Ops
         int a1;
         char* a2;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         row.a0 = MeosRuntime::laid(a0);
@@ -7916,23 +8037,22 @@ struct MeosAggregate_rasterUnion_3Ops
         row.a2 = strdup(MeosRuntime::text(MeosRuntime::literal(block, 1)).c_str());
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return raster_union_transfn(static_cast<RasterUnionState*>(s), static_cast<Raster*>(row.a0), row.a1, row.a2);
     }
+
     static void Free(Row& row)
     {
         std::free(row.a0);
         std::free(row.a2);
     }
-    static void* Final(void* s)
-    {
-        return raster_union_finalfn(static_cast<RasterUnionState*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(raster_union_finalfn(static_cast<RasterUnionState*>(s)));
-    }
+
+    static void* Final(void* s) { return raster_union_finalfn(static_cast<RasterUnionState*>(s)); }
+
+    static void Release(void* s) { std::free(raster_union_finalfn(static_cast<RasterUnionState*>(s))); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<struct Raster*>(v);
@@ -7943,15 +8063,18 @@ struct MeosAggregate_rasterUnion_3Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(raster_mem_size(static_cast<const struct Raster*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 2> MeosAggregate_rasterUnion_3Literals{DataType::Type::INT32, DataType::Type::VARSIZED};
 using MeosAggregate_rasterUnion_3 = MeosRuntime::MeosAggregate<MeosAggregate_rasterUnion_3Ops>;
-constexpr MeosAggregateKernels MeosAggregate_rasterUnion_3Kernels{&MeosAggregate_rasterUnion_3::Initialize, &MeosAggregate_rasterUnion_3::Update, &MeosAggregate_rasterUnion_3::Combine, &MeosAggregate_rasterUnion_3::Finish, MeosAggregate_rasterUnion_3::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_rasterUnion_3Kernels{
+    &MeosAggregate_rasterUnion_3::Initialize,
+    &MeosAggregate_rasterUnion_3::Update,
+    &MeosAggregate_rasterUnion_3::Combine,
+    &MeosAggregate_rasterUnion_3::Finish,
+    MeosAggregate_rasterUnion_3::StateSize};
 
 struct MeosAggregate_summaryStatsAgg_0Ops
 {
@@ -7961,9 +8084,11 @@ struct MeosAggregate_summaryStatsAgg_0Ops
         int a1;
         bool a2;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         row.a0 = MeosRuntime::laid(a0);
@@ -7975,22 +8100,18 @@ struct MeosAggregate_summaryStatsAgg_0Ops
         row.a2 = static_cast<bool>(MeosRuntime::number<bool>(MeosRuntime::literal(block, 1)));
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return raster_summary_stats_transfn(static_cast<RasterStatsState*>(s), static_cast<Raster*>(row.a0), row.a1, row.a2);
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return raster_summary_stats_finalfn(static_cast<RasterStatsState*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(raster_summary_stats_finalfn(static_cast<RasterStatsState*>(s)));
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return raster_summary_stats_finalfn(static_cast<RasterStatsState*>(s)); }
+
+    static void Release(void* s) { std::free(raster_summary_stats_finalfn(static_cast<RasterStatsState*>(s))); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<BandStats*>(v);
@@ -8001,15 +8122,18 @@ struct MeosAggregate_summaryStatsAgg_0Ops
         }
         return MeosRuntime::image(r, size_t{48});
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 2> MeosAggregate_summaryStatsAgg_0Literals{DataType::Type::INT32, DataType::Type::BOOLEAN};
 using MeosAggregate_summaryStatsAgg_0 = MeosRuntime::MeosAggregate<MeosAggregate_summaryStatsAgg_0Ops>;
-constexpr MeosAggregateKernels MeosAggregate_summaryStatsAgg_0Kernels{&MeosAggregate_summaryStatsAgg_0::Initialize, &MeosAggregate_summaryStatsAgg_0::Update, &MeosAggregate_summaryStatsAgg_0::Combine, &MeosAggregate_summaryStatsAgg_0::Finish, MeosAggregate_summaryStatsAgg_0::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_summaryStatsAgg_0Kernels{
+    &MeosAggregate_summaryStatsAgg_0::Initialize,
+    &MeosAggregate_summaryStatsAgg_0::Update,
+    &MeosAggregate_summaryStatsAgg_0::Combine,
+    &MeosAggregate_summaryStatsAgg_0::Finish,
+    MeosAggregate_summaryStatsAgg_0::StateSize};
 
 struct MeosAggregate_summaryStatsAgg_1Ops
 {
@@ -8018,9 +8142,11 @@ struct MeosAggregate_summaryStatsAgg_1Ops
         void* a0;
         bool a1;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         row.a0 = MeosRuntime::laid(a0);
@@ -8031,22 +8157,18 @@ struct MeosAggregate_summaryStatsAgg_1Ops
         row.a1 = static_cast<bool>(MeosRuntime::number<bool>(MeosRuntime::literal(block, 0)));
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return raster_summary_stats_transfn(static_cast<RasterStatsState*>(s), static_cast<Raster*>(row.a0), static_cast<int>(1), row.a1);
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return raster_summary_stats_finalfn(static_cast<RasterStatsState*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(raster_summary_stats_finalfn(static_cast<RasterStatsState*>(s)));
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return raster_summary_stats_finalfn(static_cast<RasterStatsState*>(s)); }
+
+    static void Release(void* s) { std::free(raster_summary_stats_finalfn(static_cast<RasterStatsState*>(s))); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<BandStats*>(v);
@@ -8057,15 +8179,18 @@ struct MeosAggregate_summaryStatsAgg_1Ops
         }
         return MeosRuntime::image(r, size_t{48});
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 1> MeosAggregate_summaryStatsAgg_1Literals{DataType::Type::BOOLEAN};
 using MeosAggregate_summaryStatsAgg_1 = MeosRuntime::MeosAggregate<MeosAggregate_summaryStatsAgg_1Ops>;
-constexpr MeosAggregateKernels MeosAggregate_summaryStatsAgg_1Kernels{&MeosAggregate_summaryStatsAgg_1::Initialize, &MeosAggregate_summaryStatsAgg_1::Update, &MeosAggregate_summaryStatsAgg_1::Combine, &MeosAggregate_summaryStatsAgg_1::Finish, MeosAggregate_summaryStatsAgg_1::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_summaryStatsAgg_1Kernels{
+    &MeosAggregate_summaryStatsAgg_1::Initialize,
+    &MeosAggregate_summaryStatsAgg_1::Update,
+    &MeosAggregate_summaryStatsAgg_1::Combine,
+    &MeosAggregate_summaryStatsAgg_1::Finish,
+    MeosAggregate_summaryStatsAgg_1::StateSize};
 
 struct MeosAggregate_tCount_13Ops
 {
@@ -8073,9 +8198,11 @@ struct MeosAggregate_tCount_13Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -8086,22 +8213,18 @@ struct MeosAggregate_tCount_13Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_tcount_transfn(static_cast<struct SkipList*>(s), static_cast<Temporal*>(row.a0));
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_tagg_finalfn(static_cast<struct SkipList*>(s));
-    }
-    static void Release(void* s)
-    {
-        skiplist_free(static_cast<struct SkipList*>(s));
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_tagg_finalfn(static_cast<struct SkipList*>(s)); }
+
+    static void Release(void* s) { skiplist_free(static_cast<struct SkipList*>(s)); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -8112,15 +8235,18 @@ struct MeosAggregate_tCount_13Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_tCount_13Literals{};
 using MeosAggregate_tCount_13 = MeosRuntime::MeosAggregate<MeosAggregate_tCount_13Ops>;
-constexpr MeosAggregateKernels MeosAggregate_tCount_13Kernels{&MeosAggregate_tCount_13::Initialize, &MeosAggregate_tCount_13::Update, &MeosAggregate_tCount_13::Combine, &MeosAggregate_tCount_13::Finish, MeosAggregate_tCount_13::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_tCount_13Kernels{
+    &MeosAggregate_tCount_13::Initialize,
+    &MeosAggregate_tCount_13::Update,
+    &MeosAggregate_tCount_13::Combine,
+    &MeosAggregate_tCount_13::Finish,
+    MeosAggregate_tCount_13::StateSize};
 
 struct MeosAggregate_wCount_13Ops
 {
@@ -8129,9 +8255,11 @@ struct MeosAggregate_wCount_13Ops
         void* a0;
         Interval* a1;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         row.a0 = MeosRuntime::laid(a0);
@@ -8147,23 +8275,22 @@ struct MeosAggregate_wCount_13Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_wcount_transfn(static_cast<struct SkipList*>(s), static_cast<Temporal*>(row.a0), row.a1);
     }
+
     static void Free(Row& row)
     {
         std::free(row.a0);
         std::free(row.a1);
     }
-    static void* Final(void* s)
-    {
-        return temporal_tagg_finalfn(static_cast<struct SkipList*>(s));
-    }
-    static void Release(void* s)
-    {
-        skiplist_free(static_cast<struct SkipList*>(s));
-    }
+
+    static void* Final(void* s) { return temporal_tagg_finalfn(static_cast<struct SkipList*>(s)); }
+
+    static void Release(void* s) { skiplist_free(static_cast<struct SkipList*>(s)); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -8174,15 +8301,18 @@ struct MeosAggregate_wCount_13Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 1> MeosAggregate_wCount_13Literals{DataType::Type::VARSIZED};
 using MeosAggregate_wCount_13 = MeosRuntime::MeosAggregate<MeosAggregate_wCount_13Ops>;
-constexpr MeosAggregateKernels MeosAggregate_wCount_13Kernels{&MeosAggregate_wCount_13::Initialize, &MeosAggregate_wCount_13::Update, &MeosAggregate_wCount_13::Combine, &MeosAggregate_wCount_13::Finish, MeosAggregate_wCount_13::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_wCount_13Kernels{
+    &MeosAggregate_wCount_13::Initialize,
+    &MeosAggregate_wCount_13::Update,
+    &MeosAggregate_wCount_13::Combine,
+    &MeosAggregate_wCount_13::Finish,
+    MeosAggregate_wCount_13::StateSize};
 
 struct MeosAggregate_mergeAgg_13Ops
 {
@@ -8190,9 +8320,11 @@ struct MeosAggregate_mergeAgg_13Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -8203,22 +8335,18 @@ struct MeosAggregate_mergeAgg_13Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_merge_transfn(static_cast<struct SkipList*>(s), static_cast<Temporal*>(row.a0));
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_tagg_finalfn(static_cast<struct SkipList*>(s));
-    }
-    static void Release(void* s)
-    {
-        skiplist_free(static_cast<struct SkipList*>(s));
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_tagg_finalfn(static_cast<struct SkipList*>(s)); }
+
+    static void Release(void* s) { skiplist_free(static_cast<struct SkipList*>(s)); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -8229,15 +8357,18 @@ struct MeosAggregate_mergeAgg_13Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_mergeAgg_13Literals{};
 using MeosAggregate_mergeAgg_13 = MeosRuntime::MeosAggregate<MeosAggregate_mergeAgg_13Ops>;
-constexpr MeosAggregateKernels MeosAggregate_mergeAgg_13Kernels{&MeosAggregate_mergeAgg_13::Initialize, &MeosAggregate_mergeAgg_13::Update, &MeosAggregate_mergeAgg_13::Combine, &MeosAggregate_mergeAgg_13::Finish, MeosAggregate_mergeAgg_13::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_mergeAgg_13Kernels{
+    &MeosAggregate_mergeAgg_13::Initialize,
+    &MeosAggregate_mergeAgg_13::Update,
+    &MeosAggregate_mergeAgg_13::Combine,
+    &MeosAggregate_mergeAgg_13::Finish,
+    MeosAggregate_mergeAgg_13::StateSize};
 
 struct MeosAggregate_appendInstantAgg_40Ops
 {
@@ -8245,9 +8376,11 @@ struct MeosAggregate_appendInstantAgg_40Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = true;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = true;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -8258,22 +8391,18 @@ struct MeosAggregate_appendInstantAgg_40Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_app_tinst_transfn(static_cast<Temporal*>(s), static_cast<TInstant*>(row.a0), LINEAR, -1.0, nullptr);
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_append_finalfn(static_cast<const Temporal*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_append_finalfn(static_cast<const Temporal*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -8284,15 +8413,18 @@ struct MeosAggregate_appendInstantAgg_40Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row& row)
-    {
-        return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0));
-    }
+
+    static int64_t Order(const Row& row) { return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0)); }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_appendInstantAgg_40Literals{};
 using MeosAggregate_appendInstantAgg_40 = MeosRuntime::MeosAggregate<MeosAggregate_appendInstantAgg_40Ops>;
-constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_40Kernels{&MeosAggregate_appendInstantAgg_40::Initialize, &MeosAggregate_appendInstantAgg_40::Update, &MeosAggregate_appendInstantAgg_40::Combine, &MeosAggregate_appendInstantAgg_40::Finish, MeosAggregate_appendInstantAgg_40::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_40Kernels{
+    &MeosAggregate_appendInstantAgg_40::Initialize,
+    &MeosAggregate_appendInstantAgg_40::Update,
+    &MeosAggregate_appendInstantAgg_40::Combine,
+    &MeosAggregate_appendInstantAgg_40::Finish,
+    MeosAggregate_appendInstantAgg_40::StateSize};
 
 struct MeosAggregate_appendInstantAgg_41Ops
 {
@@ -8301,9 +8433,11 @@ struct MeosAggregate_appendInstantAgg_41Ops
         void* a0;
         interpType a1;
     };
+
     static constexpr bool GATHERS = true;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = true;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         row.a0 = MeosRuntime::laid(a0);
@@ -8314,22 +8448,18 @@ struct MeosAggregate_appendInstantAgg_41Ops
         row.a1 = interptype_from_string(MeosRuntime::text(MeosRuntime::literal(block, 0)).c_str());
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_app_tinst_transfn(static_cast<Temporal*>(s), static_cast<TInstant*>(row.a0), row.a1, -1.0, nullptr);
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_append_finalfn(static_cast<const Temporal*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_append_finalfn(static_cast<const Temporal*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -8340,15 +8470,18 @@ struct MeosAggregate_appendInstantAgg_41Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row& row)
-    {
-        return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0));
-    }
+
+    static int64_t Order(const Row& row) { return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0)); }
 };
 
 constexpr std::array<DataType::Type, 1> MeosAggregate_appendInstantAgg_41Literals{DataType::Type::VARSIZED};
 using MeosAggregate_appendInstantAgg_41 = MeosRuntime::MeosAggregate<MeosAggregate_appendInstantAgg_41Ops>;
-constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_41Kernels{&MeosAggregate_appendInstantAgg_41::Initialize, &MeosAggregate_appendInstantAgg_41::Update, &MeosAggregate_appendInstantAgg_41::Combine, &MeosAggregate_appendInstantAgg_41::Finish, MeosAggregate_appendInstantAgg_41::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_41Kernels{
+    &MeosAggregate_appendInstantAgg_41::Initialize,
+    &MeosAggregate_appendInstantAgg_41::Update,
+    &MeosAggregate_appendInstantAgg_41::Combine,
+    &MeosAggregate_appendInstantAgg_41::Finish,
+    MeosAggregate_appendInstantAgg_41::StateSize};
 
 struct MeosAggregate_appendInstantAgg_42Ops
 {
@@ -8359,9 +8492,11 @@ struct MeosAggregate_appendInstantAgg_42Ops
         double a2;
         Interval* a3;
     };
+
     static constexpr bool GATHERS = true;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = true;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         row.a0 = MeosRuntime::laid(a0);
@@ -8379,23 +8514,22 @@ struct MeosAggregate_appendInstantAgg_42Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_app_tinst_transfn(static_cast<Temporal*>(s), static_cast<TInstant*>(row.a0), row.a1, row.a2, row.a3);
     }
+
     static void Free(Row& row)
     {
         std::free(row.a0);
         std::free(row.a3);
     }
-    static void* Final(void* s)
-    {
-        return temporal_append_finalfn(static_cast<const Temporal*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void* Final(void* s) { return temporal_append_finalfn(static_cast<const Temporal*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -8406,15 +8540,19 @@ struct MeosAggregate_appendInstantAgg_42Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row& row)
-    {
-        return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0));
-    }
+
+    static int64_t Order(const Row& row) { return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0)); }
 };
 
-constexpr std::array<DataType::Type, 3> MeosAggregate_appendInstantAgg_42Literals{DataType::Type::VARSIZED, DataType::Type::FLOAT64, DataType::Type::VARSIZED};
+constexpr std::array<DataType::Type, 3> MeosAggregate_appendInstantAgg_42Literals{
+    DataType::Type::VARSIZED, DataType::Type::FLOAT64, DataType::Type::VARSIZED};
 using MeosAggregate_appendInstantAgg_42 = MeosRuntime::MeosAggregate<MeosAggregate_appendInstantAgg_42Ops>;
-constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_42Kernels{&MeosAggregate_appendInstantAgg_42::Initialize, &MeosAggregate_appendInstantAgg_42::Update, &MeosAggregate_appendInstantAgg_42::Combine, &MeosAggregate_appendInstantAgg_42::Finish, MeosAggregate_appendInstantAgg_42::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_42Kernels{
+    &MeosAggregate_appendInstantAgg_42::Initialize,
+    &MeosAggregate_appendInstantAgg_42::Update,
+    &MeosAggregate_appendInstantAgg_42::Combine,
+    &MeosAggregate_appendInstantAgg_42::Finish,
+    MeosAggregate_appendInstantAgg_42::StateSize};
 
 struct MeosAggregate_appendSequenceAgg_13Ops
 {
@@ -8422,9 +8560,11 @@ struct MeosAggregate_appendSequenceAgg_13Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = true;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = true;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -8435,22 +8575,18 @@ struct MeosAggregate_appendSequenceAgg_13Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_app_tseq_transfn(static_cast<Temporal*>(s), static_cast<TSequence*>(row.a0));
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_append_finalfn(static_cast<const Temporal*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_append_finalfn(static_cast<const Temporal*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -8461,15 +8597,18 @@ struct MeosAggregate_appendSequenceAgg_13Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row& row)
-    {
-        return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0));
-    }
+
+    static int64_t Order(const Row& row) { return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0)); }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_appendSequenceAgg_13Literals{};
 using MeosAggregate_appendSequenceAgg_13 = MeosRuntime::MeosAggregate<MeosAggregate_appendSequenceAgg_13Ops>;
-constexpr MeosAggregateKernels MeosAggregate_appendSequenceAgg_13Kernels{&MeosAggregate_appendSequenceAgg_13::Initialize, &MeosAggregate_appendSequenceAgg_13::Update, &MeosAggregate_appendSequenceAgg_13::Combine, &MeosAggregate_appendSequenceAgg_13::Finish, MeosAggregate_appendSequenceAgg_13::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_appendSequenceAgg_13Kernels{
+    &MeosAggregate_appendSequenceAgg_13::Initialize,
+    &MeosAggregate_appendSequenceAgg_13::Update,
+    &MeosAggregate_appendSequenceAgg_13::Combine,
+    &MeosAggregate_appendSequenceAgg_13::Finish,
+    MeosAggregate_appendSequenceAgg_13::StateSize};
 
 struct MeosAggregate_extent_15Ops
 {
@@ -8477,9 +8616,11 @@ struct MeosAggregate_extent_15Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = false;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -8490,22 +8631,15 @@ struct MeosAggregate_extent_15Ops
         }
         return true;
     }
-    static void* Transition(void* s, Row& row)
-    {
-        return tspatial_extent_transfn(static_cast<STBox*>(s), static_cast<Temporal*>(row.a0));
-    }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return s;
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void* Transition(void* s, Row& row) { return tspatial_extent_transfn(static_cast<STBox*>(s), static_cast<Temporal*>(row.a0)); }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return s; }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<STBox*>(v);
@@ -8516,15 +8650,18 @@ struct MeosAggregate_extent_15Ops
         }
         return MeosRuntime::image(r, size_t{80});
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_extent_15Literals{};
 using MeosAggregate_extent_15 = MeosRuntime::MeosAggregate<MeosAggregate_extent_15Ops>;
-constexpr MeosAggregateKernels MeosAggregate_extent_15Kernels{&MeosAggregate_extent_15::Initialize, &MeosAggregate_extent_15::Update, &MeosAggregate_extent_15::Combine, &MeosAggregate_extent_15::Finish, MeosAggregate_extent_15::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_extent_15Kernels{
+    &MeosAggregate_extent_15::Initialize,
+    &MeosAggregate_extent_15::Update,
+    &MeosAggregate_extent_15::Combine,
+    &MeosAggregate_extent_15::Finish,
+    MeosAggregate_extent_15::StateSize};
 
 struct MeosAggregate_setUnionAgg_22Ops
 {
@@ -8532,9 +8669,11 @@ struct MeosAggregate_setUnionAgg_22Ops
     {
         uint64_t a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -8546,22 +8685,15 @@ struct MeosAggregate_setUnionAgg_22Ops
         row.a0 = s2cell_from_wkb(v0.bytes(), v0.size());
         return true;
     }
-    static void* Transition(void* s, Row& row)
-    {
-        return s2cell_union_transfn(static_cast<Set*>(s), row.a0);
-    }
-    static void Free(Row& row)
-    {
-        static_cast<void>(row);
-    }
-    static void* Final(void* s)
-    {
-        return set_union_finalfn(static_cast<Set*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void* Transition(void* s, Row& row) { return s2cell_union_transfn(static_cast<Set*>(s), row.a0); }
+
+    static void Free(Row& row) { static_cast<void>(row); }
+
+    static void* Final(void* s) { return set_union_finalfn(static_cast<Set*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Set*>(v);
@@ -8572,15 +8704,18 @@ struct MeosAggregate_setUnionAgg_22Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(set_mem_size(static_cast<const Set*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_setUnionAgg_22Literals{};
 using MeosAggregate_setUnionAgg_22 = MeosRuntime::MeosAggregate<MeosAggregate_setUnionAgg_22Ops>;
-constexpr MeosAggregateKernels MeosAggregate_setUnionAgg_22Kernels{&MeosAggregate_setUnionAgg_22::Initialize, &MeosAggregate_setUnionAgg_22::Update, &MeosAggregate_setUnionAgg_22::Combine, &MeosAggregate_setUnionAgg_22::Finish, MeosAggregate_setUnionAgg_22::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_setUnionAgg_22Kernels{
+    &MeosAggregate_setUnionAgg_22::Initialize,
+    &MeosAggregate_setUnionAgg_22::Update,
+    &MeosAggregate_setUnionAgg_22::Combine,
+    &MeosAggregate_setUnionAgg_22::Finish,
+    MeosAggregate_setUnionAgg_22::StateSize};
 
 struct MeosAggregate_setUnionAgg_23Ops
 {
@@ -8588,9 +8723,11 @@ struct MeosAggregate_setUnionAgg_23Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -8601,22 +8738,15 @@ struct MeosAggregate_setUnionAgg_23Ops
         }
         return true;
     }
-    static void* Transition(void* s, Row& row)
-    {
-        return set_union_transfn(static_cast<Set*>(s), static_cast<Set*>(row.a0));
-    }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return set_union_finalfn(static_cast<Set*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void* Transition(void* s, Row& row) { return set_union_transfn(static_cast<Set*>(s), static_cast<Set*>(row.a0)); }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return set_union_finalfn(static_cast<Set*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Set*>(v);
@@ -8627,15 +8757,18 @@ struct MeosAggregate_setUnionAgg_23Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(set_mem_size(static_cast<const Set*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_setUnionAgg_23Literals{};
 using MeosAggregate_setUnionAgg_23 = MeosRuntime::MeosAggregate<MeosAggregate_setUnionAgg_23Ops>;
-constexpr MeosAggregateKernels MeosAggregate_setUnionAgg_23Kernels{&MeosAggregate_setUnionAgg_23::Initialize, &MeosAggregate_setUnionAgg_23::Update, &MeosAggregate_setUnionAgg_23::Combine, &MeosAggregate_setUnionAgg_23::Finish, MeosAggregate_setUnionAgg_23::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_setUnionAgg_23Kernels{
+    &MeosAggregate_setUnionAgg_23::Initialize,
+    &MeosAggregate_setUnionAgg_23::Update,
+    &MeosAggregate_setUnionAgg_23::Combine,
+    &MeosAggregate_setUnionAgg_23::Finish,
+    MeosAggregate_setUnionAgg_23::StateSize};
 
 struct MeosAggregate_extent_16Ops
 {
@@ -8643,9 +8776,11 @@ struct MeosAggregate_extent_16Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = false;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -8656,22 +8791,15 @@ struct MeosAggregate_extent_16Ops
         }
         return true;
     }
-    static void* Transition(void* s, Row& row)
-    {
-        return tspatial_extent_transfn(static_cast<STBox*>(s), static_cast<Temporal*>(row.a0));
-    }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return s;
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void* Transition(void* s, Row& row) { return tspatial_extent_transfn(static_cast<STBox*>(s), static_cast<Temporal*>(row.a0)); }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return s; }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<STBox*>(v);
@@ -8682,15 +8810,18 @@ struct MeosAggregate_extent_16Ops
         }
         return MeosRuntime::image(r, size_t{80});
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_extent_16Literals{};
 using MeosAggregate_extent_16 = MeosRuntime::MeosAggregate<MeosAggregate_extent_16Ops>;
-constexpr MeosAggregateKernels MeosAggregate_extent_16Kernels{&MeosAggregate_extent_16::Initialize, &MeosAggregate_extent_16::Update, &MeosAggregate_extent_16::Combine, &MeosAggregate_extent_16::Finish, MeosAggregate_extent_16::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_extent_16Kernels{
+    &MeosAggregate_extent_16::Initialize,
+    &MeosAggregate_extent_16::Update,
+    &MeosAggregate_extent_16::Combine,
+    &MeosAggregate_extent_16::Finish,
+    MeosAggregate_extent_16::StateSize};
 
 struct MeosAggregate_tCount_14Ops
 {
@@ -8698,9 +8829,11 @@ struct MeosAggregate_tCount_14Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -8711,22 +8844,18 @@ struct MeosAggregate_tCount_14Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_tcount_transfn(static_cast<struct SkipList*>(s), static_cast<Temporal*>(row.a0));
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_tagg_finalfn(static_cast<struct SkipList*>(s));
-    }
-    static void Release(void* s)
-    {
-        skiplist_free(static_cast<struct SkipList*>(s));
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_tagg_finalfn(static_cast<struct SkipList*>(s)); }
+
+    static void Release(void* s) { skiplist_free(static_cast<struct SkipList*>(s)); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -8737,15 +8866,18 @@ struct MeosAggregate_tCount_14Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_tCount_14Literals{};
 using MeosAggregate_tCount_14 = MeosRuntime::MeosAggregate<MeosAggregate_tCount_14Ops>;
-constexpr MeosAggregateKernels MeosAggregate_tCount_14Kernels{&MeosAggregate_tCount_14::Initialize, &MeosAggregate_tCount_14::Update, &MeosAggregate_tCount_14::Combine, &MeosAggregate_tCount_14::Finish, MeosAggregate_tCount_14::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_tCount_14Kernels{
+    &MeosAggregate_tCount_14::Initialize,
+    &MeosAggregate_tCount_14::Update,
+    &MeosAggregate_tCount_14::Combine,
+    &MeosAggregate_tCount_14::Finish,
+    MeosAggregate_tCount_14::StateSize};
 
 struct MeosAggregate_wCount_14Ops
 {
@@ -8754,9 +8886,11 @@ struct MeosAggregate_wCount_14Ops
         void* a0;
         Interval* a1;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         row.a0 = MeosRuntime::laid(a0);
@@ -8772,23 +8906,22 @@ struct MeosAggregate_wCount_14Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_wcount_transfn(static_cast<struct SkipList*>(s), static_cast<Temporal*>(row.a0), row.a1);
     }
+
     static void Free(Row& row)
     {
         std::free(row.a0);
         std::free(row.a1);
     }
-    static void* Final(void* s)
-    {
-        return temporal_tagg_finalfn(static_cast<struct SkipList*>(s));
-    }
-    static void Release(void* s)
-    {
-        skiplist_free(static_cast<struct SkipList*>(s));
-    }
+
+    static void* Final(void* s) { return temporal_tagg_finalfn(static_cast<struct SkipList*>(s)); }
+
+    static void Release(void* s) { skiplist_free(static_cast<struct SkipList*>(s)); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -8799,15 +8932,18 @@ struct MeosAggregate_wCount_14Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 1> MeosAggregate_wCount_14Literals{DataType::Type::VARSIZED};
 using MeosAggregate_wCount_14 = MeosRuntime::MeosAggregate<MeosAggregate_wCount_14Ops>;
-constexpr MeosAggregateKernels MeosAggregate_wCount_14Kernels{&MeosAggregate_wCount_14::Initialize, &MeosAggregate_wCount_14::Update, &MeosAggregate_wCount_14::Combine, &MeosAggregate_wCount_14::Finish, MeosAggregate_wCount_14::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_wCount_14Kernels{
+    &MeosAggregate_wCount_14::Initialize,
+    &MeosAggregate_wCount_14::Update,
+    &MeosAggregate_wCount_14::Combine,
+    &MeosAggregate_wCount_14::Finish,
+    MeosAggregate_wCount_14::StateSize};
 
 struct MeosAggregate_mergeAgg_14Ops
 {
@@ -8815,9 +8951,11 @@ struct MeosAggregate_mergeAgg_14Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -8828,22 +8966,18 @@ struct MeosAggregate_mergeAgg_14Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_merge_transfn(static_cast<struct SkipList*>(s), static_cast<Temporal*>(row.a0));
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_tagg_finalfn(static_cast<struct SkipList*>(s));
-    }
-    static void Release(void* s)
-    {
-        skiplist_free(static_cast<struct SkipList*>(s));
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_tagg_finalfn(static_cast<struct SkipList*>(s)); }
+
+    static void Release(void* s) { skiplist_free(static_cast<struct SkipList*>(s)); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -8854,15 +8988,18 @@ struct MeosAggregate_mergeAgg_14Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_mergeAgg_14Literals{};
 using MeosAggregate_mergeAgg_14 = MeosRuntime::MeosAggregate<MeosAggregate_mergeAgg_14Ops>;
-constexpr MeosAggregateKernels MeosAggregate_mergeAgg_14Kernels{&MeosAggregate_mergeAgg_14::Initialize, &MeosAggregate_mergeAgg_14::Update, &MeosAggregate_mergeAgg_14::Combine, &MeosAggregate_mergeAgg_14::Finish, MeosAggregate_mergeAgg_14::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_mergeAgg_14Kernels{
+    &MeosAggregate_mergeAgg_14::Initialize,
+    &MeosAggregate_mergeAgg_14::Update,
+    &MeosAggregate_mergeAgg_14::Combine,
+    &MeosAggregate_mergeAgg_14::Finish,
+    MeosAggregate_mergeAgg_14::StateSize};
 
 struct MeosAggregate_appendInstantAgg_43Ops
 {
@@ -8870,9 +9007,11 @@ struct MeosAggregate_appendInstantAgg_43Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = true;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = true;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -8883,22 +9022,18 @@ struct MeosAggregate_appendInstantAgg_43Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_app_tinst_transfn(static_cast<Temporal*>(s), static_cast<TInstant*>(row.a0), STEP, -1.0, nullptr);
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_append_finalfn(static_cast<const Temporal*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_append_finalfn(static_cast<const Temporal*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -8909,15 +9044,18 @@ struct MeosAggregate_appendInstantAgg_43Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row& row)
-    {
-        return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0));
-    }
+
+    static int64_t Order(const Row& row) { return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0)); }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_appendInstantAgg_43Literals{};
 using MeosAggregate_appendInstantAgg_43 = MeosRuntime::MeosAggregate<MeosAggregate_appendInstantAgg_43Ops>;
-constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_43Kernels{&MeosAggregate_appendInstantAgg_43::Initialize, &MeosAggregate_appendInstantAgg_43::Update, &MeosAggregate_appendInstantAgg_43::Combine, &MeosAggregate_appendInstantAgg_43::Finish, MeosAggregate_appendInstantAgg_43::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_43Kernels{
+    &MeosAggregate_appendInstantAgg_43::Initialize,
+    &MeosAggregate_appendInstantAgg_43::Update,
+    &MeosAggregate_appendInstantAgg_43::Combine,
+    &MeosAggregate_appendInstantAgg_43::Finish,
+    MeosAggregate_appendInstantAgg_43::StateSize};
 
 struct MeosAggregate_appendInstantAgg_44Ops
 {
@@ -8926,9 +9064,11 @@ struct MeosAggregate_appendInstantAgg_44Ops
         void* a0;
         interpType a1;
     };
+
     static constexpr bool GATHERS = true;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = true;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         row.a0 = MeosRuntime::laid(a0);
@@ -8939,22 +9079,18 @@ struct MeosAggregate_appendInstantAgg_44Ops
         row.a1 = interptype_from_string(MeosRuntime::text(MeosRuntime::literal(block, 0)).c_str());
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_app_tinst_transfn(static_cast<Temporal*>(s), static_cast<TInstant*>(row.a0), row.a1, -1.0, nullptr);
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_append_finalfn(static_cast<const Temporal*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_append_finalfn(static_cast<const Temporal*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -8965,15 +9101,18 @@ struct MeosAggregate_appendInstantAgg_44Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row& row)
-    {
-        return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0));
-    }
+
+    static int64_t Order(const Row& row) { return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0)); }
 };
 
 constexpr std::array<DataType::Type, 1> MeosAggregate_appendInstantAgg_44Literals{DataType::Type::VARSIZED};
 using MeosAggregate_appendInstantAgg_44 = MeosRuntime::MeosAggregate<MeosAggregate_appendInstantAgg_44Ops>;
-constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_44Kernels{&MeosAggregate_appendInstantAgg_44::Initialize, &MeosAggregate_appendInstantAgg_44::Update, &MeosAggregate_appendInstantAgg_44::Combine, &MeosAggregate_appendInstantAgg_44::Finish, MeosAggregate_appendInstantAgg_44::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_44Kernels{
+    &MeosAggregate_appendInstantAgg_44::Initialize,
+    &MeosAggregate_appendInstantAgg_44::Update,
+    &MeosAggregate_appendInstantAgg_44::Combine,
+    &MeosAggregate_appendInstantAgg_44::Finish,
+    MeosAggregate_appendInstantAgg_44::StateSize};
 
 struct MeosAggregate_appendInstantAgg_45Ops
 {
@@ -8983,9 +9122,11 @@ struct MeosAggregate_appendInstantAgg_45Ops
         interpType a1;
         Interval* a2;
     };
+
     static constexpr bool GATHERS = true;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = true;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         row.a0 = MeosRuntime::laid(a0);
@@ -9002,23 +9143,22 @@ struct MeosAggregate_appendInstantAgg_45Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_app_tinst_transfn(static_cast<Temporal*>(s), static_cast<TInstant*>(row.a0), row.a1, -1.0, row.a2);
     }
+
     static void Free(Row& row)
     {
         std::free(row.a0);
         std::free(row.a2);
     }
-    static void* Final(void* s)
-    {
-        return temporal_append_finalfn(static_cast<const Temporal*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void* Final(void* s) { return temporal_append_finalfn(static_cast<const Temporal*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -9029,15 +9169,18 @@ struct MeosAggregate_appendInstantAgg_45Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row& row)
-    {
-        return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0));
-    }
+
+    static int64_t Order(const Row& row) { return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0)); }
 };
 
 constexpr std::array<DataType::Type, 2> MeosAggregate_appendInstantAgg_45Literals{DataType::Type::VARSIZED, DataType::Type::VARSIZED};
 using MeosAggregate_appendInstantAgg_45 = MeosRuntime::MeosAggregate<MeosAggregate_appendInstantAgg_45Ops>;
-constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_45Kernels{&MeosAggregate_appendInstantAgg_45::Initialize, &MeosAggregate_appendInstantAgg_45::Update, &MeosAggregate_appendInstantAgg_45::Combine, &MeosAggregate_appendInstantAgg_45::Finish, MeosAggregate_appendInstantAgg_45::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_45Kernels{
+    &MeosAggregate_appendInstantAgg_45::Initialize,
+    &MeosAggregate_appendInstantAgg_45::Update,
+    &MeosAggregate_appendInstantAgg_45::Combine,
+    &MeosAggregate_appendInstantAgg_45::Finish,
+    MeosAggregate_appendInstantAgg_45::StateSize};
 
 struct MeosAggregate_appendSequenceAgg_14Ops
 {
@@ -9045,9 +9188,11 @@ struct MeosAggregate_appendSequenceAgg_14Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = true;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = true;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -9058,22 +9203,18 @@ struct MeosAggregate_appendSequenceAgg_14Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_app_tseq_transfn(static_cast<Temporal*>(s), static_cast<TSequence*>(row.a0));
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_append_finalfn(static_cast<const Temporal*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_append_finalfn(static_cast<const Temporal*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -9084,15 +9225,18 @@ struct MeosAggregate_appendSequenceAgg_14Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row& row)
-    {
-        return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0));
-    }
+
+    static int64_t Order(const Row& row) { return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0)); }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_appendSequenceAgg_14Literals{};
 using MeosAggregate_appendSequenceAgg_14 = MeosRuntime::MeosAggregate<MeosAggregate_appendSequenceAgg_14Ops>;
-constexpr MeosAggregateKernels MeosAggregate_appendSequenceAgg_14Kernels{&MeosAggregate_appendSequenceAgg_14::Initialize, &MeosAggregate_appendSequenceAgg_14::Update, &MeosAggregate_appendSequenceAgg_14::Combine, &MeosAggregate_appendSequenceAgg_14::Finish, MeosAggregate_appendSequenceAgg_14::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_appendSequenceAgg_14Kernels{
+    &MeosAggregate_appendSequenceAgg_14::Initialize,
+    &MeosAggregate_appendSequenceAgg_14::Update,
+    &MeosAggregate_appendSequenceAgg_14::Combine,
+    &MeosAggregate_appendSequenceAgg_14::Finish,
+    MeosAggregate_appendSequenceAgg_14::StateSize};
 
 struct MeosAggregate_setUnionAgg_24Ops
 {
@@ -9100,31 +9244,26 @@ struct MeosAggregate_setUnionAgg_24Ops
     {
         int32_t a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
         row.a0 = static_cast<int32_t>(MeosRuntime::number<int32_t>(a0));
         return true;
     }
-    static void* Transition(void* s, Row& row)
-    {
-        return int_union_transfn(static_cast<Set*>(s), row.a0);
-    }
-    static void Free(Row& row)
-    {
-        static_cast<void>(row);
-    }
-    static void* Final(void* s)
-    {
-        return set_union_finalfn(static_cast<Set*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void* Transition(void* s, Row& row) { return int_union_transfn(static_cast<Set*>(s), row.a0); }
+
+    static void Free(Row& row) { static_cast<void>(row); }
+
+    static void* Final(void* s) { return set_union_finalfn(static_cast<Set*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Set*>(v);
@@ -9135,15 +9274,18 @@ struct MeosAggregate_setUnionAgg_24Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(set_mem_size(static_cast<const Set*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_setUnionAgg_24Literals{};
 using MeosAggregate_setUnionAgg_24 = MeosRuntime::MeosAggregate<MeosAggregate_setUnionAgg_24Ops>;
-constexpr MeosAggregateKernels MeosAggregate_setUnionAgg_24Kernels{&MeosAggregate_setUnionAgg_24::Initialize, &MeosAggregate_setUnionAgg_24::Update, &MeosAggregate_setUnionAgg_24::Combine, &MeosAggregate_setUnionAgg_24::Finish, MeosAggregate_setUnionAgg_24::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_setUnionAgg_24Kernels{
+    &MeosAggregate_setUnionAgg_24::Initialize,
+    &MeosAggregate_setUnionAgg_24::Update,
+    &MeosAggregate_setUnionAgg_24::Combine,
+    &MeosAggregate_setUnionAgg_24::Finish,
+    MeosAggregate_setUnionAgg_24::StateSize};
 
 struct MeosAggregate_setUnionAgg_25Ops
 {
@@ -9151,31 +9293,26 @@ struct MeosAggregate_setUnionAgg_25Ops
     {
         int64_t a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
         row.a0 = static_cast<int64_t>(MeosRuntime::number<int64_t>(a0));
         return true;
     }
-    static void* Transition(void* s, Row& row)
-    {
-        return bigint_union_transfn(static_cast<Set*>(s), row.a0);
-    }
-    static void Free(Row& row)
-    {
-        static_cast<void>(row);
-    }
-    static void* Final(void* s)
-    {
-        return set_union_finalfn(static_cast<Set*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void* Transition(void* s, Row& row) { return bigint_union_transfn(static_cast<Set*>(s), row.a0); }
+
+    static void Free(Row& row) { static_cast<void>(row); }
+
+    static void* Final(void* s) { return set_union_finalfn(static_cast<Set*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Set*>(v);
@@ -9186,15 +9323,18 @@ struct MeosAggregate_setUnionAgg_25Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(set_mem_size(static_cast<const Set*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_setUnionAgg_25Literals{};
 using MeosAggregate_setUnionAgg_25 = MeosRuntime::MeosAggregate<MeosAggregate_setUnionAgg_25Ops>;
-constexpr MeosAggregateKernels MeosAggregate_setUnionAgg_25Kernels{&MeosAggregate_setUnionAgg_25::Initialize, &MeosAggregate_setUnionAgg_25::Update, &MeosAggregate_setUnionAgg_25::Combine, &MeosAggregate_setUnionAgg_25::Finish, MeosAggregate_setUnionAgg_25::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_setUnionAgg_25Kernels{
+    &MeosAggregate_setUnionAgg_25::Initialize,
+    &MeosAggregate_setUnionAgg_25::Update,
+    &MeosAggregate_setUnionAgg_25::Combine,
+    &MeosAggregate_setUnionAgg_25::Finish,
+    MeosAggregate_setUnionAgg_25::StateSize};
 
 struct MeosAggregate_setUnionAgg_26Ops
 {
@@ -9202,31 +9342,26 @@ struct MeosAggregate_setUnionAgg_26Ops
     {
         double a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
         row.a0 = static_cast<double>(MeosRuntime::number<double>(a0));
         return true;
     }
-    static void* Transition(void* s, Row& row)
-    {
-        return float_union_transfn(static_cast<Set*>(s), row.a0);
-    }
-    static void Free(Row& row)
-    {
-        static_cast<void>(row);
-    }
-    static void* Final(void* s)
-    {
-        return set_union_finalfn(static_cast<Set*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void* Transition(void* s, Row& row) { return float_union_transfn(static_cast<Set*>(s), row.a0); }
+
+    static void Free(Row& row) { static_cast<void>(row); }
+
+    static void* Final(void* s) { return set_union_finalfn(static_cast<Set*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Set*>(v);
@@ -9237,15 +9372,18 @@ struct MeosAggregate_setUnionAgg_26Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(set_mem_size(static_cast<const Set*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_setUnionAgg_26Literals{};
 using MeosAggregate_setUnionAgg_26 = MeosRuntime::MeosAggregate<MeosAggregate_setUnionAgg_26Ops>;
-constexpr MeosAggregateKernels MeosAggregate_setUnionAgg_26Kernels{&MeosAggregate_setUnionAgg_26::Initialize, &MeosAggregate_setUnionAgg_26::Update, &MeosAggregate_setUnionAgg_26::Combine, &MeosAggregate_setUnionAgg_26::Finish, MeosAggregate_setUnionAgg_26::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_setUnionAgg_26Kernels{
+    &MeosAggregate_setUnionAgg_26::Initialize,
+    &MeosAggregate_setUnionAgg_26::Update,
+    &MeosAggregate_setUnionAgg_26::Combine,
+    &MeosAggregate_setUnionAgg_26::Finish,
+    MeosAggregate_setUnionAgg_26::StateSize};
 
 struct MeosAggregate_setUnionAgg_27Ops
 {
@@ -9253,31 +9391,26 @@ struct MeosAggregate_setUnionAgg_27Ops
     {
         text* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
         row.a0 = cstring_to_text(MeosRuntime::text(a0).c_str());
         return true;
     }
-    static void* Transition(void* s, Row& row)
-    {
-        return text_union_transfn(static_cast<Set*>(s), row.a0);
-    }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return set_union_finalfn(static_cast<Set*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void* Transition(void* s, Row& row) { return text_union_transfn(static_cast<Set*>(s), row.a0); }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return set_union_finalfn(static_cast<Set*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Set*>(v);
@@ -9288,15 +9421,18 @@ struct MeosAggregate_setUnionAgg_27Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(set_mem_size(static_cast<const Set*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_setUnionAgg_27Literals{};
 using MeosAggregate_setUnionAgg_27 = MeosRuntime::MeosAggregate<MeosAggregate_setUnionAgg_27Ops>;
-constexpr MeosAggregateKernels MeosAggregate_setUnionAgg_27Kernels{&MeosAggregate_setUnionAgg_27::Initialize, &MeosAggregate_setUnionAgg_27::Update, &MeosAggregate_setUnionAgg_27::Combine, &MeosAggregate_setUnionAgg_27::Finish, MeosAggregate_setUnionAgg_27::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_setUnionAgg_27Kernels{
+    &MeosAggregate_setUnionAgg_27::Initialize,
+    &MeosAggregate_setUnionAgg_27::Update,
+    &MeosAggregate_setUnionAgg_27::Combine,
+    &MeosAggregate_setUnionAgg_27::Finish,
+    MeosAggregate_setUnionAgg_27::StateSize};
 
 struct MeosAggregate_setUnionAgg_28Ops
 {
@@ -9304,31 +9440,26 @@ struct MeosAggregate_setUnionAgg_28Ops
     {
         TimestampTz a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
         row.a0 = MeosRuntime::timestamptz(MeosRuntime::number<uint64_t>(a0));
         return true;
     }
-    static void* Transition(void* s, Row& row)
-    {
-        return timestamptz_union_transfn(static_cast<Set*>(s), row.a0);
-    }
-    static void Free(Row& row)
-    {
-        static_cast<void>(row);
-    }
-    static void* Final(void* s)
-    {
-        return set_union_finalfn(static_cast<Set*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void* Transition(void* s, Row& row) { return timestamptz_union_transfn(static_cast<Set*>(s), row.a0); }
+
+    static void Free(Row& row) { static_cast<void>(row); }
+
+    static void* Final(void* s) { return set_union_finalfn(static_cast<Set*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Set*>(v);
@@ -9339,15 +9470,18 @@ struct MeosAggregate_setUnionAgg_28Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(set_mem_size(static_cast<const Set*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_setUnionAgg_28Literals{};
 using MeosAggregate_setUnionAgg_28 = MeosRuntime::MeosAggregate<MeosAggregate_setUnionAgg_28Ops>;
-constexpr MeosAggregateKernels MeosAggregate_setUnionAgg_28Kernels{&MeosAggregate_setUnionAgg_28::Initialize, &MeosAggregate_setUnionAgg_28::Update, &MeosAggregate_setUnionAgg_28::Combine, &MeosAggregate_setUnionAgg_28::Finish, MeosAggregate_setUnionAgg_28::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_setUnionAgg_28Kernels{
+    &MeosAggregate_setUnionAgg_28::Initialize,
+    &MeosAggregate_setUnionAgg_28::Update,
+    &MeosAggregate_setUnionAgg_28::Combine,
+    &MeosAggregate_setUnionAgg_28::Finish,
+    MeosAggregate_setUnionAgg_28::StateSize};
 
 struct MeosAggregate_setUnionAgg_29Ops
 {
@@ -9355,9 +9489,11 @@ struct MeosAggregate_setUnionAgg_29Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -9368,22 +9504,15 @@ struct MeosAggregate_setUnionAgg_29Ops
         }
         return true;
     }
-    static void* Transition(void* s, Row& row)
-    {
-        return set_union_transfn(static_cast<Set*>(s), static_cast<Set*>(row.a0));
-    }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return set_union_finalfn(static_cast<Set*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void* Transition(void* s, Row& row) { return set_union_transfn(static_cast<Set*>(s), static_cast<Set*>(row.a0)); }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return set_union_finalfn(static_cast<Set*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Set*>(v);
@@ -9394,15 +9523,18 @@ struct MeosAggregate_setUnionAgg_29Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(set_mem_size(static_cast<const Set*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_setUnionAgg_29Literals{};
 using MeosAggregate_setUnionAgg_29 = MeosRuntime::MeosAggregate<MeosAggregate_setUnionAgg_29Ops>;
-constexpr MeosAggregateKernels MeosAggregate_setUnionAgg_29Kernels{&MeosAggregate_setUnionAgg_29::Initialize, &MeosAggregate_setUnionAgg_29::Update, &MeosAggregate_setUnionAgg_29::Combine, &MeosAggregate_setUnionAgg_29::Finish, MeosAggregate_setUnionAgg_29::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_setUnionAgg_29Kernels{
+    &MeosAggregate_setUnionAgg_29::Initialize,
+    &MeosAggregate_setUnionAgg_29::Update,
+    &MeosAggregate_setUnionAgg_29::Combine,
+    &MeosAggregate_setUnionAgg_29::Finish,
+    MeosAggregate_setUnionAgg_29::StateSize};
 
 struct MeosAggregate_setUnionAgg_30Ops
 {
@@ -9410,9 +9542,11 @@ struct MeosAggregate_setUnionAgg_30Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -9423,22 +9557,15 @@ struct MeosAggregate_setUnionAgg_30Ops
         }
         return true;
     }
-    static void* Transition(void* s, Row& row)
-    {
-        return set_union_transfn(static_cast<Set*>(s), static_cast<Set*>(row.a0));
-    }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return set_union_finalfn(static_cast<Set*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void* Transition(void* s, Row& row) { return set_union_transfn(static_cast<Set*>(s), static_cast<Set*>(row.a0)); }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return set_union_finalfn(static_cast<Set*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Set*>(v);
@@ -9449,15 +9576,18 @@ struct MeosAggregate_setUnionAgg_30Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(set_mem_size(static_cast<const Set*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_setUnionAgg_30Literals{};
 using MeosAggregate_setUnionAgg_30 = MeosRuntime::MeosAggregate<MeosAggregate_setUnionAgg_30Ops>;
-constexpr MeosAggregateKernels MeosAggregate_setUnionAgg_30Kernels{&MeosAggregate_setUnionAgg_30::Initialize, &MeosAggregate_setUnionAgg_30::Update, &MeosAggregate_setUnionAgg_30::Combine, &MeosAggregate_setUnionAgg_30::Finish, MeosAggregate_setUnionAgg_30::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_setUnionAgg_30Kernels{
+    &MeosAggregate_setUnionAgg_30::Initialize,
+    &MeosAggregate_setUnionAgg_30::Update,
+    &MeosAggregate_setUnionAgg_30::Combine,
+    &MeosAggregate_setUnionAgg_30::Finish,
+    MeosAggregate_setUnionAgg_30::StateSize};
 
 struct MeosAggregate_setUnionAgg_31Ops
 {
@@ -9465,9 +9595,11 @@ struct MeosAggregate_setUnionAgg_31Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -9478,22 +9610,15 @@ struct MeosAggregate_setUnionAgg_31Ops
         }
         return true;
     }
-    static void* Transition(void* s, Row& row)
-    {
-        return set_union_transfn(static_cast<Set*>(s), static_cast<Set*>(row.a0));
-    }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return set_union_finalfn(static_cast<Set*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void* Transition(void* s, Row& row) { return set_union_transfn(static_cast<Set*>(s), static_cast<Set*>(row.a0)); }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return set_union_finalfn(static_cast<Set*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Set*>(v);
@@ -9504,15 +9629,18 @@ struct MeosAggregate_setUnionAgg_31Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(set_mem_size(static_cast<const Set*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_setUnionAgg_31Literals{};
 using MeosAggregate_setUnionAgg_31 = MeosRuntime::MeosAggregate<MeosAggregate_setUnionAgg_31Ops>;
-constexpr MeosAggregateKernels MeosAggregate_setUnionAgg_31Kernels{&MeosAggregate_setUnionAgg_31::Initialize, &MeosAggregate_setUnionAgg_31::Update, &MeosAggregate_setUnionAgg_31::Combine, &MeosAggregate_setUnionAgg_31::Finish, MeosAggregate_setUnionAgg_31::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_setUnionAgg_31Kernels{
+    &MeosAggregate_setUnionAgg_31::Initialize,
+    &MeosAggregate_setUnionAgg_31::Update,
+    &MeosAggregate_setUnionAgg_31::Combine,
+    &MeosAggregate_setUnionAgg_31::Finish,
+    MeosAggregate_setUnionAgg_31::StateSize};
 
 struct MeosAggregate_setUnionAgg_32Ops
 {
@@ -9520,9 +9648,11 @@ struct MeosAggregate_setUnionAgg_32Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -9533,22 +9663,15 @@ struct MeosAggregate_setUnionAgg_32Ops
         }
         return true;
     }
-    static void* Transition(void* s, Row& row)
-    {
-        return set_union_transfn(static_cast<Set*>(s), static_cast<Set*>(row.a0));
-    }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return set_union_finalfn(static_cast<Set*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void* Transition(void* s, Row& row) { return set_union_transfn(static_cast<Set*>(s), static_cast<Set*>(row.a0)); }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return set_union_finalfn(static_cast<Set*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Set*>(v);
@@ -9559,15 +9682,18 @@ struct MeosAggregate_setUnionAgg_32Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(set_mem_size(static_cast<const Set*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_setUnionAgg_32Literals{};
 using MeosAggregate_setUnionAgg_32 = MeosRuntime::MeosAggregate<MeosAggregate_setUnionAgg_32Ops>;
-constexpr MeosAggregateKernels MeosAggregate_setUnionAgg_32Kernels{&MeosAggregate_setUnionAgg_32::Initialize, &MeosAggregate_setUnionAgg_32::Update, &MeosAggregate_setUnionAgg_32::Combine, &MeosAggregate_setUnionAgg_32::Finish, MeosAggregate_setUnionAgg_32::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_setUnionAgg_32Kernels{
+    &MeosAggregate_setUnionAgg_32::Initialize,
+    &MeosAggregate_setUnionAgg_32::Update,
+    &MeosAggregate_setUnionAgg_32::Combine,
+    &MeosAggregate_setUnionAgg_32::Finish,
+    MeosAggregate_setUnionAgg_32::StateSize};
 
 struct MeosAggregate_setUnionAgg_33Ops
 {
@@ -9575,9 +9701,11 @@ struct MeosAggregate_setUnionAgg_33Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -9588,22 +9716,15 @@ struct MeosAggregate_setUnionAgg_33Ops
         }
         return true;
     }
-    static void* Transition(void* s, Row& row)
-    {
-        return set_union_transfn(static_cast<Set*>(s), static_cast<Set*>(row.a0));
-    }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return set_union_finalfn(static_cast<Set*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void* Transition(void* s, Row& row) { return set_union_transfn(static_cast<Set*>(s), static_cast<Set*>(row.a0)); }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return set_union_finalfn(static_cast<Set*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Set*>(v);
@@ -9614,15 +9735,18 @@ struct MeosAggregate_setUnionAgg_33Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(set_mem_size(static_cast<const Set*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_setUnionAgg_33Literals{};
 using MeosAggregate_setUnionAgg_33 = MeosRuntime::MeosAggregate<MeosAggregate_setUnionAgg_33Ops>;
-constexpr MeosAggregateKernels MeosAggregate_setUnionAgg_33Kernels{&MeosAggregate_setUnionAgg_33::Initialize, &MeosAggregate_setUnionAgg_33::Update, &MeosAggregate_setUnionAgg_33::Combine, &MeosAggregate_setUnionAgg_33::Finish, MeosAggregate_setUnionAgg_33::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_setUnionAgg_33Kernels{
+    &MeosAggregate_setUnionAgg_33::Initialize,
+    &MeosAggregate_setUnionAgg_33::Update,
+    &MeosAggregate_setUnionAgg_33::Combine,
+    &MeosAggregate_setUnionAgg_33::Finish,
+    MeosAggregate_setUnionAgg_33::StateSize};
 
 struct MeosAggregate_setUnionAgg_34Ops
 {
@@ -9630,9 +9754,11 @@ struct MeosAggregate_setUnionAgg_34Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -9643,22 +9769,15 @@ struct MeosAggregate_setUnionAgg_34Ops
         }
         return true;
     }
-    static void* Transition(void* s, Row& row)
-    {
-        return set_union_transfn(static_cast<Set*>(s), static_cast<Set*>(row.a0));
-    }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return set_union_finalfn(static_cast<Set*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void* Transition(void* s, Row& row) { return set_union_transfn(static_cast<Set*>(s), static_cast<Set*>(row.a0)); }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return set_union_finalfn(static_cast<Set*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Set*>(v);
@@ -9669,15 +9788,18 @@ struct MeosAggregate_setUnionAgg_34Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(set_mem_size(static_cast<const Set*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_setUnionAgg_34Literals{};
 using MeosAggregate_setUnionAgg_34 = MeosRuntime::MeosAggregate<MeosAggregate_setUnionAgg_34Ops>;
-constexpr MeosAggregateKernels MeosAggregate_setUnionAgg_34Kernels{&MeosAggregate_setUnionAgg_34::Initialize, &MeosAggregate_setUnionAgg_34::Update, &MeosAggregate_setUnionAgg_34::Combine, &MeosAggregate_setUnionAgg_34::Finish, MeosAggregate_setUnionAgg_34::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_setUnionAgg_34Kernels{
+    &MeosAggregate_setUnionAgg_34::Initialize,
+    &MeosAggregate_setUnionAgg_34::Update,
+    &MeosAggregate_setUnionAgg_34::Combine,
+    &MeosAggregate_setUnionAgg_34::Finish,
+    MeosAggregate_setUnionAgg_34::StateSize};
 
 struct MeosAggregate_extent_17Ops
 {
@@ -9685,9 +9807,11 @@ struct MeosAggregate_extent_17Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = false;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -9698,22 +9822,15 @@ struct MeosAggregate_extent_17Ops
         }
         return true;
     }
-    static void* Transition(void* s, Row& row)
-    {
-        return span_extent_transfn(static_cast<Span*>(s), static_cast<Span*>(row.a0));
-    }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return s;
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void* Transition(void* s, Row& row) { return span_extent_transfn(static_cast<Span*>(s), static_cast<Span*>(row.a0)); }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return s; }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Span*>(v);
@@ -9724,15 +9841,18 @@ struct MeosAggregate_extent_17Ops
         }
         return MeosRuntime::image(r, size_t{24});
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_extent_17Literals{};
 using MeosAggregate_extent_17 = MeosRuntime::MeosAggregate<MeosAggregate_extent_17Ops>;
-constexpr MeosAggregateKernels MeosAggregate_extent_17Kernels{&MeosAggregate_extent_17::Initialize, &MeosAggregate_extent_17::Update, &MeosAggregate_extent_17::Combine, &MeosAggregate_extent_17::Finish, MeosAggregate_extent_17::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_extent_17Kernels{
+    &MeosAggregate_extent_17::Initialize,
+    &MeosAggregate_extent_17::Update,
+    &MeosAggregate_extent_17::Combine,
+    &MeosAggregate_extent_17::Finish,
+    MeosAggregate_extent_17::StateSize};
 
 struct MeosAggregate_extent_18Ops
 {
@@ -9740,9 +9860,11 @@ struct MeosAggregate_extent_18Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = false;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -9753,22 +9875,15 @@ struct MeosAggregate_extent_18Ops
         }
         return true;
     }
-    static void* Transition(void* s, Row& row)
-    {
-        return span_extent_transfn(static_cast<Span*>(s), static_cast<Span*>(row.a0));
-    }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return s;
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void* Transition(void* s, Row& row) { return span_extent_transfn(static_cast<Span*>(s), static_cast<Span*>(row.a0)); }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return s; }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Span*>(v);
@@ -9779,15 +9894,18 @@ struct MeosAggregate_extent_18Ops
         }
         return MeosRuntime::image(r, size_t{24});
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_extent_18Literals{};
 using MeosAggregate_extent_18 = MeosRuntime::MeosAggregate<MeosAggregate_extent_18Ops>;
-constexpr MeosAggregateKernels MeosAggregate_extent_18Kernels{&MeosAggregate_extent_18::Initialize, &MeosAggregate_extent_18::Update, &MeosAggregate_extent_18::Combine, &MeosAggregate_extent_18::Finish, MeosAggregate_extent_18::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_extent_18Kernels{
+    &MeosAggregate_extent_18::Initialize,
+    &MeosAggregate_extent_18::Update,
+    &MeosAggregate_extent_18::Combine,
+    &MeosAggregate_extent_18::Finish,
+    MeosAggregate_extent_18::StateSize};
 
 struct MeosAggregate_extent_19Ops
 {
@@ -9795,9 +9913,11 @@ struct MeosAggregate_extent_19Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = false;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -9808,22 +9928,15 @@ struct MeosAggregate_extent_19Ops
         }
         return true;
     }
-    static void* Transition(void* s, Row& row)
-    {
-        return span_extent_transfn(static_cast<Span*>(s), static_cast<Span*>(row.a0));
-    }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return s;
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void* Transition(void* s, Row& row) { return span_extent_transfn(static_cast<Span*>(s), static_cast<Span*>(row.a0)); }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return s; }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Span*>(v);
@@ -9834,15 +9947,18 @@ struct MeosAggregate_extent_19Ops
         }
         return MeosRuntime::image(r, size_t{24});
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_extent_19Literals{};
 using MeosAggregate_extent_19 = MeosRuntime::MeosAggregate<MeosAggregate_extent_19Ops>;
-constexpr MeosAggregateKernels MeosAggregate_extent_19Kernels{&MeosAggregate_extent_19::Initialize, &MeosAggregate_extent_19::Update, &MeosAggregate_extent_19::Combine, &MeosAggregate_extent_19::Finish, MeosAggregate_extent_19::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_extent_19Kernels{
+    &MeosAggregate_extent_19::Initialize,
+    &MeosAggregate_extent_19::Update,
+    &MeosAggregate_extent_19::Combine,
+    &MeosAggregate_extent_19::Finish,
+    MeosAggregate_extent_19::StateSize};
 
 struct MeosAggregate_extent_20Ops
 {
@@ -9850,9 +9966,11 @@ struct MeosAggregate_extent_20Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = false;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -9863,22 +9981,15 @@ struct MeosAggregate_extent_20Ops
         }
         return true;
     }
-    static void* Transition(void* s, Row& row)
-    {
-        return span_extent_transfn(static_cast<Span*>(s), static_cast<Span*>(row.a0));
-    }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return s;
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void* Transition(void* s, Row& row) { return span_extent_transfn(static_cast<Span*>(s), static_cast<Span*>(row.a0)); }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return s; }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Span*>(v);
@@ -9889,15 +10000,18 @@ struct MeosAggregate_extent_20Ops
         }
         return MeosRuntime::image(r, size_t{24});
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_extent_20Literals{};
 using MeosAggregate_extent_20 = MeosRuntime::MeosAggregate<MeosAggregate_extent_20Ops>;
-constexpr MeosAggregateKernels MeosAggregate_extent_20Kernels{&MeosAggregate_extent_20::Initialize, &MeosAggregate_extent_20::Update, &MeosAggregate_extent_20::Combine, &MeosAggregate_extent_20::Finish, MeosAggregate_extent_20::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_extent_20Kernels{
+    &MeosAggregate_extent_20::Initialize,
+    &MeosAggregate_extent_20::Update,
+    &MeosAggregate_extent_20::Combine,
+    &MeosAggregate_extent_20::Finish,
+    MeosAggregate_extent_20::StateSize};
 
 struct MeosAggregate_extent_21Ops
 {
@@ -9905,9 +10019,11 @@ struct MeosAggregate_extent_21Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = false;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -9918,22 +10034,15 @@ struct MeosAggregate_extent_21Ops
         }
         return true;
     }
-    static void* Transition(void* s, Row& row)
-    {
-        return span_extent_transfn(static_cast<Span*>(s), static_cast<Span*>(row.a0));
-    }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return s;
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void* Transition(void* s, Row& row) { return span_extent_transfn(static_cast<Span*>(s), static_cast<Span*>(row.a0)); }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return s; }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Span*>(v);
@@ -9944,15 +10053,18 @@ struct MeosAggregate_extent_21Ops
         }
         return MeosRuntime::image(r, size_t{24});
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_extent_21Literals{};
 using MeosAggregate_extent_21 = MeosRuntime::MeosAggregate<MeosAggregate_extent_21Ops>;
-constexpr MeosAggregateKernels MeosAggregate_extent_21Kernels{&MeosAggregate_extent_21::Initialize, &MeosAggregate_extent_21::Update, &MeosAggregate_extent_21::Combine, &MeosAggregate_extent_21::Finish, MeosAggregate_extent_21::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_extent_21Kernels{
+    &MeosAggregate_extent_21::Initialize,
+    &MeosAggregate_extent_21::Update,
+    &MeosAggregate_extent_21::Combine,
+    &MeosAggregate_extent_21::Finish,
+    MeosAggregate_extent_21::StateSize};
 
 struct MeosAggregate_extent_22Ops
 {
@@ -9960,31 +10072,26 @@ struct MeosAggregate_extent_22Ops
     {
         int a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = false;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
         row.a0 = static_cast<int>(MeosRuntime::number<int32_t>(a0));
         return true;
     }
-    static void* Transition(void* s, Row& row)
-    {
-        return int_extent_transfn(static_cast<Span*>(s), row.a0);
-    }
-    static void Free(Row& row)
-    {
-        static_cast<void>(row);
-    }
-    static void* Final(void* s)
-    {
-        return s;
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void* Transition(void* s, Row& row) { return int_extent_transfn(static_cast<Span*>(s), row.a0); }
+
+    static void Free(Row& row) { static_cast<void>(row); }
+
+    static void* Final(void* s) { return s; }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Span*>(v);
@@ -9995,15 +10102,18 @@ struct MeosAggregate_extent_22Ops
         }
         return MeosRuntime::image(r, size_t{24});
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_extent_22Literals{};
 using MeosAggregate_extent_22 = MeosRuntime::MeosAggregate<MeosAggregate_extent_22Ops>;
-constexpr MeosAggregateKernels MeosAggregate_extent_22Kernels{&MeosAggregate_extent_22::Initialize, &MeosAggregate_extent_22::Update, &MeosAggregate_extent_22::Combine, &MeosAggregate_extent_22::Finish, MeosAggregate_extent_22::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_extent_22Kernels{
+    &MeosAggregate_extent_22::Initialize,
+    &MeosAggregate_extent_22::Update,
+    &MeosAggregate_extent_22::Combine,
+    &MeosAggregate_extent_22::Finish,
+    MeosAggregate_extent_22::StateSize};
 
 struct MeosAggregate_extent_23Ops
 {
@@ -10011,31 +10121,26 @@ struct MeosAggregate_extent_23Ops
     {
         int64_t a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = false;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
         row.a0 = static_cast<int64_t>(MeosRuntime::number<int64_t>(a0));
         return true;
     }
-    static void* Transition(void* s, Row& row)
-    {
-        return bigint_extent_transfn(static_cast<Span*>(s), row.a0);
-    }
-    static void Free(Row& row)
-    {
-        static_cast<void>(row);
-    }
-    static void* Final(void* s)
-    {
-        return s;
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void* Transition(void* s, Row& row) { return bigint_extent_transfn(static_cast<Span*>(s), row.a0); }
+
+    static void Free(Row& row) { static_cast<void>(row); }
+
+    static void* Final(void* s) { return s; }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Span*>(v);
@@ -10046,15 +10151,18 @@ struct MeosAggregate_extent_23Ops
         }
         return MeosRuntime::image(r, size_t{24});
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_extent_23Literals{};
 using MeosAggregate_extent_23 = MeosRuntime::MeosAggregate<MeosAggregate_extent_23Ops>;
-constexpr MeosAggregateKernels MeosAggregate_extent_23Kernels{&MeosAggregate_extent_23::Initialize, &MeosAggregate_extent_23::Update, &MeosAggregate_extent_23::Combine, &MeosAggregate_extent_23::Finish, MeosAggregate_extent_23::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_extent_23Kernels{
+    &MeosAggregate_extent_23::Initialize,
+    &MeosAggregate_extent_23::Update,
+    &MeosAggregate_extent_23::Combine,
+    &MeosAggregate_extent_23::Finish,
+    MeosAggregate_extent_23::StateSize};
 
 struct MeosAggregate_extent_24Ops
 {
@@ -10062,31 +10170,26 @@ struct MeosAggregate_extent_24Ops
     {
         double a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = false;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
         row.a0 = static_cast<double>(MeosRuntime::number<double>(a0));
         return true;
     }
-    static void* Transition(void* s, Row& row)
-    {
-        return float_extent_transfn(static_cast<Span*>(s), row.a0);
-    }
-    static void Free(Row& row)
-    {
-        static_cast<void>(row);
-    }
-    static void* Final(void* s)
-    {
-        return s;
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void* Transition(void* s, Row& row) { return float_extent_transfn(static_cast<Span*>(s), row.a0); }
+
+    static void Free(Row& row) { static_cast<void>(row); }
+
+    static void* Final(void* s) { return s; }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Span*>(v);
@@ -10097,15 +10200,18 @@ struct MeosAggregate_extent_24Ops
         }
         return MeosRuntime::image(r, size_t{24});
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_extent_24Literals{};
 using MeosAggregate_extent_24 = MeosRuntime::MeosAggregate<MeosAggregate_extent_24Ops>;
-constexpr MeosAggregateKernels MeosAggregate_extent_24Kernels{&MeosAggregate_extent_24::Initialize, &MeosAggregate_extent_24::Update, &MeosAggregate_extent_24::Combine, &MeosAggregate_extent_24::Finish, MeosAggregate_extent_24::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_extent_24Kernels{
+    &MeosAggregate_extent_24::Initialize,
+    &MeosAggregate_extent_24::Update,
+    &MeosAggregate_extent_24::Combine,
+    &MeosAggregate_extent_24::Finish,
+    MeosAggregate_extent_24::StateSize};
 
 struct MeosAggregate_extent_25Ops
 {
@@ -10113,31 +10219,26 @@ struct MeosAggregate_extent_25Ops
     {
         TimestampTz a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = false;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
         row.a0 = MeosRuntime::timestamptz(MeosRuntime::number<uint64_t>(a0));
         return true;
     }
-    static void* Transition(void* s, Row& row)
-    {
-        return timestamptz_extent_transfn(static_cast<Span*>(s), row.a0);
-    }
-    static void Free(Row& row)
-    {
-        static_cast<void>(row);
-    }
-    static void* Final(void* s)
-    {
-        return s;
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void* Transition(void* s, Row& row) { return timestamptz_extent_transfn(static_cast<Span*>(s), row.a0); }
+
+    static void Free(Row& row) { static_cast<void>(row); }
+
+    static void* Final(void* s) { return s; }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Span*>(v);
@@ -10148,15 +10249,18 @@ struct MeosAggregate_extent_25Ops
         }
         return MeosRuntime::image(r, size_t{24});
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_extent_25Literals{};
 using MeosAggregate_extent_25 = MeosRuntime::MeosAggregate<MeosAggregate_extent_25Ops>;
-constexpr MeosAggregateKernels MeosAggregate_extent_25Kernels{&MeosAggregate_extent_25::Initialize, &MeosAggregate_extent_25::Update, &MeosAggregate_extent_25::Combine, &MeosAggregate_extent_25::Finish, MeosAggregate_extent_25::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_extent_25Kernels{
+    &MeosAggregate_extent_25::Initialize,
+    &MeosAggregate_extent_25::Update,
+    &MeosAggregate_extent_25::Combine,
+    &MeosAggregate_extent_25::Finish,
+    MeosAggregate_extent_25::StateSize};
 
 struct MeosAggregate_extent_26Ops
 {
@@ -10164,9 +10268,11 @@ struct MeosAggregate_extent_26Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = false;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -10177,22 +10283,15 @@ struct MeosAggregate_extent_26Ops
         }
         return true;
     }
-    static void* Transition(void* s, Row& row)
-    {
-        return set_extent_transfn(static_cast<Span*>(s), static_cast<Set*>(row.a0));
-    }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return s;
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void* Transition(void* s, Row& row) { return set_extent_transfn(static_cast<Span*>(s), static_cast<Set*>(row.a0)); }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return s; }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Span*>(v);
@@ -10203,15 +10302,18 @@ struct MeosAggregate_extent_26Ops
         }
         return MeosRuntime::image(r, size_t{24});
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_extent_26Literals{};
 using MeosAggregate_extent_26 = MeosRuntime::MeosAggregate<MeosAggregate_extent_26Ops>;
-constexpr MeosAggregateKernels MeosAggregate_extent_26Kernels{&MeosAggregate_extent_26::Initialize, &MeosAggregate_extent_26::Update, &MeosAggregate_extent_26::Combine, &MeosAggregate_extent_26::Finish, MeosAggregate_extent_26::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_extent_26Kernels{
+    &MeosAggregate_extent_26::Initialize,
+    &MeosAggregate_extent_26::Update,
+    &MeosAggregate_extent_26::Combine,
+    &MeosAggregate_extent_26::Finish,
+    MeosAggregate_extent_26::StateSize};
 
 struct MeosAggregate_extent_27Ops
 {
@@ -10219,9 +10321,11 @@ struct MeosAggregate_extent_27Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = false;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -10232,22 +10336,15 @@ struct MeosAggregate_extent_27Ops
         }
         return true;
     }
-    static void* Transition(void* s, Row& row)
-    {
-        return set_extent_transfn(static_cast<Span*>(s), static_cast<Set*>(row.a0));
-    }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return s;
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void* Transition(void* s, Row& row) { return set_extent_transfn(static_cast<Span*>(s), static_cast<Set*>(row.a0)); }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return s; }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Span*>(v);
@@ -10258,15 +10355,18 @@ struct MeosAggregate_extent_27Ops
         }
         return MeosRuntime::image(r, size_t{24});
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_extent_27Literals{};
 using MeosAggregate_extent_27 = MeosRuntime::MeosAggregate<MeosAggregate_extent_27Ops>;
-constexpr MeosAggregateKernels MeosAggregate_extent_27Kernels{&MeosAggregate_extent_27::Initialize, &MeosAggregate_extent_27::Update, &MeosAggregate_extent_27::Combine, &MeosAggregate_extent_27::Finish, MeosAggregate_extent_27::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_extent_27Kernels{
+    &MeosAggregate_extent_27::Initialize,
+    &MeosAggregate_extent_27::Update,
+    &MeosAggregate_extent_27::Combine,
+    &MeosAggregate_extent_27::Finish,
+    MeosAggregate_extent_27::StateSize};
 
 struct MeosAggregate_extent_28Ops
 {
@@ -10274,9 +10374,11 @@ struct MeosAggregate_extent_28Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = false;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -10287,22 +10389,15 @@ struct MeosAggregate_extent_28Ops
         }
         return true;
     }
-    static void* Transition(void* s, Row& row)
-    {
-        return set_extent_transfn(static_cast<Span*>(s), static_cast<Set*>(row.a0));
-    }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return s;
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void* Transition(void* s, Row& row) { return set_extent_transfn(static_cast<Span*>(s), static_cast<Set*>(row.a0)); }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return s; }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Span*>(v);
@@ -10313,15 +10408,18 @@ struct MeosAggregate_extent_28Ops
         }
         return MeosRuntime::image(r, size_t{24});
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_extent_28Literals{};
 using MeosAggregate_extent_28 = MeosRuntime::MeosAggregate<MeosAggregate_extent_28Ops>;
-constexpr MeosAggregateKernels MeosAggregate_extent_28Kernels{&MeosAggregate_extent_28::Initialize, &MeosAggregate_extent_28::Update, &MeosAggregate_extent_28::Combine, &MeosAggregate_extent_28::Finish, MeosAggregate_extent_28::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_extent_28Kernels{
+    &MeosAggregate_extent_28::Initialize,
+    &MeosAggregate_extent_28::Update,
+    &MeosAggregate_extent_28::Combine,
+    &MeosAggregate_extent_28::Finish,
+    MeosAggregate_extent_28::StateSize};
 
 struct MeosAggregate_extent_29Ops
 {
@@ -10329,9 +10427,11 @@ struct MeosAggregate_extent_29Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = false;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -10342,22 +10442,15 @@ struct MeosAggregate_extent_29Ops
         }
         return true;
     }
-    static void* Transition(void* s, Row& row)
-    {
-        return set_extent_transfn(static_cast<Span*>(s), static_cast<Set*>(row.a0));
-    }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return s;
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void* Transition(void* s, Row& row) { return set_extent_transfn(static_cast<Span*>(s), static_cast<Set*>(row.a0)); }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return s; }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Span*>(v);
@@ -10368,15 +10461,18 @@ struct MeosAggregate_extent_29Ops
         }
         return MeosRuntime::image(r, size_t{24});
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_extent_29Literals{};
 using MeosAggregate_extent_29 = MeosRuntime::MeosAggregate<MeosAggregate_extent_29Ops>;
-constexpr MeosAggregateKernels MeosAggregate_extent_29Kernels{&MeosAggregate_extent_29::Initialize, &MeosAggregate_extent_29::Update, &MeosAggregate_extent_29::Combine, &MeosAggregate_extent_29::Finish, MeosAggregate_extent_29::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_extent_29Kernels{
+    &MeosAggregate_extent_29::Initialize,
+    &MeosAggregate_extent_29::Update,
+    &MeosAggregate_extent_29::Combine,
+    &MeosAggregate_extent_29::Finish,
+    MeosAggregate_extent_29::StateSize};
 
 struct MeosAggregate_extent_30Ops
 {
@@ -10384,9 +10480,11 @@ struct MeosAggregate_extent_30Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = false;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -10397,22 +10495,15 @@ struct MeosAggregate_extent_30Ops
         }
         return true;
     }
-    static void* Transition(void* s, Row& row)
-    {
-        return set_extent_transfn(static_cast<Span*>(s), static_cast<Set*>(row.a0));
-    }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return s;
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void* Transition(void* s, Row& row) { return set_extent_transfn(static_cast<Span*>(s), static_cast<Set*>(row.a0)); }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return s; }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Span*>(v);
@@ -10423,15 +10514,18 @@ struct MeosAggregate_extent_30Ops
         }
         return MeosRuntime::image(r, size_t{24});
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_extent_30Literals{};
 using MeosAggregate_extent_30 = MeosRuntime::MeosAggregate<MeosAggregate_extent_30Ops>;
-constexpr MeosAggregateKernels MeosAggregate_extent_30Kernels{&MeosAggregate_extent_30::Initialize, &MeosAggregate_extent_30::Update, &MeosAggregate_extent_30::Combine, &MeosAggregate_extent_30::Finish, MeosAggregate_extent_30::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_extent_30Kernels{
+    &MeosAggregate_extent_30::Initialize,
+    &MeosAggregate_extent_30::Update,
+    &MeosAggregate_extent_30::Combine,
+    &MeosAggregate_extent_30::Finish,
+    MeosAggregate_extent_30::StateSize};
 
 struct MeosAggregate_extent_31Ops
 {
@@ -10439,9 +10533,11 @@ struct MeosAggregate_extent_31Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = false;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -10452,22 +10548,15 @@ struct MeosAggregate_extent_31Ops
         }
         return true;
     }
-    static void* Transition(void* s, Row& row)
-    {
-        return spanset_extent_transfn(static_cast<Span*>(s), static_cast<SpanSet*>(row.a0));
-    }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return s;
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void* Transition(void* s, Row& row) { return spanset_extent_transfn(static_cast<Span*>(s), static_cast<SpanSet*>(row.a0)); }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return s; }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Span*>(v);
@@ -10478,15 +10567,18 @@ struct MeosAggregate_extent_31Ops
         }
         return MeosRuntime::image(r, size_t{24});
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_extent_31Literals{};
 using MeosAggregate_extent_31 = MeosRuntime::MeosAggregate<MeosAggregate_extent_31Ops>;
-constexpr MeosAggregateKernels MeosAggregate_extent_31Kernels{&MeosAggregate_extent_31::Initialize, &MeosAggregate_extent_31::Update, &MeosAggregate_extent_31::Combine, &MeosAggregate_extent_31::Finish, MeosAggregate_extent_31::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_extent_31Kernels{
+    &MeosAggregate_extent_31::Initialize,
+    &MeosAggregate_extent_31::Update,
+    &MeosAggregate_extent_31::Combine,
+    &MeosAggregate_extent_31::Finish,
+    MeosAggregate_extent_31::StateSize};
 
 struct MeosAggregate_extent_32Ops
 {
@@ -10494,9 +10586,11 @@ struct MeosAggregate_extent_32Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = false;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -10507,22 +10601,15 @@ struct MeosAggregate_extent_32Ops
         }
         return true;
     }
-    static void* Transition(void* s, Row& row)
-    {
-        return spanset_extent_transfn(static_cast<Span*>(s), static_cast<SpanSet*>(row.a0));
-    }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return s;
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void* Transition(void* s, Row& row) { return spanset_extent_transfn(static_cast<Span*>(s), static_cast<SpanSet*>(row.a0)); }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return s; }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Span*>(v);
@@ -10533,15 +10620,18 @@ struct MeosAggregate_extent_32Ops
         }
         return MeosRuntime::image(r, size_t{24});
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_extent_32Literals{};
 using MeosAggregate_extent_32 = MeosRuntime::MeosAggregate<MeosAggregate_extent_32Ops>;
-constexpr MeosAggregateKernels MeosAggregate_extent_32Kernels{&MeosAggregate_extent_32::Initialize, &MeosAggregate_extent_32::Update, &MeosAggregate_extent_32::Combine, &MeosAggregate_extent_32::Finish, MeosAggregate_extent_32::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_extent_32Kernels{
+    &MeosAggregate_extent_32::Initialize,
+    &MeosAggregate_extent_32::Update,
+    &MeosAggregate_extent_32::Combine,
+    &MeosAggregate_extent_32::Finish,
+    MeosAggregate_extent_32::StateSize};
 
 struct MeosAggregate_extent_33Ops
 {
@@ -10549,9 +10639,11 @@ struct MeosAggregate_extent_33Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = false;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -10562,22 +10654,15 @@ struct MeosAggregate_extent_33Ops
         }
         return true;
     }
-    static void* Transition(void* s, Row& row)
-    {
-        return spanset_extent_transfn(static_cast<Span*>(s), static_cast<SpanSet*>(row.a0));
-    }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return s;
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void* Transition(void* s, Row& row) { return spanset_extent_transfn(static_cast<Span*>(s), static_cast<SpanSet*>(row.a0)); }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return s; }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Span*>(v);
@@ -10588,15 +10673,18 @@ struct MeosAggregate_extent_33Ops
         }
         return MeosRuntime::image(r, size_t{24});
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_extent_33Literals{};
 using MeosAggregate_extent_33 = MeosRuntime::MeosAggregate<MeosAggregate_extent_33Ops>;
-constexpr MeosAggregateKernels MeosAggregate_extent_33Kernels{&MeosAggregate_extent_33::Initialize, &MeosAggregate_extent_33::Update, &MeosAggregate_extent_33::Combine, &MeosAggregate_extent_33::Finish, MeosAggregate_extent_33::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_extent_33Kernels{
+    &MeosAggregate_extent_33::Initialize,
+    &MeosAggregate_extent_33::Update,
+    &MeosAggregate_extent_33::Combine,
+    &MeosAggregate_extent_33::Finish,
+    MeosAggregate_extent_33::StateSize};
 
 struct MeosAggregate_extent_34Ops
 {
@@ -10604,9 +10692,11 @@ struct MeosAggregate_extent_34Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = false;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -10617,22 +10707,15 @@ struct MeosAggregate_extent_34Ops
         }
         return true;
     }
-    static void* Transition(void* s, Row& row)
-    {
-        return spanset_extent_transfn(static_cast<Span*>(s), static_cast<SpanSet*>(row.a0));
-    }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return s;
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void* Transition(void* s, Row& row) { return spanset_extent_transfn(static_cast<Span*>(s), static_cast<SpanSet*>(row.a0)); }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return s; }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Span*>(v);
@@ -10643,15 +10726,18 @@ struct MeosAggregate_extent_34Ops
         }
         return MeosRuntime::image(r, size_t{24});
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_extent_34Literals{};
 using MeosAggregate_extent_34 = MeosRuntime::MeosAggregate<MeosAggregate_extent_34Ops>;
-constexpr MeosAggregateKernels MeosAggregate_extent_34Kernels{&MeosAggregate_extent_34::Initialize, &MeosAggregate_extent_34::Update, &MeosAggregate_extent_34::Combine, &MeosAggregate_extent_34::Finish, MeosAggregate_extent_34::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_extent_34Kernels{
+    &MeosAggregate_extent_34::Initialize,
+    &MeosAggregate_extent_34::Update,
+    &MeosAggregate_extent_34::Combine,
+    &MeosAggregate_extent_34::Finish,
+    MeosAggregate_extent_34::StateSize};
 
 struct MeosAggregate_extent_35Ops
 {
@@ -10659,9 +10745,11 @@ struct MeosAggregate_extent_35Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = false;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -10672,22 +10760,15 @@ struct MeosAggregate_extent_35Ops
         }
         return true;
     }
-    static void* Transition(void* s, Row& row)
-    {
-        return spanset_extent_transfn(static_cast<Span*>(s), static_cast<SpanSet*>(row.a0));
-    }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return s;
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void* Transition(void* s, Row& row) { return spanset_extent_transfn(static_cast<Span*>(s), static_cast<SpanSet*>(row.a0)); }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return s; }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Span*>(v);
@@ -10698,15 +10779,18 @@ struct MeosAggregate_extent_35Ops
         }
         return MeosRuntime::image(r, size_t{24});
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_extent_35Literals{};
 using MeosAggregate_extent_35 = MeosRuntime::MeosAggregate<MeosAggregate_extent_35Ops>;
-constexpr MeosAggregateKernels MeosAggregate_extent_35Kernels{&MeosAggregate_extent_35::Initialize, &MeosAggregate_extent_35::Update, &MeosAggregate_extent_35::Combine, &MeosAggregate_extent_35::Finish, MeosAggregate_extent_35::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_extent_35Kernels{
+    &MeosAggregate_extent_35::Initialize,
+    &MeosAggregate_extent_35::Update,
+    &MeosAggregate_extent_35::Combine,
+    &MeosAggregate_extent_35::Finish,
+    MeosAggregate_extent_35::StateSize};
 
 struct MeosAggregate_spanUnionAgg_0Ops
 {
@@ -10714,9 +10798,11 @@ struct MeosAggregate_spanUnionAgg_0Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -10727,22 +10813,15 @@ struct MeosAggregate_spanUnionAgg_0Ops
         }
         return true;
     }
-    static void* Transition(void* s, Row& row)
-    {
-        return span_union_transfn(static_cast<SpanSet*>(s), static_cast<Span*>(row.a0));
-    }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return spanset_union_finalfn(static_cast<SpanSet*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void* Transition(void* s, Row& row) { return span_union_transfn(static_cast<SpanSet*>(s), static_cast<Span*>(row.a0)); }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return spanset_union_finalfn(static_cast<SpanSet*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<SpanSet*>(v);
@@ -10753,15 +10832,18 @@ struct MeosAggregate_spanUnionAgg_0Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(spanset_mem_size(static_cast<const SpanSet*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_spanUnionAgg_0Literals{};
 using MeosAggregate_spanUnionAgg_0 = MeosRuntime::MeosAggregate<MeosAggregate_spanUnionAgg_0Ops>;
-constexpr MeosAggregateKernels MeosAggregate_spanUnionAgg_0Kernels{&MeosAggregate_spanUnionAgg_0::Initialize, &MeosAggregate_spanUnionAgg_0::Update, &MeosAggregate_spanUnionAgg_0::Combine, &MeosAggregate_spanUnionAgg_0::Finish, MeosAggregate_spanUnionAgg_0::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_spanUnionAgg_0Kernels{
+    &MeosAggregate_spanUnionAgg_0::Initialize,
+    &MeosAggregate_spanUnionAgg_0::Update,
+    &MeosAggregate_spanUnionAgg_0::Combine,
+    &MeosAggregate_spanUnionAgg_0::Finish,
+    MeosAggregate_spanUnionAgg_0::StateSize};
 
 struct MeosAggregate_spanUnionAgg_1Ops
 {
@@ -10769,9 +10851,11 @@ struct MeosAggregate_spanUnionAgg_1Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -10782,22 +10866,15 @@ struct MeosAggregate_spanUnionAgg_1Ops
         }
         return true;
     }
-    static void* Transition(void* s, Row& row)
-    {
-        return span_union_transfn(static_cast<SpanSet*>(s), static_cast<Span*>(row.a0));
-    }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return spanset_union_finalfn(static_cast<SpanSet*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void* Transition(void* s, Row& row) { return span_union_transfn(static_cast<SpanSet*>(s), static_cast<Span*>(row.a0)); }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return spanset_union_finalfn(static_cast<SpanSet*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<SpanSet*>(v);
@@ -10808,15 +10885,18 @@ struct MeosAggregate_spanUnionAgg_1Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(spanset_mem_size(static_cast<const SpanSet*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_spanUnionAgg_1Literals{};
 using MeosAggregate_spanUnionAgg_1 = MeosRuntime::MeosAggregate<MeosAggregate_spanUnionAgg_1Ops>;
-constexpr MeosAggregateKernels MeosAggregate_spanUnionAgg_1Kernels{&MeosAggregate_spanUnionAgg_1::Initialize, &MeosAggregate_spanUnionAgg_1::Update, &MeosAggregate_spanUnionAgg_1::Combine, &MeosAggregate_spanUnionAgg_1::Finish, MeosAggregate_spanUnionAgg_1::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_spanUnionAgg_1Kernels{
+    &MeosAggregate_spanUnionAgg_1::Initialize,
+    &MeosAggregate_spanUnionAgg_1::Update,
+    &MeosAggregate_spanUnionAgg_1::Combine,
+    &MeosAggregate_spanUnionAgg_1::Finish,
+    MeosAggregate_spanUnionAgg_1::StateSize};
 
 struct MeosAggregate_spanUnionAgg_2Ops
 {
@@ -10824,9 +10904,11 @@ struct MeosAggregate_spanUnionAgg_2Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -10837,22 +10919,15 @@ struct MeosAggregate_spanUnionAgg_2Ops
         }
         return true;
     }
-    static void* Transition(void* s, Row& row)
-    {
-        return span_union_transfn(static_cast<SpanSet*>(s), static_cast<Span*>(row.a0));
-    }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return spanset_union_finalfn(static_cast<SpanSet*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void* Transition(void* s, Row& row) { return span_union_transfn(static_cast<SpanSet*>(s), static_cast<Span*>(row.a0)); }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return spanset_union_finalfn(static_cast<SpanSet*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<SpanSet*>(v);
@@ -10863,15 +10938,18 @@ struct MeosAggregate_spanUnionAgg_2Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(spanset_mem_size(static_cast<const SpanSet*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_spanUnionAgg_2Literals{};
 using MeosAggregate_spanUnionAgg_2 = MeosRuntime::MeosAggregate<MeosAggregate_spanUnionAgg_2Ops>;
-constexpr MeosAggregateKernels MeosAggregate_spanUnionAgg_2Kernels{&MeosAggregate_spanUnionAgg_2::Initialize, &MeosAggregate_spanUnionAgg_2::Update, &MeosAggregate_spanUnionAgg_2::Combine, &MeosAggregate_spanUnionAgg_2::Finish, MeosAggregate_spanUnionAgg_2::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_spanUnionAgg_2Kernels{
+    &MeosAggregate_spanUnionAgg_2::Initialize,
+    &MeosAggregate_spanUnionAgg_2::Update,
+    &MeosAggregate_spanUnionAgg_2::Combine,
+    &MeosAggregate_spanUnionAgg_2::Finish,
+    MeosAggregate_spanUnionAgg_2::StateSize};
 
 struct MeosAggregate_spanUnionAgg_3Ops
 {
@@ -10879,9 +10957,11 @@ struct MeosAggregate_spanUnionAgg_3Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -10892,22 +10972,15 @@ struct MeosAggregate_spanUnionAgg_3Ops
         }
         return true;
     }
-    static void* Transition(void* s, Row& row)
-    {
-        return span_union_transfn(static_cast<SpanSet*>(s), static_cast<Span*>(row.a0));
-    }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return spanset_union_finalfn(static_cast<SpanSet*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void* Transition(void* s, Row& row) { return span_union_transfn(static_cast<SpanSet*>(s), static_cast<Span*>(row.a0)); }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return spanset_union_finalfn(static_cast<SpanSet*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<SpanSet*>(v);
@@ -10918,15 +10991,18 @@ struct MeosAggregate_spanUnionAgg_3Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(spanset_mem_size(static_cast<const SpanSet*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_spanUnionAgg_3Literals{};
 using MeosAggregate_spanUnionAgg_3 = MeosRuntime::MeosAggregate<MeosAggregate_spanUnionAgg_3Ops>;
-constexpr MeosAggregateKernels MeosAggregate_spanUnionAgg_3Kernels{&MeosAggregate_spanUnionAgg_3::Initialize, &MeosAggregate_spanUnionAgg_3::Update, &MeosAggregate_spanUnionAgg_3::Combine, &MeosAggregate_spanUnionAgg_3::Finish, MeosAggregate_spanUnionAgg_3::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_spanUnionAgg_3Kernels{
+    &MeosAggregate_spanUnionAgg_3::Initialize,
+    &MeosAggregate_spanUnionAgg_3::Update,
+    &MeosAggregate_spanUnionAgg_3::Combine,
+    &MeosAggregate_spanUnionAgg_3::Finish,
+    MeosAggregate_spanUnionAgg_3::StateSize};
 
 struct MeosAggregate_spanUnionAgg_4Ops
 {
@@ -10934,9 +11010,11 @@ struct MeosAggregate_spanUnionAgg_4Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -10947,22 +11025,15 @@ struct MeosAggregate_spanUnionAgg_4Ops
         }
         return true;
     }
-    static void* Transition(void* s, Row& row)
-    {
-        return span_union_transfn(static_cast<SpanSet*>(s), static_cast<Span*>(row.a0));
-    }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return spanset_union_finalfn(static_cast<SpanSet*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void* Transition(void* s, Row& row) { return span_union_transfn(static_cast<SpanSet*>(s), static_cast<Span*>(row.a0)); }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return spanset_union_finalfn(static_cast<SpanSet*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<SpanSet*>(v);
@@ -10973,15 +11044,18 @@ struct MeosAggregate_spanUnionAgg_4Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(spanset_mem_size(static_cast<const SpanSet*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_spanUnionAgg_4Literals{};
 using MeosAggregate_spanUnionAgg_4 = MeosRuntime::MeosAggregate<MeosAggregate_spanUnionAgg_4Ops>;
-constexpr MeosAggregateKernels MeosAggregate_spanUnionAgg_4Kernels{&MeosAggregate_spanUnionAgg_4::Initialize, &MeosAggregate_spanUnionAgg_4::Update, &MeosAggregate_spanUnionAgg_4::Combine, &MeosAggregate_spanUnionAgg_4::Finish, MeosAggregate_spanUnionAgg_4::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_spanUnionAgg_4Kernels{
+    &MeosAggregate_spanUnionAgg_4::Initialize,
+    &MeosAggregate_spanUnionAgg_4::Update,
+    &MeosAggregate_spanUnionAgg_4::Combine,
+    &MeosAggregate_spanUnionAgg_4::Finish,
+    MeosAggregate_spanUnionAgg_4::StateSize};
 
 struct MeosAggregate_spansetUnionAgg_0Ops
 {
@@ -10989,9 +11063,11 @@ struct MeosAggregate_spansetUnionAgg_0Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -11002,22 +11078,15 @@ struct MeosAggregate_spansetUnionAgg_0Ops
         }
         return true;
     }
-    static void* Transition(void* s, Row& row)
-    {
-        return spanset_union_transfn(static_cast<SpanSet*>(s), static_cast<SpanSet*>(row.a0));
-    }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return spanset_union_finalfn(static_cast<SpanSet*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void* Transition(void* s, Row& row) { return spanset_union_transfn(static_cast<SpanSet*>(s), static_cast<SpanSet*>(row.a0)); }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return spanset_union_finalfn(static_cast<SpanSet*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<SpanSet*>(v);
@@ -11028,15 +11097,18 @@ struct MeosAggregate_spansetUnionAgg_0Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(spanset_mem_size(static_cast<const SpanSet*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_spansetUnionAgg_0Literals{};
 using MeosAggregate_spansetUnionAgg_0 = MeosRuntime::MeosAggregate<MeosAggregate_spansetUnionAgg_0Ops>;
-constexpr MeosAggregateKernels MeosAggregate_spansetUnionAgg_0Kernels{&MeosAggregate_spansetUnionAgg_0::Initialize, &MeosAggregate_spansetUnionAgg_0::Update, &MeosAggregate_spansetUnionAgg_0::Combine, &MeosAggregate_spansetUnionAgg_0::Finish, MeosAggregate_spansetUnionAgg_0::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_spansetUnionAgg_0Kernels{
+    &MeosAggregate_spansetUnionAgg_0::Initialize,
+    &MeosAggregate_spansetUnionAgg_0::Update,
+    &MeosAggregate_spansetUnionAgg_0::Combine,
+    &MeosAggregate_spansetUnionAgg_0::Finish,
+    MeosAggregate_spansetUnionAgg_0::StateSize};
 
 struct MeosAggregate_spansetUnionAgg_1Ops
 {
@@ -11044,9 +11116,11 @@ struct MeosAggregate_spansetUnionAgg_1Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -11057,22 +11131,15 @@ struct MeosAggregate_spansetUnionAgg_1Ops
         }
         return true;
     }
-    static void* Transition(void* s, Row& row)
-    {
-        return spanset_union_transfn(static_cast<SpanSet*>(s), static_cast<SpanSet*>(row.a0));
-    }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return spanset_union_finalfn(static_cast<SpanSet*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void* Transition(void* s, Row& row) { return spanset_union_transfn(static_cast<SpanSet*>(s), static_cast<SpanSet*>(row.a0)); }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return spanset_union_finalfn(static_cast<SpanSet*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<SpanSet*>(v);
@@ -11083,15 +11150,18 @@ struct MeosAggregate_spansetUnionAgg_1Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(spanset_mem_size(static_cast<const SpanSet*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_spansetUnionAgg_1Literals{};
 using MeosAggregate_spansetUnionAgg_1 = MeosRuntime::MeosAggregate<MeosAggregate_spansetUnionAgg_1Ops>;
-constexpr MeosAggregateKernels MeosAggregate_spansetUnionAgg_1Kernels{&MeosAggregate_spansetUnionAgg_1::Initialize, &MeosAggregate_spansetUnionAgg_1::Update, &MeosAggregate_spansetUnionAgg_1::Combine, &MeosAggregate_spansetUnionAgg_1::Finish, MeosAggregate_spansetUnionAgg_1::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_spansetUnionAgg_1Kernels{
+    &MeosAggregate_spansetUnionAgg_1::Initialize,
+    &MeosAggregate_spansetUnionAgg_1::Update,
+    &MeosAggregate_spansetUnionAgg_1::Combine,
+    &MeosAggregate_spansetUnionAgg_1::Finish,
+    MeosAggregate_spansetUnionAgg_1::StateSize};
 
 struct MeosAggregate_spansetUnionAgg_2Ops
 {
@@ -11099,9 +11169,11 @@ struct MeosAggregate_spansetUnionAgg_2Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -11112,22 +11184,15 @@ struct MeosAggregate_spansetUnionAgg_2Ops
         }
         return true;
     }
-    static void* Transition(void* s, Row& row)
-    {
-        return spanset_union_transfn(static_cast<SpanSet*>(s), static_cast<SpanSet*>(row.a0));
-    }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return spanset_union_finalfn(static_cast<SpanSet*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void* Transition(void* s, Row& row) { return spanset_union_transfn(static_cast<SpanSet*>(s), static_cast<SpanSet*>(row.a0)); }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return spanset_union_finalfn(static_cast<SpanSet*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<SpanSet*>(v);
@@ -11138,15 +11203,18 @@ struct MeosAggregate_spansetUnionAgg_2Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(spanset_mem_size(static_cast<const SpanSet*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_spansetUnionAgg_2Literals{};
 using MeosAggregate_spansetUnionAgg_2 = MeosRuntime::MeosAggregate<MeosAggregate_spansetUnionAgg_2Ops>;
-constexpr MeosAggregateKernels MeosAggregate_spansetUnionAgg_2Kernels{&MeosAggregate_spansetUnionAgg_2::Initialize, &MeosAggregate_spansetUnionAgg_2::Update, &MeosAggregate_spansetUnionAgg_2::Combine, &MeosAggregate_spansetUnionAgg_2::Finish, MeosAggregate_spansetUnionAgg_2::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_spansetUnionAgg_2Kernels{
+    &MeosAggregate_spansetUnionAgg_2::Initialize,
+    &MeosAggregate_spansetUnionAgg_2::Update,
+    &MeosAggregate_spansetUnionAgg_2::Combine,
+    &MeosAggregate_spansetUnionAgg_2::Finish,
+    MeosAggregate_spansetUnionAgg_2::StateSize};
 
 struct MeosAggregate_spansetUnionAgg_3Ops
 {
@@ -11154,9 +11222,11 @@ struct MeosAggregate_spansetUnionAgg_3Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -11167,22 +11237,15 @@ struct MeosAggregate_spansetUnionAgg_3Ops
         }
         return true;
     }
-    static void* Transition(void* s, Row& row)
-    {
-        return spanset_union_transfn(static_cast<SpanSet*>(s), static_cast<SpanSet*>(row.a0));
-    }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return spanset_union_finalfn(static_cast<SpanSet*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void* Transition(void* s, Row& row) { return spanset_union_transfn(static_cast<SpanSet*>(s), static_cast<SpanSet*>(row.a0)); }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return spanset_union_finalfn(static_cast<SpanSet*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<SpanSet*>(v);
@@ -11193,15 +11256,18 @@ struct MeosAggregate_spansetUnionAgg_3Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(spanset_mem_size(static_cast<const SpanSet*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_spansetUnionAgg_3Literals{};
 using MeosAggregate_spansetUnionAgg_3 = MeosRuntime::MeosAggregate<MeosAggregate_spansetUnionAgg_3Ops>;
-constexpr MeosAggregateKernels MeosAggregate_spansetUnionAgg_3Kernels{&MeosAggregate_spansetUnionAgg_3::Initialize, &MeosAggregate_spansetUnionAgg_3::Update, &MeosAggregate_spansetUnionAgg_3::Combine, &MeosAggregate_spansetUnionAgg_3::Finish, MeosAggregate_spansetUnionAgg_3::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_spansetUnionAgg_3Kernels{
+    &MeosAggregate_spansetUnionAgg_3::Initialize,
+    &MeosAggregate_spansetUnionAgg_3::Update,
+    &MeosAggregate_spansetUnionAgg_3::Combine,
+    &MeosAggregate_spansetUnionAgg_3::Finish,
+    MeosAggregate_spansetUnionAgg_3::StateSize};
 
 struct MeosAggregate_spansetUnionAgg_4Ops
 {
@@ -11209,9 +11275,11 @@ struct MeosAggregate_spansetUnionAgg_4Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -11222,22 +11290,15 @@ struct MeosAggregate_spansetUnionAgg_4Ops
         }
         return true;
     }
-    static void* Transition(void* s, Row& row)
-    {
-        return spanset_union_transfn(static_cast<SpanSet*>(s), static_cast<SpanSet*>(row.a0));
-    }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return spanset_union_finalfn(static_cast<SpanSet*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void* Transition(void* s, Row& row) { return spanset_union_transfn(static_cast<SpanSet*>(s), static_cast<SpanSet*>(row.a0)); }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return spanset_union_finalfn(static_cast<SpanSet*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<SpanSet*>(v);
@@ -11248,15 +11309,18 @@ struct MeosAggregate_spansetUnionAgg_4Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(spanset_mem_size(static_cast<const SpanSet*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_spansetUnionAgg_4Literals{};
 using MeosAggregate_spansetUnionAgg_4 = MeosRuntime::MeosAggregate<MeosAggregate_spansetUnionAgg_4Ops>;
-constexpr MeosAggregateKernels MeosAggregate_spansetUnionAgg_4Kernels{&MeosAggregate_spansetUnionAgg_4::Initialize, &MeosAggregate_spansetUnionAgg_4::Update, &MeosAggregate_spansetUnionAgg_4::Combine, &MeosAggregate_spansetUnionAgg_4::Finish, MeosAggregate_spansetUnionAgg_4::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_spansetUnionAgg_4Kernels{
+    &MeosAggregate_spansetUnionAgg_4::Initialize,
+    &MeosAggregate_spansetUnionAgg_4::Update,
+    &MeosAggregate_spansetUnionAgg_4::Combine,
+    &MeosAggregate_spansetUnionAgg_4::Finish,
+    MeosAggregate_spansetUnionAgg_4::StateSize};
 
 struct MeosAggregate_extent_36Ops
 {
@@ -11264,9 +11328,11 @@ struct MeosAggregate_extent_36Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = false;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -11277,22 +11343,15 @@ struct MeosAggregate_extent_36Ops
         }
         return true;
     }
-    static void* Transition(void* s, Row& row)
-    {
-        return tbox_extent_transfn(static_cast<TBox*>(s), static_cast<TBox*>(row.a0));
-    }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return s;
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void* Transition(void* s, Row& row) { return tbox_extent_transfn(static_cast<TBox*>(s), static_cast<TBox*>(row.a0)); }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return s; }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<TBox*>(v);
@@ -11303,15 +11362,18 @@ struct MeosAggregate_extent_36Ops
         }
         return MeosRuntime::image(r, size_t{56});
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_extent_36Literals{};
 using MeosAggregate_extent_36 = MeosRuntime::MeosAggregate<MeosAggregate_extent_36Ops>;
-constexpr MeosAggregateKernels MeosAggregate_extent_36Kernels{&MeosAggregate_extent_36::Initialize, &MeosAggregate_extent_36::Update, &MeosAggregate_extent_36::Combine, &MeosAggregate_extent_36::Finish, MeosAggregate_extent_36::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_extent_36Kernels{
+    &MeosAggregate_extent_36::Initialize,
+    &MeosAggregate_extent_36::Update,
+    &MeosAggregate_extent_36::Combine,
+    &MeosAggregate_extent_36::Finish,
+    MeosAggregate_extent_36::StateSize};
 
 struct MeosAggregate_extent_37Ops
 {
@@ -11319,9 +11381,11 @@ struct MeosAggregate_extent_37Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = false;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -11332,22 +11396,15 @@ struct MeosAggregate_extent_37Ops
         }
         return true;
     }
-    static void* Transition(void* s, Row& row)
-    {
-        return temporal_extent_transfn(static_cast<Span*>(s), static_cast<Temporal*>(row.a0));
-    }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return s;
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void* Transition(void* s, Row& row) { return temporal_extent_transfn(static_cast<Span*>(s), static_cast<Temporal*>(row.a0)); }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return s; }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Span*>(v);
@@ -11358,15 +11415,18 @@ struct MeosAggregate_extent_37Ops
         }
         return MeosRuntime::image(r, size_t{24});
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_extent_37Literals{};
 using MeosAggregate_extent_37 = MeosRuntime::MeosAggregate<MeosAggregate_extent_37Ops>;
-constexpr MeosAggregateKernels MeosAggregate_extent_37Kernels{&MeosAggregate_extent_37::Initialize, &MeosAggregate_extent_37::Update, &MeosAggregate_extent_37::Combine, &MeosAggregate_extent_37::Finish, MeosAggregate_extent_37::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_extent_37Kernels{
+    &MeosAggregate_extent_37::Initialize,
+    &MeosAggregate_extent_37::Update,
+    &MeosAggregate_extent_37::Combine,
+    &MeosAggregate_extent_37::Finish,
+    MeosAggregate_extent_37::StateSize};
 
 struct MeosAggregate_extent_38Ops
 {
@@ -11374,9 +11434,11 @@ struct MeosAggregate_extent_38Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = false;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -11387,22 +11449,15 @@ struct MeosAggregate_extent_38Ops
         }
         return true;
     }
-    static void* Transition(void* s, Row& row)
-    {
-        return temporal_extent_transfn(static_cast<Span*>(s), static_cast<Temporal*>(row.a0));
-    }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return s;
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void* Transition(void* s, Row& row) { return temporal_extent_transfn(static_cast<Span*>(s), static_cast<Temporal*>(row.a0)); }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return s; }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Span*>(v);
@@ -11413,15 +11468,18 @@ struct MeosAggregate_extent_38Ops
         }
         return MeosRuntime::image(r, size_t{24});
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_extent_38Literals{};
 using MeosAggregate_extent_38 = MeosRuntime::MeosAggregate<MeosAggregate_extent_38Ops>;
-constexpr MeosAggregateKernels MeosAggregate_extent_38Kernels{&MeosAggregate_extent_38::Initialize, &MeosAggregate_extent_38::Update, &MeosAggregate_extent_38::Combine, &MeosAggregate_extent_38::Finish, MeosAggregate_extent_38::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_extent_38Kernels{
+    &MeosAggregate_extent_38::Initialize,
+    &MeosAggregate_extent_38::Update,
+    &MeosAggregate_extent_38::Combine,
+    &MeosAggregate_extent_38::Finish,
+    MeosAggregate_extent_38::StateSize};
 
 struct MeosAggregate_extent_39Ops
 {
@@ -11429,9 +11487,11 @@ struct MeosAggregate_extent_39Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = false;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -11442,22 +11502,15 @@ struct MeosAggregate_extent_39Ops
         }
         return true;
     }
-    static void* Transition(void* s, Row& row)
-    {
-        return tnumber_extent_transfn(static_cast<TBox*>(s), static_cast<Temporal*>(row.a0));
-    }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return s;
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void* Transition(void* s, Row& row) { return tnumber_extent_transfn(static_cast<TBox*>(s), static_cast<Temporal*>(row.a0)); }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return s; }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<TBox*>(v);
@@ -11468,15 +11521,18 @@ struct MeosAggregate_extent_39Ops
         }
         return MeosRuntime::image(r, size_t{56});
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_extent_39Literals{};
 using MeosAggregate_extent_39 = MeosRuntime::MeosAggregate<MeosAggregate_extent_39Ops>;
-constexpr MeosAggregateKernels MeosAggregate_extent_39Kernels{&MeosAggregate_extent_39::Initialize, &MeosAggregate_extent_39::Update, &MeosAggregate_extent_39::Combine, &MeosAggregate_extent_39::Finish, MeosAggregate_extent_39::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_extent_39Kernels{
+    &MeosAggregate_extent_39::Initialize,
+    &MeosAggregate_extent_39::Update,
+    &MeosAggregate_extent_39::Combine,
+    &MeosAggregate_extent_39::Finish,
+    MeosAggregate_extent_39::StateSize};
 
 struct MeosAggregate_extent_40Ops
 {
@@ -11484,9 +11540,11 @@ struct MeosAggregate_extent_40Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = false;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -11497,22 +11555,15 @@ struct MeosAggregate_extent_40Ops
         }
         return true;
     }
-    static void* Transition(void* s, Row& row)
-    {
-        return tnumber_extent_transfn(static_cast<TBox*>(s), static_cast<Temporal*>(row.a0));
-    }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return s;
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void* Transition(void* s, Row& row) { return tnumber_extent_transfn(static_cast<TBox*>(s), static_cast<Temporal*>(row.a0)); }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return s; }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<TBox*>(v);
@@ -11523,15 +11574,18 @@ struct MeosAggregate_extent_40Ops
         }
         return MeosRuntime::image(r, size_t{56});
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_extent_40Literals{};
 using MeosAggregate_extent_40 = MeosRuntime::MeosAggregate<MeosAggregate_extent_40Ops>;
-constexpr MeosAggregateKernels MeosAggregate_extent_40Kernels{&MeosAggregate_extent_40::Initialize, &MeosAggregate_extent_40::Update, &MeosAggregate_extent_40::Combine, &MeosAggregate_extent_40::Finish, MeosAggregate_extent_40::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_extent_40Kernels{
+    &MeosAggregate_extent_40::Initialize,
+    &MeosAggregate_extent_40::Update,
+    &MeosAggregate_extent_40::Combine,
+    &MeosAggregate_extent_40::Finish,
+    MeosAggregate_extent_40::StateSize};
 
 struct MeosAggregate_extent_41Ops
 {
@@ -11539,9 +11593,11 @@ struct MeosAggregate_extent_41Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = false;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -11552,22 +11608,15 @@ struct MeosAggregate_extent_41Ops
         }
         return true;
     }
-    static void* Transition(void* s, Row& row)
-    {
-        return tnumber_extent_transfn(static_cast<TBox*>(s), static_cast<Temporal*>(row.a0));
-    }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return s;
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void* Transition(void* s, Row& row) { return tnumber_extent_transfn(static_cast<TBox*>(s), static_cast<Temporal*>(row.a0)); }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return s; }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<TBox*>(v);
@@ -11578,15 +11627,18 @@ struct MeosAggregate_extent_41Ops
         }
         return MeosRuntime::image(r, size_t{56});
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_extent_41Literals{};
 using MeosAggregate_extent_41 = MeosRuntime::MeosAggregate<MeosAggregate_extent_41Ops>;
-constexpr MeosAggregateKernels MeosAggregate_extent_41Kernels{&MeosAggregate_extent_41::Initialize, &MeosAggregate_extent_41::Update, &MeosAggregate_extent_41::Combine, &MeosAggregate_extent_41::Finish, MeosAggregate_extent_41::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_extent_41Kernels{
+    &MeosAggregate_extent_41::Initialize,
+    &MeosAggregate_extent_41::Update,
+    &MeosAggregate_extent_41::Combine,
+    &MeosAggregate_extent_41::Finish,
+    MeosAggregate_extent_41::StateSize};
 
 struct MeosAggregate_tCount_15Ops
 {
@@ -11594,31 +11646,26 @@ struct MeosAggregate_tCount_15Ops
     {
         TimestampTz a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
         row.a0 = MeosRuntime::timestamptz(MeosRuntime::number<uint64_t>(a0));
         return true;
     }
-    static void* Transition(void* s, Row& row)
-    {
-        return timestamptz_tcount_transfn(static_cast<struct SkipList*>(s), row.a0);
-    }
-    static void Free(Row& row)
-    {
-        static_cast<void>(row);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_tagg_finalfn(static_cast<struct SkipList*>(s));
-    }
-    static void Release(void* s)
-    {
-        skiplist_free(static_cast<struct SkipList*>(s));
-    }
+
+    static void* Transition(void* s, Row& row) { return timestamptz_tcount_transfn(static_cast<struct SkipList*>(s), row.a0); }
+
+    static void Free(Row& row) { static_cast<void>(row); }
+
+    static void* Final(void* s) { return temporal_tagg_finalfn(static_cast<struct SkipList*>(s)); }
+
+    static void Release(void* s) { skiplist_free(static_cast<struct SkipList*>(s)); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -11629,15 +11676,18 @@ struct MeosAggregate_tCount_15Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_tCount_15Literals{};
 using MeosAggregate_tCount_15 = MeosRuntime::MeosAggregate<MeosAggregate_tCount_15Ops>;
-constexpr MeosAggregateKernels MeosAggregate_tCount_15Kernels{&MeosAggregate_tCount_15::Initialize, &MeosAggregate_tCount_15::Update, &MeosAggregate_tCount_15::Combine, &MeosAggregate_tCount_15::Finish, MeosAggregate_tCount_15::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_tCount_15Kernels{
+    &MeosAggregate_tCount_15::Initialize,
+    &MeosAggregate_tCount_15::Update,
+    &MeosAggregate_tCount_15::Combine,
+    &MeosAggregate_tCount_15::Finish,
+    MeosAggregate_tCount_15::StateSize};
 
 struct MeosAggregate_tCount_16Ops
 {
@@ -11645,9 +11695,11 @@ struct MeosAggregate_tCount_16Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -11658,22 +11710,18 @@ struct MeosAggregate_tCount_16Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return tstzset_tcount_transfn(static_cast<struct SkipList*>(s), static_cast<Set*>(row.a0));
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_tagg_finalfn(static_cast<struct SkipList*>(s));
-    }
-    static void Release(void* s)
-    {
-        skiplist_free(static_cast<struct SkipList*>(s));
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_tagg_finalfn(static_cast<struct SkipList*>(s)); }
+
+    static void Release(void* s) { skiplist_free(static_cast<struct SkipList*>(s)); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -11684,15 +11732,18 @@ struct MeosAggregate_tCount_16Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_tCount_16Literals{};
 using MeosAggregate_tCount_16 = MeosRuntime::MeosAggregate<MeosAggregate_tCount_16Ops>;
-constexpr MeosAggregateKernels MeosAggregate_tCount_16Kernels{&MeosAggregate_tCount_16::Initialize, &MeosAggregate_tCount_16::Update, &MeosAggregate_tCount_16::Combine, &MeosAggregate_tCount_16::Finish, MeosAggregate_tCount_16::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_tCount_16Kernels{
+    &MeosAggregate_tCount_16::Initialize,
+    &MeosAggregate_tCount_16::Update,
+    &MeosAggregate_tCount_16::Combine,
+    &MeosAggregate_tCount_16::Finish,
+    MeosAggregate_tCount_16::StateSize};
 
 struct MeosAggregate_tCount_17Ops
 {
@@ -11700,9 +11751,11 @@ struct MeosAggregate_tCount_17Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -11713,22 +11766,18 @@ struct MeosAggregate_tCount_17Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return tstzspan_tcount_transfn(static_cast<struct SkipList*>(s), static_cast<Span*>(row.a0));
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_tagg_finalfn(static_cast<struct SkipList*>(s));
-    }
-    static void Release(void* s)
-    {
-        skiplist_free(static_cast<struct SkipList*>(s));
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_tagg_finalfn(static_cast<struct SkipList*>(s)); }
+
+    static void Release(void* s) { skiplist_free(static_cast<struct SkipList*>(s)); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -11739,15 +11788,18 @@ struct MeosAggregate_tCount_17Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_tCount_17Literals{};
 using MeosAggregate_tCount_17 = MeosRuntime::MeosAggregate<MeosAggregate_tCount_17Ops>;
-constexpr MeosAggregateKernels MeosAggregate_tCount_17Kernels{&MeosAggregate_tCount_17::Initialize, &MeosAggregate_tCount_17::Update, &MeosAggregate_tCount_17::Combine, &MeosAggregate_tCount_17::Finish, MeosAggregate_tCount_17::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_tCount_17Kernels{
+    &MeosAggregate_tCount_17::Initialize,
+    &MeosAggregate_tCount_17::Update,
+    &MeosAggregate_tCount_17::Combine,
+    &MeosAggregate_tCount_17::Finish,
+    MeosAggregate_tCount_17::StateSize};
 
 struct MeosAggregate_tCount_18Ops
 {
@@ -11755,9 +11807,11 @@ struct MeosAggregate_tCount_18Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -11768,22 +11822,18 @@ struct MeosAggregate_tCount_18Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return tstzspanset_tcount_transfn(static_cast<struct SkipList*>(s), static_cast<SpanSet*>(row.a0));
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_tagg_finalfn(static_cast<struct SkipList*>(s));
-    }
-    static void Release(void* s)
-    {
-        skiplist_free(static_cast<struct SkipList*>(s));
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_tagg_finalfn(static_cast<struct SkipList*>(s)); }
+
+    static void Release(void* s) { skiplist_free(static_cast<struct SkipList*>(s)); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -11794,15 +11844,18 @@ struct MeosAggregate_tCount_18Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_tCount_18Literals{};
 using MeosAggregate_tCount_18 = MeosRuntime::MeosAggregate<MeosAggregate_tCount_18Ops>;
-constexpr MeosAggregateKernels MeosAggregate_tCount_18Kernels{&MeosAggregate_tCount_18::Initialize, &MeosAggregate_tCount_18::Update, &MeosAggregate_tCount_18::Combine, &MeosAggregate_tCount_18::Finish, MeosAggregate_tCount_18::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_tCount_18Kernels{
+    &MeosAggregate_tCount_18::Initialize,
+    &MeosAggregate_tCount_18::Update,
+    &MeosAggregate_tCount_18::Combine,
+    &MeosAggregate_tCount_18::Finish,
+    MeosAggregate_tCount_18::StateSize};
 
 struct MeosAggregate_tCount_19Ops
 {
@@ -11810,9 +11863,11 @@ struct MeosAggregate_tCount_19Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -11823,22 +11878,18 @@ struct MeosAggregate_tCount_19Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_tcount_transfn(static_cast<struct SkipList*>(s), static_cast<Temporal*>(row.a0));
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_tagg_finalfn(static_cast<struct SkipList*>(s));
-    }
-    static void Release(void* s)
-    {
-        skiplist_free(static_cast<struct SkipList*>(s));
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_tagg_finalfn(static_cast<struct SkipList*>(s)); }
+
+    static void Release(void* s) { skiplist_free(static_cast<struct SkipList*>(s)); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -11849,15 +11900,18 @@ struct MeosAggregate_tCount_19Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_tCount_19Literals{};
 using MeosAggregate_tCount_19 = MeosRuntime::MeosAggregate<MeosAggregate_tCount_19Ops>;
-constexpr MeosAggregateKernels MeosAggregate_tCount_19Kernels{&MeosAggregate_tCount_19::Initialize, &MeosAggregate_tCount_19::Update, &MeosAggregate_tCount_19::Combine, &MeosAggregate_tCount_19::Finish, MeosAggregate_tCount_19::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_tCount_19Kernels{
+    &MeosAggregate_tCount_19::Initialize,
+    &MeosAggregate_tCount_19::Update,
+    &MeosAggregate_tCount_19::Combine,
+    &MeosAggregate_tCount_19::Finish,
+    MeosAggregate_tCount_19::StateSize};
 
 struct MeosAggregate_tAndAgg_0Ops
 {
@@ -11865,9 +11919,11 @@ struct MeosAggregate_tAndAgg_0Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -11878,22 +11934,18 @@ struct MeosAggregate_tAndAgg_0Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return tbool_tand_transfn(static_cast<struct SkipList*>(s), static_cast<Temporal*>(row.a0));
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_tagg_finalfn(static_cast<struct SkipList*>(s));
-    }
-    static void Release(void* s)
-    {
-        skiplist_free(static_cast<struct SkipList*>(s));
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_tagg_finalfn(static_cast<struct SkipList*>(s)); }
+
+    static void Release(void* s) { skiplist_free(static_cast<struct SkipList*>(s)); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -11904,15 +11956,18 @@ struct MeosAggregate_tAndAgg_0Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_tAndAgg_0Literals{};
 using MeosAggregate_tAndAgg_0 = MeosRuntime::MeosAggregate<MeosAggregate_tAndAgg_0Ops>;
-constexpr MeosAggregateKernels MeosAggregate_tAndAgg_0Kernels{&MeosAggregate_tAndAgg_0::Initialize, &MeosAggregate_tAndAgg_0::Update, &MeosAggregate_tAndAgg_0::Combine, &MeosAggregate_tAndAgg_0::Finish, MeosAggregate_tAndAgg_0::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_tAndAgg_0Kernels{
+    &MeosAggregate_tAndAgg_0::Initialize,
+    &MeosAggregate_tAndAgg_0::Update,
+    &MeosAggregate_tAndAgg_0::Combine,
+    &MeosAggregate_tAndAgg_0::Finish,
+    MeosAggregate_tAndAgg_0::StateSize};
 
 struct MeosAggregate_tOrAgg_0Ops
 {
@@ -11920,9 +11975,11 @@ struct MeosAggregate_tOrAgg_0Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -11933,22 +11990,18 @@ struct MeosAggregate_tOrAgg_0Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return tbool_tor_transfn(static_cast<struct SkipList*>(s), static_cast<Temporal*>(row.a0));
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_tagg_finalfn(static_cast<struct SkipList*>(s));
-    }
-    static void Release(void* s)
-    {
-        skiplist_free(static_cast<struct SkipList*>(s));
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_tagg_finalfn(static_cast<struct SkipList*>(s)); }
+
+    static void Release(void* s) { skiplist_free(static_cast<struct SkipList*>(s)); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -11959,15 +12012,18 @@ struct MeosAggregate_tOrAgg_0Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_tOrAgg_0Literals{};
 using MeosAggregate_tOrAgg_0 = MeosRuntime::MeosAggregate<MeosAggregate_tOrAgg_0Ops>;
-constexpr MeosAggregateKernels MeosAggregate_tOrAgg_0Kernels{&MeosAggregate_tOrAgg_0::Initialize, &MeosAggregate_tOrAgg_0::Update, &MeosAggregate_tOrAgg_0::Combine, &MeosAggregate_tOrAgg_0::Finish, MeosAggregate_tOrAgg_0::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_tOrAgg_0Kernels{
+    &MeosAggregate_tOrAgg_0::Initialize,
+    &MeosAggregate_tOrAgg_0::Update,
+    &MeosAggregate_tOrAgg_0::Combine,
+    &MeosAggregate_tOrAgg_0::Finish,
+    MeosAggregate_tOrAgg_0::StateSize};
 
 struct MeosAggregate_tCount_20Ops
 {
@@ -11975,9 +12031,11 @@ struct MeosAggregate_tCount_20Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -11988,22 +12046,18 @@ struct MeosAggregate_tCount_20Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_tcount_transfn(static_cast<struct SkipList*>(s), static_cast<Temporal*>(row.a0));
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_tagg_finalfn(static_cast<struct SkipList*>(s));
-    }
-    static void Release(void* s)
-    {
-        skiplist_free(static_cast<struct SkipList*>(s));
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_tagg_finalfn(static_cast<struct SkipList*>(s)); }
+
+    static void Release(void* s) { skiplist_free(static_cast<struct SkipList*>(s)); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -12014,15 +12068,18 @@ struct MeosAggregate_tCount_20Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_tCount_20Literals{};
 using MeosAggregate_tCount_20 = MeosRuntime::MeosAggregate<MeosAggregate_tCount_20Ops>;
-constexpr MeosAggregateKernels MeosAggregate_tCount_20Kernels{&MeosAggregate_tCount_20::Initialize, &MeosAggregate_tCount_20::Update, &MeosAggregate_tCount_20::Combine, &MeosAggregate_tCount_20::Finish, MeosAggregate_tCount_20::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_tCount_20Kernels{
+    &MeosAggregate_tCount_20::Initialize,
+    &MeosAggregate_tCount_20::Update,
+    &MeosAggregate_tCount_20::Combine,
+    &MeosAggregate_tCount_20::Finish,
+    MeosAggregate_tCount_20::StateSize};
 
 struct MeosAggregate_tCount_21Ops
 {
@@ -12030,9 +12087,11 @@ struct MeosAggregate_tCount_21Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -12043,22 +12102,18 @@ struct MeosAggregate_tCount_21Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_tcount_transfn(static_cast<struct SkipList*>(s), static_cast<Temporal*>(row.a0));
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_tagg_finalfn(static_cast<struct SkipList*>(s));
-    }
-    static void Release(void* s)
-    {
-        skiplist_free(static_cast<struct SkipList*>(s));
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_tagg_finalfn(static_cast<struct SkipList*>(s)); }
+
+    static void Release(void* s) { skiplist_free(static_cast<struct SkipList*>(s)); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -12069,15 +12124,18 @@ struct MeosAggregate_tCount_21Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_tCount_21Literals{};
 using MeosAggregate_tCount_21 = MeosRuntime::MeosAggregate<MeosAggregate_tCount_21Ops>;
-constexpr MeosAggregateKernels MeosAggregate_tCount_21Kernels{&MeosAggregate_tCount_21::Initialize, &MeosAggregate_tCount_21::Update, &MeosAggregate_tCount_21::Combine, &MeosAggregate_tCount_21::Finish, MeosAggregate_tCount_21::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_tCount_21Kernels{
+    &MeosAggregate_tCount_21::Initialize,
+    &MeosAggregate_tCount_21::Update,
+    &MeosAggregate_tCount_21::Combine,
+    &MeosAggregate_tCount_21::Finish,
+    MeosAggregate_tCount_21::StateSize};
 
 struct MeosAggregate_tMinAgg_0Ops
 {
@@ -12085,9 +12143,11 @@ struct MeosAggregate_tMinAgg_0Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -12098,22 +12158,18 @@ struct MeosAggregate_tMinAgg_0Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return tint_tmin_transfn(static_cast<struct SkipList*>(s), static_cast<Temporal*>(row.a0));
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_tagg_finalfn(static_cast<struct SkipList*>(s));
-    }
-    static void Release(void* s)
-    {
-        skiplist_free(static_cast<struct SkipList*>(s));
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_tagg_finalfn(static_cast<struct SkipList*>(s)); }
+
+    static void Release(void* s) { skiplist_free(static_cast<struct SkipList*>(s)); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -12124,15 +12180,18 @@ struct MeosAggregate_tMinAgg_0Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_tMinAgg_0Literals{};
 using MeosAggregate_tMinAgg_0 = MeosRuntime::MeosAggregate<MeosAggregate_tMinAgg_0Ops>;
-constexpr MeosAggregateKernels MeosAggregate_tMinAgg_0Kernels{&MeosAggregate_tMinAgg_0::Initialize, &MeosAggregate_tMinAgg_0::Update, &MeosAggregate_tMinAgg_0::Combine, &MeosAggregate_tMinAgg_0::Finish, MeosAggregate_tMinAgg_0::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_tMinAgg_0Kernels{
+    &MeosAggregate_tMinAgg_0::Initialize,
+    &MeosAggregate_tMinAgg_0::Update,
+    &MeosAggregate_tMinAgg_0::Combine,
+    &MeosAggregate_tMinAgg_0::Finish,
+    MeosAggregate_tMinAgg_0::StateSize};
 
 struct MeosAggregate_tMaxAgg_0Ops
 {
@@ -12140,9 +12199,11 @@ struct MeosAggregate_tMaxAgg_0Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -12153,22 +12214,18 @@ struct MeosAggregate_tMaxAgg_0Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return tint_tmax_transfn(static_cast<struct SkipList*>(s), static_cast<Temporal*>(row.a0));
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_tagg_finalfn(static_cast<struct SkipList*>(s));
-    }
-    static void Release(void* s)
-    {
-        skiplist_free(static_cast<struct SkipList*>(s));
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_tagg_finalfn(static_cast<struct SkipList*>(s)); }
+
+    static void Release(void* s) { skiplist_free(static_cast<struct SkipList*>(s)); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -12179,15 +12236,18 @@ struct MeosAggregate_tMaxAgg_0Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_tMaxAgg_0Literals{};
 using MeosAggregate_tMaxAgg_0 = MeosRuntime::MeosAggregate<MeosAggregate_tMaxAgg_0Ops>;
-constexpr MeosAggregateKernels MeosAggregate_tMaxAgg_0Kernels{&MeosAggregate_tMaxAgg_0::Initialize, &MeosAggregate_tMaxAgg_0::Update, &MeosAggregate_tMaxAgg_0::Combine, &MeosAggregate_tMaxAgg_0::Finish, MeosAggregate_tMaxAgg_0::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_tMaxAgg_0Kernels{
+    &MeosAggregate_tMaxAgg_0::Initialize,
+    &MeosAggregate_tMaxAgg_0::Update,
+    &MeosAggregate_tMaxAgg_0::Combine,
+    &MeosAggregate_tMaxAgg_0::Finish,
+    MeosAggregate_tMaxAgg_0::StateSize};
 
 struct MeosAggregate_tSum_0Ops
 {
@@ -12195,9 +12255,11 @@ struct MeosAggregate_tSum_0Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -12208,22 +12270,18 @@ struct MeosAggregate_tSum_0Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return tint_tsum_transfn(static_cast<struct SkipList*>(s), static_cast<Temporal*>(row.a0));
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_tagg_finalfn(static_cast<struct SkipList*>(s));
-    }
-    static void Release(void* s)
-    {
-        skiplist_free(static_cast<struct SkipList*>(s));
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_tagg_finalfn(static_cast<struct SkipList*>(s)); }
+
+    static void Release(void* s) { skiplist_free(static_cast<struct SkipList*>(s)); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -12234,15 +12292,18 @@ struct MeosAggregate_tSum_0Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_tSum_0Literals{};
 using MeosAggregate_tSum_0 = MeosRuntime::MeosAggregate<MeosAggregate_tSum_0Ops>;
-constexpr MeosAggregateKernels MeosAggregate_tSum_0Kernels{&MeosAggregate_tSum_0::Initialize, &MeosAggregate_tSum_0::Update, &MeosAggregate_tSum_0::Combine, &MeosAggregate_tSum_0::Finish, MeosAggregate_tSum_0::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_tSum_0Kernels{
+    &MeosAggregate_tSum_0::Initialize,
+    &MeosAggregate_tSum_0::Update,
+    &MeosAggregate_tSum_0::Combine,
+    &MeosAggregate_tSum_0::Finish,
+    MeosAggregate_tSum_0::StateSize};
 
 struct MeosAggregate_tAvg_0Ops
 {
@@ -12250,9 +12311,11 @@ struct MeosAggregate_tAvg_0Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -12263,22 +12326,18 @@ struct MeosAggregate_tAvg_0Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return tnumber_tavg_transfn(static_cast<struct SkipList*>(s), static_cast<Temporal*>(row.a0));
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return tnumber_tavg_finalfn(static_cast<struct SkipList*>(s));
-    }
-    static void Release(void* s)
-    {
-        skiplist_free(static_cast<struct SkipList*>(s));
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return tnumber_tavg_finalfn(static_cast<struct SkipList*>(s)); }
+
+    static void Release(void* s) { skiplist_free(static_cast<struct SkipList*>(s)); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -12289,15 +12348,18 @@ struct MeosAggregate_tAvg_0Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_tAvg_0Literals{};
 using MeosAggregate_tAvg_0 = MeosRuntime::MeosAggregate<MeosAggregate_tAvg_0Ops>;
-constexpr MeosAggregateKernels MeosAggregate_tAvg_0Kernels{&MeosAggregate_tAvg_0::Initialize, &MeosAggregate_tAvg_0::Update, &MeosAggregate_tAvg_0::Combine, &MeosAggregate_tAvg_0::Finish, MeosAggregate_tAvg_0::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_tAvg_0Kernels{
+    &MeosAggregate_tAvg_0::Initialize,
+    &MeosAggregate_tAvg_0::Update,
+    &MeosAggregate_tAvg_0::Combine,
+    &MeosAggregate_tAvg_0::Finish,
+    MeosAggregate_tAvg_0::StateSize};
 
 struct MeosAggregate_tMinAgg_1Ops
 {
@@ -12305,9 +12367,11 @@ struct MeosAggregate_tMinAgg_1Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -12318,22 +12382,18 @@ struct MeosAggregate_tMinAgg_1Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return tbigint_tmin_transfn(static_cast<struct SkipList*>(s), static_cast<Temporal*>(row.a0));
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_tagg_finalfn(static_cast<struct SkipList*>(s));
-    }
-    static void Release(void* s)
-    {
-        skiplist_free(static_cast<struct SkipList*>(s));
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_tagg_finalfn(static_cast<struct SkipList*>(s)); }
+
+    static void Release(void* s) { skiplist_free(static_cast<struct SkipList*>(s)); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -12344,15 +12404,18 @@ struct MeosAggregate_tMinAgg_1Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_tMinAgg_1Literals{};
 using MeosAggregate_tMinAgg_1 = MeosRuntime::MeosAggregate<MeosAggregate_tMinAgg_1Ops>;
-constexpr MeosAggregateKernels MeosAggregate_tMinAgg_1Kernels{&MeosAggregate_tMinAgg_1::Initialize, &MeosAggregate_tMinAgg_1::Update, &MeosAggregate_tMinAgg_1::Combine, &MeosAggregate_tMinAgg_1::Finish, MeosAggregate_tMinAgg_1::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_tMinAgg_1Kernels{
+    &MeosAggregate_tMinAgg_1::Initialize,
+    &MeosAggregate_tMinAgg_1::Update,
+    &MeosAggregate_tMinAgg_1::Combine,
+    &MeosAggregate_tMinAgg_1::Finish,
+    MeosAggregate_tMinAgg_1::StateSize};
 
 struct MeosAggregate_tMaxAgg_1Ops
 {
@@ -12360,9 +12423,11 @@ struct MeosAggregate_tMaxAgg_1Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -12373,22 +12438,18 @@ struct MeosAggregate_tMaxAgg_1Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return tbigint_tmax_transfn(static_cast<struct SkipList*>(s), static_cast<Temporal*>(row.a0));
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_tagg_finalfn(static_cast<struct SkipList*>(s));
-    }
-    static void Release(void* s)
-    {
-        skiplist_free(static_cast<struct SkipList*>(s));
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_tagg_finalfn(static_cast<struct SkipList*>(s)); }
+
+    static void Release(void* s) { skiplist_free(static_cast<struct SkipList*>(s)); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -12399,15 +12460,18 @@ struct MeosAggregate_tMaxAgg_1Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_tMaxAgg_1Literals{};
 using MeosAggregate_tMaxAgg_1 = MeosRuntime::MeosAggregate<MeosAggregate_tMaxAgg_1Ops>;
-constexpr MeosAggregateKernels MeosAggregate_tMaxAgg_1Kernels{&MeosAggregate_tMaxAgg_1::Initialize, &MeosAggregate_tMaxAgg_1::Update, &MeosAggregate_tMaxAgg_1::Combine, &MeosAggregate_tMaxAgg_1::Finish, MeosAggregate_tMaxAgg_1::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_tMaxAgg_1Kernels{
+    &MeosAggregate_tMaxAgg_1::Initialize,
+    &MeosAggregate_tMaxAgg_1::Update,
+    &MeosAggregate_tMaxAgg_1::Combine,
+    &MeosAggregate_tMaxAgg_1::Finish,
+    MeosAggregate_tMaxAgg_1::StateSize};
 
 struct MeosAggregate_tSum_1Ops
 {
@@ -12415,9 +12479,11 @@ struct MeosAggregate_tSum_1Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -12428,22 +12494,18 @@ struct MeosAggregate_tSum_1Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return tbigint_tsum_transfn(static_cast<struct SkipList*>(s), static_cast<Temporal*>(row.a0));
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_tagg_finalfn(static_cast<struct SkipList*>(s));
-    }
-    static void Release(void* s)
-    {
-        skiplist_free(static_cast<struct SkipList*>(s));
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_tagg_finalfn(static_cast<struct SkipList*>(s)); }
+
+    static void Release(void* s) { skiplist_free(static_cast<struct SkipList*>(s)); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -12454,15 +12516,18 @@ struct MeosAggregate_tSum_1Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_tSum_1Literals{};
 using MeosAggregate_tSum_1 = MeosRuntime::MeosAggregate<MeosAggregate_tSum_1Ops>;
-constexpr MeosAggregateKernels MeosAggregate_tSum_1Kernels{&MeosAggregate_tSum_1::Initialize, &MeosAggregate_tSum_1::Update, &MeosAggregate_tSum_1::Combine, &MeosAggregate_tSum_1::Finish, MeosAggregate_tSum_1::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_tSum_1Kernels{
+    &MeosAggregate_tSum_1::Initialize,
+    &MeosAggregate_tSum_1::Update,
+    &MeosAggregate_tSum_1::Combine,
+    &MeosAggregate_tSum_1::Finish,
+    MeosAggregate_tSum_1::StateSize};
 
 struct MeosAggregate_tAvg_1Ops
 {
@@ -12470,9 +12535,11 @@ struct MeosAggregate_tAvg_1Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -12483,22 +12550,18 @@ struct MeosAggregate_tAvg_1Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return tnumber_tavg_transfn(static_cast<struct SkipList*>(s), static_cast<Temporal*>(row.a0));
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return tnumber_tavg_finalfn(static_cast<struct SkipList*>(s));
-    }
-    static void Release(void* s)
-    {
-        skiplist_free(static_cast<struct SkipList*>(s));
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return tnumber_tavg_finalfn(static_cast<struct SkipList*>(s)); }
+
+    static void Release(void* s) { skiplist_free(static_cast<struct SkipList*>(s)); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -12509,15 +12572,18 @@ struct MeosAggregate_tAvg_1Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_tAvg_1Literals{};
 using MeosAggregate_tAvg_1 = MeosRuntime::MeosAggregate<MeosAggregate_tAvg_1Ops>;
-constexpr MeosAggregateKernels MeosAggregate_tAvg_1Kernels{&MeosAggregate_tAvg_1::Initialize, &MeosAggregate_tAvg_1::Update, &MeosAggregate_tAvg_1::Combine, &MeosAggregate_tAvg_1::Finish, MeosAggregate_tAvg_1::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_tAvg_1Kernels{
+    &MeosAggregate_tAvg_1::Initialize,
+    &MeosAggregate_tAvg_1::Update,
+    &MeosAggregate_tAvg_1::Combine,
+    &MeosAggregate_tAvg_1::Finish,
+    MeosAggregate_tAvg_1::StateSize};
 
 struct MeosAggregate_tCount_22Ops
 {
@@ -12525,9 +12591,11 @@ struct MeosAggregate_tCount_22Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -12538,22 +12606,18 @@ struct MeosAggregate_tCount_22Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_tcount_transfn(static_cast<struct SkipList*>(s), static_cast<Temporal*>(row.a0));
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_tagg_finalfn(static_cast<struct SkipList*>(s));
-    }
-    static void Release(void* s)
-    {
-        skiplist_free(static_cast<struct SkipList*>(s));
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_tagg_finalfn(static_cast<struct SkipList*>(s)); }
+
+    static void Release(void* s) { skiplist_free(static_cast<struct SkipList*>(s)); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -12564,15 +12628,18 @@ struct MeosAggregate_tCount_22Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_tCount_22Literals{};
 using MeosAggregate_tCount_22 = MeosRuntime::MeosAggregate<MeosAggregate_tCount_22Ops>;
-constexpr MeosAggregateKernels MeosAggregate_tCount_22Kernels{&MeosAggregate_tCount_22::Initialize, &MeosAggregate_tCount_22::Update, &MeosAggregate_tCount_22::Combine, &MeosAggregate_tCount_22::Finish, MeosAggregate_tCount_22::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_tCount_22Kernels{
+    &MeosAggregate_tCount_22::Initialize,
+    &MeosAggregate_tCount_22::Update,
+    &MeosAggregate_tCount_22::Combine,
+    &MeosAggregate_tCount_22::Finish,
+    MeosAggregate_tCount_22::StateSize};
 
 struct MeosAggregate_tMinAgg_2Ops
 {
@@ -12580,9 +12647,11 @@ struct MeosAggregate_tMinAgg_2Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -12593,22 +12662,18 @@ struct MeosAggregate_tMinAgg_2Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return tfloat_tmin_transfn(static_cast<struct SkipList*>(s), static_cast<Temporal*>(row.a0));
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_tagg_finalfn(static_cast<struct SkipList*>(s));
-    }
-    static void Release(void* s)
-    {
-        skiplist_free(static_cast<struct SkipList*>(s));
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_tagg_finalfn(static_cast<struct SkipList*>(s)); }
+
+    static void Release(void* s) { skiplist_free(static_cast<struct SkipList*>(s)); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -12619,15 +12684,18 @@ struct MeosAggregate_tMinAgg_2Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_tMinAgg_2Literals{};
 using MeosAggregate_tMinAgg_2 = MeosRuntime::MeosAggregate<MeosAggregate_tMinAgg_2Ops>;
-constexpr MeosAggregateKernels MeosAggregate_tMinAgg_2Kernels{&MeosAggregate_tMinAgg_2::Initialize, &MeosAggregate_tMinAgg_2::Update, &MeosAggregate_tMinAgg_2::Combine, &MeosAggregate_tMinAgg_2::Finish, MeosAggregate_tMinAgg_2::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_tMinAgg_2Kernels{
+    &MeosAggregate_tMinAgg_2::Initialize,
+    &MeosAggregate_tMinAgg_2::Update,
+    &MeosAggregate_tMinAgg_2::Combine,
+    &MeosAggregate_tMinAgg_2::Finish,
+    MeosAggregate_tMinAgg_2::StateSize};
 
 struct MeosAggregate_tMaxAgg_2Ops
 {
@@ -12635,9 +12703,11 @@ struct MeosAggregate_tMaxAgg_2Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -12648,22 +12718,18 @@ struct MeosAggregate_tMaxAgg_2Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return tfloat_tmax_transfn(static_cast<struct SkipList*>(s), static_cast<Temporal*>(row.a0));
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_tagg_finalfn(static_cast<struct SkipList*>(s));
-    }
-    static void Release(void* s)
-    {
-        skiplist_free(static_cast<struct SkipList*>(s));
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_tagg_finalfn(static_cast<struct SkipList*>(s)); }
+
+    static void Release(void* s) { skiplist_free(static_cast<struct SkipList*>(s)); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -12674,15 +12740,18 @@ struct MeosAggregate_tMaxAgg_2Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_tMaxAgg_2Literals{};
 using MeosAggregate_tMaxAgg_2 = MeosRuntime::MeosAggregate<MeosAggregate_tMaxAgg_2Ops>;
-constexpr MeosAggregateKernels MeosAggregate_tMaxAgg_2Kernels{&MeosAggregate_tMaxAgg_2::Initialize, &MeosAggregate_tMaxAgg_2::Update, &MeosAggregate_tMaxAgg_2::Combine, &MeosAggregate_tMaxAgg_2::Finish, MeosAggregate_tMaxAgg_2::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_tMaxAgg_2Kernels{
+    &MeosAggregate_tMaxAgg_2::Initialize,
+    &MeosAggregate_tMaxAgg_2::Update,
+    &MeosAggregate_tMaxAgg_2::Combine,
+    &MeosAggregate_tMaxAgg_2::Finish,
+    MeosAggregate_tMaxAgg_2::StateSize};
 
 struct MeosAggregate_tSum_2Ops
 {
@@ -12690,9 +12759,11 @@ struct MeosAggregate_tSum_2Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -12703,22 +12774,18 @@ struct MeosAggregate_tSum_2Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return tfloat_tsum_transfn(static_cast<struct SkipList*>(s), static_cast<Temporal*>(row.a0));
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_tagg_finalfn(static_cast<struct SkipList*>(s));
-    }
-    static void Release(void* s)
-    {
-        skiplist_free(static_cast<struct SkipList*>(s));
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_tagg_finalfn(static_cast<struct SkipList*>(s)); }
+
+    static void Release(void* s) { skiplist_free(static_cast<struct SkipList*>(s)); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -12729,15 +12796,18 @@ struct MeosAggregate_tSum_2Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_tSum_2Literals{};
 using MeosAggregate_tSum_2 = MeosRuntime::MeosAggregate<MeosAggregate_tSum_2Ops>;
-constexpr MeosAggregateKernels MeosAggregate_tSum_2Kernels{&MeosAggregate_tSum_2::Initialize, &MeosAggregate_tSum_2::Update, &MeosAggregate_tSum_2::Combine, &MeosAggregate_tSum_2::Finish, MeosAggregate_tSum_2::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_tSum_2Kernels{
+    &MeosAggregate_tSum_2::Initialize,
+    &MeosAggregate_tSum_2::Update,
+    &MeosAggregate_tSum_2::Combine,
+    &MeosAggregate_tSum_2::Finish,
+    MeosAggregate_tSum_2::StateSize};
 
 struct MeosAggregate_tAvg_2Ops
 {
@@ -12745,9 +12815,11 @@ struct MeosAggregate_tAvg_2Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -12758,22 +12830,18 @@ struct MeosAggregate_tAvg_2Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return tnumber_tavg_transfn(static_cast<struct SkipList*>(s), static_cast<Temporal*>(row.a0));
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return tnumber_tavg_finalfn(static_cast<struct SkipList*>(s));
-    }
-    static void Release(void* s)
-    {
-        skiplist_free(static_cast<struct SkipList*>(s));
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return tnumber_tavg_finalfn(static_cast<struct SkipList*>(s)); }
+
+    static void Release(void* s) { skiplist_free(static_cast<struct SkipList*>(s)); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -12784,15 +12852,18 @@ struct MeosAggregate_tAvg_2Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_tAvg_2Literals{};
 using MeosAggregate_tAvg_2 = MeosRuntime::MeosAggregate<MeosAggregate_tAvg_2Ops>;
-constexpr MeosAggregateKernels MeosAggregate_tAvg_2Kernels{&MeosAggregate_tAvg_2::Initialize, &MeosAggregate_tAvg_2::Update, &MeosAggregate_tAvg_2::Combine, &MeosAggregate_tAvg_2::Finish, MeosAggregate_tAvg_2::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_tAvg_2Kernels{
+    &MeosAggregate_tAvg_2::Initialize,
+    &MeosAggregate_tAvg_2::Update,
+    &MeosAggregate_tAvg_2::Combine,
+    &MeosAggregate_tAvg_2::Finish,
+    MeosAggregate_tAvg_2::StateSize};
 
 struct MeosAggregate_tCount_23Ops
 {
@@ -12800,9 +12871,11 @@ struct MeosAggregate_tCount_23Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -12813,22 +12886,18 @@ struct MeosAggregate_tCount_23Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_tcount_transfn(static_cast<struct SkipList*>(s), static_cast<Temporal*>(row.a0));
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_tagg_finalfn(static_cast<struct SkipList*>(s));
-    }
-    static void Release(void* s)
-    {
-        skiplist_free(static_cast<struct SkipList*>(s));
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_tagg_finalfn(static_cast<struct SkipList*>(s)); }
+
+    static void Release(void* s) { skiplist_free(static_cast<struct SkipList*>(s)); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -12839,15 +12908,18 @@ struct MeosAggregate_tCount_23Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_tCount_23Literals{};
 using MeosAggregate_tCount_23 = MeosRuntime::MeosAggregate<MeosAggregate_tCount_23Ops>;
-constexpr MeosAggregateKernels MeosAggregate_tCount_23Kernels{&MeosAggregate_tCount_23::Initialize, &MeosAggregate_tCount_23::Update, &MeosAggregate_tCount_23::Combine, &MeosAggregate_tCount_23::Finish, MeosAggregate_tCount_23::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_tCount_23Kernels{
+    &MeosAggregate_tCount_23::Initialize,
+    &MeosAggregate_tCount_23::Update,
+    &MeosAggregate_tCount_23::Combine,
+    &MeosAggregate_tCount_23::Finish,
+    MeosAggregate_tCount_23::StateSize};
 
 struct MeosAggregate_tMinAgg_3Ops
 {
@@ -12855,9 +12927,11 @@ struct MeosAggregate_tMinAgg_3Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -12868,22 +12942,18 @@ struct MeosAggregate_tMinAgg_3Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return ttext_tmin_transfn(static_cast<struct SkipList*>(s), static_cast<Temporal*>(row.a0));
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_tagg_finalfn(static_cast<struct SkipList*>(s));
-    }
-    static void Release(void* s)
-    {
-        skiplist_free(static_cast<struct SkipList*>(s));
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_tagg_finalfn(static_cast<struct SkipList*>(s)); }
+
+    static void Release(void* s) { skiplist_free(static_cast<struct SkipList*>(s)); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -12894,15 +12964,18 @@ struct MeosAggregate_tMinAgg_3Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_tMinAgg_3Literals{};
 using MeosAggregate_tMinAgg_3 = MeosRuntime::MeosAggregate<MeosAggregate_tMinAgg_3Ops>;
-constexpr MeosAggregateKernels MeosAggregate_tMinAgg_3Kernels{&MeosAggregate_tMinAgg_3::Initialize, &MeosAggregate_tMinAgg_3::Update, &MeosAggregate_tMinAgg_3::Combine, &MeosAggregate_tMinAgg_3::Finish, MeosAggregate_tMinAgg_3::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_tMinAgg_3Kernels{
+    &MeosAggregate_tMinAgg_3::Initialize,
+    &MeosAggregate_tMinAgg_3::Update,
+    &MeosAggregate_tMinAgg_3::Combine,
+    &MeosAggregate_tMinAgg_3::Finish,
+    MeosAggregate_tMinAgg_3::StateSize};
 
 struct MeosAggregate_tMaxAgg_3Ops
 {
@@ -12910,9 +12983,11 @@ struct MeosAggregate_tMaxAgg_3Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -12923,22 +12998,18 @@ struct MeosAggregate_tMaxAgg_3Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return ttext_tmax_transfn(static_cast<struct SkipList*>(s), static_cast<Temporal*>(row.a0));
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_tagg_finalfn(static_cast<struct SkipList*>(s));
-    }
-    static void Release(void* s)
-    {
-        skiplist_free(static_cast<struct SkipList*>(s));
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_tagg_finalfn(static_cast<struct SkipList*>(s)); }
+
+    static void Release(void* s) { skiplist_free(static_cast<struct SkipList*>(s)); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -12949,15 +13020,18 @@ struct MeosAggregate_tMaxAgg_3Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_tMaxAgg_3Literals{};
 using MeosAggregate_tMaxAgg_3 = MeosRuntime::MeosAggregate<MeosAggregate_tMaxAgg_3Ops>;
-constexpr MeosAggregateKernels MeosAggregate_tMaxAgg_3Kernels{&MeosAggregate_tMaxAgg_3::Initialize, &MeosAggregate_tMaxAgg_3::Update, &MeosAggregate_tMaxAgg_3::Combine, &MeosAggregate_tMaxAgg_3::Finish, MeosAggregate_tMaxAgg_3::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_tMaxAgg_3Kernels{
+    &MeosAggregate_tMaxAgg_3::Initialize,
+    &MeosAggregate_tMaxAgg_3::Update,
+    &MeosAggregate_tMaxAgg_3::Combine,
+    &MeosAggregate_tMaxAgg_3::Finish,
+    MeosAggregate_tMaxAgg_3::StateSize};
 
 struct MeosAggregate_mergeAgg_15Ops
 {
@@ -12965,9 +13039,11 @@ struct MeosAggregate_mergeAgg_15Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -12978,22 +13054,18 @@ struct MeosAggregate_mergeAgg_15Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_merge_transfn(static_cast<struct SkipList*>(s), static_cast<Temporal*>(row.a0));
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_tagg_finalfn(static_cast<struct SkipList*>(s));
-    }
-    static void Release(void* s)
-    {
-        skiplist_free(static_cast<struct SkipList*>(s));
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_tagg_finalfn(static_cast<struct SkipList*>(s)); }
+
+    static void Release(void* s) { skiplist_free(static_cast<struct SkipList*>(s)); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -13004,15 +13076,18 @@ struct MeosAggregate_mergeAgg_15Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_mergeAgg_15Literals{};
 using MeosAggregate_mergeAgg_15 = MeosRuntime::MeosAggregate<MeosAggregate_mergeAgg_15Ops>;
-constexpr MeosAggregateKernels MeosAggregate_mergeAgg_15Kernels{&MeosAggregate_mergeAgg_15::Initialize, &MeosAggregate_mergeAgg_15::Update, &MeosAggregate_mergeAgg_15::Combine, &MeosAggregate_mergeAgg_15::Finish, MeosAggregate_mergeAgg_15::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_mergeAgg_15Kernels{
+    &MeosAggregate_mergeAgg_15::Initialize,
+    &MeosAggregate_mergeAgg_15::Update,
+    &MeosAggregate_mergeAgg_15::Combine,
+    &MeosAggregate_mergeAgg_15::Finish,
+    MeosAggregate_mergeAgg_15::StateSize};
 
 struct MeosAggregate_mergeAgg_16Ops
 {
@@ -13020,9 +13095,11 @@ struct MeosAggregate_mergeAgg_16Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -13033,22 +13110,18 @@ struct MeosAggregate_mergeAgg_16Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_merge_transfn(static_cast<struct SkipList*>(s), static_cast<Temporal*>(row.a0));
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_tagg_finalfn(static_cast<struct SkipList*>(s));
-    }
-    static void Release(void* s)
-    {
-        skiplist_free(static_cast<struct SkipList*>(s));
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_tagg_finalfn(static_cast<struct SkipList*>(s)); }
+
+    static void Release(void* s) { skiplist_free(static_cast<struct SkipList*>(s)); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -13059,15 +13132,18 @@ struct MeosAggregate_mergeAgg_16Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_mergeAgg_16Literals{};
 using MeosAggregate_mergeAgg_16 = MeosRuntime::MeosAggregate<MeosAggregate_mergeAgg_16Ops>;
-constexpr MeosAggregateKernels MeosAggregate_mergeAgg_16Kernels{&MeosAggregate_mergeAgg_16::Initialize, &MeosAggregate_mergeAgg_16::Update, &MeosAggregate_mergeAgg_16::Combine, &MeosAggregate_mergeAgg_16::Finish, MeosAggregate_mergeAgg_16::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_mergeAgg_16Kernels{
+    &MeosAggregate_mergeAgg_16::Initialize,
+    &MeosAggregate_mergeAgg_16::Update,
+    &MeosAggregate_mergeAgg_16::Combine,
+    &MeosAggregate_mergeAgg_16::Finish,
+    MeosAggregate_mergeAgg_16::StateSize};
 
 struct MeosAggregate_mergeAgg_17Ops
 {
@@ -13075,9 +13151,11 @@ struct MeosAggregate_mergeAgg_17Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -13088,22 +13166,18 @@ struct MeosAggregate_mergeAgg_17Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_merge_transfn(static_cast<struct SkipList*>(s), static_cast<Temporal*>(row.a0));
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_tagg_finalfn(static_cast<struct SkipList*>(s));
-    }
-    static void Release(void* s)
-    {
-        skiplist_free(static_cast<struct SkipList*>(s));
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_tagg_finalfn(static_cast<struct SkipList*>(s)); }
+
+    static void Release(void* s) { skiplist_free(static_cast<struct SkipList*>(s)); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -13114,15 +13188,18 @@ struct MeosAggregate_mergeAgg_17Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_mergeAgg_17Literals{};
 using MeosAggregate_mergeAgg_17 = MeosRuntime::MeosAggregate<MeosAggregate_mergeAgg_17Ops>;
-constexpr MeosAggregateKernels MeosAggregate_mergeAgg_17Kernels{&MeosAggregate_mergeAgg_17::Initialize, &MeosAggregate_mergeAgg_17::Update, &MeosAggregate_mergeAgg_17::Combine, &MeosAggregate_mergeAgg_17::Finish, MeosAggregate_mergeAgg_17::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_mergeAgg_17Kernels{
+    &MeosAggregate_mergeAgg_17::Initialize,
+    &MeosAggregate_mergeAgg_17::Update,
+    &MeosAggregate_mergeAgg_17::Combine,
+    &MeosAggregate_mergeAgg_17::Finish,
+    MeosAggregate_mergeAgg_17::StateSize};
 
 struct MeosAggregate_mergeAgg_18Ops
 {
@@ -13130,9 +13207,11 @@ struct MeosAggregate_mergeAgg_18Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -13143,22 +13222,18 @@ struct MeosAggregate_mergeAgg_18Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_merge_transfn(static_cast<struct SkipList*>(s), static_cast<Temporal*>(row.a0));
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_tagg_finalfn(static_cast<struct SkipList*>(s));
-    }
-    static void Release(void* s)
-    {
-        skiplist_free(static_cast<struct SkipList*>(s));
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_tagg_finalfn(static_cast<struct SkipList*>(s)); }
+
+    static void Release(void* s) { skiplist_free(static_cast<struct SkipList*>(s)); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -13169,15 +13244,18 @@ struct MeosAggregate_mergeAgg_18Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_mergeAgg_18Literals{};
 using MeosAggregate_mergeAgg_18 = MeosRuntime::MeosAggregate<MeosAggregate_mergeAgg_18Ops>;
-constexpr MeosAggregateKernels MeosAggregate_mergeAgg_18Kernels{&MeosAggregate_mergeAgg_18::Initialize, &MeosAggregate_mergeAgg_18::Update, &MeosAggregate_mergeAgg_18::Combine, &MeosAggregate_mergeAgg_18::Finish, MeosAggregate_mergeAgg_18::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_mergeAgg_18Kernels{
+    &MeosAggregate_mergeAgg_18::Initialize,
+    &MeosAggregate_mergeAgg_18::Update,
+    &MeosAggregate_mergeAgg_18::Combine,
+    &MeosAggregate_mergeAgg_18::Finish,
+    MeosAggregate_mergeAgg_18::StateSize};
 
 struct MeosAggregate_mergeAgg_19Ops
 {
@@ -13185,9 +13263,11 @@ struct MeosAggregate_mergeAgg_19Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -13198,22 +13278,18 @@ struct MeosAggregate_mergeAgg_19Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_merge_transfn(static_cast<struct SkipList*>(s), static_cast<Temporal*>(row.a0));
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_tagg_finalfn(static_cast<struct SkipList*>(s));
-    }
-    static void Release(void* s)
-    {
-        skiplist_free(static_cast<struct SkipList*>(s));
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_tagg_finalfn(static_cast<struct SkipList*>(s)); }
+
+    static void Release(void* s) { skiplist_free(static_cast<struct SkipList*>(s)); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -13224,15 +13300,18 @@ struct MeosAggregate_mergeAgg_19Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_mergeAgg_19Literals{};
 using MeosAggregate_mergeAgg_19 = MeosRuntime::MeosAggregate<MeosAggregate_mergeAgg_19Ops>;
-constexpr MeosAggregateKernels MeosAggregate_mergeAgg_19Kernels{&MeosAggregate_mergeAgg_19::Initialize, &MeosAggregate_mergeAgg_19::Update, &MeosAggregate_mergeAgg_19::Combine, &MeosAggregate_mergeAgg_19::Finish, MeosAggregate_mergeAgg_19::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_mergeAgg_19Kernels{
+    &MeosAggregate_mergeAgg_19::Initialize,
+    &MeosAggregate_mergeAgg_19::Update,
+    &MeosAggregate_mergeAgg_19::Combine,
+    &MeosAggregate_mergeAgg_19::Finish,
+    MeosAggregate_mergeAgg_19::StateSize};
 
 struct MeosAggregate_appendInstantAgg_46Ops
 {
@@ -13240,9 +13319,11 @@ struct MeosAggregate_appendInstantAgg_46Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = true;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = true;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -13253,22 +13334,18 @@ struct MeosAggregate_appendInstantAgg_46Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_app_tinst_transfn(static_cast<Temporal*>(s), static_cast<TInstant*>(row.a0), STEP, -1.0, nullptr);
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_append_finalfn(static_cast<const Temporal*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_append_finalfn(static_cast<const Temporal*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -13279,15 +13356,18 @@ struct MeosAggregate_appendInstantAgg_46Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row& row)
-    {
-        return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0));
-    }
+
+    static int64_t Order(const Row& row) { return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0)); }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_appendInstantAgg_46Literals{};
 using MeosAggregate_appendInstantAgg_46 = MeosRuntime::MeosAggregate<MeosAggregate_appendInstantAgg_46Ops>;
-constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_46Kernels{&MeosAggregate_appendInstantAgg_46::Initialize, &MeosAggregate_appendInstantAgg_46::Update, &MeosAggregate_appendInstantAgg_46::Combine, &MeosAggregate_appendInstantAgg_46::Finish, MeosAggregate_appendInstantAgg_46::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_46Kernels{
+    &MeosAggregate_appendInstantAgg_46::Initialize,
+    &MeosAggregate_appendInstantAgg_46::Update,
+    &MeosAggregate_appendInstantAgg_46::Combine,
+    &MeosAggregate_appendInstantAgg_46::Finish,
+    MeosAggregate_appendInstantAgg_46::StateSize};
 
 struct MeosAggregate_appendInstantAgg_47Ops
 {
@@ -13296,9 +13376,11 @@ struct MeosAggregate_appendInstantAgg_47Ops
         void* a0;
         interpType a1;
     };
+
     static constexpr bool GATHERS = true;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = true;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         row.a0 = MeosRuntime::laid(a0);
@@ -13309,22 +13391,18 @@ struct MeosAggregate_appendInstantAgg_47Ops
         row.a1 = interptype_from_string(MeosRuntime::text(MeosRuntime::literal(block, 0)).c_str());
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_app_tinst_transfn(static_cast<Temporal*>(s), static_cast<TInstant*>(row.a0), row.a1, -1.0, nullptr);
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_append_finalfn(static_cast<const Temporal*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_append_finalfn(static_cast<const Temporal*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -13335,15 +13413,18 @@ struct MeosAggregate_appendInstantAgg_47Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row& row)
-    {
-        return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0));
-    }
+
+    static int64_t Order(const Row& row) { return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0)); }
 };
 
 constexpr std::array<DataType::Type, 1> MeosAggregate_appendInstantAgg_47Literals{DataType::Type::VARSIZED};
 using MeosAggregate_appendInstantAgg_47 = MeosRuntime::MeosAggregate<MeosAggregate_appendInstantAgg_47Ops>;
-constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_47Kernels{&MeosAggregate_appendInstantAgg_47::Initialize, &MeosAggregate_appendInstantAgg_47::Update, &MeosAggregate_appendInstantAgg_47::Combine, &MeosAggregate_appendInstantAgg_47::Finish, MeosAggregate_appendInstantAgg_47::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_47Kernels{
+    &MeosAggregate_appendInstantAgg_47::Initialize,
+    &MeosAggregate_appendInstantAgg_47::Update,
+    &MeosAggregate_appendInstantAgg_47::Combine,
+    &MeosAggregate_appendInstantAgg_47::Finish,
+    MeosAggregate_appendInstantAgg_47::StateSize};
 
 struct MeosAggregate_appendInstantAgg_48Ops
 {
@@ -13353,9 +13434,11 @@ struct MeosAggregate_appendInstantAgg_48Ops
         interpType a1;
         Interval* a2;
     };
+
     static constexpr bool GATHERS = true;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = true;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         row.a0 = MeosRuntime::laid(a0);
@@ -13372,23 +13455,22 @@ struct MeosAggregate_appendInstantAgg_48Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_app_tinst_transfn(static_cast<Temporal*>(s), static_cast<TInstant*>(row.a0), row.a1, -1.0, row.a2);
     }
+
     static void Free(Row& row)
     {
         std::free(row.a0);
         std::free(row.a2);
     }
-    static void* Final(void* s)
-    {
-        return temporal_append_finalfn(static_cast<const Temporal*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void* Final(void* s) { return temporal_append_finalfn(static_cast<const Temporal*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -13399,15 +13481,18 @@ struct MeosAggregate_appendInstantAgg_48Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row& row)
-    {
-        return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0));
-    }
+
+    static int64_t Order(const Row& row) { return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0)); }
 };
 
 constexpr std::array<DataType::Type, 2> MeosAggregate_appendInstantAgg_48Literals{DataType::Type::VARSIZED, DataType::Type::VARSIZED};
 using MeosAggregate_appendInstantAgg_48 = MeosRuntime::MeosAggregate<MeosAggregate_appendInstantAgg_48Ops>;
-constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_48Kernels{&MeosAggregate_appendInstantAgg_48::Initialize, &MeosAggregate_appendInstantAgg_48::Update, &MeosAggregate_appendInstantAgg_48::Combine, &MeosAggregate_appendInstantAgg_48::Finish, MeosAggregate_appendInstantAgg_48::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_48Kernels{
+    &MeosAggregate_appendInstantAgg_48::Initialize,
+    &MeosAggregate_appendInstantAgg_48::Update,
+    &MeosAggregate_appendInstantAgg_48::Combine,
+    &MeosAggregate_appendInstantAgg_48::Finish,
+    MeosAggregate_appendInstantAgg_48::StateSize};
 
 struct MeosAggregate_appendInstantAgg_49Ops
 {
@@ -13415,9 +13500,11 @@ struct MeosAggregate_appendInstantAgg_49Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = true;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = true;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -13428,22 +13515,18 @@ struct MeosAggregate_appendInstantAgg_49Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_app_tinst_transfn(static_cast<Temporal*>(s), static_cast<TInstant*>(row.a0), STEP, -1.0, nullptr);
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_append_finalfn(static_cast<const Temporal*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_append_finalfn(static_cast<const Temporal*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -13454,15 +13537,18 @@ struct MeosAggregate_appendInstantAgg_49Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row& row)
-    {
-        return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0));
-    }
+
+    static int64_t Order(const Row& row) { return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0)); }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_appendInstantAgg_49Literals{};
 using MeosAggregate_appendInstantAgg_49 = MeosRuntime::MeosAggregate<MeosAggregate_appendInstantAgg_49Ops>;
-constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_49Kernels{&MeosAggregate_appendInstantAgg_49::Initialize, &MeosAggregate_appendInstantAgg_49::Update, &MeosAggregate_appendInstantAgg_49::Combine, &MeosAggregate_appendInstantAgg_49::Finish, MeosAggregate_appendInstantAgg_49::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_49Kernels{
+    &MeosAggregate_appendInstantAgg_49::Initialize,
+    &MeosAggregate_appendInstantAgg_49::Update,
+    &MeosAggregate_appendInstantAgg_49::Combine,
+    &MeosAggregate_appendInstantAgg_49::Finish,
+    MeosAggregate_appendInstantAgg_49::StateSize};
 
 struct MeosAggregate_appendInstantAgg_50Ops
 {
@@ -13471,9 +13557,11 @@ struct MeosAggregate_appendInstantAgg_50Ops
         void* a0;
         interpType a1;
     };
+
     static constexpr bool GATHERS = true;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = true;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         row.a0 = MeosRuntime::laid(a0);
@@ -13484,22 +13572,18 @@ struct MeosAggregate_appendInstantAgg_50Ops
         row.a1 = interptype_from_string(MeosRuntime::text(MeosRuntime::literal(block, 0)).c_str());
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_app_tinst_transfn(static_cast<Temporal*>(s), static_cast<TInstant*>(row.a0), row.a1, -1.0, nullptr);
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_append_finalfn(static_cast<const Temporal*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_append_finalfn(static_cast<const Temporal*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -13510,15 +13594,18 @@ struct MeosAggregate_appendInstantAgg_50Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row& row)
-    {
-        return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0));
-    }
+
+    static int64_t Order(const Row& row) { return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0)); }
 };
 
 constexpr std::array<DataType::Type, 1> MeosAggregate_appendInstantAgg_50Literals{DataType::Type::VARSIZED};
 using MeosAggregate_appendInstantAgg_50 = MeosRuntime::MeosAggregate<MeosAggregate_appendInstantAgg_50Ops>;
-constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_50Kernels{&MeosAggregate_appendInstantAgg_50::Initialize, &MeosAggregate_appendInstantAgg_50::Update, &MeosAggregate_appendInstantAgg_50::Combine, &MeosAggregate_appendInstantAgg_50::Finish, MeosAggregate_appendInstantAgg_50::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_50Kernels{
+    &MeosAggregate_appendInstantAgg_50::Initialize,
+    &MeosAggregate_appendInstantAgg_50::Update,
+    &MeosAggregate_appendInstantAgg_50::Combine,
+    &MeosAggregate_appendInstantAgg_50::Finish,
+    MeosAggregate_appendInstantAgg_50::StateSize};
 
 struct MeosAggregate_appendInstantAgg_51Ops
 {
@@ -13529,9 +13616,11 @@ struct MeosAggregate_appendInstantAgg_51Ops
         double a2;
         Interval* a3;
     };
+
     static constexpr bool GATHERS = true;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = true;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         row.a0 = MeosRuntime::laid(a0);
@@ -13549,23 +13638,22 @@ struct MeosAggregate_appendInstantAgg_51Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_app_tinst_transfn(static_cast<Temporal*>(s), static_cast<TInstant*>(row.a0), row.a1, row.a2, row.a3);
     }
+
     static void Free(Row& row)
     {
         std::free(row.a0);
         std::free(row.a3);
     }
-    static void* Final(void* s)
-    {
-        return temporal_append_finalfn(static_cast<const Temporal*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void* Final(void* s) { return temporal_append_finalfn(static_cast<const Temporal*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -13576,15 +13664,19 @@ struct MeosAggregate_appendInstantAgg_51Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row& row)
-    {
-        return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0));
-    }
+
+    static int64_t Order(const Row& row) { return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0)); }
 };
 
-constexpr std::array<DataType::Type, 3> MeosAggregate_appendInstantAgg_51Literals{DataType::Type::VARSIZED, DataType::Type::FLOAT64, DataType::Type::VARSIZED};
+constexpr std::array<DataType::Type, 3> MeosAggregate_appendInstantAgg_51Literals{
+    DataType::Type::VARSIZED, DataType::Type::FLOAT64, DataType::Type::VARSIZED};
 using MeosAggregate_appendInstantAgg_51 = MeosRuntime::MeosAggregate<MeosAggregate_appendInstantAgg_51Ops>;
-constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_51Kernels{&MeosAggregate_appendInstantAgg_51::Initialize, &MeosAggregate_appendInstantAgg_51::Update, &MeosAggregate_appendInstantAgg_51::Combine, &MeosAggregate_appendInstantAgg_51::Finish, MeosAggregate_appendInstantAgg_51::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_51Kernels{
+    &MeosAggregate_appendInstantAgg_51::Initialize,
+    &MeosAggregate_appendInstantAgg_51::Update,
+    &MeosAggregate_appendInstantAgg_51::Combine,
+    &MeosAggregate_appendInstantAgg_51::Finish,
+    MeosAggregate_appendInstantAgg_51::StateSize};
 
 struct MeosAggregate_appendInstantAgg_52Ops
 {
@@ -13592,9 +13684,11 @@ struct MeosAggregate_appendInstantAgg_52Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = true;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = true;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -13605,22 +13699,18 @@ struct MeosAggregate_appendInstantAgg_52Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_app_tinst_transfn(static_cast<Temporal*>(s), static_cast<TInstant*>(row.a0), STEP, -1.0, nullptr);
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_append_finalfn(static_cast<const Temporal*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_append_finalfn(static_cast<const Temporal*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -13631,15 +13721,18 @@ struct MeosAggregate_appendInstantAgg_52Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row& row)
-    {
-        return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0));
-    }
+
+    static int64_t Order(const Row& row) { return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0)); }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_appendInstantAgg_52Literals{};
 using MeosAggregate_appendInstantAgg_52 = MeosRuntime::MeosAggregate<MeosAggregate_appendInstantAgg_52Ops>;
-constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_52Kernels{&MeosAggregate_appendInstantAgg_52::Initialize, &MeosAggregate_appendInstantAgg_52::Update, &MeosAggregate_appendInstantAgg_52::Combine, &MeosAggregate_appendInstantAgg_52::Finish, MeosAggregate_appendInstantAgg_52::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_52Kernels{
+    &MeosAggregate_appendInstantAgg_52::Initialize,
+    &MeosAggregate_appendInstantAgg_52::Update,
+    &MeosAggregate_appendInstantAgg_52::Combine,
+    &MeosAggregate_appendInstantAgg_52::Finish,
+    MeosAggregate_appendInstantAgg_52::StateSize};
 
 struct MeosAggregate_appendInstantAgg_53Ops
 {
@@ -13648,9 +13741,11 @@ struct MeosAggregate_appendInstantAgg_53Ops
         void* a0;
         interpType a1;
     };
+
     static constexpr bool GATHERS = true;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = true;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         row.a0 = MeosRuntime::laid(a0);
@@ -13661,22 +13756,18 @@ struct MeosAggregate_appendInstantAgg_53Ops
         row.a1 = interptype_from_string(MeosRuntime::text(MeosRuntime::literal(block, 0)).c_str());
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_app_tinst_transfn(static_cast<Temporal*>(s), static_cast<TInstant*>(row.a0), row.a1, -1.0, nullptr);
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_append_finalfn(static_cast<const Temporal*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_append_finalfn(static_cast<const Temporal*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -13687,15 +13778,18 @@ struct MeosAggregate_appendInstantAgg_53Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row& row)
-    {
-        return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0));
-    }
+
+    static int64_t Order(const Row& row) { return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0)); }
 };
 
 constexpr std::array<DataType::Type, 1> MeosAggregate_appendInstantAgg_53Literals{DataType::Type::VARSIZED};
 using MeosAggregate_appendInstantAgg_53 = MeosRuntime::MeosAggregate<MeosAggregate_appendInstantAgg_53Ops>;
-constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_53Kernels{&MeosAggregate_appendInstantAgg_53::Initialize, &MeosAggregate_appendInstantAgg_53::Update, &MeosAggregate_appendInstantAgg_53::Combine, &MeosAggregate_appendInstantAgg_53::Finish, MeosAggregate_appendInstantAgg_53::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_53Kernels{
+    &MeosAggregate_appendInstantAgg_53::Initialize,
+    &MeosAggregate_appendInstantAgg_53::Update,
+    &MeosAggregate_appendInstantAgg_53::Combine,
+    &MeosAggregate_appendInstantAgg_53::Finish,
+    MeosAggregate_appendInstantAgg_53::StateSize};
 
 struct MeosAggregate_appendInstantAgg_54Ops
 {
@@ -13706,9 +13800,11 @@ struct MeosAggregate_appendInstantAgg_54Ops
         double a2;
         Interval* a3;
     };
+
     static constexpr bool GATHERS = true;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = true;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         row.a0 = MeosRuntime::laid(a0);
@@ -13726,23 +13822,22 @@ struct MeosAggregate_appendInstantAgg_54Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_app_tinst_transfn(static_cast<Temporal*>(s), static_cast<TInstant*>(row.a0), row.a1, row.a2, row.a3);
     }
+
     static void Free(Row& row)
     {
         std::free(row.a0);
         std::free(row.a3);
     }
-    static void* Final(void* s)
-    {
-        return temporal_append_finalfn(static_cast<const Temporal*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void* Final(void* s) { return temporal_append_finalfn(static_cast<const Temporal*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -13753,15 +13848,19 @@ struct MeosAggregate_appendInstantAgg_54Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row& row)
-    {
-        return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0));
-    }
+
+    static int64_t Order(const Row& row) { return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0)); }
 };
 
-constexpr std::array<DataType::Type, 3> MeosAggregate_appendInstantAgg_54Literals{DataType::Type::VARSIZED, DataType::Type::FLOAT64, DataType::Type::VARSIZED};
+constexpr std::array<DataType::Type, 3> MeosAggregate_appendInstantAgg_54Literals{
+    DataType::Type::VARSIZED, DataType::Type::FLOAT64, DataType::Type::VARSIZED};
 using MeosAggregate_appendInstantAgg_54 = MeosRuntime::MeosAggregate<MeosAggregate_appendInstantAgg_54Ops>;
-constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_54Kernels{&MeosAggregate_appendInstantAgg_54::Initialize, &MeosAggregate_appendInstantAgg_54::Update, &MeosAggregate_appendInstantAgg_54::Combine, &MeosAggregate_appendInstantAgg_54::Finish, MeosAggregate_appendInstantAgg_54::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_54Kernels{
+    &MeosAggregate_appendInstantAgg_54::Initialize,
+    &MeosAggregate_appendInstantAgg_54::Update,
+    &MeosAggregate_appendInstantAgg_54::Combine,
+    &MeosAggregate_appendInstantAgg_54::Finish,
+    MeosAggregate_appendInstantAgg_54::StateSize};
 
 struct MeosAggregate_appendInstantAgg_55Ops
 {
@@ -13769,9 +13868,11 @@ struct MeosAggregate_appendInstantAgg_55Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = true;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = true;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -13782,22 +13883,18 @@ struct MeosAggregate_appendInstantAgg_55Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_app_tinst_transfn(static_cast<Temporal*>(s), static_cast<TInstant*>(row.a0), LINEAR, -1.0, nullptr);
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_append_finalfn(static_cast<const Temporal*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_append_finalfn(static_cast<const Temporal*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -13808,15 +13905,18 @@ struct MeosAggregate_appendInstantAgg_55Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row& row)
-    {
-        return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0));
-    }
+
+    static int64_t Order(const Row& row) { return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0)); }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_appendInstantAgg_55Literals{};
 using MeosAggregate_appendInstantAgg_55 = MeosRuntime::MeosAggregate<MeosAggregate_appendInstantAgg_55Ops>;
-constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_55Kernels{&MeosAggregate_appendInstantAgg_55::Initialize, &MeosAggregate_appendInstantAgg_55::Update, &MeosAggregate_appendInstantAgg_55::Combine, &MeosAggregate_appendInstantAgg_55::Finish, MeosAggregate_appendInstantAgg_55::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_55Kernels{
+    &MeosAggregate_appendInstantAgg_55::Initialize,
+    &MeosAggregate_appendInstantAgg_55::Update,
+    &MeosAggregate_appendInstantAgg_55::Combine,
+    &MeosAggregate_appendInstantAgg_55::Finish,
+    MeosAggregate_appendInstantAgg_55::StateSize};
 
 struct MeosAggregate_appendInstantAgg_56Ops
 {
@@ -13825,9 +13925,11 @@ struct MeosAggregate_appendInstantAgg_56Ops
         void* a0;
         interpType a1;
     };
+
     static constexpr bool GATHERS = true;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = true;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         row.a0 = MeosRuntime::laid(a0);
@@ -13838,22 +13940,18 @@ struct MeosAggregate_appendInstantAgg_56Ops
         row.a1 = interptype_from_string(MeosRuntime::text(MeosRuntime::literal(block, 0)).c_str());
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_app_tinst_transfn(static_cast<Temporal*>(s), static_cast<TInstant*>(row.a0), row.a1, -1.0, nullptr);
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_append_finalfn(static_cast<const Temporal*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_append_finalfn(static_cast<const Temporal*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -13864,15 +13962,18 @@ struct MeosAggregate_appendInstantAgg_56Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row& row)
-    {
-        return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0));
-    }
+
+    static int64_t Order(const Row& row) { return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0)); }
 };
 
 constexpr std::array<DataType::Type, 1> MeosAggregate_appendInstantAgg_56Literals{DataType::Type::VARSIZED};
 using MeosAggregate_appendInstantAgg_56 = MeosRuntime::MeosAggregate<MeosAggregate_appendInstantAgg_56Ops>;
-constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_56Kernels{&MeosAggregate_appendInstantAgg_56::Initialize, &MeosAggregate_appendInstantAgg_56::Update, &MeosAggregate_appendInstantAgg_56::Combine, &MeosAggregate_appendInstantAgg_56::Finish, MeosAggregate_appendInstantAgg_56::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_56Kernels{
+    &MeosAggregate_appendInstantAgg_56::Initialize,
+    &MeosAggregate_appendInstantAgg_56::Update,
+    &MeosAggregate_appendInstantAgg_56::Combine,
+    &MeosAggregate_appendInstantAgg_56::Finish,
+    MeosAggregate_appendInstantAgg_56::StateSize};
 
 struct MeosAggregate_appendInstantAgg_57Ops
 {
@@ -13883,9 +13984,11 @@ struct MeosAggregate_appendInstantAgg_57Ops
         double a2;
         Interval* a3;
     };
+
     static constexpr bool GATHERS = true;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = true;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         row.a0 = MeosRuntime::laid(a0);
@@ -13903,23 +14006,22 @@ struct MeosAggregate_appendInstantAgg_57Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_app_tinst_transfn(static_cast<Temporal*>(s), static_cast<TInstant*>(row.a0), row.a1, row.a2, row.a3);
     }
+
     static void Free(Row& row)
     {
         std::free(row.a0);
         std::free(row.a3);
     }
-    static void* Final(void* s)
-    {
-        return temporal_append_finalfn(static_cast<const Temporal*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void* Final(void* s) { return temporal_append_finalfn(static_cast<const Temporal*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -13930,15 +14032,19 @@ struct MeosAggregate_appendInstantAgg_57Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row& row)
-    {
-        return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0));
-    }
+
+    static int64_t Order(const Row& row) { return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0)); }
 };
 
-constexpr std::array<DataType::Type, 3> MeosAggregate_appendInstantAgg_57Literals{DataType::Type::VARSIZED, DataType::Type::FLOAT64, DataType::Type::VARSIZED};
+constexpr std::array<DataType::Type, 3> MeosAggregate_appendInstantAgg_57Literals{
+    DataType::Type::VARSIZED, DataType::Type::FLOAT64, DataType::Type::VARSIZED};
 using MeosAggregate_appendInstantAgg_57 = MeosRuntime::MeosAggregate<MeosAggregate_appendInstantAgg_57Ops>;
-constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_57Kernels{&MeosAggregate_appendInstantAgg_57::Initialize, &MeosAggregate_appendInstantAgg_57::Update, &MeosAggregate_appendInstantAgg_57::Combine, &MeosAggregate_appendInstantAgg_57::Finish, MeosAggregate_appendInstantAgg_57::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_57Kernels{
+    &MeosAggregate_appendInstantAgg_57::Initialize,
+    &MeosAggregate_appendInstantAgg_57::Update,
+    &MeosAggregate_appendInstantAgg_57::Combine,
+    &MeosAggregate_appendInstantAgg_57::Finish,
+    MeosAggregate_appendInstantAgg_57::StateSize};
 
 struct MeosAggregate_appendInstantAgg_58Ops
 {
@@ -13946,9 +14052,11 @@ struct MeosAggregate_appendInstantAgg_58Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = true;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = true;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -13959,22 +14067,18 @@ struct MeosAggregate_appendInstantAgg_58Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_app_tinst_transfn(static_cast<Temporal*>(s), static_cast<TInstant*>(row.a0), STEP, -1.0, nullptr);
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_append_finalfn(static_cast<const Temporal*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_append_finalfn(static_cast<const Temporal*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -13985,15 +14089,18 @@ struct MeosAggregate_appendInstantAgg_58Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row& row)
-    {
-        return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0));
-    }
+
+    static int64_t Order(const Row& row) { return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0)); }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_appendInstantAgg_58Literals{};
 using MeosAggregate_appendInstantAgg_58 = MeosRuntime::MeosAggregate<MeosAggregate_appendInstantAgg_58Ops>;
-constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_58Kernels{&MeosAggregate_appendInstantAgg_58::Initialize, &MeosAggregate_appendInstantAgg_58::Update, &MeosAggregate_appendInstantAgg_58::Combine, &MeosAggregate_appendInstantAgg_58::Finish, MeosAggregate_appendInstantAgg_58::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_58Kernels{
+    &MeosAggregate_appendInstantAgg_58::Initialize,
+    &MeosAggregate_appendInstantAgg_58::Update,
+    &MeosAggregate_appendInstantAgg_58::Combine,
+    &MeosAggregate_appendInstantAgg_58::Finish,
+    MeosAggregate_appendInstantAgg_58::StateSize};
 
 struct MeosAggregate_appendInstantAgg_59Ops
 {
@@ -14002,9 +14109,11 @@ struct MeosAggregate_appendInstantAgg_59Ops
         void* a0;
         interpType a1;
     };
+
     static constexpr bool GATHERS = true;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = true;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         row.a0 = MeosRuntime::laid(a0);
@@ -14015,22 +14124,18 @@ struct MeosAggregate_appendInstantAgg_59Ops
         row.a1 = interptype_from_string(MeosRuntime::text(MeosRuntime::literal(block, 0)).c_str());
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_app_tinst_transfn(static_cast<Temporal*>(s), static_cast<TInstant*>(row.a0), row.a1, -1.0, nullptr);
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_append_finalfn(static_cast<const Temporal*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_append_finalfn(static_cast<const Temporal*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -14041,15 +14146,18 @@ struct MeosAggregate_appendInstantAgg_59Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row& row)
-    {
-        return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0));
-    }
+
+    static int64_t Order(const Row& row) { return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0)); }
 };
 
 constexpr std::array<DataType::Type, 1> MeosAggregate_appendInstantAgg_59Literals{DataType::Type::VARSIZED};
 using MeosAggregate_appendInstantAgg_59 = MeosRuntime::MeosAggregate<MeosAggregate_appendInstantAgg_59Ops>;
-constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_59Kernels{&MeosAggregate_appendInstantAgg_59::Initialize, &MeosAggregate_appendInstantAgg_59::Update, &MeosAggregate_appendInstantAgg_59::Combine, &MeosAggregate_appendInstantAgg_59::Finish, MeosAggregate_appendInstantAgg_59::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_59Kernels{
+    &MeosAggregate_appendInstantAgg_59::Initialize,
+    &MeosAggregate_appendInstantAgg_59::Update,
+    &MeosAggregate_appendInstantAgg_59::Combine,
+    &MeosAggregate_appendInstantAgg_59::Finish,
+    MeosAggregate_appendInstantAgg_59::StateSize};
 
 struct MeosAggregate_appendInstantAgg_60Ops
 {
@@ -14059,9 +14167,11 @@ struct MeosAggregate_appendInstantAgg_60Ops
         interpType a1;
         Interval* a2;
     };
+
     static constexpr bool GATHERS = true;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = true;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         row.a0 = MeosRuntime::laid(a0);
@@ -14078,23 +14188,22 @@ struct MeosAggregate_appendInstantAgg_60Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_app_tinst_transfn(static_cast<Temporal*>(s), static_cast<TInstant*>(row.a0), row.a1, -1.0, row.a2);
     }
+
     static void Free(Row& row)
     {
         std::free(row.a0);
         std::free(row.a2);
     }
-    static void* Final(void* s)
-    {
-        return temporal_append_finalfn(static_cast<const Temporal*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void* Final(void* s) { return temporal_append_finalfn(static_cast<const Temporal*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -14105,15 +14214,18 @@ struct MeosAggregate_appendInstantAgg_60Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row& row)
-    {
-        return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0));
-    }
+
+    static int64_t Order(const Row& row) { return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0)); }
 };
 
 constexpr std::array<DataType::Type, 2> MeosAggregate_appendInstantAgg_60Literals{DataType::Type::VARSIZED, DataType::Type::VARSIZED};
 using MeosAggregate_appendInstantAgg_60 = MeosRuntime::MeosAggregate<MeosAggregate_appendInstantAgg_60Ops>;
-constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_60Kernels{&MeosAggregate_appendInstantAgg_60::Initialize, &MeosAggregate_appendInstantAgg_60::Update, &MeosAggregate_appendInstantAgg_60::Combine, &MeosAggregate_appendInstantAgg_60::Finish, MeosAggregate_appendInstantAgg_60::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_appendInstantAgg_60Kernels{
+    &MeosAggregate_appendInstantAgg_60::Initialize,
+    &MeosAggregate_appendInstantAgg_60::Update,
+    &MeosAggregate_appendInstantAgg_60::Combine,
+    &MeosAggregate_appendInstantAgg_60::Finish,
+    MeosAggregate_appendInstantAgg_60::StateSize};
 
 struct MeosAggregate_appendSequenceAgg_15Ops
 {
@@ -14121,9 +14233,11 @@ struct MeosAggregate_appendSequenceAgg_15Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = true;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = true;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -14134,22 +14248,18 @@ struct MeosAggregate_appendSequenceAgg_15Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_app_tseq_transfn(static_cast<Temporal*>(s), static_cast<TSequence*>(row.a0));
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_append_finalfn(static_cast<const Temporal*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_append_finalfn(static_cast<const Temporal*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -14160,15 +14270,18 @@ struct MeosAggregate_appendSequenceAgg_15Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row& row)
-    {
-        return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0));
-    }
+
+    static int64_t Order(const Row& row) { return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0)); }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_appendSequenceAgg_15Literals{};
 using MeosAggregate_appendSequenceAgg_15 = MeosRuntime::MeosAggregate<MeosAggregate_appendSequenceAgg_15Ops>;
-constexpr MeosAggregateKernels MeosAggregate_appendSequenceAgg_15Kernels{&MeosAggregate_appendSequenceAgg_15::Initialize, &MeosAggregate_appendSequenceAgg_15::Update, &MeosAggregate_appendSequenceAgg_15::Combine, &MeosAggregate_appendSequenceAgg_15::Finish, MeosAggregate_appendSequenceAgg_15::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_appendSequenceAgg_15Kernels{
+    &MeosAggregate_appendSequenceAgg_15::Initialize,
+    &MeosAggregate_appendSequenceAgg_15::Update,
+    &MeosAggregate_appendSequenceAgg_15::Combine,
+    &MeosAggregate_appendSequenceAgg_15::Finish,
+    MeosAggregate_appendSequenceAgg_15::StateSize};
 
 struct MeosAggregate_appendSequenceAgg_16Ops
 {
@@ -14176,9 +14289,11 @@ struct MeosAggregate_appendSequenceAgg_16Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = true;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = true;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -14189,22 +14304,18 @@ struct MeosAggregate_appendSequenceAgg_16Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_app_tseq_transfn(static_cast<Temporal*>(s), static_cast<TSequence*>(row.a0));
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_append_finalfn(static_cast<const Temporal*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_append_finalfn(static_cast<const Temporal*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -14215,15 +14326,18 @@ struct MeosAggregate_appendSequenceAgg_16Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row& row)
-    {
-        return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0));
-    }
+
+    static int64_t Order(const Row& row) { return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0)); }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_appendSequenceAgg_16Literals{};
 using MeosAggregate_appendSequenceAgg_16 = MeosRuntime::MeosAggregate<MeosAggregate_appendSequenceAgg_16Ops>;
-constexpr MeosAggregateKernels MeosAggregate_appendSequenceAgg_16Kernels{&MeosAggregate_appendSequenceAgg_16::Initialize, &MeosAggregate_appendSequenceAgg_16::Update, &MeosAggregate_appendSequenceAgg_16::Combine, &MeosAggregate_appendSequenceAgg_16::Finish, MeosAggregate_appendSequenceAgg_16::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_appendSequenceAgg_16Kernels{
+    &MeosAggregate_appendSequenceAgg_16::Initialize,
+    &MeosAggregate_appendSequenceAgg_16::Update,
+    &MeosAggregate_appendSequenceAgg_16::Combine,
+    &MeosAggregate_appendSequenceAgg_16::Finish,
+    MeosAggregate_appendSequenceAgg_16::StateSize};
 
 struct MeosAggregate_appendSequenceAgg_17Ops
 {
@@ -14231,9 +14345,11 @@ struct MeosAggregate_appendSequenceAgg_17Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = true;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = true;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -14244,22 +14360,18 @@ struct MeosAggregate_appendSequenceAgg_17Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_app_tseq_transfn(static_cast<Temporal*>(s), static_cast<TSequence*>(row.a0));
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_append_finalfn(static_cast<const Temporal*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_append_finalfn(static_cast<const Temporal*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -14270,15 +14382,18 @@ struct MeosAggregate_appendSequenceAgg_17Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row& row)
-    {
-        return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0));
-    }
+
+    static int64_t Order(const Row& row) { return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0)); }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_appendSequenceAgg_17Literals{};
 using MeosAggregate_appendSequenceAgg_17 = MeosRuntime::MeosAggregate<MeosAggregate_appendSequenceAgg_17Ops>;
-constexpr MeosAggregateKernels MeosAggregate_appendSequenceAgg_17Kernels{&MeosAggregate_appendSequenceAgg_17::Initialize, &MeosAggregate_appendSequenceAgg_17::Update, &MeosAggregate_appendSequenceAgg_17::Combine, &MeosAggregate_appendSequenceAgg_17::Finish, MeosAggregate_appendSequenceAgg_17::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_appendSequenceAgg_17Kernels{
+    &MeosAggregate_appendSequenceAgg_17::Initialize,
+    &MeosAggregate_appendSequenceAgg_17::Update,
+    &MeosAggregate_appendSequenceAgg_17::Combine,
+    &MeosAggregate_appendSequenceAgg_17::Finish,
+    MeosAggregate_appendSequenceAgg_17::StateSize};
 
 struct MeosAggregate_appendSequenceAgg_18Ops
 {
@@ -14286,9 +14401,11 @@ struct MeosAggregate_appendSequenceAgg_18Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = true;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = true;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -14299,22 +14416,18 @@ struct MeosAggregate_appendSequenceAgg_18Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_app_tseq_transfn(static_cast<Temporal*>(s), static_cast<TSequence*>(row.a0));
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_append_finalfn(static_cast<const Temporal*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_append_finalfn(static_cast<const Temporal*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -14325,15 +14438,18 @@ struct MeosAggregate_appendSequenceAgg_18Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row& row)
-    {
-        return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0));
-    }
+
+    static int64_t Order(const Row& row) { return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0)); }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_appendSequenceAgg_18Literals{};
 using MeosAggregate_appendSequenceAgg_18 = MeosRuntime::MeosAggregate<MeosAggregate_appendSequenceAgg_18Ops>;
-constexpr MeosAggregateKernels MeosAggregate_appendSequenceAgg_18Kernels{&MeosAggregate_appendSequenceAgg_18::Initialize, &MeosAggregate_appendSequenceAgg_18::Update, &MeosAggregate_appendSequenceAgg_18::Combine, &MeosAggregate_appendSequenceAgg_18::Finish, MeosAggregate_appendSequenceAgg_18::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_appendSequenceAgg_18Kernels{
+    &MeosAggregate_appendSequenceAgg_18::Initialize,
+    &MeosAggregate_appendSequenceAgg_18::Update,
+    &MeosAggregate_appendSequenceAgg_18::Combine,
+    &MeosAggregate_appendSequenceAgg_18::Finish,
+    MeosAggregate_appendSequenceAgg_18::StateSize};
 
 struct MeosAggregate_appendSequenceAgg_19Ops
 {
@@ -14341,9 +14457,11 @@ struct MeosAggregate_appendSequenceAgg_19Ops
     {
         void* a0;
     };
+
     static constexpr bool GATHERS = true;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = true;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         static_cast<void>(block);
@@ -14354,22 +14472,18 @@ struct MeosAggregate_appendSequenceAgg_19Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_app_tseq_transfn(static_cast<Temporal*>(s), static_cast<TSequence*>(row.a0));
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_append_finalfn(static_cast<const Temporal*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(s);
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_append_finalfn(static_cast<const Temporal*>(s)); }
+
+    static void Release(void* s) { std::free(s); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -14380,15 +14494,18 @@ struct MeosAggregate_appendSequenceAgg_19Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row& row)
-    {
-        return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0));
-    }
+
+    static int64_t Order(const Row& row) { return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0)); }
 };
 
 constexpr std::array<DataType::Type, 0> MeosAggregate_appendSequenceAgg_19Literals{};
 using MeosAggregate_appendSequenceAgg_19 = MeosRuntime::MeosAggregate<MeosAggregate_appendSequenceAgg_19Ops>;
-constexpr MeosAggregateKernels MeosAggregate_appendSequenceAgg_19Kernels{&MeosAggregate_appendSequenceAgg_19::Initialize, &MeosAggregate_appendSequenceAgg_19::Update, &MeosAggregate_appendSequenceAgg_19::Combine, &MeosAggregate_appendSequenceAgg_19::Finish, MeosAggregate_appendSequenceAgg_19::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_appendSequenceAgg_19Kernels{
+    &MeosAggregate_appendSequenceAgg_19::Initialize,
+    &MeosAggregate_appendSequenceAgg_19::Update,
+    &MeosAggregate_appendSequenceAgg_19::Combine,
+    &MeosAggregate_appendSequenceAgg_19::Finish,
+    MeosAggregate_appendSequenceAgg_19::StateSize};
 
 struct MeosAggregate_wMin_0Ops
 {
@@ -14397,9 +14514,11 @@ struct MeosAggregate_wMin_0Ops
         void* a0;
         Interval* a1;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         row.a0 = MeosRuntime::laid(a0);
@@ -14415,23 +14534,22 @@ struct MeosAggregate_wMin_0Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return tint_wmin_transfn(static_cast<struct SkipList*>(s), static_cast<Temporal*>(row.a0), row.a1);
     }
+
     static void Free(Row& row)
     {
         std::free(row.a0);
         std::free(row.a1);
     }
-    static void* Final(void* s)
-    {
-        return temporal_tagg_finalfn(static_cast<struct SkipList*>(s));
-    }
-    static void Release(void* s)
-    {
-        skiplist_free(static_cast<struct SkipList*>(s));
-    }
+
+    static void* Final(void* s) { return temporal_tagg_finalfn(static_cast<struct SkipList*>(s)); }
+
+    static void Release(void* s) { skiplist_free(static_cast<struct SkipList*>(s)); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -14442,15 +14560,18 @@ struct MeosAggregate_wMin_0Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 1> MeosAggregate_wMin_0Literals{DataType::Type::VARSIZED};
 using MeosAggregate_wMin_0 = MeosRuntime::MeosAggregate<MeosAggregate_wMin_0Ops>;
-constexpr MeosAggregateKernels MeosAggregate_wMin_0Kernels{&MeosAggregate_wMin_0::Initialize, &MeosAggregate_wMin_0::Update, &MeosAggregate_wMin_0::Combine, &MeosAggregate_wMin_0::Finish, MeosAggregate_wMin_0::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_wMin_0Kernels{
+    &MeosAggregate_wMin_0::Initialize,
+    &MeosAggregate_wMin_0::Update,
+    &MeosAggregate_wMin_0::Combine,
+    &MeosAggregate_wMin_0::Finish,
+    MeosAggregate_wMin_0::StateSize};
 
 struct MeosAggregate_wMax_0Ops
 {
@@ -14459,9 +14580,11 @@ struct MeosAggregate_wMax_0Ops
         void* a0;
         Interval* a1;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         row.a0 = MeosRuntime::laid(a0);
@@ -14477,23 +14600,22 @@ struct MeosAggregate_wMax_0Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return tint_wmax_transfn(static_cast<struct SkipList*>(s), static_cast<Temporal*>(row.a0), row.a1);
     }
+
     static void Free(Row& row)
     {
         std::free(row.a0);
         std::free(row.a1);
     }
-    static void* Final(void* s)
-    {
-        return temporal_tagg_finalfn(static_cast<struct SkipList*>(s));
-    }
-    static void Release(void* s)
-    {
-        skiplist_free(static_cast<struct SkipList*>(s));
-    }
+
+    static void* Final(void* s) { return temporal_tagg_finalfn(static_cast<struct SkipList*>(s)); }
+
+    static void Release(void* s) { skiplist_free(static_cast<struct SkipList*>(s)); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -14504,15 +14626,18 @@ struct MeosAggregate_wMax_0Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 1> MeosAggregate_wMax_0Literals{DataType::Type::VARSIZED};
 using MeosAggregate_wMax_0 = MeosRuntime::MeosAggregate<MeosAggregate_wMax_0Ops>;
-constexpr MeosAggregateKernels MeosAggregate_wMax_0Kernels{&MeosAggregate_wMax_0::Initialize, &MeosAggregate_wMax_0::Update, &MeosAggregate_wMax_0::Combine, &MeosAggregate_wMax_0::Finish, MeosAggregate_wMax_0::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_wMax_0Kernels{
+    &MeosAggregate_wMax_0::Initialize,
+    &MeosAggregate_wMax_0::Update,
+    &MeosAggregate_wMax_0::Combine,
+    &MeosAggregate_wMax_0::Finish,
+    MeosAggregate_wMax_0::StateSize};
 
 struct MeosAggregate_wSum_0Ops
 {
@@ -14521,9 +14646,11 @@ struct MeosAggregate_wSum_0Ops
         void* a0;
         Interval* a1;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         row.a0 = MeosRuntime::laid(a0);
@@ -14539,23 +14666,22 @@ struct MeosAggregate_wSum_0Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return tint_wsum_transfn(static_cast<struct SkipList*>(s), static_cast<Temporal*>(row.a0), row.a1);
     }
+
     static void Free(Row& row)
     {
         std::free(row.a0);
         std::free(row.a1);
     }
-    static void* Final(void* s)
-    {
-        return temporal_tagg_finalfn(static_cast<struct SkipList*>(s));
-    }
-    static void Release(void* s)
-    {
-        skiplist_free(static_cast<struct SkipList*>(s));
-    }
+
+    static void* Final(void* s) { return temporal_tagg_finalfn(static_cast<struct SkipList*>(s)); }
+
+    static void Release(void* s) { skiplist_free(static_cast<struct SkipList*>(s)); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -14566,15 +14692,18 @@ struct MeosAggregate_wSum_0Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 1> MeosAggregate_wSum_0Literals{DataType::Type::VARSIZED};
 using MeosAggregate_wSum_0 = MeosRuntime::MeosAggregate<MeosAggregate_wSum_0Ops>;
-constexpr MeosAggregateKernels MeosAggregate_wSum_0Kernels{&MeosAggregate_wSum_0::Initialize, &MeosAggregate_wSum_0::Update, &MeosAggregate_wSum_0::Combine, &MeosAggregate_wSum_0::Finish, MeosAggregate_wSum_0::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_wSum_0Kernels{
+    &MeosAggregate_wSum_0::Initialize,
+    &MeosAggregate_wSum_0::Update,
+    &MeosAggregate_wSum_0::Combine,
+    &MeosAggregate_wSum_0::Finish,
+    MeosAggregate_wSum_0::StateSize};
 
 struct MeosAggregate_wCount_15Ops
 {
@@ -14583,9 +14712,11 @@ struct MeosAggregate_wCount_15Ops
         void* a0;
         Interval* a1;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         row.a0 = MeosRuntime::laid(a0);
@@ -14601,23 +14732,22 @@ struct MeosAggregate_wCount_15Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_wcount_transfn(static_cast<struct SkipList*>(s), static_cast<Temporal*>(row.a0), row.a1);
     }
+
     static void Free(Row& row)
     {
         std::free(row.a0);
         std::free(row.a1);
     }
-    static void* Final(void* s)
-    {
-        return temporal_tagg_finalfn(static_cast<struct SkipList*>(s));
-    }
-    static void Release(void* s)
-    {
-        skiplist_free(static_cast<struct SkipList*>(s));
-    }
+
+    static void* Final(void* s) { return temporal_tagg_finalfn(static_cast<struct SkipList*>(s)); }
+
+    static void Release(void* s) { skiplist_free(static_cast<struct SkipList*>(s)); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -14628,15 +14758,18 @@ struct MeosAggregate_wCount_15Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 1> MeosAggregate_wCount_15Literals{DataType::Type::VARSIZED};
 using MeosAggregate_wCount_15 = MeosRuntime::MeosAggregate<MeosAggregate_wCount_15Ops>;
-constexpr MeosAggregateKernels MeosAggregate_wCount_15Kernels{&MeosAggregate_wCount_15::Initialize, &MeosAggregate_wCount_15::Update, &MeosAggregate_wCount_15::Combine, &MeosAggregate_wCount_15::Finish, MeosAggregate_wCount_15::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_wCount_15Kernels{
+    &MeosAggregate_wCount_15::Initialize,
+    &MeosAggregate_wCount_15::Update,
+    &MeosAggregate_wCount_15::Combine,
+    &MeosAggregate_wCount_15::Finish,
+    MeosAggregate_wCount_15::StateSize};
 
 struct MeosAggregate_wAvgAgg_0Ops
 {
@@ -14645,9 +14778,11 @@ struct MeosAggregate_wAvgAgg_0Ops
         void* a0;
         Interval* a1;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         row.a0 = MeosRuntime::laid(a0);
@@ -14663,23 +14798,22 @@ struct MeosAggregate_wAvgAgg_0Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return tnumber_wavg_transfn(static_cast<struct SkipList*>(s), static_cast<Temporal*>(row.a0), row.a1);
     }
+
     static void Free(Row& row)
     {
         std::free(row.a0);
         std::free(row.a1);
     }
-    static void* Final(void* s)
-    {
-        return tnumber_tavg_finalfn(static_cast<struct SkipList*>(s));
-    }
-    static void Release(void* s)
-    {
-        skiplist_free(static_cast<struct SkipList*>(s));
-    }
+
+    static void* Final(void* s) { return tnumber_tavg_finalfn(static_cast<struct SkipList*>(s)); }
+
+    static void Release(void* s) { skiplist_free(static_cast<struct SkipList*>(s)); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -14690,15 +14824,18 @@ struct MeosAggregate_wAvgAgg_0Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 1> MeosAggregate_wAvgAgg_0Literals{DataType::Type::VARSIZED};
 using MeosAggregate_wAvgAgg_0 = MeosRuntime::MeosAggregate<MeosAggregate_wAvgAgg_0Ops>;
-constexpr MeosAggregateKernels MeosAggregate_wAvgAgg_0Kernels{&MeosAggregate_wAvgAgg_0::Initialize, &MeosAggregate_wAvgAgg_0::Update, &MeosAggregate_wAvgAgg_0::Combine, &MeosAggregate_wAvgAgg_0::Finish, MeosAggregate_wAvgAgg_0::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_wAvgAgg_0Kernels{
+    &MeosAggregate_wAvgAgg_0::Initialize,
+    &MeosAggregate_wAvgAgg_0::Update,
+    &MeosAggregate_wAvgAgg_0::Combine,
+    &MeosAggregate_wAvgAgg_0::Finish,
+    MeosAggregate_wAvgAgg_0::StateSize};
 
 struct MeosAggregate_wMin_1Ops
 {
@@ -14707,9 +14844,11 @@ struct MeosAggregate_wMin_1Ops
         void* a0;
         Interval* a1;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         row.a0 = MeosRuntime::laid(a0);
@@ -14725,23 +14864,22 @@ struct MeosAggregate_wMin_1Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return tbigint_wmin_transfn(static_cast<struct SkipList*>(s), static_cast<Temporal*>(row.a0), row.a1);
     }
+
     static void Free(Row& row)
     {
         std::free(row.a0);
         std::free(row.a1);
     }
-    static void* Final(void* s)
-    {
-        return temporal_tagg_finalfn(static_cast<struct SkipList*>(s));
-    }
-    static void Release(void* s)
-    {
-        skiplist_free(static_cast<struct SkipList*>(s));
-    }
+
+    static void* Final(void* s) { return temporal_tagg_finalfn(static_cast<struct SkipList*>(s)); }
+
+    static void Release(void* s) { skiplist_free(static_cast<struct SkipList*>(s)); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -14752,15 +14890,18 @@ struct MeosAggregate_wMin_1Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 1> MeosAggregate_wMin_1Literals{DataType::Type::VARSIZED};
 using MeosAggregate_wMin_1 = MeosRuntime::MeosAggregate<MeosAggregate_wMin_1Ops>;
-constexpr MeosAggregateKernels MeosAggregate_wMin_1Kernels{&MeosAggregate_wMin_1::Initialize, &MeosAggregate_wMin_1::Update, &MeosAggregate_wMin_1::Combine, &MeosAggregate_wMin_1::Finish, MeosAggregate_wMin_1::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_wMin_1Kernels{
+    &MeosAggregate_wMin_1::Initialize,
+    &MeosAggregate_wMin_1::Update,
+    &MeosAggregate_wMin_1::Combine,
+    &MeosAggregate_wMin_1::Finish,
+    MeosAggregate_wMin_1::StateSize};
 
 struct MeosAggregate_wMax_1Ops
 {
@@ -14769,9 +14910,11 @@ struct MeosAggregate_wMax_1Ops
         void* a0;
         Interval* a1;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         row.a0 = MeosRuntime::laid(a0);
@@ -14787,23 +14930,22 @@ struct MeosAggregate_wMax_1Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return tbigint_wmax_transfn(static_cast<struct SkipList*>(s), static_cast<Temporal*>(row.a0), row.a1);
     }
+
     static void Free(Row& row)
     {
         std::free(row.a0);
         std::free(row.a1);
     }
-    static void* Final(void* s)
-    {
-        return temporal_tagg_finalfn(static_cast<struct SkipList*>(s));
-    }
-    static void Release(void* s)
-    {
-        skiplist_free(static_cast<struct SkipList*>(s));
-    }
+
+    static void* Final(void* s) { return temporal_tagg_finalfn(static_cast<struct SkipList*>(s)); }
+
+    static void Release(void* s) { skiplist_free(static_cast<struct SkipList*>(s)); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -14814,15 +14956,18 @@ struct MeosAggregate_wMax_1Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 1> MeosAggregate_wMax_1Literals{DataType::Type::VARSIZED};
 using MeosAggregate_wMax_1 = MeosRuntime::MeosAggregate<MeosAggregate_wMax_1Ops>;
-constexpr MeosAggregateKernels MeosAggregate_wMax_1Kernels{&MeosAggregate_wMax_1::Initialize, &MeosAggregate_wMax_1::Update, &MeosAggregate_wMax_1::Combine, &MeosAggregate_wMax_1::Finish, MeosAggregate_wMax_1::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_wMax_1Kernels{
+    &MeosAggregate_wMax_1::Initialize,
+    &MeosAggregate_wMax_1::Update,
+    &MeosAggregate_wMax_1::Combine,
+    &MeosAggregate_wMax_1::Finish,
+    MeosAggregate_wMax_1::StateSize};
 
 struct MeosAggregate_wSum_1Ops
 {
@@ -14831,9 +14976,11 @@ struct MeosAggregate_wSum_1Ops
         void* a0;
         Interval* a1;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         row.a0 = MeosRuntime::laid(a0);
@@ -14849,23 +14996,22 @@ struct MeosAggregate_wSum_1Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return tbigint_wsum_transfn(static_cast<struct SkipList*>(s), static_cast<Temporal*>(row.a0), row.a1);
     }
+
     static void Free(Row& row)
     {
         std::free(row.a0);
         std::free(row.a1);
     }
-    static void* Final(void* s)
-    {
-        return temporal_tagg_finalfn(static_cast<struct SkipList*>(s));
-    }
-    static void Release(void* s)
-    {
-        skiplist_free(static_cast<struct SkipList*>(s));
-    }
+
+    static void* Final(void* s) { return temporal_tagg_finalfn(static_cast<struct SkipList*>(s)); }
+
+    static void Release(void* s) { skiplist_free(static_cast<struct SkipList*>(s)); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -14876,15 +15022,18 @@ struct MeosAggregate_wSum_1Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 1> MeosAggregate_wSum_1Literals{DataType::Type::VARSIZED};
 using MeosAggregate_wSum_1 = MeosRuntime::MeosAggregate<MeosAggregate_wSum_1Ops>;
-constexpr MeosAggregateKernels MeosAggregate_wSum_1Kernels{&MeosAggregate_wSum_1::Initialize, &MeosAggregate_wSum_1::Update, &MeosAggregate_wSum_1::Combine, &MeosAggregate_wSum_1::Finish, MeosAggregate_wSum_1::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_wSum_1Kernels{
+    &MeosAggregate_wSum_1::Initialize,
+    &MeosAggregate_wSum_1::Update,
+    &MeosAggregate_wSum_1::Combine,
+    &MeosAggregate_wSum_1::Finish,
+    MeosAggregate_wSum_1::StateSize};
 
 struct MeosAggregate_wCount_16Ops
 {
@@ -14893,9 +15042,11 @@ struct MeosAggregate_wCount_16Ops
         void* a0;
         Interval* a1;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         row.a0 = MeosRuntime::laid(a0);
@@ -14911,23 +15062,22 @@ struct MeosAggregate_wCount_16Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_wcount_transfn(static_cast<struct SkipList*>(s), static_cast<Temporal*>(row.a0), row.a1);
     }
+
     static void Free(Row& row)
     {
         std::free(row.a0);
         std::free(row.a1);
     }
-    static void* Final(void* s)
-    {
-        return temporal_tagg_finalfn(static_cast<struct SkipList*>(s));
-    }
-    static void Release(void* s)
-    {
-        skiplist_free(static_cast<struct SkipList*>(s));
-    }
+
+    static void* Final(void* s) { return temporal_tagg_finalfn(static_cast<struct SkipList*>(s)); }
+
+    static void Release(void* s) { skiplist_free(static_cast<struct SkipList*>(s)); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -14938,15 +15088,18 @@ struct MeosAggregate_wCount_16Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 1> MeosAggregate_wCount_16Literals{DataType::Type::VARSIZED};
 using MeosAggregate_wCount_16 = MeosRuntime::MeosAggregate<MeosAggregate_wCount_16Ops>;
-constexpr MeosAggregateKernels MeosAggregate_wCount_16Kernels{&MeosAggregate_wCount_16::Initialize, &MeosAggregate_wCount_16::Update, &MeosAggregate_wCount_16::Combine, &MeosAggregate_wCount_16::Finish, MeosAggregate_wCount_16::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_wCount_16Kernels{
+    &MeosAggregate_wCount_16::Initialize,
+    &MeosAggregate_wCount_16::Update,
+    &MeosAggregate_wCount_16::Combine,
+    &MeosAggregate_wCount_16::Finish,
+    MeosAggregate_wCount_16::StateSize};
 
 struct MeosAggregate_wAvgAgg_1Ops
 {
@@ -14955,9 +15108,11 @@ struct MeosAggregate_wAvgAgg_1Ops
         void* a0;
         Interval* a1;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         row.a0 = MeosRuntime::laid(a0);
@@ -14973,23 +15128,22 @@ struct MeosAggregate_wAvgAgg_1Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return tnumber_wavg_transfn(static_cast<struct SkipList*>(s), static_cast<Temporal*>(row.a0), row.a1);
     }
+
     static void Free(Row& row)
     {
         std::free(row.a0);
         std::free(row.a1);
     }
-    static void* Final(void* s)
-    {
-        return tnumber_tavg_finalfn(static_cast<struct SkipList*>(s));
-    }
-    static void Release(void* s)
-    {
-        skiplist_free(static_cast<struct SkipList*>(s));
-    }
+
+    static void* Final(void* s) { return tnumber_tavg_finalfn(static_cast<struct SkipList*>(s)); }
+
+    static void Release(void* s) { skiplist_free(static_cast<struct SkipList*>(s)); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -15000,15 +15154,18 @@ struct MeosAggregate_wAvgAgg_1Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 1> MeosAggregate_wAvgAgg_1Literals{DataType::Type::VARSIZED};
 using MeosAggregate_wAvgAgg_1 = MeosRuntime::MeosAggregate<MeosAggregate_wAvgAgg_1Ops>;
-constexpr MeosAggregateKernels MeosAggregate_wAvgAgg_1Kernels{&MeosAggregate_wAvgAgg_1::Initialize, &MeosAggregate_wAvgAgg_1::Update, &MeosAggregate_wAvgAgg_1::Combine, &MeosAggregate_wAvgAgg_1::Finish, MeosAggregate_wAvgAgg_1::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_wAvgAgg_1Kernels{
+    &MeosAggregate_wAvgAgg_1::Initialize,
+    &MeosAggregate_wAvgAgg_1::Update,
+    &MeosAggregate_wAvgAgg_1::Combine,
+    &MeosAggregate_wAvgAgg_1::Finish,
+    MeosAggregate_wAvgAgg_1::StateSize};
 
 struct MeosAggregate_wMin_2Ops
 {
@@ -15017,9 +15174,11 @@ struct MeosAggregate_wMin_2Ops
         void* a0;
         Interval* a1;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         row.a0 = MeosRuntime::laid(a0);
@@ -15035,23 +15194,22 @@ struct MeosAggregate_wMin_2Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return tfloat_wmin_transfn(static_cast<struct SkipList*>(s), static_cast<Temporal*>(row.a0), row.a1);
     }
+
     static void Free(Row& row)
     {
         std::free(row.a0);
         std::free(row.a1);
     }
-    static void* Final(void* s)
-    {
-        return temporal_tagg_finalfn(static_cast<struct SkipList*>(s));
-    }
-    static void Release(void* s)
-    {
-        skiplist_free(static_cast<struct SkipList*>(s));
-    }
+
+    static void* Final(void* s) { return temporal_tagg_finalfn(static_cast<struct SkipList*>(s)); }
+
+    static void Release(void* s) { skiplist_free(static_cast<struct SkipList*>(s)); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -15062,15 +15220,18 @@ struct MeosAggregate_wMin_2Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 1> MeosAggregate_wMin_2Literals{DataType::Type::VARSIZED};
 using MeosAggregate_wMin_2 = MeosRuntime::MeosAggregate<MeosAggregate_wMin_2Ops>;
-constexpr MeosAggregateKernels MeosAggregate_wMin_2Kernels{&MeosAggregate_wMin_2::Initialize, &MeosAggregate_wMin_2::Update, &MeosAggregate_wMin_2::Combine, &MeosAggregate_wMin_2::Finish, MeosAggregate_wMin_2::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_wMin_2Kernels{
+    &MeosAggregate_wMin_2::Initialize,
+    &MeosAggregate_wMin_2::Update,
+    &MeosAggregate_wMin_2::Combine,
+    &MeosAggregate_wMin_2::Finish,
+    MeosAggregate_wMin_2::StateSize};
 
 struct MeosAggregate_wMax_2Ops
 {
@@ -15079,9 +15240,11 @@ struct MeosAggregate_wMax_2Ops
         void* a0;
         Interval* a1;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         row.a0 = MeosRuntime::laid(a0);
@@ -15097,23 +15260,22 @@ struct MeosAggregate_wMax_2Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return tfloat_wmax_transfn(static_cast<struct SkipList*>(s), static_cast<Temporal*>(row.a0), row.a1);
     }
+
     static void Free(Row& row)
     {
         std::free(row.a0);
         std::free(row.a1);
     }
-    static void* Final(void* s)
-    {
-        return temporal_tagg_finalfn(static_cast<struct SkipList*>(s));
-    }
-    static void Release(void* s)
-    {
-        skiplist_free(static_cast<struct SkipList*>(s));
-    }
+
+    static void* Final(void* s) { return temporal_tagg_finalfn(static_cast<struct SkipList*>(s)); }
+
+    static void Release(void* s) { skiplist_free(static_cast<struct SkipList*>(s)); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -15124,15 +15286,18 @@ struct MeosAggregate_wMax_2Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 1> MeosAggregate_wMax_2Literals{DataType::Type::VARSIZED};
 using MeosAggregate_wMax_2 = MeosRuntime::MeosAggregate<MeosAggregate_wMax_2Ops>;
-constexpr MeosAggregateKernels MeosAggregate_wMax_2Kernels{&MeosAggregate_wMax_2::Initialize, &MeosAggregate_wMax_2::Update, &MeosAggregate_wMax_2::Combine, &MeosAggregate_wMax_2::Finish, MeosAggregate_wMax_2::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_wMax_2Kernels{
+    &MeosAggregate_wMax_2::Initialize,
+    &MeosAggregate_wMax_2::Update,
+    &MeosAggregate_wMax_2::Combine,
+    &MeosAggregate_wMax_2::Finish,
+    MeosAggregate_wMax_2::StateSize};
 
 struct MeosAggregate_wSum_2Ops
 {
@@ -15141,9 +15306,11 @@ struct MeosAggregate_wSum_2Ops
         void* a0;
         Interval* a1;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         row.a0 = MeosRuntime::laid(a0);
@@ -15159,23 +15326,22 @@ struct MeosAggregate_wSum_2Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return tfloat_wsum_transfn(static_cast<struct SkipList*>(s), static_cast<Temporal*>(row.a0), row.a1);
     }
+
     static void Free(Row& row)
     {
         std::free(row.a0);
         std::free(row.a1);
     }
-    static void* Final(void* s)
-    {
-        return temporal_tagg_finalfn(static_cast<struct SkipList*>(s));
-    }
-    static void Release(void* s)
-    {
-        skiplist_free(static_cast<struct SkipList*>(s));
-    }
+
+    static void* Final(void* s) { return temporal_tagg_finalfn(static_cast<struct SkipList*>(s)); }
+
+    static void Release(void* s) { skiplist_free(static_cast<struct SkipList*>(s)); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -15186,15 +15352,18 @@ struct MeosAggregate_wSum_2Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 1> MeosAggregate_wSum_2Literals{DataType::Type::VARSIZED};
 using MeosAggregate_wSum_2 = MeosRuntime::MeosAggregate<MeosAggregate_wSum_2Ops>;
-constexpr MeosAggregateKernels MeosAggregate_wSum_2Kernels{&MeosAggregate_wSum_2::Initialize, &MeosAggregate_wSum_2::Update, &MeosAggregate_wSum_2::Combine, &MeosAggregate_wSum_2::Finish, MeosAggregate_wSum_2::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_wSum_2Kernels{
+    &MeosAggregate_wSum_2::Initialize,
+    &MeosAggregate_wSum_2::Update,
+    &MeosAggregate_wSum_2::Combine,
+    &MeosAggregate_wSum_2::Finish,
+    MeosAggregate_wSum_2::StateSize};
 
 struct MeosAggregate_wCount_17Ops
 {
@@ -15203,9 +15372,11 @@ struct MeosAggregate_wCount_17Ops
         void* a0;
         Interval* a1;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         row.a0 = MeosRuntime::laid(a0);
@@ -15221,23 +15392,22 @@ struct MeosAggregate_wCount_17Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_wcount_transfn(static_cast<struct SkipList*>(s), static_cast<Temporal*>(row.a0), row.a1);
     }
+
     static void Free(Row& row)
     {
         std::free(row.a0);
         std::free(row.a1);
     }
-    static void* Final(void* s)
-    {
-        return temporal_tagg_finalfn(static_cast<struct SkipList*>(s));
-    }
-    static void Release(void* s)
-    {
-        skiplist_free(static_cast<struct SkipList*>(s));
-    }
+
+    static void* Final(void* s) { return temporal_tagg_finalfn(static_cast<struct SkipList*>(s)); }
+
+    static void Release(void* s) { skiplist_free(static_cast<struct SkipList*>(s)); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -15248,15 +15418,18 @@ struct MeosAggregate_wCount_17Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 1> MeosAggregate_wCount_17Literals{DataType::Type::VARSIZED};
 using MeosAggregate_wCount_17 = MeosRuntime::MeosAggregate<MeosAggregate_wCount_17Ops>;
-constexpr MeosAggregateKernels MeosAggregate_wCount_17Kernels{&MeosAggregate_wCount_17::Initialize, &MeosAggregate_wCount_17::Update, &MeosAggregate_wCount_17::Combine, &MeosAggregate_wCount_17::Finish, MeosAggregate_wCount_17::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_wCount_17Kernels{
+    &MeosAggregate_wCount_17::Initialize,
+    &MeosAggregate_wCount_17::Update,
+    &MeosAggregate_wCount_17::Combine,
+    &MeosAggregate_wCount_17::Finish,
+    MeosAggregate_wCount_17::StateSize};
 
 struct MeosAggregate_wAvgAgg_2Ops
 {
@@ -15265,9 +15438,11 @@ struct MeosAggregate_wAvgAgg_2Ops
         void* a0;
         Interval* a1;
     };
+
     static constexpr bool GATHERS = false;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         row.a0 = MeosRuntime::laid(a0);
@@ -15283,23 +15458,22 @@ struct MeosAggregate_wAvgAgg_2Ops
         }
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return tnumber_wavg_transfn(static_cast<struct SkipList*>(s), static_cast<Temporal*>(row.a0), row.a1);
     }
+
     static void Free(Row& row)
     {
         std::free(row.a0);
         std::free(row.a1);
     }
-    static void* Final(void* s)
-    {
-        return tnumber_tavg_finalfn(static_cast<struct SkipList*>(s));
-    }
-    static void Release(void* s)
-    {
-        skiplist_free(static_cast<struct SkipList*>(s));
-    }
+
+    static void* Final(void* s) { return tnumber_tavg_finalfn(static_cast<struct SkipList*>(s)); }
+
+    static void Release(void* s) { skiplist_free(static_cast<struct SkipList*>(s)); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -15310,15 +15484,18 @@ struct MeosAggregate_wAvgAgg_2Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row&)
-    {
-        return 0;
-    }
+
+    static int64_t Order(const Row&) { return 0; }
 };
 
 constexpr std::array<DataType::Type, 1> MeosAggregate_wAvgAgg_2Literals{DataType::Type::VARSIZED};
 using MeosAggregate_wAvgAgg_2 = MeosRuntime::MeosAggregate<MeosAggregate_wAvgAgg_2Ops>;
-constexpr MeosAggregateKernels MeosAggregate_wAvgAgg_2Kernels{&MeosAggregate_wAvgAgg_2::Initialize, &MeosAggregate_wAvgAgg_2::Update, &MeosAggregate_wAvgAgg_2::Combine, &MeosAggregate_wAvgAgg_2::Finish, MeosAggregate_wAvgAgg_2::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_wAvgAgg_2Kernels{
+    &MeosAggregate_wAvgAgg_2::Initialize,
+    &MeosAggregate_wAvgAgg_2::Update,
+    &MeosAggregate_wAvgAgg_2::Combine,
+    &MeosAggregate_wAvgAgg_2::Finish,
+    MeosAggregate_wAvgAgg_2::StateSize};
 
 struct MeosAggregate_reachabilityFilterAgg_2Ops
 {
@@ -15327,9 +15504,11 @@ struct MeosAggregate_reachabilityFilterAgg_2Ops
         void* a0;
         double a1;
     };
+
     static constexpr bool GATHERS = true;
     static constexpr bool HAS_FINAL = true;
     static constexpr bool KEEPS = false;
+
     static bool Read(Row& row, int8_t* a0, int8_t* block)
     {
         row.a0 = MeosRuntime::laid(a0);
@@ -15340,22 +15519,18 @@ struct MeosAggregate_reachabilityFilterAgg_2Ops
         row.a1 = static_cast<double>(MeosRuntime::number<double>(MeosRuntime::literal(block, 0)));
         return true;
     }
+
     static void* Transition(void* s, Row& row)
     {
         return temporal_reachability_filter_transfn(static_cast<struct ReachabilityState*>(s), static_cast<TInstant*>(row.a0), row.a1);
     }
-    static void Free(Row& row)
-    {
-        std::free(row.a0);
-    }
-    static void* Final(void* s)
-    {
-        return temporal_reachability_filter_finalfn(static_cast<struct ReachabilityState*>(s));
-    }
-    static void Release(void* s)
-    {
-        std::free(temporal_reachability_filter_finalfn(static_cast<struct ReachabilityState*>(s)));
-    }
+
+    static void Free(Row& row) { std::free(row.a0); }
+
+    static void* Final(void* s) { return temporal_reachability_filter_finalfn(static_cast<struct ReachabilityState*>(s)); }
+
+    static void Release(void* s) { std::free(temporal_reachability_filter_finalfn(static_cast<struct ReachabilityState*>(s))); }
+
     static int8_t* Write(void* v, int8_t* out)
     {
         auto* r = static_cast<Temporal*>(v);
@@ -15366,1373 +15541,3172 @@ struct MeosAggregate_reachabilityFilterAgg_2Ops
         }
         return MeosRuntime::image(r, static_cast<size_t>(temporal_mem_size(static_cast<const Temporal*>(static_cast<const void*>(r)))));
     }
-    static int64_t Order(const Row& row)
-    {
-        return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0));
-    }
+
+    static int64_t Order(const Row& row) { return temporal_start_timestamptz(static_cast<const Temporal*>(row.a0)); }
 };
 
 constexpr std::array<DataType::Type, 1> MeosAggregate_reachabilityFilterAgg_2Literals{DataType::Type::FLOAT64};
 using MeosAggregate_reachabilityFilterAgg_2 = MeosRuntime::MeosAggregate<MeosAggregate_reachabilityFilterAgg_2Ops>;
-constexpr MeosAggregateKernels MeosAggregate_reachabilityFilterAgg_2Kernels{&MeosAggregate_reachabilityFilterAgg_2::Initialize, &MeosAggregate_reachabilityFilterAgg_2::Update, &MeosAggregate_reachabilityFilterAgg_2::Combine, &MeosAggregate_reachabilityFilterAgg_2::Finish, MeosAggregate_reachabilityFilterAgg_2::StateSize};
+constexpr MeosAggregateKernels MeosAggregate_reachabilityFilterAgg_2Kernels{
+    &MeosAggregate_reachabilityFilterAgg_2::Initialize,
+    &MeosAggregate_reachabilityFilterAgg_2::Update,
+    &MeosAggregate_reachabilityFilterAgg_2::Combine,
+    &MeosAggregate_reachabilityFilterAgg_2::Finish,
+    MeosAggregate_reachabilityFilterAgg_2::StateSize};
 
 void describe(PluginDescriptor& descriptor)
 {
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_setUnionAgg_0",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_setUnionAgg_0Literals, MeosAggregate_setUnionAgg_0Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_setUnionAgg_1",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_setUnionAgg_1Literals, MeosAggregate_setUnionAgg_1Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_extent_0",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_extent_0Literals, MeosAggregate_extent_0Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_tCount_0",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_tCount_0Literals, MeosAggregate_tCount_0Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_wCount_0",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_wCount_0Literals, MeosAggregate_wCount_0Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_mergeAgg_0",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_mergeAgg_0Literals, MeosAggregate_mergeAgg_0Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_appendInstantAgg_0",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_appendInstantAgg_0Literals, MeosAggregate_appendInstantAgg_0Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_appendInstantAgg_1",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_appendInstantAgg_1Literals, MeosAggregate_appendInstantAgg_1Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_appendInstantAgg_2",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_appendInstantAgg_2Literals, MeosAggregate_appendInstantAgg_2Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_appendSequenceAgg_0",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_appendSequenceAgg_0Literals, MeosAggregate_appendSequenceAgg_0Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_setUnionAgg_2",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_setUnionAgg_2Literals, MeosAggregate_setUnionAgg_2Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_setUnionAgg_3",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_setUnionAgg_3Literals, MeosAggregate_setUnionAgg_3Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_setUnionAgg_4",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_setUnionAgg_4Literals, MeosAggregate_setUnionAgg_4Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_setUnionAgg_5",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_setUnionAgg_5Literals, MeosAggregate_setUnionAgg_5Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_extent_1",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_extent_1Literals, MeosAggregate_extent_1Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_extent_2",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_extent_2Literals, MeosAggregate_extent_2Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_extent_3",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_extent_3Literals, MeosAggregate_extent_3Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_tCount_1",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_tCount_1Literals, MeosAggregate_tCount_1Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_tCount_2",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_tCount_2Literals, MeosAggregate_tCount_2Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_wCount_1",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_wCount_1Literals, MeosAggregate_wCount_1Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_wCount_2",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_wCount_2Literals, MeosAggregate_wCount_2Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_mergeAgg_1",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_mergeAgg_1Literals, MeosAggregate_mergeAgg_1Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_mergeAgg_2",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_mergeAgg_2Literals, MeosAggregate_mergeAgg_2Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_appendInstantAgg_3",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_appendInstantAgg_3Literals, MeosAggregate_appendInstantAgg_3Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_appendInstantAgg_4",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_appendInstantAgg_4Literals, MeosAggregate_appendInstantAgg_4Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_appendInstantAgg_5",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_appendInstantAgg_5Literals, MeosAggregate_appendInstantAgg_5Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_appendInstantAgg_6",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_appendInstantAgg_6Literals, MeosAggregate_appendInstantAgg_6Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_appendInstantAgg_7",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_appendInstantAgg_7Literals, MeosAggregate_appendInstantAgg_7Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_appendInstantAgg_8",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_appendInstantAgg_8Literals, MeosAggregate_appendInstantAgg_8Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_appendSequenceAgg_1",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_appendSequenceAgg_1Literals, MeosAggregate_appendSequenceAgg_1Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_appendSequenceAgg_2",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_appendSequenceAgg_2Literals, MeosAggregate_appendSequenceAgg_2Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_extent_4",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_extent_4Literals, MeosAggregate_extent_4Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_extent_5",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_extent_5Literals, MeosAggregate_extent_5Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_tCount_3",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_tCount_3Literals, MeosAggregate_tCount_3Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_tCount_4",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_tCount_4Literals, MeosAggregate_tCount_4Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_wCount_3",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_wCount_3Literals, MeosAggregate_wCount_3Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_wCount_4",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_wCount_4Literals, MeosAggregate_wCount_4Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_tCentroid_0",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_tCentroid_0Literals, MeosAggregate_tCentroid_0Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_mergeAgg_3",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_mergeAgg_3Literals, MeosAggregate_mergeAgg_3Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_mergeAgg_4",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_mergeAgg_4Literals, MeosAggregate_mergeAgg_4Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_appendInstantAgg_9",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_appendInstantAgg_9Literals, MeosAggregate_appendInstantAgg_9Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_appendInstantAgg_10",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_appendInstantAgg_10Literals, MeosAggregate_appendInstantAgg_10Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_appendInstantAgg_11",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_appendInstantAgg_11Literals, MeosAggregate_appendInstantAgg_11Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_appendInstantAgg_12",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_appendInstantAgg_12Literals, MeosAggregate_appendInstantAgg_12Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_appendInstantAgg_13",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_appendInstantAgg_13Literals, MeosAggregate_appendInstantAgg_13Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_appendInstantAgg_14",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_appendInstantAgg_14Literals, MeosAggregate_appendInstantAgg_14Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_appendSequenceAgg_3",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_appendSequenceAgg_3Literals, MeosAggregate_appendSequenceAgg_3Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_appendSequenceAgg_4",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_appendSequenceAgg_4Literals, MeosAggregate_appendSequenceAgg_4Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_reachabilityFilterAgg_0",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_reachabilityFilterAgg_0Literals, MeosAggregate_reachabilityFilterAgg_0Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_reachabilityFilterAgg_1",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_reachabilityFilterAgg_1Literals, MeosAggregate_reachabilityFilterAgg_1Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_setUnionAgg_6",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_setUnionAgg_6Literals, MeosAggregate_setUnionAgg_6Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_setUnionAgg_7",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_setUnionAgg_7Literals, MeosAggregate_setUnionAgg_7Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_extent_6",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_extent_6Literals, MeosAggregate_extent_6Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_tCount_5",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_tCount_5Literals, MeosAggregate_tCount_5Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_wCount_5",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_wCount_5Literals, MeosAggregate_wCount_5Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_mergeAgg_5",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_mergeAgg_5Literals, MeosAggregate_mergeAgg_5Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_appendInstantAgg_15",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_appendInstantAgg_15Literals, MeosAggregate_appendInstantAgg_15Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_appendInstantAgg_16",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_appendInstantAgg_16Literals, MeosAggregate_appendInstantAgg_16Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_appendInstantAgg_17",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_appendInstantAgg_17Literals, MeosAggregate_appendInstantAgg_17Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_appendSequenceAgg_5",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_appendSequenceAgg_5Literals, MeosAggregate_appendSequenceAgg_5Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_setUnionAgg_8",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_setUnionAgg_8Literals, MeosAggregate_setUnionAgg_8Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_setUnionAgg_9",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_setUnionAgg_9Literals, MeosAggregate_setUnionAgg_9Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_extent_7",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_extent_7Literals, MeosAggregate_extent_7Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_tCount_6",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_tCount_6Literals, MeosAggregate_tCount_6Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_wCount_6",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_wCount_6Literals, MeosAggregate_wCount_6Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_mergeAgg_6",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_mergeAgg_6Literals, MeosAggregate_mergeAgg_6Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_appendInstantAgg_18",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_appendInstantAgg_18Literals, MeosAggregate_appendInstantAgg_18Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_appendInstantAgg_19",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_appendInstantAgg_19Literals, MeosAggregate_appendInstantAgg_19Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_appendInstantAgg_20",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_appendInstantAgg_20Literals, MeosAggregate_appendInstantAgg_20Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_appendSequenceAgg_6",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_appendSequenceAgg_6Literals, MeosAggregate_appendSequenceAgg_6Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_setUnionAgg_10",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_setUnionAgg_10Literals, MeosAggregate_setUnionAgg_10Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_setUnionAgg_11",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_setUnionAgg_11Literals, MeosAggregate_setUnionAgg_11Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_extent_8",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_extent_8Literals, MeosAggregate_extent_8Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_tCount_7",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_tCount_7Literals, MeosAggregate_tCount_7Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_wCount_7",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_wCount_7Literals, MeosAggregate_wCount_7Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_tCentroid_1",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_tCentroid_1Literals, MeosAggregate_tCentroid_1Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_mergeAgg_7",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_mergeAgg_7Literals, MeosAggregate_mergeAgg_7Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_appendInstantAgg_21",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_appendInstantAgg_21Literals, MeosAggregate_appendInstantAgg_21Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_appendInstantAgg_22",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_appendInstantAgg_22Literals, MeosAggregate_appendInstantAgg_22Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_appendInstantAgg_23",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_appendInstantAgg_23Literals, MeosAggregate_appendInstantAgg_23Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_appendSequenceAgg_7",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_appendSequenceAgg_7Literals, MeosAggregate_appendSequenceAgg_7Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_setUnionAgg_12",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_setUnionAgg_12Literals, MeosAggregate_setUnionAgg_12Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_setUnionAgg_13",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_setUnionAgg_13Literals, MeosAggregate_setUnionAgg_13Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_setUnionAgg_14",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_setUnionAgg_14Literals, MeosAggregate_setUnionAgg_14Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_setUnionAgg_15",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_setUnionAgg_15Literals, MeosAggregate_setUnionAgg_15Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_extent_9",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_extent_9Literals, MeosAggregate_extent_9Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_extent_10",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_extent_10Literals, MeosAggregate_extent_10Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_extent_11",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_extent_11Literals, MeosAggregate_extent_11Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_tCount_8",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_tCount_8Literals, MeosAggregate_tCount_8Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_tCount_9",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_tCount_9Literals, MeosAggregate_tCount_9Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_tnpoints_0",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_tnpoints_0Literals, MeosAggregate_tnpoints_0Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_tdensity_0",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_tdensity_0Literals, MeosAggregate_tdensity_0Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_wCount_8",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_wCount_8Literals, MeosAggregate_wCount_8Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_wCount_9",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_wCount_9Literals, MeosAggregate_wCount_9Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_mergeAgg_8",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_mergeAgg_8Literals, MeosAggregate_mergeAgg_8Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_mergeAgg_9",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_mergeAgg_9Literals, MeosAggregate_mergeAgg_9Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_appendInstantAgg_24",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_appendInstantAgg_24Literals, MeosAggregate_appendInstantAgg_24Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_appendInstantAgg_25",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_appendInstantAgg_25Literals, MeosAggregate_appendInstantAgg_25Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_appendInstantAgg_26",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_appendInstantAgg_26Literals, MeosAggregate_appendInstantAgg_26Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_appendInstantAgg_27",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_appendInstantAgg_27Literals, MeosAggregate_appendInstantAgg_27Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_appendInstantAgg_28",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_appendInstantAgg_28Literals, MeosAggregate_appendInstantAgg_28Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_appendInstantAgg_29",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_appendInstantAgg_29Literals, MeosAggregate_appendInstantAgg_29Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_appendSequenceAgg_8",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_appendSequenceAgg_8Literals, MeosAggregate_appendSequenceAgg_8Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_appendSequenceAgg_9",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_appendSequenceAgg_9Literals, MeosAggregate_appendSequenceAgg_9Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_setUnionAgg_16",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_setUnionAgg_16Literals, MeosAggregate_setUnionAgg_16Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_setUnionAgg_17",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_setUnionAgg_17Literals, MeosAggregate_setUnionAgg_17Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_tCount_10",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_tCount_10Literals, MeosAggregate_tCount_10Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_extent_12",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_extent_12Literals, MeosAggregate_extent_12Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_wCount_10",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_wCount_10Literals, MeosAggregate_wCount_10Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_mergeAgg_10",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_mergeAgg_10Literals, MeosAggregate_mergeAgg_10Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_appendInstantAgg_30",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_appendInstantAgg_30Literals, MeosAggregate_appendInstantAgg_30Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_appendInstantAgg_31",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_appendInstantAgg_31Literals, MeosAggregate_appendInstantAgg_31Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_appendInstantAgg_32",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_appendInstantAgg_32Literals, MeosAggregate_appendInstantAgg_32Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_appendSequenceAgg_10",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_appendSequenceAgg_10Literals, MeosAggregate_appendSequenceAgg_10Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_setUnionAgg_18",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_setUnionAgg_18Literals, MeosAggregate_setUnionAgg_18Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_setUnionAgg_19",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_setUnionAgg_19Literals, MeosAggregate_setUnionAgg_19Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_tCount_11",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_tCount_11Literals, MeosAggregate_tCount_11Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_extent_13",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_extent_13Literals, MeosAggregate_extent_13Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_wCount_11",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_wCount_11Literals, MeosAggregate_wCount_11Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_mergeAgg_11",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_mergeAgg_11Literals, MeosAggregate_mergeAgg_11Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_appendInstantAgg_33",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_appendInstantAgg_33Literals, MeosAggregate_appendInstantAgg_33Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_appendInstantAgg_34",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_appendInstantAgg_34Literals, MeosAggregate_appendInstantAgg_34Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_appendInstantAgg_35",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_appendInstantAgg_35Literals, MeosAggregate_appendInstantAgg_35Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_appendInstantAgg_36",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_appendInstantAgg_36Literals, MeosAggregate_appendInstantAgg_36Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_appendSequenceAgg_11",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_appendSequenceAgg_11Literals, MeosAggregate_appendSequenceAgg_11Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_setUnionAgg_20",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_setUnionAgg_20Literals, MeosAggregate_setUnionAgg_20Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_setUnionAgg_21",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_setUnionAgg_21Literals, MeosAggregate_setUnionAgg_21Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_extent_14",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_extent_14Literals, MeosAggregate_extent_14Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_tCount_12",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_tCount_12Literals, MeosAggregate_tCount_12Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_wCount_12",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_wCount_12Literals, MeosAggregate_wCount_12Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_mergeAgg_12",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_mergeAgg_12Literals, MeosAggregate_mergeAgg_12Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_appendInstantAgg_37",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_appendInstantAgg_37Literals, MeosAggregate_appendInstantAgg_37Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_appendInstantAgg_38",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_appendInstantAgg_38Literals, MeosAggregate_appendInstantAgg_38Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_appendInstantAgg_39",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_appendInstantAgg_39Literals, MeosAggregate_appendInstantAgg_39Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_appendSequenceAgg_12",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_appendSequenceAgg_12Literals, MeosAggregate_appendSequenceAgg_12Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_rasterUnion_0",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_rasterUnion_0Literals, MeosAggregate_rasterUnion_0Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_rasterUnion_1",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_rasterUnion_1Literals, MeosAggregate_rasterUnion_1Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_rasterUnion_2",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_rasterUnion_2Literals, MeosAggregate_rasterUnion_2Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_rasterUnion_3",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_rasterUnion_3Literals, MeosAggregate_rasterUnion_3Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_summaryStatsAgg_0",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_summaryStatsAgg_0Literals, MeosAggregate_summaryStatsAgg_0Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_summaryStatsAgg_1",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_summaryStatsAgg_1Literals, MeosAggregate_summaryStatsAgg_1Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_tCount_13",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_tCount_13Literals, MeosAggregate_tCount_13Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_wCount_13",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_wCount_13Literals, MeosAggregate_wCount_13Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_mergeAgg_13",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_mergeAgg_13Literals, MeosAggregate_mergeAgg_13Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_appendInstantAgg_40",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_appendInstantAgg_40Literals, MeosAggregate_appendInstantAgg_40Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_appendInstantAgg_41",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_appendInstantAgg_41Literals, MeosAggregate_appendInstantAgg_41Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_appendInstantAgg_42",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_appendInstantAgg_42Literals, MeosAggregate_appendInstantAgg_42Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_appendSequenceAgg_13",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_appendSequenceAgg_13Literals, MeosAggregate_appendSequenceAgg_13Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_extent_15",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_extent_15Literals, MeosAggregate_extent_15Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_setUnionAgg_22",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_setUnionAgg_22Literals, MeosAggregate_setUnionAgg_22Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_setUnionAgg_23",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_setUnionAgg_23Literals, MeosAggregate_setUnionAgg_23Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_extent_16",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_extent_16Literals, MeosAggregate_extent_16Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_tCount_14",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_tCount_14Literals, MeosAggregate_tCount_14Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_wCount_14",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_wCount_14Literals, MeosAggregate_wCount_14Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_mergeAgg_14",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_mergeAgg_14Literals, MeosAggregate_mergeAgg_14Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_appendInstantAgg_43",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_appendInstantAgg_43Literals, MeosAggregate_appendInstantAgg_43Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_appendInstantAgg_44",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_appendInstantAgg_44Literals, MeosAggregate_appendInstantAgg_44Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_appendInstantAgg_45",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_appendInstantAgg_45Literals, MeosAggregate_appendInstantAgg_45Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_appendSequenceAgg_14",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_appendSequenceAgg_14Literals, MeosAggregate_appendSequenceAgg_14Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_setUnionAgg_24",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::INT32, MeosAggregate_setUnionAgg_24Literals, MeosAggregate_setUnionAgg_24Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_setUnionAgg_25",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::INT64, MeosAggregate_setUnionAgg_25Literals, MeosAggregate_setUnionAgg_25Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_setUnionAgg_26",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::FLOAT64, MeosAggregate_setUnionAgg_26Literals, MeosAggregate_setUnionAgg_26Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_setUnionAgg_27",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_setUnionAgg_27Literals, MeosAggregate_setUnionAgg_27Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_setUnionAgg_28",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::UINT64, MeosAggregate_setUnionAgg_28Literals, MeosAggregate_setUnionAgg_28Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_setUnionAgg_29",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_setUnionAgg_29Literals, MeosAggregate_setUnionAgg_29Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_setUnionAgg_30",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_setUnionAgg_30Literals, MeosAggregate_setUnionAgg_30Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_setUnionAgg_31",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_setUnionAgg_31Literals, MeosAggregate_setUnionAgg_31Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_setUnionAgg_32",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_setUnionAgg_32Literals, MeosAggregate_setUnionAgg_32Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_setUnionAgg_33",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_setUnionAgg_33Literals, MeosAggregate_setUnionAgg_33Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_setUnionAgg_34",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_setUnionAgg_34Literals, MeosAggregate_setUnionAgg_34Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_extent_17",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_extent_17Literals, MeosAggregate_extent_17Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_extent_18",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_extent_18Literals, MeosAggregate_extent_18Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_extent_19",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_extent_19Literals, MeosAggregate_extent_19Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_extent_20",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_extent_20Literals, MeosAggregate_extent_20Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_extent_21",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_extent_21Literals, MeosAggregate_extent_21Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_extent_22",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::INT32, MeosAggregate_extent_22Literals, MeosAggregate_extent_22Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_extent_23",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::INT64, MeosAggregate_extent_23Literals, MeosAggregate_extent_23Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_extent_24",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::FLOAT64, MeosAggregate_extent_24Literals, MeosAggregate_extent_24Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_extent_25",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::UINT64, MeosAggregate_extent_25Literals, MeosAggregate_extent_25Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_extent_26",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_extent_26Literals, MeosAggregate_extent_26Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_extent_27",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_extent_27Literals, MeosAggregate_extent_27Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_extent_28",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_extent_28Literals, MeosAggregate_extent_28Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_extent_29",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_extent_29Literals, MeosAggregate_extent_29Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_extent_30",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_extent_30Literals, MeosAggregate_extent_30Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_extent_31",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_extent_31Literals, MeosAggregate_extent_31Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_extent_32",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_extent_32Literals, MeosAggregate_extent_32Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_extent_33",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_extent_33Literals, MeosAggregate_extent_33Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_extent_34",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_extent_34Literals, MeosAggregate_extent_34Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_extent_35",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_extent_35Literals, MeosAggregate_extent_35Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_spanUnionAgg_0",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_spanUnionAgg_0Literals, MeosAggregate_spanUnionAgg_0Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_spanUnionAgg_1",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_spanUnionAgg_1Literals, MeosAggregate_spanUnionAgg_1Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_spanUnionAgg_2",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_spanUnionAgg_2Literals, MeosAggregate_spanUnionAgg_2Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_spanUnionAgg_3",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_spanUnionAgg_3Literals, MeosAggregate_spanUnionAgg_3Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_spanUnionAgg_4",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_spanUnionAgg_4Literals, MeosAggregate_spanUnionAgg_4Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_spansetUnionAgg_0",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_spansetUnionAgg_0Literals, MeosAggregate_spansetUnionAgg_0Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_spansetUnionAgg_1",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_spansetUnionAgg_1Literals, MeosAggregate_spansetUnionAgg_1Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_spansetUnionAgg_2",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_spansetUnionAgg_2Literals, MeosAggregate_spansetUnionAgg_2Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_spansetUnionAgg_3",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_spansetUnionAgg_3Literals, MeosAggregate_spansetUnionAgg_3Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_spansetUnionAgg_4",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_spansetUnionAgg_4Literals, MeosAggregate_spansetUnionAgg_4Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_extent_36",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_extent_36Literals, MeosAggregate_extent_36Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_extent_37",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_extent_37Literals, MeosAggregate_extent_37Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_extent_38",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_extent_38Literals, MeosAggregate_extent_38Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_extent_39",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_extent_39Literals, MeosAggregate_extent_39Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_extent_40",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_extent_40Literals, MeosAggregate_extent_40Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_extent_41",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_extent_41Literals, MeosAggregate_extent_41Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_tCount_15",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::UINT64, MeosAggregate_tCount_15Literals, MeosAggregate_tCount_15Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_tCount_16",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_tCount_16Literals, MeosAggregate_tCount_16Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_tCount_17",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_tCount_17Literals, MeosAggregate_tCount_17Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_tCount_18",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_tCount_18Literals, MeosAggregate_tCount_18Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_tCount_19",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_tCount_19Literals, MeosAggregate_tCount_19Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_tAndAgg_0",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_tAndAgg_0Literals, MeosAggregate_tAndAgg_0Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_tOrAgg_0",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_tOrAgg_0Literals, MeosAggregate_tOrAgg_0Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_tCount_20",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_tCount_20Literals, MeosAggregate_tCount_20Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_tCount_21",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_tCount_21Literals, MeosAggregate_tCount_21Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_tMinAgg_0",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_tMinAgg_0Literals, MeosAggregate_tMinAgg_0Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_tMaxAgg_0",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_tMaxAgg_0Literals, MeosAggregate_tMaxAgg_0Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_tSum_0",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_tSum_0Literals, MeosAggregate_tSum_0Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_tAvg_0",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_tAvg_0Literals, MeosAggregate_tAvg_0Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_tMinAgg_1",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_tMinAgg_1Literals, MeosAggregate_tMinAgg_1Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_tMaxAgg_1",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_tMaxAgg_1Literals, MeosAggregate_tMaxAgg_1Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_tSum_1",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_tSum_1Literals, MeosAggregate_tSum_1Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_tAvg_1",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_tAvg_1Literals, MeosAggregate_tAvg_1Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_tCount_22",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_tCount_22Literals, MeosAggregate_tCount_22Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_tMinAgg_2",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_tMinAgg_2Literals, MeosAggregate_tMinAgg_2Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_tMaxAgg_2",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_tMaxAgg_2Literals, MeosAggregate_tMaxAgg_2Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_tSum_2",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_tSum_2Literals, MeosAggregate_tSum_2Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_tAvg_2",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_tAvg_2Literals, MeosAggregate_tAvg_2Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_tCount_23",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_tCount_23Literals, MeosAggregate_tCount_23Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_tMinAgg_3",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_tMinAgg_3Literals, MeosAggregate_tMinAgg_3Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_tMaxAgg_3",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_tMaxAgg_3Literals, MeosAggregate_tMaxAgg_3Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_mergeAgg_15",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_mergeAgg_15Literals, MeosAggregate_mergeAgg_15Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_mergeAgg_16",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_mergeAgg_16Literals, MeosAggregate_mergeAgg_16Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_mergeAgg_17",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_mergeAgg_17Literals, MeosAggregate_mergeAgg_17Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_mergeAgg_18",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_mergeAgg_18Literals, MeosAggregate_mergeAgg_18Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_mergeAgg_19",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_mergeAgg_19Literals, MeosAggregate_mergeAgg_19Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_appendInstantAgg_46",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_appendInstantAgg_46Literals, MeosAggregate_appendInstantAgg_46Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_appendInstantAgg_47",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_appendInstantAgg_47Literals, MeosAggregate_appendInstantAgg_47Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_appendInstantAgg_48",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_appendInstantAgg_48Literals, MeosAggregate_appendInstantAgg_48Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_appendInstantAgg_49",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_appendInstantAgg_49Literals, MeosAggregate_appendInstantAgg_49Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_appendInstantAgg_50",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_appendInstantAgg_50Literals, MeosAggregate_appendInstantAgg_50Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_appendInstantAgg_51",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_appendInstantAgg_51Literals, MeosAggregate_appendInstantAgg_51Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_appendInstantAgg_52",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_appendInstantAgg_52Literals, MeosAggregate_appendInstantAgg_52Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_appendInstantAgg_53",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_appendInstantAgg_53Literals, MeosAggregate_appendInstantAgg_53Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_appendInstantAgg_54",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_appendInstantAgg_54Literals, MeosAggregate_appendInstantAgg_54Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_appendInstantAgg_55",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_appendInstantAgg_55Literals, MeosAggregate_appendInstantAgg_55Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_appendInstantAgg_56",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_appendInstantAgg_56Literals, MeosAggregate_appendInstantAgg_56Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_appendInstantAgg_57",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_appendInstantAgg_57Literals, MeosAggregate_appendInstantAgg_57Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_appendInstantAgg_58",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_appendInstantAgg_58Literals, MeosAggregate_appendInstantAgg_58Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_appendInstantAgg_59",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_appendInstantAgg_59Literals, MeosAggregate_appendInstantAgg_59Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_appendInstantAgg_60",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_appendInstantAgg_60Literals, MeosAggregate_appendInstantAgg_60Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_appendSequenceAgg_15",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_appendSequenceAgg_15Literals, MeosAggregate_appendSequenceAgg_15Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_appendSequenceAgg_16",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_appendSequenceAgg_16Literals, MeosAggregate_appendSequenceAgg_16Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_appendSequenceAgg_17",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_appendSequenceAgg_17Literals, MeosAggregate_appendSequenceAgg_17Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_appendSequenceAgg_18",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_appendSequenceAgg_18Literals, MeosAggregate_appendSequenceAgg_18Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_appendSequenceAgg_19",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_appendSequenceAgg_19Literals, MeosAggregate_appendSequenceAgg_19Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_wMin_0",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_wMin_0Literals, MeosAggregate_wMin_0Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_wMax_0",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_wMax_0Literals, MeosAggregate_wMax_0Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_wSum_0",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_wSum_0Literals, MeosAggregate_wSum_0Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_wCount_15",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_wCount_15Literals, MeosAggregate_wCount_15Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_wAvgAgg_0",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_wAvgAgg_0Literals, MeosAggregate_wAvgAgg_0Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_wMin_1",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_wMin_1Literals, MeosAggregate_wMin_1Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_wMax_1",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_wMax_1Literals, MeosAggregate_wMax_1Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_wSum_1",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_wSum_1Literals, MeosAggregate_wSum_1Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_wCount_16",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_wCount_16Literals, MeosAggregate_wCount_16Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_wAvgAgg_1",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_wAvgAgg_1Literals, MeosAggregate_wAvgAgg_1Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_wMin_2",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_wMin_2Literals, MeosAggregate_wMin_2Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_wMax_2",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_wMax_2Literals, MeosAggregate_wMax_2Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_wSum_2",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_wSum_2Literals, MeosAggregate_wSum_2Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_wCount_17",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_wCount_17Literals, MeosAggregate_wCount_17Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_wAvgAgg_2",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_wAvgAgg_2Literals, MeosAggregate_wAvgAgg_2Kernels); }}}});
-    descriptor.entries.push_back(EntryProvision{
-        .registryClassName = "AggregationPhysicalFunctionRegistry",
-        .key = "MeosAggregate_reachabilityFilterAgg_2",
-        .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{[](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
-            { return meosAggregation(std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_reachabilityFilterAgg_2Literals, MeosAggregate_reachabilityFilterAgg_2Kernels); }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_setUnionAgg_0",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_setUnionAgg_0Literals,
+                        MeosAggregate_setUnionAgg_0Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_setUnionAgg_1",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_setUnionAgg_1Literals,
+                        MeosAggregate_setUnionAgg_1Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_extent_0",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_extent_0Literals, MeosAggregate_extent_0Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_tCount_0",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_tCount_0Literals, MeosAggregate_tCount_0Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_wCount_0",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_wCount_0Literals, MeosAggregate_wCount_0Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_mergeAgg_0",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_mergeAgg_0Literals, MeosAggregate_mergeAgg_0Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_appendInstantAgg_0",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_appendInstantAgg_0Literals,
+                        MeosAggregate_appendInstantAgg_0Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_appendInstantAgg_1",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_appendInstantAgg_1Literals,
+                        MeosAggregate_appendInstantAgg_1Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_appendInstantAgg_2",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_appendInstantAgg_2Literals,
+                        MeosAggregate_appendInstantAgg_2Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_appendSequenceAgg_0",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_appendSequenceAgg_0Literals,
+                        MeosAggregate_appendSequenceAgg_0Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_setUnionAgg_2",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_setUnionAgg_2Literals,
+                        MeosAggregate_setUnionAgg_2Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_setUnionAgg_3",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_setUnionAgg_3Literals,
+                        MeosAggregate_setUnionAgg_3Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_setUnionAgg_4",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_setUnionAgg_4Literals,
+                        MeosAggregate_setUnionAgg_4Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_setUnionAgg_5",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_setUnionAgg_5Literals,
+                        MeosAggregate_setUnionAgg_5Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_extent_1",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_extent_1Literals, MeosAggregate_extent_1Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_extent_2",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_extent_2Literals, MeosAggregate_extent_2Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_extent_3",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_extent_3Literals, MeosAggregate_extent_3Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_tCount_1",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_tCount_1Literals, MeosAggregate_tCount_1Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_tCount_2",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_tCount_2Literals, MeosAggregate_tCount_2Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_wCount_1",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_wCount_1Literals, MeosAggregate_wCount_1Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_wCount_2",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_wCount_2Literals, MeosAggregate_wCount_2Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_mergeAgg_1",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_mergeAgg_1Literals, MeosAggregate_mergeAgg_1Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_mergeAgg_2",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_mergeAgg_2Literals, MeosAggregate_mergeAgg_2Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_appendInstantAgg_3",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_appendInstantAgg_3Literals,
+                        MeosAggregate_appendInstantAgg_3Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_appendInstantAgg_4",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_appendInstantAgg_4Literals,
+                        MeosAggregate_appendInstantAgg_4Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_appendInstantAgg_5",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_appendInstantAgg_5Literals,
+                        MeosAggregate_appendInstantAgg_5Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_appendInstantAgg_6",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_appendInstantAgg_6Literals,
+                        MeosAggregate_appendInstantAgg_6Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_appendInstantAgg_7",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_appendInstantAgg_7Literals,
+                        MeosAggregate_appendInstantAgg_7Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_appendInstantAgg_8",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_appendInstantAgg_8Literals,
+                        MeosAggregate_appendInstantAgg_8Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_appendSequenceAgg_1",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_appendSequenceAgg_1Literals,
+                        MeosAggregate_appendSequenceAgg_1Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_appendSequenceAgg_2",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_appendSequenceAgg_2Literals,
+                        MeosAggregate_appendSequenceAgg_2Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_extent_4",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_extent_4Literals, MeosAggregate_extent_4Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_extent_5",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_extent_5Literals, MeosAggregate_extent_5Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_tCount_3",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_tCount_3Literals, MeosAggregate_tCount_3Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_tCount_4",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_tCount_4Literals, MeosAggregate_tCount_4Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_wCount_3",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_wCount_3Literals, MeosAggregate_wCount_3Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_wCount_4",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_wCount_4Literals, MeosAggregate_wCount_4Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_tCentroid_0",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_tCentroid_0Literals,
+                        MeosAggregate_tCentroid_0Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_mergeAgg_3",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_mergeAgg_3Literals, MeosAggregate_mergeAgg_3Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_mergeAgg_4",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_mergeAgg_4Literals, MeosAggregate_mergeAgg_4Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_appendInstantAgg_9",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_appendInstantAgg_9Literals,
+                        MeosAggregate_appendInstantAgg_9Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_appendInstantAgg_10",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_appendInstantAgg_10Literals,
+                        MeosAggregate_appendInstantAgg_10Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_appendInstantAgg_11",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_appendInstantAgg_11Literals,
+                        MeosAggregate_appendInstantAgg_11Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_appendInstantAgg_12",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_appendInstantAgg_12Literals,
+                        MeosAggregate_appendInstantAgg_12Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_appendInstantAgg_13",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_appendInstantAgg_13Literals,
+                        MeosAggregate_appendInstantAgg_13Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_appendInstantAgg_14",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_appendInstantAgg_14Literals,
+                        MeosAggregate_appendInstantAgg_14Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_appendSequenceAgg_3",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_appendSequenceAgg_3Literals,
+                        MeosAggregate_appendSequenceAgg_3Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_appendSequenceAgg_4",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_appendSequenceAgg_4Literals,
+                        MeosAggregate_appendSequenceAgg_4Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_reachabilityFilterAgg_0",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_reachabilityFilterAgg_0Literals,
+                        MeosAggregate_reachabilityFilterAgg_0Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_reachabilityFilterAgg_1",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_reachabilityFilterAgg_1Literals,
+                        MeosAggregate_reachabilityFilterAgg_1Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_setUnionAgg_6",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_setUnionAgg_6Literals,
+                        MeosAggregate_setUnionAgg_6Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_setUnionAgg_7",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_setUnionAgg_7Literals,
+                        MeosAggregate_setUnionAgg_7Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_extent_6",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_extent_6Literals, MeosAggregate_extent_6Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_tCount_5",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_tCount_5Literals, MeosAggregate_tCount_5Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_wCount_5",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_wCount_5Literals, MeosAggregate_wCount_5Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_mergeAgg_5",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_mergeAgg_5Literals, MeosAggregate_mergeAgg_5Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_appendInstantAgg_15",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_appendInstantAgg_15Literals,
+                        MeosAggregate_appendInstantAgg_15Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_appendInstantAgg_16",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_appendInstantAgg_16Literals,
+                        MeosAggregate_appendInstantAgg_16Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_appendInstantAgg_17",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_appendInstantAgg_17Literals,
+                        MeosAggregate_appendInstantAgg_17Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_appendSequenceAgg_5",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_appendSequenceAgg_5Literals,
+                        MeosAggregate_appendSequenceAgg_5Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_setUnionAgg_8",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_setUnionAgg_8Literals,
+                        MeosAggregate_setUnionAgg_8Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_setUnionAgg_9",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_setUnionAgg_9Literals,
+                        MeosAggregate_setUnionAgg_9Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_extent_7",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_extent_7Literals, MeosAggregate_extent_7Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_tCount_6",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_tCount_6Literals, MeosAggregate_tCount_6Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_wCount_6",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_wCount_6Literals, MeosAggregate_wCount_6Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_mergeAgg_6",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_mergeAgg_6Literals, MeosAggregate_mergeAgg_6Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_appendInstantAgg_18",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_appendInstantAgg_18Literals,
+                        MeosAggregate_appendInstantAgg_18Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_appendInstantAgg_19",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_appendInstantAgg_19Literals,
+                        MeosAggregate_appendInstantAgg_19Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_appendInstantAgg_20",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_appendInstantAgg_20Literals,
+                        MeosAggregate_appendInstantAgg_20Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_appendSequenceAgg_6",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_appendSequenceAgg_6Literals,
+                        MeosAggregate_appendSequenceAgg_6Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_setUnionAgg_10",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_setUnionAgg_10Literals,
+                        MeosAggregate_setUnionAgg_10Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_setUnionAgg_11",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_setUnionAgg_11Literals,
+                        MeosAggregate_setUnionAgg_11Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_extent_8",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_extent_8Literals, MeosAggregate_extent_8Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_tCount_7",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_tCount_7Literals, MeosAggregate_tCount_7Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_wCount_7",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_wCount_7Literals, MeosAggregate_wCount_7Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_tCentroid_1",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_tCentroid_1Literals,
+                        MeosAggregate_tCentroid_1Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_mergeAgg_7",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_mergeAgg_7Literals, MeosAggregate_mergeAgg_7Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_appendInstantAgg_21",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_appendInstantAgg_21Literals,
+                        MeosAggregate_appendInstantAgg_21Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_appendInstantAgg_22",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_appendInstantAgg_22Literals,
+                        MeosAggregate_appendInstantAgg_22Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_appendInstantAgg_23",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_appendInstantAgg_23Literals,
+                        MeosAggregate_appendInstantAgg_23Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_appendSequenceAgg_7",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_appendSequenceAgg_7Literals,
+                        MeosAggregate_appendSequenceAgg_7Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_setUnionAgg_12",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_setUnionAgg_12Literals,
+                        MeosAggregate_setUnionAgg_12Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_setUnionAgg_13",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_setUnionAgg_13Literals,
+                        MeosAggregate_setUnionAgg_13Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_setUnionAgg_14",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_setUnionAgg_14Literals,
+                        MeosAggregate_setUnionAgg_14Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_setUnionAgg_15",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_setUnionAgg_15Literals,
+                        MeosAggregate_setUnionAgg_15Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_extent_9",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_extent_9Literals, MeosAggregate_extent_9Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_extent_10",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_extent_10Literals, MeosAggregate_extent_10Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_extent_11",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_extent_11Literals, MeosAggregate_extent_11Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_tCount_8",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_tCount_8Literals, MeosAggregate_tCount_8Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_tCount_9",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_tCount_9Literals, MeosAggregate_tCount_9Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_tnpoints_0",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_tnpoints_0Literals, MeosAggregate_tnpoints_0Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_tdensity_0",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_tdensity_0Literals, MeosAggregate_tdensity_0Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_wCount_8",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_wCount_8Literals, MeosAggregate_wCount_8Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_wCount_9",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_wCount_9Literals, MeosAggregate_wCount_9Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_mergeAgg_8",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_mergeAgg_8Literals, MeosAggregate_mergeAgg_8Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_mergeAgg_9",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_mergeAgg_9Literals, MeosAggregate_mergeAgg_9Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_appendInstantAgg_24",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_appendInstantAgg_24Literals,
+                        MeosAggregate_appendInstantAgg_24Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_appendInstantAgg_25",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_appendInstantAgg_25Literals,
+                        MeosAggregate_appendInstantAgg_25Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_appendInstantAgg_26",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_appendInstantAgg_26Literals,
+                        MeosAggregate_appendInstantAgg_26Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_appendInstantAgg_27",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_appendInstantAgg_27Literals,
+                        MeosAggregate_appendInstantAgg_27Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_appendInstantAgg_28",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_appendInstantAgg_28Literals,
+                        MeosAggregate_appendInstantAgg_28Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_appendInstantAgg_29",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_appendInstantAgg_29Literals,
+                        MeosAggregate_appendInstantAgg_29Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_appendSequenceAgg_8",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_appendSequenceAgg_8Literals,
+                        MeosAggregate_appendSequenceAgg_8Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_appendSequenceAgg_9",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_appendSequenceAgg_9Literals,
+                        MeosAggregate_appendSequenceAgg_9Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_setUnionAgg_16",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_setUnionAgg_16Literals,
+                        MeosAggregate_setUnionAgg_16Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_setUnionAgg_17",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_setUnionAgg_17Literals,
+                        MeosAggregate_setUnionAgg_17Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_tCount_10",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_tCount_10Literals, MeosAggregate_tCount_10Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_extent_12",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_extent_12Literals, MeosAggregate_extent_12Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_wCount_10",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_wCount_10Literals, MeosAggregate_wCount_10Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_mergeAgg_10",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_mergeAgg_10Literals,
+                        MeosAggregate_mergeAgg_10Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_appendInstantAgg_30",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_appendInstantAgg_30Literals,
+                        MeosAggregate_appendInstantAgg_30Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_appendInstantAgg_31",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_appendInstantAgg_31Literals,
+                        MeosAggregate_appendInstantAgg_31Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_appendInstantAgg_32",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_appendInstantAgg_32Literals,
+                        MeosAggregate_appendInstantAgg_32Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_appendSequenceAgg_10",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_appendSequenceAgg_10Literals,
+                        MeosAggregate_appendSequenceAgg_10Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_setUnionAgg_18",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_setUnionAgg_18Literals,
+                        MeosAggregate_setUnionAgg_18Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_setUnionAgg_19",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_setUnionAgg_19Literals,
+                        MeosAggregate_setUnionAgg_19Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_tCount_11",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_tCount_11Literals, MeosAggregate_tCount_11Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_extent_13",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_extent_13Literals, MeosAggregate_extent_13Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_wCount_11",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_wCount_11Literals, MeosAggregate_wCount_11Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_mergeAgg_11",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_mergeAgg_11Literals,
+                        MeosAggregate_mergeAgg_11Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_appendInstantAgg_33",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_appendInstantAgg_33Literals,
+                        MeosAggregate_appendInstantAgg_33Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_appendInstantAgg_34",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_appendInstantAgg_34Literals,
+                        MeosAggregate_appendInstantAgg_34Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_appendInstantAgg_35",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_appendInstantAgg_35Literals,
+                        MeosAggregate_appendInstantAgg_35Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_appendInstantAgg_36",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_appendInstantAgg_36Literals,
+                        MeosAggregate_appendInstantAgg_36Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_appendSequenceAgg_11",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_appendSequenceAgg_11Literals,
+                        MeosAggregate_appendSequenceAgg_11Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_setUnionAgg_20",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_setUnionAgg_20Literals,
+                        MeosAggregate_setUnionAgg_20Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_setUnionAgg_21",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_setUnionAgg_21Literals,
+                        MeosAggregate_setUnionAgg_21Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_extent_14",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_extent_14Literals, MeosAggregate_extent_14Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_tCount_12",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_tCount_12Literals, MeosAggregate_tCount_12Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_wCount_12",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_wCount_12Literals, MeosAggregate_wCount_12Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_mergeAgg_12",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_mergeAgg_12Literals,
+                        MeosAggregate_mergeAgg_12Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_appendInstantAgg_37",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_appendInstantAgg_37Literals,
+                        MeosAggregate_appendInstantAgg_37Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_appendInstantAgg_38",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_appendInstantAgg_38Literals,
+                        MeosAggregate_appendInstantAgg_38Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_appendInstantAgg_39",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_appendInstantAgg_39Literals,
+                        MeosAggregate_appendInstantAgg_39Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_appendSequenceAgg_12",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_appendSequenceAgg_12Literals,
+                        MeosAggregate_appendSequenceAgg_12Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_rasterUnion_0",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_rasterUnion_0Literals,
+                        MeosAggregate_rasterUnion_0Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_rasterUnion_1",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_rasterUnion_1Literals,
+                        MeosAggregate_rasterUnion_1Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_rasterUnion_2",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_rasterUnion_2Literals,
+                        MeosAggregate_rasterUnion_2Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_rasterUnion_3",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_rasterUnion_3Literals,
+                        MeosAggregate_rasterUnion_3Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_summaryStatsAgg_0",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_summaryStatsAgg_0Literals,
+                        MeosAggregate_summaryStatsAgg_0Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_summaryStatsAgg_1",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_summaryStatsAgg_1Literals,
+                        MeosAggregate_summaryStatsAgg_1Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_tCount_13",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_tCount_13Literals, MeosAggregate_tCount_13Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_wCount_13",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_wCount_13Literals, MeosAggregate_wCount_13Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_mergeAgg_13",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_mergeAgg_13Literals,
+                        MeosAggregate_mergeAgg_13Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_appendInstantAgg_40",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_appendInstantAgg_40Literals,
+                        MeosAggregate_appendInstantAgg_40Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_appendInstantAgg_41",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_appendInstantAgg_41Literals,
+                        MeosAggregate_appendInstantAgg_41Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_appendInstantAgg_42",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_appendInstantAgg_42Literals,
+                        MeosAggregate_appendInstantAgg_42Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_appendSequenceAgg_13",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_appendSequenceAgg_13Literals,
+                        MeosAggregate_appendSequenceAgg_13Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_extent_15",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_extent_15Literals, MeosAggregate_extent_15Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_setUnionAgg_22",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_setUnionAgg_22Literals,
+                        MeosAggregate_setUnionAgg_22Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_setUnionAgg_23",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_setUnionAgg_23Literals,
+                        MeosAggregate_setUnionAgg_23Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_extent_16",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_extent_16Literals, MeosAggregate_extent_16Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_tCount_14",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_tCount_14Literals, MeosAggregate_tCount_14Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_wCount_14",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_wCount_14Literals, MeosAggregate_wCount_14Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_mergeAgg_14",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_mergeAgg_14Literals,
+                        MeosAggregate_mergeAgg_14Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_appendInstantAgg_43",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_appendInstantAgg_43Literals,
+                        MeosAggregate_appendInstantAgg_43Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_appendInstantAgg_44",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_appendInstantAgg_44Literals,
+                        MeosAggregate_appendInstantAgg_44Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_appendInstantAgg_45",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_appendInstantAgg_45Literals,
+                        MeosAggregate_appendInstantAgg_45Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_appendSequenceAgg_14",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_appendSequenceAgg_14Literals,
+                        MeosAggregate_appendSequenceAgg_14Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_setUnionAgg_24",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::INT32,
+                        MeosAggregate_setUnionAgg_24Literals,
+                        MeosAggregate_setUnionAgg_24Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_setUnionAgg_25",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::INT64,
+                        MeosAggregate_setUnionAgg_25Literals,
+                        MeosAggregate_setUnionAgg_25Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_setUnionAgg_26",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::FLOAT64,
+                        MeosAggregate_setUnionAgg_26Literals,
+                        MeosAggregate_setUnionAgg_26Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_setUnionAgg_27",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_setUnionAgg_27Literals,
+                        MeosAggregate_setUnionAgg_27Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_setUnionAgg_28",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::UINT64,
+                        MeosAggregate_setUnionAgg_28Literals,
+                        MeosAggregate_setUnionAgg_28Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_setUnionAgg_29",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_setUnionAgg_29Literals,
+                        MeosAggregate_setUnionAgg_29Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_setUnionAgg_30",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_setUnionAgg_30Literals,
+                        MeosAggregate_setUnionAgg_30Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_setUnionAgg_31",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_setUnionAgg_31Literals,
+                        MeosAggregate_setUnionAgg_31Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_setUnionAgg_32",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_setUnionAgg_32Literals,
+                        MeosAggregate_setUnionAgg_32Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_setUnionAgg_33",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_setUnionAgg_33Literals,
+                        MeosAggregate_setUnionAgg_33Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_setUnionAgg_34",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_setUnionAgg_34Literals,
+                        MeosAggregate_setUnionAgg_34Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_extent_17",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_extent_17Literals, MeosAggregate_extent_17Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_extent_18",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_extent_18Literals, MeosAggregate_extent_18Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_extent_19",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_extent_19Literals, MeosAggregate_extent_19Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_extent_20",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_extent_20Literals, MeosAggregate_extent_20Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_extent_21",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_extent_21Literals, MeosAggregate_extent_21Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_extent_22",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::INT32, MeosAggregate_extent_22Literals, MeosAggregate_extent_22Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_extent_23",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::INT64, MeosAggregate_extent_23Literals, MeosAggregate_extent_23Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_extent_24",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::FLOAT64, MeosAggregate_extent_24Literals, MeosAggregate_extent_24Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_extent_25",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::UINT64, MeosAggregate_extent_25Literals, MeosAggregate_extent_25Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_extent_26",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_extent_26Literals, MeosAggregate_extent_26Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_extent_27",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_extent_27Literals, MeosAggregate_extent_27Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_extent_28",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_extent_28Literals, MeosAggregate_extent_28Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_extent_29",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_extent_29Literals, MeosAggregate_extent_29Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_extent_30",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_extent_30Literals, MeosAggregate_extent_30Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_extent_31",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_extent_31Literals, MeosAggregate_extent_31Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_extent_32",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_extent_32Literals, MeosAggregate_extent_32Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_extent_33",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_extent_33Literals, MeosAggregate_extent_33Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_extent_34",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_extent_34Literals, MeosAggregate_extent_34Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_extent_35",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_extent_35Literals, MeosAggregate_extent_35Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_spanUnionAgg_0",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_spanUnionAgg_0Literals,
+                        MeosAggregate_spanUnionAgg_0Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_spanUnionAgg_1",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_spanUnionAgg_1Literals,
+                        MeosAggregate_spanUnionAgg_1Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_spanUnionAgg_2",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_spanUnionAgg_2Literals,
+                        MeosAggregate_spanUnionAgg_2Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_spanUnionAgg_3",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_spanUnionAgg_3Literals,
+                        MeosAggregate_spanUnionAgg_3Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_spanUnionAgg_4",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_spanUnionAgg_4Literals,
+                        MeosAggregate_spanUnionAgg_4Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_spansetUnionAgg_0",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_spansetUnionAgg_0Literals,
+                        MeosAggregate_spansetUnionAgg_0Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_spansetUnionAgg_1",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_spansetUnionAgg_1Literals,
+                        MeosAggregate_spansetUnionAgg_1Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_spansetUnionAgg_2",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_spansetUnionAgg_2Literals,
+                        MeosAggregate_spansetUnionAgg_2Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_spansetUnionAgg_3",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_spansetUnionAgg_3Literals,
+                        MeosAggregate_spansetUnionAgg_3Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_spansetUnionAgg_4",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_spansetUnionAgg_4Literals,
+                        MeosAggregate_spansetUnionAgg_4Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_extent_36",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_extent_36Literals, MeosAggregate_extent_36Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_extent_37",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_extent_37Literals, MeosAggregate_extent_37Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_extent_38",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_extent_38Literals, MeosAggregate_extent_38Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_extent_39",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_extent_39Literals, MeosAggregate_extent_39Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_extent_40",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_extent_40Literals, MeosAggregate_extent_40Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_extent_41",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_extent_41Literals, MeosAggregate_extent_41Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_tCount_15",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::UINT64, MeosAggregate_tCount_15Literals, MeosAggregate_tCount_15Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_tCount_16",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_tCount_16Literals, MeosAggregate_tCount_16Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_tCount_17",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_tCount_17Literals, MeosAggregate_tCount_17Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_tCount_18",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_tCount_18Literals, MeosAggregate_tCount_18Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_tCount_19",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_tCount_19Literals, MeosAggregate_tCount_19Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_tAndAgg_0",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_tAndAgg_0Literals, MeosAggregate_tAndAgg_0Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_tOrAgg_0",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_tOrAgg_0Literals, MeosAggregate_tOrAgg_0Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_tCount_20",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_tCount_20Literals, MeosAggregate_tCount_20Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_tCount_21",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_tCount_21Literals, MeosAggregate_tCount_21Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_tMinAgg_0",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_tMinAgg_0Literals, MeosAggregate_tMinAgg_0Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_tMaxAgg_0",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_tMaxAgg_0Literals, MeosAggregate_tMaxAgg_0Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_tSum_0",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_tSum_0Literals, MeosAggregate_tSum_0Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_tAvg_0",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_tAvg_0Literals, MeosAggregate_tAvg_0Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_tMinAgg_1",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_tMinAgg_1Literals, MeosAggregate_tMinAgg_1Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_tMaxAgg_1",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_tMaxAgg_1Literals, MeosAggregate_tMaxAgg_1Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_tSum_1",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_tSum_1Literals, MeosAggregate_tSum_1Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_tAvg_1",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_tAvg_1Literals, MeosAggregate_tAvg_1Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_tCount_22",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_tCount_22Literals, MeosAggregate_tCount_22Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_tMinAgg_2",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_tMinAgg_2Literals, MeosAggregate_tMinAgg_2Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_tMaxAgg_2",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_tMaxAgg_2Literals, MeosAggregate_tMaxAgg_2Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_tSum_2",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_tSum_2Literals, MeosAggregate_tSum_2Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_tAvg_2",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_tAvg_2Literals, MeosAggregate_tAvg_2Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_tCount_23",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_tCount_23Literals, MeosAggregate_tCount_23Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_tMinAgg_3",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_tMinAgg_3Literals, MeosAggregate_tMinAgg_3Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_tMaxAgg_3",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_tMaxAgg_3Literals, MeosAggregate_tMaxAgg_3Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_mergeAgg_15",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_mergeAgg_15Literals,
+                        MeosAggregate_mergeAgg_15Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_mergeAgg_16",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_mergeAgg_16Literals,
+                        MeosAggregate_mergeAgg_16Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_mergeAgg_17",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_mergeAgg_17Literals,
+                        MeosAggregate_mergeAgg_17Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_mergeAgg_18",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_mergeAgg_18Literals,
+                        MeosAggregate_mergeAgg_18Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_mergeAgg_19",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_mergeAgg_19Literals,
+                        MeosAggregate_mergeAgg_19Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_appendInstantAgg_46",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_appendInstantAgg_46Literals,
+                        MeosAggregate_appendInstantAgg_46Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_appendInstantAgg_47",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_appendInstantAgg_47Literals,
+                        MeosAggregate_appendInstantAgg_47Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_appendInstantAgg_48",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_appendInstantAgg_48Literals,
+                        MeosAggregate_appendInstantAgg_48Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_appendInstantAgg_49",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_appendInstantAgg_49Literals,
+                        MeosAggregate_appendInstantAgg_49Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_appendInstantAgg_50",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_appendInstantAgg_50Literals,
+                        MeosAggregate_appendInstantAgg_50Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_appendInstantAgg_51",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_appendInstantAgg_51Literals,
+                        MeosAggregate_appendInstantAgg_51Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_appendInstantAgg_52",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_appendInstantAgg_52Literals,
+                        MeosAggregate_appendInstantAgg_52Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_appendInstantAgg_53",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_appendInstantAgg_53Literals,
+                        MeosAggregate_appendInstantAgg_53Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_appendInstantAgg_54",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_appendInstantAgg_54Literals,
+                        MeosAggregate_appendInstantAgg_54Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_appendInstantAgg_55",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_appendInstantAgg_55Literals,
+                        MeosAggregate_appendInstantAgg_55Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_appendInstantAgg_56",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_appendInstantAgg_56Literals,
+                        MeosAggregate_appendInstantAgg_56Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_appendInstantAgg_57",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_appendInstantAgg_57Literals,
+                        MeosAggregate_appendInstantAgg_57Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_appendInstantAgg_58",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_appendInstantAgg_58Literals,
+                        MeosAggregate_appendInstantAgg_58Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_appendInstantAgg_59",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_appendInstantAgg_59Literals,
+                        MeosAggregate_appendInstantAgg_59Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_appendInstantAgg_60",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_appendInstantAgg_60Literals,
+                        MeosAggregate_appendInstantAgg_60Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_appendSequenceAgg_15",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_appendSequenceAgg_15Literals,
+                        MeosAggregate_appendSequenceAgg_15Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_appendSequenceAgg_16",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_appendSequenceAgg_16Literals,
+                        MeosAggregate_appendSequenceAgg_16Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_appendSequenceAgg_17",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_appendSequenceAgg_17Literals,
+                        MeosAggregate_appendSequenceAgg_17Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_appendSequenceAgg_18",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_appendSequenceAgg_18Literals,
+                        MeosAggregate_appendSequenceAgg_18Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_appendSequenceAgg_19",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_appendSequenceAgg_19Literals,
+                        MeosAggregate_appendSequenceAgg_19Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_wMin_0",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_wMin_0Literals, MeosAggregate_wMin_0Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_wMax_0",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_wMax_0Literals, MeosAggregate_wMax_0Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_wSum_0",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_wSum_0Literals, MeosAggregate_wSum_0Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_wCount_15",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_wCount_15Literals, MeosAggregate_wCount_15Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_wAvgAgg_0",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_wAvgAgg_0Literals, MeosAggregate_wAvgAgg_0Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_wMin_1",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_wMin_1Literals, MeosAggregate_wMin_1Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_wMax_1",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_wMax_1Literals, MeosAggregate_wMax_1Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_wSum_1",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_wSum_1Literals, MeosAggregate_wSum_1Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_wCount_16",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_wCount_16Literals, MeosAggregate_wCount_16Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_wAvgAgg_1",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_wAvgAgg_1Literals, MeosAggregate_wAvgAgg_1Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_wMin_2",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_wMin_2Literals, MeosAggregate_wMin_2Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_wMax_2",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_wMax_2Literals, MeosAggregate_wMax_2Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_wSum_2",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_wSum_2Literals, MeosAggregate_wSum_2Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_wCount_17",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_wCount_17Literals, MeosAggregate_wCount_17Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_wAvgAgg_2",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments), DataType::Type::VARSIZED, MeosAggregate_wAvgAgg_2Literals, MeosAggregate_wAvgAgg_2Kernels);
+                }}}});
+    descriptor.entries.push_back(
+        EntryProvision{
+            .registryClassName = "AggregationPhysicalFunctionRegistry",
+            .key = "MeosAggregate_reachabilityFilterAgg_2",
+            .entry = std::any{AggregationPhysicalFunctionRegistry::EntryType{
+                [](AggregationPhysicalFunctionRegistryArguments arguments) -> AggregationPhysicalFunctionRegistryReturnType
+                {
+                    return meosAggregation(
+                        std::move(arguments),
+                        DataType::Type::VARSIZED,
+                        MeosAggregate_reachabilityFilterAgg_2Literals,
+                        MeosAggregate_reachabilityFilterAgg_2Kernels);
+                }}}});
 }
 
 /// Static registration is the purpose of this initializer; it only stores a function pointer.

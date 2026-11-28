@@ -267,9 +267,9 @@ std::optional<DataType> DataType::join(const DataType& otherDataType) const
 /// DataTypeRegistry holds under that name
 Reflected Reflector<DataType>::operator()(const DataType& field, const ReflectionContext& context) const
 {
-    return context.reflect(std::make_pair(
-        std::make_pair(field.type, field.nullable),
-        field.extension != nullptr ? std::string{field.extension->name} : std::string{}));
+    return context.reflect(
+        std::make_pair(
+            std::make_pair(field.type, field.nullable), field.extension != nullptr ? std::string{field.extension->name} : std::string{}));
 }
 
 DataType Unreflector<DataType>::operator()(const Reflected& rfl, const ReflectionContext& context) const

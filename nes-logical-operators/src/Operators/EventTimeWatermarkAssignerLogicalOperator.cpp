@@ -53,7 +53,11 @@ EventTimeWatermarkAssignerLogicalOperator::EventTimeWatermarkAssignerLogicalOper
 }
 
 EventTimeWatermarkAssignerLogicalOperator::EventTimeWatermarkAssignerLogicalOperator(
-    WeakLogicalOperator self, LogicalOperator child, LogicalFunction onField, const Windowing::TimeUnit& unit, const uint64_t allowedLateness)
+    WeakLogicalOperator self,
+    LogicalOperator child,
+    LogicalFunction onField,
+    const Windowing::TimeUnit& unit,
+    const uint64_t allowedLateness)
     : ManagedByOperator(std::move(self)), unit(unit), onField(std::move(onField)), allowedLateness(allowedLateness), child(std::move(child))
 {
     inferLocalSchema();
@@ -65,8 +69,7 @@ EventTimeWatermarkAssignerLogicalOperator::create(LogicalFunction onField, const
     return TypedLogicalOperator<EventTimeWatermarkAssignerLogicalOperator>{std::move(onField), unit, allowedLateness};
 }
 
-TypedLogicalOperator<EventTimeWatermarkAssignerLogicalOperator>
-EventTimeWatermarkAssignerLogicalOperator::create(
+TypedLogicalOperator<EventTimeWatermarkAssignerLogicalOperator> EventTimeWatermarkAssignerLogicalOperator::create(
     LogicalOperator child, LogicalFunction onField, const Windowing::TimeUnit& unit, const uint64_t allowedLateness)
 {
     return TypedLogicalOperator<EventTimeWatermarkAssignerLogicalOperator>{std::move(child), std::move(onField), unit, allowedLateness};
@@ -193,7 +196,8 @@ TypedLogicalOperator<EventTimeWatermarkAssignerLogicalOperator>
 Unreflector<TypedLogicalOperator<EventTimeWatermarkAssignerLogicalOperator>>::operator()(
     const Reflected& reflected, const ReflectionContext& context) const
 {
-    auto [id, onField, timeUnit, allowedLateness] = context.unreflect<detail::ReflectedEventTimeWatermarkAssignerLogicalOperator>(reflected);
+    auto [id, onField, timeUnit, allowedLateness]
+        = context.unreflect<detail::ReflectedEventTimeWatermarkAssignerLogicalOperator>(reflected);
     auto children = plan->getChildrenFor(id, context);
     if (children.size() != 1)
     {
@@ -213,5 +217,7 @@ uint64_t std::hash<NES::EventTimeWatermarkAssignerLogicalOperator>::operator()(
     const NES::EventTimeWatermarkAssignerLogicalOperator& eventTimeWatermarkAssignerOperator) const noexcept
 {
     return folly::hash::hash_combine(
-        eventTimeWatermarkAssignerOperator.unit, eventTimeWatermarkAssignerOperator.onField, eventTimeWatermarkAssignerOperator.allowedLateness);
+        eventTimeWatermarkAssignerOperator.unit,
+        eventTimeWatermarkAssignerOperator.onField,
+        eventTimeWatermarkAssignerOperator.allowedLateness);
 }

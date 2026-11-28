@@ -146,9 +146,7 @@ literalBlock(const std::span<const DataType::Type> types, const std::vector<Logi
         switch (types[i])
         {
             case DataType::Type::VARSIZED:
-                append(
-                    block,
-                    MeosRuntime::Argument{.size = result->values[i].size(), .content = result->values[i].data()});
+                append(block, MeosRuntime::Argument{.size = result->values[i].size(), .content = result->values[i].data()});
                 break;
             case DataType::Type::BOOLEAN:
                 append(block, static_cast<int64_t>(toUpperCase(text) == "TRUE"));
@@ -257,7 +255,8 @@ Record MeosAggregationPhysicalFunction::lower(
     Record record;
     if (resultType.type != DataType::Type::VARSIZED)
     {
-        record.write(resultFieldIdentifier, VarVal::readVarValFromMemory(out, DataType{resultType.type, DataType::NULLABLE::IS_NULLABLE}, null));
+        record.write(
+            resultFieldIdentifier, VarVal::readVarValFromMemory(out, DataType{resultType.type, DataType::NULLABLE::IS_NULLABLE}, null));
         return record;
     }
     const auto length = nautilus::invoke(answeredLength, answer);

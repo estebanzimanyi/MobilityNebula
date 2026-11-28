@@ -81,7 +81,8 @@ bool CountDistinctAggregationLogicalFunction::operator==(const CountDistinctAggr
     return inputFunction == other.inputFunction;
 }
 
-CountDistinctAggregationLogicalFunction CountDistinctAggregationLogicalFunction::withInferredType(const Schema<Field, Unordered>& schema) const
+CountDistinctAggregationLogicalFunction
+CountDistinctAggregationLogicalFunction::withInferredType(const Schema<Field, Unordered>& schema) const
 {
     return CountDistinctAggregationLogicalFunction{inferFieldAccess(inputFunction, schema)};
 }
@@ -98,7 +99,8 @@ Unreflector<CountDistinctAggregationLogicalFunction>::operator()(const Reflected
     return CountDistinctAggregationLogicalFunction{context.unreflect<AggregationFieldAccess>(reflected)};
 }
 
-AggregationLogicalFunctionRegistryReturnType CountDistinctAggregationLogicalFunction::create(AggregationLogicalFunctionRegistryArguments arguments)
+AggregationLogicalFunctionRegistryReturnType
+CountDistinctAggregationLogicalFunction::create(AggregationLogicalFunctionRegistryArguments arguments)
 {
     if (arguments.on.size() != 1)
     {

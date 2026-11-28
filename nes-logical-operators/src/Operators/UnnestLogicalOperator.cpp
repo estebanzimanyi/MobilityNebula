@@ -200,8 +200,9 @@ LogicalOperator UnnestLogicalOperator::getChild() const
 Reflected Reflector<TypedLogicalOperator<UnnestLogicalOperator>>::operator()(
     const TypedLogicalOperator<UnnestLogicalOperator>& op, const ReflectionContext& context) const
 {
-    return context.reflect(detail::ReflectedUnnestLogicalOperator{
-        .operatorId = op.getId(), .array = op->getArray(), .alias = op->getAlias(), .element = op->getElement()});
+    return context.reflect(
+        detail::ReflectedUnnestLogicalOperator{
+            .operatorId = op.getId(), .array = op->getArray(), .alias = op->getAlias(), .element = op->getElement()});
 }
 
 Unreflector<TypedLogicalOperator<UnnestLogicalOperator>>::Unreflector(ContextType operatorMapping) : plan(std::move(operatorMapping))

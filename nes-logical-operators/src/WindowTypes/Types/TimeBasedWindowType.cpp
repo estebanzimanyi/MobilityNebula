@@ -31,7 +31,8 @@
 
 namespace NES::Windowing
 {
-TimeBasedWindowType::TimeBasedWindowType(std::variant<TumblingWindow, SlidingWindow, SessionWindow> underlying) : underlying(std::move(underlying))
+TimeBasedWindowType::TimeBasedWindowType(std::variant<TumblingWindow, SlidingWindow, SessionWindow> underlying)
+    : underlying(std::move(underlying))
 {
 }
 
@@ -76,11 +77,13 @@ Reflector<Windowing::TimeBasedWindowType>::operator()(const Windowing::TimeBased
 Windowing::TimeBasedWindowType
 Unreflector<Windowing::TimeBasedWindowType>::operator()(const Reflected& reflected, const ReflectionContext& context) const
 {
-    return Windowing::TimeBasedWindowType{context.unreflect<std::variant<Windowing::TumblingWindow, Windowing::SlidingWindow, Windowing::SessionWindow>>(reflected)};
+    return Windowing::TimeBasedWindowType{
+        context.unreflect<std::variant<Windowing::TumblingWindow, Windowing::SlidingWindow, Windowing::SessionWindow>>(reflected)};
 }
 }
 
 std::size_t std::hash<NES::Windowing::TimeBasedWindowType>::operator()(const NES::Windowing::TimeBasedWindowType& window) const noexcept
 {
-    return std::hash<std::variant<NES::Windowing::TumblingWindow, NES::Windowing::SlidingWindow, NES::Windowing::SessionWindow>>{}(window.getUnderlying());
+    return std::hash<std::variant<NES::Windowing::TumblingWindow, NES::Windowing::SlidingWindow, NES::Windowing::SessionWindow>>{}(
+        window.getUnderlying());
 }

@@ -27,9 +27,9 @@
 #include <Interface/PagedVector/PagedVector.hpp>
 #include <Interface/PagedVector/PagedVectorRef.hpp>
 #include <Interface/Record.hpp>
-#include <nautilus/function.hpp>
 #include <Runtime/AbstractBufferProvider.hpp>
 #include <Runtime/TupleBuffer.hpp>
+#include <nautilus/function.hpp>
 #include <AggregationPhysicalFunctionRegistry.hpp>
 #include <ErrorHandling.hpp>
 #include <ExecutionContext.hpp>
@@ -48,7 +48,8 @@ OwnedNautilusBuffer loadPagedVector(const nautilus::val<AggregationState*>& aggr
 {
     OwnedNautilusBuffer pagedVecBuffer;
     nautilus::invoke(
-        +[](TupleBuffer* parent, TupleBuffer* out, const uint32_t* indexPtr) { *out = parent->loadChildBuffer(ChildBufferIndex{*indexPtr}); },
+        +[](TupleBuffer* parent, TupleBuffer* out, const uint32_t* indexPtr)
+        { *out = parent->loadChildBuffer(ChildBufferIndex{*indexPtr}); },
         parentBuffer.asArg(),
         pagedVecBuffer.asArg(),
         static_cast<nautilus::val<uint32_t*>>(aggregationState));

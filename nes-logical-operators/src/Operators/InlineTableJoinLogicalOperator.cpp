@@ -69,8 +69,8 @@ InlineTableJoinLogicalOperator::create(std::vector<LogicalFunction> values, Iden
     return TypedLogicalOperator<InlineTableJoinLogicalOperator>{std::move(values), std::move(alias), std::move(fields)};
 }
 
-TypedLogicalOperator<InlineTableJoinLogicalOperator>
-InlineTableJoinLogicalOperator::create(LogicalOperator child, std::vector<LogicalFunction> values, Identifier alias, std::vector<Identifier> fields)
+TypedLogicalOperator<InlineTableJoinLogicalOperator> InlineTableJoinLogicalOperator::create(
+    LogicalOperator child, std::vector<LogicalFunction> values, Identifier alias, std::vector<Identifier> fields)
 {
     return TypedLogicalOperator<InlineTableJoinLogicalOperator>{std::move(child), std::move(values), std::move(alias), std::move(fields)};
 }
@@ -220,11 +220,13 @@ LogicalOperator InlineTableJoinLogicalOperator::getChild() const
 Reflected Reflector<TypedLogicalOperator<InlineTableJoinLogicalOperator>>::operator()(
     const TypedLogicalOperator<InlineTableJoinLogicalOperator>& op, const ReflectionContext& context) const
 {
-    return context.reflect(detail::ReflectedInlineTableJoinLogicalOperator{
-        .operatorId = op.getId(), .values = op->getValues(), .alias = op->getAlias(), .fields = op->getFields()});
+    return context.reflect(
+        detail::ReflectedInlineTableJoinLogicalOperator{
+            .operatorId = op.getId(), .values = op->getValues(), .alias = op->getAlias(), .fields = op->getFields()});
 }
 
-Unreflector<TypedLogicalOperator<InlineTableJoinLogicalOperator>>::Unreflector(ContextType operatorMapping) : plan(std::move(operatorMapping))
+Unreflector<TypedLogicalOperator<InlineTableJoinLogicalOperator>>::Unreflector(ContextType operatorMapping)
+    : plan(std::move(operatorMapping))
 {
 }
 

@@ -49,8 +49,12 @@ namespace
 /// ones these tests state the input of; a plugin adds aggregations over its own types, which neither
 /// test states.
 constexpr std::array OwnAggregations{
-    std::string_view{"AVG"}, std::string_view{"COUNT"}, std::string_view{"MAX"},
-    std::string_view{"MEDIAN"}, std::string_view{"MIN"}, std::string_view{"SUM"}};
+    std::string_view{"AVG"},
+    std::string_view{"COUNT"},
+    std::string_view{"MAX"},
+    std::string_view{"MEDIAN"},
+    std::string_view{"MIN"},
+    std::string_view{"SUM"}};
 constexpr std::array NonNumericAggregations{std::string_view{"COUNT"}};
 
 class AggregationInputTypeTest : public ::testing::Test

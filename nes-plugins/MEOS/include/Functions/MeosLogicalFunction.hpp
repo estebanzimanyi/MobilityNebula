@@ -78,6 +78,7 @@ public:
     /// The physical function of the chosen signature, else the SQL name
     [[nodiscard]] std::string_view getType() const;
     [[nodiscard]] std::string explain(ExplainVerbosity verbosity) const;
+
     [[nodiscard]] std::string_view getName() const { return name; }
 
 private:

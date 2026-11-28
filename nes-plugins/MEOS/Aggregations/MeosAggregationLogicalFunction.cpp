@@ -186,7 +186,8 @@ MeosAggregationLogicalFunction MeosAggregationLogicalFunction::withInferredType(
             "{} takes no argument of type {} followed by the constants ({})",
             name,
             fieldType(copy.inputFunction),
-            fmt::join(literals | std::views::transform([](const auto& literal) { return literal.explain(ExplainVerbosity::Short); }), ", "));
+            fmt::join(
+                literals | std::views::transform([](const auto& literal) { return literal.explain(ExplainVerbosity::Short); }), ", "));
     }
     return copy;
 }
@@ -213,8 +214,11 @@ bool MeosAggregationLogicalFunction::operator==(const MeosAggregationLogicalFunc
 Reflected Reflector<MeosAggregationLogicalFunction>::operator()(
     const MeosAggregationLogicalFunction& function, const ReflectionContext& context) const
 {
-    return context.reflect(detail::ReflectedMeosAggregationLogicalFunction{
-        .name = std::string(function.getAggregateName()), .inputFunction = function.getInputFunction(), .literals = function.getLiterals()});
+    return context.reflect(
+        detail::ReflectedMeosAggregationLogicalFunction{
+            .name = std::string(function.getAggregateName()),
+            .inputFunction = function.getInputFunction(),
+            .literals = function.getLiterals()});
 }
 
 MeosAggregationLogicalFunction
@@ -232,7 +236,8 @@ Unreflector<MeosAggregationLogicalFunction>::operator()(const Reflected& reflect
 
 }
 
-size_t std::hash<NES::MeosAggregationLogicalFunction>::operator()(const NES::MeosAggregationLogicalFunction& aggregationFunction) const noexcept
+size_t
+std::hash<NES::MeosAggregationLogicalFunction>::operator()(const NES::MeosAggregationLogicalFunction& aggregationFunction) const noexcept
 {
     return folly::hash::hash_combine(aggregationFunction.getInputFunction(), aggregationFunction.getName());
 }
