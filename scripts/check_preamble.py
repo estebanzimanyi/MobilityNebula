@@ -105,6 +105,9 @@ VENDORED_FILES = {
     "nes-systests/utils/SystestPlugin/NES-Systest-Runner/gradlew",
     "nes-systests/utils/SystestPlugin/NES-Systest-Runner/gradlew.bat",
     "vcpkg/vcpkg-registry/ports/llvm/portfile.cmake",
+    # JMEOS's generator, copied from MobilityDB/JMEOS, keeps the PostgreSQL License notice it carries there.
+    "tools/codegen/jmeos/codegen_jvm.py",
+    "tools/codegen/jmeos/codegen_spark_udfs.py",
     "vcpkg/vcpkg-registry/ports/cpptrace/portfile.cmake",
     "vcpkg/vcpkg-registry/ports/libuuid/CMakeLists.txt",
     "vcpkg/vcpkg-registry/ports/libuuid/config.linux.h",
@@ -146,7 +149,7 @@ if __name__ == "__main__":
                 if not content.startswith(license_text_cmake):
                     print(f'{COLOR_RED_BOLD}Error{COLOR_RESET}: file lacks license preamble: {filename}:1')
                     result = False
-        elif suffix in {"sh", "py", "bats", "toml", "bash"}:
+        elif suffix in {"sh", "py", "bats", "toml", "bash"} or (suffix == "txt" and not filename.startswith(".github")):
             with open(filename, "r", encoding="utf-8") as fp:
                 content = fp.read()
                 if license_text_cmake not in content:

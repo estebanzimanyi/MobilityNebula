@@ -1,4 +1,16 @@
 #!/usr/bin/env python3
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+
+#    https://www.apache.org/licenses/LICENSE-2.0
+
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 """Build a codegen_nebula.py descriptor from the MEOS catalog.
 
 Reads the composed meos-idl.json, classifies each public function into a known
@@ -31,6 +43,24 @@ import collections
 import json
 import re
 import sys
+
+# The licence preamble #write_ledger opens the ledger with: the hash form, license_text_cmake, of
+# scripts/check_preamble.py, which requires it of every tracked .txt, .py and .sh, and which cannot be
+# imported since it runs its check on import
+LEDGER_PREAMBLE = """\
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+
+#    https://www.apache.org/licenses/LICENSE-2.0
+
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+"""
 
 # --- per-base-type input construction -------------------------------------
 #
@@ -1293,6 +1323,7 @@ def write_ledger(path, catalog, shapes):
         rows.append(f"{bucket}\t{fn}")
         tally[bucket.split(":")[0]] += 1
     with open(path, "w") as fh:
+        fh.write(LEDGER_PREAMBLE)
         fh.write("# MobilityNebula coverage ledger — every public MEOS function in exactly\n")
         fh.write("# one bucket. Regenerate with build_descriptor.py --catalog <idl> --ledger.\n")
         for r in rows:

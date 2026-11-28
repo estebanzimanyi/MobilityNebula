@@ -12,8 +12,7 @@
     limitations under the License.
 */
 
-#ifndef NES_PLUGINS_MEOS_HPP
-#define NES_PLUGINS_MEOS_HPP
+#pragma once
 
 #include <string>
 
@@ -48,7 +47,7 @@ public:
         explicit SpatioTemporalBox(const std::string& wkt_string);
         ~SpatioTemporalBox();
 
-        // Non-copyable, movable to avoid double-free of MEOS-managed memory
+        /// Non-copyable, movable to avoid double-free of MEOS-managed memory
         SpatioTemporalBox(const SpatioTemporalBox&) = delete;
         SpatioTemporalBox& operator=(const SpatioTemporalBox&) = delete;
 
@@ -126,7 +125,7 @@ public:
         Temporal* temporal;
     };
 
-    // Thread-safe wrappers around selected MEOS functions to avoid internal races
+    /// Thread-safe wrappers around selected MEOS functions to avoid internal races
     static int safe_edwithin_tgeo_geo(const Temporal* temp, const GSERIALIZED* gs, double dist);
     static int safe_eintersects_tgeo_geo(const Temporal* temp, const GSERIALIZED* gs);
     static Temporal* safe_tgeo_at_stbox(const Temporal* temp, const STBox* box, bool border_inc);
@@ -161,4 +160,3 @@ public:
 };
 
 }
-#endif // NES_PLUGINS_MEOS_HPP
